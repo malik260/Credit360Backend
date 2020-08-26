@@ -2459,6 +2459,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("fixed-deposit-collateral-report/collateralCode/{collateralCode}")]
+
+        public HttpResponseMessage GetFixedDepositCollaterals(string collateralCode)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetFixedDepositCollaterals(token.GetCompanyId, collateralCode, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("cbn-npl-team-report")]

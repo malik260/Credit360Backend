@@ -52,77 +52,59 @@ namespace FintrakBanking.Repositories.Risk
 
             List<string> employeeType = new List<string> { "EMPLOYER", "SELFEMPLOYED","EMPLOYEE" };
             List<TBL_RAC_DEFINITION> racDefinitionOnEmployer = new List<TBL_RAC_DEFINITION>();
+
             if (model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS" && !model.isOperationbased)
             {
-                var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
-                                                                                        && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                                        && !employeeType.Contains(x.EMPLOYMENTTYPE)
-                                                                                        && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                        && x.ISACTIVE == true
-                                                                                        && x.DELETED == false).ToList();
+                        var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
+                                                                                                && x.SEARCHPLACEHOLDER == "PRODUCT"
+                                                                                                && !employeeType.Contains(x.EMPLOYMENTTYPE)
+                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                                && x.ISACTIVE == true
+                                                                                                && x.DELETED == false).ToList();
 
-                var racDefinitionOnProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId
-                                                                                          && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
-                                                                                          && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                          && !employeeType.Contains(x.EMPLOYMENTTYPE)
-                                                                                          && x.ISACTIVE == true && x.DELETED == false).ToList();
+                        var racDefinitionOnProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId
+                                                                                                  && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
+                                                                                                  && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                                  && !employeeType.Contains(x.EMPLOYMENTTYPE)
+                                                                                                  && x.ISACTIVE == true && x.DELETED == false).ToList();
 
-                racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
+                        racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
 
-                if (isCorporate || model.productClassId == (int)ProductClassEnum.MortgageLoan)
+                if (isCorporate)
                 {
-                    var racDefinitionOnEmployerByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                                           && (x.EMPLOYMENTTYPE == "EMPLOYER" || x.EMPLOYMENTTYPE == "SELFEMPLOYED")
-                                                                                           && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                           && x.ISACTIVE == true
-                                                                                           && x.DELETED == false).ToList();
+                        var racDefinitionOnEmployerByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
+                                                                                               && (x.EMPLOYMENTTYPE == "EMPLOYER" || x.EMPLOYMENTTYPE == "SELFEMPLOYED")
+                                                                                               && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                               && x.ISACTIVE == true
+                                                                                               && x.DELETED == false).ToList();
 
-                    var racDefinitionOnEmployerByProductClass = context.TBL_RAC_DEFINITION.Where(x => (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS") 
-                                                                                           && (x.EMPLOYMENTTYPE == "EMPLOYER" || x.EMPLOYMENTTYPE == "SELFEMPLOYED")
-                                                                                           && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                           && x.ISACTIVE == true
-                                                                                           && x.DELETED == false).ToList();
+                        var racDefinitionOnEmployerByProductClass = context.TBL_RAC_DEFINITION.Where(x => (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS") 
+                                                                                               && (x.EMPLOYMENTTYPE == "EMPLOYER" || x.EMPLOYMENTTYPE == "SELFEMPLOYED")
+                                                                                               && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                               && x.ISACTIVE == true
+                                                                                               && x.DELETED == false).ToList();
 
-                    racDefinitionOnEmployer = racDefinitionOnEmployerByProduct.Count() > 0 ? racDefinitionOnEmployerByProduct : racDefinitionOnEmployerByProductClass;
+                        racDefinitionOnEmployer = racDefinitionOnEmployerByProduct.Count() > 0 ? racDefinitionOnEmployerByProduct : racDefinitionOnEmployerByProductClass;
 
-                    racDefinition.AddRange(racDefinitionOnEmployer);
+                        racDefinition.AddRange(racDefinitionOnEmployer);
                 }
-                else if (!isCorporate && model.productClassId != (int)ProductClassEnum.MortgageLoan)
+                else if (!isCorporate)
                 {
-                    var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                                         && (x.EMPLOYMENTTYPE == "EMPLOYEE")
-                                                                                         && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                         && x.ISACTIVE == true
-                                                                                         && x.DELETED == false).ToList();
+                        var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
+                                                                                             && (x.EMPLOYMENTTYPE == "EMPLOYEE")
+                                                                                             && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                             && x.ISACTIVE == true
+                                                                                             && x.DELETED == false).ToList();
 
-                    var racDefinitionOnEmployeeByProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
-                                                                                        && (x.EMPLOYMENTTYPE == "EMPLOYEE")
-                                                                                        && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                        && x.ISACTIVE == true
-                                                                                        && x.DELETED == false).ToList();
+                        var racDefinitionOnEmployeeByProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
+                                                                                            && (x.EMPLOYMENTTYPE == "EMPLOYEE")
+                                                                                            && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                            && x.ISACTIVE == true
+                                                                                            && x.DELETED == false).ToList();
 
-                    racDefinitionOnEmployer = racDefinitionOnEmployeeByProduct.Count() > 0 ? racDefinitionOnEmployeeByProduct : racDefinitionOnEmployeeByProductClass;
+                        racDefinitionOnEmployer = racDefinitionOnEmployeeByProduct.Count() > 0 ? racDefinitionOnEmployeeByProduct : racDefinitionOnEmployeeByProductClass;
 
-                    racDefinition.AddRange(racDefinitionOnEmployer);
-                }
-
-                else if (!isCorporate && model.productClassId == (int)ProductClassEnum.MortgageLoan)
-                {
-                    var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                                         && (x.EMPLOYMENTTYPE == "EMPLOYEE")
-                                                                                         && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                         && x.ISACTIVE == true
-                                                                                         && x.DELETED == false).ToList();
-
-                    var racDefinitionOnEmployeeByProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
-                                                                                        && (x.EMPLOYMENTTYPE == "EMPLOYEE")
-                                                                                        && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                        && x.ISACTIVE == true
-                                                                                        && x.DELETED == false).ToList();
-
-                    racDefinitionOnEmployer = racDefinitionOnEmployeeByProduct.Count() > 0 ? racDefinitionOnEmployeeByProduct : racDefinitionOnEmployeeByProductClass;
-
-                    racDefinition.AddRange(racDefinitionOnEmployer);
+                        racDefinition.AddRange(racDefinitionOnEmployer);
                 }
 
             }

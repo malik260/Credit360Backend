@@ -345,6 +345,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (loanRecord != null)
                 {
                     loanRecord.USER_PRUDENTIAL_GUIDE_STATUSID = entity.prudentialGuidelineStatusId;
+                    context.SaveChanges();
                     //LoanPerformancePosting(prudTypeId, termLoan);
                 }
 
@@ -367,6 +368,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     revolvingLoanRecord.USER_PRUDENTIAL_GUIDE_STATUSID = entity.prudentialGuidelineStatusId;
                     //LoanPerformancePosting(prudTypeId,  revolvingLoan);
+                    context.SaveChanges();
                 }
 
                 //Send Email to Customer
