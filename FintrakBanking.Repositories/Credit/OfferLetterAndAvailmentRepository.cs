@@ -2142,7 +2142,7 @@ namespace FintrakBanking.Repositories.Credit
                                       where a.LOANAPPLICATIONID == loanApplicationId
                                       select new OfferLetterViewModel
                                       {
-                                          //customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                          customerName = a.CUSTOMERID != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
                                           offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                           offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                           customerId = b.CUSTOMERID,
