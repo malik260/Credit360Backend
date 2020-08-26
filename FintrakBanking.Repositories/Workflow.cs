@@ -1171,7 +1171,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void ContinueProcess(int status)
         {
-            this.statusId = status == (int)ApprovalStatusEnum.Disapproved ? (int)ApprovalStatusEnum.Processing : status == (int)ApprovalStatusEnum.Finishing ? status : (int)ApprovalStatusEnum.Authorised;
+            this.statusId = status == (int)ApprovalStatusEnum.Disapproved ? (int)ApprovalStatusEnum.Processing : status == (int)ApprovalStatusEnum.Finishing ? status : status == (int)ApprovalStatusEnum.Escalated ? status : (int)ApprovalStatusEnum.Authorised;
             this.newStateId = (int)ApprovalState.Processing;
         }
 
@@ -1457,7 +1457,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (this.statusId == (int)ApprovalStatusEnum.Escalated)
                 {
-                    this.ContinueProcess((int)ApprovalStatusEnum.Processing);
+                    this.ContinueProcess(this.statusId);
                     return statusId;
                 }
             }
