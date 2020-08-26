@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Report;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -571,6 +572,28 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
 
             return result;
+        }
+
+        public IEnumerable<FixedDepositCollateralViewModel> GetFixedDepositCollaterals(int companyId, string collateralCode)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = from d in context.TBL_COLLATERAL_CUSTOMER
+                           where d.COLLATERALCODE == collateralCode && d.COLLATERALTYPEID == (int) CollateralTypeEnum.FixedDeposit
+                           orderby d.DATETIMECREATED descending
+                           select new FixedDepositCollateralViewModel()
+                           {
+                               collateralSummary = d.COLLATERALSUMMARY,
+                               valuationCycle = d.VALUATIONCYCLE.ToString(),
+                               dateTimeCreated = d.DATETIMECREATED,
+                               collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                               //collateralDetail = d.TBL_COLLATERAL_TYPE.DETAILS,
+                               collateralCode = d.COLLATERALCODE,
+                               collateralValue = d.COLLATERALVALUE,
+                           };
+
+                return data.ToList();
+            }
         }
 
     }

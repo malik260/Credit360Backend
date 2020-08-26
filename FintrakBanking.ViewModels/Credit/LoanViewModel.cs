@@ -1765,6 +1765,23 @@ namespace FintrakBanking.ViewModels.Credit
         public RacInformationViewModel rac { get; set; }
     }
 
+    public class creditBureauModel
+    {
+
+        public DateTime Test { get; set; }
+        public int? branchCode { get; set; }
+        public string branchName { get; set; }
+        public string staffCode { get; set; }
+        public DateTime requestedDate { get; set; }
+        public int? relationshipManagerID { get; set; }
+        public string rmName { get; set; }
+
+
+        public string userName { get; set; }
+        public string subjectCriteria { get; set; }
+        public decimal Amount { get; set; }
+    }
+
 
 
     //public class MaturityIntructionViewModel : GeneralEntity
