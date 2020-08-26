@@ -544,6 +544,21 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+        [HttpGet, Route("get-customer-fixed-deposit-collateral/searchParam/{searchParam}")]
+        public HttpResponseMessage GetCustomerFixedDepositCollateral(string searchParam)
+        {
+            try
+            {
+                var response = repo.GetCustomerFixedDepositCollateral(searchParam, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
         [HttpPost, Route("customer-collateral/customer")]
         public HttpResponseMessage GetCustomerCollateralRepo([FromBody]NewCollateralViewModel data)
         {

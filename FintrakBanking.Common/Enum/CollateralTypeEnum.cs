@@ -12,7 +12,7 @@ namespace FintrakBanking.Common.Enum
         InsurancePolicy = 4,
         Vehicle = 5,
         PreciousMetal = 6,
-        TermDeposit = 7,
+        FixedDeposit = 7,
         CASA = 8,
         Gaurantee = 9,
         Miscellaneous = 17,

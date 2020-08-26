@@ -620,6 +620,13 @@
     <Compile Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx.designer.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\FixedDepositCollateral.aspx.cs">
+      <DependentUpon>FixedDepositCollateral.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\FixedDepositCollateral.aspx.designer.cs">
+      <DependentUpon>FixedDepositCollateral.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx.cs">
       <DependentUpon>FullAndFinalSettlementAndWaivers.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1425,6 +1432,7 @@
     <Content Include="Reports\ReportViews\CollateralInsurance.aspx" />
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
+    <Content Include="Reports\ReportViews\FixedDepositCollateral.aspx" />
     <Content Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx" />
     <Content Include="Reports\ReportViews\IdleAssetsSales.aspx" />
     <Content Include="Reports\ReportViews\InsiderRelatedLoansReport.aspx" />
@@ -1681,15 +1689,15 @@
     <Content Include="Reports\ReportDataset\StaffInfoDataSet.xsc">
       <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
     </Content>
-    <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
-      <DependentUpon>ReportDataSet.xsd</DependentUpon>
-    </Content>
     <Content Include="Reports\ReportDataset\RecoveryReporting.xsc">
       <DependentUpon>RecoveryReporting.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\RecoveryReporting.xsd" />
     <Content Include="Reports\ReportDataset\RecoveryReporting.xss">
       <DependentUpon>RecoveryReporting.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\ReportDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1853,6 +1861,7 @@
     <EmbeddedResource Include="Reports\Report\ExpiredReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
+    <EmbeddedResource Include="Reports\Report\FixedDepositCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Report\Form3800BFacilityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\FullAndFinalSettlementAndWaivers.rdlc" />
     <EmbeddedResource Include="Reports\Report\IdleAssetsSales.rdlc" />
