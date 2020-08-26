@@ -1,0 +1,20 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CollateralRegister.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.CollateralRegister" %>
+<%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <asp:ScriptManager ID="ScriptManager1" runat="server">
+            </asp:ScriptManager>
+            <rsweb:ReportViewer  Font-Names="Fruitger LT 45"  KeepSessionAlive="false" AsyncRendering="false" ID="ReportViewer" runat="server" Height="800px" Width="100%">
+            </rsweb:ReportViewer>
+        </div>
+    </form>
+</body>
+</html>
