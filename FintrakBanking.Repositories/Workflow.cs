@@ -755,7 +755,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             else
             {
-                if (this.reviewerLevelId > 0 && response.statusId == (int)ApprovalStatusEnum.Approved)
+                if (this.ignorePostApprovalReviewer == false && this.reviewerLevelId > 0 && response.statusId == (int)ApprovalStatusEnum.Approved)
                 {
                     var toLevel = context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == this.reviewerLevelId);
                     var nextLevelName = toLevel.LEVELNAME;
