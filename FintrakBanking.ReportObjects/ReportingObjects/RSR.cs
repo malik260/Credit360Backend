@@ -596,5 +596,28 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
         }
 
+        public IEnumerable<FixedDepositCollateralViewModel> GetValidCollaterals(DateTime startDate, DateTime endDate)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = from d in context.TBL_COLLATERAL_CUSTOMER
+                           where (DbFunctions.TruncateTime(d.VALIDTILL) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(d.VALIDTILL) <= DbFunctions.TruncateTime(endDate))
+                           orderby d.DATETIMECREATED descending
+                           select new FixedDepositCollateralViewModel()
+                           {
+                               collateralSummary = d.COLLATERALSUMMARY,
+                               valuationCycle = d.VALUATIONCYCLE.ToString(),
+                               dateTimeCreated = d.DATETIMECREATED,
+                               collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                               //collateralDetail = d.TBL_COLLATERAL_TYPE.DETAILS,
+                               collateralCode = d.COLLATERALCODE,
+                               collateralValue = d.COLLATERALVALUE,
+                               validityExpiryDate = d.VALIDTILL.Value
+                           };
+
+                return data.ToList();
+            }
+        }
+
     }
 }

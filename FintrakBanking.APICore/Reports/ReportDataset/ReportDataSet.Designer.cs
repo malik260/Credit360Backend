@@ -1515,6 +1515,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columndateTimeCreated;
             
+            private global::System.Data.DataColumn columnvalidityExpiryDate;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public FixedDepositCollateralDataTable() {
@@ -1598,6 +1600,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn validityExpiryDateColumn {
+                get {
+                    return this.columnvalidityExpiryDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1633,7 +1643,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public FixedDepositCollateralRow AddFixedDepositCollateralRow(string collateralCode, string collateralType, string collateralValue, string valuationCycle, string collateralSummary, string dateTimeCreated) {
+            public FixedDepositCollateralRow AddFixedDepositCollateralRow(string collateralCode, string collateralType, string collateralValue, string valuationCycle, string collateralSummary, string dateTimeCreated, string validityExpiryDate) {
                 FixedDepositCollateralRow rowFixedDepositCollateralRow = ((FixedDepositCollateralRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         collateralCode,
@@ -1641,7 +1651,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         collateralValue,
                         valuationCycle,
                         collateralSummary,
-                        dateTimeCreated};
+                        dateTimeCreated,
+                        validityExpiryDate};
                 rowFixedDepositCollateralRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowFixedDepositCollateralRow);
                 return rowFixedDepositCollateralRow;
@@ -1670,6 +1681,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnvaluationCycle = base.Columns["valuationCycle"];
                 this.columncollateralSummary = base.Columns["collateralSummary"];
                 this.columndateTimeCreated = base.Columns["dateTimeCreated"];
+                this.columnvalidityExpiryDate = base.Columns["validityExpiryDate"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1687,6 +1699,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columncollateralSummary);
                 this.columndateTimeCreated = new global::System.Data.DataColumn("dateTimeCreated", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columndateTimeCreated);
+                this.columnvalidityExpiryDate = new global::System.Data.DataColumn("validityExpiryDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnvalidityExpiryDate);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2819,6 +2833,23 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string validityExpiryDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFixedDepositCollateral.validityExpiryDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'validityExpiryDate\' in table \'FixedDepositCollateral\' is DB" +
+                                "Null.", e);
+                    }
+                }
+                set {
+                    this[this.tableFixedDepositCollateral.validityExpiryDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IscollateralCodeNull() {
                 return this.IsNull(this.tableFixedDepositCollateral.collateralCodeColumn);
             }
@@ -2887,6 +2918,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetdateTimeCreatedNull() {
                 this[this.tableFixedDepositCollateral.dateTimeCreatedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsvalidityExpiryDateNull() {
+                return this.IsNull(this.tableFixedDepositCollateral.validityExpiryDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetvalidityExpiryDateNull() {
+                this[this.tableFixedDepositCollateral.validityExpiryDateColumn] = global::System.Convert.DBNull;
             }
         }
         

@@ -268,6 +268,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string valuationCycle { get; set; }
         public string collateralType { get; set; }
         public string collateralSummary { get; set; }
+        public DateTime validityExpiryDate { get; set; }
     }
 
     public class LoanApplicationUpdateMessage

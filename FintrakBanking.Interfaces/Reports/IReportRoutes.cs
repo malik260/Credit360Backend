@@ -166,6 +166,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCollateralPerfection(DateRange dateRange);
         string GetCollateralRegister(DateRange dateRange);
         string GetFixedDepositCollaterals(int companyId, string collateralCode, int staffId);
+        string GetValidCollaterals(DateTime startDate, DateTime endDate);
 
     }
 
