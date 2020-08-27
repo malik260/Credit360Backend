@@ -1211,7 +1211,7 @@ namespace FintrakBanking.Repositories.Admin
                     if (!output)
                     {
                         trans.Rollback();
-                        throw new SecureException("");
+                        throw new SecureException("Failed to Save");
                     }
                     affectedrecord = temProfileUser;
                 }
@@ -1232,7 +1232,11 @@ namespace FintrakBanking.Repositories.Admin
                     trans.Commit();
                     return true;
                 }
-                else { return false; trans.Rollback(); }
+                else 
+                { 
+                    trans.Rollback();
+                    return false;
+                }
             }
         }
 

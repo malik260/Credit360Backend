@@ -64,6 +64,7 @@ namespace FintrakBanking.Repositories.Credit
         // field variables
         TBL_LOAN_APPLICATION loanApplication = null;
         TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
+        TBL_LMSR_APPLICATION_DETAIL lmsrApplicationDetail = null;
         TBL_LMSR_APPLICATION lmsrApplication = null;
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
         List<TBL_LMSR_APPLICATION_DETAIL> customerFacilitiesLms = null;
@@ -103,7 +104,9 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string exchangeRateHolder = "@{{ExchangeRate}}";
         private readonly string groupFacilitySummaryHolder = "@{{GroupFacilitySummary}}";
 
-      
+        private readonly string recoveryAnalysisHolder = "@{{RecoveryAnalysisData}}";
+
+
 
         //private readonly string groupFacilitySummaryFcyHolder = "@{{GroupFacilitySummaryFcy}}";
         //private readonly string directFacilitiesHolder = "@{{DirectFacilities}}";
@@ -427,15 +430,15 @@ namespace FintrakBanking.Repositories.Credit
 
         private string originalDocumentNonCreditProgramData;
         private string originalDocumentCreditProgramData;
+        private string recoveryAnalysisData;
 
-        
 
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
         {
             if (isDrawdwon)
             {
-                return InitializeDrawdownMemoProperties(operationId, targetId);
+                return InitializeDrawdownMemoProperties(targetId,operationId);
             }
 
             this.targetId = targetId;
@@ -812,12 +815,19 @@ namespace FintrakBanking.Repositories.Credit
         {
             this.targetId = targetId;
             this.operationId = operationId;
-
-            if (loanApplicationDetail == null)
+            var loanDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
+            if (loanDetail != null)
             {
-                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
-                this.loanApplication = loanApplicationDetail?.TBL_LOAN_APPLICATION;
+                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanDetail.LOANAPPLICATIONDETAILID);
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Where(l=>l.LOANAPPLICATIONID == loanApplicationDetail.LOANAPPLICATIONID).FirstOrDefault();
             }
+            //else
+            //{
+            //    var loanApplication = context.TBL_LOAN_APPLICATION.Find(targetId);
+            //    this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+            //}
+
+
             var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(f => f.LOANAPPLICATIONDETAILID == targetId)?.CHARGEFEEID;
 
                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
@@ -828,14 +838,20 @@ namespace FintrakBanking.Repositories.Credit
                         
                 </tr></table>";
             string customerName = String.Empty;
-            if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
-            if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+            if (this.loanApplication?.CUSTOMERGROUPID != null)
+            {
+                this.customerName = this.loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+            }
+            if (this.loanApplication?.CUSTOMERID != null)
+            {
+                this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+            }
             this.applicationReferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER;
             this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
             this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
             this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.OPERATINGCASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault()?? "N/A";
             this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
-            this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+            this.drawdownAmount = loanApplicationDetail?.APPROVEDAMOUNT.ToString("#,##.00");
             this.tenor = loanApplicationDetail.APPROVEDTENOR;
             this.moratorium = loanApplicationDetail.MORATORIUMDURATION;
             this.principalRepayment = "";
@@ -5869,6 +5885,8 @@ namespace FintrakBanking.Repositories.Credit
 
             content = content.Replace(originalDocumentNonCreditProgramHolder, originalDocumentNonCreditProgramData);
             content = content.Replace(originalDocumentCreditProgramHolder, originalDocumentCreditProgramData);
+
+            content = content.Replace(recoveryAnalysisHolder, recoveryAnalysisData);
 
             return content;
         }
@@ -11757,7 +11775,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public string DocumentationDeferralWaiverFormHtml(int staffId, int operationId, int targetId)
         {
-            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+            var isInitialize = InitializeDrawdownMemoProperties(targetId,operationId);
 
             var result = String.Empty;
             var n = 0;
@@ -12212,7 +12230,108 @@ namespace FintrakBanking.Repositories.Credit
             return transactionDynamicsDetails;
         }
 
-        
+        private string GetOutstandingLoans(int accreditedConsultantId)
+        {
+                var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                                join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                where
+                                lr.ISFULLYRECOVERED == false
+                                && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                && pr.EXCLUDEFROMLITIGATION == false
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
+                                select new LoanReviewOperationApprovalViewModel
+                                {
+                                    totalAmountRecovery = (decimal)lr.TOTALAMOUNTRECOVERY,
+                                    customerCode = cu.CUSTOMERCODE,
+                                    loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                    customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                    customerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == cu.CUSTOMERID).Select(a => a.ADDRESS).ToList(),
+                                    branchName = br.BRANCHNAME,
+                                }).ToList();
+
+                var dataRevolvingLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                         join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                         join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                         join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                         join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                         join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                         join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                         join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                         join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                         where
+                                         lr.ISFULLYRECOVERED == false
+                                         && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                         && pr.EXCLUDEFROMLITIGATION == false
+                                         && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
+                                         select new LoanReviewOperationApprovalViewModel
+                                         {
+                                             totalAmountRecovery = (decimal)lr.TOTALAMOUNTRECOVERY,
+                                             customerCode = cu.CUSTOMERCODE,
+                                             loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                             customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                             customerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(a=>a.CUSTOMERID == cu.CUSTOMERID).Select(a=>a.ADDRESS).ToList(),
+                                             branchName = br.BRANCHNAME,
+                                         }).ToList();
+
+
+                    var data = dataLoan.Union(dataRevolvingLoan);
+                     foreach(var rec in data)
+                    {
+                        foreach(var address in rec.customerAddresses)
+                        {
+                            rec.address = rec.address + " " + address;
+                        }
+                    }
+
+            int i = 0;
+            var result = String.Empty;
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>Name Of Customer</b></th>
+                        <th><b>Address/GSM No</b></th>
+                        <th><b>Outstanding Exposure</b></th>
+                        <th><b>Branch</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in data)
+            {
+                i++;
+                result = result + $@"
+                    <tr>
+                        <td>{i}</td>
+                        <td>{trail.customerName.ToUpper()}</td>
+                        <td>{trail.address}</td>
+                        <td>{trail.totalAmountRecovery}</td>
+                        <td>{trail.branchName}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
+
+
+        public bool InitRecoveryDate(int accreditedConsultantId)
+        {
+            this.recoveryAnalysisData = GetOutstandingLoans(accreditedConsultantId);
+
+            return true;
+        }
 
     }
 }

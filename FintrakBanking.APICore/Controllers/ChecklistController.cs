@@ -1219,8 +1219,9 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                var res = repo.SubmitDeferralDocumentForApproval(model);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
+                var response = repo.SubmitDeferralDocumentForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "DEFERRED DOCUMENT PROVISION") });
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
             }
             catch (SecureException ex)
             {

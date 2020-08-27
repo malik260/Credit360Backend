@@ -367,7 +367,7 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Commit();
                     if (operationId != (short)OperationsEnum.ContigentLoanBooking && workflow.NewState == (int)ApprovalState.Ended)
                     {
-                        workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
+                        //workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
                     }
                     return workflow.Response;
                     //return 0;
@@ -375,6 +375,13 @@ namespace FintrakBanking.Repositories.Credit
 
                 else
                 {
+                    if (!isContingent && workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        //workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
+                        context.SaveChanges();
+                        trans.Commit();
+                        return workflow.Response;
+                    }
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestInitiated;
                     context.SaveChanges();
                     trans.Commit();
@@ -1087,9 +1094,9 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in data)
             {
-                var approvedLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.DELETED == false && t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted).Select(t => t.LCISSUANCEID).ToList();
+                var adequateLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.DELETED == false && (t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted || t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress)).Select(t => t.LCISSUANCEID).ToList();
                 var lcIFFRequests = context.TBL_LC_ISSUANCE.Where(l => l.DELETED == false && l.FUNDSOURCEID == (int)LCFundSource.IFF);
-                var lcapprovedLCIFFs = lcIFFRequests.Where(i => approvedLCIssuanceIds.Contains(i.LCISSUANCEID)).Select(i => new { i.FUNDSOURCEDETAILS, i.LETTEROFCREDITAMOUNT });
+                var lcapprovedLCIFFs = lcIFFRequests.Where(i => adequateLCIssuanceIds.Contains(i.LCISSUANCEID)).Select(i => new { i.FUNDSOURCEDETAILS, i.LETTEROFCREDITAMOUNT });
                 var lcapprovedLCIFFsRecords = lcapprovedLCIFFs.Where(i => i.FUNDSOURCEDETAILS == item.loanApplicationId).ToList();
                 var lcApprovedAmounts = lcapprovedLCIFFsRecords.Count() > 0 ? lcapprovedLCIFFsRecords?.Sum(i => i.LETTEROFCREDITAMOUNT) : 0;
                 var product = context.TBL_PRODUCT.Find(item.productId);
@@ -1922,7 +1929,7 @@ namespace FintrakBanking.Repositories.Credit
 
             List<int> collateralTypesIds = new List<int>();
             collateralTypesIds.Add((int)CollateralTypeEnum.CASA);
-            collateralTypesIds.Add((int)CollateralTypeEnum.TermDeposit);
+            collateralTypesIds.Add((int)CollateralTypeEnum.FixedDeposit);
             //collateralTypesIds.Add((int)CollateralTypeEnum.DomiciliationContract);
             collateralTypesIds.Add((int)CollateralTypeEnum.TreasuryBillsAndBonds);
 

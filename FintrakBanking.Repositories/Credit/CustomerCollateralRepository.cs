@@ -96,7 +96,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 switch (entity.collateralTypeId)
                 {
-                    case (int)CollateralTypeEnum.TermDeposit: AddDepositCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.FixedDeposit: AddDepositCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.PlantAndMachinery: AddTempEquipmentCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Miscellaneous: AddTempMiscellaneousCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Gaurantee: AddTempGuaranteeCollateral(collateralId, entity); break;
@@ -394,14 +394,14 @@ namespace FintrakBanking.Repositories.Credit
                     if (collateral != null) securityValue = collateral.SECURITYVALUE;
                 }
 
-                if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.TermDeposit)
+                if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.FixedDeposit)
                 {
                     description = "Deposit callateral lien release";
                     var collateral = context.TBL_COLLATERAL_DEPOSIT.FirstOrDefault(x => x.COLLATERALCUSTOMERID == mainCollateral.COLLATERALCUSTOMERID);
                     if (collateral != null) securityValue = collateral.SECURITYVALUE;
                 }
 
-                if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.TermDeposit ||
+                if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.FixedDeposit ||
                     mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
                 {
                     var existingLien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == mainCollateral.COLLATERALCODE && x.LIENTYPEID == (int)LienTypeEnum.CollateralCreation);
@@ -972,7 +972,7 @@ namespace FintrakBanking.Repositories.Credit
 
             switch (entity.collateralTypeId)
             {
-                case (int)CollateralTypeEnum.TermDeposit: UpdateDepositCollateral(entity); break;
+                case (int)CollateralTypeEnum.FixedDeposit: UpdateDepositCollateral(entity); break;
                 case (int)CollateralTypeEnum.PlantAndMachinery: UpdateEquipmentCollateral(entity); break;
                 //  case (int)CollateralTypeEnum.Miscellaneous: UpdateMiscellaneousCollateral(entity); break;
                 case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(entity); break;
@@ -2708,6 +2708,52 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
+        public IEnumerable<CollateralViewModel> GetCustomerFixedDepositCollateral(string searchParam, int companyId)
+        {
+            var typeIds = new List<int>();
+            var company = context.TBL_COMPANY.Find(companyId);
+            bool disAllowCollateral = false;
+            //bool isForiegnCurrencyFacility = false;
+            searchParam = searchParam.Trim();
+
+            var collaterals = (from d in context.TBL_COLLATERAL_CUSTOMER
+                               join cus in context.TBL_CUSTOMER on d.CUSTOMERID equals cus.CUSTOMERID into cusd
+                               from cus in cusd.DefaultIfEmpty()
+                               where (d.CUSTOMERCODE.Contains(searchParam)
+                               || cus.FIRSTNAME.ToLower().Contains(searchParam.ToLower())
+                               || cus.LASTNAME.ToLower().Contains(searchParam.ToLower())
+                               || cus.MIDDLENAME.ToLower().Contains(searchParam.ToLower())) && d.COLLATERALTYPEID == (int) CollateralTypeEnum.FixedDeposit
+                               select new CollateralViewModel
+                               {
+                                   collateralId = d.COLLATERALCUSTOMERID,
+                                   collateralTypeId = d.COLLATERALTYPEID,
+                                   collateralSubTypeId = d.COLLATERALSUBTYPEID,
+                                   customerId = d.CUSTOMERID.Value,
+                                   currencyId = d.CURRENCYID,
+                                   baseCurrencyId = company.CURRENCYID,
+                                   currency = d.TBL_CURRENCY.CURRENCYNAME,            // c.c.TBL_CURRENCY.CURRENCYNAME,
+                                   disAllowCollateral = disAllowCollateral && d.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
+                                   collateralTypeName = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                   collateralSubTypeName = "not implimented",
+                                   collateralCode = d.COLLATERALCODE,
+                                   collateralValue = d.COLLATERALVALUE,
+                                   camRefNumber = d.CAMREFNUMBER,
+                                   allowSharing = d.ALLOWSHARING,
+                                   isLocationBased = d.ISLOCATIONBASED.HasValue ? (bool)d.ISLOCATIONBASED : d.ISLOCATIONBASED,
+                                   valuationCycle = d.VALUATIONCYCLE,
+                                   haircut = d.HAIRCUT,
+                                   approvalStatusName = d.APPROVALSTATUS,
+                                   allowApplicationMapping = typeIds.Contains((short)d.COLLATERALTYPEID),
+                                   requireInsurancePolicy = d.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
+                                   exchangeRate = d.EXCHANGERATE,
+                                   collateralSummary = d.COLLATERALSUMMARY,
+                                   availableCollateralValue = 0,
+                                   // accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
+                               }).ToList().GroupBy(x => x.collateralId).Select(g => g.First()).ToList();
+
+            return collaterals;
+        }
+
         private List<CollateralViewModel> ResolveCollateralValues(List<CollateralViewModel> collaterals, TBL_COMPANY company)
         {
             var baseCurrencyId = company.TBL_CURRENCY.CURRENCYID;
@@ -2880,7 +2926,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 switch (typeId)
                 {
-                    case (int)CollateralTypeEnum.TermDeposit: data = GetCollateralDeposit(collateralId); break;
+                    case (int)CollateralTypeEnum.FixedDeposit: data = GetCollateralDeposit(collateralId); break;
                     case (int)CollateralTypeEnum.PlantAndMachinery: data = GetCollateralMachinery(collateralId); break;
                     case (int)CollateralTypeEnum.Miscellaneous: data = GetCollateralMiscellaneous(collateralId); break;
                     case (int)CollateralTypeEnum.Gaurantee: data = GetCollateralGuarantee(collateralId); break;
@@ -5649,14 +5695,14 @@ namespace FintrakBanking.Repositories.Credit
                         if (collateral != null) securityValue = collateral.SECURITYVALUE;
                     }
 
-                    if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.TermDeposit)
+                    if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.FixedDeposit)
                     {
                         description = "Deposit callateral lien release";
                         var collateral = context.TBL_COLLATERAL_DEPOSIT.FirstOrDefault(x => x.COLLATERALCUSTOMERID == mainCollateral.COLLATERALCUSTOMERID);
                         if (collateral != null) securityValue = collateral.SECURITYVALUE;
                     }
 
-                    if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.TermDeposit ||
+                    if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.FixedDeposit ||
                         mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
                     {
                         var existingLien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == mainCollateral.COLLATERALCODE && x.LIENTYPEID == (int)LienTypeEnum.CollateralCreation);
@@ -6233,7 +6279,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             ICollection<TBL_COLLATERAL_DEPOSIT> collateral;
 
-            if (collateralType != CollateralTypeEnum.TermDeposit)
+            if (collateralType != CollateralTypeEnum.FixedDeposit)
                 return null;
 
             collateral = new List<TBL_COLLATERAL_DEPOSIT>();
@@ -7273,7 +7319,7 @@ namespace FintrakBanking.Repositories.Credit
                                              }).FirstOrDefault();
 
                 }
-                else if (record.collateralTypeId == (int)CollateralTypeEnum.TermDeposit)
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.FixedDeposit)
                 {
                     record.collateralDeposit = (from x in context.TBL_COLLATERAL_DEPOSIT.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
                                                 select new CollateralDepositViewModel
@@ -8919,7 +8965,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         }
                     }
-                    else if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.TermDeposit)
+                    else if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.FixedDeposit)
                     {
                         var tempDeposit = context.TBL_TEMP_COLLATERAL_DEPOSIT.Where(x => x.TEMPCOLLATERALCUSTOMERID == mainCollateral.TEMPCOLLATERALCUSTOMERID).FirstOrDefault();
                         var branch = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == mainCollateral.CUSTOMERID).Select(x => x.BRANCHID).FirstOrDefault();
@@ -9915,7 +9961,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = new CollateralViewModel();
             switch (typeId)
             {
-                case (int)CollateralTypeEnum.TermDeposit: data = GetTempCollateralDeposit(collateralId); break;
+                case (int)CollateralTypeEnum.FixedDeposit: data = GetTempCollateralDeposit(collateralId); break;
                 case (int)CollateralTypeEnum.PlantAndMachinery: data = GetTempCollateralMachinery(collateralId); break;
                 case (int)CollateralTypeEnum.Miscellaneous: data = GetTempCollateralMiscellaneous(collateralId); break;
                 case (int)CollateralTypeEnum.Gaurantee: data = GetTempCollateralGuarantee(collateralId); break;
@@ -11460,7 +11506,9 @@ namespace FintrakBanking.Repositories.Credit
                                        customerId = s.CUSTOMERID,
                                        newCollateralId = s.NEWCOLLATERALID,
                                        collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
-                                       swapRef = s.SWAPREF
+                                       swapRef = s.SWAPREF,
+                                       oldCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.OLDCOLLATERALID).COLLATERALCODE,
+                                       newCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.NEWCOLLATERALID).COLLATERALCODE,
                                    }).ToList();
 
             var result = swapsNotStarted.Union(swapsInProgress);
@@ -11482,7 +11530,7 @@ namespace FintrakBanking.Repositories.Credit
                                                && s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
                                                && t.APPROVALSTATEID != (int)ApprovalState.Ended
                                                && t.RESPONSESTAFFID == null
-                                               && t.LOOPEDSTAFFID == null
+                                               && (t.LOOPEDSTAFFID == null || t.LOOPEDSTAFFID == staffId)
                                                && levelIds.Contains((int)t.TOAPPROVALLEVELID)
                                                && (t.TOSTAFFID == null || t.TOSTAFFID == staffId)
                                                )
@@ -11499,9 +11547,11 @@ namespace FintrakBanking.Repositories.Credit
                                                   approvalTrailId = t.APPROVALTRAILID,
                                                   currentApprovalLevelId = t.TOAPPROVALLEVELID,
                                                   currentApprovalLevel = t.TBL_APPROVAL_LEVEL1.LEVELNAME,
-                                                  approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                                  approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME.ToUpper(),
                                                   customerName = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.MIDDLENAME + " " + s.TBL_CUSTOMER.LASTNAME,
                                                   swapRef = s.SWAPREF,
+                                                  oldCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.OLDCOLLATERALID).COLLATERALCODE,
+                                                  newCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.NEWCOLLATERALID).COLLATERALCODE,
                                                   dateTimeCreated = (DateTime)s.DATETIMECREATED
                                               }).GroupBy(d => d.collateralSwapId)
                                                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault()).ToList();
@@ -11554,6 +11604,47 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public String ResponseMessage(WorkflowResponse response, string itemHeading)
+        {
+            if (response.stateId != (int)ApprovalState.Ended)
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Referred)
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextLevelName;
+                    }
+                }
+                else
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextLevelName;
+                    }
+                }
+            }
+            else
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Approved)
+                {
+                    return "The " + itemHeading + " request has been APPROVED successfully";
+                }
+                else
+                {
+                    return "The " + itemHeading + " request has been DISAPPROVED successfully";
+                }
+            }
+
+        }
+
         public WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model)
         {
             int operationId = (int)OperationsEnum.CollateralSwap; // CHANGE
@@ -11597,7 +11688,8 @@ namespace FintrakBanking.Repositories.Credit
 
             // UPDATE APPLICATION
             //cs.APPROVALSTATUSID = (short)workflow.StatusId;
-            cs.COLLATERALSWAPSTATUSID = (int)LoanApplicationStatusEnum.collateralSwapInProgress;
+            if (cs != null) { cs.COLLATERALSWAPSTATUSID = (int)LoanApplicationStatusEnum.collateralSwapInProgress; }
+            
             //if (cs.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { cs.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
 
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status

@@ -2223,9 +2223,9 @@ namespace FintrakBanking.Repositories.Credit
                 currentLevelId = data.LastOrDefault()?.toApprovalLevelId ?? 0;
             }
 
-            while (data.Exists(d => d.approvalStateId == (int)ApprovalState.Ended) && !isClassified)//get only un-ended trail incase of workflow ending&/change
+            while (data.Exists(d => d.approvalStateId == (int)ApprovalState.Ended && d.approvalStatusId != (int)ApprovalStatusEnum.Approved) && !isClassified)//get only un-ended trail incase of workflow ending&/change
             {
-                var firstTrail = data.FirstOrDefault(t => t.approvalStateId == (int)ApprovalState.Ended);
+                var firstTrail = data.FirstOrDefault(t => t.approvalStateId == (int)ApprovalState.Ended && t.approvalStatusId != (int)ApprovalStatusEnum.Approved);
                 data = data.Where(t => t.approvalTrailId > firstTrail.approvalTrailId).ToList();
             }
 
@@ -2293,8 +2293,8 @@ namespace FintrakBanking.Repositories.Credit
 
             data = data2;
             data.OrderByDescending(d => d.systemArrivalDateTime).ToList();
-            return data;
-        }
+             return data;
+        }//Ify
 
 
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)

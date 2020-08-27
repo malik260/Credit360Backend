@@ -330,5 +330,50 @@ namespace FintrakBanking.ReportObjects.Credit
             }
 
         }
+
+        public List<creditBureauModel> creditBureau(DateTime startDate, DateTime endDate)
+        {
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                //  int getRMCode = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLENAME.Equals("RM")).Select(x => x.STAFFROLEID).FirstOrDefault();
+                //  var relationshipManagerID = context.TBL_STAFF.Where(x => x.STAFFROLEID == getRMCode).Select(x=>x.rel).FirstOrDefault();
+                var getCreditBureau = (from c in context.TBL_CUSTOMER_CREDIT_BUREAU
+                                       join s in context.TBL_STAFF on c.CREATEDBY equals s.STAFFID
+                                       join b in context.TBL_BRANCH on c.BRANCHID equals b.BRANCHID
+                                       join cus in context.TBL_CUSTOMER on c.CUSTOMERID equals cus.CUSTOMERID
+
+                                       where DbFunctions.TruncateTime(c.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
+                             && DbFunctions.TruncateTime(c.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+
+                                       select new creditBureauModel
+                                       {
+                                           branchCode = c.BRANCHID,
+                                           branchName = b.BRANCHNAME,
+                                           requestedDate = c.DATETIMECREATED,
+                                           // rmName = 0,//context.TBL_STAFF.Where(x => x.CREATEDBY == c.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME).FirstOrDefault(),
+                                           userName = cus.FIRSTNAME + "" + cus.LASTNAME,
+                                           Amount = c.CHARGEAMOUNT,
+                                           relationshipManagerID = cus.RELATIONSHIPOFFICERID
+
+
+
+                                       }).ToList().Select(x =>
+                                       {
+                                           var relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.relationshipManagerID).Select(f => f.FIRSTNAME + " " + f.LASTNAME).FirstOrDefault();
+
+                                           x.rmName = relationshipManagerName;
+                                           return x;
+
+                                       }).ToList();
+
+                return getCreditBureau;
+
+            }
+
+
+
+
+        }
     }
 }

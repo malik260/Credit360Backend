@@ -54,6 +54,8 @@ namespace FintrakBanking.Interfaces.Reports
         #endregion Offer Letter Generation & Loan Monitoring Reports
         string GetLoanCommercialReport(DateRange dateRange, int companyId, int staffId);
         string GetTeamAndRevolving(DateRange dateRange, int companyId, int staffId);
+        string InsiderRelatedLoansReport(DateRange dateRange);
+        string GetLoanStatusReport(DateRange dateRange, int companyId, int staffId);
         string GetEarnedUnearnedInterest(DateRange dateRange, int companyId, int staffId);
         string RiskAssets(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string CbnTeam(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
@@ -160,6 +162,11 @@ namespace FintrakBanking.Interfaces.Reports
         string GetGeneratedCFLOfferLetter(string applicationRefNumber, string ActionByName);
         string GetTrialBalanceReport(int glAccountId, int currencyCode, int companyId, int staffId);
         string GetInterestIncome(DateTime startDate, DateTime endDate);
+        string GetCreditBureauReport(DateRange dateRange);
+        string GetCollateralPerfection(DateRange dateRange);
+        string GetCollateralRegister(DateRange dateRange);
+        string GetFixedDepositCollaterals(int companyId, string collateralCode, int staffId);
+        string GetValidCollaterals(DateTime startDate, DateTime endDate);
 
     }
 

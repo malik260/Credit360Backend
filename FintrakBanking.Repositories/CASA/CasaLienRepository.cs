@@ -637,7 +637,7 @@ namespace FintrakBanking.Repositories.CASA
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>
-                            <table style='font face: arial; size:12px' border=1 width=450 cellpadding=10 cellspacing=0>
+                            <table style='font face: arial; size:12px' border=1 width=410 cellpadding=10 cellspacing=0>
                                 <tr>
                                     <th colspan='2'><b>THE LOAN</b></th>
                                 </tr>
@@ -662,7 +662,7 @@ namespace FintrakBanking.Repositories.CASA
                         </td>
 
                         <td>
-                            <table style='font face: arial; size:12px' border=1 width=450 cellpadding=10 cellspacing=0>
+                            <table style='font face: arial; size:12px' border=1 width=410 cellpadding=10 cellspacing=0>
                                 <tr>
                                     <th><b>TOTAL COST TO CONSUMER</b></th>
                                 </tr>
@@ -825,7 +825,7 @@ namespace FintrakBanking.Repositories.CASA
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>
-                            <table style='font face: arial; size:12px' border=1 width=445 cellpadding=10 cellspacing=0>
+                            <table style='font face: arial; size:12px' border=1 width=410 cellpadding=10 cellspacing=0>
                                 <tr>
                                     <th colspan='2'><b>(A) credit prover’s fees</b></th>
                                 </tr>
@@ -856,7 +856,7 @@ namespace FintrakBanking.Repositories.CASA
                         </td>
 
                         <td>
-                            <table style='font face: arial; size:12px' border=1 width=445 cellpadding=10 cellspacing=0>
+                            <table style='font face: arial; size:12px' border=1 width=410 cellpadding=10 cellspacing=0>
                                 <tr>
                                     <th colspan='2'><b>(B) Third party fees/charges</b></th>
                                 </tr>

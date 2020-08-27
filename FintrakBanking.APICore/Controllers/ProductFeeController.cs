@@ -51,12 +51,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("fee/saved-Facility/{loanApplicationDetailId}")]
-        public HttpResponseMessage GetSavedFee(int loanApplicationDetailId)
+        [Route("fee/saved-Facility/{loanApplicationDetailId}/{forModifyFacility}")]
+        public HttpResponseMessage GetSavedFee(int loanApplicationDetailId, bool forModifyFacility)
         {
             try
             {
-                var data = repo.GetSavedFee(loanApplicationDetailId);
+                var data = repo.GetSavedFee(loanApplicationDetailId, forModifyFacility);
                 if (data.Count() == 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

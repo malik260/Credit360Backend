@@ -138,6 +138,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         TDAccountRecordViewModel GetFixedDepositAccountDetail(string AccpuntNumber);
         IEnumerable<CollateralViewModel> GetCustomerCollateralReport(string searchParam, int companyId);
+        IEnumerable<CollateralViewModel> GetCustomerFixedDepositCollateral(string searchParam, int companyId);
 
         bool ProposeCollateralForUsage(CollateralCoverageViewModel model);
         bool RejectProposedCollateralForUsage(int collateralCustomerId);
@@ -189,7 +190,7 @@ namespace FintrakBanking.Interfaces.Credit
         CollateralInsurancePolicyViewModel GetAddedInsuranceById(int id);
         WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 
-
+        String ResponseMessage(WorkflowResponse response, string itemHeading);
 
 
 
