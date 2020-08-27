@@ -29549,12 +29549,6 @@ namespace FintrakBanking.Repositories.Credit
                 levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
             }
 
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.RevolvingLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CommercialLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ForeignExchangeLoanBooking).ToList());
-
 
             var company = context.TBL_COMPANY.Find(companyId);
 
@@ -30027,12 +30021,6 @@ namespace FintrakBanking.Repositories.Credit
                 levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList());
             }
 
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.RevolvingLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CommercialLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ForeignExchangeLoanBooking).ToList());
-
             var company = context.TBL_COMPANY.Find(companyId);
             IEnumerable<CamProcessedLoanViewModel> allLoans = null;
 
@@ -30049,7 +30037,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                    && a.ISPRINTED == false
                                    && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
-                                   && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing &&  !levelIds.Contains((int)atrail.TOAPPROVALLEVELID) 
+                                   && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing && !levelIds.Contains((int)atrail.TOAPPROVALLEVELID)
                                    || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
 
                                    orderby a.DATEAPPROVED descending
@@ -30132,7 +30120,7 @@ namespace FintrakBanking.Repositories.Credit
                                             && a.ISPRINTED == false
                                             && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
                                             && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing && !levelIds.Contains((int)atrail.TOAPPROVALLEVELID)
-                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
+                                            || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
 
 
                                          orderby a.DATEAPPROVED descending
@@ -30213,11 +30201,11 @@ namespace FintrakBanking.Repositories.Credit
                                           && s.DELETED == false
                                           && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                           && a.ISPRINTED == false
-                                          && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive )
+                                          && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
                                           && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing && !levelIds.Contains((int)atrail.TOAPPROVALLEVELID)
-                                           || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
+                                          || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
 
-                                       orderby a.DATEAPPROVED descending
+                                         orderby a.DATEAPPROVED descending
                                          select new CamProcessedLoanViewModel()
                                          {
                                              bookingAmountRequested = s.AMOUNT_REQUESTED,
