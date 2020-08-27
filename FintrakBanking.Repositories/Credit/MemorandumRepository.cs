@@ -811,7 +811,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private bool InitializeDrawdownMemoProperties(int targetId, int operationId, int bookingRequestId = 0) // feeder
+        private bool InitializeDrawdownMemoProperties(int operationId, int targetId, int bookingRequestId = 0) // feeder
         {
             this.targetId = targetId;
             this.operationId = operationId;
@@ -821,13 +821,11 @@ namespace FintrakBanking.Repositories.Credit
                 this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanDetail.LOANAPPLICATIONDETAILID);
                 this.loanApplication = context.TBL_LOAN_APPLICATION.Where(l=>l.LOANAPPLICATIONID == loanApplicationDetail.LOANAPPLICATIONID).FirstOrDefault();
             }
-            else
-            {
-                var loanDetail2 = context.TBL_LMSR_APPLICATION_DETAIL.Find(targetId);
-                this.lmsrApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(loanDetail2.LOANREVIEWAPPLICATIONID);
-                this.lmsrApplication = context.TBL_LMSR_APPLICATION.Where(l => l.LOANAPPLICATIONID == loanApplicationDetail.LOANAPPLICATIONID).FirstOrDefault();
-
-            }
+            //else
+            //{
+            //    var loanApplication = context.TBL_LOAN_APPLICATION.Find(targetId);
+            //    this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+            //}
 
 
             var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(f => f.LOANAPPLICATIONDETAILID == targetId)?.CHARGEFEEID;

@@ -260,6 +260,17 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalIncome { get; set; }
     }
 
+    public class FixedDepositCollateralViewModel
+    {
+        public string collateralCode { get; set; }
+        public decimal collateralValue { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public string valuationCycle { get; set; }
+        public string collateralType { get; set; }
+        public string collateralSummary { get; set; }
+        public DateTime validityExpiryDate { get; set; }
+    }
+
     public class LoanApplicationUpdateMessage
     {
         public bool isdone { get; set; } 

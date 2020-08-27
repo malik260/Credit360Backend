@@ -36,6 +36,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         private PropertyRevaluationDataTable tablePropertyRevaluation;
         
+        private CollateralRegisterDataTable tableCollateralRegister;
+        
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -81,6 +83,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["PropertyRevaluation"] != null)) {
                     base.Tables.Add(new PropertyRevaluationDataTable(ds.Tables["PropertyRevaluation"]));
+                }
+                if ((ds.Tables["CollateralRegister"] != null)) {
+                    base.Tables.Add(new CollateralRegisterDataTable(ds.Tables["CollateralRegister"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -157,6 +162,16 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         public PropertyRevaluationDataTable PropertyRevaluation {
             get {
                 return this.tablePropertyRevaluation;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public CollateralRegisterDataTable CollateralRegister {
+            get {
+                return this.tableCollateralRegister;
             }
         }
         
@@ -245,6 +260,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["PropertyRevaluation"] != null)) {
                     base.Tables.Add(new PropertyRevaluationDataTable(ds.Tables["PropertyRevaluation"]));
                 }
+                if ((ds.Tables["CollateralRegister"] != null)) {
+                    base.Tables.Add(new CollateralRegisterDataTable(ds.Tables["CollateralRegister"]));
+                }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
                 this.Namespace = ds.Namespace;
@@ -314,6 +332,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tablePropertyRevaluation.InitVars();
                 }
             }
+            this.tableCollateralRegister = ((CollateralRegisterDataTable)(base.Tables["CollateralRegister"]));
+            if ((initTable == true)) {
+                if ((this.tableCollateralRegister != null)) {
+                    this.tableCollateralRegister.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -336,6 +360,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableCollateralVisitation);
             this.tablePropertyRevaluation = new PropertyRevaluationDataTable();
             base.Tables.Add(this.tablePropertyRevaluation);
+            this.tableCollateralRegister = new CollateralRegisterDataTable();
+            base.Tables.Add(this.tableCollateralRegister);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -371,6 +397,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private bool ShouldSerializePropertyRevaluation() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeCollateralRegister() {
             return false;
         }
         
@@ -446,6 +478,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void PropertyRevaluationRowChangeEventHandler(object sender, PropertyRevaluationRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public delegate void CollateralRegisterRowChangeEventHandler(object sender, CollateralRegisterRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -3157,6 +3192,599 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class CollateralRegisterDataTable : global::System.Data.TypedTableBase<CollateralRegisterRow> {
+            
+            private global::System.Data.DataColumn columncustomerID;
+            
+            private global::System.Data.DataColumn columnaccountNumber;
+            
+            private global::System.Data.DataColumn columncustomername;
+            
+            private global::System.Data.DataColumn columnglSubheadCode;
+            
+            private global::System.Data.DataColumn columncollateralType;
+            
+            private global::System.Data.DataColumn columnperfectionStatus;
+            
+            private global::System.Data.DataColumn columngrossBalance;
+            
+            private global::System.Data.DataColumn columncollateralValueOmv;
+            
+            private global::System.Data.DataColumn columncollateralValueEfsv;
+            
+            private global::System.Data.DataColumn columncollateralCoverage;
+            
+            private global::System.Data.DataColumn columncollateralLocation;
+            
+            private global::System.Data.DataColumn columndateOfValuation;
+            
+            private global::System.Data.DataColumn columnnameOfValuer;
+            
+            private global::System.Data.DataColumn columndateOfCollateralInspection;
+            
+            private global::System.Data.DataColumn columndateOfInsurance;
+            
+            private global::System.Data.DataColumn columnexpiryDate;
+            
+            private global::System.Data.DataColumn columninsuranceCompany;
+            
+            private global::System.Data.DataColumn columnrmCode;
+            
+            private global::System.Data.DataColumn columnrmName;
+            
+            private global::System.Data.DataColumn columndateOfExpiration;
+            
+            private global::System.Data.DataColumn columndays;
+            
+            private global::System.Data.DataColumn columnstc;
+            
+            private global::System.Data.DataColumn columnbusinessUnit;
+            
+            private global::System.Data.DataColumn columngroupDescription;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CollateralRegisterDataTable() {
+                this.TableName = "CollateralRegister";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal CollateralRegisterDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected CollateralRegisterDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerIDColumn {
+                get {
+                    return this.columncustomerID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn accountNumberColumn {
+                get {
+                    return this.columnaccountNumber;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customernameColumn {
+                get {
+                    return this.columncustomername;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn glSubheadCodeColumn {
+                get {
+                    return this.columnglSubheadCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn collateralTypeColumn {
+                get {
+                    return this.columncollateralType;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn perfectionStatusColumn {
+                get {
+                    return this.columnperfectionStatus;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn grossBalanceColumn {
+                get {
+                    return this.columngrossBalance;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn collateralValueOmvColumn {
+                get {
+                    return this.columncollateralValueOmv;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn collateralValueEfsvColumn {
+                get {
+                    return this.columncollateralValueEfsv;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn collateralCoverageColumn {
+                get {
+                    return this.columncollateralCoverage;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn collateralLocationColumn {
+                get {
+                    return this.columncollateralLocation;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn dateOfValuationColumn {
+                get {
+                    return this.columndateOfValuation;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn nameOfValuerColumn {
+                get {
+                    return this.columnnameOfValuer;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn dateOfCollateralInspectionColumn {
+                get {
+                    return this.columndateOfCollateralInspection;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn dateOfInsuranceColumn {
+                get {
+                    return this.columndateOfInsurance;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn expiryDateColumn {
+                get {
+                    return this.columnexpiryDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn insuranceCompanyColumn {
+                get {
+                    return this.columninsuranceCompany;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn rmCodeColumn {
+                get {
+                    return this.columnrmCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn rmNameColumn {
+                get {
+                    return this.columnrmName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn dateOfExpirationColumn {
+                get {
+                    return this.columndateOfExpiration;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn daysColumn {
+                get {
+                    return this.columndays;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn stcColumn {
+                get {
+                    return this.columnstc;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn businessUnitColumn {
+                get {
+                    return this.columnbusinessUnit;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn groupDescriptionColumn {
+                get {
+                    return this.columngroupDescription;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CollateralRegisterRow this[int index] {
+                get {
+                    return ((CollateralRegisterRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CollateralRegisterRowChangeEventHandler CollateralRegisterRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CollateralRegisterRowChangeEventHandler CollateralRegisterRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CollateralRegisterRowChangeEventHandler CollateralRegisterRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CollateralRegisterRowChangeEventHandler CollateralRegisterRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddCollateralRegisterRow(CollateralRegisterRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CollateralRegisterRow AddCollateralRegisterRow(
+                        string customerID, 
+                        string accountNumber, 
+                        string customername, 
+                        string glSubheadCode, 
+                        string collateralType, 
+                        string perfectionStatus, 
+                        string grossBalance, 
+                        string collateralValueOmv, 
+                        string collateralValueEfsv, 
+                        string collateralCoverage, 
+                        string collateralLocation, 
+                        string dateOfValuation, 
+                        string nameOfValuer, 
+                        string dateOfCollateralInspection, 
+                        string dateOfInsurance, 
+                        string expiryDate, 
+                        string insuranceCompany, 
+                        string rmCode, 
+                        string rmName, 
+                        string dateOfExpiration, 
+                        string days, 
+                        string stc, 
+                        string businessUnit, 
+                        string groupDescription) {
+                CollateralRegisterRow rowCollateralRegisterRow = ((CollateralRegisterRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        customerID,
+                        accountNumber,
+                        customername,
+                        glSubheadCode,
+                        collateralType,
+                        perfectionStatus,
+                        grossBalance,
+                        collateralValueOmv,
+                        collateralValueEfsv,
+                        collateralCoverage,
+                        collateralLocation,
+                        dateOfValuation,
+                        nameOfValuer,
+                        dateOfCollateralInspection,
+                        dateOfInsurance,
+                        expiryDate,
+                        insuranceCompany,
+                        rmCode,
+                        rmName,
+                        dateOfExpiration,
+                        days,
+                        stc,
+                        businessUnit,
+                        groupDescription};
+                rowCollateralRegisterRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowCollateralRegisterRow);
+                return rowCollateralRegisterRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                CollateralRegisterDataTable cln = ((CollateralRegisterDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new CollateralRegisterDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columncustomerID = base.Columns["customerID"];
+                this.columnaccountNumber = base.Columns["accountNumber"];
+                this.columncustomername = base.Columns["customername"];
+                this.columnglSubheadCode = base.Columns["glSubheadCode"];
+                this.columncollateralType = base.Columns["collateralType"];
+                this.columnperfectionStatus = base.Columns["perfectionStatus"];
+                this.columngrossBalance = base.Columns["grossBalance"];
+                this.columncollateralValueOmv = base.Columns["collateralValueOmv"];
+                this.columncollateralValueEfsv = base.Columns["collateralValueEfsv"];
+                this.columncollateralCoverage = base.Columns["collateralCoverage"];
+                this.columncollateralLocation = base.Columns["collateralLocation"];
+                this.columndateOfValuation = base.Columns["dateOfValuation"];
+                this.columnnameOfValuer = base.Columns["nameOfValuer"];
+                this.columndateOfCollateralInspection = base.Columns["dateOfCollateralInspection"];
+                this.columndateOfInsurance = base.Columns["dateOfInsurance"];
+                this.columnexpiryDate = base.Columns["expiryDate"];
+                this.columninsuranceCompany = base.Columns["insuranceCompany"];
+                this.columnrmCode = base.Columns["rmCode"];
+                this.columnrmName = base.Columns["rmName"];
+                this.columndateOfExpiration = base.Columns["dateOfExpiration"];
+                this.columndays = base.Columns["days"];
+                this.columnstc = base.Columns["stc"];
+                this.columnbusinessUnit = base.Columns["businessUnit"];
+                this.columngroupDescription = base.Columns["groupDescription"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columncustomerID = new global::System.Data.DataColumn("customerID", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerID);
+                this.columnaccountNumber = new global::System.Data.DataColumn("accountNumber", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnaccountNumber);
+                this.columncustomername = new global::System.Data.DataColumn("customername", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomername);
+                this.columnglSubheadCode = new global::System.Data.DataColumn("glSubheadCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnglSubheadCode);
+                this.columncollateralType = new global::System.Data.DataColumn("collateralType", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncollateralType);
+                this.columnperfectionStatus = new global::System.Data.DataColumn("perfectionStatus", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnperfectionStatus);
+                this.columngrossBalance = new global::System.Data.DataColumn("grossBalance", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columngrossBalance);
+                this.columncollateralValueOmv = new global::System.Data.DataColumn("collateralValueOmv", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncollateralValueOmv);
+                this.columncollateralValueEfsv = new global::System.Data.DataColumn("collateralValueEfsv", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncollateralValueEfsv);
+                this.columncollateralCoverage = new global::System.Data.DataColumn("collateralCoverage", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncollateralCoverage);
+                this.columncollateralLocation = new global::System.Data.DataColumn("collateralLocation", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncollateralLocation);
+                this.columndateOfValuation = new global::System.Data.DataColumn("dateOfValuation", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndateOfValuation);
+                this.columnnameOfValuer = new global::System.Data.DataColumn("nameOfValuer", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnnameOfValuer);
+                this.columndateOfCollateralInspection = new global::System.Data.DataColumn("dateOfCollateralInspection", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndateOfCollateralInspection);
+                this.columndateOfInsurance = new global::System.Data.DataColumn("dateOfInsurance", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndateOfInsurance);
+                this.columnexpiryDate = new global::System.Data.DataColumn("expiryDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnexpiryDate);
+                this.columninsuranceCompany = new global::System.Data.DataColumn("insuranceCompany", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columninsuranceCompany);
+                this.columnrmCode = new global::System.Data.DataColumn("rmCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrmCode);
+                this.columnrmName = new global::System.Data.DataColumn("rmName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrmName);
+                this.columndateOfExpiration = new global::System.Data.DataColumn("dateOfExpiration", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndateOfExpiration);
+                this.columndays = new global::System.Data.DataColumn("days", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndays);
+                this.columnstc = new global::System.Data.DataColumn("stc", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnstc);
+                this.columnbusinessUnit = new global::System.Data.DataColumn("businessUnit", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbusinessUnit);
+                this.columngroupDescription = new global::System.Data.DataColumn("groupDescription", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columngroupDescription);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CollateralRegisterRow NewCollateralRegisterRow() {
+                return ((CollateralRegisterRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new CollateralRegisterRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(CollateralRegisterRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.CollateralRegisterRowChanged != null)) {
+                    this.CollateralRegisterRowChanged(this, new CollateralRegisterRowChangeEvent(((CollateralRegisterRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.CollateralRegisterRowChanging != null)) {
+                    this.CollateralRegisterRowChanging(this, new CollateralRegisterRowChangeEvent(((CollateralRegisterRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.CollateralRegisterRowDeleted != null)) {
+                    this.CollateralRegisterRowDeleted(this, new CollateralRegisterRowChangeEvent(((CollateralRegisterRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.CollateralRegisterRowDeleting != null)) {
+                    this.CollateralRegisterRowDeleting(this, new CollateralRegisterRowChangeEvent(((CollateralRegisterRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveCollateralRegisterRow(CollateralRegisterRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                CollateralDataSet ds = new CollateralDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "CollateralRegisterDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
         public partial class ScheduledCollateralRow : global::System.Data.DataRow {
@@ -5780,6 +6408,698 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class CollateralRegisterRow : global::System.Data.DataRow {
+            
+            private CollateralRegisterDataTable tableCollateralRegister;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal CollateralRegisterRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableCollateralRegister = ((CollateralRegisterDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerID {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.customerIDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerID\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.customerIDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string accountNumber {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.accountNumberColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'accountNumber\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.accountNumberColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customername {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.customernameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customername\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.customernameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string glSubheadCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.glSubheadCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'glSubheadCode\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.glSubheadCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string collateralType {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.collateralTypeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'collateralType\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.collateralTypeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string perfectionStatus {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.perfectionStatusColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'perfectionStatus\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.perfectionStatusColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string grossBalance {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.grossBalanceColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'grossBalance\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.grossBalanceColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string collateralValueOmv {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.collateralValueOmvColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'collateralValueOmv\' in table \'CollateralRegister\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.collateralValueOmvColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string collateralValueEfsv {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.collateralValueEfsvColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'collateralValueEfsv\' in table \'CollateralRegister\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.collateralValueEfsvColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string collateralCoverage {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.collateralCoverageColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'collateralCoverage\' in table \'CollateralRegister\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.collateralCoverageColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string collateralLocation {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.collateralLocationColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'collateralLocation\' in table \'CollateralRegister\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.collateralLocationColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string dateOfValuation {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.dateOfValuationColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'dateOfValuation\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.dateOfValuationColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string nameOfValuer {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.nameOfValuerColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'nameOfValuer\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.nameOfValuerColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string dateOfCollateralInspection {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.dateOfCollateralInspectionColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'dateOfCollateralInspection\' in table \'CollateralRegister\' i" +
+                                "s DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.dateOfCollateralInspectionColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string dateOfInsurance {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.dateOfInsuranceColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'dateOfInsurance\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.dateOfInsuranceColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string expiryDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.expiryDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'expiryDate\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.expiryDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string insuranceCompany {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.insuranceCompanyColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'insuranceCompany\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.insuranceCompanyColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string rmCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.rmCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'rmCode\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.rmCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string rmName {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.rmNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'rmName\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.rmNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string dateOfExpiration {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.dateOfExpirationColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'dateOfExpiration\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.dateOfExpirationColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string days {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.daysColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'days\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.daysColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string stc {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.stcColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'stc\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.stcColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string businessUnit {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.businessUnitColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'businessUnit\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.businessUnitColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string groupDescription {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.groupDescriptionColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'groupDescription\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.groupDescriptionColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerIDNull() {
+                return this.IsNull(this.tableCollateralRegister.customerIDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerIDNull() {
+                this[this.tableCollateralRegister.customerIDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsaccountNumberNull() {
+                return this.IsNull(this.tableCollateralRegister.accountNumberColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetaccountNumberNull() {
+                this[this.tableCollateralRegister.accountNumberColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomernameNull() {
+                return this.IsNull(this.tableCollateralRegister.customernameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomernameNull() {
+                this[this.tableCollateralRegister.customernameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsglSubheadCodeNull() {
+                return this.IsNull(this.tableCollateralRegister.glSubheadCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetglSubheadCodeNull() {
+                this[this.tableCollateralRegister.glSubheadCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscollateralTypeNull() {
+                return this.IsNull(this.tableCollateralRegister.collateralTypeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcollateralTypeNull() {
+                this[this.tableCollateralRegister.collateralTypeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsperfectionStatusNull() {
+                return this.IsNull(this.tableCollateralRegister.perfectionStatusColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetperfectionStatusNull() {
+                this[this.tableCollateralRegister.perfectionStatusColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsgrossBalanceNull() {
+                return this.IsNull(this.tableCollateralRegister.grossBalanceColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetgrossBalanceNull() {
+                this[this.tableCollateralRegister.grossBalanceColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscollateralValueOmvNull() {
+                return this.IsNull(this.tableCollateralRegister.collateralValueOmvColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcollateralValueOmvNull() {
+                this[this.tableCollateralRegister.collateralValueOmvColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscollateralValueEfsvNull() {
+                return this.IsNull(this.tableCollateralRegister.collateralValueEfsvColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcollateralValueEfsvNull() {
+                this[this.tableCollateralRegister.collateralValueEfsvColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscollateralCoverageNull() {
+                return this.IsNull(this.tableCollateralRegister.collateralCoverageColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcollateralCoverageNull() {
+                this[this.tableCollateralRegister.collateralCoverageColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscollateralLocationNull() {
+                return this.IsNull(this.tableCollateralRegister.collateralLocationColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcollateralLocationNull() {
+                this[this.tableCollateralRegister.collateralLocationColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdateOfValuationNull() {
+                return this.IsNull(this.tableCollateralRegister.dateOfValuationColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdateOfValuationNull() {
+                this[this.tableCollateralRegister.dateOfValuationColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsnameOfValuerNull() {
+                return this.IsNull(this.tableCollateralRegister.nameOfValuerColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetnameOfValuerNull() {
+                this[this.tableCollateralRegister.nameOfValuerColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdateOfCollateralInspectionNull() {
+                return this.IsNull(this.tableCollateralRegister.dateOfCollateralInspectionColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdateOfCollateralInspectionNull() {
+                this[this.tableCollateralRegister.dateOfCollateralInspectionColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdateOfInsuranceNull() {
+                return this.IsNull(this.tableCollateralRegister.dateOfInsuranceColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdateOfInsuranceNull() {
+                this[this.tableCollateralRegister.dateOfInsuranceColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsexpiryDateNull() {
+                return this.IsNull(this.tableCollateralRegister.expiryDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetexpiryDateNull() {
+                this[this.tableCollateralRegister.expiryDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsinsuranceCompanyNull() {
+                return this.IsNull(this.tableCollateralRegister.insuranceCompanyColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetinsuranceCompanyNull() {
+                this[this.tableCollateralRegister.insuranceCompanyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsrmCodeNull() {
+                return this.IsNull(this.tableCollateralRegister.rmCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetrmCodeNull() {
+                this[this.tableCollateralRegister.rmCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsrmNameNull() {
+                return this.IsNull(this.tableCollateralRegister.rmNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetrmNameNull() {
+                this[this.tableCollateralRegister.rmNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdateOfExpirationNull() {
+                return this.IsNull(this.tableCollateralRegister.dateOfExpirationColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdateOfExpirationNull() {
+                this[this.tableCollateralRegister.dateOfExpirationColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdaysNull() {
+                return this.IsNull(this.tableCollateralRegister.daysColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdaysNull() {
+                this[this.tableCollateralRegister.daysColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsstcNull() {
+                return this.IsNull(this.tableCollateralRegister.stcColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetstcNull() {
+                this[this.tableCollateralRegister.stcColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbusinessUnitNull() {
+                return this.IsNull(this.tableCollateralRegister.businessUnitColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbusinessUnitNull() {
+                this[this.tableCollateralRegister.businessUnitColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsgroupDescriptionNull() {
+                return this.IsNull(this.tableCollateralRegister.groupDescriptionColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetgroupDescriptionNull() {
+                this[this.tableCollateralRegister.groupDescriptionColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -5969,6 +7289,40 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public PropertyRevaluationRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class CollateralRegisterRowChangeEvent : global::System.EventArgs {
+            
+            private CollateralRegisterRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CollateralRegisterRowChangeEvent(CollateralRegisterRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CollateralRegisterRow Row {
                 get {
                     return this.eventRow;
                 }

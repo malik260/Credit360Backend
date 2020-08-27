@@ -60,6 +60,19 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="FixedDepositCollateral" msprop:Generator_TableClassName="FixedDepositCollateralDataTable" msprop:Generator_TableVarName="tableFixedDepositCollateral" msprop:Generator_RowChangedName="FixedDepositCollateralRowChanged" msprop:Generator_TablePropName="FixedDepositCollateral" msprop:Generator_RowDeletingName="FixedDepositCollateralRowDeleting" msprop:Generator_RowChangingName="FixedDepositCollateralRowChanging" msprop:Generator_RowEvHandlerName="FixedDepositCollateralRowChangeEventHandler" msprop:Generator_RowDeletedName="FixedDepositCollateralRowDeleted" msprop:Generator_RowClassName="FixedDepositCollateralRow" msprop:Generator_UserTableName="FixedDepositCollateral" msprop:Generator_RowEvArgName="FixedDepositCollateralRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="collateralCode" msprop:Generator_ColumnVarNameInTable="columncollateralCode" msprop:Generator_ColumnPropNameInRow="collateralCode" msprop:Generator_ColumnPropNameInTable="collateralCodeColumn" msprop:Generator_UserColumnName="collateralCode" type="xs:string" minOccurs="0" />
+              <xs:element name="collateralType" msprop:Generator_ColumnVarNameInTable="columncollateralType" msprop:Generator_ColumnPropNameInRow="collateralType" msprop:Generator_ColumnPropNameInTable="collateralTypeColumn" msprop:Generator_UserColumnName="collateralType" type="xs:string" minOccurs="0" />
+              <xs:element name="collateralValue" msprop:Generator_ColumnVarNameInTable="columncollateralValue" msprop:Generator_ColumnPropNameInRow="collateralValue" msprop:Generator_ColumnPropNameInTable="collateralValueColumn" msprop:Generator_UserColumnName="collateralValue" type="xs:string" minOccurs="0" />
+              <xs:element name="valuationCycle" msprop:Generator_ColumnVarNameInTable="columnvaluationCycle" msprop:Generator_ColumnPropNameInRow="valuationCycle" msprop:Generator_ColumnPropNameInTable="valuationCycleColumn" msprop:Generator_UserColumnName="valuationCycle" type="xs:string" minOccurs="0" />
+              <xs:element name="collateralSummary" msprop:Generator_ColumnVarNameInTable="columncollateralSummary" msprop:Generator_ColumnPropNameInRow="collateralSummary" msprop:Generator_ColumnPropNameInTable="collateralSummaryColumn" msprop:Generator_UserColumnName="collateralSummary" type="xs:string" minOccurs="0" />
+              <xs:element name="dateTimeCreated" msprop:Generator_ColumnVarNameInTable="columndateTimeCreated" msprop:Generator_ColumnPropNameInRow="dateTimeCreated" msprop:Generator_ColumnPropNameInTable="dateTimeCreatedColumn" msprop:Generator_UserColumnName="dateTimeCreated" type="xs:string" minOccurs="0" />
+              <xs:element name="validityExpiryDate" msprop:Generator_ColumnVarNameInTable="columnvalidityExpiryDate" msprop:Generator_ColumnPropNameInRow="validityExpiryDate" msprop:Generator_ColumnPropNameInTable="validityExpiryDateColumn" msprop:Generator_UserColumnName="validityExpiryDate" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>

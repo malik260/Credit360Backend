@@ -78,7 +78,7 @@ namespace FintrakBanking.Repositories.Risk
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
 
-                        var racDefinitionOnEmployerByProductClass = context.TBL_RAC_DEFINITION.Where(x => (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS") 
+                        var racDefinitionOnEmployerByProductClass = context.TBL_RAC_DEFINITION.Where(x => (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS")
                                                                                                && (x.EMPLOYMENTTYPE == "EMPLOYER" || x.EMPLOYMENTTYPE == "SELFEMPLOYED")
                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                && x.ISACTIVE == true
@@ -91,13 +91,13 @@ namespace FintrakBanking.Repositories.Risk
                 else if (!isCorporate)
                 {
                         var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                                             && (x.EMPLOYMENTTYPE == "EMPLOYEE")
+                                                                                             && (x.EMPLOYMENTTYPE == "EMPLOYEE" || x.EMPLOYMENTTYPE == "SELFEMPLOYED")
                                                                                              && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                              && x.ISACTIVE == true
                                                                                              && x.DELETED == false).ToList();
 
                         var racDefinitionOnEmployeeByProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
-                                                                                            && (x.EMPLOYMENTTYPE == "EMPLOYEE")
+                                                                                            && (x.EMPLOYMENTTYPE == "EMPLOYEE" || x.EMPLOYMENTTYPE == "SELFEMPLOYED")
                                                                                             && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                             && x.ISACTIVE == true
                                                                                             && x.DELETED == false).ToList();

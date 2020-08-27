@@ -29549,12 +29549,6 @@ namespace FintrakBanking.Repositories.Credit
                 levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
             }
 
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.RevolvingLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CommercialLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ForeignExchangeLoanBooking).ToList());
-
 
             var company = context.TBL_COMPANY.Find(companyId);
 
@@ -30037,12 +30031,6 @@ namespace FintrakBanking.Repositories.Credit
                 levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList());
             }
 
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.RevolvingLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CommercialLoanBooking).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ForeignExchangeLoanBooking).ToList());
-
             var company = context.TBL_COMPANY.Find(companyId);
             IEnumerable<CamProcessedLoanViewModel> allLoans = null;
 
@@ -30236,7 +30224,7 @@ namespace FintrakBanking.Repositories.Credit
                                           && ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
                                           || (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)))
 
-                                       orderby a.DATEAPPROVED descending
+                                         orderby a.DATEAPPROVED descending
                                          select new CamProcessedLoanViewModel()
                                          {
                                              bookingAmountRequested = s.AMOUNT_REQUESTED,

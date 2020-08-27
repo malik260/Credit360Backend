@@ -1118,6 +1118,24 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string GetFixedDepositCollaterals(int companyId, string collateralCode, int staffId)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/FixedDepositCollateral.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&collateralCode=" + collateralCode.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+
+        public string GetValidCollaterals(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/ValidCollaterals.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
         public string CbnTeam(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
@@ -1469,6 +1487,32 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
             string path = string.Empty;
             path = reportPath + "ReportViews/FullAndFinalSettlementAndWaivers.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetCreditBureauReport(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/creditBureau.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&searchInfo=" + dateRange.searchInfo + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+
+        public string GetCollateralPerfection(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/CollateralPerfection.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&status=" + dateRange.approvalStatus + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+        public string GetCollateralRegister(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/CollateralRegister.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&branchId=" + dateRange.branchId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
 
