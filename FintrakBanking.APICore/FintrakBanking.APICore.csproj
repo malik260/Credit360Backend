@@ -648,6 +648,13 @@
     <Compile Include="Reports\ReportViews\CreditBureau.aspx.designer.cs">
       <DependentUpon>CreditBureau.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\FixedDepositCollateral.aspx.cs">
+      <DependentUpon>FixedDepositCollateral.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\FixedDepositCollateral.aspx.designer.cs">
+      <DependentUpon>FixedDepositCollateral.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx.cs">
       <DependentUpon>FullAndFinalSettlementAndWaivers.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1382,6 +1389,13 @@
     <Compile Include="Reports\ReportViews\UserGroupChangeReport.aspx.designer.cs">
       <DependentUpon>UserGroupChangeReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ValidCollaterals.aspx.cs">
+      <DependentUpon>ValidCollaterals.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ValidCollaterals.aspx.designer.cs">
+      <DependentUpon>ValidCollaterals.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx.cs">
       <DependentUpon>WeeklyRecoveryReportForFINCON.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1456,6 +1470,7 @@
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\CollateralRegister.aspx" />
     <Content Include="Reports\ReportViews\CreditBureau.aspx" />
+    <Content Include="Reports\ReportViews\FixedDepositCollateral.aspx" />
     <Content Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx" />
     <Content Include="Reports\ReportViews\IdleAssetsSales.aspx" />
     <Content Include="Reports\ReportViews\InsiderRelatedLoansReport.aspx" />
@@ -1554,6 +1569,7 @@
     <Content Include="Reports\ReportViews\UnpaidObligationReport.aspx" />
     <Content Include="Reports\ReportViews\UnutilizedFacilityReport.aspx" />
     <Content Include="Reports\ReportViews\UserGroupChangeReport.aspx" />
+    <Content Include="Reports\ReportViews\ValidCollaterals.aspx" />
     <Content Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
@@ -1723,15 +1739,15 @@
     <Content Include="Reports\ReportDataset\StaffInfoDataSet.xsc">
       <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
     </Content>
-    <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
-      <DependentUpon>ReportDataSet.xsd</DependentUpon>
-    </Content>
     <Content Include="Reports\ReportDataset\RecoveryReporting.xsc">
       <DependentUpon>RecoveryReporting.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\RecoveryReporting.xsd" />
     <Content Include="Reports\ReportDataset\RecoveryReporting.xss">
       <DependentUpon>RecoveryReporting.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\ReportDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1898,6 +1914,7 @@
     <EmbeddedResource Include="Reports\Report\ExpiredReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
+    <EmbeddedResource Include="Reports\Report\FixedDepositCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Report\Form3800BFacilityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\FullAndFinalSettlementAndWaivers.rdlc" />
     <EmbeddedResource Include="Reports\Report\IdleAssetsSales.rdlc" />
@@ -1965,6 +1982,7 @@
     <EmbeddedResource Include="Reports\Report\UnearnedLoanInterest.rdlc" />
     <EmbeddedResource Include="Reports\Report\UnutilizedFacilityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\UserGroupChangeReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ValidCollaterals.rdlc" />
     <EmbeddedResource Include="Reports\Report\WeeklyRecoveryReportFINCON.rdlc" />
     <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />
   </ItemGroup>

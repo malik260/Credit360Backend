@@ -438,7 +438,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (isDrawdwon)
             {
-                return InitializeDrawdownMemoProperties(operationId, targetId);
+                return InitializeDrawdownMemoProperties(targetId,operationId);
             }
 
             this.targetId = targetId;
@@ -821,13 +821,11 @@ namespace FintrakBanking.Repositories.Credit
                 this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanDetail.LOANAPPLICATIONDETAILID);
                 this.loanApplication = context.TBL_LOAN_APPLICATION.Where(l=>l.LOANAPPLICATIONID == loanApplicationDetail.LOANAPPLICATIONID).FirstOrDefault();
             }
-            else
-            {
-                var loanDetail2 = context.TBL_LMSR_APPLICATION_DETAIL.Find(targetId);
-                this.lmsrApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(loanDetail2.LOANREVIEWAPPLICATIONID);
-                this.lmsrApplication = context.TBL_LMSR_APPLICATION.Where(l => l.LOANAPPLICATIONID == loanApplicationDetail.LOANAPPLICATIONID).FirstOrDefault();
-
-            }
+            //else
+            //{
+            //    var loanApplication = context.TBL_LOAN_APPLICATION.Find(targetId);
+            //    this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+            //}
 
 
             var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(f => f.LOANAPPLICATIONDETAILID == targetId)?.CHARGEFEEID;
@@ -840,8 +838,14 @@ namespace FintrakBanking.Repositories.Credit
                         
                 </tr></table>";
             string customerName = String.Empty;
-            if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
-            if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+            if (this.loanApplication?.CUSTOMERGROUPID != null)
+            {
+                this.customerName = this.loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+            }
+            if (this.loanApplication?.CUSTOMERID != null)
+            {
+                this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+            }
             this.applicationReferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER;
             this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
             this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
@@ -11771,7 +11775,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public string DocumentationDeferralWaiverFormHtml(int staffId, int operationId, int targetId)
         {
-            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+            var isInitialize = InitializeDrawdownMemoProperties(targetId,operationId);
 
             var result = String.Empty;
             var n = 0;
