@@ -9,7 +9,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>FIXED DEPOSIT COLLATERAL REPORT</Value>
+                <Value>VALID COLLATERALS REPORT</Value>
                 <Style>
                   <FontSize>14pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -39,9 +39,9 @@
         <Value>logomain</Value>
         <Sizing>FitProportional</Sizing>
         <Top>0.10417in</Top>
-        <Left>8.96041in</Left>
+        <Left>10.59584in</Left>
         <Height>0.37083in</Height>
-        <Width>1.56041in</Width>
+        <Width>1.57082in</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -53,7 +53,10 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1.20833in</Width>
+              <Width>1.40625in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.58334in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.60542in</Width>
@@ -65,7 +68,7 @@
               <Width>1.625in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.45833in</Width>
+              <Width>1.32291in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.83333in</Width>
@@ -96,6 +99,40 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox18</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox4">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Validity Expiry Date</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox4</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -320,6 +357,40 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
+                    <Textbox Name="validityExpiryDate">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!validityExpiryDate.Value</Value>
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>validityExpiryDate</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
                     <Textbox Name="collateralCode">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -494,6 +565,7 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
+            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -513,7 +585,7 @@
         <Top>1.4675in</Top>
         <Left>0.28in</Left>
         <Height>0.58334in</Height>
-        <Width>10.24082in</Width>
+        <Width>11.88666in</Width>
         <ZIndex>2</ZIndex>
         <Style>
           <Border>
@@ -525,7 +597,7 @@
     <Height>16.99875in</Height>
     <Style />
   </Body>
-  <Width>10.86458in</Width>
+  <Width>12.26041in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>

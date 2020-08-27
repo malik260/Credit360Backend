@@ -2461,9 +2461,9 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("fixed-deposit-collateral-report/collateralCode/{collateralCode}")]
+        [Route("get-fixed-deposit-collateral-report/collateralCode/{collateralCode}")]
 
-        public HttpResponseMessage GetFixedDepositCollaterals(string collateralCode)
+        public HttpResponseMessage GetFixedDepositCollateralsReport(string collateralCode)
         {
             var token = new TokenDecryptionHelper();
             try
@@ -2475,7 +2475,30 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data });  //Ok(accounts);
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("get-valid-collaterals-report")]
+        public HttpResponseMessage GetValidCollateralsReport([FromBody] InterestIncome obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetValidCollaterals(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
             }
             catch (SecureException ex)
             {
