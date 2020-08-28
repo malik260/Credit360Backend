@@ -574,12 +574,14 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return result;
         }
 
-        public IEnumerable<FixedDepositCollateralViewModel> GetFixedDepositCollaterals(int companyId, string collateralCode)
+        public IEnumerable<FixedDepositCollateralViewModel> GetFixedDepositCollaterals(int companyId, string customerCode)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var data = from d in context.TBL_COLLATERAL_CUSTOMER
-                           where d.COLLATERALCODE == collateralCode && d.COLLATERALTYPEID == (int) CollateralTypeEnum.FixedDeposit
+                           join e in context.TBL_COLLATERAL_DEPOSIT on d.COLLATERALCUSTOMERID equals e.COLLATERALCUSTOMERID
+                           join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
+                           where f.CUSTOMERCODE == customerCode && d.COLLATERALTYPEID == (int) CollateralTypeEnum.FixedDeposit
                            orderby d.DATETIMECREATED descending
                            select new FixedDepositCollateralViewModel()
                            {
@@ -590,6 +592,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                //collateralDetail = d.TBL_COLLATERAL_TYPE.DETAILS,
                                collateralCode = d.COLLATERALCODE,
                                collateralValue = d.COLLATERALVALUE,
+                               effectiveDate = e.EFFECTIVEDATE,
+                               maturityDate = e.MATURITYDATE,
+                               accountNumber = e.ACCOUNTNUMBER,
+                               securityValue = e.SECURITYVALUE,
+                               availableBalance = e.AVAILABLEBALANCE,
+                               customerCode = f.CUSTOMERCODE,
+                               customerName = f.FIRSTNAME + " " + f.LASTNAME,
                            };
 
                 return data.ToList();
@@ -601,6 +610,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var data = from d in context.TBL_COLLATERAL_CUSTOMER
+                           join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
                            where (DbFunctions.TruncateTime(d.VALIDTILL) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(d.VALIDTILL) <= DbFunctions.TruncateTime(endDate))
                            orderby d.DATETIMECREATED descending
                            select new FixedDepositCollateralViewModel()
@@ -612,7 +622,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                //collateralDetail = d.TBL_COLLATERAL_TYPE.DETAILS,
                                collateralCode = d.COLLATERALCODE,
                                collateralValue = d.COLLATERALVALUE,
-                               validityExpiryDate = d.VALIDTILL.Value
+                               validityExpiryDate = d.VALIDTILL.Value,
+                               customerCode = f.CUSTOMERCODE,
+                               customerName = f.FIRSTNAME + " " + f.LASTNAME,
                            };
 
                 return data.ToList();

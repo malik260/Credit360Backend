@@ -269,6 +269,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralType { get; set; }
         public string collateralSummary { get; set; }
         public DateTime validityExpiryDate { get; set; }
+        public string customerCode { get; set; }
+        public string accountNumber { get; set; }
+        public decimal availableBalance { get; set; }
+        public decimal securityValue { get; set; }
+        public DateTime effectiveDate { get; set; }
+        
+        public DateTime maturityDate { get; set; }
+        public string customerName { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
