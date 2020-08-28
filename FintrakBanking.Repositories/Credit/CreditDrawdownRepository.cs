@@ -1592,7 +1592,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (individualGlobalLimit > 0 && request.amount_Requested > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded.");  }
                 }
 
-                if (individualGlobalLimit > 0 && (valueTaken + request.amount_Requested) > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer."); }
+                if (individualGlobalLimit > 0 && (valueTaken + request.amount_Requested) > currentFacility.APPROVEDAMOUNT) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer."); }
             }
         }
 
@@ -1833,7 +1833,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
             {
-                if (requestedFacility.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                if (requestedFacility.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased || requestedFacility.TBL_PRODUCT_CLASS.PRODUCTCLASSID== (short)ProductClassEnum.MortgageLoan)
                 {
                     LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
                     request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
