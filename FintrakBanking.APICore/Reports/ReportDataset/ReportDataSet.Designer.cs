@@ -1517,6 +1517,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnvalidityExpiryDate;
             
+            private global::System.Data.DataColumn columncustomerCode;
+            
+            private global::System.Data.DataColumn columnavailableBalance;
+            
+            private global::System.Data.DataColumn columnsecurityValue;
+            
+            private global::System.Data.DataColumn columnaccountNumber;
+            
+            private global::System.Data.DataColumn columnmaturityDate;
+            
+            private global::System.Data.DataColumn columneffectiveDate;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public FixedDepositCollateralDataTable() {
@@ -1608,6 +1620,54 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerCodeColumn {
+                get {
+                    return this.columncustomerCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn availableBalanceColumn {
+                get {
+                    return this.columnavailableBalance;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn securityValueColumn {
+                get {
+                    return this.columnsecurityValue;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn accountNumberColumn {
+                get {
+                    return this.columnaccountNumber;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn maturityDateColumn {
+                get {
+                    return this.columnmaturityDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn effectiveDateColumn {
+                get {
+                    return this.columneffectiveDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1643,7 +1703,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public FixedDepositCollateralRow AddFixedDepositCollateralRow(string collateralCode, string collateralType, string collateralValue, string valuationCycle, string collateralSummary, string dateTimeCreated, string validityExpiryDate) {
+            public FixedDepositCollateralRow AddFixedDepositCollateralRow(string collateralCode, string collateralType, string collateralValue, string valuationCycle, string collateralSummary, string dateTimeCreated, string validityExpiryDate, string customerCode, string availableBalance, string securityValue, string accountNumber, string maturityDate, string effectiveDate) {
                 FixedDepositCollateralRow rowFixedDepositCollateralRow = ((FixedDepositCollateralRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         collateralCode,
@@ -1652,7 +1712,13 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         valuationCycle,
                         collateralSummary,
                         dateTimeCreated,
-                        validityExpiryDate};
+                        validityExpiryDate,
+                        customerCode,
+                        availableBalance,
+                        securityValue,
+                        accountNumber,
+                        maturityDate,
+                        effectiveDate};
                 rowFixedDepositCollateralRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowFixedDepositCollateralRow);
                 return rowFixedDepositCollateralRow;
@@ -1682,6 +1748,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columncollateralSummary = base.Columns["collateralSummary"];
                 this.columndateTimeCreated = base.Columns["dateTimeCreated"];
                 this.columnvalidityExpiryDate = base.Columns["validityExpiryDate"];
+                this.columncustomerCode = base.Columns["customerCode"];
+                this.columnavailableBalance = base.Columns["availableBalance"];
+                this.columnsecurityValue = base.Columns["securityValue"];
+                this.columnaccountNumber = base.Columns["accountNumber"];
+                this.columnmaturityDate = base.Columns["maturityDate"];
+                this.columneffectiveDate = base.Columns["effectiveDate"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1701,6 +1773,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columndateTimeCreated);
                 this.columnvalidityExpiryDate = new global::System.Data.DataColumn("validityExpiryDate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnvalidityExpiryDate);
+                this.columncustomerCode = new global::System.Data.DataColumn("customerCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerCode);
+                this.columnavailableBalance = new global::System.Data.DataColumn("availableBalance", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnavailableBalance);
+                this.columnsecurityValue = new global::System.Data.DataColumn("securityValue", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsecurityValue);
+                this.columnaccountNumber = new global::System.Data.DataColumn("accountNumber", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnaccountNumber);
+                this.columnmaturityDate = new global::System.Data.DataColumn("maturityDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnmaturityDate);
+                this.columneffectiveDate = new global::System.Data.DataColumn("effectiveDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columneffectiveDate);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2850,6 +2934,106 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableFixedDepositCollateral.customerCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerCode\' in table \'FixedDepositCollateral\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFixedDepositCollateral.customerCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string availableBalance {
+                get {
+                    try {
+                        return ((string)(this[this.tableFixedDepositCollateral.availableBalanceColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'availableBalance\' in table \'FixedDepositCollateral\' is DBNu" +
+                                "ll.", e);
+                    }
+                }
+                set {
+                    this[this.tableFixedDepositCollateral.availableBalanceColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string securityValue {
+                get {
+                    try {
+                        return ((string)(this[this.tableFixedDepositCollateral.securityValueColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'securityValue\' in table \'FixedDepositCollateral\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableFixedDepositCollateral.securityValueColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string accountNumber {
+                get {
+                    try {
+                        return ((string)(this[this.tableFixedDepositCollateral.accountNumberColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'accountNumber\' in table \'FixedDepositCollateral\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableFixedDepositCollateral.accountNumberColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string maturityDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFixedDepositCollateral.maturityDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'maturityDate\' in table \'FixedDepositCollateral\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFixedDepositCollateral.maturityDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string effectiveDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFixedDepositCollateral.effectiveDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'effectiveDate\' in table \'FixedDepositCollateral\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableFixedDepositCollateral.effectiveDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IscollateralCodeNull() {
                 return this.IsNull(this.tableFixedDepositCollateral.collateralCodeColumn);
             }
@@ -2930,6 +3114,78 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetvalidityExpiryDateNull() {
                 this[this.tableFixedDepositCollateral.validityExpiryDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerCodeNull() {
+                return this.IsNull(this.tableFixedDepositCollateral.customerCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerCodeNull() {
+                this[this.tableFixedDepositCollateral.customerCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsavailableBalanceNull() {
+                return this.IsNull(this.tableFixedDepositCollateral.availableBalanceColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetavailableBalanceNull() {
+                this[this.tableFixedDepositCollateral.availableBalanceColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IssecurityValueNull() {
+                return this.IsNull(this.tableFixedDepositCollateral.securityValueColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetsecurityValueNull() {
+                this[this.tableFixedDepositCollateral.securityValueColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsaccountNumberNull() {
+                return this.IsNull(this.tableFixedDepositCollateral.accountNumberColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetaccountNumberNull() {
+                this[this.tableFixedDepositCollateral.accountNumberColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsmaturityDateNull() {
+                return this.IsNull(this.tableFixedDepositCollateral.maturityDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetmaturityDateNull() {
+                this[this.tableFixedDepositCollateral.maturityDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IseffectiveDateNull() {
+                return this.IsNull(this.tableFixedDepositCollateral.effectiveDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SeteffectiveDateNull() {
+                this[this.tableFixedDepositCollateral.effectiveDateColumn] = global::System.Convert.DBNull;
             }
         }
         

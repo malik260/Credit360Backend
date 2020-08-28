@@ -13977,8 +13977,7 @@ namespace FintrakBanking.Repositories.Credit
                               // operationName = e.OPERATIONNAME,
                               //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
                               approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME
-                          }).OrderByDescending(O => O.approvalTrailId).Distinct();
-
+                          }).Distinct().OrderByDescending(O => O.approvalTrailId);
 
             var response = result.ToList();
             return result;
