@@ -25,6 +25,8 @@ namespace FintrakBanking.Entities.Models
         public decimal? TOTALAMOUNTRECOVERY { get; set; }
         public decimal? AMOUNTRECOVERED { get; set; }
         public int LOANID { get; set; }
-        
+        public bool DELETED { get; set; }
+        public int? DELETEDBY { get; set; }
+
     }
 }
