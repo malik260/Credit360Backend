@@ -61,7 +61,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         //bool Confirmation(int type, int applicationId);
 
-        IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId);
+        IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, bool isSpecific = false);
         List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps);
         IQueryable<LoanApplicationViewModel> GetPoolApplications(int operationId, int companyId, int branchId, int staffId, int? classId);
         bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity entity);

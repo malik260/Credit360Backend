@@ -129,9 +129,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
 
                                 }).ToList();
-
-            
-
             return employerData;
         }
 

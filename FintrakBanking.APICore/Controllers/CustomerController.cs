@@ -1695,6 +1695,25 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("single-customer-related-employer/{customerId}")]
+        public HttpResponseMessage GetSingleCustomerRelatedEmployer(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerRelatedEmployer(customerId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("single-customer-employment-info/")]
         public HttpResponseMessage GetSingleCustomerEmploymentHistoryInfo(int customerId, int targetId)
         {

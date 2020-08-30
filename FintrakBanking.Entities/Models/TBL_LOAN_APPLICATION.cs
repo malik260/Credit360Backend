@@ -170,6 +170,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISMULTIPLEPRODUCTDRAWDOWN { get; set; }
         public short? APPROVEDLINESTATUSID { get; set; }
+        public bool ISEMPLOYERRELATED { get; set; }
+        public int? RELATEDEMPLOYERID { get; set; }
         public int CREATEDBY { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
