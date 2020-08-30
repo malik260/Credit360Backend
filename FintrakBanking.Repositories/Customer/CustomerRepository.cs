@@ -3787,10 +3787,21 @@ namespace FintrakBanking.Repositories.Customer
                                          terminalBenefits = s.TERMINALBENEFITS,
                                          annualIncome = s.ANNUALINCOME,
                                          monthlyIncome = s.MONTHLYINCOME,
-                                         expenditure = s.EXPENDITURE
-
+                                         expenditure = s.EXPENDITURE,
+                                         employerId = s.EMPLOYERID
                                      }).ToList();
             return employmentHistory;
+        }
+
+        public CustomerEmploymentHistoryViewModels GetSingleCustomerRelatedEmployer(int customerId)
+        {
+            var employers = GetSingleCustomerEmploymentHistoryInfo(customerId);
+            var relatedEmployer = employers.Where(e => e.active && e.employerId > 0).FirstOrDefault();
+            if (relatedEmployer == null)
+            {
+                throw new SecureException("There is no active Related Employer setup for this customer!");
+            }
+            return relatedEmployer;
         }
 
         public IEnumerable<CustomerEmploymentHistoryViewModels> GetSingleCustomerEmploymentHistoryInfo(int customerId,

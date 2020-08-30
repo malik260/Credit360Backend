@@ -2878,6 +2878,8 @@ namespace FintrakBanking.Repositories.Credit
                 applicationAmount = a.APPLICATIONAMOUNT,
                 dateTimeCreated = a.DATETIMECREATED,
                 collateralDetail = a.COLLATERALDETAIL,
+                isEmployerRelated = a.ISEMPLOYERRELATED,
+                employer = context.TBL_CUSTOMER_EMPLOYER.FirstOrDefault(e => e.EMPLOYERID == a.RELATEDEMPLOYERID).EMPLOYER_NAME,
                 loanPurpose = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false).Select(l => l.LOANPURPOSE).FirstOrDefault(),
                 LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false)
                                             .Select(c => new LoanApplicationDetailViewModel
@@ -2979,7 +2981,7 @@ namespace FintrakBanking.Repositories.Credit
 
         #region FAM Pending Applications
 
-        public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId)
+        public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId, bool isSpecific)
         {
             // var declarations
             List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
@@ -3099,6 +3101,11 @@ namespace FintrakBanking.Repositories.Credit
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID
         }).ToList();
+
+            if (isSpecific)
+            {
+                query = query.Where(q => q.toStaffId == null).ToList();
+            }
 
             applications = query.AsQueryable()
                 .Where(x => x.currentApprovalLevelTypeId != 2)
@@ -3257,7 +3264,7 @@ namespace FintrakBanking.Repositories.Credit
                 && x.RESPONSESTAFFID == null
                 && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                 //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                //&& (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
+                && (staffs.Contains((int)x.TOSTAFFID))
             ),
             a => a.LOANAPPLICATIONID,
             b => b.TARGETID,
@@ -3346,6 +3353,7 @@ namespace FintrakBanking.Repositories.Credit
             apiRequestId = x.a.APIREQUESTID
         }).ToList();
 
+            
             applications = query.AsQueryable()
                 .Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.loanApplicationId)
