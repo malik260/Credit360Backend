@@ -22,6 +22,7 @@ namespace FintrakBanking.ViewModels.Customer
         public decimal? annualIncome { get; set; }
         public decimal? monthlyIncome { get; set; }
         public decimal? expenditure { get; set; }
+        public int? employerId { get; set; }
     }
 
 

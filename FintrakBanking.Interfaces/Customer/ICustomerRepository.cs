@@ -94,6 +94,7 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerBvnViewModels> GetSingleCustomerBVNInfo(int customerId);
         IEnumerable<CustomerIdentificationViewModels> GetSingleCustomerIdentificationInfo(int customerId);
         IEnumerable<CustomerEmploymentHistoryViewModels> GetSingleCustomerEmploymentHistoryInfo(int customerId);
+        CustomerEmploymentHistoryViewModels GetSingleCustomerRelatedEmployer(int customerId);
         IEnumerable<CustomerCompanyDirectorsViewModels> GetSingleCustomerDirectorInfo(int customerId, short directorTypeId);
         IEnumerable<CustomerCompanyDirectorsViewModels> GetSingleCustomerShareholderInfo(int customerId, short customerTypeId);
         IEnumerable<CustomerClientOrSupplierViewModels> GetSingleCustomerClientOrSupplierInfo(int customerId, short clientTypeId);

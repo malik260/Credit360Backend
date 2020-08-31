@@ -410,10 +410,10 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("loan-application-approval-process")]
-        public HttpResponseMessage GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString)
+        public HttpResponseMessage GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
         {
             IQueryable<LoanApplicationViewModel> items;
-            items = repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
+            items = repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
 
 
             if (!String.IsNullOrEmpty(searchString))
@@ -465,8 +465,8 @@ namespace FintrakBanking.APICore.Controllers
                          select x);
             }
 
-            var data = items.ToList();
-
+            var data = items.OrderByDescending(x => x.timeIn).ToList();
+            data = repo.CalculateSLA(data);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 
