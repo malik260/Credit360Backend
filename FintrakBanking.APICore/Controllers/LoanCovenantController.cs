@@ -241,15 +241,15 @@ namespace FintrakBanking.APICore.Controllers
         [Route("covenant/loan-application/{id}")]
         public HttpResponseMessage GetLoanApplicationCovenant(int id)
         {
-            try
-            {
+            
                 var data = repo.GetLoanApplicationCovenant(id);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else { 
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+                }
         }
 
         [HttpGet]
@@ -257,15 +257,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("covenant/loan-application-detail/{id}")]
         public HttpResponseMessage GetLoanApplicationDetailCovenant(int id)
         {
-            try
-            {
+           
                 var data = repo.GetLoanApplicationDetailCovenant(id);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+                }
         }
 
         
