@@ -943,6 +943,8 @@ namespace FintrakBanking.Repositories.Credit
                              operationId = a.OPERATIONID,
                              productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                              tranchLevelId = a.TRANCHEAPPROVAL_LEVELID,
+                             isEmployerRelated = a.ISEMPLOYERRELATED,
+                             employer = context.TBL_CUSTOMER_EMPLOYER.FirstOrDefault(e => e.EMPLOYERID == a.RELATEDEMPLOYERID).EMPLOYER_NAME,
                              applicationDetails = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                                                    where d.LOANAPPLICATIONID == a.LOANAPPLICATIONID
                                                    select new LoanApplicationDetailViewModel()
