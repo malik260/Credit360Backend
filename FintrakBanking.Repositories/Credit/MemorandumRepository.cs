@@ -438,7 +438,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (isDrawdwon)
             {
-                return InitializeDrawdownMemoProperties(operationId, targetId);
+                return InitializeDrawdownMemoProperties(targetId,operationId);
             }
 
             this.targetId = targetId;
@@ -811,7 +811,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private bool InitializeDrawdownMemoProperties(int operationId, int targetId, int bookingRequestId = 0) // feeder
+        private bool InitializeDrawdownMemoProperties(int targetId, int operationId, int bookingRequestId = 0) // feeder
         {
             this.targetId = targetId;
             this.operationId = operationId;
@@ -838,8 +838,14 @@ namespace FintrakBanking.Repositories.Credit
                         
                 </tr></table>";
             string customerName = String.Empty;
-            if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
-            if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+            if (this.loanApplication?.CUSTOMERGROUPID != null)
+            {
+                this.customerName = this.loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+            }
+            if (this.loanApplication?.CUSTOMERID != null)
+            {
+                this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+            }
             this.applicationReferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER;
             this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
             this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
@@ -11769,7 +11775,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public string DocumentationDeferralWaiverFormHtml(int staffId, int operationId, int targetId)
         {
-            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+            var isInitialize = InitializeDrawdownMemoProperties(targetId,operationId);
 
             var result = String.Empty;
             var n = 0;

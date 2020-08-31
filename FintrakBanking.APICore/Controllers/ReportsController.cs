@@ -2461,14 +2461,14 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-fixed-deposit-collateral-report/collateralCode/{collateralCode}")]
+        [Route("get-fixed-deposit-collateral-report/customerCode/{customerCode}")]
 
-        public HttpResponseMessage GetFixedDepositCollateralsReport(string collateralCode)
+        public HttpResponseMessage GetFixedDepositCollateralsReport(string customerCode)
         {
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetFixedDepositCollaterals(token.GetCompanyId, collateralCode, token.GetCompanyId);
+                var data = repo.GetFixedDepositCollaterals(token.GetCompanyId, customerCode, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

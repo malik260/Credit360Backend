@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     //DateTime.TryParse(startDateString, out DateTime startDate);
 
                     int companyId = Int32.Parse(Request.QueryString["companyId"]);
-                    string collateralCode = Request.QueryString["collateralCode"];
+                    string customerCode = Request.QueryString["customerCode"];
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
                     DateTime.TryParse(inputDateInfo, out DateTime incomingDate);
@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     }
 
                     RSR psr = new RSR();
-                    var fixedDepositCollateral = psr.GetFixedDepositCollaterals(companyId, collateralCode);
+                    var fixedDepositCollateral = psr.GetFixedDepositCollaterals(companyId, customerCode);
                     ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = fixedDepositCollateral;

@@ -1216,16 +1216,32 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-report-all-agents")]
+        [Route("loan-operation/recovered-report-all-agents")]
         public HttpResponseMessage GetAllLoansRecoveredByAgent()
         {
-            var data = repo.GetAllLoansRecoveredByAgentForReporting(token.GetStaffId, token.GetCompanyId);
+            var data = repo.GetAllLoansRecoveredByAgents(token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "No record found" });
             }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/recovery-report-all-agents")]
+        public HttpResponseMessage GetAllLoansRecoveredByAgents()
+        {
+            var data = repo.GetAllLoansRecoveredByAgentForReporting(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
         }
 

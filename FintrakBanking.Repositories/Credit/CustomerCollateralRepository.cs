@@ -2717,18 +2717,20 @@ namespace FintrakBanking.Repositories.Credit
             searchParam = searchParam.Trim();
 
             var collaterals = (from d in context.TBL_COLLATERAL_CUSTOMER
-                               join cus in context.TBL_CUSTOMER on d.CUSTOMERID equals cus.CUSTOMERID into cusd
-                               from cus in cusd.DefaultIfEmpty()
-                               where (d.CUSTOMERCODE.Contains(searchParam)
-                               || cus.FIRSTNAME.ToLower().Contains(searchParam.ToLower())
-                               || cus.LASTNAME.ToLower().Contains(searchParam.ToLower())
-                               || cus.MIDDLENAME.ToLower().Contains(searchParam.ToLower())) && d.COLLATERALTYPEID == (int) CollateralTypeEnum.FixedDeposit
+                               join e in context.TBL_COLLATERAL_DEPOSIT on d.COLLATERALCUSTOMERID equals e.COLLATERALCUSTOMERID
+                               join cus in context.TBL_CUSTOMER on d.CUSTOMERID equals cus.CUSTOMERID
+                               where (d.CUSTOMERCODE.Contains(searchParam) || cus.FIRSTNAME.ToLower().Contains(searchParam.ToLower())
+                               || cus.LASTNAME.ToLower().Contains(searchParam.ToLower()) || cus.MIDDLENAME.ToLower().Contains(searchParam.ToLower())) 
+                               && d.COLLATERALTYPEID == (int) CollateralTypeEnum.FixedDeposit
                                select new CollateralViewModel
                                {
                                    collateralId = d.COLLATERALCUSTOMERID,
                                    collateralTypeId = d.COLLATERALTYPEID,
                                    collateralSubTypeId = d.COLLATERALSUBTYPEID,
                                    customerId = d.CUSTOMERID.Value,
+                                   customerCode = cus.CUSTOMERCODE,
+                                   customerName = cus.FIRSTNAME + " " + cus.LASTNAME,
+                                   accountNumber = e.ACCOUNTNUMBER,
                                    currencyId = d.CURRENCYID,
                                    baseCurrencyId = company.CURRENCYID,
                                    currency = d.TBL_CURRENCY.CURRENCYNAME,            // c.c.TBL_CURRENCY.CURRENCYNAME,
@@ -2902,13 +2904,7 @@ namespace FintrakBanking.Repositories.Credit
                 //collateralValue = x.CollateralValue
                 exchangeRate = x.EXCHANGERATE,
                 collateralSummary = x.COLLATERALSUMMARY
-
-            })
-            .FirstOrDefault();
-
-
-
-
+            }).FirstOrDefault();
 
             return collateral;
         }
@@ -11531,7 +11527,8 @@ namespace FintrakBanking.Repositories.Credit
                                                && t.APPROVALSTATEID != (int)ApprovalState.Ended
                                                && t.RESPONSESTAFFID == null
                                                && (t.LOOPEDSTAFFID == null || t.LOOPEDSTAFFID == staffId)
-                                               && levelIds.Contains((int)t.TOAPPROVALLEVELID)
+                                               && ((levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == null) || (!levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == staffId))
+                                               //&& levelIds.Contains((int)t.TOAPPROVALLEVELID)
                                                && (t.TOSTAFFID == null || t.TOSTAFFID == staffId)
                                                )
                                               select new CollateralSwapViewModel

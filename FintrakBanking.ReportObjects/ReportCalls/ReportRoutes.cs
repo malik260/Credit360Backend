@@ -1118,12 +1118,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetFixedDepositCollaterals(int companyId, string collateralCode, int staffId)
+        public string GetFixedDepositCollaterals(int companyId, string customerCode, int staffId)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/FixedDepositCollateral.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&collateralCode=" + collateralCode.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            path = reportPath + "ReportViews/FixedDepositCollateral.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&customerCode=" + customerCode.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
 
