@@ -33487,6 +33487,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgentForReporting(int staffId, int companyId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
+
             var loansId = context.TBL_LOAN_RECOVERY_REPORTING_BATCH.Where(x => x.DELETED == false).Select(x => x.LOANID).ToList();
             var loansAmount = context.TBL_LOAN_RECOVERY_REPORTING_BATCH.Where(x => x.DELETED == false).Select(x => x.AMOUNTRECOVERED).ToList();
 
@@ -33501,9 +33502,9 @@ namespace FintrakBanking.Repositories.Credit
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                            where loansId.Contains(ln.TERMLOANID)
-                            && !loansAmount.Contains(lr.RECOVEREDAMOUNT)
-                            && pr.EXCLUDEFROMLITIGATION == false
+                            where 
+                            pr.EXCLUDEFROMLITIGATION == false
+                            && !loansAmount.Contains(lr.RECOVEREDAMOUNT) //&& !loansId.Contains(ln.TERMLOANID))
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                             select new LoanReviewOperationApprovalViewModel
@@ -33621,9 +33622,9 @@ namespace FintrakBanking.Repositories.Credit
                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
-                                     where loansId.Contains(ln.REVOLVINGLOANID)
-                                     && !loansAmount.Contains(lr.RECOVEREDAMOUNT)
-                                     && pr.EXCLUDEFROMLITIGATION == false
+                                     where 
+                                     pr.EXCLUDEFROMLITIGATION == false
+                                     && (!loansAmount.Contains(lr.RECOVEREDAMOUNT) && loansId.Contains(ln.REVOLVINGLOANID))
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                                      select new LoanReviewOperationApprovalViewModel
