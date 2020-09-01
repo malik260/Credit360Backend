@@ -278,7 +278,7 @@ namespace FintrakBanking.Repositories.Customer
                 .Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x => x.LOANAPPLICATIONDETAILID);
 
-            return context.TBL_LOAN_APPLICATION_COVENANT.Where(x =>
+            var records = context.TBL_LOAN_APPLICATION_COVENANT.Where(x =>
                     x.DELETED == false && ids.Contains(x.LOANAPPLICATIONDETAILID)
                 ).Select(c => new LoanCovenantDetailViewModel
                 {
@@ -300,11 +300,13 @@ namespace FintrakBanking.Repositories.Customer
                     productCustomerName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
                     
                 });
+
+            return records;
         }
 
         public IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenant(int applicationDetailId)
         {
-            return context.TBL_LOAN_APPLICATION_COVENANT.Where(x =>
+            var records = context.TBL_LOAN_APPLICATION_COVENANT.Where(x =>
                     x.DELETED == false && x.LOANAPPLICATIONDETAILID == applicationDetailId
                 ).Select(c => new LoanCovenantDetailViewModel
                 {
@@ -326,6 +328,8 @@ namespace FintrakBanking.Repositories.Customer
                     productCustomerName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
 
                 });
+
+            return records;
         }
 
 
