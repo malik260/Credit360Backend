@@ -30002,7 +30002,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var staff = context.TBL_STAFF.Find(staffId);
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
-            var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
+            //var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
 
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             List<int> loanOperationIds = new List<int>();
@@ -30019,7 +30019,8 @@ namespace FintrakBanking.Repositories.Credit
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
             List<int> levelIds = new List<int>();
-            foreach (var i in loanOperationIds) {
+            foreach (var i in loanOperationIds) 
+            {
                 levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList());
             }
             foreach (var i in contingentOperationIds)
@@ -30031,26 +30032,26 @@ namespace FintrakBanking.Repositories.Credit
                 levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList());
             }
 
-            var company = context.TBL_COMPANY.Find(companyId);
+            //var company = context.TBL_COMPANY.Find(companyId);
             IEnumerable<CamProcessedLoanViewModel> allLoans = null;
 
             var dataTermLoans = (from a in context.TBL_LOAN
-                                   join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
-                                   join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
-                                   join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                                   join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
-                                   join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                                   join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
-                                   join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                   where m.COMPANYID == companyId
-                                   && s.DELETED == false
-                                   && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                                   && a.ISPRINTED == false
-                                   && a.ISDISBURSED == true
-                                   && loanOperationIds.Contains(atrail.OPERATIONID)
-                                   && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
-                                   && ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
-                                   || (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)))
+                                join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals s.LOAN_BOOKING_REQUESTID
+                                join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                                join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                                join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                                join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                                join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
+                                join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+                                where m.COMPANYID == companyId
+                                && s.DELETED == false
+                                && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                                && a.ISPRINTED == false
+                                && a.ISDISBURSED == true
+                                && loanOperationIds.Contains(atrail.OPERATIONID)
+                                && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
+                                 //&& ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                                 //|| (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)))
                                  orderby a.DATEAPPROVED descending
                                  select new CamProcessedLoanViewModel()
                                    {
@@ -30117,25 +30118,25 @@ namespace FintrakBanking.Repositories.Credit
                                        isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                        approvalTrailId = atrail.APPROVALTRAILID,
                                        responseStaffId = atrail.RESPONSESTAFFID
-                                   }).GroupBy(l => l.loanId).Select(s => s.OrderByDescending(o => o.approvalTrailId).FirstOrDefault()).Take(50).ToList();
+                                   }).GroupBy(l => l.loanId).Select(s => s.OrderByDescending(o => o.approvalTrailId).FirstOrDefault()).ToList();
 
             var dataRevolvingLoans = (from a in context.TBL_LOAN_REVOLVING
-                                         join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
-                                         join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
-                                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
-                                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                                         join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
-                                         join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                         where m.COMPANYID == companyId
-                                            && s.DELETED == false
-                                            && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                                            && a.ISPRINTED == false
-                                            && RevolvingOperationIds.Contains(atrail.OPERATIONID)
-                                            && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
-                                            && a.ISDISBURSED == true
-                                            && ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
-                                            || (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)))
+                                        join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals s.LOAN_BOOKING_REQUESTID
+                                        join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                                        join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                                        join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                                        join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                                        join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
+                                        join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+                                        where m.COMPANYID == companyId
+                                        && s.DELETED == false
+                                        && (a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                                        && a.ISPRINTED == false
+                                        && RevolvingOperationIds.Contains(atrail.OPERATIONID)
+                                        && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
+                                        && a.ISDISBURSED == true
+                                        //&& ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                                        //|| (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)))
 
 
                                       orderby a.DATEAPPROVED descending
@@ -30204,25 +30205,25 @@ namespace FintrakBanking.Repositories.Credit
                                              isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                              approvalTrailId = atrail.APPROVALTRAILID,
                                              responseStaffId = atrail.RESPONSESTAFFID
-                                         }).GroupBy(l => l.loanId).Select(s => s.OrderByDescending(o => o.approvalTrailId).FirstOrDefault()).Take(50).ToList();
+                                         }).GroupBy(l => l.loanId).Select(s => s.OrderByDescending(o => o.approvalTrailId).FirstOrDefault()).ToList();
 
         var dataContingentLoans = (from a in context.TBL_LOAN_CONTINGENT
-                                         join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
-                                         join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
-                                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
-                                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                                         join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
-                                         join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                         where m.COMPANYID == companyId
-                                          && s.DELETED == false
-                                          && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                                          && a.ISPRINTED == false
-                                          && contingentOperationIds.Contains(atrail.OPERATIONID)
-                                          && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive )
-                                          && a.ISDISBURSED == true
-                                          && ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
-                                          || (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)))
+                                    join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals s.LOAN_BOOKING_REQUESTID
+                                    join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                                    join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                                    join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                                    join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                                    join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
+                                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+                                    where m.COMPANYID == companyId
+                                    && s.DELETED == false
+                                    && (a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                                    && a.ISPRINTED == false
+                                    && contingentOperationIds.Contains(atrail.OPERATIONID)
+                                    && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive )
+                                    && a.ISDISBURSED == true
+                                    //&& ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                                    //|| (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)))
 
                                          orderby a.DATEAPPROVED descending
                                          select new CamProcessedLoanViewModel()
@@ -30290,16 +30291,17 @@ namespace FintrakBanking.Repositories.Credit
                                              isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                              approvalTrailId = atrail.APPROVALTRAILID,
                                              responseStaffId = atrail.RESPONSESTAFFID
-                                         }).GroupBy(l => l.loanId).Select(s => s.OrderByDescending(o => o.approvalTrailId).FirstOrDefault()).Take(50).ToList();
+                                         }).GroupBy(l => l.loanId).Select(s => s.OrderByDescending(o => o.approvalTrailId).FirstOrDefault()).ToList();
 
 
-             var termLoanData = dataTermLoans.OrderByDescending(x => x.approvalDate);
-            var revolvingLoanData = dataRevolvingLoans.OrderByDescending(x => x.approvalDate);
-            var contingentLoanData = dataContingentLoans.OrderByDescending(x => x.approvalDate);
+            var termLoanData = dataTermLoans.OrderByDescending(x => x.approvalDate).Take(50);
+            var revolvingLoanData = dataRevolvingLoans.OrderByDescending(x => x.approvalDate).Take(50);
+            var contingentLoanData = dataContingentLoans.OrderByDescending(x => x.approvalDate).Take(50);
             var unionAll = termLoanData.Union(revolvingLoanData);
 
             var data = unionAll.Union(contingentLoanData);
-            allLoans = data.ToList();
+
+            allLoans = data.OrderByDescending(x => x.approvalDate).ToList();
             return allLoans;
             
         }
@@ -33487,6 +33489,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgentForReporting(int staffId, int companyId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
+
             var loansId = context.TBL_LOAN_RECOVERY_REPORTING_BATCH.Where(x => x.DELETED == false).Select(x => x.LOANID).ToList();
             var loansAmount = context.TBL_LOAN_RECOVERY_REPORTING_BATCH.Where(x => x.DELETED == false).Select(x => x.AMOUNTRECOVERED).ToList();
 
@@ -33501,9 +33504,9 @@ namespace FintrakBanking.Repositories.Credit
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                            where loansId.Contains(ln.TERMLOANID)
-                            && !loansAmount.Contains(lr.RECOVEREDAMOUNT)
-                            && pr.EXCLUDEFROMLITIGATION == false
+                            where 
+                            pr.EXCLUDEFROMLITIGATION == false
+                            && !loansAmount.Contains(lr.RECOVEREDAMOUNT) //&& !loansId.Contains(ln.TERMLOANID))
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                             select new LoanReviewOperationApprovalViewModel
@@ -33621,9 +33624,9 @@ namespace FintrakBanking.Repositories.Credit
                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
-                                     where loansId.Contains(ln.REVOLVINGLOANID)
-                                     && !loansAmount.Contains(lr.RECOVEREDAMOUNT)
-                                     && pr.EXCLUDEFROMLITIGATION == false
+                                     where 
+                                     pr.EXCLUDEFROMLITIGATION == false
+                                     && (!loansAmount.Contains(lr.RECOVEREDAMOUNT) && loansId.Contains(ln.REVOLVINGLOANID))
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                                      select new LoanReviewOperationApprovalViewModel

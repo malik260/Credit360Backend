@@ -222,11 +222,10 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-            public IEnumerable<OriginalDocumentReleaseViewModel> GetLeaseDocumentForApproval(int staffId)
+        public IEnumerable<OriginalDocumentReleaseViewModel> GetLeaseDocumentForApproval(int staffId)
         {
             var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.SecurityRelease).ToList();
             ids.AddRange(_general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.GuaranteeReleaseApproval).ToList());
-
             var staffs = _general.GetStaffRlieved(staffId);
 
             var record = from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
@@ -237,12 +236,13 @@ namespace FintrakBanking.Repositories.Credit
                          join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
                          where dr.DELETED == false && (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved || atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
                          && atrail.RESPONSESTAFFID == null
-                         && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
+                         && (atrail.LOOPEDSTAFFID == null || atrail.LOOPEDSTAFFID == staffId)
+                         && ((ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) || (!ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
                          && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                          && (atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease || atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval)
                          select new OriginalDocumentReleaseViewModel
                          {
-                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault().ToUpper(),
                              customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                              //applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
                              documentReferenceNumber = oda.REFERENCENUMBER,
@@ -265,10 +265,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var result = record.GroupBy(r => r.originalDocumentApprovalId)
                                .Select( r =>r.FirstOrDefault()).ToList();
-
-            return result;
-            //return record.ToList();
-            
+            return result;            
         }
 
         public IEnumerable<OriginalDocumentReleaseViewModel> GetRejectedAndReferredSecurityRelease(int staffId)

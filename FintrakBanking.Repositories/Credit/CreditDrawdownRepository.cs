@@ -226,8 +226,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var classifiedTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
                      x.OPERATIONID == (int)entity.operationId
-                     && x.RESPONSESTAFFID == null
+                     //&& x.RESPONSESTAFFID == null
                      && x.DESTINATIONOPERATIONID > 0
+                     && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
                      && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
                      && x.TARGETID == entity.targetId
                     );
@@ -246,6 +247,7 @@ namespace FintrakBanking.Repositories.Credit
                         classifiedTrail.APPROVALSTATEID = (short)ApprovalState.Ended;
                         classifiedTrail.RESPONSESTAFFID = entity.staffId;
                         classifiedTrail.RESPONSEDATE = DateTime.Now;
+                        classifiedTrail.REFEREBACKSTATEID = (short)ApprovalState.Ended;
 
 
                         request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;

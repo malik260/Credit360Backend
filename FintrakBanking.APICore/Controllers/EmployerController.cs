@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -41,6 +42,61 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-all-pending-employers")]
+        public HttpResponseMessage getAllPendingEmployers()
+        {
+            try
+            {
+                var data = repo.getAllPendingEmployers(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-all-approved-employers")]
+        public HttpResponseMessage getAllApprovedEmployers()
+        {
+            try
+            {
+                var data = repo.getAllApprovedEmployers(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("forward-for-related-employer-approval")]
+        public HttpResponseMessage ForwardRelatedEmployerForApproval([FromBody] EmployerViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            //entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.ForwardRelatedEmployerForApproval(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "RELATED EMPLOYER") });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-related-employer-waiting-for-approval")]
+        public HttpResponseMessage GetRelatedEmployersWaitingForApproval()
+        {
+            IEnumerable<EmployerViewModel> response = repo.GetRelatedEmployersWaitingForApproval(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
         [HttpGet] [ClaimsAuthorization]  
         [Route("employer")]
         public HttpResponseMessage getEmployer(int employerId)
@@ -64,6 +120,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 employer.companyId = token.GetCompanyId;
                 employer.staffId = token.GetStaffId;
+                employer.createdBy = token.GetStaffId;
                 employer.userBranchId = (short)token.GetBranchId;
 
                 var data = repo.addEmployer(employer);
@@ -129,6 +186,22 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.getEmployerSunType(employerTypeId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-all-employer-sub-types")]
+        public HttpResponseMessage getAllEmployerSubTypes()
+        {
+            try
+            {
+                var data = repo.getAllEmployerSubTypes();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
             catch (SecureException ex)
