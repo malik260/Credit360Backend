@@ -3797,8 +3797,7 @@ namespace FintrakBanking.Repositories.Customer
                                          monthlyIncome = s.MONTHLYINCOME,
                                          expenditure = s.EXPENDITURE,
                                          isEmployerRelated = s.ISEMPLOYERRELATED,
-                                         approvedEmployerId = s.APPROVEDEMPLOYERID
-                                         expenditure = s.EXPENDITURE,
+                                         approvedEmployerId = s.APPROVEDEMPLOYERID,
                                          employerId = s.EMPLOYERID
                                      }).ToList();
             return employmentHistory;
