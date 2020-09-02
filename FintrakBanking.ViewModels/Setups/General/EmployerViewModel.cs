@@ -21,8 +21,19 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int stateId { get; set; }
         public string employerTypeName { get; set; }
         public short employerTypeId { get; set; }
+        public bool active { get; set; }
+        public DateTime? establishmentDate { get; set; }
+        public int operationId { get; set; }
+        public short approvalStatusId { get; set; }
 
-
+        public int forwardAction { get; set; }
+        public string approvalStatus { get; set; }
+        public string comment { get; set; }
+        public short vote { get; set; }
+        public string currentApprovalLevel { get; set; }
+        public int approvalTrailId { get; set; }
+        public int? currentApprovalLevelId { get; set; }
+        //public int countryId { get; set; }
 
     }
 }

@@ -10606,7 +10606,8 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in customer)
             {
-                var customercode = context.TBL_CUSTOMER.Find(item.customerId).CUSTOMERCODE;
+                var customercode = context.TBL_CUSTOMER.Find(item.customerId)?.CUSTOMERCODE;
+
                 camsol = (from cam in context.TBL_LOAN_CAMSOL
                           join c in context.TBL_LOAN_CAMSOL_TYPE on cam.CAMSOLTYPEID equals c.CAMSOLTYPEID
                           where cam.CUSTOMERCODE == customercode
@@ -10684,7 +10685,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in customer)
             {
-                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId).CUSTOMERCODE.Trim();
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId)?.CUSTOMERCODE.Trim();
                 //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
                 exposure = (from a in context.TBL_GLOBAL_EXPOSURE

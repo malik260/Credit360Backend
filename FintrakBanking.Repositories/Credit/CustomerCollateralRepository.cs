@@ -11519,18 +11519,14 @@ namespace FintrakBanking.Repositories.Credit
 
             var collateralSwapsForApproval = (from s in context.TBL_COLLATERAL_SWAP_REQUEST
                                               join t in context.TBL_APPROVAL_TRAIL on s.COLLATERALSWAPID equals t.TARGETID
-                                              where
-                                               (
-                                               s.DELETED == false
-                                               && t.OPERATIONID == (int)OperationsEnum.CollateralSwap
+                                              where (s.DELETED == false && t.OPERATIONID == (int)OperationsEnum.CollateralSwap
                                                && s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
                                                && t.APPROVALSTATEID != (int)ApprovalState.Ended
                                                && t.RESPONSESTAFFID == null
                                                && (t.LOOPEDSTAFFID == null || t.LOOPEDSTAFFID == staffId)
                                                && ((levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == null) || (!levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == staffId))
                                                //&& levelIds.Contains((int)t.TOAPPROVALLEVELID)
-                                               && (t.TOSTAFFID == null || t.TOSTAFFID == staffId)
-                                               )
+                                               && (t.TOSTAFFID == null || t.TOSTAFFID == staffId))
                                               select new CollateralSwapViewModel
                                               {
                                                   collateralSwapId = s.COLLATERALSWAPID,

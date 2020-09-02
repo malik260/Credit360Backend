@@ -38,6 +38,18 @@ namespace FintrakBanking.Entities.Models
         //[StringLength(50)]
         public string EMAILADDRESS { get; set; }
 
+        public int OPERATIONID { get; set; }
+
+        public short APPROVALSTATUSID { get; set; }
+
+        public DateTime? ESTABLISHMENTDATE { get; set; }
+
+        public bool ACTIVE { get; set; }
+
+        public int COUNTRYID { get; set; }
+
+        public int STATEID { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
