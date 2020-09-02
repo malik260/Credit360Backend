@@ -523,7 +523,7 @@ namespace FintrakBanking.Repositories.Credit
                             detail.LASTUPDATEDBY = model.createdBy;
                             detail.DATETIMEUPDATED = DateTime.Now;
 
-                            if (model.isBusiness) // DELETE OR UPDATE PROPOSED
+                            if (model.isBusiness && model.forwardAction != (int)ApprovalStatusEnum.Referred) // DELETE OR UPDATE PROPOSED
                             {
                                 if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
                                 else

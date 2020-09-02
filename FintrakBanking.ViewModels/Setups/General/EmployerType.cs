@@ -8,15 +8,15 @@ namespace FintrakBanking.ViewModels.Setups.General
 {
     public class EmployerType
     {
-        public int EmployerTypeId { get; set; }
-        public string EmployerTypeName { get; set; }
+        public int employerTypeId { get; set; }
+        public string employerTypeName { get; set; }
     }
 
     public class EmployerSubType
     {
-        public int EmployerSubTypeId { get; set; }
-        public string EmployerSubTypeName { get; set; }
-        public object EmployerTypeName { get; set; }
-        public short EmployerTypeId { get; set; }
+        public int employerSubTypeId { get; set; }
+        public string employerSubTypeName { get; set; }
+        public object employerTypeName { get; set; }
+        public short employerTypeId { get; set; }
     }
 }
