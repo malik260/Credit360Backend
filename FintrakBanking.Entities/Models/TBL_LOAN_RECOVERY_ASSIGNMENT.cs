@@ -26,5 +26,7 @@ namespace FintrakBanking.Entities.Models
         public string REFERENCEID { get; set; }
         public bool ISFULLYRECOVERED { get; set; }
         public DateTime? EXPCOMPLETIONDATE { get; set; }
+        public bool DELETED { get; set; }
+        public int? DELETEDBY { get; set; }
     }
 }

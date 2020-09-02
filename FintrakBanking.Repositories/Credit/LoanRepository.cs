@@ -5525,7 +5525,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 revolvingLoanRecord.DATEAPPROVED = DateTime.Now;
                 revolvingLoanRecord.DISBURSEDATE = DateTime.Now;
-                revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                 revolvingLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                 revolvingLoanRecord.ISDISBURSED = true;
                 revolvingLoanRecord.APPROVEDBY = user.createdBy;
@@ -5562,7 +5562,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 contingentLoanRecord.DATEAPPROVED = DateTime.Now;
-                contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
                 var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
                 loanScheduleModel.operationId = contingentLoanRecord.OPERATIONID;

@@ -25,6 +25,7 @@ namespace FintrakBanking.ViewModels.Customer
         public int? approvedEmployerId { get; set; }
         public bool isEmployerRelated { get; set; }
 
+        public int? employerId { get; set; }
     }
 
 

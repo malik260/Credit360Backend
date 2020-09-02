@@ -244,6 +244,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanSystemTypeId { get; set; }
         public string legalContingentCode { get; set; }
         public int? singleCustomerId { get; set; }
+        public bool isEmployerRelated { get; set; }
+        public int? relatedEmployerId { get; set; }
+        public string employer { get; set; }
     }
 
     public class InterestIncomeViewModel
@@ -513,6 +516,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string moratorium { get; set; }
         public bool? isMoratorium { get; set; }
         public decimal? approvedLineLimit { get; set; }
+        
 
 
         public string priceIndexName { get; set; }
