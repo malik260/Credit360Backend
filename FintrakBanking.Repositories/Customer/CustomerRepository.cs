@@ -3798,7 +3798,7 @@ namespace FintrakBanking.Repositories.Customer
                                          expenditure = s.EXPENDITURE,
                                          isEmployerRelated = s.ISEMPLOYERRELATED,
                                          approvedEmployerId = s.APPROVEDEMPLOYERID,
-                                         employerId = s.EMPLOYERID
+                                         employerId = s.APPROVEDEMPLOYERID
                                      }).ToList();
             return employmentHistory;
         }
@@ -3806,6 +3806,12 @@ namespace FintrakBanking.Repositories.Customer
         public CustomerEmploymentHistoryViewModels GetSingleCustomerRelatedEmployer(int customerId)
         {
             var employers = GetSingleCustomerEmploymentHistoryInfo(customerId);
+            var activeEmployers = employers.Where(e => e.active && e.employerId > 0).ToList();
+            if (activeEmployers.Count > 1)
+            {
+                throw new SecureException("There cannot be more than one active current employer setup for a customer!");
+            }
+
             var relatedEmployer = employers.Where(e => e.active && e.employerId > 0).FirstOrDefault();
             if (relatedEmployer == null)
             {
@@ -5105,6 +5111,8 @@ namespace FintrakBanking.Repositories.Customer
                     entity.ANNUALINCOME = temp.ANNUALINCOME;
                     entity.MONTHLYINCOME = temp.MONTHLYINCOME;
                     entity.EXPENDITURE = temp.EXPENDITURE;
+                    entity.ISEMPLOYERRELATED = temp.ISEMPLOYERRELATED;
+                    entity.APPROVEDEMPLOYERID = temp.APPROVEDEMPLOYERID;
 
                     context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Add(entity);
 
@@ -5135,6 +5143,8 @@ namespace FintrakBanking.Repositories.Customer
                     entity.ANNUALINCOME = temp.ANNUALINCOME;
                     entity.MONTHLYINCOME = temp.MONTHLYINCOME;
                     entity.EXPENDITURE = temp.EXPENDITURE;
+                    entity.ISEMPLOYERRELATED = temp.ISEMPLOYERRELATED;
+                    entity.APPROVEDEMPLOYERID = temp.APPROVEDEMPLOYERID;
                 }
             }
 
