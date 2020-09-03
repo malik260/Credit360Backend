@@ -19252,7 +19252,9 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVALSTATUSID = entity.approvalStatusId,
                 OPERATIONCOMPLETED = entity.operationCompleted,
                 TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
-                AMOUNTRECOVERED = entity.amountRecovered
+                AMOUNTRECOVERED = entity.amountRecovered,
+                COLLATERALLIQUIDATIONRECOVERYID = entity.collateralLiquidationRecoveryId
+
             };
             return data;
         }
@@ -19411,7 +19413,8 @@ namespace FintrakBanking.Repositories.Credit
                 TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
                 AMOUNTRECOVERED = entity.amountRecovered,
                 MISCODE = entity.misCode,
-                REGION = entity.region
+                REGION = entity.region,
+                LOANRECOVERYREPORTBATCHID = entity.loanRecoveryReportBatchId
             };
             return data;
         }

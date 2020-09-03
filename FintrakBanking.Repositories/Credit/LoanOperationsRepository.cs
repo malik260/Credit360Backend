@@ -32142,7 +32142,7 @@ namespace FintrakBanking.Repositories.Credit
             var loansId = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.DELETED == false).Select(x => x.LOANRECOVERYREPORTBATCHID).ToList();
             
             var dataLoan = (from l in context.TBL_LOAN_RECOVERY_REPORTING_BATCH
-                            join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
+                            join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.COLLATERALLIQUIDATIONRECOVERYID equals lr.COLLATERALLIQUIDATIONRECOVERYID
                             join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -32155,9 +32155,7 @@ namespace FintrakBanking.Repositories.Credit
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
                             where
                             l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                            && pr.EXCLUDEFROMLITIGATION == false
                             && !loansId.Contains(l.LOANRECOVERYREPORTBATCHID)
-                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                             select new LoanReviewOperationApprovalViewModel
                             {
@@ -32265,7 +32263,7 @@ namespace FintrakBanking.Repositories.Credit
                             }).ToList();
 
             var dataRevolvingLoan = (from l in context.TBL_LOAN_RECOVERY_REPORTING_BATCH
-                                     join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
+                                     join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.COLLATERALLIQUIDATIONRECOVERYID equals lr.COLLATERALLIQUIDATIONRECOVERYID
                                      join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -32278,8 +32276,6 @@ namespace FintrakBanking.Repositories.Credit
                                      where
                                      l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && !loansId.Contains(l.LOANRECOVERYREPORTBATCHID)
-                                     && pr.EXCLUDEFROMLITIGATION == false
-                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      
                                      select new LoanReviewOperationApprovalViewModel
                                      {
