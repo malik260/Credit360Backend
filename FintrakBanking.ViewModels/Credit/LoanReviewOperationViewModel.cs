@@ -751,6 +751,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public bool operationCompleted { get; set; }
         public decimal? recoveredAmount { get; set; }
         public decimal? totalRecoveryAmount { get; set; }
+        public object collateralLiquidationRecoveryId { get; set; }
     }
 
     public class LoanRecoveryReportApprovalViewModel : GeneralEntity
@@ -828,6 +829,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string region { get; set; }
         public string recoveryMisCode { get; set; }
         public string recoveryRegion { get; set; }
+        public object loanRecoveryReportBatchId { get; set; }
     }
 
     public class RemedialAssetReportViewModel

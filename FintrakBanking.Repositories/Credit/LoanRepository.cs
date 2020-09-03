@@ -19141,6 +19141,7 @@ namespace FintrakBanking.Repositories.Credit
                 request.totalAmountRecovery = model.totalRecoveryAmount;
                 request.amountRecovered = model.recoveredAmount;
                 request.customerId = model.customerId;
+                request.collateralLiquidationRecoveryId = model.collateralLiquidationRecoveryId;
                 var loanData = addBulkLoanRecoveryReporting(request);
                 bulkLoanTable.Add(loanData);
             }
@@ -19294,6 +19295,7 @@ namespace FintrakBanking.Repositories.Credit
                 request.customerId = model.customerId;
                 request.misCode = model.recoveryMisCode;
                 request.region = model.recoveryRegion;
+                request.loanRecoveryReportBatchId = model.loanRecoveryReportBatchId;
                 var loanData = addBulkLoanRecoveryCommission(request);
                 bulkLoanTable.Add(loanData);
             }
