@@ -5111,6 +5111,8 @@ namespace FintrakBanking.Repositories.Customer
                     entity.ANNUALINCOME = temp.ANNUALINCOME;
                     entity.MONTHLYINCOME = temp.MONTHLYINCOME;
                     entity.EXPENDITURE = temp.EXPENDITURE;
+                    entity.ISEMPLOYERRELATED = temp.ISEMPLOYERRELATED;
+                    entity.APPROVEDEMPLOYERID = temp.APPROVEDEMPLOYERID;
 
                     context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Add(entity);
 
@@ -5141,6 +5143,8 @@ namespace FintrakBanking.Repositories.Customer
                     entity.ANNUALINCOME = temp.ANNUALINCOME;
                     entity.MONTHLYINCOME = temp.MONTHLYINCOME;
                     entity.EXPENDITURE = temp.EXPENDITURE;
+                    entity.ISEMPLOYERRELATED = temp.ISEMPLOYERRELATED;
+                    entity.APPROVEDEMPLOYERID = temp.APPROVEDEMPLOYERID;
                 }
             }
 
