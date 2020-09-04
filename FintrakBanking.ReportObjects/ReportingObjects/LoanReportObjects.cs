@@ -4001,10 +4001,10 @@ namespace FintrakBanking.ReportObjects
                                               status = lpg.STATUSNAME,
                                               currentBalance = l.PASTDUEPRINCIPAL + l.PRINCIPALAMOUNT,
                                               excessAboveLimit = "",
-                                              //totalExposure = l.PASTDUEINTEREST + cas.AVAILABLEBALANCE,
+                                              totalExposure = l.PASTDUEINTEREST + cas.AVAILABLEBALANCE,
                                               crTurnover = "",
-                                              // custId = l.CUSTOMERID,
-                                              //sanctionLimit = lpd.APPROVEDAMOUNT,
+                                              custId = l.CUSTOMERID,
+                                              sanctionLimit = lpd.APPROVEDAMOUNT,
                                               schemeCode = l.PRODUCTID.ToString()
 
                                           }).ToList();
