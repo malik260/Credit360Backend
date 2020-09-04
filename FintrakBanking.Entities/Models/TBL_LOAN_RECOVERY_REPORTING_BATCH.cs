@@ -27,6 +27,8 @@ namespace FintrakBanking.Entities.Models
         public int LOANID { get; set; }
         public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
+        public int? COLLATERALLIQUIDATIONRECOVERYID { get; set; }
+        
 
     }
 }
