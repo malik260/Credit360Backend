@@ -289,6 +289,7 @@ namespace FintrakBanking.ReportObjects
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                            join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                            join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
+                           join bt in context.TBL_STAFF on a.DISBURSEDBY equals bt.STAFFID
                            join br in context.TBL_STAFF on a.CREATEDBY equals br.STAFFID
                            where (a.ISDISBURSED && DbFunctions.TruncateTime(a.DISBURSEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DISBURSEDATE) <= DbFunctions.TruncateTime(endDate))
                            && a.COMPANYID == companyId
@@ -302,6 +303,7 @@ namespace FintrakBanking.ReportObjects
                                approvedInterestRate = a.INTERESTRATE,
                                outstandingInterest = a.OUTSTANDINGINTEREST,
                                amountDisbursed = a.PRINCIPALAMOUNT,
+                               disbursedUser = bt.FIRSTNAME + " " + bt.MIDDLENAME + " " + bt.LASTNAME,
                                accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
                                applicationReferenceNumber = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                productName = p.PRODUCTNAME,
