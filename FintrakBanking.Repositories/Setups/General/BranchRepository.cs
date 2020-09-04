@@ -613,5 +613,86 @@ namespace FintrakBanking.Repositories.Setups.General
         //}
 
         //#endregion tbl_Branch Limit Setup
+
+
+        public IEnumerable<CollectionsRetailCronSetupViewModel> GetCollectionRetailCronJobSetup()
+        {
+            var retailCollection = from x in context.TBL_COLLECTION_RETAIL_CRON_SETUP
+                                   where x.DELETED == false
+                                   select new CollectionsRetailCronSetupViewModel
+                                   {
+                                       cronJobId = x.CRONJOBID,
+                                       startDate = x.STARTDATE,
+                                       startTime = x.STARTTIME,
+                                       endDate = x.ENDDATE,
+                                       endTime = x.ENDTIME,
+                                       cronNature = x.CRONNATURE,
+                                       createdBy = x.CREATEDBY,
+                                       dateTimeCreated = x.DATETIMECREATED,
+                                   };
+
+            return retailCollection.ToList();
+        }
+
+        public async Task<bool> AddRetailCollectionCronJobAsync(CollectionsRetailCronSetupViewModel model)
+        {
+            var response = 0;
+
+            try
+            {
+                var setup = new TBL_COLLECTION_RETAIL_CRON_SETUP()
+                {
+                    STARTDATE = model.startDate,
+                    STARTTIME = model.startTime,
+                    ENDDATE = model.endDate,
+                    ENDTIME = model.endTime,
+                    CRONNATURE = model.cronNature,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                };
+
+                this.context.TBL_COLLECTION_RETAIL_CRON_SETUP.Add(setup);
+
+                response = await context.SaveChangesAsync();
+
+            }
+            catch (Exception ex) { }
+            return response != 0;
+        }
+
+        public bool UpdateCollectionRetailCronJob(CollectionsRetailCronSetupViewModel model, short id)
+        {
+            var setup = context.TBL_COLLECTION_RETAIL_CRON_SETUP.Find(id);
+
+            if (setup != null)
+            {
+                setup.CRONJOBID = id;
+                setup.STARTDATE = model.startDate;
+                setup.STARTTIME = model.startTime;
+                setup.ENDDATE = model.endDate;
+                setup.ENDTIME = model.endTime;
+                setup.CRONNATURE = model.cronNature;
+            }
+           
+            return context.SaveChanges() > 0;
+        }
+
+
+        public async Task<bool> DeleteRetailCollectionCronJobAsync(short id, UserInfo user)
+        {
+            var response = 0;
+            var setup = context.TBL_COLLECTION_RETAIL_CRON_SETUP.Find(id);
+
+            if (setup != null)
+            {
+                setup.DELETED = true;
+                response = await context.SaveChangesAsync();
+            }
+
+            return response != 0;
+        }
+
+
+
     }
 }

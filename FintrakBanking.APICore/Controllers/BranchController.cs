@@ -361,8 +361,103 @@ namespace FintrakBanking.APICore.Controllers
            
         }
 
-        
         #endregion Branch Setup
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collection-retail-cron-setup")]
+        public HttpResponseMessage GetCollectionRetailCronJobSetup()
+        {
+                var data = _repo.GetCollectionRetailCronJobSetup();
+                
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "" });
+                }
+            
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-collection-retail-cron-setup")]
+        public async Task<HttpResponseMessage> AddRetailCollectionCronJobAsync([FromBody]CollectionsRetailCronSetupViewModel model)
+        {
+            try
+            {
+                model.createdBy = _token.GetStaffId;
+                model.userBranchId = (short)_token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = _token.GetCompanyId;
+                var result = await _repo.AddRetailCollectionCronJobAsync(model);
+                if (result)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Cron setup has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = "There was an error saving this record, Branch Name Exist" });
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("collection-retail-cron-setup/{id}")]
+        public HttpResponseMessage UpdateCollectionRetailCronJob([FromBody] CollectionsRetailCronSetupViewModel model, short id)
+        {
+
+            try
+            {
+                model.createdBy = _token.GetStaffId;
+                model.userBranchId = (short)_token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = _token.GetCompanyId;
+                var result = _repo.UpdateCollectionRetailCronJob(model, id);
+                if (result)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Changes saved successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Saved changes not successfull" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("collection-retail-cron-setup/{id}")]
+        public async Task<HttpResponseMessage> DeleteRetailCollectionCronJobAsync([FromUri] short id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = _token.GetBranchId,
+                    companyId = _token.GetCompanyId,
+                    staffId = _token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
+                var branch = await _repo.DeleteRetailCollectionCronJobAsync(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, Ok(branch));
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+
     }
 
 }
