@@ -447,8 +447,8 @@ namespace FintrakBanking.APICore.Controllers
                     staffId = _token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
                 };
-                var branch = await _repo.DeleteRetailCollectionCronJobAsync(id, user);
-                return Request.CreateResponse(HttpStatusCode.OK, Ok(branch));
+                var collection = await _repo.DeleteRetailCollectionCronJobAsync(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = collection, message = "Successfully deleted" });
             }
             catch (SecureException ex)
             {

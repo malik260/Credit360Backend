@@ -887,41 +887,43 @@ namespace FintrakBanking.Repositories.Setups.General
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
 
+            externalAlertRepository.GetLoanOperationRecoveryAnalysisByCustomer();
+
             if (CompareDate() == true)
             {
-                TimeSpan start = new TimeSpan(17, 0, 0); 
-                TimeSpan end = new TimeSpan(19, 0, 0); 
+                //TimeSpan start = new TimeSpan(17, 0, 0); 
+                //TimeSpan end = new TimeSpan(19, 0, 0); 
 
-                if ((now >= start) && (now <= end))
-                {
-                    //GetStaffLoanPortfolioReport();
-                    GetValuationReminder();
-                    GetSiteVisitationAccountReminder();
-                    GetExpiredValuationReport();
-                    GetFacilityRestructuredNotification();
-                    GetSLAReport();
-                    GetPastDueDeferredDocuments();
-                    GetExpiredInsurancePolicies();
-                    GetLoanRepaymentReminder();
-                    GetGroupCreditFileChecklistReminder();
-                    state = true;
-                }
+                //if ((now >= start) && (now <= end))
+                //{
+                //    //GetStaffLoanPortfolioReport();
+                //    GetValuationReminder();
+                //    GetSiteVisitationAccountReminder();
+                //    GetExpiredValuationReport();
+                //    GetFacilityRestructuredNotification();
+                //    GetSLAReport();
+                //    GetPastDueDeferredDocuments();
+                //    GetExpiredInsurancePolicies();
+                //    GetLoanRepaymentReminder();
+                //    GetGroupCreditFileChecklistReminder();
+                //    state = true;
+                //}
             }
 
             if (CompareDateSectorLimit() == true)
             {
-                TimeSpan start2 = new TimeSpan(8, 0, 0); 
-                TimeSpan end2 = new TimeSpan(17, 0, 0);
+                //TimeSpan start2 = new TimeSpan(8, 0, 0); 
+                //TimeSpan end2 = new TimeSpan(17, 0, 0);
 
-                if ((now >= start2) && (now <= end2))
-                {
-                    GetSectorLimitExceedeBBDReminder();
-                    GetSectorLimitExceedeCBDReminder();
-                    GetSectorLimitExceedeCIBDReminder();
-                    GetSectorLimitExceedeRBDReminder();
-                    GetSectorLimitExceededBankReminder();
-                    state = true;
-                }
+                //if ((now >= start2) && (now <= end2))
+                //{
+                //    GetSectorLimitExceedeBBDReminder();
+                //    GetSectorLimitExceedeCBDReminder();
+                //    GetSectorLimitExceedeCIBDReminder();
+                //    GetSectorLimitExceedeRBDReminder();
+                //    GetSectorLimitExceededBankReminder();
+                //    state = true;
+                //}
 
                 
             }
@@ -929,62 +931,63 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareDigitalLoanDate() == true)
             {
-                TimeSpan start11 = new TimeSpan(11, 0, 0); 
-                TimeSpan end13 = new TimeSpan(13, 0, 0); 
+                //TimeSpan start11 = new TimeSpan(11, 0, 0); 
+                //TimeSpan end13 = new TimeSpan(13, 0, 0); 
 
-                if ((now >= start11) && (now <= end13))
-                {
-                    GetDigitalLoanExceptionNPLIncrease();
-                    GetDigitalLoanExceptionNPLDecrease();
-                    GetDigitalLoanExceptionNPLModuleIncrease();
-                    GetDigitalLoanExceptionNPLModuleDecrease();
-                    GetDigitalLoanDisbursementIncrease();
-                    GetDigitalLoanDisbursementDecrease();
-                    GetDigitalLoanDisbursementModuleIncrease();
-                    GetDigitalLoanDisbursementModuleDecrease();
-                    GetDigitalLoanDPDIncrease();
-                    GetDigitalLoanDPDDecrease();
-                    GetDigitalLoanDPDModuleIncrease();
-                    GetDigitalLoanDPDModuleDecrease();
-                    GetDigitalLoanLiquidationIncrease();
-                    GetDigitalLoanLiquidationModuleIncrease();
-                    state = true;
-                }
+                //if ((now >= start11) && (now <= end13))
+                //{
+                //    GetDigitalLoanExceptionNPLIncrease();
+                //    GetDigitalLoanExceptionNPLDecrease();
+                //    GetDigitalLoanExceptionNPLModuleIncrease();
+                //    GetDigitalLoanExceptionNPLModuleDecrease();
+                //    GetDigitalLoanDisbursementIncrease();
+                //    GetDigitalLoanDisbursementDecrease();
+                //    GetDigitalLoanDisbursementModuleIncrease();
+                //    GetDigitalLoanDisbursementModuleDecrease();
+                //    GetDigitalLoanDPDIncrease();
+                //    GetDigitalLoanDPDDecrease();
+                //    GetDigitalLoanDPDModuleIncrease();
+                //    GetDigitalLoanDPDModuleDecrease();
+                //    GetDigitalLoanLiquidationIncrease();
+                //    GetDigitalLoanLiquidationModuleIncrease();
+                //    state = true;
+                //}
 
 
             }
 
             if (CompareDefaultRepayment() == true)
             {
-                TimeSpan start11 = new TimeSpan(14, 0, 0);
-                TimeSpan end13 = new TimeSpan(16, 0, 0);
+                //TimeSpan start11 = new TimeSpan(14, 0, 0);
+                //TimeSpan end13 = new TimeSpan(16, 0, 0);
 
-                if ((now >= start11) && (now <= end13))
-                {
-                    GetRepaymentDefaultersAlert();
-                    GetRepaymentPayDownAlert();
-                    state = true;
-                }
+                //if ((now >= start11) && (now <= end13))
+                //{
+                //    GetRepaymentDefaultersAlert();
+                //    GetRepaymentPayDownAlert();
+                //    state = true;
+                //}
             }
 
             
-            /*if (CompareDate() == true)
+            if (CompareDate() == true)
             {
-                TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
-                TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
-                TimeSpan now = DateTime.Now.TimeOfDay;
+                //TimeSpan start = new TimeSpan(8, 0, 0); 
+                //TimeSpan end = new TimeSpan(11, 0, 0); 
+                
+                //if ((now >= start) && (now <= end))
+                //{
+                //    GroupImminentMaturitiesByGroupHeads();
+                //    GetImminentMaturities();
+                //    GetPastDueObligationsReminder();
+                //    GetPastDueObligationsReminderByGroupHeads();
+                //    state = true;
+                //}
+            }
 
-                if ((now >= start) && (now <= end))
-                {
-                    GroupImminentMaturitiesByGroupHeads();
-                    GetImminentMaturities();
-                    GetPastDueObligationsReminder();
-                    GetPastDueObligationsReminderByGroupHeads();
-                    state = true;
-                }
-            }*/
             return state;
         }
+
         private bool CompareDate()
         {
             DateTime currentDate = DateTime.Now;

@@ -686,6 +686,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (setup != null)
             {
                 setup.DELETED = true;
+                setup.DATETIMEDELETED = DateTime.Now;
                 response = await context.SaveChangesAsync();
             }
 
