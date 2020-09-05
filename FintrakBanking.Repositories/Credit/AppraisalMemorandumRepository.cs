@@ -3457,7 +3457,7 @@ namespace FintrakBanking.Repositories.Credit
                             //    t.REQUESTSTAFFID = staffId;
                             //}
                             trail.LOOPEDSTAFFID = staffId;
-                            trail.SYSTEMARRIVALDATETIME = systemDateNow;
+                            //trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                         else
                         {
@@ -3468,7 +3468,7 @@ namespace FintrakBanking.Repositories.Credit
                             //    t.REQUESTSTAFFID = staffId;
                             //}
                             trail.TOSTAFFID = staffId;
-                            trail.SYSTEMARRIVALDATETIME = systemDateNow;
+                            //trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                     }
 
