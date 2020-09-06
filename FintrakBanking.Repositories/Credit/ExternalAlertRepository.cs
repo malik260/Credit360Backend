@@ -6186,5 +6186,4 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-    }
 }
