@@ -280,6 +280,14 @@ namespace FintrakBanking.ViewModels.Credit
         
         public DateTime maturityDate { get; set; }
         public string customerName { get; set; }
+
+        public string facilityDetails { get; set; }
+        public string facilityReference { get; set; }
+        public string currencyCode { get; set; }
+        public string comment { get; set; }
+        public string contractCode { get; set; }
+        public string facilityType { get; set; }
+        public string applicationReference { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
