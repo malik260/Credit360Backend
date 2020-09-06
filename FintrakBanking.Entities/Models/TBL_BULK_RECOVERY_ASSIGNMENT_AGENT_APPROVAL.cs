@@ -18,5 +18,6 @@ namespace FintrakBanking.Entities.Models
         public int APPROVALSTATUSID { get; set; }
         public int OPERATIONID { get; set; }
         public DateTime REQUESTDATE { get; set; }
+        public string SOURCE { get; set; }
     }
 }
