@@ -549,6 +549,7 @@ namespace FintrakBanking.Repositories.Customer
                     COMPANYID = entity.companyId,
                 };
                 context.TBL_LOAN_APPLICATION_COVENANT.Add(convenant);
+                context.SaveChanges();
             }
             else
             {
