@@ -490,6 +490,25 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
+        [Route("retail-recovery-report/{startDate}/{endDate}")]
+        public HttpResponseMessage GetRetailRecoveryReporting([FromUri] DateTime startDate, [FromUri] DateTime endDate)
+        {
+            
+                var records = repo.GetRetailRecoveryReporting(startDate, endDate);
+            if (records != null) {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = records });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record(s) found" });
+            }
+            
+        }
+
+
+
+
+        [HttpGet]
         [Route("customer-ratios/{customerId}/{applicationId}")]
         public HttpResponseMessage GetCustomerRatios(int customerId, int applicationId)
         {

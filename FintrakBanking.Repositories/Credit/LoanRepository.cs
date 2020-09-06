@@ -18329,7 +18329,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool saveBulkLoanAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, UserInfo user)
+        public bool saveBulkLoanAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, UserInfo user)
         {
             bool result = false;
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -18343,6 +18343,7 @@ namespace FintrakBanking.Repositories.Credit
             var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
                                                           && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                                           && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                                                          && x.DELETED == false
                                                           ).ToList();
             if (validate != null && validate.Count() > 0)
             {
