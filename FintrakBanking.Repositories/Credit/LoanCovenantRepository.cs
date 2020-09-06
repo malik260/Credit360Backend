@@ -529,7 +529,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool AddLoanApplicationCovenant(LoanCovenantDetailViewModel entity)
         {
-            if (entity.loanCovenantDetailId > 0)
+            if (entity.loanCovenantDetailId == 0)
             {
                 var convenant = new TBL_LOAN_APPLICATION_COVENANT
                 {
