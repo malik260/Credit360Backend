@@ -531,6 +531,22 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (entity.loanCovenantDetailId > 0)
             {
+                var convenant = context.TBL_LOAN_APPLICATION_COVENANT.Find(entity.loanCovenantDetailId);
+                convenant.COVENANTAMOUNT = entity.covenantAmount;
+                convenant.COVENANTDATE = entity.covenantDate;
+                convenant.COVENANTDETAIL = entity.covenantDetail;
+                convenant.COVENANTTYPEID = entity.covenantTypeId;
+                convenant.FREQUENCYTYPEID = entity.frequencyTypeId;
+                convenant.LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId;
+                convenant.ISPERCENTAGE = entity.isPercentage;
+                convenant.NEXTCOVENANTDATE = GetFrequencyDate((int)entity.frequencyTypeId, entity.covenantDate);
+                convenant.PREVIOUSCOVENANTDATE = GetFrequencyDate((int)entity.frequencyTypeId, entity.covenantDate);
+                convenant.CASAACCOUNTID = entity.casaAccountId;
+                convenant.DATETIMEUPDATED = DateTime.Now;
+                context.SaveChanges();
+            }
+            else
+            {
                 var convenant = new TBL_LOAN_APPLICATION_COVENANT
                 {
                     LOANCOVENANTDETAILID = entity.loanCovenantDetailId,
@@ -549,22 +565,7 @@ namespace FintrakBanking.Repositories.Customer
                     COMPANYID = entity.companyId,
                 };
                 context.TBL_LOAN_APPLICATION_COVENANT.Add(convenant);
-            }
-            else
-            {
-                var convenant = context.TBL_LOAN_APPLICATION_COVENANT.Find(entity.loanCovenantDetailId);
-                    convenant.COVENANTAMOUNT = entity.covenantAmount;
-                    convenant.COVENANTDATE = entity.covenantDate;
-                    convenant.COVENANTDETAIL = entity.covenantDetail;
-                    convenant.COVENANTTYPEID = entity.covenantTypeId;
-                    convenant.FREQUENCYTYPEID = entity.frequencyTypeId;
-                    convenant.LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId;
-                    convenant.ISPERCENTAGE = entity.isPercentage;
-                    convenant.NEXTCOVENANTDATE = GetFrequencyDate((int)entity.frequencyTypeId, entity.covenantDate);
-                    convenant.PREVIOUSCOVENANTDATE = GetFrequencyDate((int)entity.frequencyTypeId, entity.covenantDate);
-                    convenant.CASAACCOUNTID = entity.casaAccountId;
-                    convenant.DATETIMEUPDATED = DateTime.Now;
-                    context.SaveChanges();
+                context.SaveChanges();
             }
             var appl = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
 
