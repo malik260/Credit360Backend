@@ -19468,7 +19468,7 @@ namespace FintrakBanking.Repositories.Credit
             return dataLoan;
         }
 
-        public IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId)
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApprovalList(string source, int staffId, int companyId)
         {
             var dataLoan = (from ln in context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
                             join atrail in context.TBL_APPROVAL_TRAIL on ln.BULKRECOVERYAPPROVALID equals atrail.TARGETID
@@ -19480,6 +19480,7 @@ namespace FintrakBanking.Repositories.Credit
                             || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                             && atrail.OPERATIONID == ln.OPERATIONID
+                            && source.ToLower() == source.ToLower()
 
                             select new LoanReviewOperationApprovalViewModel
                             {
@@ -19500,11 +19501,12 @@ namespace FintrakBanking.Repositories.Credit
             return LoanData;
         }
 
-        public IEnumerable<LoanReviewOperationApprovalViewModel> BulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId)
+        public IEnumerable<LoanReviewOperationApprovalViewModel> BulkRecoveryToAgentAwaitingApprovalList(string source, int staffId, int companyId)
         {
             var dataLoan = (from ln in context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
                             where
                             ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                            && ln.SOURCE.ToLower() == source.ToLower()
 
                             select new LoanReviewOperationApprovalViewModel
                             {
@@ -31487,7 +31489,7 @@ namespace FintrakBanking.Repositories.Credit
             return allData;
         }
 
-        public IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(int staffId, int companyId)
+        public IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(string source, int staffId, int companyId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
 
@@ -31506,6 +31508,7 @@ namespace FintrakBanking.Repositories.Credit
                             && pr.EXCLUDEFROMLITIGATION == false
                             && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && lr.SOURCE.ToLower() == source.ToLower()
 
                             select new LoanReviewOperationApprovalViewModel
                             {

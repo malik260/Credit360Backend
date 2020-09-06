@@ -1064,10 +1064,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("bulk-recovery-assignment-to-agent/awaiting-approval-list")]
-        public HttpResponseMessage GetLienRemovalAwaitingApprovalList()
+        [Route("bulk-recovery-assignment-to-agent/awaiting-approval-list/{source}")]
+        public HttpResponseMessage GetLienRemovalAwaitingApprovalList(string source)
         {
-            var data = repo.GetBulkRecoveryToAgentAwaitingApprovalList(token.GetStaffId, token.GetCompanyId);
+            var data = repo.GetBulkRecoveryToAgentAwaitingApprovalList(source, token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1096,10 +1096,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("bulk-recovery-assignment-to-agent/application-list")]
-        public HttpResponseMessage BulkRecoveryToAgentAwaitingApprovalList()
+        [Route("bulk-recovery-assignment-to-agent/application-list/{source}")]
+        public HttpResponseMessage BulkRecoveryToAgentAwaitingApprovalList(string source)
         {
-            var data = repo.BulkRecoveryToAgentAwaitingApprovalList(token.GetStaffId, token.GetCompanyId);
+            var data = repo.BulkRecoveryToAgentAwaitingApprovalList(source, token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1201,10 +1201,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-analysis-agents")]
-        public HttpResponseMessage getAllLoansOperationRecoveryAnalysisByAgent()
+        [Route("loan-operation/recovery-analysis-agents/{source}")]
+        public HttpResponseMessage getAllLoansOperationRecoveryAnalysisByAgent(string source)
         {
-            var data = repo.getAllLoansOperationRecoveryAnalysisByAgent(token.GetStaffId, token.GetCompanyId);
+            var data = repo.getAllLoansOperationRecoveryAnalysisByAgent(source, token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
