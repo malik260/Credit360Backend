@@ -45,6 +45,9 @@ namespace FintrakBanking.Entities.Models
 
         public int EMPLOYERCOUNTRYID { get; set; }
 
+        public int? APPROVEDEMPLOYERID { get; set; }
+        public bool ISEMPLOYERRELATED { get; set; }
+
         [Required]
         //[StringLength(200)]
         public string OFFICEPHONE { get; set; }

@@ -1951,6 +1951,8 @@ namespace FintrakBanking.Repositories.Customer
                         history.EMPLOYERNAME = entity.employerName;
                         history.OFFICEPHONE = entity.officePhone;
                         history.PREVIOUSEMPLOYER = entity.previousEmployer;
+                        history.ISEMPLOYERRELATED = entity.isEmployerRelated;
+                        history.APPROVEDEMPLOYERID = entity.approvedEmployerId;
 
                         auditDetail = "Updated Customer Employment History for customer ID: + (" + entity.customerId + ") ";
                         auditType = (short)AuditTypeEnum.CustomerDetailUpdated;
@@ -1983,6 +1985,8 @@ namespace FintrakBanking.Repositories.Customer
                         history.ANNUALINCOME = entity.annualIncome;
                         history.MONTHLYINCOME = entity.monthlyIncome;
                         history.EXPENDITURE = entity.expenditure;
+                        history.ISEMPLOYERRELATED = entity.isEmployerRelated;
+                        history.APPROVEDEMPLOYERID = entity.approvedEmployerId;
                         context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Add(history);
                         auditDetail = "Added Customer Employment History for customer ID: + (" + entity.customerId + ") ";
                         auditType = (short)AuditTypeEnum.CustomerDetailAdded;
@@ -2029,6 +2033,8 @@ namespace FintrakBanking.Repositories.Customer
                             temp.EMPLOYERNAME = entity.employerName;
                             temp.OFFICEPHONE = entity.officePhone;
                             temp.PREVIOUSEMPLOYER = entity.previousEmployer;
+                            temp.ISEMPLOYERRELATED = entity.isEmployerRelated;
+                            temp.APPROVEDEMPLOYERID = entity.approvedEmployerId;
                             existingTempAddress.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             existingTempAddress.ISCURRENT = true;
                             modifiedTargetId = temp.TEMPPLACEOFWORKID;
@@ -2066,6 +2072,8 @@ namespace FintrakBanking.Repositories.Customer
                             temp.MONTHLYINCOME = entity.monthlyIncome;
                             temp.EXPENDITURE = entity.expenditure;
                             temp.PLACEOFWORKID = entity.placeOfWorkId;
+                            temp.ISEMPLOYERRELATED = entity.isEmployerRelated;
+                            temp.APPROVEDEMPLOYERID = entity.approvedEmployerId;
                             context.TBL_TEMP_CUSTOMEREMPLOYMENT.Add(temp);
 
                             auditDetail = "Added Customer Employment History for customer ID: + (" + entity.customerId + ") ";
@@ -3788,7 +3796,9 @@ namespace FintrakBanking.Repositories.Customer
                                          annualIncome = s.ANNUALINCOME,
                                          monthlyIncome = s.MONTHLYINCOME,
                                          expenditure = s.EXPENDITURE,
-                                         employerId = s.EMPLOYERID
+                                         isEmployerRelated = s.ISEMPLOYERRELATED,
+                                         approvedEmployerId = s.APPROVEDEMPLOYERID,
+                                         employerId = s.APPROVEDEMPLOYERID
                                      }).ToList();
             return employmentHistory;
         }
@@ -3796,6 +3806,12 @@ namespace FintrakBanking.Repositories.Customer
         public CustomerEmploymentHistoryViewModels GetSingleCustomerRelatedEmployer(int customerId)
         {
             var employers = GetSingleCustomerEmploymentHistoryInfo(customerId);
+            var activeEmployers = employers.Where(e => e.active && e.employerId > 0).ToList();
+            if (activeEmployers.Count > 1)
+            {
+                throw new SecureException("There cannot be more than one active current employer setup for a customer!");
+            }
+
             var relatedEmployer = employers.Where(e => e.active && e.employerId > 0).FirstOrDefault();
             if (relatedEmployer == null)
             {
@@ -3828,7 +3844,9 @@ namespace FintrakBanking.Repositories.Customer
                                          terminalBenefits = s.TERMINALBENEFITS,
                                          annualIncome = s.ANNUALINCOME,
                                          monthlyIncome = s.MONTHLYINCOME,
-                                         expenditure =s.EXPENDITURE
+                                         expenditure =s.EXPENDITURE,
+                                         isEmployerRelated = s.ISEMPLOYERRELATED,
+                                         approvedEmployerId = s.APPROVEDEMPLOYERID
                                      }).ToList();
             return employmentHistory;
         }
@@ -5093,6 +5111,8 @@ namespace FintrakBanking.Repositories.Customer
                     entity.ANNUALINCOME = temp.ANNUALINCOME;
                     entity.MONTHLYINCOME = temp.MONTHLYINCOME;
                     entity.EXPENDITURE = temp.EXPENDITURE;
+                    entity.ISEMPLOYERRELATED = temp.ISEMPLOYERRELATED;
+                    entity.APPROVEDEMPLOYERID = temp.APPROVEDEMPLOYERID;
 
                     context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Add(entity);
 
@@ -5123,6 +5143,8 @@ namespace FintrakBanking.Repositories.Customer
                     entity.ANNUALINCOME = temp.ANNUALINCOME;
                     entity.MONTHLYINCOME = temp.MONTHLYINCOME;
                     entity.EXPENDITURE = temp.EXPENDITURE;
+                    entity.ISEMPLOYERRELATED = temp.ISEMPLOYERRELATED;
+                    entity.APPROVEDEMPLOYERID = temp.APPROVEDEMPLOYERID;
                 }
             }
 

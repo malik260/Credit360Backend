@@ -523,7 +523,7 @@ namespace FintrakBanking.Repositories.Credit
                             detail.LASTUPDATEDBY = model.createdBy;
                             detail.DATETIMEUPDATED = DateTime.Now;
 
-                            if (model.isBusiness) // DELETE OR UPDATE PROPOSED
+                            if (model.isBusiness && model.forwardAction != (int)ApprovalStatusEnum.Referred) // DELETE OR UPDATE PROPOSED
                             {
                                 if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
                                 else
@@ -943,6 +943,8 @@ namespace FintrakBanking.Repositories.Credit
                              operationId = a.OPERATIONID,
                              productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                              tranchLevelId = a.TRANCHEAPPROVAL_LEVELID,
+                             isEmployerRelated = a.ISEMPLOYERRELATED,
+                             employer = context.TBL_CUSTOMER_EMPLOYER.FirstOrDefault(e => e.EMPLOYERID == a.RELATEDEMPLOYERID).EMPLOYER_NAME,
                              applicationDetails = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                                                    where d.LOANAPPLICATIONID == a.LOANAPPLICATIONID
                                                    select new LoanApplicationDetailViewModel()
@@ -1363,7 +1365,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
             var cancelationInProgress = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == lc.LCISSUANCEID && t.OPERATIONID == (int)OperationsEnum.LCTerminationApproval && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended);
-            if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress || lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted)
+            if ((lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress && model.isInitiation) || lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted)
             {
                 throw new SecureException("LC Issuance Cancelation Approval Already Ongoing or Completed");
             }
@@ -2002,6 +2004,8 @@ namespace FintrakBanking.Repositories.Credit
                     systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
                     responseStaffId = x.RESPONSESTAFFID,
                     requestStaffId = x.REQUESTSTAFFID,
+                    toStaffId = x.TOSTAFFID,
+                    loopedStaffId = x.LOOPEDSTAFFID,
                     fromApprovalLevelId = x.FROMAPPROVALLEVELID ,
                     fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a=>a.APPROVALLEVELID ==x.FROMAPPROVALLEVELID).Select(a=>a.LEVELNAME).FirstOrDefault(),
                     toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a=>a.APPROVALLEVELID ==x.TOAPPROVALLEVELID).Select(a=>a.LEVELNAME).FirstOrDefault(),
@@ -2044,6 +2048,20 @@ namespace FintrakBanking.Repositories.Credit
             
 
             data.OrderByDescending(d => d.approvalTrailId);
+            //foreach(var d in data)
+            //{
+            //    if (d.fromApprovalLevelId == d.toApprovalLevelId)
+            //    {
+            //        if (d.loopedStaffId > 0)
+            //        {
+            //            d.toApprovalLevelName = staffs.FirstOrDefault(s => s.STAFFID == d.loopedStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
+            //        }
+            //        else
+            //        {
+            //            d.fromApprovalLevelName = staffs.FirstOrDefault(s => s.STAFFID == d.requestStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
+            //        }
+            //    }
+            //}
 
             //for Filtering multiple occuring levels
             //var data2 = data.ToList();
@@ -2116,6 +2134,8 @@ namespace FintrakBanking.Repositories.Credit
                 systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
                 responseStaffId = x.RESPONSESTAFFID,
                 requestStaffId = x.REQUESTSTAFFID,
+                toStaffId = x.TOSTAFFID,
+                loopedStaffId = x.LOOPEDSTAFFID,
                 fromApprovalLevelId = x.FROMAPPROVALLEVELID,
                 fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
@@ -2223,9 +2243,9 @@ namespace FintrakBanking.Repositories.Credit
                 currentLevelId = data.LastOrDefault()?.toApprovalLevelId ?? 0;
             }
 
-            while (data.Exists(d => d.approvalStateId == (int)ApprovalState.Ended && d.approvalStatusId != (int)ApprovalStatusEnum.Approved) && !isClassified)//get only un-ended trail incase of workflow ending&/change
+            while (data.Exists(d => d.approvalStateId == (int)ApprovalState.Ended && (d.approvalStatusId != (int)ApprovalStatusEnum.Approved && d.approvalStatusId != (int)ApprovalStatusEnum.Closed)) && !isClassified)//get only un-ended trail incase of workflow ending&/change
             {
-                var firstTrail = data.FirstOrDefault(t => t.approvalStateId == (int)ApprovalState.Ended && t.approvalStatusId != (int)ApprovalStatusEnum.Approved);
+                var firstTrail = data.FirstOrDefault(t => t.approvalStateId == (int)ApprovalState.Ended && (t.approvalStatusId != (int)ApprovalStatusEnum.Approved && t.approvalStatusId != (int)ApprovalStatusEnum.Closed));
                 data = data.Where(t => t.approvalTrailId > firstTrail.approvalTrailId).ToList();
             }
 
@@ -3437,7 +3457,7 @@ namespace FintrakBanking.Repositories.Credit
                             //    t.REQUESTSTAFFID = staffId;
                             //}
                             trail.LOOPEDSTAFFID = staffId;
-                            trail.SYSTEMARRIVALDATETIME = systemDateNow;
+                            //trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                         else
                         {
@@ -3448,7 +3468,7 @@ namespace FintrakBanking.Repositories.Credit
                             //    t.REQUESTSTAFFID = staffId;
                             //}
                             trail.TOSTAFFID = staffId;
-                            trail.SYSTEMARRIVALDATETIME = systemDateNow;
+                            //trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                     }
 

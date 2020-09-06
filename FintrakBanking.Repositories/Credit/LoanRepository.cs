@@ -5525,7 +5525,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 revolvingLoanRecord.DATEAPPROVED = DateTime.Now;
                 revolvingLoanRecord.DISBURSEDATE = DateTime.Now;
-                revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                 revolvingLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                 revolvingLoanRecord.ISDISBURSED = true;
                 revolvingLoanRecord.APPROVEDBY = user.createdBy;
@@ -5562,7 +5562,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 contingentLoanRecord.DATEAPPROVED = DateTime.Now;
-                contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
                 var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
                 loanScheduleModel.operationId = contingentLoanRecord.OPERATIONID;
@@ -9933,7 +9933,8 @@ namespace FintrakBanking.Repositories.Credit
                             requestedBy = "",
                             appraisalOperationId = m.OPERATIONID,
                             requestedAmount = s.AMOUNT_REQUESTED,
-                            requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
+                            //requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
+                            requestOperationId = (short)(s.OPERATIONID ?? 0),
                             approvalStatusId = (short)m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
@@ -10606,7 +10607,8 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in customer)
             {
-                var customercode = context.TBL_CUSTOMER.Find(item.customerId).CUSTOMERCODE;
+                var customercode = context.TBL_CUSTOMER.Find(item.customerId)?.CUSTOMERCODE;
+
                 camsol = (from cam in context.TBL_LOAN_CAMSOL
                           join c in context.TBL_LOAN_CAMSOL_TYPE on cam.CAMSOLTYPEID equals c.CAMSOLTYPEID
                           where cam.CUSTOMERCODE == customercode
@@ -10684,7 +10686,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in customer)
             {
-                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId).CUSTOMERCODE.Trim();
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId)?.CUSTOMERCODE.Trim();
                 //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
                 exposure = (from a in context.TBL_GLOBAL_EXPOSURE
@@ -13976,7 +13978,7 @@ namespace FintrakBanking.Repositories.Credit
                               // operationId = e.OPERATIONID,
                               // operationName = e.OPERATIONNAME,
                               //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
-                              approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME
+                              approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME.ToUpper()
                           }).Distinct().OrderByDescending(O => O.approvalTrailId);
 
             var response = result.ToList();
@@ -19140,6 +19142,7 @@ namespace FintrakBanking.Repositories.Credit
                 request.totalAmountRecovery = model.totalRecoveryAmount;
                 request.amountRecovered = model.recoveredAmount;
                 request.customerId = model.customerId;
+                request.collateralLiquidationRecoveryId = model.collateralLiquidationRecoveryId;
                 var loanData = addBulkLoanRecoveryReporting(request);
                 bulkLoanTable.Add(loanData);
             }
@@ -19250,7 +19253,9 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVALSTATUSID = entity.approvalStatusId,
                 OPERATIONCOMPLETED = entity.operationCompleted,
                 TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
-                AMOUNTRECOVERED = entity.amountRecovered
+                AMOUNTRECOVERED = entity.amountRecovered,
+                COLLATERALLIQUIDATIONRECOVERYID = entity.collateralLiquidationRecoveryId
+
             };
             return data;
         }
@@ -19293,6 +19298,7 @@ namespace FintrakBanking.Repositories.Credit
                 request.customerId = model.customerId;
                 request.misCode = model.recoveryMisCode;
                 request.region = model.recoveryRegion;
+                request.loanRecoveryReportBatchId = model.loanRecoveryReportBatchId;
                 var loanData = addBulkLoanRecoveryCommission(request);
                 bulkLoanTable.Add(loanData);
             }
@@ -19408,7 +19414,8 @@ namespace FintrakBanking.Repositories.Credit
                 TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
                 AMOUNTRECOVERED = entity.amountRecovered,
                 MISCODE = entity.misCode,
-                REGION = entity.region
+                REGION = entity.region,
+                LOANRECOVERYREPORTBATCHID = entity.loanRecoveryReportBatchId
             };
             return data;
         }

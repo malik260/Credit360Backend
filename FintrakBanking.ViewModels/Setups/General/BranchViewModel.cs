@@ -51,4 +51,14 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string houStaffName { get; set; }
     }
 
+    public class CollectionsRetailCronSetupViewModel : GeneralEntity
+    {
+        public int cronJobId { get; set; }
+        public DateTime startDate { get; set; }
+        public string startTime { get; set; }
+        public DateTime endDate { get; set; }
+        public string endTime { get; set; }
+        public int cronNature { get; set; }
+    }
+
 }

@@ -11,6 +11,7 @@ using FintrakBanking.Common.Enum;
 using System.Data;
 using FintrakBanking.Common.Extensions;
 using FintrakBanking.Common;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -19,19 +20,21 @@ namespace FintrakBanking.Repositories.Setups.General
         private readonly FinTrakBankingContext _context;
         private readonly IGeneralSetupRepository _genSetup;
         private readonly IAuditTrailRepository _auditTrail;
+        private IWorkflow _workflow;
 
         public EmployerRepository(FinTrakBankingContext context, IGeneralSetupRepository genSetup,
-                                IAuditTrailRepository auditTrail)
+                                IAuditTrailRepository auditTrail, IWorkflow workflow)
         {
             _context = context;
             _genSetup = genSetup;
             _auditTrail = auditTrail;
+            _workflow = workflow;
         }
 
         #region Employer functions
         public string addEmployer(EmployerViewModel employer)
         {
-            if (employer!=null)
+            if (employer != null)
             {
                 var employerDb = new TBL_CUSTOMER_EMPLOYER
                 {
@@ -42,13 +45,19 @@ namespace FintrakBanking.Repositories.Setups.General
                     EMPLOYER_SUB_TYPEID = employer.employerSubTypeId,
                     CITYID  = employer.cityId,
                     DATETIMECREATED = _genSetup.GetApplicationDate(),
-                    CREATEDBY =employer.createdBy,
-                    COMPANYID=employer.companyId,
-                    DELETED = false
+                    CREATEDBY = employer.createdBy,
+                    COMPANYID = employer.companyId,
+                    DELETED = false,
+                    APPROVALSTATUSID = (short) ApprovalStatusEnum.Pending,
+                    OPERATIONID = (int) OperationsEnum.RelatedEmployer,
+                    ACTIVE = employer.active,
+                    ESTABLISHMENTDATE = employer.establishmentDate,
+                    STATEID = employer.stateId,
+                    COUNTRYID = employer.countryId
                 };
-            _context.TBL_CUSTOMER_EMPLOYER.Add(employerDb);
-              
 
+                _context.TBL_CUSTOMER_EMPLOYER.Add(employerDb);
+              
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalInserted,
@@ -79,7 +88,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 employerDel.DATETIMEDELETED = employer.dateTimeDeleted;
                 employerDel.DELETED = true;
                 employerDel.DELETEDBY = employer.staffId;
-
                 
                 var audit = new TBL_AUDIT
                 {
@@ -105,34 +113,241 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<EmployerViewModel> getEmployer(int companyId)
         {
-
             var employerData = (from a in _context.TBL_CUSTOMER_EMPLOYER
                                 join c in _context.TBL_CITY on a.CITYID equals c.CITYID
                                 join sb in _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB on a.EMPLOYER_SUB_TYPEID equals sb.EMPLOYER_SUB_TYPEID
                                 where a.COMPANYID == companyId & a.DELETED == false
                                 orderby a.EMPLOYER_NAME
                                 select new EmployerViewModel {
-
-                                    employerName=a.EMPLOYER_NAME,
-                                    emailAddress=a.EMAILADDRESS,
-                                    phoneNumber=a.PHONENUMBER,
-                                    address=a.ADDRESS,
+                                    employerName = a.EMPLOYER_NAME,
+                                    emailAddress = a.EMAILADDRESS,
+                                    phoneNumber = a.PHONENUMBER,
+                                    address = a.ADDRESS,
                                     cityName = c.CITYNAME,
-                                    employerId=a.EMPLOYERID,
+                                    employerId = a.EMPLOYERID,
                                     createdBy = a.CREATEDBY,
                                     employerSubTypeName = sb.EMPLOYER_SUB_TYPE_NAME,
-                                    employerSubTypeId=a.EMPLOYER_SUB_TYPEID,
-                                    cityId=a.CITYID,
-                                    companyId=companyId,
-                                    stateId=c.TBL_LOCALGOVERNMENT.STATEID,
-                                    employerTypeId = sb.EMPLOYER_TYPEID
-
-
+                                    employerSubTypeId = a.EMPLOYER_SUB_TYPEID,
+                                    cityId = a.CITYID,
+                                    companyId = companyId,
+                                    stateId = c.TBL_LOCALGOVERNMENT.STATEID,
+                                    
+                                    employerTypeId = sb.EMPLOYER_TYPEID,
+                                    //employerTypeName = sb.TBL_CUSTOMER_EMPLOYER_TYPE.EMPLOYER_TYPE_NAME
                                 }).ToList();
             return employerData;
         }
 
-      
+        public IEnumerable<EmployerViewModel> getAllPendingEmployers(int companyId)
+        {
+            var employerData = (from a in _context.TBL_CUSTOMER_EMPLOYER
+                                join c in _context.TBL_CITY on a.CITYID equals c.CITYID
+                                join sb in _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB on a.EMPLOYER_SUB_TYPEID equals sb.EMPLOYER_SUB_TYPEID
+                                where a.COMPANYID == companyId && a.DELETED == false && a.APPROVALSTATUSID == (short) ApprovalStatusEnum.Pending
+                                orderby a.EMPLOYER_NAME
+                                select new EmployerViewModel
+                                {
+                                    employerName = a.EMPLOYER_NAME,
+                                    emailAddress = a.EMAILADDRESS,
+                                    phoneNumber = a.PHONENUMBER,
+                                    address = a.ADDRESS,
+                                    cityName = c.CITYNAME,
+                                    employerId = a.EMPLOYERID,
+                                    createdBy = a.CREATEDBY,
+                                    employerSubTypeName = sb.EMPLOYER_SUB_TYPE_NAME,
+                                    employerSubTypeId = a.EMPLOYER_SUB_TYPEID,
+                                    cityId = a.CITYID,
+                                    companyId = companyId,
+                                    //stateId = c.TBL_LOCALGOVERNMENT.STATEID,
+
+                                    stateId = a.STATEID,
+                                    countryId = a.COUNTRYID,
+                                    establishmentDate = a.ESTABLISHMENTDATE,
+                                    active = a.ACTIVE,
+                                    operationId = a.OPERATIONID,
+                                    approvalStatusId = a.APPROVALSTATUSID,
+                                    employerTypeId = sb.EMPLOYER_TYPEID,
+                                    approvalStatus = _context.TBL_APPROVAL_STATUS.FirstOrDefault(b => b.APPROVALSTATUSID == a.APPROVALSTATUSID).APPROVALSTATUSNAME.ToUpper(),
+                                    //employerTypeName = sb.TBL_CUSTOMER_EMPLOYER_TYPE.EMPLOYER_TYPE_NAME
+                                }).ToList();
+            return employerData;
+        }
+
+        public IEnumerable<EmployerViewModel> getAllApprovedEmployers(int companyId)
+        {
+            var employerData = (from a in _context.TBL_CUSTOMER_EMPLOYER
+                                join c in _context.TBL_CITY on a.CITYID equals c.CITYID
+                                join sb in _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB on a.EMPLOYER_SUB_TYPEID equals sb.EMPLOYER_SUB_TYPEID
+                                where a.COMPANYID == companyId && a.DELETED == false && a.APPROVALSTATUSID == (short) ApprovalStatusEnum.Approved
+                                orderby a.EMPLOYER_NAME
+                                select new EmployerViewModel
+                                {
+                                    employerName = a.EMPLOYER_NAME,
+                                    emailAddress = a.EMAILADDRESS,
+                                    phoneNumber = a.PHONENUMBER,
+                                    address = a.ADDRESS,
+                                    cityName = c.CITYNAME,
+                                    employerId = a.EMPLOYERID,
+                                    createdBy = a.CREATEDBY,
+                                    employerSubTypeName = sb.EMPLOYER_SUB_TYPE_NAME,
+                                    employerSubTypeId = a.EMPLOYER_SUB_TYPEID,
+                                    cityId = a.CITYID,
+                                    companyId = companyId,
+                                    //stateId = c.TBL_LOCALGOVERNMENT.STATEID,
+
+                                    stateId = a.STATEID,
+                                    countryId = a.COUNTRYID,
+                                    establishmentDate = a.ESTABLISHMENTDATE,
+                                    active = a.ACTIVE,
+                                    operationId = a.OPERATIONID,
+                                    approvalStatusId = a.APPROVALSTATUSID,
+                                    employerTypeId = sb.EMPLOYER_TYPEID,
+                                    //employerTypeName = sb.TBL_CUSTOMER_EMPLOYER_TYPE.EMPLOYER_TYPE_NAME
+                                }).ToList();
+            return employerData;
+        }
+
+        public IEnumerable<EmployerViewModel> GetRelatedEmployersWaitingForApproval(int staffId)
+        {
+            var operationId = (int)OperationsEnum.RelatedEmployer;
+            var levelIds = _genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+
+            var relatedEmployers = (from a in _context.TBL_CUSTOMER_EMPLOYER
+                                    join c in _context.TBL_CITY on a.CITYID equals c.CITYID
+                                    join sb in _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB on a.EMPLOYER_SUB_TYPEID equals sb.EMPLOYER_SUB_TYPEID
+                                    join t in _context.TBL_APPROVAL_TRAIL on a.EMPLOYERID equals t.TARGETID
+                                    where (a.DELETED == false && t.OPERATIONID == (int) OperationsEnum.RelatedEmployer
+                                    && a.APPROVALSTATUSID == (short) ApprovalStatusEnum.Processing
+                                    && t.APPROVALSTATEID != (int)ApprovalState.Ended && t.RESPONSESTAFFID == null
+                                    && (t.LOOPEDSTAFFID == null || t.LOOPEDSTAFFID == staffId)
+                                    && ((levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == null) || (!levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == staffId))
+                                    && (t.TOSTAFFID == null || t.TOSTAFFID == staffId))
+                                    select new EmployerViewModel
+                                    {
+                                        employerName = a.EMPLOYER_NAME,
+                                        emailAddress = a.EMAILADDRESS,
+                                        phoneNumber = a.PHONENUMBER,
+                                        address = a.ADDRESS,
+                                        cityName = c.CITYNAME,
+                                        employerId = a.EMPLOYERID,
+                                        createdBy = a.CREATEDBY,
+                                        employerSubTypeName = sb.EMPLOYER_SUB_TYPE_NAME,
+                                        employerSubTypeId = a.EMPLOYER_SUB_TYPEID,
+                                        cityId = a.CITYID,
+
+                                        stateId = a.STATEID,
+                                        countryId = a.COUNTRYID,
+                                        establishmentDate = a.ESTABLISHMENTDATE.Value,
+                                        active = a.ACTIVE,
+                                        operationId = a.OPERATIONID,
+                                        employerTypeId = sb.EMPLOYER_TYPEID,
+
+                                        approvalStatusId = t.APPROVALSTATUSID,
+                                        approvalTrailId = t.APPROVALTRAILID,
+                                        currentApprovalLevelId = t.TOAPPROVALLEVELID,
+                                        currentApprovalLevel = t.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                        approvalStatus = _context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME.ToUpper(),
+                                        dateTimeCreated = a.DATETIMECREATED
+                                    }).ToList();
+            return relatedEmployers;
+        }
+
+        public WorkflowResponse ForwardRelatedEmployerForApproval(EmployerViewModel model)
+        {
+            int operationId = (int)OperationsEnum.RelatedEmployer;
+            var employer = _context.TBL_CUSTOMER_EMPLOYER.Find(model.employerId);
+
+            if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved)
+            {
+                model.forwardAction = (int)ApprovalStatusEnum.Processing;
+            }
+            else
+            {
+                model.forwardAction = (int)ApprovalStatusEnum.Disapproved;
+            }
+
+            // workflow
+            _workflow.OperationId = operationId;
+            _workflow.StaffId = model.createdBy;
+            _workflow.TargetId = model.employerId;
+            _workflow.CompanyId = model.companyId;
+            _workflow.Vote = model.vote;
+            _workflow.NextLevelId = 0;
+            _workflow.ToStaffId = null;
+            _workflow.StatusId = (int) model.forwardAction;
+            _workflow.Comment = model.comment;
+
+            _workflow.DeferredExecution = true;
+            _workflow.LogActivity();
+
+            WorkflowResponse finalResponse = new WorkflowResponse();
+
+            // update new employer status
+            if (employer != null) {
+                if (employer.APPROVALSTATUSID == (short) ApprovalStatusEnum.Pending) {
+                    employer.APPROVALSTATUSID = (short) ApprovalStatusEnum.Processing;
+                }
+                
+            }
+
+            if (_workflow.NewState == (int)ApprovalState.Ended)
+            {
+                if (_workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
+                {
+                    employer.APPROVALSTATUSID = (short) ApprovalStatusEnum.Approved;
+                    _workflow.SetResponse = true;
+                }
+                else
+                {
+                    employer.APPROVALSTATUSID = (short) ApprovalStatusEnum.Disapproved;
+                }
+            }
+
+            _context.SaveChanges();
+            return _workflow.Response;
+        }
+
+        public String ResponseMessage(WorkflowResponse response, string itemHeading)
+        {
+            if (response.stateId != (int)ApprovalState.Ended)
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Referred)
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextLevelName;
+                    }
+                }
+                else
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextLevelName;
+                    }
+                }
+            }
+            else
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Approved)
+                {
+                    return "The " + itemHeading + " request has been APPROVED successfully";
+                }
+                else
+                {
+                    return "The " + itemHeading + " request has been DISAPPROVED successfully";
+                }
+            }
+
+        }
+
         public EmployerViewModel getEmployer(int employerId, int companyId)
         {
             var employerData = (from a in _context.TBL_CUSTOMER_EMPLOYER
@@ -202,8 +417,19 @@ namespace FintrakBanking.Repositories.Setups.General
                           where a.EMPLOYER_TYPEID == emplyerTypeId
                           select new EmployerSubType
                           {
-                              EmployerSubTypeId = a.EMPLOYER_SUB_TYPEID,
-                              EmployerSubTypeName = a.EMPLOYER_SUB_TYPE_NAME
+                              employerSubTypeId = a.EMPLOYER_SUB_TYPEID,
+                              employerSubTypeName = a.EMPLOYER_SUB_TYPE_NAME
+                          };
+            return subType;
+        }
+
+        public IEnumerable<EmployerSubType> getAllEmployerSubTypes()
+        {
+            var subType = from a in _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB
+                          select new EmployerSubType
+                          {
+                              employerSubTypeId = a.EMPLOYER_SUB_TYPEID,
+                              employerSubTypeName = a.EMPLOYER_SUB_TYPE_NAME
                           };
             return subType;
         }
@@ -213,8 +439,8 @@ namespace FintrakBanking.Repositories.Setups.General
             var type = from a in _context.TBL_CUSTOMER_EMPLOYER_TYPE
                        select new EmployerType
                        {
-                           EmployerTypeId = a.EMPLOYER_TYPEID,
-                           EmployerTypeName = a.EMPLOYER_TYPE_NAME
+                           employerTypeId = a.EMPLOYER_TYPEID,
+                           employerTypeName = a.EMPLOYER_TYPE_NAME
                        };
             return type;
         }
@@ -320,8 +546,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        where a.EMPLOYER_TYPEID == employerTypeId
                        select new EmployerType
                        {
-                           EmployerTypeId = a.EMPLOYER_TYPEID,
-                           EmployerTypeName = a.EMPLOYER_TYPE_NAME
+                           employerTypeId = a.EMPLOYER_TYPEID,
+                           employerTypeName = a.EMPLOYER_TYPE_NAME
                        };
             return type;
         }
@@ -426,10 +652,10 @@ namespace FintrakBanking.Repositories.Setups.General
                        join b in _context.TBL_CUSTOMER_EMPLOYER_TYPE on a.EMPLOYER_TYPEID equals b.EMPLOYER_TYPEID
                        select new EmployerSubType
                        {
-                           EmployerSubTypeId = a.EMPLOYER_SUB_TYPEID,
-                           EmployerSubTypeName = a.EMPLOYER_SUB_TYPE_NAME,
-                           EmployerTypeName = b.EMPLOYER_TYPE_NAME,
-                           EmployerTypeId = b.EMPLOYER_TYPEID
+                           employerSubTypeId = a.EMPLOYER_SUB_TYPEID,
+                           employerSubTypeName = a.EMPLOYER_SUB_TYPE_NAME,
+                           employerTypeName = b.EMPLOYER_TYPE_NAME,
+                           employerTypeId = b.EMPLOYER_TYPEID
                        };
             return type;
         }

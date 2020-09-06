@@ -226,8 +226,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var classifiedTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
                      x.OPERATIONID == (int)entity.operationId
-                     && x.RESPONSESTAFFID == null
+                     //&& x.RESPONSESTAFFID == null
                      && x.DESTINATIONOPERATIONID > 0
+                     && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
                      && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
                      && x.TARGETID == entity.targetId
                     );
@@ -246,6 +247,7 @@ namespace FintrakBanking.Repositories.Credit
                         classifiedTrail.APPROVALSTATEID = (short)ApprovalState.Ended;
                         classifiedTrail.RESPONSESTAFFID = entity.staffId;
                         classifiedTrail.RESPONSEDATE = DateTime.Now;
+                        classifiedTrail.REFEREBACKSTATEID = (short)ApprovalState.Ended;
 
 
                         request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
@@ -896,7 +898,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId, bool getAll = false)
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId, int customerId, bool getAll = false)
         {
             var systemDate = generalSetup.GetApplicationDate();
             var company = context.TBL_COMPANY.Find(companyId);
@@ -910,6 +912,7 @@ namespace FintrakBanking.Repositories.Credit
                              join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                              where a.COMPANYID == companyId && d.DELETED == false
                              //&& staffIds.Contains(a.OWNEDBY)
+                             && customerId == d.CUSTOMERID
                              && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                              && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                              && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -1094,9 +1097,9 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in data)
             {
-                var adequateLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.DELETED == false && (t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted || t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress)).Select(t => t.LCISSUANCEID).ToList();
-                var lcIFFRequests = context.TBL_LC_ISSUANCE.Where(l => l.DELETED == false && l.FUNDSOURCEID == (int)LCFundSource.IFF);
-                var lcapprovedLCIFFs = lcIFFRequests.Where(i => adequateLCIssuanceIds.Contains(i.LCISSUANCEID)).Select(i => new { i.FUNDSOURCEDETAILS, i.LETTEROFCREDITAMOUNT });
+                var adequateLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.DELETED == false && t.CUSTOMERID == customerId && (t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted)).Select(t => t.LCISSUANCEID).ToList();
+                var lcIFFRequests = context.TBL_LC_ISSUANCE.Where(l => l.DELETED == false && l.FUNDSOURCEID == (int)LCFundSource.IFF).ToList();
+                var lcapprovedLCIFFs = lcIFFRequests.Where(i => adequateLCIssuanceIds.Contains(i.LCISSUANCEID)).Select(i => new { i.FUNDSOURCEDETAILS, i.LETTEROFCREDITAMOUNT }).ToList();
                 var lcapprovedLCIFFsRecords = lcapprovedLCIFFs.Where(i => i.FUNDSOURCEDETAILS == item.loanApplicationId).ToList();
                 var lcApprovedAmounts = lcapprovedLCIFFsRecords.Count() > 0 ? lcapprovedLCIFFsRecords?.Sum(i => i.LETTEROFCREDITAMOUNT) : 0;
                 var product = context.TBL_PRODUCT.Find(item.productId);

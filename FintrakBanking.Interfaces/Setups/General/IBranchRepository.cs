@@ -7,6 +7,10 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IBranchRepository
     {
+        Task<bool> DeleteRetailCollectionCronJobAsync(short id, UserInfo user);
+        bool UpdateCollectionRetailCronJob(CollectionsRetailCronSetupViewModel model, short id);
+        Task<bool> AddRetailCollectionCronJobAsync(CollectionsRetailCronSetupViewModel model);
+        IEnumerable<CollectionsRetailCronSetupViewModel> GetCollectionRetailCronJobSetup();
         BranchViewModel GetBranch(short id);
 
         IEnumerable<BranchViewModel> GetAllBranch();
