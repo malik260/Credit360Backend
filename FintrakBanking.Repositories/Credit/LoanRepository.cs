@@ -18375,7 +18375,8 @@ namespace FintrakBanking.Repositories.Credit
                 REFERENCEBATCHID = referenceNumber,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
-                REQUESTDATE = DateTime.Now
+                REQUESTDATE = DateTime.Now,
+                SOURCE = source
             });
             if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
 
@@ -18413,7 +18414,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var validate = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Where(x => x.REFERENCEBATCHID == models.referenceId
                                                           && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Pending
-                                                          || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
+                                                          || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                                                          ).FirstOrDefault();
             if (validate != null)
             {
                 throw new SecureException("Request already exist and undergoing approval");
