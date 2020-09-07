@@ -31614,6 +31614,7 @@ namespace FintrakBanking.Repositories.Credit
                                      && pr.EXCLUDEFROMLITIGATION == false
                                      && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && lr.SOURCE.ToLower() == source.ToLower()
 
                                      select new LoanReviewOperationApprovalViewModel
                                      {

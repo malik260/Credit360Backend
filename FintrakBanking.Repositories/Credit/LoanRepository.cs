@@ -18361,6 +18361,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerRequest.approvalStatusId = (int)ApprovalStatusEnum.Pending;
                 customerRequest.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
                 customerRequest.operationCompleted = false;
+                customerRequest.source = source;
                 var loanData = addBulkLoanAssignmentToAgent(customerRequest);
                 bulkLoanTable.Add(loanData);
             }
@@ -19028,7 +19029,8 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONID = entity.operationId,
                 APPROVALSTATUSID = entity.approvalStatusId,
                 OPERATIONCOMPLETED = entity.operationCompleted,
-                TOTALAMOUNTRECOVERY = entity.totalAmountRecovery
+                TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
+                SOURCE = entity.source
             };
             return data;
         }
