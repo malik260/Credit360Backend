@@ -18403,6 +18403,72 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+
+        public bool saveBulkLoanReAssignmentToAgent(LoanRecoveryAssignmentViewModel model, UserInfo user)
+        {
+            bool result = false;
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+            List<TBL_LOAN_RECOVERY_ASSIGNMENT> bulkLoanTable = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
+            if (model == null)
+            {
+                throw new ConditionNotMetException("Kindly select an accredited consultant/expected completion date is empty.");
+            }
+            
+                var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+                    validate.CREATEDBY = user.createdBy;
+                    validate.ACCREDITEDCONSULTANT = model.accreditedConsultant;
+                    validate.EXPCOMPLETIONDATE = model.expCompletionDate;
+                    validate.REFERENCEID = referenceNumber;
+                    validate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                    validate.OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                    validate.OPERATIONCOMPLETED = false;
+                    validate.SOURCE = model.source;
+                    
+                  context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(validate);
+                 if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+            TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL removeLienOperation = new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL();
+            removeLienOperation = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
+            {
+                ACCREDITEDCONSULTANTID = model.accreditedConsultant,
+                REFERENCEBATCHID = referenceNumber,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
+                REQUESTDATE = DateTime.Now,
+                SOURCE = model.source
+            });
+            if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+            var flagDelete = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+            flagDelete.DELETED = true;
+            flagDelete.DELETEDBY = user.createdBy;
+            flagDelete.DATETIMEDELETED = DateTime.Now;
+            context.SaveChanges();
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ referenceNumber}' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            });
+
+            int resultStatus = context.SaveChanges();
+            if (resultStatus > 0)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
         public bool bulkLoanAssignmentToAgentGoForApproval(LoanRecoveryAssignmentViewModel models, UserInfo user)
         {
             bool result = false;
@@ -19446,6 +19512,47 @@ namespace FintrakBanking.Repositories.Credit
                 saved = context.SaveChanges() > 0;
 
             return saved;
+        }
+
+        public bool RetailLoanRecoveryCommission(RetailLoanRecoveryCommissionViewModel models, UserInfo user)
+        {
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            if (models == null)
+            {
+                throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
+            }
+
+            try
+            {
+                var record = new TBL_LOAN_RECOVERY_COMMISSION_RETAIL
+                {
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
+                    AGENTACCOUNTNUMBER = models.agentAccountNumber,
+                    COMMENT = models.comment,
+                    DATEOFENGAGEMENT = models.dateOfEngagement == null ? DateTime.Now : models.dateOfEngagement,
+                    CREATEDBY = user.createdBy,
+                    COLLECTIONDATE = models.collectionDate,
+                    MODEOFCOLLECTION = models.modeOfCollection,
+                    COMMISSIONRATE = models.commissionRate,
+                    DATETIMECREATED = DateTime.Now,
+                    COMMISSIONPAYABLE = models.commissionPayable,
+                    TOTALRECOVERYAMOUNT = models.totalAmountRecovery,
+                    AMOUNTRECOVERED = models.amountRecovered,
+                    LOANASSIGNID = models.loanAssignId,
+                    LOANID = models.loanId,
+                    LOANREFERENCE = models.loanReferenceNumber,
+                    ACCREDITEDCONSULTANT = models.accreditedConsultant,
+                    REFERENCEID = referenceNumber,
+                };
+                context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Add(record);
+                var status = context.SaveChanges() != 0;
+                return status;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+           
         }
     }
 }

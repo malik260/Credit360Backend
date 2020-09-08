@@ -447,6 +447,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public DateTime? recoveryDate { get; set; }
         public int? flagStatus { get; set; }
         public List<string> customerAddresses { get; set; }
+        public string agentCategory { get; set; }
+        public string agentAccountNumber { get; set; }
     }
 
 
@@ -893,6 +895,166 @@ public int? newInterestFrequencyTypeId { get; set; }
         public decimal periodPaymentAmount { get; set; }
         public decimal periodPrincipalAmount { get; set; }
         public decimal endPrincipalAmount { get; set; }
+    }
+
+
+    public class RetailLoanRecoveryCommissionViewModel : GeneralEntity
+    {
+        public int loanRecoveryCommissionId { get; set; }
+        public string referenceId { get; set; }
+        public int? approvalStatusId { get; set; }
+        public int? operationId { get; set; }
+        public int loanId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public bool operationCompleted { get; set; }
+        public decimal? totalAmountRecovery { get; set; }
+        public decimal? amountRecovered { get; set; }
+       
+        public string accountNumber { get; set; }
+        public string accountName { get; set; }
+        public decimal? accountBalance { get; set; }
+        public string misCode { get; set; }
+        public string region { get; set; }
+        public string comment { get; set; }
+        public int numberOfLoans { get; set; }
+        public int? currentApprovalLevelId { get; set; }
+        public string approverComment { get; set; }
+        public string agentAccountNumber { get; set; }
+        public DateTime? dateOfEngagement { get; set; }
+        public DateTime? collectionDate { get; set; }
+        public string modeOfCollection { get; set; }
+        public decimal? commissionRate { get; set; }
+        public decimal? commissionPayable { get; set; }
+        public int? loanAssignId { get; set; }
+
+        public decimal? prepaymentAmount;
+        public decimal? TotalExposure { get; set; }
+
+        public DateTime? expCompletionDate { get; set; }
+        public int loanChargeFeeId { get; set; }
+        public string chargeFeeName { get; set; }
+        public decimal feeAmount { get; set; }
+        public string description { get; set; }
+        public int? takeFeeCasaAccountId { get; set; }
+        public string takeFeeCasaAccountName { get; set; }
+        public string legalContingentCode { get; set; }
+
+        public int? loanReviewApplicationId { get; set; }
+        public int? appraisalOperationId { get; set; }
+        public string currencyCode { get; set; }
+        public bool isBankFormat { get; set; }
+        public int companyId { get; set; }
+        public string createdByName { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public decimal maturityAmount { get; set; }
+        public string relatedReferenceNumber { get; set; }
+        public decimal interestAmount { get; set; }
+        
+        public short productId { get; set; }
+        public decimal productPriceIndexRate { get; set; }
+        public int casaAccountId { get; set; }
+        public string casaAccount { get; set; }
+
+        public string casaAccountName { get; set; }
+        public int loanApplicationDetailId { get; set; }
+
+        public short branchId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public short principalFrequencyTypeId { get; set; }
+        public short interestFrequencyTypeId { get; set; }
+        public int principalNumberOfInstallment { get; set; }
+        public int interestNumberOfInstallment { get; set; }
+        public int relationshipOfficerId { get; set; }
+        public int relationshipManagerId { get; set; }
+        public string loanCategory { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string productAccountNumber { get; set; }
+        public int currencyId { get; set; }
+        public string currency { get; set; }
+        public int productTypeId { get; set; }
+
+        public string productTypeName { get; set; }
+        public string creatorName { get; set; }
+        public string productAccountName { get; set; }
+        public string loanTypeName { get; set; }
+        public string branchName { get; set; }
+        public string subSectorName { get; set; }
+        public string sectorName { get; set; }
+        public string relationshipOfficerName { get; set; }
+        public string relationshipManagerName { get; set; }
+        public string productName { get; set; }
+        public string customerSensitivityLevelName { get; set; }
+        public string customerName { get; set; }
+        public string pricipalFrequencyTypeName { get; set; }
+        public string interestFrequencyTypeName { get; set; }
+        public int operationTypeId { get; set; }
+        public string operationTypeName { get; set; }
+        public DateTime newEffectiveDate { get; set; }
+        public string reviewDetails { get; set; }
+        public double? newInterateRate { get; set; }
+        public decimal? prepayment { get; set; }
+        public int? newPrincipalFrequencyTypeId { get; set; }
+        public string newPrincipalFrequencyTypeName { get; set; }
+        public int? newInterestFrequencyTypeId { get; set; }
+        public string newInterestFrequencyTypeName { get; set; }
+        public DateTime? newPrincipalFirstPaymentDate { get; set; }
+        public DateTime? newInterestFirstPaymentDate { get; set; }
+        public int? newTenor { get; set; }
+        public int? cASA_AccountId { get; set; }
+        public string cASA_AccountName { get; set; }
+        public string cASA_Account { get; set; }
+
+        public decimal? overDraftTopup { get; set; }
+        public decimal? fee_Charges { get; set; }
+        public string terminationAndReBook { get; set; }
+        public string completeWriteOff { get; set; }
+        public string cancelUndisbursedLoan { get; set; }
+        public string lmsLoanReferenceNumber { get; set; }
+        public int collateralLiquidationRecoveryId { get; set; }
+        public decimal totalRecoveryAmount { get; set; }
+        public decimal recoveredAmount { get; set; }
+        public decimal? outstandingAmount { get; set; }
+        public string collateralCode { get; set; }
+        public string collectionMode { get; set; }
+        public int createdBy { get; set; }
+        public int loanApplicationId { get; set; }
+        public int casaLienAccountId { get; set; }
+        public int lienRemovalId { get; set; }
+        public int lienRemovalOperationId { get; set; }
+        public int unfreezeLienAccountId { get; set; }
+        public string accreditedConsultantName { get; set; }
+        public string accreditedConsultantCompany { get; set; }
+        public int bulkRecoveryApprovalId { get; set; }
+        public int accreditedConsultantId { get; set; }
+        public decimal? agentCommission { get; set; }
+        public decimal? percentageCommission { get; set; }
+        public string nameOfRecoveryAgent { get; set; }
+        public string address { get; set; }
+        public string telephoneNumber { get; set; }
+        public DateTime expectedRecoveryDate { get; set; }
+
+        public int periodToRecover { get { return (this.expectedRecoveryDate.Date - this.dateOfAssignment.Date).Days; } }
+        public List<string> listOfAccountAssigned { get; set; }
+        public string email { get; set; }
+        public DateTime dateOfAssignment { get; set; }
+        public int loanRecoveryReportBatchId { get; set; }
+        public decimal? totalAllrecoveryAmount { get; set; }
+        public string recoveryMisCode { get; set; }
+        public string recoveryRegion { get; set; }
+        public int loanRecoveryCommissionBatchId { get; set; }
+        public decimal? creditToAgent { get; set; }
+        public decimal? amountToDebit { get; set; }
+        public decimal? amountToCredit { get; set; }
+        public string listOfAccountsAssigned { get; set; }
+        public DateTime? recoveryDate { get; set; }
+        public int? flagStatus { get; set; }
+        public List<string> customerAddresses { get; set; }
+        public string agentCategory { get; set; }
     }
 
 }
