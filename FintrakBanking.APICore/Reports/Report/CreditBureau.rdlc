@@ -42,7 +42,8 @@
                             <TextRun>
                               <Value>S/N</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -55,7 +56,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -75,7 +76,8 @@
                             <TextRun>
                               <Value>Branch Code</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -88,7 +90,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -108,7 +110,8 @@
                             <TextRun>
                               <Value>Branch Name</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -121,7 +124,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -141,7 +144,8 @@
                             <TextRun>
                               <Value>Requested Date</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -154,7 +158,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -174,7 +178,8 @@
                             <TextRun>
                               <Value>RM Name</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -187,7 +192,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -207,7 +212,8 @@
                             <TextRun>
                               <Value>Customer Name</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -220,7 +226,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -240,7 +246,8 @@
                             <TextRun>
                               <Value>Amount</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -253,7 +260,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -479,7 +486,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -525,23 +531,22 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>CREDIT BUREAU REPORT</Value>
+                <Value>Credit Bureau Report</Value>
                 <Style>
-                  <FontFamily>Garamond</FontFamily>
-                  <FontSize>12pt</FontSize>
+                  <FontFamily>Verdana</FontFamily>
+                  <FontSize>14pt</FontSize>
                   <FontWeight>Bold</FontWeight>
-                  <Color>DarkBlue</Color>
                 </Style>
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>0.16667in</Top>
-        <Left>3.02604in</Left>
+        <Top>0.32292in</Top>
+        <Left>1.20708in</Left>
         <Height>0.25in</Height>
         <Width>3.94792in</Width>
         <ZIndex>1</ZIndex>
@@ -581,7 +586,7 @@
                   </Style>
                 </TextRun>
                 <TextRun>
-                  <Value>   FIRST BANK OF NIGERIA</Value>
+                  <Value xml:space="preserve">  </Value>
                   <Style>
                     <FontFamily>Garamond</FontFamily>
                     <FontSize>14pt</FontSize>
@@ -589,15 +594,25 @@
                     <Color>DarkBlue</Color>
                   </Style>
                 </TextRun>
+                <TextRun>
+                  <Value> Access Bank Plc</Value>
+                  <Style>
+                    <FontFamily>Verdana</FontFamily>
+                    <FontSize>14pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
+                </TextRun>
               </TextRuns>
-              <Style />
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox16</rd:DefaultName>
-          <Top>0.73766cm</Top>
-          <Left>8.00327cm</Left>
+          <Top>1.0287cm</Top>
+          <Left>1.21082cm</Left>
           <Height>1.02333cm</Height>
-          <Width>8.86043cm</Width>
+          <Width>8.17251cm</Width>
           <Style>
             <Border>
               <Style>None</Style>

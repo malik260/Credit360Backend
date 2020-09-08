@@ -109,14 +109,14 @@
           <DataField>productClassName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="staffName">
-          <DataField>staffName</DataField>
+        <Field Name="disbursedUser">
+          <DataField>disbursedUser</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\FintrakProjects\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\AccessBankCredit360\main\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
         <rd:TableName>DisbursedLoans</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -132,108 +132,64 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.45209in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1.74167in</Width>
+                  <Width>2in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.54584in</Width>
+                  <Width>0.96875in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.51958in</Width>
+                  <Width>1.11333in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.40625in</Width>
+                  <Width>1.13542in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.01458in</Width>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.91249in</Width>
+                  <Width>0.64583in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.57708in</Width>
+                  <Width>1.30208in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.02083in</Width>
+                  <Width>1.08333in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.96458in</Width>
+                  <Width>0.61458in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.33333in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.48958in</Width>
+                  <Width>1.30208in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.77292in</Width>
+                  <Width>1.51042in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.55625in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1.07292in</Width>
+                  <Width>1.45833in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.93958in</Width>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.64167in</Width>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
                   <Height>0.42708in</Height>
                   <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox7">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Product Class Name</Value>
-                                  <Style>
-                                    <FontFamily>verdana</FontFamily>
-                                    <FontSize>9pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Left</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox7</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <BottomBorder>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </BottomBorder>
-                            <BackgroundColor>Goldenrod</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Textbox17">
@@ -284,7 +240,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>RM Name</Value>
+                                  <Value>Disbursed By</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -530,7 +486,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Approved Amount</Value>
+                                  <Value>="Approved Amount (" + First(Fields!facilityCurrency.Value, "DisbursedLoan") + ")"</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -653,7 +609,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Amount Disbursed</Value>
+                                  <Value>="Amount Disbursed ("+First(Fields!facilityCurrency.Value, "DisbursedLoan")+")"</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -694,7 +650,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Base Currency Value</Value>
+                                  <Value>="Base Currency Value ("+First(Fields!baseCurrency.Value, "DisbursedLoan")+")"</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -735,7 +691,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Outstanding Principal</Value>
+                                  <Value>="Outstanding Principal ("+ First(Fields!facilityCurrency.Value, "DisbursedLoan")+")"</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -776,7 +732,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Outstanding Interest</Value>
+                                  <Value>="Outstanding Interest ("+ First(Fields!facilityCurrency.Value, "DisbursedLoan")+")"</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -785,7 +741,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Left</TextAlign>
+                                <TextAlign>Right</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -979,44 +935,6 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="productClassName">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!productClassName.Value</Value>
-                                  <Style>
-                                    <FontFamily>verdana</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <Color>#333333</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Left</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>productClassName</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <BackgroundColor>White</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="customerName1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1055,14 +973,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="staffName">
+                        <Textbox Name="disbursedUser">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!staffName.Value</Value>
+                                  <Value>=Fields!disbursedUser.Value</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1076,7 +994,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>staffName</rd:DefaultName>
+                          <rd:DefaultName>disbursedUser</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -1704,51 +1622,6 @@
                 <TablixRow>
                   <Height>0.35417in</Height>
                   <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox10">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontFamily>verdana</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <Color>#333333</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Left</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox10</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <TopBorder>
-                              <Style>Solid</Style>
-                            </TopBorder>
-                            <BottomBorder>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </BottomBorder>
-                            <BackgroundColor>White</BackgroundColor>
-                            <VerticalAlign>Bottom</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Textbox19">
@@ -2583,48 +2456,6 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox14">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontFamily>verdana</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <Color>#333333</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Left</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox14</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <TopBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </TopBorder>
-                            <BackgroundColor>White</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="Textbox20">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -3390,7 +3221,6 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -3556,7 +3386,7 @@
             <DataSetName>DisbursedLoan</DataSetName>
             <Left>0.0625in</Left>
             <Height>1.32292in</Height>
-            <Width>26.25291in</Width>
+            <Width>22.75915in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3567,7 +3397,7 @@
         <Height>1.4375in</Height>
         <Style />
       </Body>
-      <Width>32.10708in</Width>
+      <Width>22.82165in</Width>
       <Page>
         <PageHeader>
           <Height>1.23958in</Height>
@@ -3641,7 +3471,7 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Textbox Name="endDate">
+            <Textbox Name="startDate">
               <CanGrow>true</CanGrow>
               <KeepTogether>true</KeepTogether>
               <Paragraphs>
@@ -3657,6 +3487,7 @@
                   <Style />
                 </Paragraph>
               </Paragraphs>
+              <rd:DefaultName>startDate</rd:DefaultName>
               <Top>0.83208in</Top>
               <Left>0.0625in</Left>
               <Height>0.25in</Height>
@@ -3672,21 +3503,6 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Image Name="Image1">
-              <Source>Embedded</Source>
-              <Value>logomain</Value>
-              <Sizing>FitProportional</Sizing>
-              <Top>0.47375in</Top>
-              <Left>24.0175in</Left>
-              <Height>0.60833in</Height>
-              <Width>2.29791in</Width>
-              <ZIndex>3</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-              </Style>
-            </Image>
           </ReportItems>
           <Style>
             <Border>
@@ -3887,12 +3703,6 @@ ij6KQ/rBAiL1NTVN3dzFJguIikP7ad6F9wOC2NqtlNhdWBozBATANM1WPmsiaiIA6gXFkI4fCuZq/dDD
 o1HF5XL1FUWRc87lYNCqWbt2ZXUq5J1yyrTe2dmavmjRorZi/oWxYyd7JCkUbuv7LC0tVfbs2ZNdWFhYV1ZW1uZOykdCUVGRw+v1er755ps6dH05ODZhwoR8VVVzAJiBgNlQXv5JVVcKnDwZkq5PLdQ01WuapgEAliUopmlWr1794T7gGFMGs2bNvi8YDJ+lquL3nMMvCCw7Jye3YNasWZe9//775amWN2NG8YWiKN4hCGjgHDsBmIzBBUgjZ88uiZqmftXy5ctXpVpucXHxxfG4+YyqqisBqwpgDiLIAKSioiHXVlZWbkmFHEVxXMUYJhFRFREkQRBO0zRXGODriJgkiujj89GzAB5PhbyMDOk3O3ZU3lZcXDx16dKlK1qeKy6ec/3Gjd8/OHLksDIAcw+81u8PbtE0l15WVnbk9TMPYPLkyQ5FcayvqKgYMXPm7LeWLVtyVqplJJk2bdpIRXF8CWATY1ROBGd2NvLmzCkpMAz+xPLlSx5IvcxZZwH0htcrfcI5VciyrAEAYyjkHE8CeAY4hpTBcceNufb995fcfPrpk67/9NOPH0kenzJl5ukul3LY7LLOMmtW8VPffbfxsmHDhj7aq1fmLWVlZc3lpi+66KLCzZu3vVZRUfHJ2Wefe+kbb7z+TCplNzWFe2/Y8C+MHXvc3atWrVqeyrZb4vG4b9++fbtQXl5ujB8/3qkojrAsSxs+/njlXMCenZSXl6csrM7jcT+xY0f8tsbGwAIApyaPP/HEE86nnnrmhuzsXqiq2lc6Z86caYsXL/4weX7KlOn/vmrVp/1Gjx7bmb03O0woFH3eNIPZQ4cOvXXt2nULJk+eesPKlR893DWyQp4tW75Wxo4du3TFig9vSh6fMGHi7z77bNUfTzzxZGXdujX3pFKmZfH88vK1GD169J8//3zVgdWkm22kR3/QUYI+fQpWzZxZbDmd2r0lJT95cNq04jMAYMWKZZ8uWrRoeyplTZo06Yzy8vWX
 DRs25MkPP1x+XUtFAADPP//8nksuuWjKsGHDjKqq6gdTKRsAfD4Pz87Ohqa5fYC9TJk8eXLeSSed1CuVcsrKyqzklLy8vFz3er1wu93NP/7EuZRNmRcuXFhZUFBw17Zt206ZPn367OTx55//x82cW32GDz9pkKZpVU1NwYdaXhePxx4YO3bsttWrVz2Zqr4kmTZtZunevXtLvV7vVYsWvXPfgAEDXt+5c+dD8+bNG55qWQDgdvt4bm5vuFyaBwBOPfXUQgDIyHBnjh07Dj5f5veplqlpip6X1xseT8bxEydOGzlt2qyZ06fP+un06cWnoYW36ZhRBkuWLPly2bKlDgC3WxYmK4r4yuzZJdHi4jkvn3LKKb1TKauhoWmIZVnIyPB8e6jPzJ8/33C73dssy8hEivcfEATGnU4NosiuKy6e86zH4/uLprme79Ur+39KS0u7pKb9+PHjGXVDGO20aVMWDB8+DJFI7P7kMSK6Q1Udr7z00l+3S5Jy99atW8bOmDHjJwAwceLkSyoqKrOdTvWaVPdlwYIF3mAw+FpRUdGbH3/80UIAmD37+kvy8vJpx47KDu3H8EPw+bywLJo6c2bxn3Nze//vqFFjqLGxaV5Jyezc5cuXdkE1bkaq6gBjwhlOpzpfksQLRFG+XBCEn7T8lMQ5obtCejnnIDqiWae5bNnShwA8BAClpaUnb926Y7WqKme99tprWXPnzu3QzjGHIzu796bq6n0IBPynA3i0rc/84he/6LN+/VfDMzN9a2GXokolYiQSgWnyB5YvX/r2ySef7PF4PCwzM9MqKys7drfDA3DXXXfFJk+eet133234c3Fx8bCmpuBxdXV1GDRowB0AsGrVisdPO+30e8Ph6D0AFpmm8T9FRf3WfvDBByndzhwAysoW/mXv3r04+eSTorNnl/yJCHlffPHcjoyMjNVr1649ddKkKbd8/PGK+1Itt76+Hj5f1sJly5beCgCzZs05z+9vemXt2vI/
 Arg41fKIuBAKhWBZ1p+WLVtyyM14JMagC4IIznmX78IsiqJKEH6QJXjWrFlXAJDi8fji6urq+k2bNkUbGxujvXplcVEUd6VKEQD20qO4+CcL9u2runXGjFkGY3Tfnj179sqyzFXV5/b5nKfv21f718LCwlpFkUoP32LnME0dum6AyIwAwJo1awKplnEgAwcOZA0NTSASu7yw7MqVHz06ZcrU66JRfYnTqfk0reCFxYsXb06e93oz5jc0NL18xhmTPgFYlsfjnpPqPkyZMuXXW7Zs/8WIESMu/+qr9S8OGjRojKZpVjQaJcuyfj9mzJh/7Ny5c0FxcfFnS5cu7fSGJIeCc50ZhgEiq3mc339/8aszZhQL3377zUtTpkwLrFjx4XWpkgcAlmUx0zQBUN/S0lKxrq6uPwCIoqgEg8GG1atX296EeFS/nDFyybLQ5bvrMJLVuG78QGOfUMCY+BuHQ7x2wICB0f79B0mCwPpzzl/4/vvFV6W2p8DSpYtumzGj+EtRFB5hjM3q169/DRGZjDEHgDzGhDe2bdv6q61bt6ZciQqCEMjPz4MgKClTcIejrKzMLC4uqWUMNd0hz+nUbqmq2vfP7OxsyLJ2b8tzS5YseaW4ePY133+/aeKwYUOeWLRo0depli9Jyh9GjRr5r/ffX/I0AFRWVq5peb6kpOSWgoL88wzDuh12lGJKEAQhmp+fDwCtfgfLly99edas4nMaGhqvnTx58p9XrlyZsngHQRCrRo8+johwRSAQLlUUzS7VxtDP58t6EvaGMvg/VyFBLWQy/CYAAAAASUVORK5CYII=</ImageData>
-    </EmbeddedImage>
-    <EmbeddedImage Name="logomain">
-      <MIMEType>image/png</MIMEType>
-      <ImageData>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</ImageData>
     </EmbeddedImage>
   </EmbeddedImages>
   <rd:ReportUnitType>Inch</rd:ReportUnitType>
