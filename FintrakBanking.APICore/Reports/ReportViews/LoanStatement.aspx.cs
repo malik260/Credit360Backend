@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common.Extensions;
+using FintrakBanking.ReportObjects;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,9 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 try
                 {
-                    companyId.Text = Request.QueryString["companyId"]; //"1",
+                    var companyId = Request.QueryString["companyId"]; //"1",
 
-                    loanId.Text = Request.QueryString["loanId"]; //"252"; 
+                    var loanId = Request.QueryString["loanId"]; //"252"; 
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -47,6 +48,20 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     //    this.ReportViewer.LocalReport.Refresh();
                     //    return;
                     //}
+
+                    LoanReportObjects loanStatement = new LoanReportObjects();
+                    var data = loanStatement.LoanStatement(int.Parse(companyId), int.Parse(loanId));
+
+                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    ReportDataSource reportDataSource = new ReportDataSource();
+                    reportDataSource.Value = data;
+                    reportDataSource.Name = "LoanStatement";
+
+                    this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanStatement.rdlc");
+
+                    ReportViewer.LocalReport.Refresh();
+
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
                     if (extension != null)

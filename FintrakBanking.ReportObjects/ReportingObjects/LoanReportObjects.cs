@@ -115,7 +115,7 @@ namespace FintrakBanking.ReportObjects
 
         }
 
-        public static IList<LoanStatementViewModel> LoanStatement(int companyId, int loanId)
+        public IList<LoanStatementViewModel> LoanStatement(int companyId, int loanId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
