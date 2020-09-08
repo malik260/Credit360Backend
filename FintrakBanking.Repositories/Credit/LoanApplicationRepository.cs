@@ -4512,6 +4512,7 @@ namespace FintrakBanking.Repositories.Credit
                                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                     join p in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals p.PRODUCTID
                                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                                    let bizUnit = context.TBL_PROFILE_BUSINESS_UNIT.FirstOrDefault(u => u.BUSINESSUNITID == c.BUSINESSUNTID)
                                     let creatorStaff = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == x.OWNEDBY)
                                     let jumpsToDrawDown = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == x.FLOWCHANGEID)
                                     //join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
@@ -4524,6 +4525,7 @@ namespace FintrakBanking.Repositories.Credit
                             || c.FIRSTNAME.ToLower().Contains(searchString)
                             || c.LASTNAME.ToLower().Contains(searchString)
                             || c.MIDDLENAME.ToLower().Contains(searchString)
+                            || bizUnit.BUSINESSUNITSHORTCODE.ToLower().Contains(searchString)
                             || x.OWNEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
                                     select new LoanApplicationViewModel
                                     {
@@ -8163,18 +8165,18 @@ namespace FintrakBanking.Repositories.Credit
             var termLoanData = dataTermLoan.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.customerId);
             var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.customerId);
             var unionRecord = termLoanData.Union(revolvingLoanData);
+            var data = unionRecord.ToList();
 
-
-            foreach (var record in unionRecord)
+            foreach (var record in data)
             {
                 var first = (from a in context.TBL_LOAN_APPLICATION_TRANS
                              where 
                              a.CUSTOMERID == record.customerId 
-                             && a.LOANAPPLICATIONID == record.loanApplicationId
-                             && a.MONTH >= startDate.Month
-                             && a.MONTH <= endDate.Month
-                             && a.YEAR >= startDate.Year
-                             && a.YEAR <= endDate.Year
+                             && a.LOANAPPLICATIONID == record.loanApplicationId 
+                             && a.MONTH >= DbFunctions.TruncateTime(startDate).Value.Month 
+                             && a.MONTH <= DbFunctions.TruncateTime(endDate).Value.Month 
+                             && a.YEAR >= DbFunctions.TruncateTime(startDate).Value.Year 
+                             && a.YEAR <= DbFunctions.TruncateTime(endDate).Value.Year 
                              && a.ISLMS == false
                              select new RetailRecoveryCustomerTransactionsViewModels
                              {
@@ -8196,6 +8198,7 @@ namespace FintrakBanking.Repositories.Credit
                                  expCompletionDate = record.expCompletionDate,
                                  loanReferenceNumber = record.loanReferenceNumber,
                                  applicationReferenceNumber = record.applicationReferenceNumber,
+                                 customerName = record.customerName,
                              }).GroupBy(O => new { O.accountNumber, O.credit_Turnover, O.debit_Turnover, O.min_Credit_Balance, O.min_Debit_Balance }).Select(O => O.FirstOrDefault()).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
 
 
@@ -8203,10 +8206,10 @@ namespace FintrakBanking.Repositories.Credit
                               where
                               a.CUSTOMERID == record.customerId
                               && a.LOANAPPLICATIONID == record.loanApplicationId
-                              && a.MONTH >= startDate.Month
-                              && a.MONTH <= endDate.Month
-                              && a.YEAR >= startDate.Year
-                              && a.YEAR <= endDate.Year
+                              && a.MONTH >= DbFunctions.TruncateTime(startDate).Value.Month
+                              && a.MONTH <= DbFunctions.TruncateTime(endDate).Value.Month
+                              && a.YEAR >= DbFunctions.TruncateTime(startDate).Value.Year
+                              && a.YEAR <= DbFunctions.TruncateTime(endDate).Value.Year
                               && a.ISLMS == false
                               select new RetailRecoveryCustomerTransactionsViewModels
                               {
@@ -8224,6 +8227,7 @@ namespace FintrakBanking.Repositories.Credit
                                   expCompletionDate = record.expCompletionDate,
                                   loanReferenceNumber = record.loanReferenceNumber,
                                   applicationReferenceNumber = record.applicationReferenceNumber,
+                                  customerName = record.customerName,
                               }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList(); ;
 
                 first.Add(new RetailRecoveryCustomerTransactionsViewModels

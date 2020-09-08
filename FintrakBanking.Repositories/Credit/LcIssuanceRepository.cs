@@ -1176,15 +1176,34 @@ namespace FintrakBanking.Repositories.credit
                 throw new SecureException("You Cannot Enhance an LC with status " + status + "!");
             }
 
-            if (model.letterOfCreditAmount < lc.LETTEROFCREDITAMOUNT)
+            //if (model.letterOfCreditAmount < lc.LETTEROFCREDITAMOUNT)
+            //{
+            //    throw new SecureException("New Lc Amount cannot be less than Initial Lc Amount!");
+            //}
+
+            //if (model.letterOfcreditExpirydate < lc.LETTEROFCREDITEXPIRYDATE)
+            //{
+            //    throw new SecureException("New Lc Expiry Date cannot be less than Initial Lc Expiry Date!");
+            //}
+        }
+
+        public void ValidateLcEnhancementUpdate(LcIssuanceViewModel model)
+        {
+            var lc = context.TBL_LC_ISSUANCE.Find(model.lcIssuanceId);
+            if (lc == null)
             {
-                throw new SecureException("New Lc Amount cannot be less than Initial Lc Amount!");
+                throw new SecureException("You Cannot Enhance an Lc that does not exist!");
             }
 
-            if (model.letterOfcreditExpirydate < lc.LETTEROFCREDITEXPIRYDATE)
-            {
-                throw new SecureException("New Lc Expiry Date cannot be less than Initial Lc Expiry Date!");
-            }
+            //if (model.letterOfCreditAmount < lc.LETTEROFCREDITAMOUNT)
+            //{
+            //    throw new SecureException("New Lc Amount cannot be less than Initial Lc Amount!");
+            //}
+
+            //if (model.letterOfcreditExpirydate < lc.LETTEROFCREDITEXPIRYDATE)
+            //{
+            //    throw new SecureException("New Lc Expiry Date cannot be less than Initial Lc Expiry Date!");
+            //}
         }
 
         public LcIssuanceViewModel AddLcEnhanceMent(LcIssuanceViewModel model)
@@ -1327,7 +1346,7 @@ namespace FintrakBanking.Repositories.credit
         public bool UpdateLcEnhancement(LcIssuanceViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_TEMP_LC_ISSUANCE.Find(id);
-            ValidateLcEnhancement(model);
+            ValidateLcEnhancementUpdate(model);
 
             //entity.LCREFERENCENUMBER = model.lcReferenceNumber;
             entity.BENEFICIARYNAME = model.beneficiaryName;
