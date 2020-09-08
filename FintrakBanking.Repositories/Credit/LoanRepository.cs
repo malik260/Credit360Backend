@@ -9933,7 +9933,8 @@ namespace FintrakBanking.Repositories.Credit
                             requestedBy = "",
                             appraisalOperationId = m.OPERATIONID,
                             requestedAmount = s.AMOUNT_REQUESTED,
-                            requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
+                            //requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
+                            requestOperationId = (short)(s.OPERATIONID ?? 0),
                             approvalStatusId = (short)m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
@@ -13977,7 +13978,7 @@ namespace FintrakBanking.Repositories.Credit
                               // operationId = e.OPERATIONID,
                               // operationName = e.OPERATIONNAME,
                               //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
-                              approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME
+                              approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME.ToUpper()
                           }).Distinct().OrderByDescending(O => O.approvalTrailId);
 
             var response = result.ToList();
@@ -18328,7 +18329,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool saveBulkLoanAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, UserInfo user)
+        public bool saveBulkLoanAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, UserInfo user)
         {
             bool result = false;
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -18342,6 +18343,7 @@ namespace FintrakBanking.Repositories.Credit
             var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
                                                           && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                                           && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                                                          && x.DELETED == false
                                                           ).ToList();
             if (validate != null && validate.Count() > 0)
             {
@@ -19141,6 +19143,7 @@ namespace FintrakBanking.Repositories.Credit
                 request.totalAmountRecovery = model.totalRecoveryAmount;
                 request.amountRecovered = model.recoveredAmount;
                 request.customerId = model.customerId;
+                request.collateralLiquidationRecoveryId = model.collateralLiquidationRecoveryId;
                 var loanData = addBulkLoanRecoveryReporting(request);
                 bulkLoanTable.Add(loanData);
             }
@@ -19251,7 +19254,9 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVALSTATUSID = entity.approvalStatusId,
                 OPERATIONCOMPLETED = entity.operationCompleted,
                 TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
-                AMOUNTRECOVERED = entity.amountRecovered
+                AMOUNTRECOVERED = entity.amountRecovered,
+                COLLATERALLIQUIDATIONRECOVERYID = entity.collateralLiquidationRecoveryId
+
             };
             return data;
         }
@@ -19294,6 +19299,7 @@ namespace FintrakBanking.Repositories.Credit
                 request.customerId = model.customerId;
                 request.misCode = model.recoveryMisCode;
                 request.region = model.recoveryRegion;
+                request.loanRecoveryReportBatchId = model.loanRecoveryReportBatchId;
                 var loanData = addBulkLoanRecoveryCommission(request);
                 bulkLoanTable.Add(loanData);
             }
@@ -19409,7 +19415,8 @@ namespace FintrakBanking.Repositories.Credit
                 TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
                 AMOUNTRECOVERED = entity.amountRecovered,
                 MISCODE = entity.misCode,
-                REGION = entity.region
+                REGION = entity.region,
+                LOANRECOVERYREPORTBATCHID = entity.loanRecoveryReportBatchId
             };
             return data;
         }

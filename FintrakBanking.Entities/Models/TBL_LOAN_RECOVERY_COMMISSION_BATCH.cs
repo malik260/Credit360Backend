@@ -29,5 +29,7 @@ namespace FintrakBanking.Entities.Models
         public string REGION { get; set; }
         public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
+        public int? LOANRECOVERYREPORTBATCHID { get; set; }
+
     }
 }

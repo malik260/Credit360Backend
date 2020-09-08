@@ -581,6 +581,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 var data = from d in context.TBL_COLLATERAL_CUSTOMER
                            join e in context.TBL_COLLATERAL_DEPOSIT on d.COLLATERALCUSTOMERID equals e.COLLATERALCUSTOMERID
                            join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
+                           join g in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
+                           join h in context.TBL_LOAN_APPLICATION_DETAIL on g.LOANAPPLICATIONID equals h.LOANAPPLICATIONID
                            where f.CUSTOMERCODE == customerCode && d.COLLATERALTYPEID == (int) CollateralTypeEnum.FixedDeposit
                            orderby d.DATETIMECREATED descending
                            select new FixedDepositCollateralViewModel()
@@ -599,9 +601,53 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                availableBalance = e.AVAILABLEBALANCE,
                                customerCode = f.CUSTOMERCODE,
                                customerName = f.FIRSTNAME + " " + f.LASTNAME,
+
+                               applicationReference = g.APPLICATIONREFERENCENUMBER,
+                               comment = e.REMARK,
+                               contractCode = e.DEALREFERENCENUMBER,
+                               currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                               facilityDetails = h.LOANPURPOSE,
+                               facilityReference = null,
+                               facilityType = h.TBL_PRODUCT.PRODUCTNAME,
                            };
 
-                return data.ToList();
+                var data2 = from d in context.TBL_COLLATERAL_CUSTOMER
+                           join e in context.TBL_COLLATERAL_DEPOSIT on d.COLLATERALCUSTOMERID equals e.COLLATERALCUSTOMERID
+                           join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
+                           join g in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
+                           join h in context.TBL_LOAN_APPLICATION_DETAIL on g.LOANAPPLICATIONID equals h.LOANAPPLICATIONID
+                           join i in context.TBL_LOAN on h.LOANAPPLICATIONDETAILID equals i.LOANAPPLICATIONDETAILID
+                           where f.CUSTOMERCODE == customerCode && d.COLLATERALTYPEID == (int)CollateralTypeEnum.FixedDeposit && i.ISDISBURSED == true
+                           orderby d.DATETIMECREATED descending
+                           select new FixedDepositCollateralViewModel()
+                           {
+                               collateralSummary = d.COLLATERALSUMMARY,
+                               valuationCycle = d.VALUATIONCYCLE.ToString(),
+                               dateTimeCreated = d.DATETIMECREATED,
+                               collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                               //collateralDetail = d.TBL_COLLATERAL_TYPE.DETAILS,
+                               collateralCode = d.COLLATERALCODE,
+                               collateralValue = d.COLLATERALVALUE,
+                               effectiveDate = e.EFFECTIVEDATE,
+                               maturityDate = e.MATURITYDATE,
+                               accountNumber = e.ACCOUNTNUMBER,
+                               securityValue = e.SECURITYVALUE,
+                               availableBalance = e.AVAILABLEBALANCE,
+                               customerCode = f.CUSTOMERCODE,
+                               customerName = f.FIRSTNAME + " " + f.LASTNAME,
+
+                               applicationReference = g.APPLICATIONREFERENCENUMBER,
+                               comment = e.REMARK,
+                               contractCode = e.DEALREFERENCENUMBER,
+                               currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                               facilityDetails = h.LOANPURPOSE,
+                               facilityReference = i.LOANREFERENCENUMBER,
+                               facilityType = h.TBL_PRODUCT.PRODUCTNAME,
+                           };
+
+                data = data.Where(O => !data2.Any(N => N.collateralCode.Equals(O.collateralCode)));
+                var result = data.Union(data2).ToList(); //.GroupBy(O => O.collateralCode).FirstOrDefault()
+                return result;
             }
         }
 
@@ -625,6 +671,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                validityExpiryDate = d.VALIDTILL.Value,
                                customerCode = f.CUSTOMERCODE,
                                customerName = f.FIRSTNAME + " " + f.LASTNAME,
+                               accountNumber = context.TBL_CASA.Where(O => O.CUSTOMERID == f.CUSTOMERID).FirstOrDefault().PRODUCTACCOUNTNUMBER,
                            };
 
                 return data.ToList();
