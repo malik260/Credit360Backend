@@ -8020,5 +8020,236 @@ namespace FintrakBanking.Repositories.Credit
 
             return reviewTypes;
         }
+
+
+
+
+        public RetailRecoveryCustomerTransactionsViewModels GetRetailRecoveryReporting(DateTime startDate, DateTime endDate)
+        {
+           
+            var fields = new RetailRecoveryCustomerTransactionsViewModels();
+
+            var dataTermLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                            join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                            join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                            join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                            join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                            join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                            join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                            join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                            join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                            join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                            where
+                            lr.ISFULLYRECOVERED == false
+                            && pr.EXCLUDEFROMLITIGATION == false
+                            && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && lr.SOURCE.ToLower() == "retail"
+
+                            select new RetailRecoveryCustomerTransactionsViewModels
+                            {
+                                loanApplicationId = lp.LOANAPPLICATIONID,
+                                currencyId = ld.CURRENCYID,
+                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
+                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
+                                accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
+                                expCompletionDate = lr.EXPCOMPLETIONDATE,
+                                creditAppraisalOperationId = lp.OPERATIONID,
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                loanId = ln.TERMLOANID,
+                                customerId = ln.CUSTOMERID,
+                                productId = ln.PRODUCTID,
+                                productTypeId = pr.PRODUCTTYPEID,
+                                casaAccountId = ln.CASAACCOUNTID,
+                                casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                branchId = ln.BRANCHID,
+                                totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
+                                loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
+                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                interestFrequencyTypeId = ln.INTERESTFREQUENCYTYPEID != null ? (short)ln.INTERESTFREQUENCYTYPEID : (short)0,
+                                interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                principalNumberOfInstallment = ln.PRINCIPALNUMBEROFINSTALLMENT,
+                                interestNumberOfInstallment = ln.INTERESTNUMBEROFINSTALLMENT,
+                                misCode = ln.MISCODE,
+                                teamMiscode = ln.TEAMMISCODE,
+                                interestRate = ln.INTERESTRATE,
+                                effectiveDate = ln.EFFECTIVEDATE,
+                                maturityDate = ln.MATURITYDATE,
+                                bookingDate = ln.BOOKINGDATE,
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL, 
+                                principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
+                                operationId = ln.OPERATIONID,
+                                loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                equityContribution = ln.EQUITYCONTRIBUTION,
+                                subSectorId = ln.SUBSECTORID,
+                                subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                profileLoan = ln.PROFILELOAN,
+                                customerCode = cu.CUSTOMERCODE,
+                                loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                branchName = br.BRANCHNAME,
+                                relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                productName = pr.PRODUCTNAME,
+                                approvedAmount = ld.APPROVEDAMOUNT,
+                                creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                            }).ToList();
+
+            var dataRevolvingLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                     join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                     join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                     join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                     join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                     join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                     join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                     join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                     join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                     where
+                                     lr.ISFULLYRECOVERED == false
+                                     && pr.EXCLUDEFROMLITIGATION == false
+                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && lr.SOURCE.ToLower() == "retail"
+
+                                     select new RetailRecoveryCustomerTransactionsViewModels
+                                     {
+                                         loanApplicationId = lp.LOANAPPLICATIONID,
+                                         totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
+                                         currencyId = ld.CURRENCYID,
+                                         accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
+                                         accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
+                                         accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
+                                         expCompletionDate = lr.EXPCOMPLETIONDATE,
+                                         creditAppraisalOperationId = lp.OPERATIONID,
+                                         loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                         loanId = ln.REVOLVINGLOANID,
+                                         customerId = ln.CUSTOMERID,
+                                         productId = ln.PRODUCTID,
+                                         productTypeId = pr.PRODUCTTYPEID,
+                                         casaAccountId = ln.CASAACCOUNTID,
+                                         casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         branchId = ln.BRANCHID,
+                                         loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                         applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                         misCode = ln.MISCODE,
+                                         teamMiscode = ln.TEAMMISCODE,
+                                         interestRate = ln.INTERESTRATE,
+                                         effectiveDate = ln.EFFECTIVEDATE,
+                                         maturityDate = ln.MATURITYDATE,
+                                         bookingDate = ln.BOOKINGDATE,
+                                         operationId = ln.OPERATIONID,
+                                         loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                         subSectorId = ln.SUBSECTORID,
+                                         subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                         sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                         customerCode = cu.CUSTOMERCODE,
+                                         loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                         customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                         branchName = br.BRANCHNAME,
+                                         relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                         relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                         productName = pr.PRODUCTNAME,
+                                         approvedAmount = ld.APPROVEDAMOUNT,
+                                         creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                     }).ToList();
+
+
+            var termLoanData = dataTermLoan.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.customerId);
+            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.customerId);
+            var unionRecord = termLoanData.Union(revolvingLoanData);
+            var data = unionRecord.ToList();
+
+            foreach (var record in data)
+            {
+                var first = (from a in context.TBL_LOAN_APPLICATION_TRANS
+                             where 
+                             a.CUSTOMERID == record.customerId 
+                             && a.LOANAPPLICATIONID == record.loanApplicationId 
+                             && a.MONTH >= DbFunctions.TruncateTime(startDate).Value.Month 
+                             && a.MONTH <= DbFunctions.TruncateTime(endDate).Value.Month 
+                             && a.YEAR >= DbFunctions.TruncateTime(startDate).Value.Year 
+                             && a.YEAR <= DbFunctions.TruncateTime(endDate).Value.Year 
+                             && a.ISLMS == false
+                             select new RetailRecoveryCustomerTransactionsViewModels
+                             {
+                                 cust_Id = a.CUSTOMERTRANSACTIONID.ToString(),
+                                 period = a.PERIOD,
+                                 productName = a.PRODUCTNAME,
+                                 accountNumber = a.ACCOUNTNUMBER,
+                                 max_Credit_Balance = a.MAXIMUMCREDITBALANCE,
+                                 max_Debit_Balance = a.MAXIMUMDEBITBALANCE,
+                                 min_Credit_Balance = a.MINIMUMCREDITBALANCE,
+                                 min_Debit_Balance = a.MINIMUMDEBITBALANCE,
+                                 credit_Turnover = a.CREDITTURNOVER,
+                                 debit_Turnover = a.DEBITTURNOVER,
+                                 month = a.MONTH,
+                                 year = a.YEAR,
+                                 productAccountName = record.casaAccountName,
+                                 accreditedConsultantName = record.accreditedConsultantName,
+                                 accreditedConsultantCompany = record.accreditedConsultantCompany,
+                                 expCompletionDate = record.expCompletionDate,
+                                 loanReferenceNumber = record.loanReferenceNumber,
+                                 applicationReferenceNumber = record.applicationReferenceNumber,
+                                 customerName = record.customerName,
+                             }).GroupBy(O => new { O.accountNumber, O.credit_Turnover, O.debit_Turnover, O.min_Credit_Balance, O.min_Debit_Balance }).Select(O => O.FirstOrDefault()).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
+
+
+                var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
+                              where
+                              a.CUSTOMERID == record.customerId
+                              && a.LOANAPPLICATIONID == record.loanApplicationId
+                              && a.MONTH >= DbFunctions.TruncateTime(startDate).Value.Month
+                              && a.MONTH <= DbFunctions.TruncateTime(endDate).Value.Month
+                              && a.YEAR >= DbFunctions.TruncateTime(startDate).Value.Year
+                              && a.YEAR <= DbFunctions.TruncateTime(endDate).Value.Year
+                              && a.ISLMS == false
+                              select new RetailRecoveryCustomerTransactionsViewModels
+                              {
+                                  cust_Id = a.CUSTOMERTRANSACTIONID2.ToString(),
+                                  period = a.PERIOD,
+                                  productName = a.PRODUCTNAME,
+                                  accountNumber = a.ACCOUNTNUMBER,
+                                  interest = a.INTEREST,
+                                  float_Charge = a.FLOATCHARGE,
+                                  month = a.MONTH,
+                                  year = a.YEAR,
+                                  productAccountName = record.casaAccountName,
+                                  accreditedConsultantName = record.accreditedConsultantName,
+                                  accreditedConsultantCompany = record.accreditedConsultantCompany,
+                                  expCompletionDate = record.expCompletionDate,
+                                  loanReferenceNumber = record.loanReferenceNumber,
+                                  applicationReferenceNumber = record.applicationReferenceNumber,
+                                  customerName = record.customerName,
+                              }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList(); ;
+
+                first.Add(new RetailRecoveryCustomerTransactionsViewModels
+                {
+                    cust_Id = "TOTAL",
+                    max_Credit_Balance = first.Sum(t => t.max_Credit_Balance),
+                    max_Debit_Balance = first.Sum(t => t.max_Debit_Balance),
+                    min_Credit_Balance = first.Sum(t => t.min_Credit_Balance),
+                    min_Debit_Balance = first.Sum(t => t.min_Debit_Balance),
+                    credit_Turnover = first.Sum(t => t.credit_Turnover),
+                    debit_Turnover = first.Sum(t => t.debit_Turnover),
+                });
+                second.Add(new RetailRecoveryCustomerTransactionsViewModels
+                {
+                    cust_Id = "TOTAL",
+                    interest = second.Sum(t => t.interest),
+                    float_Charge = second.Sum(t => t.float_Charge),
+                });
+
+
+                fields.firstTransaction = first;
+                fields.secondTransaction = second;
+            }
+            return fields;
+        }
     }
 }

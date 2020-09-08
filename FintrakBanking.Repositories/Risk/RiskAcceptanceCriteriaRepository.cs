@@ -53,7 +53,8 @@ namespace FintrakBanking.Repositories.Risk
             bool isCorporate = customerTypeId == (short)CustomerTypeEnum.Corporate;
 
             var employeeType = string.Empty;
-            if(employerType?.EMPLOYERNAME.ToLower() == "self employed"){
+            if(employerType != null && employerType?.EMPLOYERNAME?.ToLower() == "self employed" )
+            {
                  employeeType = "SELFEMPLOYED";
             }
             else
@@ -88,13 +89,13 @@ namespace FintrakBanking.Repositories.Risk
                 if (isCorporate)
                     {
                         var racDefinitionOnEmployerByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                                               && (x.EMPLOYMENTTYPE == employeeType.ToUpper())
+                                                                                               && (x.EMPLOYMENTTYPE == employeeType)
                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
 
                         var racDefinitionOnEmployerByProductClass = context.TBL_RAC_DEFINITION.Where(x => (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS")
-                                                                                               && (x.EMPLOYMENTTYPE == employeeType.ToUpper())
+                                                                                               && (x.EMPLOYMENTTYPE == employeeType)
                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
@@ -107,13 +108,13 @@ namespace FintrakBanking.Repositories.Risk
                 else if (!isCorporate)
                 {
                     var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                                         && (x.EMPLOYMENTTYPE == employeeType.ToUpper())
+                                                                                         && (x.EMPLOYMENTTYPE == employeeType)
                                                                                          && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                          && x.ISACTIVE == true
                                                                                          && x.DELETED == false).ToList();
 
                     var racDefinitionOnEmployeeByProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
-                                                                                        && (x.EMPLOYMENTTYPE == employeeType.ToUpper())
+                                                                                        && (x.EMPLOYMENTTYPE == employeeType)
                                                                                         && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                         && x.ISACTIVE == true
                                                                                         && x.DELETED == false).ToList();
