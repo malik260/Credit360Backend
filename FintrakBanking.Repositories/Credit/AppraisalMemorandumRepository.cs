@@ -2402,6 +2402,8 @@ namespace FintrakBanking.Repositories.Credit
             var appl = context.TBL_LOAN_APPLICATION.Find(entity.targetId);
             List<int> ExclusiveOperations = new List<int>(); // (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
             List<int> levelIds = new List<int>();
+            List<PrivilegeViewModel> grants = new List<PrivilegeViewModel>();
+            PrivilegeViewModel grant;
 
             //ExclusiveOperations.Add(entity.operationId);
             if (appl != null)
@@ -2409,69 +2411,73 @@ namespace FintrakBanking.Repositories.Credit
                 ExclusiveOperations.Add(appl.OPERATIONID);
             }
             var now = DateTime.Now;
-            var relieverStaff = context.TBL_STAFF_RELIEF
-                    .FirstOrDefault(x => x.DELETED == false
+            var relieverStaffs = context.TBL_STAFF_RELIEF
+                    .Where(x => x.DELETED == false
                         && x.RELIEFSTAFFID == entity.createdBy
                         && x.STARTDATE <= now
                         && x.ENDDATE >= now
                         && x.ISACTIVE == true
-                    );
+                    ).ToList();
 
-            if (relieverStaff == null) { return new PrivilegeViewModel(); }
-
-            // mirror above
-            var operationId = entity.operationId;
-            var staffId = relieverStaff.STAFFID; // changed
-            var staff = context.TBL_STAFF.Find(staffId);
-            IQueryable<PrivilegeViewModel> grants;
-            PrivilegeViewModel grant;
-
-            // check default role
-            var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
-
-            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
-                .Join(context.TBL_APPROVAL_GROUP,
-                    m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
-                    mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
-                    {
-                        viewCamDocument = l.CANVIEWDOCUMENT,
-                        canMakeChanges = l.CANEDIT,
-                        canAppendTemplate = l.CANEDIT,
-                        viewUploadedFiles = l.CANVIEWUPLOAD,
-                        canUploadFile = l.CANUPLOAD,
-                        viewApproval = l.CANVIEWAPPROVAL,
-                        canApprove = l.CANAPPROVE,
-                        approvalLimit = l.MAXIMUMAMOUNT,
-                        approvalLevelId = l.APPROVALLEVELID,
-                        groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
-                        canEscalate = l.CANESCALATE,
-                        levelTypeId = l.LEVELTYPEID,
-                    });
-
-            if (grants.Any() == false) // check specific
+            if (relieverStaffs == null) { return new PrivilegeViewModel(); }
+            foreach(var relieverStaff in relieverStaffs)
             {
-                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
-                 .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
-                     m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
-                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-                 .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.STAFFID == staffId),
-                     gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
-                     {
-                         viewCamDocument = s.CANVIEWDOCUMENT,
-                         canMakeChanges = s.CANEDIT,
-                         canAppendTemplate = s.CANEDIT,
-                         viewUploadedFiles = s.CANVIEWUPLOAD,
-                         canUploadFile = s.CANUPLOAD,
-                         viewApproval = s.CANVIEWAPPROVAL,
-                         canApprove = s.CANAPPROVE,
-                         approvalLimit = s.MAXIMUMAMOUNT,
-                         approvalLevelId = s.APPROVALLEVELID,
-                         groupRoleId = gl.mg.g.ROLEID,
-                         canEscalate = gl.l.CANESCALATE,
-                         levelTypeId = gl.l.LEVELTYPEID,
-                     });
+                // mirror above
+                var operationId = entity.operationId;
+                var staffId = relieverStaff.STAFFID; // changed
+                var staff = context.TBL_STAFF.Find(staffId);
+
+                // check default role
+                var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
+
+                var reliefgrants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
+                    .Join(context.TBL_APPROVAL_GROUP,
+                        m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
+                        {
+                            viewCamDocument = l.CANVIEWDOCUMENT,
+                            canMakeChanges = l.CANEDIT,
+                            canAppendTemplate = l.CANEDIT,
+                            viewUploadedFiles = l.CANVIEWUPLOAD,
+                            canUploadFile = l.CANUPLOAD,
+                            viewApproval = l.CANVIEWAPPROVAL,
+                            canApprove = l.CANAPPROVE,
+                            approvalLimit = l.MAXIMUMAMOUNT,
+                            approvalLevelId = l.APPROVALLEVELID,
+                            groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
+                            canEscalate = l.CANESCALATE,
+                            levelTypeId = l.LEVELTYPEID,
+                        }).ToList();
+
+                var test1 = reliefgrants.ToList();
+
+                if (reliefgrants.Any() == false) // check specific
+                {
+                    reliefgrants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
+                     .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
+                         m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                     .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
+                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
+                     .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.STAFFID == staffId),
+                         gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
+                         {
+                             viewCamDocument = s.CANVIEWDOCUMENT,
+                             canMakeChanges = s.CANEDIT,
+                             canAppendTemplate = s.CANEDIT,
+                             viewUploadedFiles = s.CANVIEWUPLOAD,
+                             canUploadFile = s.CANUPLOAD,
+                             viewApproval = s.CANVIEWAPPROVAL,
+                             canApprove = s.CANAPPROVE,
+                             approvalLimit = s.MAXIMUMAMOUNT,
+                             approvalLevelId = s.APPROVALLEVELID,
+                             groupRoleId = gl.mg.g.ROLEID,
+                             canEscalate = gl.l.CANESCALATE,
+                             levelTypeId = gl.l.LEVELTYPEID,
+                         }).ToList();
+                }
+
+                grants.AddRange(reliefgrants);
             }
 
             var test = grants.ToList();
