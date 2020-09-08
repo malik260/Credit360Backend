@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Risk
             bool isCorporate = customerTypeId == (short)CustomerTypeEnum.Corporate;
 
             var employeeType = string.Empty;
-            if(employerType.EMPLOYERNAME.ToLower() == "self employed"){
+            if(employerType?.EMPLOYERNAME.ToLower() == "self employed"){
                  employeeType = "SELFEMPLOYED";
             }
             else
