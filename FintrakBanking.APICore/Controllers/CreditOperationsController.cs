@@ -153,6 +153,8 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-review-approval-operationtype/")]
@@ -169,6 +171,8 @@ namespace FintrakBanking.APICore.Controllers
                        new { success = true, result = data });
             
         }
+
+
 
         [HttpGet]
         [ClaimsAuthorization]
