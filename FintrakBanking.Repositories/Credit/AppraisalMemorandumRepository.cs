@@ -1426,7 +1426,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private bool AddLcArchive(int LcIssuanceId)
+        public bool AddLcArchive(int LcIssuanceId, int operationId)
         {
             var lc = context.TBL_LC_ISSUANCE.Find(LcIssuanceId);
             if (lc == null)
@@ -1456,6 +1456,7 @@ namespace FintrakBanking.Repositories.Credit
                 LETTEROFCREDITEXPIRYDATE = lc.LETTEROFCREDITEXPIRYDATE,
                 INVOICEDATE = lc.INVOICEDATE,
                 INVOICEDUEDATE = lc.INVOICEDUEDATE,
+                TRANSACTIONCYCLE = lc.TRANSACTIONCYCLE,
                 DATETIMECREATED = lc.DATETIMECREATED,
                 DATETIMEUPDATED = lc.DATETIMEUPDATED,
                 DELETED = lc.DELETED,
@@ -1485,6 +1486,7 @@ namespace FintrakBanking.Repositories.Credit
                 LCTOLERANCEVALUE = lc.LCTOLERANCEVALUE,
                 RELEASEDAMOUNT = lc.RELEASEDAMOUNT,
                 OPERATIONID = lc.OPERATIONID,
+                ARCHIVINGOPERATIONID = operationId,
                 DATETIMEARCHIVED = DateTime.Now
             };
             context.TBL_LC_ISSUANCE_ARCHIVE.Add(newArch);
@@ -1566,8 +1568,8 @@ namespace FintrakBanking.Repositories.Credit
                 var placeholders = new AlertPlaceholders();
                 placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME;
                 placeholders.referenceNumber = "<br />LC REFERENCENUMBER: " + tempLc.LCREFERENCENUMBER;
-                placeholders.facilityType = "<br />FACILITY INFORMATION: LETTER OF CREDIT: CANCELATION";
-                placeholders.operationName = "<br />OPERATION NAME: LC ENHANCEMENT";
+                placeholders.facilityType = "<br />FACILITY INFORMATION: LETTER OF CREDIT";
+                placeholders.operationName = "<br />OPERATION NAME: LC AMOUNT MODIFICATION";
                 placeholders.branchName = "<br />BRANCH NAME: " + c.TBL_BRANCH.BRANCHNAME;
                 workflow.Placeholders = placeholders;
 
@@ -1586,7 +1588,76 @@ namespace FintrakBanking.Repositories.Credit
                         tempLc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcEnhancementCompleted;
                         tempLc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         workflow.SetResponse = false;
-                        var archived = AddLcArchive(tempLc.LCISSUANCEID);
+                        var archived = AddLcArchive(tempLc.LCISSUANCEID, operationId);
+                        if (archived)
+                        {
+                            UpdateLcWithEnhancement(tempLc.TEMPLCISSUANCEID);
+                        }
+                        else
+                        {
+                            throw new SecureException("There was an Error Archiving this LC!");
+                        }
+                    }
+                    else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
+                    {
+                        tempLc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    }
+                }
+                context.SaveChanges();
+                trans.Commit();
+                return workflow.Response;
+            }
+        }
+
+        public WorkflowResponse LcExtensionMemorandum(LcForwardViewModel model)
+        {
+            var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
+            if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress || lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress)
+            {
+                throw new SecureException("This LC is already undergoing Termination Or has been Terminated");
+            }
+            int operationId = (int)OperationsEnum.LCExtensionApproval; // CHANGE
+            var applicationDate = general.GetApplicationDate();
+            var tempLc = context.TBL_TEMP_LC_ISSUANCE.Find(model.tempLcIssuanceId);
+            if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
+            // WORKFLOW
+            using (var trans = context.Database.BeginTransaction())
+            {
+                workflow.OperationId = operationId;
+                workflow.StaffId = model.createdBy;
+                workflow.TargetId = model.tempLcIssuanceId;
+                workflow.CompanyId = model.companyId;
+                workflow.Vote = model.vote;
+                workflow.ToStaffId = null;
+                workflow.StatusId = model.forwardAction;
+                workflow.Comment = model.comment;
+                var c = context.TBL_CUSTOMER.Find(tempLc.CUSTOMERID);
+
+                workflow.BusinessUnitId = c?.BUSINESSUNTID;
+                var placeholders = new AlertPlaceholders();
+                placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME;
+                placeholders.referenceNumber = "<br />LC REFERENCENUMBER: " + tempLc.LCREFERENCENUMBER;
+                placeholders.facilityType = "<br />FACILITY INFORMATION: LETTER OF CREDIT";
+                placeholders.operationName = "<br />OPERATION NAME: LC AMOUNT MODIFICATION";
+                placeholders.branchName = "<br />BRANCH NAME: " + c.TBL_BRANCH.BRANCHNAME;
+                workflow.Placeholders = placeholders;
+
+                workflow.DeferredExecution = true;
+                workflow.LogActivity();
+
+                WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
+
+                tempLc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcExtensionInProgress;
+                tempLc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+
+                if (workflow.NewState == (int)ApprovalState.Ended) // cam status
+                {
+                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                    {
+                        tempLc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcExtensionCompleted;
+                        tempLc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        workflow.SetResponse = false;
+                        var archived = AddLcArchive(tempLc.LCISSUANCEID, operationId);
                         if (archived)
                         {
                             UpdateLcWithEnhancement(tempLc.TEMPLCISSUANCEID);

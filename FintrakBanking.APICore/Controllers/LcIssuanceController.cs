@@ -82,6 +82,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lc-extension")]
+        public HttpResponseMessage GetLcIssuancesForExtension()
+        {
+            try
+            {
+                IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForExtension(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lc-search/{searchString}")]
         public HttpResponseMessage SearchLc(string searchString)
         {
@@ -138,6 +155,22 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForEnhancementApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-extension/approval")]
+        public HttpResponseMessage GetLcIssuancesForExtensionApproval()
+        {
+            try
+            {
+                IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForExtensionApproval(token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (SecureException ex)
@@ -232,7 +265,29 @@ namespace FintrakBanking.APICore.Controllers
             model.companyId = token.GetCompanyId;
             try
             {
-                var response = repo.AddLcEnhanceMent(model);
+                var response = repo.AddLcEnhancement(model);
+                if (response.tempLcIssuanceId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lc-extension")]
+        public HttpResponseMessage AddLcExtension([FromBody] LcIssuanceViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            try
+            {
+                var response = repo.AddLcExtension(model);
                 if (response.tempLcIssuanceId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
@@ -290,6 +345,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("lc-extension/{id}")]
+        public HttpResponseMessage UpdateLcExtension([FromBody] LcIssuanceViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            try
+            {
+                bool response = repo.UpdateLcExtension(model, id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been updated successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("lc-issuance/{id}")]
@@ -330,6 +409,30 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 bool response = repo.DeleteLcEnhancement(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been deleted successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("lc-extension/{id}")]
+        public HttpResponseMessage DeleteLcExtension(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            try
+            {
+                bool response = repo.DeleteLcExtension(id, user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been deleted successfully" });
             }
             catch (SecureException ex)
