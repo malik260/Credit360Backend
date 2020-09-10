@@ -134,6 +134,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool operationCompleted { get; set; }
         public DateTime? expCompletionDate { get; set; }
         public string comment { get; set; }
+        public string source { get; set; }
     }
 
     public class RemoveLienViewModel
