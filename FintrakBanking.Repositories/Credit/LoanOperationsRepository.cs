@@ -31535,6 +31535,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanId = ln.TERMLOANID,
                                 customerId = ln.CUSTOMERID,
                                 productId = ln.PRODUCTID,
+                                productClassId = pr.PRODUCTCLASSID,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
@@ -31646,6 +31647,7 @@ namespace FintrakBanking.Repositories.Credit
                                          loanId = ln.REVOLVINGLOANID,
                                          customerId = ln.CUSTOMERID,
                                          productId = ln.PRODUCTID,
+                                         productClassId = pr.PRODUCTCLASSID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          casaAccountId = ln.CASAACCOUNTID,
                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
@@ -31715,10 +31717,8 @@ namespace FintrakBanking.Repositories.Credit
                             join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                             join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
-                            join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             where
-                            pr.EXCLUDEFROMLITIGATION == false
-                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            l.DELETED == false
 
                             select new RetailLoanRecoveryCommissionViewModel
                             {
@@ -31752,7 +31752,6 @@ namespace FintrakBanking.Repositories.Credit
                                 customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
                                 branchName = br.BRANCHNAME,
                                 relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                                relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
                                 productName = pr.PRODUCTNAME,
                                 comment = "",
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
@@ -31768,10 +31767,8 @@ namespace FintrakBanking.Repositories.Credit
                                      join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
-                                     join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                      where
-                                     pr.EXCLUDEFROMLITIGATION == false
-                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     l.DELETED == false
 
                                      select new RetailLoanRecoveryCommissionViewModel
                                      {
@@ -31805,15 +31802,14 @@ namespace FintrakBanking.Repositories.Credit
                                          customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
                                          branchName = br.BRANCHNAME,
                                          relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                                         relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
                                          productName = pr.PRODUCTNAME,
                                          comment = "",
                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
                                      }).ToList();
 
 
-            var termLoanData = dataLoan.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber);
-            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber);
+            var termLoanData = dataLoan.OrderByDescending(x => x.accreditedConsultantName);
+            var revolvingLoanData = dataRevolvingLoan.OrderByDescending(x => x.accreditedConsultantName);
             var unionAll = termLoanData.Union(revolvingLoanData);
 
             var data = unionAll;
