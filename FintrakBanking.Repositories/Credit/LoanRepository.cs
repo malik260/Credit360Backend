@@ -18339,71 +18339,77 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new ConditionNotMetException("Kindly select an accredited consultant/expected completion date is empty.");
             }
-
-            var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
-                                                          && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                                          && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
-                                                          && x.DELETED == false
-                                                          ).ToList();
-            if (validate != null && validate.Count() > 0)
+            try
             {
-                throw new SecureException("Request already exist and undergoing approval");
+                var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
+                                                              && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                                              && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                                                              && x.DELETED == false
+                                                              ).ToList();
+                if (validate != null && validate.Count() > 0)
+                {
+                    throw new SecureException("Request already exist and undergoing approval");
+                }
+
+                LoanRecoveryAssignmentViewModel assignOperations = new LoanRecoveryAssignmentViewModel();
+
+                foreach (var customerRequest in models)
+                {
+                    assignOperations.createdBy = user.createdBy;
+                    assignOperations.accreditedConsultant = accreditedConsultant;
+                    assignOperations.loanReferenceNumber = customerRequest.loanReferenceNumber;
+                    assignOperations.expCompletionDate = expCompletionDate;
+                    assignOperations.referenceId = referenceNumber;
+                    assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+                    assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                    assignOperations.operationCompleted = false;
+                    assignOperations.totalAmountRecovery = customerRequest.totalAmountRecovery; 
+                    assignOperations.source = source;
+                    assignOperations.productId = customerRequest.productId;
+                    assignOperations.productClassId = customerRequest.productClassId;
+                    var loanData = addBulkLoanAssignmentToAgent(assignOperations);
+                    bulkLoanTable.Add(loanData);
+                }
+                context.TBL_LOAN_RECOVERY_ASSIGNMENT.AddRange(bulkLoanTable);
+                if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+                TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL removeLienOperation = new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL();
+                removeLienOperation = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
+                {
+                    ACCREDITEDCONSULTANTID = accreditedConsultant,
+                    REFERENCEBATCHID = referenceNumber,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
+                    REQUESTDATE = DateTime.Now,
+                    SOURCE = source
+                });
+                if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+                auditTrail.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ referenceNumber}' ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                });
+
+                int resultStatus = context.SaveChanges();
+                if (resultStatus > 0)
+                {
+                    result = true;
+                }
+
+                return result;
+            }catch(Exception e)
+            {
+                throw e;
             }
-
-            LoanRecoveryAssignmentViewModel assignOperations = new LoanRecoveryAssignmentViewModel();
-
-            foreach (var customerRequest in models)
-            {
-                assignOperations.createdBy = user.createdBy;
-                assignOperations.accreditedConsultant = accreditedConsultant;
-                assignOperations.loanReferenceNumber = customerRequest.loanReferenceNumber;
-                assignOperations.expCompletionDate = expCompletionDate;
-                assignOperations.referenceId = referenceNumber;
-                assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Pending;
-                assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
-                assignOperations.operationCompleted = false;
-                assignOperations.source = source;
-                assignOperations.productId = customerRequest.productId;
-                assignOperations.productClassId = customerRequest.productClassId;
-                var loanData = addBulkLoanAssignmentToAgent(assignOperations);
-                bulkLoanTable.Add(loanData);
-            }
-            context.TBL_LOAN_RECOVERY_ASSIGNMENT.AddRange(bulkLoanTable);
-            if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
-
-            TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL removeLienOperation = new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL();
-            removeLienOperation = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
-            {
-                ACCREDITEDCONSULTANTID = accreditedConsultant,
-                REFERENCEBATCHID = referenceNumber,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
-                REQUESTDATE = DateTime.Now,
-                SOURCE = source
-            });
-            if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
-
-            auditTrail.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ referenceNumber}' ",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = user.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName()
-            });
-
-            int resultStatus = context.SaveChanges();
-            if (resultStatus > 0)
-            {
-                result = true;
-            }
-
-            return result;
         }
 
 
