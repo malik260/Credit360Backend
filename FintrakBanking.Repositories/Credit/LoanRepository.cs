@@ -18339,8 +18339,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new ConditionNotMetException("Kindly select an accredited consultant/expected completion date is empty.");
             }
-            try
-            {
+            
                 var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
                                                               && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                                               && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
@@ -18367,12 +18366,16 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.source = source;
                     assignOperations.productId = customerRequest.productId;
                     assignOperations.productClassId = customerRequest.productClassId;
+                    assignOperations.loanId = customerRequest.loanId;
+                    assignOperations.applicationReferenceNumber = customerRequest.applicationReferenceNumber;
+                    assignOperations.customerId = customerRequest.customerId;
                     var loanData = addBulkLoanAssignmentToAgent(assignOperations);
                     bulkLoanTable.Add(loanData);
                 }
-                context.TBL_LOAN_RECOVERY_ASSIGNMENT.AddRange(bulkLoanTable);
-                if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
-
+            
+                 context.TBL_LOAN_RECOVERY_ASSIGNMENT.AddRange(bulkLoanTable);
+                 if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+            
                 TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL removeLienOperation = new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL();
                 removeLienOperation = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
                 {
@@ -18406,10 +18409,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 return result;
-            }catch(Exception e)
-            {
-                throw e;
-            }
+           
         }
 
 

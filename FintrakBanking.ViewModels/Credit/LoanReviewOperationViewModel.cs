@@ -199,8 +199,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
-        public decimal? prepaymentAmount;
+        public decimal? prepaymentAmount { get; set; }
         public decimal? TotalExposure { get; set; }
+        public string source { get; set; }
 
         public DateTime? expCompletionDate { get; set; }
         public int loanAssignId { get; set; }

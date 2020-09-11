@@ -19462,7 +19462,8 @@ namespace FintrakBanking.Repositories.Credit
                                 approverComment = atrail.COMMENT,
                                 requestDate = ln.REQUESTDATE,
                                 bulkRecoveryApprovalId = ln.BULKRECOVERYAPPROVALID,
-                                operationId = ln.OPERATIONID
+                                operationId = ln.OPERATIONID,
+                                source = ln.SOURCE
                             }).ToList();
 
             return dataLoan;
@@ -19494,7 +19495,8 @@ namespace FintrakBanking.Repositories.Credit
                                 approverComment = atrail.COMMENT,
                                 requestDate = ln.REQUESTDATE,
                                 bulkRecoveryApprovalId = ln.BULKRECOVERYAPPROVALID,
-                                operationId = ln.OPERATIONID
+                                operationId = ln.OPERATIONID,
+                                source = ln.SOURCE
                             }).ToList();
             var LoanData = dataLoan.GroupBy(x => x.bulkRecoveryApprovalId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.bulkRecoveryApprovalId);
 
@@ -19518,7 +19520,8 @@ namespace FintrakBanking.Repositories.Credit
                                 approvalStatusId = (int)ln.APPROVALSTATUSID,
                                 requestDate = ln.REQUESTDATE,
                                 bulkRecoveryApprovalId = ln.BULKRECOVERYAPPROVALID,
-                                operationId = ln.OPERATIONID
+                                operationId = ln.OPERATIONID,
+                                source = ln.SOURCE
                             }).ToList();
             var LoanData = dataLoan.GroupBy(x => x.bulkRecoveryApprovalId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.bulkRecoveryApprovalId);
 
