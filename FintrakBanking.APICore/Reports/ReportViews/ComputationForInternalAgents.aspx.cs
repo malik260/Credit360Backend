@@ -52,7 +52,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource2);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/ComputationForExternalAgents.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/RecoveryComputation.rdlc");
 
                     ReportViewer.LocalReport.Refresh();
                 }
