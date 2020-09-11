@@ -19540,6 +19540,23 @@ namespace FintrakBanking.Repositories.Credit
 
             try
             {
+                var updateRecord = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(models.loanAssignId);
+                if(updateRecord != null)
+                {
+                    if (updateRecord.TOTALAMOUNTRECOVERY == models.amountRecovered)
+                    {
+                        updateRecord.TOTALAMOUNTRECOVERY = 0;
+                        updateRecord.ISFULLYRECOVERED = true;
+                        updateRecord.OPERATIONCOMPLETED = true;
+                    }
+                    if (updateRecord.TOTALAMOUNTRECOVERY != models.amountRecovered)
+                    {
+                        updateRecord.TOTALAMOUNTRECOVERY = (updateRecord.TOTALAMOUNTRECOVERY - models.amountRecovered);
+                    }
+                    context.SaveChanges();
+                }
+
+
                 var record = new TBL_LOAN_RECOVERY_COMMISSION_RETAIL
                 {
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
