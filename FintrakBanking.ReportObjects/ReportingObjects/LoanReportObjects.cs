@@ -1709,10 +1709,10 @@ namespace FintrakBanking.ReportObjects
         }
         public IList<LoanDocumentWaivedViewModel> LoanDocumentWaived(DateTime startDate, DateTime endDate, int companyId, short? branchId, string searchParameter)
         {
-            List<SubHead> subList = new List<SubHead>();
+            //List<SubHead> subList = new List<SubHead>();
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
-                subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION }).ToList();
+                //subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION }).ToList();
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
 
@@ -1729,15 +1729,16 @@ namespace FintrakBanking.ReportObjects
                                              && DbFunctions.TruncateTime(b.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                                              && DbFunctions.TruncateTime(b.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                                              //&& b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
-                                             && b.TBL_LOAN_APPLICATION.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                                             && c.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                                             && (b.TBL_CUSTOMER.BRANCHID == branchId || branchId == null || branchId == 0)
-                                             && (b.APPROVEDAMOUNT.ToString().Contains(searchParameter.Trim()) || b.TBL_PRODUCT.PRODUCTNAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.CUSTOMERCODE.Contains(searchParameter.Trim())
-                                               || b.TBL_CUSTOMER.FIRSTNAME.StartsWith(searchParameter.Trim()) || b.TBL_CUSTOMER.MIDDLENAME.StartsWith(searchParameter.Trim()) || b.TBL_CUSTOMER.LASTNAME.StartsWith(searchParameter.Trim())
-                                               || b.TBL_CUSTOMER.FIRSTNAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.MIDDLENAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.LASTNAME.Contains(searchParameter.Trim())
-                                               || a.CONDITION.Contains(searchParameter.Trim())
-                                               || p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME.Contains(searchParameter.Trim())
-                                               || searchParameter == "" || searchParameter == null)
+
+                                             //&& b.TBL_LOAN_APPLICATION.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                                             //&& c.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                                             //&& (b.TBL_CUSTOMER.BRANCHID == branchId || branchId == null || branchId == 0)
+                                             //&& (b.APPROVEDAMOUNT.ToString().Contains(searchParameter.Trim()) || b.TBL_PRODUCT.PRODUCTNAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.CUSTOMERCODE.Contains(searchParameter.Trim())
+                                             //  || b.TBL_CUSTOMER.FIRSTNAME.StartsWith(searchParameter.Trim()) || b.TBL_CUSTOMER.MIDDLENAME.StartsWith(searchParameter.Trim()) || b.TBL_CUSTOMER.LASTNAME.StartsWith(searchParameter.Trim())
+                                             //  || b.TBL_CUSTOMER.FIRSTNAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.MIDDLENAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.LASTNAME.Contains(searchParameter.Trim())
+                                             //  || a.CONDITION.Contains(searchParameter.Trim())
+                                             //  || p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME.Contains(searchParameter.Trim())
+                                             //  || searchParameter == "" || searchParameter == null)
 
                                             orderby e.EFFECTIVEDATE descending
                                             select new LoanDocumentWaivedViewModel()
@@ -1753,17 +1754,18 @@ namespace FintrakBanking.ReportObjects
 
 
 
+
                                             }).ToList().Select(x =>
                                             {
-                                                var buDescription = subList.Where(f => f.staffCode == x.staffCode).Select(f => f.region).FirstOrDefault();
-                                                if (buDescription != null)
-                                                {
-                                                    x.buDescription = buDescription;
-                                                }
-                                                else if (buDescription == null)
-                                                {
+                                                //var buDescription = waivedConditions.Where(f => f.staffCode == x.staffCode).Select(f => f.region).FirstOrDefault();
+                                                //if (buDescription != null)
+                                                //{
+                                                //    x.buDescription = buDescription;
+                                                //}
+                                                //else if (buDescription == null)
+                                                //{
                                                     x.buDescription = "";
-                                                }
+                                                //}
                                                 return x;
                                             });
                     return waivedConditions.Distinct().OrderBy(u => u.waveredDate).ToList();
