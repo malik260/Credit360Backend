@@ -18350,19 +18350,20 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Request already exist and undergoing approval");
             }
 
-            //List<TBL_LOAN_RECOVERY_ASSIGNMENT> assignOperations = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
+            LoanRecoveryAssignmentViewModel assignOperations = new LoanRecoveryAssignmentViewModel();
 
             foreach (var customerRequest in models)
             {
-                customerRequest.createdBy = user.createdBy;
-                customerRequest.accreditedConsultant = accreditedConsultant;
-                customerRequest.expCompletionDate = expCompletionDate;
-                customerRequest.referenceId = referenceNumber;
-                customerRequest.approvalStatusId = (int)ApprovalStatusEnum.Pending;
-                customerRequest.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
-                customerRequest.operationCompleted = false;
-                customerRequest.source = source;
-                var loanData = addBulkLoanAssignmentToAgent(customerRequest);
+                assignOperations.createdBy = user.createdBy;
+                assignOperations.accreditedConsultant = accreditedConsultant;
+                assignOperations.loanReferenceNumber = customerRequest.loanReferenceNumber;
+                assignOperations.expCompletionDate = expCompletionDate;
+                assignOperations.referenceId = referenceNumber;
+                assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+                assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                assignOperations.operationCompleted = false;
+                assignOperations.source = source;
+                var loanData = addBulkLoanAssignmentToAgent(assignOperations);
                 bulkLoanTable.Add(loanData);
             }
             context.TBL_LOAN_RECOVERY_ASSIGNMENT.AddRange(bulkLoanTable);
@@ -18573,6 +18574,7 @@ namespace FintrakBanking.Repositories.Credit
                 dateTimeCreated = x.DATETIMECREATED,
                 loanAssignId = x.LOANASSIGNID,
                 percentageCommission = x.PERCENTAGECOMMISSION,
+                loanReference = x.LOANREFERENCE,
             }).FirstOrDefault();
 
             if (existing != null && model.overwrite == false) return 3;
@@ -18598,7 +18600,8 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALCODE = model.collateralCode,
                 COLLECTIONMODE = model.collectionMode,
                 LOANASSIGNID = model.loanAssignId,
-                PERCENTAGECOMMISSION = model.percentageCommission
+                PERCENTAGECOMMISSION = model.percentageCommission,
+                LOANREFERENCE = model.loanReference
             };
 
             context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Add(entity);
@@ -18656,7 +18659,8 @@ namespace FintrakBanking.Repositories.Credit
                 createdBy = x.CREATEDBY,
                 dateTimeCreated = x.DATETIMECREATED,
                 loanAssignId = x.LOANASSIGNID,
-                percentageCommission = x.PERCENTAGECOMMISSION
+                percentageCommission = x.PERCENTAGECOMMISSION,
+                loanReference = x.LOANREFERENCE,
             }).FirstOrDefault();
 
             if (existing != null && model.overwrite == false) return 3;
@@ -18677,7 +18681,8 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALCODE = model.collateralCode,
                 COLLECTIONMODE = model.collectionMode,
                 LOANASSIGNID = model.loanAssignId,
-                PERCENTAGECOMMISSION = model.percentageCommission
+                PERCENTAGECOMMISSION = model.percentageCommission,
+                LOANREFERENCE = model.loanReference
             };
 
             context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Add(entity);
@@ -19098,7 +19103,8 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVALSTATUSID = entity.approvalStatusId,
                 OPERATIONCOMPLETED = entity.operationCompleted,
                 TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
-                SOURCE = entity.source
+                SOURCE = entity.source,
+                LOANREFERENCE = entity.loanReferenceNumber
             };
             return data;
         }

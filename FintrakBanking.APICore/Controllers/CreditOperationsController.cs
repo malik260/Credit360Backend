@@ -1216,8 +1216,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-commission-agents-retail/{source}")]
-        public HttpResponseMessage getAllRecoveryCommissonByAgents(string source)
+        [Route("loan-operation/recovery-commission-agents-retail")]
+        public HttpResponseMessage getAllRecoveryCommissonByAgents()
         {
             var data = repo.getAllRecoveryCommissonByAgents(token.GetStaffId, token.GetCompanyId);
             if (data == null)
