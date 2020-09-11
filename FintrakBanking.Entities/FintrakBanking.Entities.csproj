@@ -156,6 +156,7 @@
     <Compile Include="Models\TBL_LOAN_RECOVERY_ASSIGNMENT.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_COMMISSION_APPROVAL.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_COMMISSION_BATCH.cs" />
+    <Compile Include="Models\TBL_LOAN_RECOVERY_COMMISSION_RETAIL.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_REPORTING_APPROVAL.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_REPORTING_BATCH.cs" />
     <Compile Include="Models\TBL_OPERATION_CAMSOL_LIST.cs" />

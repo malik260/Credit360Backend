@@ -524,6 +524,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\RecoveryCollections.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RecoveryCollections.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\ReportDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -639,12 +644,40 @@
     <Compile Include="Reports\ReportViews\CollateralRegister.aspx.designer.cs">
       <DependentUpon>CollateralRegister.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ComputationForInternalAgents.aspx.cs">
+      <DependentUpon>ComputationForInternalAgents.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ComputationForInternalAgents.aspx.designer.cs">
+      <DependentUpon>ComputationForInternalAgents.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryCollectionReport.aspx.cs">
+      <DependentUpon>RecoveryCollectionReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryCollectionReport.aspx.designer.cs">
+      <DependentUpon>RecoveryCollectionReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CreditBureau.aspx.cs">
       <DependentUpon>CreditBureau.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\CreditBureau.aspx.designer.cs">
       <DependentUpon>CreditBureau.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ComputationForExternalAgents.aspx.cs">
+      <DependentUpon>ComputationForExternalAgents.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ComputationForExternalAgents.aspx.designer.cs">
+      <DependentUpon>ComputationForExternalAgents.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\PaydayLoanCollection.aspx.cs">
+      <DependentUpon>PaydayLoanCollection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\PaydayLoanCollection.aspx.designer.cs">
+      <DependentUpon>PaydayLoanCollection.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\FixedDepositCollateral.aspx.cs">
       <DependentUpon>FixedDepositCollateral.aspx</DependentUpon>
@@ -1345,6 +1378,13 @@
     <Compile Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx.designer.cs">
       <DependentUpon>SubmissionOfOriginalDocument.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\DelinquentAccounts.aspx.cs">
+      <DependentUpon>DelinquentAccounts.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DelinquentAccounts.aspx.designer.cs">
+      <DependentUpon>DelinquentAccounts.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\TrialBalance.aspx.cs">
       <DependentUpon>TrialBalance.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1467,7 +1507,11 @@
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\CollateralRegister.aspx" />
+    <Content Include="Reports\ReportViews\ComputationForInternalAgents.aspx" />
+    <Content Include="Reports\ReportViews\RecoveryCollectionReport.aspx" />
     <Content Include="Reports\ReportViews\CreditBureau.aspx" />
+    <Content Include="Reports\ReportViews\ComputationForExternalAgents.aspx" />
+    <Content Include="Reports\ReportViews\PaydayLoanCollection.aspx" />
     <Content Include="Reports\ReportViews\FixedDepositCollateral.aspx" />
     <Content Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx" />
     <Content Include="Reports\ReportViews\IdleAssetsSales.aspx" />
@@ -1561,6 +1605,7 @@
     <Content Include="Reports\ReportViews\StaffRoleProfileGroupReport.aspx" />
     <Content Include="Reports\ReportViews\StalledPerfection.aspx" />
     <Content Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx" />
+    <Content Include="Reports\ReportViews\DelinquentAccounts.aspx" />
     <Content Include="Reports\ReportViews\TrialBalance.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
     <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
@@ -1740,6 +1785,17 @@
     <Content Include="Reports\ReportDataset\RecoveryReporting.xsc">
       <DependentUpon>RecoveryReporting.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\ReportDataset\RecoveryCollections.xsc">
+      <DependentUpon>RecoveryCollections.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\RecoveryCollections.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>RecoveryCollections.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\RecoveryCollections.xss">
+      <DependentUpon>RecoveryCollections.xsd</DependentUpon>
+    </Content>
     <None Include="Reports\ReportDataset\RecoveryReporting.xsd" />
     <Content Include="Reports\ReportDataset\RecoveryReporting.xss">
       <DependentUpon>RecoveryReporting.xsd</DependentUpon>
@@ -1896,6 +1952,7 @@
     <EmbeddedResource Include="Reports\Report\CollateralSales.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralValuationReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ComputationForExternalAgents.rdlc" />
     <EmbeddedResource Include="Reports\Report\ContigentLiabilityInformation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Report\CreditBureau.rdlc" />
@@ -1903,6 +1960,7 @@
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\DeferralWaiver.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DelinquentAccounts.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\DrawdownMemo.rdlc" />
@@ -1952,13 +2010,16 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
+    <EmbeddedResource Include="Reports\Report\PaydayLoanCollection.rdlc" />
     <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\PSR_APG.rdlc" />
     <EmbeddedResource Include="Reports\Report\PSR_Direct.rdlc" />
     <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RecoveryAgentPerformance.rdlc" />
     <EmbeddedResource Include="Reports\Report\RecoveryAgentUpdate.rdlc" />
+    <EmbeddedResource Include="Reports\Report\RecoveryCollectionReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RecoveryCommission.rdlc" />
+    <EmbeddedResource Include="Reports\Report\RecoveryComputation.rdlc" />
     <EmbeddedResource Include="Reports\Report\RevalidationOfFullAndFinalSettlement.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\RunningLoanReport.rdlc" />
