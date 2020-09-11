@@ -902,11 +902,15 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 foreach(var consultant in allData)
                 {
+                    consultant.orlMinimumAssigned = 0.0;
+                    consultant.amountRecoveredOrl = 0.0;
                     consultant.commissionOne = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber).Sum(c => c.COMMISSIONPAYABLE);
                     consultant.commissionTwo = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber).Sum(c => c.COMMISSIONPAYABLE);
                     consultant.target = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber).Sum(c => c.TOTALRECOVERYAMOUNT);
                     consultant.totalAmountRecovered = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber).Sum(c => c.AMOUNTRECOVERED);
                     consultant.totalAmountAssigned = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber).Sum(c => c.TOTALRECOVERYAMOUNT);
+                    consultant.amountRecoveredCreditCard = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber && c.PRODUCTCLASSID == (int)ProductClassEnum.Creditcards).Sum(c => c.AMOUNTRECOVERED);
+                    consultant.creditCardMinimumAssigned = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber && c.PRODUCTCLASSID == (int)ProductClassEnum.Creditcards).Sum(c => c.TOTALRECOVERYAMOUNT);
                                                       
                 }
 

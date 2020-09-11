@@ -18363,6 +18363,8 @@ namespace FintrakBanking.Repositories.Credit
                 assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
                 assignOperations.operationCompleted = false;
                 assignOperations.source = source;
+                assignOperations.productId = customerRequest.productId;
+                assignOperations.productClassId = customerRequest.productClassId;
                 var loanData = addBulkLoanAssignmentToAgent(assignOperations);
                 bulkLoanTable.Add(loanData);
             }
@@ -19104,7 +19106,9 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONCOMPLETED = entity.operationCompleted,
                 TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
                 SOURCE = entity.source,
-                LOANREFERENCE = entity.loanReferenceNumber
+                LOANREFERENCE = entity.loanReferenceNumber,
+                PRODUCTCLASSID = entity.productClassId,
+                PRODUCTID = entity.productId
             };
             return data;
         }
@@ -19549,6 +19553,8 @@ namespace FintrakBanking.Repositories.Credit
                     LOANREFERENCE = models.loanReferenceNumber,
                     ACCREDITEDCONSULTANT = models.accreditedConsultant,
                     REFERENCEID = referenceNumber,
+                    PRODUCTCLASSID = models.productClassId,
+                    PRODUCTID = (int)models.productId,
                 };
                 context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Add(record);
                 var status = context.SaveChanges() != 0;

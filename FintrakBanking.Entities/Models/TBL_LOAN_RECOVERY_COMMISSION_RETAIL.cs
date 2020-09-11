@@ -31,5 +31,7 @@ namespace FintrakBanking.Entities.Models
         public int? LOANASSIGNID { get; set; }
         public int? LOANID { get; set; }
         public string LOANREFERENCE { get; set; }
+        public int? PRODUCTID { get; set; }
+        public int? PRODUCTCLASSID { get; set; }
     }
 }

@@ -119,6 +119,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanRecoveryAssignmentViewModel
     {
+        public int? productId { get; set; }
+        public int? productClassId { get; set; }
         public string loanReferenceNumber { get; set; }
         public int loanAssignId { get; set; }
         public string referenceId { get; set; }
@@ -224,6 +226,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
+        public int productClassId { get; set; }
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
         public string casaAccount { get; set; }
@@ -960,6 +963,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal interestAmount { get; set; }
 
         public short productId { get; set; }
+        public int? productClassId { get; set; }
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
         public string casaAccount { get; set; }
@@ -1066,7 +1070,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RecoveryCollectionsViewModel
     {
-        public decimal? prepaymentAmount;
+        public decimal? prepaymentAmount { get; set; }
+        public double orlMinimumAssigned { get; set; }
+
         public decimal? TotalExposure { get; set; }
         public decimal totalExposureLcy { get; set; }
         public DateTime? expCompletionDate { get; set; }
@@ -1407,6 +1413,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? target { get; set; }
         public decimal? totalAmountRecovered { get; set; }
         public decimal? totalAmountAssigned { get; set; }
+        public decimal? amountRecoveredCreditCard { get; set; }
+        public decimal? creditCardMinimumAssigned { get; set; }
+        public double amountRecoveredOrl { get; set; }
     }
 
 }

@@ -2019,6 +2019,7 @@
     <EmbeddedResource Include="Reports\Report\RecoveryAgentUpdate.rdlc" />
     <EmbeddedResource Include="Reports\Report\RecoveryCollectionReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RecoveryCommission.rdlc" />
+    <EmbeddedResource Include="Reports\Report\RecoveryComputation.rdlc" />
     <EmbeddedResource Include="Reports\Report\RevalidationOfFullAndFinalSettlement.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\RunningLoanReport.rdlc" />
