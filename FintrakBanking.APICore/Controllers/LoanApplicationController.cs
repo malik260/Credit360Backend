@@ -1882,6 +1882,34 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-exceptional-loans-for-approval")]
+        public HttpResponseMessage GetExceptionalLoansForApproval()
+        {
+            var data = repo.GetExceptionalLoansForApproval(token.GetStaffId);
+
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpPost]
+        [Route("exceptional-loan/forward-for-approval")]
+        public HttpResponseMessage GoForApprovalExceptionalLoan([FromBody] ExceptionalLoanViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.GoForApprovalExceptionalLoan(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "EXCEPTIONAL LOAN") });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("application-detail-fields/{id}")]
         public HttpResponseMessage GetLoanApplicationDetailFields(int id)
         {

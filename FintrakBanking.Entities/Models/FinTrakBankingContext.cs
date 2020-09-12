@@ -625,7 +625,14 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_THIRDPARTY_LOAN_MAPPING> TBL_THIRDPARTY_LOAN_MAPPING { get; set; }
         public virtual DbSet<TBL_CUSTOMER_RATIO_CATEGORY> TBL_CUSTOMER_RATIO_CATEGORY { get; set; }
 
-
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPLICATION> TBL_EXCEPTIONAL_LOAN_APPLICATION { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETAIL> TBL_EXCEPTIONAL_LOAN_APPL_DETAIL { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETL_FEE> TBL_EXCEPTIONAL_LOAN_APPL_DETL_FEE { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETL_INV> TBL_EXCEPTIONAL_LOAN_APPL_DETL_INV { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETL_BG> TBL_EXCEPTIONAL_LOAN_APPL_DETL_BG { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETL_SYN> TBL_EXCEPTIONAL_LOAN_APPL_DETL_SYN { get; set; }
+        //public virtual DbSet<TBL_EXCEPTIONAL_RAC_DEFINITION> TBL_EXCEPTIONAL_RAC_DEFINITION { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_RAC_DETAIL> TBL_EXCEPTIONAL_RAC_DETAIL { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 
