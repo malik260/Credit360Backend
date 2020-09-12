@@ -3573,7 +3573,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetRecoveryDelinquentAccountsReport(obj.startDate, obj.endDate);
+                var data = repo.GetRecoveryDelinquentAccountsReport(obj.startDate, obj.endDate, obj.dpd);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
