@@ -14,7 +14,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 {
     public class RecoveryCollections
     {
-        public IEnumerable<RecoveryCollectionsViewModel> DelinquentAccounts(DateTime startDate, DateTime endDate)
+        public IEnumerable<RecoveryCollectionsViewModel> DelinquentAccounts(DateTime startDate, DateTime endDate, int dpd)
         {
             List<SubHead> staffmisi = new List<SubHead>();
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -34,7 +34,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
-                                             && DbFunctions.DiffDays(lr.DATEASSIGNED, DateTime.UtcNow).Value >= 30
+                                             && DbFunctions.DiffDays(lr.DATEASSIGNED, DateTime.UtcNow).Value >= dpd
                                              && lr.TOTALAMOUNTRECOVERY < 50000000
                                              && lr.ISFULLYRECOVERED == false
                                              && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -84,7 +84,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                   join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                                   where
                                                   (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
-                                                  && DbFunctions.DiffDays(lr.DATEASSIGNED, DateTime.UtcNow).Value >= 30
+                                                  && DbFunctions.DiffDays(lr.DATEASSIGNED, DateTime.UtcNow).Value >= dpd
                                                   && lr.TOTALAMOUNTRECOVERY < 50000000
                                                   && lr.ISFULLYRECOVERED == false
                                                   && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved

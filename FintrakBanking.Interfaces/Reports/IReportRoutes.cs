@@ -16,7 +16,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetRecoveryCollectionReport(DateTime startDate, DateTime endDate);
         string GetComputationForExternalAgentsReport(DateTime startDate, DateTime endDate);
         string GetPaydayLoanRecoveryCollectionReport(DateTime startDate, DateTime endDate);
-        string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate);
+        string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate, int dpd);
         string GetOutOfCourtSettlement(DateTime startDate, DateTime endDate);
         string GetCollateralSales(DateTime startDate, DateTime endDate);
         string GetRecoveryAgentUpdate(DateTime startDate, DateTime endDate);

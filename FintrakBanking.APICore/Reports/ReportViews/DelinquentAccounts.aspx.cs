@@ -23,6 +23,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     DateTime.TryParse(startDateString, out DateTime startDate);
                     string endDateString = Request.QueryString["endDate"];
                     DateTime.TryParse(endDateString, out DateTime endDate);
+                    int dpd = Convert.ToInt32(Request.QueryString["dpd"]);
+                    
 
                     HashHelper hash = new HashHelper();
                     string inputHashValue = Request.QueryString["hashValue"];
@@ -30,7 +32,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
 
                     RecoveryCollections recoveryCollection = new RecoveryCollections();
-                    var data = recoveryCollection.DelinquentAccounts(startDate, endDate);
+                    var data = recoveryCollection.DelinquentAccounts(startDate, endDate, dpd);
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
