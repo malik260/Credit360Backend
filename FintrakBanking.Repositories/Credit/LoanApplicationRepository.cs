@@ -5583,6 +5583,7 @@ namespace FintrakBanking.Repositories.Credit
                                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                     join p in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals p.PRODUCTID
                                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                                    let bizUnit = context.TBL_PROFILE_BUSINESS_UNIT.FirstOrDefault(u => u.BUSINESSUNITID == c.BUSINESSUNTID)
                                     let creatorStaff = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == x.OWNEDBY)
                                     let jumpsToDrawDown = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == x.FLOWCHANGEID)
                                     //join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
@@ -5595,6 +5596,7 @@ namespace FintrakBanking.Repositories.Credit
                             || c.FIRSTNAME.ToLower().Contains(searchString)
                             || c.LASTNAME.ToLower().Contains(searchString)
                             || c.MIDDLENAME.ToLower().Contains(searchString)
+                            || bizUnit.BUSINESSUNITSHORTCODE.ToLower().Contains(searchString)
                             || x.OWNEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
                                     select new LoanApplicationViewModel
                                     {

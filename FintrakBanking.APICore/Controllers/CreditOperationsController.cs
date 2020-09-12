@@ -153,6 +153,8 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-review-approval-operationtype/")]
@@ -169,6 +171,8 @@ namespace FintrakBanking.APICore.Controllers
                        new { success = true, result = data });
             
         }
+
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -1211,6 +1215,22 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "No record found" });
             }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/recovery-commission-agents-retail")]
+        public HttpResponseMessage getAllRecoveryCommissonByAgents()
+        {
+            var data = repo.getAllRecoveryCommissonByAgents(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
         }
 

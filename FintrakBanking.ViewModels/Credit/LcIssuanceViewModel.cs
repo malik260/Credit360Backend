@@ -273,6 +273,7 @@ namespace FintrakBanking.ViewModels.credit
         public List<LcReleaseAmountViewModel> lcReleases { get; set; }
         public List<LcUssanceViewModel> lcUsances { get; set; }
         public List<LcIssuanceViewModel> lcEnhancements { get; set; }
+        public List<LcIssuanceViewModel> lcExtensions { get; set; }
 
 
         //ussance

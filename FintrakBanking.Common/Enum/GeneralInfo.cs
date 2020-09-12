@@ -471,7 +471,9 @@ namespace FintrakBanking.Common.Enum
         RemoveLien = 564,
         BulkLoanRecoveryAssignment = 565,
         BulkLoanRecoveryReport = 566,
-
+        LcExtensionAdded = 567,
+        LcExtensionUpdated = 568,
+        LcExtensionDeleted = 569,
 
     };
     public enum RegulatoryTypeEnum
