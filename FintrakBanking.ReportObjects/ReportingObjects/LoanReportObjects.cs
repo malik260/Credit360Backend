@@ -3100,8 +3100,8 @@ namespace FintrakBanking.ReportObjects
                                   join la in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals la.LOANAPPLICATIONDETAILID
                                   join a in context.TBL_LOAN_APPLICATION on la.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                   join ca in context.TBL_CASA on l.CASAACCOUNTID equals ca.CASAACCOUNTID
-                                  join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
-                                  join ccust in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals ccust.COLLATERALCUSTOMERID
+                                  //join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
+                                  //join ccust in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals ccust.COLLATERALCUSTOMERID
                                   join li in context.TBL_CASA_LIEN on ca.PRODUCTACCOUNTNUMBER equals li.PRODUCTACCOUNTNUMBER
                                   where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
                                    DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
@@ -3486,14 +3486,12 @@ namespace FintrakBanking.ReportObjects
         }
 
         public List<CreditScheduleViewModel> CreditScheduleReport(DateTime startDate, DateTime endDate, int companyid)
-        {
-          
+        {        
             var applicationDate = DateTime.Now;
-            List<SubHead> subList = new List<SubHead>();
-            
+            //List<SubHead> subList = new List<SubHead>();         
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
-                subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION, teamUnit = sl.TEAM_UNIT, businessDevelopmentManger = sl.DIRECTORATE, deptName = sl.DEPT_NAME }).ToList();
+                //subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION, teamUnit = sl.TEAM_UNIT, businessDevelopmentManger = sl.DIRECTORATE, deptName = sl.DEPT_NAME }).ToList();
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
                     var creditSchedule = (from a in context.TBL_LOAN_COLLATERAL_MAPPING
@@ -3565,15 +3563,15 @@ namespace FintrakBanking.ReportObjects
                                           }).ToList().Select(x =>
                                           {
 
-                                              var checkForBuDescription = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.region).FirstOrDefault();
-                                              if (checkForBuDescription == null)
-                                              {
+                                              //var checkForBuDescription = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.region).FirstOrDefault();
+                                              //if (checkForBuDescription == null)
+                                              //{
                                                   x.businessType = "";
-                                              }
-                                              else if (checkForBuDescription != null)
-                                              {
-                                                  x.businessType = checkForBuDescription;
-                                              }
+                                              //}
+                                              //else if (checkForBuDescription != null)
+                                              //{
+                                              //    x.businessType = checkForBuDescription;
+                                              //}
 
 
                                               return x;
