@@ -201,6 +201,7 @@
     GuaranteeReleaseApproval = 270,
 
     RelatedEmployer = 273,
+    ExceptionalLoan = 275
 }
 
 

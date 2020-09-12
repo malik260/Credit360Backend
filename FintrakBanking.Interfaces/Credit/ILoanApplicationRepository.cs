@@ -66,7 +66,7 @@ namespace FintrakBanking.Interfaces.Credit
 
 
 
-        LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
+        LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan, bool isExceptionalLoan = false);
         bool ValidateDuplicateLoanApplication( LoanApplicationViewModel loan);
         string GetRefrenceNumber();
 
@@ -171,6 +171,11 @@ namespace FintrakBanking.Interfaces.Credit
         CurrentCustomerExposure GetCurrentCompanyExposure();
 
         CurrentCustomerExposure GetCurrentCustomerExposure(int customerId);
+
+        String ResponseMessage(WorkflowResponse response, string itemHeading);
+        IEnumerable<LoanApplicationDetailViewModel> GetExceptionalLoansForApproval(int staffId);
+
+        WorkflowResponse GoForApprovalExceptionalLoan(ExceptionalLoanViewModel model);
 
         LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId);
 
