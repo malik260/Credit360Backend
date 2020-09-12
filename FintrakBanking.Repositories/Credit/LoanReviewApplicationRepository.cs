@@ -869,6 +869,36 @@ namespace FintrakBanking.Repositories.Credit
             return list;
         }
 
+
+        public SelectListViewModel GetAllLMSApprovalOperationListByProductTypeId(int productTypeId)
+        {
+            var list = new SelectListViewModel();
+
+            var frequency = context.TBL_FREQUENCY_TYPE.Select(x => new DropDownSelect { id = x.FREQUENCYTYPEID, name = x.MODE }).ToList();
+
+            list.interestFrequencyTypes = frequency;
+            list.principalFrequencyTypes = frequency;
+
+            if (productTypeId == (int)LoanProductTypeEnum.SelfLiquidating
+                || productTypeId == (int)LoanProductTypeEnum.ForeignXRevolving
+                || productTypeId == (int)LoanProductTypeEnum.SyndicatedTermLoan
+                || productTypeId == (int)LoanProductTypeEnum.SyndicatedTermLoan) { productTypeId = (int)LoanProductTypeEnum.TermLoan; }
+
+            list.casaAccounts = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
+            list.productTypes = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
+            list.operationTypes = context.TBL_OPERATIONS.Where(x =>
+                // (
+                x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
+                //|| x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
+                // || x.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial)
+                && x.ISDISABLED == false
+            ).Select(x => new DropDownSelect { id = x.OPERATIONID, name = x.OPERATIONNAME, typeId = (int)x.OPERATIONTYPEID, productTypeId = x.PRODUCTTYPEID }).Where(t => t.productTypeId == productTypeId || t.productTypeId == null).OrderBy(o => o.name).ToList();
+            list.feeCharges = context.TBL_CHARGE_FEE.Select(x => new DropDownSelect { id = x.CHARGEFEEID, name = x.CHARGEFEENAME }).ToList();
+
+            return list;
+        }
+
+
         public SelectListViewModel GetAllSelectList()
         {
             var list = new SelectListViewModel();

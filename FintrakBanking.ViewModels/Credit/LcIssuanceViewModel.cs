@@ -70,6 +70,7 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? lcTolerancePercentage { get; set; }
 
         public decimal? lcToleranceValue { get; set; }
+        public int transactionCycle { get; set; }
 
         public decimal releaseAmount { get; set; }
 
@@ -264,6 +265,7 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? lcTolerancePercentage { get; set; }
 
         public decimal? lcToleranceValue { get; set; }
+        public int transactionCycle { get; set; }
 
         public decimal? releaseAmount { get; set; }
         public decimal releasedAmount { get; set; }
@@ -271,6 +273,7 @@ namespace FintrakBanking.ViewModels.credit
         public List<LcReleaseAmountViewModel> lcReleases { get; set; }
         public List<LcUssanceViewModel> lcUsances { get; set; }
         public List<LcIssuanceViewModel> lcEnhancements { get; set; }
+        public List<LcIssuanceViewModel> lcExtensions { get; set; }
 
 
         //ussance

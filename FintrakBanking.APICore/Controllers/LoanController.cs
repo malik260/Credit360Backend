@@ -1661,8 +1661,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("bulk-loan-recovery-assignment/{accreditedConsultant}/{expCompletionDate}")]
-        public HttpResponseMessage saveBulkLoanAssignmentToAgent(int accreditedConsultant, DateTime? expCompletionDate, [FromBody] List<LoanRecoveryAssignmentViewModel> models)
+        [Route("bulk-loan-recovery-assignment/{accreditedConsultant}/{expCompletionDate}/{source}")]
+        public HttpResponseMessage saveBulkLoanAssignmentToAgent(int accreditedConsultant, DateTime? expCompletionDate, string source, [FromBody] List<LoanRecoveryAssignmentViewModel> models)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1670,7 +1670,7 @@ namespace FintrakBanking.APICore.Controllers
             user.companyId = token.GetCompanyId;
             user.createdBy = token.GetStaffId;
 
-            var data = repo.saveBulkLoanAssignmentToAgent(models, accreditedConsultant, expCompletionDate, user);
+            var data = repo.saveBulkLoanAssignmentToAgent(models, accreditedConsultant, expCompletionDate, source, user);
 
             if (data)
             {
@@ -1680,6 +1680,30 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK,
 
                 new { success = false, message = "saving loan recovery assignment unsuccessfully" });
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-loan-recovery-re-assignment")]
+        public HttpResponseMessage saveBulkLoanReAssignmentToAgent([FromBody] LoanRecoveryAssignmentViewModel model)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            var data = repo.saveBulkLoanReAssignmentToAgent(model, user);
+
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Recovery Re-Assigned Successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery re-assignment unsuccessfully" });
         }
 
         [HttpPost]
@@ -1968,6 +1992,29 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK,
 
                 new { success = false, message = "Error occur forwarding for approval" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("retail-loan-recovery-commission")]
+        public HttpResponseMessage RetailLoanRecoveryCommission([FromBody] RetailLoanRecoveryCommissionViewModel models)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            bool data = repo.RetailLoanRecoveryCommission(models, user);
+
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Record saved successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "Error occur saving record" });
         }
 
 

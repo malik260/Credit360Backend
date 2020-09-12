@@ -28,5 +28,10 @@ namespace FintrakBanking.Entities.Models
         public DateTime? EXPCOMPLETIONDATE { get; set; }
         public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
+        public string SOURCE { get; set; }
+        public string LOANREFERENCE { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
+        public int? PRODUCTID { get; set; }
+        public int? PRODUCTCLASSID { get; set; }
     }
 }

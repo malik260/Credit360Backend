@@ -16,6 +16,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
+        IEnumerable<RetailLoanRecoveryCommissionViewModel> getAllRecoveryCommissonByAgents(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgents(int staffId, int companyId);
         bool GoForDocumentationFillingApproval(ApprovalViewModel entity);
         IEnumerable<CamProcessedLoanViewModel> GetLoanOperationDocumentationLosApproval(int staffId, int companyId);
@@ -33,8 +34,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanRecoveryReportApprovalViewModel> BulkRecoveryReportingApplicationList(int staffId, int companyId);
         bool CreditDocumentationFillingLos(CreditDocumentationViewModel model);
         IEnumerable<CamProcessedLoanViewModel> GetLoanOperationDocumentationLos(int staffId, int companyId);
-        IEnumerable<LoanReviewOperationApprovalViewModel> BulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId);
-        IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> BulkRecoveryToAgentAwaitingApprovalList(string source, int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApprovalList(string source, int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApproval(int staffId, int companyId);
         int GoForAssignLoansToAgentApproval(ApprovalViewModel entity);
@@ -53,7 +54,7 @@ namespace FintrakBanking.Interfaces.Credit
         string GetTransactionReferenceNo();
      
         IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId);
-        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(string source, int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationRecoveryAnalysis(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentation(int staffId, int companyId);
         bool CreditDocumentationFilling(CreditDocumentationViewModel model);

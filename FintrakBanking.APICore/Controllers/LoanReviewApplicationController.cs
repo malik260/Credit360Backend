@@ -237,6 +237,19 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
+        [HttpGet, Route("loan-review-application-approval/select-list/productTypeId/{productTypeId}")]
+        public HttpResponseMessage GetAllLMSApprovalOperationListByProductTypeId(int productTypeId)
+        {
+
+            var data = repo.GetAllLMSApprovalOperationListByProductTypeId(productTypeId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
 
         [HttpGet, Route("loan-review-application/chargefeeid/{id}")]
         public HttpResponseMessage GetChargeFeeById(int id)

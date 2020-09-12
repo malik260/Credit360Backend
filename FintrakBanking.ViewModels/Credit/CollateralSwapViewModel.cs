@@ -33,4 +33,21 @@ namespace FintrakBanking.ViewModels.Credit
         public string comment { get; set; }
         public short vote { get; set; }
     }
+
+    public class ExceptionalLoanViewModel : GeneralEntity
+    {
+       
+        public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public int operationId { get; set; }
+
+        public int? customerId { get; set; }
+        
+        public int? approvalStatusId { get; set; }
+        
+        public int forwardAction { get; set; }
+        public string approvalStatus { get; set; }
+        public string comment { get; set; }
+        public short vote { get; set; }
+    }
 }

@@ -1365,7 +1365,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
             var cancelationInProgress = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == lc.LCISSUANCEID && t.OPERATIONID == (int)OperationsEnum.LCTerminationApproval && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended);
-            if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress || lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted)
+            if ((lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress && model.isInitiation) || lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted)
             {
                 throw new SecureException("LC Issuance Cancelation Approval Already Ongoing or Completed");
             }
@@ -1426,7 +1426,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private bool AddLcArchive(int LcIssuanceId)
+        public bool AddLcArchive(int LcIssuanceId, int operationId)
         {
             var lc = context.TBL_LC_ISSUANCE.Find(LcIssuanceId);
             if (lc == null)
@@ -1456,6 +1456,7 @@ namespace FintrakBanking.Repositories.Credit
                 LETTEROFCREDITEXPIRYDATE = lc.LETTEROFCREDITEXPIRYDATE,
                 INVOICEDATE = lc.INVOICEDATE,
                 INVOICEDUEDATE = lc.INVOICEDUEDATE,
+                TRANSACTIONCYCLE = lc.TRANSACTIONCYCLE,
                 DATETIMECREATED = lc.DATETIMECREATED,
                 DATETIMEUPDATED = lc.DATETIMEUPDATED,
                 DELETED = lc.DELETED,
@@ -1485,6 +1486,7 @@ namespace FintrakBanking.Repositories.Credit
                 LCTOLERANCEVALUE = lc.LCTOLERANCEVALUE,
                 RELEASEDAMOUNT = lc.RELEASEDAMOUNT,
                 OPERATIONID = lc.OPERATIONID,
+                ARCHIVINGOPERATIONID = operationId,
                 DATETIMEARCHIVED = DateTime.Now
             };
             context.TBL_LC_ISSUANCE_ARCHIVE.Add(newArch);
@@ -1566,8 +1568,8 @@ namespace FintrakBanking.Repositories.Credit
                 var placeholders = new AlertPlaceholders();
                 placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME;
                 placeholders.referenceNumber = "<br />LC REFERENCENUMBER: " + tempLc.LCREFERENCENUMBER;
-                placeholders.facilityType = "<br />FACILITY INFORMATION: LETTER OF CREDIT: CANCELATION";
-                placeholders.operationName = "<br />OPERATION NAME: LC ENHANCEMENT";
+                placeholders.facilityType = "<br />FACILITY INFORMATION: LETTER OF CREDIT";
+                placeholders.operationName = "<br />OPERATION NAME: LC AMOUNT MODIFICATION";
                 placeholders.branchName = "<br />BRANCH NAME: " + c.TBL_BRANCH.BRANCHNAME;
                 workflow.Placeholders = placeholders;
 
@@ -1586,7 +1588,76 @@ namespace FintrakBanking.Repositories.Credit
                         tempLc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcEnhancementCompleted;
                         tempLc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         workflow.SetResponse = false;
-                        var archived = AddLcArchive(tempLc.LCISSUANCEID);
+                        var archived = AddLcArchive(tempLc.LCISSUANCEID, operationId);
+                        if (archived)
+                        {
+                            UpdateLcWithEnhancement(tempLc.TEMPLCISSUANCEID);
+                        }
+                        else
+                        {
+                            throw new SecureException("There was an Error Archiving this LC!");
+                        }
+                    }
+                    else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
+                    {
+                        tempLc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    }
+                }
+                context.SaveChanges();
+                trans.Commit();
+                return workflow.Response;
+            }
+        }
+
+        public WorkflowResponse LcExtensionMemorandum(LcForwardViewModel model)
+        {
+            var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
+            if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress || lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress)
+            {
+                throw new SecureException("This LC is already undergoing Termination Or has been Terminated");
+            }
+            int operationId = (int)OperationsEnum.LCExtensionApproval; // CHANGE
+            var applicationDate = general.GetApplicationDate();
+            var tempLc = context.TBL_TEMP_LC_ISSUANCE.Find(model.tempLcIssuanceId);
+            if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
+            // WORKFLOW
+            using (var trans = context.Database.BeginTransaction())
+            {
+                workflow.OperationId = operationId;
+                workflow.StaffId = model.createdBy;
+                workflow.TargetId = model.tempLcIssuanceId;
+                workflow.CompanyId = model.companyId;
+                workflow.Vote = model.vote;
+                workflow.ToStaffId = null;
+                workflow.StatusId = model.forwardAction;
+                workflow.Comment = model.comment;
+                var c = context.TBL_CUSTOMER.Find(tempLc.CUSTOMERID);
+
+                workflow.BusinessUnitId = c?.BUSINESSUNTID;
+                var placeholders = new AlertPlaceholders();
+                placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME;
+                placeholders.referenceNumber = "<br />LC REFERENCENUMBER: " + tempLc.LCREFERENCENUMBER;
+                placeholders.facilityType = "<br />FACILITY INFORMATION: LETTER OF CREDIT";
+                placeholders.operationName = "<br />OPERATION NAME: LC AMOUNT MODIFICATION";
+                placeholders.branchName = "<br />BRANCH NAME: " + c.TBL_BRANCH.BRANCHNAME;
+                workflow.Placeholders = placeholders;
+
+                workflow.DeferredExecution = true;
+                workflow.LogActivity();
+
+                WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
+
+                tempLc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcExtensionInProgress;
+                tempLc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+
+                if (workflow.NewState == (int)ApprovalState.Ended) // cam status
+                {
+                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                    {
+                        tempLc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcExtensionCompleted;
+                        tempLc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        workflow.SetResponse = false;
+                        var archived = AddLcArchive(tempLc.LCISSUANCEID, operationId);
                         if (archived)
                         {
                             UpdateLcWithEnhancement(tempLc.TEMPLCISSUANCEID);
@@ -2402,6 +2473,8 @@ namespace FintrakBanking.Repositories.Credit
             var appl = context.TBL_LOAN_APPLICATION.Find(entity.targetId);
             List<int> ExclusiveOperations = new List<int>(); // (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
             List<int> levelIds = new List<int>();
+            List<PrivilegeViewModel> grants = new List<PrivilegeViewModel>();
+            PrivilegeViewModel grant;
 
             //ExclusiveOperations.Add(entity.operationId);
             if (appl != null)
@@ -2409,69 +2482,73 @@ namespace FintrakBanking.Repositories.Credit
                 ExclusiveOperations.Add(appl.OPERATIONID);
             }
             var now = DateTime.Now;
-            var relieverStaff = context.TBL_STAFF_RELIEF
-                    .FirstOrDefault(x => x.DELETED == false
+            var relieverStaffs = context.TBL_STAFF_RELIEF
+                    .Where(x => x.DELETED == false
                         && x.RELIEFSTAFFID == entity.createdBy
                         && x.STARTDATE <= now
                         && x.ENDDATE >= now
                         && x.ISACTIVE == true
-                    );
+                    ).ToList();
 
-            if (relieverStaff == null) { return new PrivilegeViewModel(); }
-
-            // mirror above
-            var operationId = entity.operationId;
-            var staffId = relieverStaff.STAFFID; // changed
-            var staff = context.TBL_STAFF.Find(staffId);
-            IQueryable<PrivilegeViewModel> grants;
-            PrivilegeViewModel grant;
-
-            // check default role
-            var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
-
-            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
-                .Join(context.TBL_APPROVAL_GROUP,
-                    m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
-                    mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
-                    {
-                        viewCamDocument = l.CANVIEWDOCUMENT,
-                        canMakeChanges = l.CANEDIT,
-                        canAppendTemplate = l.CANEDIT,
-                        viewUploadedFiles = l.CANVIEWUPLOAD,
-                        canUploadFile = l.CANUPLOAD,
-                        viewApproval = l.CANVIEWAPPROVAL,
-                        canApprove = l.CANAPPROVE,
-                        approvalLimit = l.MAXIMUMAMOUNT,
-                        approvalLevelId = l.APPROVALLEVELID,
-                        groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
-                        canEscalate = l.CANESCALATE,
-                        levelTypeId = l.LEVELTYPEID,
-                    });
-
-            if (grants.Any() == false) // check specific
+            if (relieverStaffs == null) { return new PrivilegeViewModel(); }
+            foreach(var relieverStaff in relieverStaffs)
             {
-                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
-                 .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
-                     m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
-                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-                 .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.STAFFID == staffId),
-                     gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
-                     {
-                         viewCamDocument = s.CANVIEWDOCUMENT,
-                         canMakeChanges = s.CANEDIT,
-                         canAppendTemplate = s.CANEDIT,
-                         viewUploadedFiles = s.CANVIEWUPLOAD,
-                         canUploadFile = s.CANUPLOAD,
-                         viewApproval = s.CANVIEWAPPROVAL,
-                         canApprove = s.CANAPPROVE,
-                         approvalLimit = s.MAXIMUMAMOUNT,
-                         approvalLevelId = s.APPROVALLEVELID,
-                         groupRoleId = gl.mg.g.ROLEID,
-                         canEscalate = gl.l.CANESCALATE,
-                         levelTypeId = gl.l.LEVELTYPEID,
-                     });
+                // mirror above
+                var operationId = entity.operationId;
+                var staffId = relieverStaff.STAFFID; // changed
+                var staff = context.TBL_STAFF.Find(staffId);
+
+                // check default role
+                var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
+
+                var reliefgrants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
+                    .Join(context.TBL_APPROVAL_GROUP,
+                        m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
+                        {
+                            viewCamDocument = l.CANVIEWDOCUMENT,
+                            canMakeChanges = l.CANEDIT,
+                            canAppendTemplate = l.CANEDIT,
+                            viewUploadedFiles = l.CANVIEWUPLOAD,
+                            canUploadFile = l.CANUPLOAD,
+                            viewApproval = l.CANVIEWAPPROVAL,
+                            canApprove = l.CANAPPROVE,
+                            approvalLimit = l.MAXIMUMAMOUNT,
+                            approvalLevelId = l.APPROVALLEVELID,
+                            groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
+                            canEscalate = l.CANESCALATE,
+                            levelTypeId = l.LEVELTYPEID,
+                        }).ToList();
+
+                var test1 = reliefgrants.ToList();
+
+                if (reliefgrants.Any() == false) // check specific
+                {
+                    reliefgrants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
+                     .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
+                         m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                     .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
+                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
+                     .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.STAFFID == staffId),
+                         gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
+                         {
+                             viewCamDocument = s.CANVIEWDOCUMENT,
+                             canMakeChanges = s.CANEDIT,
+                             canAppendTemplate = s.CANEDIT,
+                             viewUploadedFiles = s.CANVIEWUPLOAD,
+                             canUploadFile = s.CANUPLOAD,
+                             viewApproval = s.CANVIEWAPPROVAL,
+                             canApprove = s.CANAPPROVE,
+                             approvalLimit = s.MAXIMUMAMOUNT,
+                             approvalLevelId = s.APPROVALLEVELID,
+                             groupRoleId = gl.mg.g.ROLEID,
+                             canEscalate = gl.l.CANESCALATE,
+                             levelTypeId = gl.l.LEVELTYPEID,
+                         }).ToList();
+                }
+
+                grants.AddRange(reliefgrants);
             }
 
             var test = grants.ToList();
@@ -3457,7 +3534,7 @@ namespace FintrakBanking.Repositories.Credit
                             //    t.REQUESTSTAFFID = staffId;
                             //}
                             trail.LOOPEDSTAFFID = staffId;
-                            trail.SYSTEMARRIVALDATETIME = systemDateNow;
+                            //trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                         else
                         {
@@ -3468,7 +3545,7 @@ namespace FintrakBanking.Repositories.Credit
                             //    t.REQUESTSTAFFID = staffId;
                             //}
                             trail.TOSTAFFID = staffId;
-                            trail.SYSTEMARRIVALDATETIME = systemDateNow;
+                            //trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                     }
 

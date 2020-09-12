@@ -403,6 +403,7 @@ namespace FintrakBanking.ViewModels.Reports
     {
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
+        public int dpd { get; set; }
 
     }
 

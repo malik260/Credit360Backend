@@ -33,5 +33,6 @@ namespace FintrakBanking.Entities.Models
         public decimal? OUTSTANDINGAMOUNT { get; set; }
         public string COLLATERALCODE { get; set; }
         public string COLLECTIONMODE { get; set; }
+        public string LOANREFERENCE { get; set; }
     }
 }

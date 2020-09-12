@@ -51,7 +51,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private int? fromLevelId = null;
         private int? reliefStaffId = null;
-        private int? requestLevelId = null;
+        private int? lastOpenRequestFromLevelId = null;
         private int currentStateId;
         private int newStateId = (int)ApprovalState.Processing;
         private int? tenor = null;
@@ -205,7 +205,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.currentStateId = lastOpenRequest.APPROVALSTATEID;
                 this.requestStaffId = lastOpenRequest.REQUESTSTAFFID;
                 this.fromLevelId = lastOpenRequest.TOAPPROVALLEVELID;
-                this.requestLevelId = lastOpenRequest.FROMAPPROVALLEVELID;
+                this.lastOpenRequestFromLevelId = lastOpenRequest.FROMAPPROVALLEVELID;
                 this.isCrossOperationProcess = lastOpenRequest.OPERATIONID != this.operationId;
                 this.ResolveExternalFlowLoop(lastOpenRequest, initiatingRequest);
 
@@ -2067,7 +2067,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             flowLog += "productId " + this.productId + "," + Environment.NewLine;
             flowLog += "exclusiveFlowChangeId " + this.exclusiveFlowChangeId + "," + Environment.NewLine;
             flowLog += "amount " + this.amount + "," + Environment.NewLine;
-            flowLog += "requestLevelId " + this.requestLevelId + "," + Environment.NewLine;
+            flowLog += "requestLevelId " + this.lastOpenRequestFromLevelId + "," + Environment.NewLine;
             flowLog += "requestStaffId " + this.requestStaffId + "," + Environment.NewLine;
             flowLog += "currentStateId " + this.currentStateId + "," + Environment.NewLine;
             flowLog += "approvalLevels " + ((this.approvalGrid == null) ? String.Empty : AppendApprovalDetail(this.approvalGrid.ToList()) + Environment.NewLine);
