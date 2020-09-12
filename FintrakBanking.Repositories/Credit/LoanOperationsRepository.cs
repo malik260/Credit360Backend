@@ -31488,12 +31488,12 @@ namespace FintrakBanking.Repositories.Credit
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
 
 
-            var unionAll = termLoanData.Union(revolvingLoanData).ToList();
-            var unionAll2 = termLoanDataNon.Union(revolvingLoanDataNon).ToList();
-            var allData = unionAll.Union(unionAll2).ToList();
+            var unionAll = termLoanData.Union(revolvingLoanData);
+            var unionAll2 = termLoanDataNon.Union(revolvingLoanDataNon);
+            var allData = unionAll.Union(unionAll2);
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList(); 
 
-            return allData;
+            return data;
         }
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(string source, int staffId, int companyId)

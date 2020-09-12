@@ -75,8 +75,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
+                                join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                 join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                 join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                 join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -106,8 +106,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 }).ToList();
 
                 var dataRevolvingLoan = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
+                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                          join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -155,8 +155,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from l in context.TBL_LOAN_RECOVERY_COMMISSION_BATCH
-                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCENUMBER equals lr.LOANREFERENCE
+                                join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                 join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                 join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                 join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -184,8 +184,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 }).ToList();
 
                 var dataRevolvingLoan = (from l in context.TBL_LOAN_RECOVERY_COMMISSION_BATCH
-                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCENUMBER equals lr.LOANREFERENCE
+                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                          join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -224,8 +224,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
+                                join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                 join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                 join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                 join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -255,8 +255,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 }).ToList();
 
                 var dataRevolvingLoan = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
+                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                          join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
