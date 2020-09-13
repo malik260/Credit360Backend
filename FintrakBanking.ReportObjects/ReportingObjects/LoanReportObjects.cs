@@ -2716,11 +2716,11 @@ namespace FintrakBanking.ReportObjects
         public List<UnearnedLoanInterestReport> UnearnedLoanInterest(DateTime startDate, DateTime endDate, int companyid)
         {
 
-            List<SubHead> subList = new List<SubHead>();
+            //List<SubHead> subList = new List<SubHead>();
 
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
-                subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB }).ToList();
+                //subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB }).ToList();
 
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
@@ -2790,7 +2790,7 @@ namespace FintrakBanking.ReportObjects
                                           tenorToMaturity = x.tenorToMaturity,
                                           unearnedInterestAsAtDate = x.unearnedInterestAsAtDate,
                                           staffcode = x.staffcode,
-                                          businessGroup = subList.Where(f => f.staffCode == x.staffcode).FirstOrDefault().subHead
+                                          //businessGroup = subList.Where(f => f.staffCode == x.staffcode).FirstOrDefault().subHead
 
                                       }).ToList().Select(x =>
                                      {
