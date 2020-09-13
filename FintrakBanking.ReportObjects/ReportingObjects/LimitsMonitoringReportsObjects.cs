@@ -716,9 +716,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                      join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
                                                      join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
                                                      join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
-                                                     join p in context.TBL_COLLATERAL_ITEM_POLICY on a.COLLATERALCUSTOMERID equals p.COLLATERALCUSTOMERID
-                                                     where p.ENDDATE>= startDate && p.ENDDATE <=endDate
-                                                                       orderby p.ENDDATE descending
+                                                     //join p in context.TBL_COLLATERAL_ITEM_POLICY on a.COLLATERALCUSTOMERID equals p.COLLATERALCUSTOMERID
+                                                     //where p.ENDDATE>= startDate && p.ENDDATE <=endDate
+                                                                       //orderby p.ENDDATE descending
 
                                                                        select new CollateralViewModel
                                                      {
@@ -731,8 +731,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                          collateralValue = (decimal?)a.COLLATERALVALUE,
                                                          valuationCycle = a.VALUATIONCYCLE,
                                                       //   insuranceCompany = p.INSURANCECOMPANYNAME,
-                                                         startDate = (DateTime?)p.STARTDATE,
-                                                         endDate = (DateTime?)p.ENDDATE,
+                                                      //   startDate = (DateTime?)p.STARTDATE,
+                                                      //   endDate = (DateTime?)p.ENDDATE,
                                                      }).ToList();
             return insuranceApprochingExpiration;
         } //to do
