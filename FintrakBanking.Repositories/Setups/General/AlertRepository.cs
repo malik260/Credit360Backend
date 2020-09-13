@@ -990,7 +990,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 foreach (var c in getCronSetup)
                 {
-                    if (c.FREQUENCYMODE.ToLower() == "monthly")
+                    if (c.CRONNATURE == 1)
                     {
                         var startDate = c.STARTDATE;
                         var endDate = c.ENDDATE;
@@ -1008,7 +1008,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        
                     }
 
-                    if (c.FREQUENCYMODE.ToLower() == "quarterly")
+                    if (c.CRONNATURE == 2)
                     {
                         var startDate = c.STARTDATE;
                         var endDate = c.ENDDATE;
