@@ -31817,7 +31817,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId)
+        public IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId,string referenceId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
 
@@ -31838,6 +31838,7 @@ namespace FintrakBanking.Repositories.Credit
                             && (lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             || lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                             && lr.DELETED == false
+                            && lr.REFERENCEID == referenceId
 
                             select new LoanReviewOperationApprovalViewModel
                             {
@@ -31932,6 +31933,7 @@ namespace FintrakBanking.Repositories.Credit
                                      && (lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                      || lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                                      && lr.DELETED == false
+                                     && lr.REFERENCEID == referenceId
 
                                      select new LoanReviewOperationApprovalViewModel
                                      {
