@@ -19498,7 +19498,7 @@ namespace FintrakBanking.Repositories.Credit
                                 operationId = ln.OPERATIONID,
                                 source = ln.SOURCE
                             }).ToList();
-            var LoanData = dataLoan.GroupBy(x => x.bulkRecoveryApprovalId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.bulkRecoveryApprovalId);
+            var LoanData = dataLoan.GroupBy(x => x.referenceId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.bulkRecoveryApprovalId);
 
             return LoanData;
         }
@@ -31835,7 +31835,8 @@ namespace FintrakBanking.Repositories.Credit
                             lr.ISFULLYRECOVERED == false
                             && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
                             && pr.EXCLUDEFROMLITIGATION == false
-                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && (lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            || lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                             && lr.DELETED == false
 
                             select new LoanReviewOperationApprovalViewModel
@@ -31928,7 +31929,8 @@ namespace FintrakBanking.Repositories.Credit
                                      lr.ISFULLYRECOVERED == false
                                      && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
                                      && pr.EXCLUDEFROMLITIGATION == false
-                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && (lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                     || lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                                      && lr.DELETED == false
 
                                      select new LoanReviewOperationApprovalViewModel
