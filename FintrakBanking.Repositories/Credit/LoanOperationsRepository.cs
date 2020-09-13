@@ -19488,7 +19488,7 @@ namespace FintrakBanking.Repositories.Credit
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                 referenceId = ln.REFERENCEBATCHID,
                                 accreditedConsultant = ln.ACCREDITEDCONSULTANTID,
-                                numberOfLoans = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == ln.REFERENCEBATCHID && x.DELETED == false).Count(),
+                                numberOfLoans = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == ln.REFERENCEBATCHID && x.DELETED == false && x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && x.APPROVALSTATUSID==(int)ApprovalStatusEnum.Processing).Count(),
                                 accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID && x.DELETED == false).FirstOrDefault().NAME,
                                 accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID && x.DELETED == false).FirstOrDefault().FIRMNAME,
                                 approvalStatusId = (int)ln.APPROVALSTATUSID,
@@ -19498,7 +19498,7 @@ namespace FintrakBanking.Repositories.Credit
                                 operationId = ln.OPERATIONID,
                                 source = ln.SOURCE
                             }).ToList();
-            var LoanData = dataLoan.GroupBy(x => x.referenceId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.bulkRecoveryApprovalId);
+            var LoanData = dataLoan.GroupBy(x => x.bulkRecoveryApprovalId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.bulkRecoveryApprovalId);
 
             return LoanData;
         }
