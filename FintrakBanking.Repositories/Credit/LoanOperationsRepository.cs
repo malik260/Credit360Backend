@@ -19514,9 +19514,9 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 referenceId = ln.REFERENCEBATCHID,
                                 accreditedConsultant = ln.ACCREDITEDCONSULTANTID,
-                                numberOfLoans = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == ln.REFERENCEBATCHID).Count(),
-                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID).FirstOrDefault().NAME,
-                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID).FirstOrDefault().FIRMNAME,
+                                numberOfLoans = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == ln.REFERENCEBATCHID && x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).Count(),
+                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID && x.DELETED==false).FirstOrDefault().NAME,
+                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID && x.DELETED == false).FirstOrDefault().FIRMNAME,
                                 approvalStatusId = (int)ln.APPROVALSTATUSID,
                                 requestDate = ln.REQUESTDATE,
                                 bulkRecoveryApprovalId = ln.BULKRECOVERYAPPROVALID,
