@@ -23,7 +23,5 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
-        public string FREQUENCYMODE { get; set; }
-
     }
 }
