@@ -6373,7 +6373,7 @@ namespace FintrakBanking.Repositories.Credit
             
         }
 
-        public void MonthlyAutoAssignRecoveryAnalysisByCustomer()
+        public bool MonthlyAutoAssignRecoveryAnalysisByCustomer()
         {
             var applicationDate = _genSetup.GetApplicationDate();
             var loansId = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.DELETED == false).Select(x => x.LOANREFERENCE).ToList();
@@ -6446,11 +6446,12 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
             }
+            return true;
         }
 
 
 
-        public void QuarterlyAutoAssignRecoveryAnalysisByCustomer()
+        public bool QuarterlyAutoAssignRecoveryAnalysisByCustomer()
         {
             var applicationDate = _genSetup.GetApplicationDate();
             var dataLoanNonPerforming = (from r in context.TBL_LOAN_RECOVERY_ASSIGNMENT
@@ -6531,6 +6532,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
             }
+            return true;
         }
 
 
