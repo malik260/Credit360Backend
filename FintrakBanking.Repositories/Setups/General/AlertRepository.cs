@@ -887,7 +887,7 @@ namespace FintrakBanking.Repositories.Setups.General
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
 
-            externalAlertRepository.GetLoanOperationRecoveryAnalysisByCustomer();
+            
 
             if (CompareDate() == true)
             {
@@ -984,6 +984,52 @@ namespace FintrakBanking.Repositories.Setups.General
                 //    state = true;
                 //}
             }
+
+            var getCronSetup = context.TBL_COLLECTION_RETAIL_CRON_SETUP.Where(x => x.DELETED == false).ToList();
+            if (getCronSetup.Count() > 0)
+            {
+                foreach (var c in getCronSetup)
+                {
+                    if (c.FREQUENCYMODE.ToLower() == "monthly")
+                    {
+                        var startDate = c.STARTDATE;
+                        var endDate = c.ENDDATE;
+                        
+                        TimeSpan start11 = new TimeSpan(long.Parse(c.STARTTIME));
+                        TimeSpan end13 = new TimeSpan(long.Parse(c.ENDTIME));
+
+                        if (startDate.Date >= DateTime.Now.Date && endDate.Date <= DateTime.MinValue.Date)
+                        {
+                            if ((now >= start11) && (now <= end13))
+                            {
+                                externalAlertRepository.MonthlyAutoAssignRecoveryAnalysisByCustomer();
+                            }
+                        }
+                       
+                    }
+
+                    if (c.FREQUENCYMODE.ToLower() == "quarterly")
+                    {
+                        var startDate = c.STARTDATE;
+                        var endDate = c.ENDDATE;
+
+                        TimeSpan start11 = new TimeSpan(long.Parse(c.STARTTIME));
+                        TimeSpan end13 = new TimeSpan(long.Parse(c.ENDTIME));
+
+                        if (startDate.Date >= DateTime.Now.Date && endDate.Date <= DateTime.MinValue.Date)
+                        {
+                            if ((now >= start11) && (now <= end13))
+                            {
+                                externalAlertRepository.QuarterlyAutoAssignRecoveryAnalysisByCustomer();
+                            }
+                        }
+                       
+                    }
+
+                }
+
+            }
+
 
             return state;
         }
