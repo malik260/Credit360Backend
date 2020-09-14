@@ -36,7 +36,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CamProcessedLoanViewModel> GetLoanOperationDocumentationLos(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> BulkRecoveryToAgentAwaitingApprovalList(string source, int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApprovalList(string source, int staffId, int companyId);
-        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId, string referenceId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApproval(int staffId, int companyId);
         int GoForAssignLoansToAgentApproval(ApprovalViewModel entity);
         int GoForLienRemovalApproval(ApprovalViewModel entity);
