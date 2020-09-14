@@ -97,6 +97,7 @@ namespace FintrakBanking.Repositories.credit
         public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForUssance(int staffId)
         {
             var usances = context.TBL_LC_USSANCE.ToList();
+            var staffs = general.GetStaffRlieved(staffId).ToList();
             var lcsInProgress = (from x in context.TBL_LC_ISSUANCE
                        join u in context.TBL_LC_USSANCE on x.LCISSUANCEID equals u.LCISSUANCEID
                        join t in context.TBL_APPROVAL_TRAIL on u.LCUSSANCEID equals t.TARGETID into ut
@@ -148,7 +149,7 @@ namespace FintrakBanking.Repositories.credit
                             }).GroupBy(l => l.lcUssanceId).Select(l => l.OrderByDescending(t => t.lcApprovalTrailId).FirstOrDefault())
                                 .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                                 || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
-                                && l.loopedStaffId == staffId)).ToList();
+                                && staffs.Contains(l.loopedStaffId ?? 0))).ToList();
 
             var lcsNotStarted = (from x in context.TBL_LC_ISSUANCE
                                  join y in context.TBL_LC_USSANCE on x.LCISSUANCEID equals y.LCISSUANCEID into xy
@@ -156,6 +157,7 @@ namespace FintrakBanking.Repositories.credit
                                  where
                                 (
                                 x.DELETED == false
+                                && staffs.Contains(u.CREATEDBY ?? 0)
                                 && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
                                 && (u.USANCEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceInProgress || u == null)
                                 && (u.USANCEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceCompleted || u == null)
@@ -328,6 +330,7 @@ namespace FintrakBanking.Repositories.credit
             var operationId = (int)OperationsEnum.lcUssance;
             IQueryable<LcIssuanceApprovalViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+            var staffs = general.GetStaffRlieved(staffId).ToList();
 
             //var querytest1 = (from a in context.TBL_LC_ISSUANCE
             //                  where
@@ -357,7 +360,7 @@ namespace FintrakBanking.Repositories.credit
                             && ut.RESPONSESTAFFID == null
                             && levelIds.Contains((int)ut.TOAPPROVALLEVELID)
                             && ut.LOOPEDSTAFFID == null
-                            && (ut.TOSTAFFID == null || ut.TOSTAFFID == staffId)
+                            && (ut.TOSTAFFID == null || staffs.Contains(ut.TOSTAFFID ?? 0))
                             )
                          select new LcIssuanceApprovalViewModel()
                          {

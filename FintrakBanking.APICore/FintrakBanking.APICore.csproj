@@ -355,6 +355,7 @@
     <Compile Include="Controllers\DocumentUsageController.cs" />
     <Compile Include="Controllers\FacilityModificationController.cs" />
     <Compile Include="Controllers\FinacleIntegrationController.cs" />
+    <Compile Include="Controllers\LcCashBuildUpPlanController.cs" />
     <Compile Include="Controllers\LcIssuanceController.cs" />
     <Compile Include="Controllers\LetterGenerationRequestController.cs" />
     <Compile Include="Controllers\LoanFeeChargeController.cs" />

@@ -298,8 +298,10 @@ namespace FintrakBanking.ViewModels.credit
         public decimal ussanceAmount { get; set; }
         public double? ussanceRate { get; set; }
         public int? ussanceTenor { get; set; }
+        public int? oldUssanceTenor { get; set; }
         public DateTime? lcEffectiveDate { get; set; }
         public DateTime? lcMaturityDate { get; set; }
+        public DateTime? oldLcMaturityDate { get; set; }
         public int? usanceAmountCurrencyId { get; set; }
         public int? usanceApplicationStatusId { get; set; }
         public int? usanceApprovalStatusId { get; set; }

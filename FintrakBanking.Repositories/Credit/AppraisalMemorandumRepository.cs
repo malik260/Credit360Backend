@@ -1678,6 +1678,37 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        private bool ArchiveLCUsance(int lcUssanceId, int operationId)
+        {
+            var lcUsance = context.TBL_LC_USSANCE.Find(operationId);
+            var usanceForArchive = new TBL_LC_USSANCE_ARCHIVE();
+            usanceForArchive.LCISSUANCEID = lcUsance.LCISSUANCEID;
+            usanceForArchive.LCUSSANCEID = lcUsance.LCUSSANCEID;
+            usanceForArchive.USSANCEAMOUNT = lcUsance.USSANCEAMOUNT;
+            usanceForArchive.USSANCERATE = lcUsance.USSANCERATE;
+            usanceForArchive.USSANCETENOR = lcUsance.USSANCETENOR;
+            usanceForArchive.LCUSSANCEEFFECTIVEDATE = lcUsance.LCUSSANCEEFFECTIVEDATE;
+            usanceForArchive.USANCEAPPLICATIONSTATUSID = lcUsance.USANCEAPPLICATIONSTATUSID;
+            usanceForArchive.USANCEAPPROVALSTATUSID = lcUsance.USANCEAPPLICATIONSTATUSID;
+            usanceForArchive.DELETED = lcUsance.DELETED;
+            usanceForArchive.DELETEDBY = lcUsance.DELETEDBY;
+            usanceForArchive.LASTUPDATEDBY = lcUsance.LASTUPDATEDBY;
+            usanceForArchive.DATETIMEUPDATED = lcUsance.DATETIMEUPDATED;
+            usanceForArchive.DATETIMEDELETED = lcUsance.DATETIMEDELETED;
+            usanceForArchive.ARCHIVINGOPERATIONID = operationId;
+            usanceForArchive.LCUSSANCEMATURITYDATE = lcUsance.LCUSSANCEMATURITYDATE;
+            usanceForArchive.CREATEDBY = lcUsance.CREATEDBY;
+            usanceForArchive.DATETIMECREATED = lcUsance.DATETIMECREATED;
+            usanceForArchive.USANCEAMOUNTCURRENCYID = lcUsance.USANCEAMOUNTCURRENCYID;
+            usanceForArchive.USANCEREF = lcUsance.USANCEREF;
+            usanceForArchive.ARCHIVEDATE = DateTime.Now;
+
+            context.TBL_LC_USSANCE_ARCHIVE.Add(usanceForArchive);
+
+            var saved = context.SaveChanges() > 0;
+            return saved;
+        }
+
         public WorkflowResponse LcUssanceMemorandum(LcForwardViewModel model)
         {
             int operationId = (int)OperationsEnum.lcUssance; // CHANGE
