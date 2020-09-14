@@ -1285,6 +1285,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManagerName { get; set; }
         public decimal approvedAmount { get; set; }
         public string creatorName { get; set; }
+        public decimal debitAmount { get; set; }
+        public decimal creditAmount { get; set; }
+        public string loanReference { get; set; }
+        public DateTime valueDate { get; set; }
+        public DateTime postedDate { get; set; }
+        public string description { get; set; }
     }
 
 }
