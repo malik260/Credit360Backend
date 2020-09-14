@@ -9,16 +9,16 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>STALLED PERFECTION FOR COLLATERAL</Value>
+                <Value>Stalled Perfection For Collateral</Value>
                 <Style>
-                  <FontFamily>Arial Black</FontFamily>
+                  <FontFamily>Verdana</FontFamily>
                   <FontSize>14pt</FontSize>
-                  <Color>Indigo</Color>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -55,9 +55,6 @@
             <TablixColumn>
               <Width>1.31945in</Width>
             </TablixColumn>
-            <TablixColumn>
-              <Width>2.22778in</Width>
-            </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
@@ -74,7 +71,7 @@
                             <TextRun>
                               <Value>Loan Ref No</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -91,6 +88,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -110,7 +108,7 @@
                             <TextRun>
                               <Value>Customer Name</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -127,6 +125,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -146,7 +145,7 @@
                             <TextRun>
                               <Value>Outstanding Principal</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -163,6 +162,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -182,7 +182,7 @@
                             <TextRun>
                               <Value>Outstanding Interest</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -199,6 +199,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -218,7 +219,7 @@
                             <TextRun>
                               <Value>Total Balance</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -235,42 +236,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox6">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>Reasons for Stalled Perfection</Value>
-                              <Style>
-                                <FontFamily>Tahoma</FontFamily>
-                                <FontSize>8pt</FontSize>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox6</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -295,7 +261,7 @@
                             <TextRun>
                               <Value>=Fields!loanRefno.Value</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                               </Style>
                             </TextRun>
@@ -330,7 +296,7 @@
                             <TextRun>
                               <Value>=Fields!customerName.Value</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                               </Style>
                             </TextRun>
@@ -365,7 +331,7 @@
                             <TextRun>
                               <Value>=Fields!outstandingBalance.Value</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                               </Style>
                             </TextRun>
@@ -400,7 +366,7 @@
                             <TextRun>
                               <Value>=Fields!outstandingInterest.Value</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                               </Style>
                             </TextRun>
@@ -435,7 +401,7 @@
                             <TextRun>
                               <Value>=((Fields!outstandingBalance.Value) + (Fields!outstandingInterest.Value))</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                               </Style>
                             </TextRun>
@@ -446,41 +412,6 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>OutstandingBalance1</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="reasonsforStalledPerfection">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!reasonsforStalledPerfection.Value</Value>
-                              <Style>
-                                <FontFamily>Tahoma</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>reasonsforStalledPerfection</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -510,7 +441,7 @@
                             <TextRun>
                               <Value />
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -546,7 +477,7 @@
                             <TextRun>
                               <Value>Total</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -582,7 +513,7 @@
                             <TextRun>
                               <Value>=Sum(Fields!outstandingBalance.Value)</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                                 <Color>Maroon</Color>
@@ -619,7 +550,7 @@
                             <TextRun>
                               <Value>=Sum(Fields!outstandingInterest.Value)</Value>
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                                 <Color>Maroon</Color>
@@ -656,7 +587,7 @@
                             <TextRun>
                               <Value />
                               <Style>
-                                <FontFamily>Tahoma</FontFamily>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                                 <Color>Maroon</Color>
@@ -682,48 +613,12 @@
                     </Textbox>
                   </CellContents>
                 </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox12">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style>
-                                <FontFamily>Tahoma</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox12</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
               </TablixCells>
             </TablixRow>
           </TablixRows>
         </TablixBody>
         <TablixColumnHierarchy>
           <TablixMembers>
-            <TablixMember />
             <TablixMember />
             <TablixMember />
             <TablixMember />
@@ -748,7 +643,7 @@
         <Top>0.51333in</Top>
         <Left>0.11667in</Left>
         <Height>0.75in</Height>
-        <Width>9.86669in</Width>
+        <Width>7.63891in</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -766,6 +661,43 @@
       <Height>0.625in</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
+      <ReportItems>
+        <Textbox Name="Textbox5">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Access Bank Plc</Value>
+                  <Style>
+                    <FontFamily>Verdana</FontFamily>
+                    <FontSize>14pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox1</rd:DefaultName>
+          <Top>0.14583in</Top>
+          <Left>0.13749in</Left>
+          <Height>0.33333in</Height>
+          <Width>9.86668in</Width>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+      </ReportItems>
       <Style>
         <Border>
           <Style>None</Style>

@@ -12,6 +12,7 @@ using FintrakBanking.ViewModels.Setups.General;
 
 using FintrakBanking.ViewModels;
 using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -19,11 +20,13 @@ namespace FintrakBanking.APICore.Controllers
     public class AlertController : ApiController
     {
         private readonly IAlertRepository _repo;
+        private readonly IExternalAlertRepository _alertRepo;
         private readonly TokenDecryptionHelper _token = new TokenDecryptionHelper();
 
-        public AlertController(IAlertRepository repo)
+        public AlertController(IAlertRepository repo, IExternalAlertRepository alertRepo)
         {
             this._repo = repo;
+            this._alertRepo = alertRepo;
         }
 
 
@@ -826,7 +829,24 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
-        
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("auto-assignment-loan-recovery")]
+        public HttpResponseMessage GetAutoAssignmentOfLoanRecovery()
+        {
+           
+                var alertViewModels = _alertRepo.MonthlyAutoAssignRecoveryAnalysisByCustomer();
+                if (alertViewModels)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, message = "Success" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error" });
+                }
+                
+        }
 
     }
 

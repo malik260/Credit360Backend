@@ -47,12 +47,6 @@
             <TablixColumn>
               <Width>4.25478cm</Width>
             </TablixColumn>
-            <TablixColumn>
-              <Width>2.66728cm</Width>
-            </TablixColumn>
-            <TablixColumn>
-              <Width>2.66728cm</Width>
-            </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
@@ -69,7 +63,7 @@
                             <TextRun>
                               <Value>S/N</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -82,7 +76,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -102,7 +96,7 @@
                             <TextRun>
                               <Value>Customer Name</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -115,7 +109,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -135,7 +129,7 @@
                             <TextRun>
                               <Value>Principal Amount</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -148,7 +142,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -168,7 +162,7 @@
                             <TextRun>
                               <Value>Interest Rate</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -181,7 +175,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -201,7 +195,7 @@
                             <TextRun>
                               <Value>Interest Rate Change</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -214,7 +208,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -234,7 +228,7 @@
                             <TextRun>
                               <Value>Start Date</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -247,7 +241,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -267,7 +261,7 @@
                             <TextRun>
                               <Value>End Date</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -280,7 +274,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -300,7 +294,7 @@
                             <TextRun>
                               <Value>Tenor</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -313,7 +307,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -333,7 +327,7 @@
                             <TextRun>
                               <Value>Tenor To Date</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -346,7 +340,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -366,7 +360,7 @@
                             <TextRun>
                               <Value>Tenor To Maturity</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -379,7 +373,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -399,7 +393,7 @@
                             <TextRun>
                               <Value>Unearned Interest As At Date</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -412,7 +406,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -432,7 +426,7 @@
                             <TextRun>
                               <Value>Accrued Interest To Date</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -445,7 +439,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -465,7 +459,7 @@
                             <TextRun>
                               <Value>Account Pay To</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -478,7 +472,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -498,7 +492,7 @@
                             <TextRun>
                               <Value>Account Receive From</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -511,73 +505,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox33">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>Interest Type</Value>
-                              <Style>
-                                <Color>White</Color>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox33</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox29">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>Business Group</Value>
-                              <Style>
-                                <Color>White</Color>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox29</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
-                        <BackgroundColor>Olive</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -601,7 +529,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=RowNumber(nothing)</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -631,7 +561,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!customerName.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -661,7 +593,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!principalAmount.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -691,7 +625,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!interestRate.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -721,7 +657,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!interestRateChange.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -751,7 +689,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!startDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -781,7 +721,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!endDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -811,7 +753,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!tenor.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -841,7 +785,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!tenorToDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -871,7 +817,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!tenorToMaturity.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -901,7 +849,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!unearnedInterestAsAtDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -931,7 +881,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!accruedInterestToDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -961,7 +913,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!accountPayTo.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -991,73 +945,15 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!accountReceiveFrom.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>accountReceiveFrom</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="interestType">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!interestType.Value</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>interestType</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="businessGroup">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!businessGroup.Value</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>businessGroup</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1091,8 +987,6 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
-            <TablixMember />
-            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -1109,7 +1003,7 @@
         <Top>2.35479cm</Top>
         <Left>1.27cm</Left>
         <Height>2.0964cm</Height>
-        <Width>53.67462cm</Width>
+        <Width>48.34006cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1123,33 +1017,61 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value xml:space="preserve">                   </Value>
-                <Style />
-              </TextRun>
-              <TextRun>
-                <Value xml:space="preserve">    </Value>
+                <Value>Unearned &amp; Receivable Interest Report</Value>
                 <Style>
-                  <FontSize>15pt</FontSize>
-                </Style>
-              </TextRun>
-              <TextRun>
-                <Value>UNEARNED AND RECEIVABLE INTEREST </Value>
-                <Style>
+                  <FontFamily>Verdana</FontFamily>
                   <FontSize>15pt</FontSize>
                   <FontWeight>Bold</FontWeight>
-                  <Color>DarkBlue</Color>
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox35</rd:DefaultName>
-        <Top>0.3937cm</Top>
-        <Left>11.41496cm</Left>
+        <Top>0.95222cm</Top>
+        <Left>1.27cm</Left>
         <Height>1.26146cm</Height>
         <Width>13.67728cm</Width>
         <ZIndex>1</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox37">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Access Bank Plc</Value>
+                <Style>
+                  <FontFamily>Verdana</FontFamily>
+                  <FontSize>15pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox35</rd:DefaultName>
+        <Top>0cm</Top>
+        <Left>1.27cm</Left>
+        <Height>1.26146cm</Height>
+        <Width>13.67728cm</Width>
+        <ZIndex>2</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>

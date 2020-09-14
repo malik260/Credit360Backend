@@ -45,7 +45,8 @@
                             <TextRun>
                               <Value>S/N</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -58,7 +59,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Peru</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -78,7 +79,8 @@
                             <TextRun>
                               <Value>Name of Customer</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -91,7 +93,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Peru</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -111,7 +113,8 @@
                             <TextRun>
                               <Value>Facility Type</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -124,7 +127,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Peru</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -144,7 +147,8 @@
                             <TextRun>
                               <Value>Facility Amount</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -157,7 +161,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Peru</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -177,7 +181,8 @@
                             <TextRun>
                               <Value>Facility Granted Date</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -190,7 +195,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Peru</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -210,7 +215,8 @@
                             <TextRun>
                               <Value>Waived Document</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -223,7 +229,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Peru</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -243,7 +249,8 @@
                             <TextRun>
                               <Value>CIF </Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -256,7 +263,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Peru</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -276,7 +283,8 @@
                             <TextRun>
                               <Value>Business Unit</Value>
                               <Style>
-                                <Color>White</Color>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -289,7 +297,7 @@
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
-                        <BackgroundColor>Peru</BackgroundColor>
+                        <BackgroundColor>Orange</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -313,7 +321,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=RowNumber(nothing)</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -343,7 +353,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!customerName.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -373,7 +385,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!facilityType.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -403,7 +417,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!facilityAmount.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -434,6 +450,7 @@
                             <TextRun>
                               <Value>=Fields!facilityGrantedDate.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
@@ -465,7 +482,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!waivedDocument.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -495,7 +514,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!customerCode.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -525,7 +546,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!businessUnit.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -573,7 +596,7 @@
         </TablixRowHierarchy>
         <DataSetName>LoanDocumentWaived</DataSetName>
         <Top>0.66542in</Top>
-        <Left>0.655in</Left>
+        <Left>1.6875in</Left>
         <Height>0.5in</Height>
         <Width>11.92708in</Width>
         <Style>
@@ -586,10 +609,10 @@
     <Height>1.98958in</Height>
     <Style />
   </Body>
-  <Width>27.82165in</Width>
+  <Width>28.85415in</Width>
   <Page>
     <PageHeader>
-      <Height>1.21875in</Height>
+      <Height>2.18403in</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -609,7 +632,7 @@
                   </Style>
                 </TextRun>
                 <TextRun>
-                  <Value xml:space="preserve">     </Value>
+                  <Value xml:space="preserve"> </Value>
                   <Style>
                     <FontStyle>Italic</FontStyle>
                     <FontFamily>verdana</FontFamily>
@@ -619,23 +642,97 @@
                   </Style>
                 </TextRun>
                 <TextRun>
+                  <Value xml:space="preserve">    </Value>
+                  <Style>
+                    <FontStyle>Normal</FontStyle>
+                    <FontFamily>verdana</FontFamily>
+                    <FontSize>12pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
+                </TextRun>
+                <TextRun>
                   <Value>Checklist Waiver Report</Value>
+                  <Style>
+                    <FontStyle>Normal</FontStyle>
+                    <FontFamily>verdana</FontFamily>
+                    <FontSize>14pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox85</rd:DefaultName>
+          <Top>1.65972in</Top>
+          <Height>0.52431in</Height>
+          <Width>6.79042in</Width>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox86">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value xml:space="preserve">                           </Value>
                   <Style>
                     <FontStyle>Italic</FontStyle>
                     <FontFamily>verdana</FontFamily>
-                    <FontSize>14pt</FontSize>
+                    <FontSize>12pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
+                </TextRun>
+                <TextRun>
+                  <Value xml:space="preserve"> </Value>
+                  <Style>
+                    <FontStyle>Italic</FontStyle>
+                    <FontFamily>verdana</FontFamily>
+                    <FontSize>12pt</FontSize>
                     <FontWeight>Bold</FontWeight>
                     <Color>DarkBlue</Color>
                   </Style>
                 </TextRun>
+                <TextRun>
+                  <Value xml:space="preserve">    </Value>
+                  <Style>
+                    <FontStyle>Normal</FontStyle>
+                    <FontFamily>verdana</FontFamily>
+                    <FontSize>12pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
+                </TextRun>
+                <TextRun>
+                  <Value>Access Bank Plc</Value>
+                  <Style>
+                    <FontStyle>Normal</FontStyle>
+                    <FontFamily>verdana</FontFamily>
+                    <FontSize>14pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                  </Style>
+                </TextRun>
               </TextRuns>
-              <Style />
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox85</rd:DefaultName>
-          <Top>0.48611in</Top>
+          <Top>1.06597in</Top>
           <Height>0.52431in</Height>
           <Width>6.79042in</Width>
+          <ZIndex>1</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>

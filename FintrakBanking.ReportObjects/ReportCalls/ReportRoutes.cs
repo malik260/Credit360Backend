@@ -1499,6 +1499,18 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string CorporateLoansReport(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+
+            path = reportPath + "ReportViews/CorporateLoansReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&loanRefNo=" + dateRange.loanRefNo + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+
+
+            return path;
+        }
+
         public string GetCollateralPerfection(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
@@ -1515,6 +1527,53 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/CollateralRegister.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&branchId=" + dateRange.branchId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
+
+
+        public string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate, int dpd)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/DelinquentAccounts.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue+"&dpd="+dpd;
+            return path;
+        }
+
+        public string GetPaydayLoanRecoveryCollectionReport(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/PaydayLoanCollection.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetComputationForExternalAgentsReport(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/ComputationForExternalAgents.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetRecoveryCollectionReport(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RecoveryCollectionReport.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetComputationForInternalAgentsReport(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/ComputationForInternalAgents.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
 
     }
 

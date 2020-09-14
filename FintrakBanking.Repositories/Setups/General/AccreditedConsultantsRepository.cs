@@ -1218,6 +1218,12 @@ namespace FintrakBanking.Repositories.Setups.General
             var data = this.context.TBL_LOAN_APPLICATION_DETL_CON.Find(id);
             if (data == null) return false;
 
+            var validateRecoveryCollection = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == id && x.DELETED == false).ToList();
+            if (validateRecoveryCollection.Count() > 0 )
+            {
+                throw new SecureException("The agent is currently on recovery collection list. Kindly unassign before deleting");
+            }
+
             data.DELETED = true;
             data.DATETIMEDELETED = DateTime.Now;
             data.DELETEDBY = user.createdBy;
