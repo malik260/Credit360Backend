@@ -312,6 +312,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int? checklistStatus { get; set; }
         public int? productId { get; set; }
         public int? productClassId { get; set; }
+        public int racDefinitionId { get; set; }
+        public int createdBy { get; set; }
+        public string actualValue { get; set; }
     }
     public class RacFormControlValue
     {
@@ -575,6 +578,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string email { get; set; }
         public short? requireCollateralTypeId { get; set; }
         public int relationshipOfficerId { get; set; }
+        public string breachedLimitName { get; set; }
+        public int approvalTrailId { get; set; }
+        public string approvalStatus { get; set; }
+        public int? currentApprovalLevelId { get; set; }
+        public string currentApprovalLevel { get; set; }
 
         // public int? loanreViewApplicationId { get; set; }
     }
@@ -1277,6 +1285,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManagerName { get; set; }
         public decimal approvedAmount { get; set; }
         public string creatorName { get; set; }
+        public decimal debitAmount { get; set; }
+        public decimal creditAmount { get; set; }
+        public string loanReference { get; set; }
+        public DateTime valueDate { get; set; }
+        public DateTime postedDate { get; set; }
+        public string description { get; set; }
     }
 
 }

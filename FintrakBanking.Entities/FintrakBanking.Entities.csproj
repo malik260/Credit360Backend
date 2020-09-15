@@ -89,6 +89,14 @@
     <Compile Include="Models\TBL_CONTRACTOR_TIERING.cs" />
     <Compile Include="Models\TBL_CURRENCY_LIMIT.cs" />
     <Compile Include="Models\TBL_DOCUMENTATION_FILLING_APPROVAL.cs" />
+    <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPLICATION.cs" />
+    <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPLICATION_DETAIL.cs" />
+    <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPL_DETL_BG.cs" />
+    <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPL_DETL_FEE.cs" />
+    <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPL_DETL_INV.cs" />
+    <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPL_DETL_SYN.cs" />
+    <Compile Include="Models\TBL_EXCEPTIONAL_RAC_DEFINITION.cs" />
+    <Compile Include="Models\TBL_EXCEPTIONAL_RAC_DETAIL.cs" />
     <Compile Include="Models\TBL_FACILITY_MODIFICATION.cs" />
     <Compile Include="Models\TBL_FACILITY_MOD_DETL_FEE.cs" />
     <Compile Include="Models\TBL_GROUP_LIMIT.cs" />
@@ -156,6 +164,7 @@
     <Compile Include="Models\TBL_LOAN_RECOVERY_ASSIGNMENT.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_COMMISSION_APPROVAL.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_COMMISSION_BATCH.cs" />
+    <Compile Include="Models\TBL_LOAN_RECOVERY_COMMISSION_RETAIL.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_REPORTING_APPROVAL.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_REPORTING_BATCH.cs" />
     <Compile Include="Models\TBL_OPERATION_CAMSOL_LIST.cs" />

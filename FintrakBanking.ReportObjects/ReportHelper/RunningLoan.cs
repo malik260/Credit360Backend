@@ -14,11 +14,11 @@ namespace FintrakBanking.ReportObjects.ReportHelper
     {
         public List<RuniningLoanViewModel> GetRunningLoan(DateTime startDate, DateTime endDate, int companyId, short? branchId)
         {
-            List<SubHead> subList = new List<SubHead>();
+            //List<SubHead> subList = new List<SubHead>();
 
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
-                subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION, teamUnit = sl.TEAM_UNIT, businessDevelopmentManger = sl.DIRECTORATE, deptName = sl.DEPT_NAME }).ToList();
+                //subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION, teamUnit = sl.TEAM_UNIT, businessDevelopmentManger = sl.DIRECTORATE, deptName = sl.DEPT_NAME }).ToList();
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
 
@@ -117,54 +117,54 @@ namespace FintrakBanking.ReportObjects.ReportHelper
                                             {
 
 
-                                                var checkForGroupHead = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.subHead).FirstOrDefault();
+                                                //var checkForGroupHead = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.subHead).FirstOrDefault();
 
-                                                if (checkForGroupHead == null)
-                                                {
-                                                    x.groupDescription = "";
-                                                }
-                                                else if (checkForGroupHead != null)
-                                                {
-                                                    x.groupDescription = checkForGroupHead;
-                                                }
-                                                var checkForTeamDescription = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.teamUnit).FirstOrDefault();
-                                                if (checkForTeamDescription == null)
-                                                {
-                                                    x.teamDescription = "";
-                                                }
-                                                else if (checkForTeamDescription != null)
-                                                {
-                                                    x.teamDescription = checkForTeamDescription;
-                                                }
-                                                var checkForDeskDescription = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.deptName).FirstOrDefault();
-                                                if (checkForDeskDescription == null)
-                                                {
-                                                    x.deskDescription = "";
-                                                }
-                                                else if (checkForDeskDescription != null)
-                                                {
-                                                    x.deskDescription = checkForDeskDescription;
-                                                }
-                                                var checkForBusinessDevelopment = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.businessDevelopmentManger).FirstOrDefault();
+                                                //if (checkForGroupHead == null)
+                                                //{
+                                                //    x.groupDescription = "";
+                                                //}
+                                                //else if (checkForGroupHead != null)
+                                                //{
+                                                //    x.groupDescription = checkForGroupHead;
+                                                //}
+                                                //var checkForTeamDescription = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.teamUnit).FirstOrDefault();
+                                                //if (checkForTeamDescription == null)
+                                                //{
+                                                //    x.teamDescription = "";
+                                                //}
+                                                //else if (checkForTeamDescription != null)
+                                                //{
+                                                //    x.teamDescription = checkForTeamDescription;
+                                                //}
+                                                //var checkForDeskDescription = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.deptName).FirstOrDefault();
+                                                //if (checkForDeskDescription == null)
+                                                //{
+                                                //    x.deskDescription = "";
+                                                //}
+                                                //else if (checkForDeskDescription != null)
+                                                //{
+                                                //    x.deskDescription = checkForDeskDescription;
+                                                //}
+                                                //var checkForBusinessDevelopment = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.businessDevelopmentManger).FirstOrDefault();
 
-                                                if (checkForBusinessDevelopment == null)
-                                                {
-                                                    x.businessDevelopmentManger = "";
-                                                }
-                                                else if (checkForBusinessDevelopment != null)
-                                                {
-                                                    x.businessDevelopmentManger = checkForBusinessDevelopment;
-                                                }
+                                                //if (checkForBusinessDevelopment == null)
+                                                //{
+                                                //    x.businessDevelopmentManger = "";
+                                                //}
+                                                //else if (checkForBusinessDevelopment != null)
+                                                //{
+                                                //    x.businessDevelopmentManger = checkForBusinessDevelopment;
+                                                //}
 
-                                                var checkForBuDescription = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.region).FirstOrDefault();
-                                                if (checkForBuDescription == null)
-                                                {
-                                                    x.buDescription = "";
-                                                }
-                                                else if (checkForBuDescription != null)
-                                                {
-                                                    x.buDescription = checkForBuDescription;
-                                                }
+                                                //var checkForBuDescription = subList.Where(u => u.staffCode == x.staffCode).Select(u => u.region).FirstOrDefault();
+                                                //if (checkForBuDescription == null)
+                                                //{
+                                                //    x.buDescription = "";
+                                                //}
+                                                //else if (checkForBuDescription != null)
+                                                //{
+                                                //    x.buDescription = checkForBuDescription;
+                                                //}
 
                                                 return x;
 

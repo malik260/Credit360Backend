@@ -11655,15 +11655,13 @@ namespace FintrakBanking.Repositories.Credit
             workflow.StaffId = model.createdBy;
             workflow.TargetId = model.collateralSwapId;
             workflow.CompanyId = model.companyId;
-            workflow.Vote = model.vote;
-            //var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
-            //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-            workflow.NextLevelId = 0;
-            workflow.ToStaffId = null;
+
+            //workflow.Vote = model.vote;
+            workflow.NextLevelId = null;
+            //workflow.ToStaffId = null;
             workflow.StatusId = (int)model.forwardAction;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(model.customerId);
-            //var c = context.TBL_CUSTOMER.Find(cs.TBL_CUSTOMER.CUSTOMERID);
 
             workflow.BusinessUnitId = c?.BUSINESSUNTID;
             var placeholders = new AlertPlaceholders();

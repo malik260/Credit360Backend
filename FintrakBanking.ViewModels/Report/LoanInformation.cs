@@ -114,6 +114,43 @@ namespace FintrakBanking.ViewModels.Reports
         public string BU { get; set; }
     }
 
+    public class CorporateLoansDeptViewModel
+    {
+        public int? bookingrequestid { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public int loanapplicationid { get; set; }
+        public string applicationreferencenumber { get; set; }
+        public string loanApplicationId { get; set; }
+        public string TermLoanId { get; set; }
+        public string solId { get; set; }
+        public string BranchName { get; set; }
+        public DateTime DateTimeInitiated { get; set; }
+        public string status { get; set; }
+        public string PreviousStage { get; set; }
+        public string DisburseOfficerName { get; set; }
+        public DateTime? disburseDateTime { get; set; }
+        public string verificationOfficer { get; set; }
+        public DateTime? verificationDateTime { get; set; }
+        public string loanOfficerName { get; set; }
+        public DateTime loanOfficerDateTime { get; set; }
+        public string productType { get; set; }
+        public string RM { get; set; }
+        public DateTime RMDate { get; set; }
+        public DateTime? availmentDate { get; set; }
+        public DateTime? crmsDate { get; set; }
+        public string customerOperativeAccount { get; set; }
+        public string customerCode { get; set; }
+        public string customerName { get; set; }
+        public decimal? customerLoanAmount { get; set; }
+        public int loanTenure { get; set; }
+        public decimal? loanAmountDisbursed { get; set; }
+        public int lonaTenor { get; set; }
+        public decimal? disbursementAmount { get; set; }
+        public string refferBackComment { get; set; }
+        public string refferBackUser { get; set; }
+        public string completedComment { get; set; }
+    }
+
     public class fullname
     {
         public string name { get; set; }
@@ -366,6 +403,7 @@ namespace FintrakBanking.ViewModels.Reports
     {
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
+        public int dpd { get; set; }
 
     }
 

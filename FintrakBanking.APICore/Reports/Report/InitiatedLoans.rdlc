@@ -9,9 +9,6 @@
               <Width>2.38988in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.47917in</Width>
-            </TablixColumn>
-            <TablixColumn>
               <Width>1in</Width>
             </TablixColumn>
             <TablixColumn>
@@ -48,7 +45,7 @@
                             <TextRun>
                               <Value>APPLICATION REFERENCE NUMBER</Value>
                               <Style>
-                                <FontSize>11pt</FontSize>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -79,46 +76,6 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox1">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>BUSINESS UNIT</Value>
-                              <Style>
-                                <FontSize>11pt</FontSize>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox1</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <BottomBorder>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </BottomBorder>
-                        <BackgroundColor>Peru</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
                     <Textbox Name="Textbox4">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -128,7 +85,7 @@
                             <TextRun>
                               <Value>PRODUCT</Value>
                               <Style>
-                                <FontSize>11pt</FontSize>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -168,7 +125,7 @@
                             <TextRun>
                               <Value>SOL ID</Value>
                               <Style>
-                                <FontSize>11pt</FontSize>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -208,7 +165,7 @@
                             <TextRun>
                               <Value>CUSTOMER NAME</Value>
                               <Style>
-                                <FontSize>11pt</FontSize>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -248,7 +205,7 @@
                             <TextRun>
                               <Value>STAFF NAME</Value>
                               <Style>
-                                <FontSize>11pt</FontSize>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -288,7 +245,7 @@
                             <TextRun>
                               <Value>APPROVED TENOR (DAYS)</Value>
                               <Style>
-                                <FontSize>11pt</FontSize>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -328,7 +285,7 @@
                             <TextRun>
                               <Value>APPLICATION AMOUNT (NGN)</Value>
                               <Style>
-                                <FontSize>11pt</FontSize>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -368,7 +325,7 @@
                             <TextRun>
                               <Value>DATE TIME CREATED</Value>
                               <Style>
-                                <FontSize>11pt</FontSize>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -413,6 +370,7 @@
                             <TextRun>
                               <Value>=Fields!applicationReferenceNumber.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Normal</FontWeight>
                                 <Color>#333333</Color>
                               </Style>
@@ -437,39 +395,6 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="BU">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!BU.Value</Value>
-                              <Style>
-                                <FontWeight>Normal</FontWeight>
-                                <Color>#333333</Color>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>BU</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <BackgroundColor>White</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
                     <Textbox Name="product">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -479,6 +404,7 @@
                             <TextRun>
                               <Value>=Fields!product.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Normal</FontWeight>
                                 <Color>#333333</Color>
                               </Style>
@@ -512,6 +438,7 @@
                             <TextRun>
                               <Value>=Fields!solId.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Normal</FontWeight>
                                 <Color>#333333</Color>
                               </Style>
@@ -545,6 +472,7 @@
                             <TextRun>
                               <Value>=Fields!customerName.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Normal</FontWeight>
                                 <Color>#333333</Color>
                               </Style>
@@ -565,6 +493,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -578,6 +507,7 @@
                             <TextRun>
                               <Value>=Fields!staffName.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Normal</FontWeight>
                                 <Color>#333333</Color>
                               </Style>
@@ -611,6 +541,7 @@
                             <TextRun>
                               <Value>=Fields!approvedTenor.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Normal</FontWeight>
                                 <Color>#333333</Color>
                               </Style>
@@ -644,6 +575,7 @@
                             <TextRun>
                               <Value>=Fields!applicationAmount.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Normal</FontWeight>
                                 <Format>#,0.00;(#,0.00)</Format>
                                 <Color>#333333</Color>
@@ -678,6 +610,7 @@
                             <TextRun>
                               <Value>=Fields!dateTimeCreated.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <FontWeight>Normal</FontWeight>
                                 <Format>dd-MMM-yyyy hh:mm:ss</Format>
                                 <Color>#333333</Color>
@@ -715,7 +648,6 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
-            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -729,10 +661,9 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>InitiatedLoans</DataSetName>
-        <Top>0.47917in</Top>
-        <Left>0.19792in</Left>
+        <Top>1.03125in</Top>
         <Height>0.5in</Height>
-        <Width>17.80208in</Width>
+        <Width>15.32291in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -746,9 +677,10 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Initiated Loans Reoport</Value>
+                <Value>Initiated Loans Report</Value>
                 <Style>
-                  <FontSize>18pt</FontSize>
+                  <FontFamily>Verdana</FontFamily>
+                  <FontSize>12pt</FontSize>
                   <FontWeight>Heavy</FontWeight>
                 </Style>
               </TextRun>
@@ -769,11 +701,55 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox15</rd:DefaultName>
-        <Top>0.0925in</Top>
-        <Left>5.49875in</Left>
+        <Top>0.42236in</Top>
         <Height>0.35889in</Height>
         <Width>4.11137in</Width>
         <ZIndex>1</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox16">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Access Bank Plc</Value>
+                <Style>
+                  <FontFamily>Verdana</FontFamily>
+                  <FontSize>14pt</FontSize>
+                  <FontWeight>Heavy</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value />
+                <Style>
+                  <FontSize>18pt</FontSize>
+                  <FontWeight>Heavy</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox15</rd:DefaultName>
+        <Top>0.0357in</Top>
+        <Height>0.35889in</Height>
+        <Width>4.11137in</Width>
+        <ZIndex>2</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>

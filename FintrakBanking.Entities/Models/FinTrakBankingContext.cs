@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.Models
 
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }  
+        public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_RETAIL> TBL_LOAN_RECOVERY_COMMISSION_RETAIL { get; set; }
         public virtual DbSet<TBL_COLLECTION_RETAIL_CRON_SETUP> TBL_COLLECTION_RETAIL_CRON_SETUP { get; set; }
         public virtual DbSet<TBL_DOCUMENTATION_FILLING_APPROVAL> TBL_DOCUMENTATION_FILLING_APPROVAL { get; set; }
         public virtual DbSet<TBL_CONTRACTOR_CRITERIA_OPTION> TBL_CONTRACTOR_CRITERIA_OPTION { get; set; }
@@ -624,7 +625,14 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_THIRDPARTY_LOAN_MAPPING> TBL_THIRDPARTY_LOAN_MAPPING { get; set; }
         public virtual DbSet<TBL_CUSTOMER_RATIO_CATEGORY> TBL_CUSTOMER_RATIO_CATEGORY { get; set; }
 
-
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPLICATION> TBL_EXCEPTIONAL_LOAN_APPLICATION { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETAIL> TBL_EXCEPTIONAL_LOAN_APPL_DETAIL { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETL_FEE> TBL_EXCEPTIONAL_LOAN_APPL_DETL_FEE { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETL_INV> TBL_EXCEPTIONAL_LOAN_APPL_DETL_INV { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETL_BG> TBL_EXCEPTIONAL_LOAN_APPL_DETL_BG { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETL_SYN> TBL_EXCEPTIONAL_LOAN_APPL_DETL_SYN { get; set; }
+        //public virtual DbSet<TBL_EXCEPTIONAL_RAC_DEFINITION> TBL_EXCEPTIONAL_RAC_DEFINITION { get; set; }
+        public virtual DbSet<TBL_EXCEPTIONAL_RAC_DETAIL> TBL_EXCEPTIONAL_RAC_DETAIL { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

@@ -89,7 +89,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>S/N</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -120,7 +123,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Branch Id</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -151,7 +157,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Branch Name</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -182,7 +191,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Group Description</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -213,7 +225,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Account</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -244,7 +259,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Account Name</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -275,7 +293,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Sanction Limit</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -306,7 +327,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Collateral Type</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -337,7 +361,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Perfection Status</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -368,7 +395,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Insurance Type</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -399,7 +429,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Insurance Policy Number</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -430,7 +463,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Insurance Company Name</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -461,7 +497,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Premium Paid</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -492,7 +531,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Insured Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -523,7 +565,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Start Date</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -554,7 +599,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Maturity Date</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -585,7 +633,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Days</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -616,7 +667,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>WorkFlow ID</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -647,7 +701,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Status</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -678,7 +735,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Relationship Manager</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -709,7 +769,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Business Development Manger</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -740,7 +803,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Group Head</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -771,7 +837,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Remarks</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -807,7 +876,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=RowNumber(nothing)</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -837,7 +908,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!branchId.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -867,7 +940,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!branchName.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -897,7 +972,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!groupDescription.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -927,7 +1004,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!account.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -957,7 +1036,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!accountName.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -987,7 +1068,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!sanctionLimit.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1017,7 +1100,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!collateralType.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1047,7 +1132,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!perfectionStatus.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1077,7 +1164,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!insuranceType.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1107,7 +1196,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!insurancePolicyNumber.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1137,7 +1228,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!insuranceCompanyName.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1167,7 +1260,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!premiumPaid.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1197,7 +1292,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!insuredValue.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1228,6 +1325,7 @@
                             <TextRun>
                               <Value>=Fields!startDate.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
@@ -1260,6 +1358,7 @@
                             <TextRun>
                               <Value>=Fields!maturityDate.Value</Value>
                               <Style>
+                                <FontFamily>Verdana</FontFamily>
                                 <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
@@ -1291,7 +1390,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!days.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1321,7 +1422,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!workFlowID.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1351,7 +1454,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!status.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1381,7 +1486,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!rmName.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1411,7 +1518,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!businessDevelopmentManger.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1441,7 +1550,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!groupDescription.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1459,7 +1570,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -1472,7 +1582,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!remarks.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1544,6 +1656,42 @@
           </Border>
         </Style>
       </Tablix>
+      <Textbox Name="Textbox4">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Insurance Report</Value>
+                <Style>
+                  <FontFamily>Verdana</FontFamily>
+                  <FontSize>14pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox1</rd:DefaultName>
+        <Top>0.30556in</Top>
+        <Left>0.68625in</Left>
+        <Height>0.34167in</Height>
+        <Width>7.4in</Width>
+        <ZIndex>1</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
     </ReportItems>
     <Height>2in</Height>
     <Style />
@@ -1551,34 +1699,33 @@
   <Width>30.94667in</Width>
   <Page>
     <PageHeader>
-      <Height>1in</Height>
+      <Height>1.57361in</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
-        <Textbox Name="Textbox4">
+        <Textbox Name="Textbox6">
           <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
           <Paragraphs>
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>INSURANCE REPORT</Value>
+                  <Value>Access Bank Plc</Value>
                   <Style>
-                    <FontFamily>Arial Black</FontFamily>
+                    <FontFamily>Verdana</FontFamily>
                     <FontSize>14pt</FontSize>
                     <FontWeight>Bold</FontWeight>
-                    <Color>DarkBlue</Color>
                   </Style>
                 </TextRun>
               </TextRuns>
               <Style>
-                <TextAlign>Center</TextAlign>
+                <TextAlign>Left</TextAlign>
               </Style>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>0.32916in</Top>
-          <Left>11.77333in</Left>
+          <Top>1.23194in</Top>
+          <Left>0.68625in</Left>
           <Height>0.34167in</Height>
           <Width>7.4in</Width>
           <Style>

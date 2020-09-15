@@ -75,8 +75,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
+                                join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                 join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                 join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                 join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -97,7 +97,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     AccountName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
                                     NameOfRecoveryAgent = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().NAME,
                                     Address = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
-                                    TelephoneNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().PHONENUMBER,
+                                    Telephone = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().PHONENUMBER,
                                     ExpectedRecoveryDate = (DateTime)l.EXPCOMPLETIONDATE,
                                     AmountRecovered = lr.ISFULLYRECOVERED == true ? lr.TOTALRECOVERYAMOUNT : lr.RECOVEREDAMOUNT,
                                     DateOfAssignment = l.DATEASSIGNED,
@@ -106,8 +106,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 }).ToList();
 
                 var dataRevolvingLoan = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
+                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                          join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -127,7 +127,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              AccountName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
                                              NameOfRecoveryAgent = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().NAME,
                                              Address = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
-                                             TelephoneNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().PHONENUMBER,
+                                             Telephone = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().PHONENUMBER,
                                              ExpectedRecoveryDate = (DateTime)l.EXPCOMPLETIONDATE,
                                              AmountRecovered = lr.ISFULLYRECOVERED == true ? lr.TOTALRECOVERYAMOUNT : lr.RECOVEREDAMOUNT,
                                              DateOfAssignment = l.DATEASSIGNED,
@@ -155,8 +155,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from l in context.TBL_LOAN_RECOVERY_COMMISSION_BATCH
-                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCENUMBER equals lr.LOANREFERENCE
+                                join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                 join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                 join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                 join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -175,7 +175,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     AccountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                     AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                     RecoveryAgentName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().NAME,
-                                    TotalExposure = context.TBL_GLOBAL_EXPOSURE.Where(x => x.CUSTOMERID == l.CUSTOMERID.ToString()).Sum(x => x.TOTALEXPOSURE),
+                                    TotalExposure = lp.TOTALEXPOSUREAMOUNT, //context.TBL_GLOBAL_EXPOSURE.Where(x => x.CUSTOMERID == l.CUSTOMERID.ToString()).Sum(x => x.TOTALEXPOSURE),
                                     AccountRecovered = l.AMOUNTRECOVERED,
                                     DateOfRecovery = lr.RECEIPTDATE,
                                     AmountRecovered = lr.ISFULLYRECOVERED == true ? lr.TOTALRECOVERYAMOUNT : lr.RECOVEREDAMOUNT,
@@ -184,8 +184,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 }).ToList();
 
                 var dataRevolvingLoan = (from l in context.TBL_LOAN_RECOVERY_COMMISSION_BATCH
-                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCENUMBER equals lr.LOANREFERENCE
+                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                          join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -203,7 +203,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              AccountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                              AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                              RecoveryAgentName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().NAME,
-                                             TotalExposure = context.TBL_GLOBAL_EXPOSURE.Where(x => x.CUSTOMERID == l.CUSTOMERID.ToString()).Sum(x => x.TOTALEXPOSURE),
+                                             TotalExposure = lp.TOTALEXPOSUREAMOUNT, //context.TBL_GLOBAL_EXPOSURE.Where(x => x.CUSTOMERID == l.CUSTOMERID.ToString()).Sum(x => x.TOTALEXPOSURE),
                                              AccountRecovered = l.AMOUNTRECOVERED,
                                              DateOfRecovery = lr.RECEIPTDATE,
                                              AmountRecovered = lr.ISFULLYRECOVERED == true ? lr.TOTALRECOVERYAMOUNT : lr.RECOVEREDAMOUNT,
@@ -224,8 +224,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                                join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
+                                join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                 join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                 join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                 join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -255,8 +255,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 }).ToList();
 
                 var dataRevolvingLoan = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANID equals lr.LOANID
-                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                         join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
+                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                          join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID

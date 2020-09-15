@@ -218,7 +218,7 @@
                                 <TextRun>
                                   <Value>S/N</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -233,7 +233,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -253,7 +253,7 @@
                                 <TextRun>
                                   <Value>Flow Type</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -268,7 +268,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -288,7 +288,7 @@
                                 <TextRun>
                                   <Value>Source Reference Number</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -303,7 +303,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -323,7 +323,7 @@
                                 <TextRun>
                                   <Value>Product Code</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -338,7 +338,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -358,7 +358,7 @@
                                 <TextRun>
                                   <Value>Product Name</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -373,7 +373,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -393,7 +393,7 @@
                                 <TextRun>
                                   <Value>Customer Code</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -408,7 +408,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -428,7 +428,7 @@
                                 <TextRun>
                                   <Value>Customer Name</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -443,7 +443,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -463,7 +463,7 @@
                                 <TextRun>
                                   <Value>Branch Code</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -478,7 +478,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -498,7 +498,7 @@
                                 <TextRun>
                                   <Value>Branch Name</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -513,7 +513,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -533,7 +533,7 @@
                                 <TextRun>
                                   <Value>Debit Account</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -548,7 +548,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -568,7 +568,7 @@
                                 <TextRun>
                                   <Value>Credit Account</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -583,7 +583,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -603,7 +603,7 @@
                                 <TextRun>
                                   <Value>Amount</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -618,7 +618,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -638,7 +638,7 @@
                                 <TextRun>
                                   <Value>Amount Collected</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -653,7 +653,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -673,7 +673,7 @@
                                 <TextRun>
                                   <Value>Description</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -688,7 +688,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -708,7 +708,7 @@
                                 <TextRun>
                                   <Value>Posted Date</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -723,7 +723,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -743,7 +743,7 @@
                                 <TextRun>
                                   <Value>Value Date</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -758,7 +758,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -778,7 +778,7 @@
                                 <TextRun>
                                   <Value>Force Debit Account(Y/N?)</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -793,7 +793,7 @@
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                            <BackgroundColor>Orange</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -818,7 +818,7 @@
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -850,7 +850,7 @@
                                 <TextRun>
                                   <Value>=Fields!description.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -882,7 +882,7 @@
                                 <TextRun>
                                   <Value>=Fields!sourceReferenceNumber.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -914,7 +914,7 @@
                                 <TextRun>
                                   <Value>=Fields!productCode.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -946,7 +946,7 @@
                                 <TextRun>
                                   <Value>=Fields!productName.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -978,7 +978,7 @@
                                 <TextRun>
                                   <Value>=Fields!customerCode.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1010,7 +1010,7 @@
                                 <TextRun>
                                   <Value>=Fields!customerName.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1042,7 +1042,7 @@
                                 <TextRun>
                                   <Value>=Fields!branchCode.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1074,7 +1074,7 @@
                                 <TextRun>
                                   <Value>=Fields!branchName.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1106,7 +1106,7 @@
                                 <TextRun>
                                   <Value>=Fields!debitAccount.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1138,7 +1138,7 @@
                                 <TextRun>
                                   <Value>=Fields!creditAccount.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1170,7 +1170,7 @@
                                 <TextRun>
                                   <Value>=Fields!amount.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
@@ -1203,7 +1203,7 @@
                                 <TextRun>
                                   <Value>=Fields!amountCollected.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
@@ -1236,7 +1236,7 @@
                                 <TextRun>
                                   <Value>=Fields!description.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1268,7 +1268,7 @@
                                 <TextRun>
                                   <Value>=Fields!postedDate.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <Format>MMM d, yyyy</Format>
                                   </Style>
                                 </TextRun>
@@ -1301,7 +1301,7 @@
                                 <TextRun>
                                   <Value>=Fields!valueDate.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                     <Format>MMM d, yyyy</Format>
                                   </Style>
                                 </TextRun>
@@ -1334,7 +1334,7 @@
                                 <TextRun>
                                   <Value>=Fields!forceDebitAccount.Value</Value>
                                   <Style>
-                                    <FontFamily>Calibri</FontFamily>
+                                    <FontFamily>Verdana</FontFamily>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1421,22 +1421,55 @@
                     <TextRun>
                       <Value>Custom Facility Repayment Report</Value>
                       <Style>
-                        <FontFamily>Calibri</FontFamily>
-                        <FontSize>20pt</FontSize>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>14pt</FontSize>
                         <FontWeight>Bold</FontWeight>
                       </Style>
                     </TextRun>
                   </TextRuns>
                   <Style>
-                    <TextAlign>Center</TextAlign>
+                    <TextAlign>Left</TextAlign>
                   </Style>
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox27</rd:DefaultName>
-              <Top>0.22222in</Top>
-              <Left>4.24604in</Left>
+              <Top>0.52778in</Top>
               <Height>0.45833in</Height>
               <Width>5.54167in</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox29">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Access Bank Plc</Value>
+                      <Style>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>18pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox27</rd:DefaultName>
+              <Height>0.45833in</Height>
+              <Width>5.54167in</Width>
+              <ZIndex>1</ZIndex>
               <Style>
                 <Border>
                   <Style>None</Style>
