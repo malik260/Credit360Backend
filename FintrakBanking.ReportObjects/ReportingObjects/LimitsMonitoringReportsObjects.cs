@@ -154,10 +154,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                      join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
                                                      join v in context.TBL_COLLATERAL_VISITATION on a.COLLATERALCUSTOMERID equals v.COLLATERALCUSTOMERID
                                                      where v.VISITATIONDATE >= startDate && v.VISITATIONDATE <= endDate
-                                                     && d.REQUIREVISITATION == true
-                                                                  orderby v.VISITATIONDATE descending
+                                                           && d.REQUIREVISITATION == true
+                                                     orderby v.VISITATIONDATE descending
 
-                                                                  select new CollateralViewModel
+                                                     select new CollateralViewModel
                                                      {
                                                          collateralTypeId = a.COLLATERALTYPEID,
                                                          collateralType = d.COLLATERALTYPENAME,
@@ -985,7 +985,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         select new Blacklist
                         {
                             accountName = camsol.ACCOUNTNAME,
-                            accountNumber = camsol.ACCOUNTNAME,
+                            accountNumber = camsol.ACCOUNTNUMBER,
                             balance = camsol.BALANCE,
                             canTakeLoan = camsol.CANTAKELOAN,
                             customerCode = camsol.CUSTOMERCODE,
