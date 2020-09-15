@@ -641,6 +641,7 @@ namespace FintrakBanking.ReportObjects
                                          appDetailId = ft.LOANAPPLICATIONDETAILID,
                                          appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                          accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                         createdby = ft.TBL_STAFF.FIRSTNAME + " " + ft.TBL_STAFF.MIDDLENAME + " " + ft.TBL_STAFF.LASTNAME,
                                          // disbursedby=  "1",//ft.DISBURSEDBY.ToString(),
                                          ft.LOANSTATUSID,
                                          ft.DISBURSEDATE,
@@ -662,6 +663,7 @@ namespace FintrakBanking.ReportObjects
                                               appDetailId = ft.LOANAPPLICATIONDETAILID,
                                               appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                               accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                              createdby = ft.TBL_STAFF.FIRSTNAME + " " + ft.TBL_STAFF.MIDDLENAME + " " + ft.TBL_STAFF.LASTNAME,
                                               // disbursedby =   ft.DISBURSEDBY,
                                               ft.LOANSTATUSID,
                                               ft.DISBURSEDATE,
@@ -683,6 +685,7 @@ namespace FintrakBanking.ReportObjects
                                                appDetailId = ft.LOANAPPLICATIONDETAILID,
                                                appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                                accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                               createdby = ft.TBL_STAFF.FIRSTNAME + " " + ft.TBL_STAFF.MIDDLENAME + " " + ft.TBL_STAFF.LASTNAME,
                                                // disbursedby = ft.DISBURSEDBY,
                                                ft.LOANSTATUSID,
                                                ft.DISBURSEDATE,
@@ -703,6 +706,7 @@ namespace FintrakBanking.ReportObjects
                                     applicationReferenceNumber = b.APPLICATIONREFERENCENUMBER,
                                     solId = a.BRANCHCODE,
                                     customerName = a.customerName,
+                                    staffName = a.createdby,
                                     // staffName= e.FIRSTNAME+" "+e.MIDDLENAME+" "+e.LASTNAME,
                                     approvedAmount = b.APPROVEDAMOUNT,
                                     exchangeRate = c.EXCHANGERATE,
@@ -845,7 +849,7 @@ namespace FintrakBanking.ReportObjects
                             {
                                 applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                 solId = a.TBL_BRANCH.BRANCHCODE,
-                                utilizedAmount = allLoans.Where(x => x.appDetailId == b.LOANAPPLICATIONDETAILID && x.ISDISBURSED == true).Sum(y => y.PRINCIPALAMOUNT),
+                                //utilizedAmount = allLoans.Where(x => x.appDetailId == b.LOANAPPLICATIONDETAILID && x.ISDISBURSED == true).Sum(y => y.PRINCIPALAMOUNT),
                                 disbursedStatus = allLoans.Where(x => x.appDetailId == b.LOANAPPLICATIONDETAILID).Where(x1 => x1.ISDISBURSED == true).Count() > 0 ? "Disbursed" : "Not Disbursed",
                                 customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                 staffName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
@@ -1335,7 +1339,7 @@ namespace FintrakBanking.ReportObjects
                                     status = a.ACCOUNTSTATUS,
                                     exchangeRate = a.exchnageRate,
                                     tenor = c.APPROVEDTENOR + " " + context.TBL_TENOR_MODE.Where(x => x.TENORMODEID == c.TENORFREQUENCYTYPEID).FirstOrDefault().TENORMODENAME,
-
+                                    staffName = a.createdby,
                                     disbursedBy = a.disbusedby,
                                     pricipalAmount = a.PRINCIPALAMOUNT,
                                     disburseDate = a.DISBURSEDATE,
@@ -1345,17 +1349,17 @@ namespace FintrakBanking.ReportObjects
                                 }
                         ).ToList().Select(x =>
                         {
-                            x.amountDisbursed = x.pricipalAmount * (decimal)x.exchangeRate;
-                            if (string.IsNullOrEmpty(x.disbursedBy) | string.IsNullOrWhiteSpace(x.disbursedBy))
-                            {
-                                try
-                                {
-                                    x.disbursedBy = context.TBL_LOAN.Where(o => o.LOANREFERENCENUMBER == o.LOANREFERENCENUMBER).FirstOrDefault().DISBURSEDBY.ToString();
-                                }
-                                catch (Exception ex)
-                                {
-                                    x.disbursedBy = "";
-                                }
+                            //x.amountDisbursed = x.pricipalAmount * (decimal)x.exchangeRate;
+                            //if (string.IsNullOrEmpty(x.disbursedBy) | string.IsNullOrWhiteSpace(x.disbursedBy))
+                            //{
+                            //    try
+                            //    {
+                            //        x.disbursedBy = context.TBL_LOAN.Where(o => o.LOANREFERENCENUMBER == o.LOANREFERENCENUMBER).FirstOrDefault().DISBURSEDBY.ToString();
+                            //    }
+                            //    catch (Exception ex)
+                            //    {
+                            //        x.disbursedBy = "";
+                            //    }
 
                                 //var businessUnitName = misInfo.Where(z => z.FIELD1 == x.misCode).Select(z => z.FIELD8).FirstOrDefault();
                                 //if (businessUnitName != null)
@@ -1367,10 +1371,10 @@ namespace FintrakBanking.ReportObjects
                                 //    x.BU = "N/A";
                                 //}
 
-                            }
-                            x.staffName = GetStaffFullName(int.Parse(x.disbursedBy));
+                            //}
+                            //x.staffName = GetStaffFullName(int.Parse(x.disbursedBy));
                             return x;
-                        });
+                        }).ToList();
 
                     return data.ToList();
                 }
