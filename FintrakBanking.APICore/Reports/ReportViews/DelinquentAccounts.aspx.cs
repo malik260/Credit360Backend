@@ -4,7 +4,9 @@ using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -24,7 +26,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     string endDateString = Request.QueryString["endDate"];
                     DateTime.TryParse(endDateString, out DateTime endDate);
                     int dpd = Convert.ToInt32(Request.QueryString["dpd"]);
-                    
+
 
                     HashHelper hash = new HashHelper();
                     string inputHashValue = Request.QueryString["hashValue"];
@@ -46,9 +48,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
                     reportDataSource.Name = "DelinquentAccounts";
-
-                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
-                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/DelinquentAccounts.rdlc");
