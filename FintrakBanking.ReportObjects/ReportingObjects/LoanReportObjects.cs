@@ -122,7 +122,7 @@ namespace FintrakBanking.ReportObjects
                 var principalRepayment = (from a in context.TBL_LOAN
                                           join b in context.TBL_FINANCE_TRANSACTION on a.LOANREFERENCENUMBER equals b.SOURCEREFERENCENUMBER
                                           where a.COMPANYID == companyId && a.TERMLOANID == loanId
-                                          && b.TBL_CHART_OF_ACCOUNT.GLCLASSID == (int)ChartOfAccountClassEnum.LoanSchedule
+                                          //&& b.TBL_CHART_OF_ACCOUNT.GLCLASSID == (int)ChartOfAccountClassEnum.LoanSchedule
                                           select new LoanStatementViewModel()
                                           {
                                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
@@ -150,7 +150,7 @@ namespace FintrakBanking.ReportObjects
                 var interstRepayment = (from a in context.TBL_LOAN
                                         join b in context.TBL_FINANCE_TRANSACTION on a.LOANREFERENCENUMBER equals b.SOURCEREFERENCENUMBER
                                         where a.COMPANYID == companyId && a.TERMLOANID == loanId
-                                        && b.TBL_CHART_OF_ACCOUNT.GLCLASSID == (int)ChartOfAccountClassEnum.LoanInterestReceivable
+                                        //&& b.TBL_CHART_OF_ACCOUNT.GLCLASSID == (int)ChartOfAccountClassEnum.LoanInterestReceivable
                                         select new LoanStatementViewModel()
                                         {
                                             //balance = a.OUTSTANDINGPRINCIPAL,
@@ -185,8 +185,8 @@ namespace FintrakBanking.ReportObjects
                                            join c in context.TBL_DAILY_ACCRUAL_CATEGORY on b.CATEGORYID equals c.CATEGORYID
                                            where a.COMPANYID == companyId && a.TERMLOANID == loanId && b.COMPANYID == companyId
                                             && interestItems.Contains(b.CATEGORYID)
-                                            && b.REPAYMENTPOSTEDSTATUS == true
-                                            && b.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
+                                            //&& b.REPAYMENTPOSTEDSTATUS == true
+                                            //&& b.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
                                            select new LoanStatementViewModel()
                                            {
                                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
@@ -4022,9 +4022,9 @@ namespace FintrakBanking.ReportObjects
         public List<InsuranceViewModel> InsuranceReport(DateTime startDate, DateTime endDate, int companyId, short? branchId)
         {
 
-            var getRunningLoan = new RunningLoan();
+            //var getRunningLoan = new RunningLoan();
 
-            var data = getRunningLoan.GetRunningLoan(startDate, endDate,companyId, branchId);
+            //var data = getRunningLoan.GetRunningLoan(startDate, endDate,companyId, branchId);
 
 
 
@@ -4035,16 +4035,17 @@ namespace FintrakBanking.ReportObjects
                                      join cu in context.TBL_CUSTOMER on ccu.CUSTOMERID equals cu.CUSTOMERID
                                      join br in context.TBL_BRANCH on cu.BRANCHID equals br.BRANCHID
                                      join ccp in context.TBL_COLLATERAL_ITEM_POLICY on ccu.COLLATERALCUSTOMERID equals ccp.COLLATERALCUSTOMERID
-                                     //join cp in context.TBL_COLLATERAL_POLICY on ccu.COLLATERALCUSTOMERID equals cp.COLLATERALCUSTOMERID
-                                     join ip in context.TBL_COLLATERAL_IMMOVE_PROPERTY on ccu.COLLATERALCUSTOMERID equals ip.COLLATERALCUSTOMERID
-                                     join pe in context.TBL_COLLATERAL_PERFECTN_STAT on ip.PERFECTIONSTATUSID equals pe.PERFECTIONSTATUSID
+                                     //join ip in context.TBL_COLLATERAL_IMMOVE_PROPERTY on ccu.COLLATERALCUSTOMERID equals ip.COLLATERALCUSTOMERID
+                                     //join pe in context.TBL_COLLATERAL_PERFECTN_STAT on ip.PERFECTIONSTATUSID equals pe.PERFECTIONSTATUSID
                                      join ct in context.TBL_COLLATERAL_TYPE on ccu.COLLATERALTYPEID equals ct.COLLATERALTYPEID
-                                     join lc in context.TBL_LOAN_COLLATERAL_MAPPING on ccu.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
-                                     join l in context.TBL_LOAN on lc.LOANID equals l.TERMLOANID
-                                     join st in context.TBL_STAFF on l.CREATEDBY equals st.STAFFID
-                                     where l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                     //join lc in context.TBL_LOAN_COLLATERAL_MAPPING on ccu.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
+                                     //join l in context.TBL_LOAN on lc.LOANID equals l.TERMLOANID
+                                     //join st in context.TBL_STAFF on l.CREATEDBY equals st.STAFFID
 
-                                       && ccu.COMPANYID == companyId
+                                     where ccu.COMPANYID == companyId
+                                     //where l.LOANSTATUSID == (short)LoanStatusEnum.Active
+
+                                     //&& ccu.COMPANYID == companyId
                                      orderby ccp.STARTDATE descending
 
                                      select new InsuranceViewModel
@@ -4053,7 +4054,7 @@ namespace FintrakBanking.ReportObjects
                                          branchId = br.BRANCHID,
 
                                          collateralType = ct.COLLATERALTYPENAME,
-                                         perfectionStatus = pe.PERFECTIONSTATUSNAME,
+                                       //  perfectionStatus = pe.PERFECTIONSTATUSNAME,
                                        //  insuranceType = ccp.INSURANCETYPE,
                                          insurancePolicyNumber = ccp.POLICYREFERENCENUMBER,
                                        //  insuranceCompanyName = ccp.INSURANCECOMPANYNAME,
@@ -4063,11 +4064,11 @@ namespace FintrakBanking.ReportObjects
 
                                          startDate = ccp.STARTDATE,
 
-                                         maturityDate = l.MATURITYDATE,
+                                        // maturityDate = l.MATURITYDATE,
 
-                                         days = (int)DbFunctions.DiffDays((DateTime?)l.MATURITYDATE, (DateTime?)l.EFFECTIVEDATE),
+                                         //days = (int)DbFunctions.DiffDays((DateTime?)l.MATURITYDATE, (DateTime?)l.EFFECTIVEDATE),
                                          workFlowID = "",
-                                         status = l.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                                       //  status = l.TBL_LOAN_STATUS.ACCOUNTSTATUS,
                                          //staffCode = st.STAFFCODE,
                                          //rmName = st.FIRSTNAME + " " + " " + st.MIDDLENAME + " " + " " + st.LASTNAME,
                                          customerId = ccu.COLLATERALCUSTOMERID,
@@ -4077,36 +4078,36 @@ namespace FintrakBanking.ReportObjects
                                      }).ToList().Select(x =>
                                      {
 
-                                         foreach (var d in data)
-                                         {
+                                         //foreach (var d in data)
+                                         //{
 
 
 
 
-                                             var checkForRemarks = context.TBL_COLLATERAL_POLICY.Where(u => u.COLLATERALCUSTOMERID == x.customerId).Select(u => u.REMARK).FirstOrDefault();
+                                         //    var checkForRemarks = context.TBL_COLLATERAL_POLICY.Where(u => u.COLLATERALCUSTOMERID == x.customerId).Select(u => u.REMARK).FirstOrDefault();
 
-                                             if (checkForRemarks == null)
-                                             {
-                                                 x.remarks = "";
-                                             }
-                                             else if (checkForRemarks != null)
-                                             {
-                                                 x.remarks = checkForRemarks;
-                                             }
+                                         //    if (checkForRemarks == null)
+                                         //    {
+                                         //        x.remarks = "";
+                                         //    }
+                                         //    else if (checkForRemarks != null)
+                                         //    {
+                                         //        x.remarks = checkForRemarks;
+                                         //    }
 
 
-                                             var checkForPremiumPaid = context.TBL_COLLATERAL_POLICY.Where(u => u.COLLATERALCUSTOMERID == x.customerId).Select(u => u.PREMIUMAMOUNT).FirstOrDefault();
+                                         //    var checkForPremiumPaid = context.TBL_COLLATERAL_POLICY.Where(u => u.COLLATERALCUSTOMERID == x.customerId).Select(u => u.PREMIUMAMOUNT).FirstOrDefault();
 
-                                             if (checkForPremiumPaid == 0)
-                                             {
-                                                 x.premiumPaid = 0;
-                                             }
-                                             else if (checkForPremiumPaid != 0)
-                                             {
-                                                 x.premiumPaid = checkForPremiumPaid;
-                                             }
+                                         //    if (checkForPremiumPaid == 0)
+                                         //    {
+                                         //        x.premiumPaid = 0;
+                                         //    }
+                                         //    else if (checkForPremiumPaid != 0)
+                                         //    {
+                                         //        x.premiumPaid = checkForPremiumPaid;
+                                         //    }
 
-                                         }
+                                         //}
 
                                          return x;
                                      }).ToList();

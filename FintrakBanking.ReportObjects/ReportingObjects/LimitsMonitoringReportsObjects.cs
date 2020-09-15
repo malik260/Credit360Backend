@@ -985,7 +985,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         select new Blacklist
                         {
                             accountName = camsol.ACCOUNTNAME,
-                            accountNumber = camsol.ACCOUNTNAME,
+                            accountNumber = camsol.ACCOUNTNUMBER,
                             balance = camsol.BALANCE,
                             canTakeLoan = camsol.CANTAKELOAN,
                             customerCode = camsol.CUSTOMERCODE,
