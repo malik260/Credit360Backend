@@ -9098,10 +9098,9 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-        public RetailRecoveryCustomerTransactionsViewModels GetRetailRecoveryReporting(DateTime startDate, DateTime endDate)
+        public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate)
         {
-           
-            var fields = new RetailRecoveryCustomerTransactionsViewModels();
+            IEnumerable<RetailRecoveryCustomerTransactionsViewModels> records = null;
 
             var dataTermLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                             join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
@@ -9241,29 +9240,16 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var record in data)
             {
-                var first = (from a in context.TBL_LOAN_APPLICATION_TRANS
+               records = (from a in context.TBL_FINANCE_TRANSACTION
                              where 
-                             a.CUSTOMERID == record.customerId 
-                             && a.LOANAPPLICATIONID == record.loanApplicationId 
-                             && a.MONTH >= DbFunctions.TruncateTime(startDate).Value.Month 
-                             && a.MONTH <= DbFunctions.TruncateTime(endDate).Value.Month 
-                             && a.YEAR >= DbFunctions.TruncateTime(startDate).Value.Year 
-                             && a.YEAR <= DbFunctions.TruncateTime(endDate).Value.Year 
-                             && a.ISLMS == false
+                             a.SOURCEREFERENCENUMBER == record.loanReferenceNumber 
+                             && (DbFunctions.TruncateTime(a.APPROVEDDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.APPROVEDDATE) <= DbFunctions.TruncateTime(endDate))
                              select new RetailRecoveryCustomerTransactionsViewModels
                              {
-                                 cust_Id = a.CUSTOMERTRANSACTIONID.ToString(),
-                                 period = a.PERIOD,
-                                 productName = a.PRODUCTNAME,
-                                 accountNumber = a.ACCOUNTNUMBER,
-                                 max_Credit_Balance = a.MAXIMUMCREDITBALANCE,
-                                 max_Debit_Balance = a.MAXIMUMDEBITBALANCE,
-                                 min_Credit_Balance = a.MINIMUMCREDITBALANCE,
-                                 min_Debit_Balance = a.MINIMUMDEBITBALANCE,
-                                 credit_Turnover = a.CREDITTURNOVER,
-                                 debit_Turnover = a.DEBITTURNOVER,
-                                 month = a.MONTH,
-                                 year = a.YEAR,
+                                 startDate = startDate,
+                                 endDate = endDate,
+                                 productName = record.productName,
+                                 accountNumber = record.casaAccount,
                                  productAccountName = record.casaAccountName,
                                  accreditedConsultantName = record.accreditedConsultantName,
                                  accreditedConsultantCompany = record.accreditedConsultantCompany,
@@ -9271,59 +9257,16 @@ namespace FintrakBanking.Repositories.Credit
                                  loanReferenceNumber = record.loanReferenceNumber,
                                  applicationReferenceNumber = record.applicationReferenceNumber,
                                  customerName = record.customerName,
-                             }).GroupBy(O => new { O.accountNumber, O.credit_Turnover, O.debit_Turnover, O.min_Credit_Balance, O.min_Debit_Balance }).Select(O => O.FirstOrDefault()).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
+                                 debitAmount = a.DEBITAMOUNT,
+                                 creditAmount = a.CREDITAMOUNT,
+                                 valueDate = a.VALUEDATE,
+                                 postedDate = a.POSTEDDATE,
+                                 description = a.DESCRIPTION,
+                                 loanReference = record.loanReferenceNumber
+                             }).ToList();
 
-
-                var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
-                              where
-                              a.CUSTOMERID == record.customerId
-                              && a.LOANAPPLICATIONID == record.loanApplicationId
-                              && a.MONTH >= DbFunctions.TruncateTime(startDate).Value.Month
-                              && a.MONTH <= DbFunctions.TruncateTime(endDate).Value.Month
-                              && a.YEAR >= DbFunctions.TruncateTime(startDate).Value.Year
-                              && a.YEAR <= DbFunctions.TruncateTime(endDate).Value.Year
-                              && a.ISLMS == false
-                              select new RetailRecoveryCustomerTransactionsViewModels
-                              {
-                                  cust_Id = a.CUSTOMERTRANSACTIONID2.ToString(),
-                                  period = a.PERIOD,
-                                  productName = a.PRODUCTNAME,
-                                  accountNumber = a.ACCOUNTNUMBER,
-                                  interest = a.INTEREST,
-                                  float_Charge = a.FLOATCHARGE,
-                                  month = a.MONTH,
-                                  year = a.YEAR,
-                                  productAccountName = record.casaAccountName,
-                                  accreditedConsultantName = record.accreditedConsultantName,
-                                  accreditedConsultantCompany = record.accreditedConsultantCompany,
-                                  expCompletionDate = record.expCompletionDate,
-                                  loanReferenceNumber = record.loanReferenceNumber,
-                                  applicationReferenceNumber = record.applicationReferenceNumber,
-                                  customerName = record.customerName,
-                              }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList(); ;
-
-                first.Add(new RetailRecoveryCustomerTransactionsViewModels
-                {
-                    cust_Id = "TOTAL",
-                    max_Credit_Balance = first.Sum(t => t.max_Credit_Balance),
-                    max_Debit_Balance = first.Sum(t => t.max_Debit_Balance),
-                    min_Credit_Balance = first.Sum(t => t.min_Credit_Balance),
-                    min_Debit_Balance = first.Sum(t => t.min_Debit_Balance),
-                    credit_Turnover = first.Sum(t => t.credit_Turnover),
-                    debit_Turnover = first.Sum(t => t.debit_Turnover),
-                });
-                second.Add(new RetailRecoveryCustomerTransactionsViewModels
-                {
-                    cust_Id = "TOTAL",
-                    interest = second.Sum(t => t.interest),
-                    float_Charge = second.Sum(t => t.float_Charge),
-                });
-
-
-                fields.firstTransaction = first;
-                fields.secondTransaction = second;
             }
-            return fields;
+            return records;
         }
     }
 }

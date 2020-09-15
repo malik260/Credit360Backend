@@ -6439,7 +6439,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var recoveryAgents = GetAccreditedRecoveryConsultants((int)record.stateId);
                     var customerRecords = GetLoanOperationRecoveryAnalysis(record.customerId).ToList();
-                    if (recoveryAgents !=null && customerRecords.Count() > 0 ) {
+                    if (recoveryAgents.Count()>0 && customerRecords.Count() > 0 ) {
                         var consultant = recoveryAgents.ElementAt(0).accreditedConsultantId;
                         saveBulkLoanAssignmentToAgent(customerRecords, consultant, DateTime.Now,"RETAIL");
                     }
@@ -6523,7 +6523,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var recoveryAgents = GetAccreditedRecoveryConsultantsByAutoReAssignment((int)record.stateId);
                     var customerRecords = GetQuarterlyLoanOperationRecoveryAnalysis(record.customerId).ToList();
-                    if (recoveryAgents != null && customerRecords.Count() > 0)
+                    if (recoveryAgents.Count() > 0 && customerRecords.Count() > 0)
                     {
                         var consultant = recoveryAgents.ElementAt(0).accreditedConsultantId;
                         saveBulkLoanAssignmentToAgent(customerRecords, consultant, DateTime.Now, "RETAIL");
