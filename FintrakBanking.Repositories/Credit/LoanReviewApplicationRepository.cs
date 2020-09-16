@@ -197,7 +197,7 @@ namespace FintrakBanking.Repositories.Credit
             int companyId = user.companyId;
             bool ignoreBranch = true;
 
-            List<short> approvalOperations = context.TBL_LMSR_FLOW_ORDER.Where(x => x.REQUIREDRAWDOWN == true).Select(c => (short)c.OPERATIONID).ToList();
+            List<short> approvalOperations = new List<short> { (short)OperationsEnum.LoanReviewDrawdownForExtension, (short)OperationsEnum.OverdraftReviewDrawdownForExtension, (short)OperationsEnum.ContingentReviewDrawdownForExtension};
 
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
@@ -246,7 +246,9 @@ namespace FintrakBanking.Repositories.Credit
                  branchId = x.branch.BRANCHID,
                  branchName = x.branch.BRANCHNAME,
                  customerId = x.customer.CUSTOMERID,
-                 operationId = x.application.OPERATIONID,
+                 operationId = context.TBL_PRODUCT.Where(p=>p.PRODUCTID ==  x.application.PRODUCTID).Select(d=>d.PRODUCTTYPEID).FirstOrDefault() == (short)LoanProductTypeEnum.RevolvingLoan ? (short)OperationsEnum.OverdraftReviewDrawdownForExtension 
+                    : context.TBL_PRODUCT.Where(p => p.PRODUCTID == x.application.PRODUCTID).Select(d => d.PRODUCTTYPEID).FirstOrDefault() == (short)LoanProductTypeEnum.ContingentLiability ? (short)OperationsEnum.ContingentReviewDrawdownForExtension 
+                    : (short) OperationsEnum.LoanReviewDrawdownForExtension ,
                  customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
                  atInitiator = x.application.CREATEDBY == staffId,
                  timeIn = x.trail.SYSTEMARRIVALDATETIME,
@@ -1361,7 +1363,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
-
+            var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
             //string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
 
             //var checklistValidation = ChecklistCompleted(model.applicationId);
@@ -1384,6 +1386,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
                 }
+
+                List<short> drawdownOperations = new List<short> { (int)OperationsEnum.LoanReviewDrawdownForExtension, (int)OperationsEnum.OverdraftReviewDrawdownForExtension, (int)OperationsEnum.ContingentReviewDrawdownForExtension };
+                var isDrawdownOperation = drawdownOperations.Contains((short)model.operationId);
 
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -1485,7 +1490,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                             }
-
+                            
                             if (flowOrder == null)
                             {
                                 if (defaultFlowOrder.REQUIREOFFERLETTER && currentOperationType != (short)OperationsEnum.LoanReviewApprovalAvailment)
@@ -1493,9 +1498,12 @@ namespace FintrakBanking.Repositories.Credit
                                     nextOperatioId = (short)OperationsEnum.LoanReviewApprovalOfferLetter;
                                     LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
                                 }
-                                if (defaultFlowOrder.REQUIREDRAWDOWN)
+                                if (defaultFlowOrder.REQUIREDRAWDOWN && !isDrawdownOperation)
                                 {
-                                    nextOperatioId = (short)OperationsEnum.LoanReviewDrawdownForExtension;
+                                    if(product.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan) { nextOperatioId = (short)OperationsEnum.OverdraftReviewDrawdownForExtension; }
+                                    else if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability) { nextOperatioId = (short)OperationsEnum.ContingentReviewDrawdownForExtension; }
+                                    else { nextOperatioId = (short)OperationsEnum.LoanReviewDrawdownForExtension; }
+                                    //nextOperatioId = (short)OperationsEnum.LoanReviewDrawdownForExtension;
                                     LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
                                 }
                                 else if (defaultFlowOrder.REQUIREAVAILMENT)
@@ -1518,9 +1526,11 @@ namespace FintrakBanking.Repositories.Credit
                                     nextOperatioId = (short)OperationsEnum.LoanReviewApprovalOfferLetter;
                                     LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
                                 }
-                                if (flowOrder.REQUIREDRAWDOWN)
+                                if (flowOrder.REQUIREDRAWDOWN && !isDrawdownOperation)
                                 {
-                                    nextOperatioId = (short)OperationsEnum.LoanReviewDrawdownForExtension;
+                                    if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan) { nextOperatioId = (short)OperationsEnum.OverdraftReviewDrawdownForExtension; }
+                                    else if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability) { nextOperatioId = (short)OperationsEnum.ContingentReviewDrawdownForExtension; }
+                                    else { nextOperatioId = (short)OperationsEnum.LoanReviewDrawdownForExtension; }
                                     LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
                                 }
                                 else if (flowOrder.REQUIREAVAILMENT)
@@ -1673,7 +1683,12 @@ namespace FintrakBanking.Repositories.Credit
                                 }
                                 if (defaultFlowOrder.REQUIREDRAWDOWN)
                                 {
-                                    nextOperatioId = (short)OperationsEnum.LoanReviewDrawdownForExtension;
+                                    if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan) { nextOperatioId = (short)OperationsEnum.OverdraftReviewDrawdownForExtension; }
+
+                                    else if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability) { nextOperatioId = (short)OperationsEnum.ContingentReviewDrawdownForExtension; }
+
+                                    else { nextOperatioId = (short)OperationsEnum.LoanReviewDrawdownForExtension; }
+
                                     LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
                                 }
                                 else if (defaultFlowOrder.REQUIREAVAILMENT)
@@ -1698,7 +1713,10 @@ namespace FintrakBanking.Repositories.Credit
                                 }
                                 if (flowOrder.REQUIREDRAWDOWN)
                                 {
-                                    nextOperatioId = (short)OperationsEnum.LoanReviewDrawdownForExtension;
+                                    if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan) { nextOperatioId = (short)OperationsEnum.OverdraftReviewDrawdownForExtension; }
+                                    else if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability) { nextOperatioId = (short)OperationsEnum.ContingentReviewDrawdownForExtension; }
+                                    else { nextOperatioId = (short)OperationsEnum.LoanReviewDrawdownForExtension; }
+
                                     LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
                                 }
                                 else if (flowOrder.REQUIREAVAILMENT)

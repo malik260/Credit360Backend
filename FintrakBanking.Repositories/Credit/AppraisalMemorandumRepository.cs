@@ -2555,8 +2555,9 @@ namespace FintrakBanking.Repositories.Credit
 
             grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
             if (grant == null) { grant = new PrivilegeViewModel(); } // changed
-            grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
-            grant.owner = grant.userApprovalLevelIds.Contains((int)entity.levelId);
+            grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId)?.ToList();
+
+            grant.owner = grant.userApprovalLevelIds.Contains(entity.levelId ?? 0);
 
             return grant;
         }
