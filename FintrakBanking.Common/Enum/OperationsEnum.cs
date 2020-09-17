@@ -201,8 +201,9 @@
     GuaranteeReleaseApproval = 270,
 
     RelatedEmployer = 273,
-    LCExtensionApproval = 274,
+    LCIssuanceExtensionApproval = 274,
     ExceptionalLoan = 275,
+    LCUsanceExtensionApproval = 276,
     LoanReviewDrawdownForExtension = 277,
     ContingentReviewDrawdownForExtension = 278,
     OverdraftReviewDrawdownForExtension = 279,

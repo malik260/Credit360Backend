@@ -239,6 +239,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             SetReroute();
 
+            FurtherValidations();
+
             this.applicationDate = GetApplicationDate();
 
             if (lastOpenRequest != null)
@@ -273,7 +275,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 var level = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
                 var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
-                if (isReviewer) { this.statusId = (int)ApprovalStatusEnum.Finishing; }
+                if (isReviewer && this.loopedStaffId == null)
+                {
+                    this.statusId = (int)ApprovalStatusEnum.Finishing;
+                }
             }
 
 
@@ -873,6 +878,53 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
+        private void ValidateAgainstAlreadyClosedProcess()
+        {
+            if (this.statusId == (int)ApprovalStatusEnum.Referred || this.referredLog.Count > 0)
+            {
+                return;
+            }
+
+            if (this.newStateId != (int)ApprovalState.Ended || this.statusId != (int)ApprovalStatusEnum.Approved)
+            {
+                return;
+            }
+                
+            var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
+            if (allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved))
+            {
+                new SecureException("The process is closed already!");
+            }
+        }
+
+        private void FurtherValidations()
+        {
+            ValidateAgainstAlreadyClosedProcess();
+        }
+
+        private void ValidateAgainstReinitiationOfClosedProcess()//might be redundant soon
+        {
+            if (currentStateId != (int)ApprovalState.Initiation || lastOpenRequest != null)
+            {
+                return;
+            }
+            var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
+            if (allRelatingRequestsDescending.Count > 0)
+            {
+                foreach(var req in allRelatingRequestsDescending)
+                {
+                    if (req.APPROVALSTATEID != (int)ApprovalState.Ended)
+                    {
+                        continue;
+                    }
+                    if (IsNormalEnd(req))
+                    {
+                        new SecureException("The process is closed!");
+                    }
+                }
+            }
+        }
+
         private void ValidateSourceConfiguration()
         {
             bool valid = true;
@@ -899,21 +951,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             ValidateDestinationConfiguration();
 
-            if (currentStateId != (int)ApprovalState.Initiation || lastOpenRequest != null)
-            {
-                return;
-            }
-            var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
-            if (allRelatingRequestsDescending.Count > 0)
-            {
-                var lastActualRequest = allRelatingRequestsDescending.FirstOrDefault();
-                if (lastActualRequest.APPROVALSTATEID == (int)ApprovalState.Ended && IsNormalEnd(lastActualRequest))
-                {
-                    //new SecureException("The Last Approving Level for this Request has ended the Approval, Kindly refresh your Browser Screen!");
-                    new SecureException("The process is closed!");
-                }
+            ValidateAgainstReinitiationOfClosedProcess();
 
-            }
+
+
         }
 
         private bool IsNormalEnd(TBL_APPROVAL_TRAIL request)
@@ -1991,6 +2032,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             IsFromPc = model.isFromPc;
             destinationOperationId = model.destinationOperationId;
             businessUnitId = model.businessUnitId;
+            NextLevelId = 0;
             var response = LogActivity();
 
             return response;
