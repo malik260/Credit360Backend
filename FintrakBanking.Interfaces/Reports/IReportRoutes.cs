@@ -173,6 +173,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCollateralRegister(DateRange dateRange);
         string GetFixedDepositCollaterals(int companyId, string collateralCode, int staffId);
         string GetValidCollaterals(DateTime startDate, DateTime endDate);
+        string GetJobRequestReport(DateRange dateRange, int companyId, int staffId);
 
     }
 
