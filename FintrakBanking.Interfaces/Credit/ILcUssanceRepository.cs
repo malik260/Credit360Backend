@@ -14,15 +14,20 @@ namespace FintrakBanking.Interfaces.credit
         List<LcUssanceViewModel> GetLcUssanceByLCIssuanceId(int lcIssuanceId);
 
         LcUssanceViewModel GetLcUssanceByLCUsanceId(int lcUsanceId);
+        LcUssanceViewModel GetLcUssanceExtensionByTempLcUsanceId(int tempLcUsanceId);
+        List<LcUssanceViewModel> GetLcUssanceExtensionByLcUsanceId(int lcUsanceId);
 
         IEnumerable<LcUssanceViewModel> GetLcUssances();
 
+        IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForUssanceExtensionApproval(int staffId);
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForUssanceApproval(int staffId);
-
+        IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForUssanceExtension(int staffId);
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForUssance(int staffId);
 
+        LcUssanceViewModel AddLcUssanceExtension(LcUssanceViewModel model);
         LcUssanceViewModel AddLcUssance(LcUssanceViewModel model);
 
+        bool UpdateLcUsanceExtension(LcUssanceViewModel model, int id, UserInfo user);
         bool UpdateLcUssance(LcUssanceViewModel model, int id, UserInfo user);
 
         bool DeleteLcUssance(int id, UserInfo user);

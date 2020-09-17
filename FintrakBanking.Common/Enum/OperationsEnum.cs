@@ -201,8 +201,9 @@
     GuaranteeReleaseApproval = 270,
 
     RelatedEmployer = 273,
-    LCExtensionApproval = 274,
-    ExceptionalLoan = 275
+    LCIssuanceExtensionApproval = 274,
+    ExceptionalLoan = 275,
+    LCUsanceExtensionApproval = 276
 }
 
 

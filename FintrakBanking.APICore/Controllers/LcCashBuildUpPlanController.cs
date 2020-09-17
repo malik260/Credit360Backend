@@ -30,10 +30,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lc-cashbuildupplan")]
-        public HttpResponseMessage GetLcCashBuildUpPlans()
+        [Route("lc-cashbuildupplan/{id}")]
+        public HttpResponseMessage GetLcCashBuildUpPlansByLcIssuanceId(int id)
         {
-            IEnumerable<LcCashBuildUpPlanViewModel> response = repo.GetLcCashBuildUpPlans();
+            IEnumerable<LcCashBuildUpPlanViewModel> response = repo.GetLcCashBuildUpPlansByLcIssuanceId(id);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
@@ -48,19 +48,19 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("lc-cashBuildUpPlan/{id}")]
-        public HttpResponseMessage GetLcCashBuildUpPlan(int id)
-        {
-            LcCashBuildUpPlanViewModel response = repo.GetLcCashBuildUpPlan(id);
-            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-        }
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("lc-cashbuildupplan/{id}")]
+        //public HttpResponseMessage GetLcCashBuildUpPlan(int id)
+        //{
+        //    LcCashBuildUpPlanViewModel response = repo.GetLcCashBuildUpPlan(id);
+        //    if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        //}
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("lc-cashBuildUpPlan")]
+        [Route("lc-cashbuildupplan")]
         public HttpResponseMessage AddLcCashBuildUpPlan([FromBody] LcCashBuildUpPlanViewModel model)
         {
             model.userBranchId = (short)token.GetBranchId;
@@ -82,7 +82,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [ClaimsAuthorization]
-        [Route("lc-cashBuildUpPlan/{id}")]
+        [Route("lc-cashbuildupplan/{id}")]
         public HttpResponseMessage UpdateLcCashBuildUpPlan([FromBody] LcCashBuildUpPlanViewModel model, int id)
         {
             UserInfo user = new UserInfo()
@@ -106,7 +106,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("lc-cashBuildUpPlan/{id}")]
+        [Route("lc-cashbuildupplan/{id}")]
         public HttpResponseMessage DeleteLcCashBuildUpPlan(int id)
         {
             UserInfo user = new UserInfo()

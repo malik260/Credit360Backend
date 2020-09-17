@@ -17,6 +17,7 @@ namespace FintrakBanking.Entities.Models
         public int LCISSUANCEID { get; set; }
         public int? USSANCETENOR { get; set; }
         public decimal USSANCEAMOUNT { get; set; }
+        public decimal USSANCEAMOUNTLOCAL { get; set; }
         public double? USSANCERATE { get; set; }
         public int? USANCEAMOUNTCURRENCYID { get; set; }
         public DateTime? LCUSSANCEEFFECTIVEDATE { get; set; }

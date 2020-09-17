@@ -25,6 +25,7 @@ using FintrakBanking.ViewModels.Customer;
 using GemBox.Spreadsheet;
 using System.IO;
 using System.Data.Entity.Validation;
+using FintrakBanking.ViewModels.Finance;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -93,6 +94,12 @@ namespace FintrakBanking.Repositories.Credit
                     tenor = c.APPLICATIONTENOR
                 }).ToList();
             return data;
+        }
+
+        public CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId)
+        {
+            var rate = fina.GetExchangeRate(date, currencyId, companyId);
+            return rate;
         }
 
         private LoanApplicationViewModel GetLoanApplicationByLoanRefrenceNo(string loanApplicationRef, int companyId)

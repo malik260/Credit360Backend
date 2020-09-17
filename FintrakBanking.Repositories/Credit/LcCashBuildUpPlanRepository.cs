@@ -37,9 +37,9 @@ namespace FintrakBanking.Repositories.credit
             this.workflow = _workflow;
         }
 
-        public IEnumerable<LcCashBuildUpPlanViewModel> GetLcCashBuildUpPlans()
+        public IEnumerable<LcCashBuildUpPlanViewModel> GetLcCashBuildUpPlansByLcIssuanceId(int id)
         {
-            return context.TBL_LC_CASHBUILDUPPLAN.Where(x => x.DELETED == false)
+            return context.TBL_LC_CASHBUILDUPPLAN.Where(x => x.DELETED == false && x.LCISSUANCEID == id)
                 .Select(x => new LcCashBuildUpPlanViewModel
                 {
                     lcCashBuildUpPlanId = x.LCCASHBUILDUPPLANID,
@@ -178,6 +178,3 @@ namespace FintrakBanking.Repositories.credit
 
     }
 }
-
-           // kernel.Bind<ILcCashBuildUpPlanRepository>().To<LcCashBuildUpPlanRepository>();
-           // LcCashBuildUpPlanAdded = ???, LcCashBuildUpPlanUpdated = ???, LcCashBuildUpPlanDeleted = ???,

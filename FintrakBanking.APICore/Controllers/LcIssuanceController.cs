@@ -930,12 +930,37 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lc-ussance-lcUsanceId/{lcUsanceId}")]
-        public HttpResponseMessage GetLcUssanceByLCUsanceId(int lcUsanceId)
+        [Route("lc-ussance-extension/lcUsanceId/{lcUsanceId}")]
+        public HttpResponseMessage GetLcUssanceExtensionByLcUsanceId(int lcUsanceId)
         {
             try
             {
-                LcUssanceViewModel response = ussanceRepo.GetLcUssanceByLCUsanceId(lcUsanceId);
+                List<LcUssanceViewModel> response = ussanceRepo.GetLcUssanceExtensionByLcUsanceId(lcUsanceId);
+                if (response.Count == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record was found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-ussance-extension/{tempLcUsanceId}")]
+        public HttpResponseMessage GetLcUssanceExtensionByTempLcUsanceId(int tempLcUsanceId)
+        {
+            try
+            {
+                LcUssanceViewModel response = ussanceRepo.GetLcUssanceExtensionByTempLcUsanceId(tempLcUsanceId);
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record was found" });
+                }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
             }
             catch (SecureException ex)
@@ -945,6 +970,48 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-ussance-lcUsanceId/{lcUsanceId}")]
+        public HttpResponseMessage GetLcUssanceByLCUsanceId(int lcUsanceId)
+        {
+            try
+            {
+                LcUssanceViewModel response = ussanceRepo.GetLcUssanceByLCUsanceId(lcUsanceId);
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record was found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lc-ussance-extension")]
+        public HttpResponseMessage AddLcUssanceExtension([FromBody] LcUssanceViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            try
+            {
+                var response = ussanceRepo.AddLcUssanceExtension(model);
+                if (response.tempLcUsanceId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -966,6 +1033,31 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("lc-ussance-extension/{id}")]
+        public HttpResponseMessage UpdateLcUsanceExtension([FromBody] LcUssanceViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            try
+            {
+                bool response = ussanceRepo.UpdateLcUsanceExtension(model, id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been updated successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
         [HttpPut]
@@ -995,12 +1087,46 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lc-issuance/ussance-extension")]
+        public HttpResponseMessage GetLcIssuancesForUssanceExtension()
+        {
+            try
+            {
+                IEnumerable<LcIssuanceApprovalViewModel> response = ussanceRepo.GetLcIssuancesForUssanceExtension(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lc-issuance/ussance")]
         public HttpResponseMessage GetLcIssuancesForUssance()
         {
             try
             {
                 IEnumerable<LcIssuanceApprovalViewModel> response = ussanceRepo.GetLcIssuancesForUssance(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-issuance/ussance-extension-approval")]
+        public HttpResponseMessage GetLcIssuancesForUssanceExtensionApproval()
+        {
+            try
+            {
+                IEnumerable<LcIssuanceApprovalViewModel> response = ussanceRepo.GetLcIssuancesForUssanceExtensionApproval(token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (SecureException ex)

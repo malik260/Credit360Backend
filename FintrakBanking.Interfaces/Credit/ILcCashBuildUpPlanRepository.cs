@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.credit
     {
         LcCashBuildUpPlanViewModel GetLcCashBuildUpPlan(int id);
 
-        IEnumerable<LcCashBuildUpPlanViewModel> GetLcCashBuildUpPlans();
+        IEnumerable<LcCashBuildUpPlanViewModel> GetLcCashBuildUpPlansByLcIssuanceId(int id);
         IEnumerable<LcCashBuildUpPlanViewModel> GetLcCashBuildUpReferenceTypes();
 
         bool AddLcCashBuildUpPlan(LcCashBuildUpPlanViewModel model);

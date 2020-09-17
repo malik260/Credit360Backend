@@ -163,6 +163,7 @@ namespace FintrakBanking.ViewModels.credit
         public int lcIssuanceId { get; set; }
         public string EnhancementReferenceNumber { get; set; }
         public int tempLcIssuanceId { get; set; }
+        public int tempLcUsanceId { get; set; }
 
         public int? lcReleaseAmountId { get; set; }
 
@@ -242,7 +243,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public string lcApplicationStatus { get; set; }
         public string usanceStatus { get; set; }
-        public decimal? totalUsanceAmount { get; set; }
+        public decimal? totalUsanceAmount { get; set; }//total amount available for usance
 
         public int? operationId { get; set; }
         public string usanceApprovalStatus { get; set; }
@@ -265,6 +266,7 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? lcTolerancePercentage { get; set; }
 
         public decimal? lcToleranceValue { get; set; }
+        public decimal? totalUsanceAmountLocal { get; set; }//total amount used in usance
         public int transactionCycle { get; set; }
 
         public decimal? releaseAmount { get; set; }
@@ -295,7 +297,9 @@ namespace FintrakBanking.ViewModels.credit
         //ussance
         public int lcIssuanceId { get; set; }
         public int lcUssanceId { get; set; }
+        public int tempLcUsanceId { get; set; }
         public decimal ussanceAmount { get; set; }
+        public decimal ussanceAmountLocal { get; set; }
         public double? ussanceRate { get; set; }
         public int? ussanceTenor { get; set; }
         public int? oldUssanceTenor { get; set; }
