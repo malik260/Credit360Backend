@@ -2032,6 +2032,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             IsFromPc = model.isFromPc;
             destinationOperationId = model.destinationOperationId;
             businessUnitId = model.businessUnitId;
+            NextLevelId = 0;
             var response = LogActivity();
 
             return response;
