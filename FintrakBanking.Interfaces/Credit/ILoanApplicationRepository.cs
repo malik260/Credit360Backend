@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.ViewModels.Finance;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -35,6 +36,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool CheckExistingCertificateOfOwnership(string certificateOfOwnership, int companyId);
 
         IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId);
+        CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId);
 
         IEnumerable<LoanApplicationViewModel> GetAllLoanApplications(int companyId);
 

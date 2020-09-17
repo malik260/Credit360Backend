@@ -71,10 +71,16 @@ namespace FintrakBanking.Repositories.CRMS
                     if (loan == null)
                         throw new ConditionNotMetException("This LMS Request does not exist");
 
+                    
                     param.crmsCode = param.crmsCode.Trim();
                     var codeExist = context.TBL_LMSR_APPLICATION.Where(x => x.CRMSCODE == param.crmsCode).Any();
                     if (codeExist == true)
                         throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+                    if (!(string.IsNullOrEmpty(loan.CRMSCODE)) && (loan.CRMSVALIDATED ?? false))
+                    {
+                        throw new ConditionNotMetException($"CRMS code has aleady been captured for this request! on {loan.CRMSDATE}");
+                    }
 
                     loan.CRMSCODE = param.crmsCode;
                     loan.CRMSDATE = DateTime.Now;
@@ -137,7 +143,7 @@ namespace FintrakBanking.Repositories.CRMS
                 var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE.Trim() == param.crmsCode).Any();
                 if (codeExist == true)
                     throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
-                if (!string.IsNullOrEmpty(loan.CRMSCODE) && !string.IsNullOrWhiteSpace(loan.CRMSCODE) && (loan.CRMSVALIDATED ?? false))
+                if (!(string.IsNullOrEmpty(loan.CRMSCODE)) && !(string.IsNullOrWhiteSpace(loan.CRMSCODE)) && (loan.CRMSVALIDATED ?? false))
                 {
                     throw new ConditionNotMetException("CRMS code has already been captured for this request, kindly refresh your screen for confirmation!");
                 }
@@ -145,6 +151,7 @@ namespace FintrakBanking.Repositories.CRMS
                 loan.CRMSCODE = param.crmsCode;
                 loan.CRMSDATE = DateTime.Now;
                 loan.CRMSVALIDATED = true;
+                context.SaveChanges();//to handle issue of sending the request twice as result of screen loading response anomaly;
 
                 var finishingJob = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
                     && x.TARGETID == loan.LOAN_BOOKING_REQUESTID && x.OPERATIONID == loan.OPERATIONID);
