@@ -935,7 +935,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                List<LcUssanceViewModel> response = ussanceRepo.GetLcUssanceExtensionByLcUsanceId(lcUsanceId);
+                List<LcUssanceViewModel> response = ussanceRepo.GetLcUssanceExtensionsByLcUsanceId(lcUsanceId);
                 if (response.Count == 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record was found" });

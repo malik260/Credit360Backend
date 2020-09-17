@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.credit
                 .ToList();
         }
 
-        public List<LcUssanceViewModel> GetLcUssanceExtensionByLcUsanceId(int lcUsanceId)
+        public List<LcUssanceViewModel> GetLcUssanceExtensionsByLcUsanceId(int lcUsanceId)
         {
             var entity = (from u in context.TBL_LC_USSANCE
                           join ux in context.TBL_TEMP_LC_USSANCE on u.LCUSSANCEID equals ux.LCUSSANCEID

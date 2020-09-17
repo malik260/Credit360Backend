@@ -276,6 +276,7 @@ namespace FintrakBanking.ViewModels.credit
         public List<LcUssanceViewModel> lcUsances { get; set; }
         public List<LcIssuanceViewModel> lcEnhancements { get; set; }
         public List<LcIssuanceViewModel> lcExtensions { get; set; }
+        public List<LcUssanceViewModel> lcUsanceExtensions { get; set; }
 
 
         //ussance
@@ -292,7 +293,7 @@ namespace FintrakBanking.ViewModels.credit
         public int? usanceApprovalStatusId { get; set; }
     }
 
-    public class LcUssanceViewModel : GeneralEntity
+    public class LcUssanceViewModel : LcIssuanceViewModel
     {
         //ussance
         public int lcIssuanceId { get; set; }

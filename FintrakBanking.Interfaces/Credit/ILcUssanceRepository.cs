@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.credit
 
         LcUssanceViewModel GetLcUssanceByLCUsanceId(int lcUsanceId);
         LcUssanceViewModel GetLcUssanceExtensionByTempLcUsanceId(int tempLcUsanceId);
-        List<LcUssanceViewModel> GetLcUssanceExtensionByLcUsanceId(int lcUsanceId);
+        List<LcUssanceViewModel> GetLcUssanceExtensionsByLcUsanceId(int lcUsanceId);
 
         IEnumerable<LcUssanceViewModel> GetLcUssances();
 
