@@ -686,6 +686,13 @@
     <Compile Include="Reports\ReportViews\InsiderRelatedLoansReport.aspx.designer.cs">
       <DependentUpon>InsiderRelatedLoansReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\JobRequestReport.aspx.cs">
+      <DependentUpon>JobRequestReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\JobRequestReport.aspx.designer.cs">
+      <DependentUpon>JobRequestReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\LoanStatusReport.aspx.cs">
       <DependentUpon>LoanStatusReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1520,6 +1527,7 @@
     <Content Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx" />
     <Content Include="Reports\ReportViews\IdleAssetsSales.aspx" />
     <Content Include="Reports\ReportViews\InsiderRelatedLoansReport.aspx" />
+    <Content Include="Reports\ReportViews\JobRequestReport.aspx" />
     <Content Include="Reports\ReportViews\LoanStatusReport.aspx" />
     <Content Include="Reports\ReportViews\PaydayLoanCollection.aspx" />
     <Content Include="Reports\ReportViews\ComputationForExternalAgents.aspx" />
@@ -1989,6 +1997,7 @@
     <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestIncome.rdlc" />
+    <EmbeddedResource Include="Reports\Report\JobRequestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\ListOfCustomers.rdlc" />
     <EmbeddedResource Include="Reports\Report\LitigationRecoveries.rdlc" />

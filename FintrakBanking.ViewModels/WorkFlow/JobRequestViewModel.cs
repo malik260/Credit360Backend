@@ -11,7 +11,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
     public class JobRequestViewModel : GeneralEntity
     {
         public int loanApplicationId;
-
+        public decimal facilityAmount { get; set; }
         public string jobSourceName { get; set; }
         public string sourceBranchName { get; set; }
         public string sourceBranchCode { get; set; }
