@@ -123,6 +123,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? productClassId { get; set; }
         public string loanReferenceNumber { get; set; }
         public int loanAssignId { get; set; }
+        public string assignmentType { get; set; }
         public string referenceId { get; set; }
         public int? approvalStatusId { get; set; }
         public int? operationId { get; set; }
@@ -1427,6 +1428,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? prepaymentAmount { get; set; }
         public decimal? TotalExposure { get; set; }
         public string source { get; set; }
+        public string assignmentType { get; set; }
 
         public DateTime? expCompletionDate { get; set; }
         public int loanAssignId { get; set; }

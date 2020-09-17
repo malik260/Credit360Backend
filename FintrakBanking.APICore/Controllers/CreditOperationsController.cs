@@ -19,6 +19,7 @@ using System.Linq;
 using FintrakBanking.Interfaces.Setups.General;
 using System.Globalization;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -1532,6 +1533,51 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
             }
         }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("assign-bulk-nplloans-to-agent-approval/{approvalStatusId}/{comment}")]
+        public HttpResponseMessage GoForBulkAssignLoansToAgentApproval(int approvalStatusId, string comment, [FromBody] List<BulkRecoveryApprovalViewModel> entity)
+        {
+
+            var user = new UserInfo
+            {
+                BranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            var data = repo.GoForBulkAssignLoansToAgentApproval(entity,user, approvalStatusId,comment);
+
+            if (data == 1)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation has been approved successfully." });
+            }
+            else if (data == 2)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation has been disapproved successfully." });
+            }
+            else if (data == 3)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            else if (data == 4)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, message = "Operation Has Been Refered Back" });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
+        }
+
+
 
         [HttpGet]
         [ClaimsAuthorization]

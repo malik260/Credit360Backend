@@ -18329,7 +18329,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool saveBulkLoanAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, UserInfo user)
+        public bool saveBulkLoanAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user)
         {
             bool result = false;
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -18359,7 +18359,7 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.loanReferenceNumber = customerRequest.loanReferenceNumber;
                     assignOperations.expCompletionDate = expCompletionDate;
                     assignOperations.referenceId = referenceNumber;
-                    assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+                    assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Processing;
                     assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
                     assignOperations.operationCompleted = false;
                     assignOperations.totalAmountRecovery = customerRequest.totalAmountRecovery; 
@@ -18367,6 +18367,7 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.productId = customerRequest.productId;
                     assignOperations.productClassId = customerRequest.productClassId;
                     assignOperations.loanId = customerRequest.loanId;
+                    assignOperations.assignmentType = assignmentType;
                     assignOperations.applicationReferenceNumber = customerRequest.applicationReferenceNumber;
                     assignOperations.customerId = customerRequest.customerId;
                     var loanData = addBulkLoanAssignmentToAgent(assignOperations);
@@ -18381,14 +18382,34 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     ACCREDITEDCONSULTANTID = accreditedConsultant,
                     REFERENCEBATCHID = referenceNumber,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                     OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
                     REQUESTDATE = DateTime.Now,
                     SOURCE = source
                 });
                 if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
 
-                auditTrail.AddAuditTrail(new TBL_AUDIT
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+
+                    workflow.StaffId = user.createdBy;
+                    workflow.CompanyId = user.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = removeLienOperation.BULKRECOVERYAPPROVALID;
+                    workflow.Comment = "Kindly help approve the loan recovery assignment to agent";
+                    workflow.OperationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = false;
+
+                    var response = workflow.LogActivity();
+                        context.SaveChanges();
+                
+                transactionScope.Complete();
+
+                transactionScope.Dispose();
+            }
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
                     STAFFID = user.createdBy,
@@ -18481,7 +18502,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool bulkLoanAssignmentToAgentGoForApproval(LoanRecoveryAssignmentViewModel models, UserInfo user)
         {
             bool result = false;
-            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            //var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             if (models == null || models.accreditedConsultant == 0)
             {
                 throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
@@ -19114,7 +19135,8 @@ namespace FintrakBanking.Repositories.Credit
                 SOURCE = entity.source,
                 LOANREFERENCE = entity.loanReferenceNumber,
                 PRODUCTCLASSID = entity.productClassId,
-                PRODUCTID = entity.productId
+                PRODUCTID = entity.productId,
+                ASSIGNMENTTYPE = entity.assignmentType
             };
             return data;
         }
@@ -19131,7 +19153,15 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.CREATEDBY,
                 EXPCOMPLETIONDATE = entity.EXPCOMPLETIONDATE,
                 REFERENCEID = entity.REFERENCEID,
-                OPERATIONID = entity.OPERATIONID
+                OPERATIONID = entity.OPERATIONID,
+                APPROVALSTATUSID = entity.APPROVALSTATUSID,
+                OPERATIONCOMPLETED = entity.OPERATIONCOMPLETED,
+                TOTALAMOUNTRECOVERY = entity.TOTALAMOUNTRECOVERY,
+                SOURCE = entity.SOURCE,
+                LOANREFERENCE = entity.LOANREFERENCE,
+                PRODUCTCLASSID = entity.PRODUCTCLASSID,
+                PRODUCTID = entity.PRODUCTID,
+                ASSIGNMENTTYPE = entity.ASSIGNMENTTYPE
             };
             return data;
         }

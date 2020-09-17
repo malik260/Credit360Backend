@@ -35,6 +35,7 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Repositories.WorkFlow;
 using System.Diagnostics;
 using System.Transactions;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Repositories.Credit
 
@@ -20234,6 +20235,153 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+
+        public int GoForBulkAssignLoansToAgentApproval(List<BulkRecoveryApprovalViewModel> entity, UserInfo user, int approvalStatusId, string comment)
+        {
+            List<string> receiverEmailList = new List<string>();
+            AlertsViewModel alert = new AlertsViewModel();
+            var dynamicMessage = string.Empty;
+            bool output = false;
+            int data = 0;
+
+            if (entity != null)
+            {
+                
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    foreach (var record in entity)
+                    {
+                        record.applicationDate = generalSetup.GetApplicationDate();
+
+                        var reviewRecord = (from s in context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
+                                            where s.BULKRECOVERYAPPROVALID == record.bulkRecoveryApprovalId && s.OPERATIONID == record.operationId
+                                            && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                            select s).FirstOrDefault();
+
+                        if (approvalStatusId == (int)ApprovalStatusEnum.Referred)
+                        {
+
+                            int staffId = user.createdBy;
+
+
+                            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+                            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == record.operationId)
+                                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                                     {
+                                         groupPosition = mg.m.POSITION,
+                                         levelPosition = l.POSITION,
+                                         levelId = l.APPROVALLEVELID,
+                                         levelName = l.LEVELNAME,
+                                         staffRoleId = l.STAFFROLEID,
+                                     })
+                                     .OrderBy(x => x.groupPosition)
+                                     .ThenBy(x => x.levelPosition)
+                                     .ToList();
+
+                            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+                            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+                            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+                            workFlow.StaffId = user.createdBy;
+                            workFlow.OperationId = record.operationId;
+                            workFlow.TargetId = record.bulkRecoveryApprovalId;
+                            workFlow.CompanyId = user.companyId;
+                            workFlow.ProductClassId = null;
+                            workFlow.ProductId = null;
+                            workFlow.NextLevelId = record.currentApprovalLevelId;
+                            workFlow.ToStaffId = staffId;
+                            workFlow.StatusId = (int)ApprovalStatusEnum.Referred;
+                            workFlow.Comment = comment;
+                            workFlow.DeferredExecution = true;
+
+
+                            var loanAssigns = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == reviewRecord.REFERENCEBATCHID).ToList();
+                            foreach (var loanAssign in loanAssigns)
+                            {
+                                var records = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(loanAssign.LOANASSIGNID);
+                                records.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+                                records.OPERATIONCOMPLETED = false;
+                                context.SaveChanges();
+                            }
+                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+                            context.SaveChanges();
+                            trans.Commit();
+                            return 4;
+                        }
+
+                        workFlow.StaffId = user.createdBy;
+                        workFlow.CompanyId = user.companyId;
+                        workFlow.StatusId = (approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : approvalStatusId;
+                        workFlow.TargetId = record.bulkRecoveryApprovalId; 
+                        workFlow.Comment = comment;
+                        workFlow.OperationId = record.operationId;
+                        workFlow.DeferredExecution = true;
+                        workFlow.LogActivity();
+                        
+                        if (approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                        {
+
+                            var loanAssigns = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == reviewRecord.REFERENCEBATCHID).ToList();
+                            foreach (var loanAssign in loanAssigns)
+                            {
+                                var records = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(loanAssign.LOANASSIGNID);
+                                records.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                                records.OPERATIONCOMPLETED = false;
+                                context.SaveChanges();
+                            }
+                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                            context.SaveChanges();
+                            trans.Commit();
+                            data = 2;
+                        }
+
+                        if (workFlow.NewState != (int)ApprovalState.Ended)
+                        {
+                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                            output = context.SaveChanges() > 0;
+                            trans.Commit();
+                            data = 3;
+                        }
+                        else if (workFlow.NewState == (int)ApprovalState.Ended)
+                        {
+                            if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
+                            {
+                                var loanAssigns = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == reviewRecord.REFERENCEBATCHID).ToList();
+                                foreach (var loanAssign in loanAssigns)
+                                {
+                                    var records = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(loanAssign.LOANASSIGNID);
+                                    records.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                    records.OPERATIONCOMPLETED = true;
+                                    records.OPERATIONID = record.operationId;
+                                    output = context.SaveChanges() > 0;
+                                }
+                                reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                output = context.SaveChanges() > 0;
+
+                                var consultant = context.TBL_ACCREDITEDCONSULTANT.Find(reviewRecord.ACCREDITEDCONSULTANTID);
+                                alert.receiverEmailList.Add(consultant.EMAILADDRESS);
+                                dynamicMessage = "Dear " + consultant.FIRMNAME + "<br/> Kindly be informed that you have been shortlisted as one of the Consulting firms for our Loan(s) recovery process. Contact the bank for further details";
+                                LogEmailAlert(dynamicMessage, "NOTIFICATION FOR LOAN(S) RECOVERY", alert.receiverEmailList, "80760", 80760, "NotifyRecoveryAgentForAssignedLoans");
+
+                            }
+                            if (output == true)
+                            {
+                                trans.Commit();
+                                data = 1;
+                            }
+
+                        }
+
+                    }
+                }
+               
+            }
+            return data;
+        }
+
         public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
         {
             try
@@ -31017,6 +31165,7 @@ namespace FintrakBanking.Repositories.Credit
                             && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONTYPEID == (int)OperationsEnum.CompleteWriteOff
+                            && ln.USER_PRUDENTIAL_GUIDE_STATUSID == (int)LoanPrudentialStatusEnum.Performing
 
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
@@ -31179,6 +31328,7 @@ namespace FintrakBanking.Repositories.Credit
                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONTYPEID == (int)OperationsEnum.CompleteWriteOff
+                                     && ln.USER_PRUDENTIAL_GUIDE_STATUSID == (int)LoanPrudentialStatusEnum.Performing
 
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel

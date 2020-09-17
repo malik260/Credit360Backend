@@ -1661,8 +1661,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("bulk-loan-recovery-assignment/{accreditedConsultant}/{expCompletionDate}/{source}")]
-        public HttpResponseMessage saveBulkLoanAssignmentToAgent(int accreditedConsultant, DateTime? expCompletionDate, string source, [FromBody] List<LoanRecoveryAssignmentViewModel> models)
+        [Route("bulk-loan-recovery-assignment/{accreditedConsultant}/{expCompletionDate}/{source}/{assignmentType}")]
+        public HttpResponseMessage saveBulkLoanAssignmentToAgent(int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, [FromBody] List<LoanRecoveryAssignmentViewModel> models)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1670,7 +1670,7 @@ namespace FintrakBanking.APICore.Controllers
             user.companyId = token.GetCompanyId;
             user.createdBy = token.GetStaffId;
 
-            var data = repo.saveBulkLoanAssignmentToAgent(models, accreditedConsultant, expCompletionDate, source, user);
+            var data = repo.saveBulkLoanAssignmentToAgent(models, accreditedConsultant, expCompletionDate, source, assignmentType, user);
 
             if (data)
             {
