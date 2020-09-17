@@ -19474,12 +19474,7 @@ namespace FintrakBanking.Repositories.Credit
             var dataLoan = (from ln in context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
                             join atrail in context.TBL_APPROVAL_TRAIL on ln.BULKRECOVERYAPPROVALID equals atrail.TARGETID
                             where
-                            (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
-                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                            atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             && atrail.OPERATIONID == ln.OPERATIONID
                             && source.ToLower() == source.ToLower()
 

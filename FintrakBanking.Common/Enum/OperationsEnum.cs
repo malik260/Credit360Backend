@@ -194,7 +194,7 @@
 
     ReversalOfPrepayment = 249,
     BulkLiquidation = 258,
-    LoanReviewDrawdownForExtension = 265,
+    
     RecoveryCommission = 269,
     RecoveryReporting = 124,
     LMSFacilityModificationApproval = 263,
@@ -203,7 +203,10 @@
     RelatedEmployer = 273,
     LCIssuanceExtensionApproval = 274,
     ExceptionalLoan = 275,
-    LCUsanceExtensionApproval = 276
+    LCUsanceExtensionApproval = 276,
+    LoanReviewDrawdownForExtension = 277,
+    ContingentReviewDrawdownForExtension = 278,
+    OverdraftReviewDrawdownForExtension = 279,
 }
 
 
