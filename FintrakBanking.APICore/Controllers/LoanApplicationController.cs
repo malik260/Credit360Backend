@@ -1905,6 +1905,11 @@ namespace FintrakBanking.APICore.Controllers
             entity.applicationUrl = HttpContext.Current.Request.Path;
 
             WorkflowResponse response = repo.GoForApprovalExceptionalLoan(entity);
+
+            if (response.responseMessage != "") {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, $"EXCEPTIONAL LOAN - {response.responseMessage}") });
+            }
+
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "EXCEPTIONAL LOAN") });
         }
 
