@@ -224,6 +224,7 @@ namespace FintrakBanking.ViewModels.credit
         public int? currentApprovalLevelId { get; set; }
 
         public string currentApprovalLevel { get; set; }
+        public string currentlyWith { get; set; }
         public string requestApprovalLevel { get; set; }
         public string requestStaffName { get; set; }
 
