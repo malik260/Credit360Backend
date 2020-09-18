@@ -185,7 +185,8 @@ namespace FintrakBanking.Repositories.credit
                                 where
                                 //y.RESPONSESTAFFID == null
                                 (
-                                 (operations.Contains(canct.OPERATIONID) || canct == null)
+                                 //(operations.Contains(canct.OPERATIONID) || canct == null)
+                                 ((canct.OPERATIONID == (int)OperationsEnum.LCTerminationApproval) || canct == null)
                                  &&
                                 (
                                 (a.LCREFERENCENUMBER.Trim().ToLower().Contains(searchString))
@@ -302,10 +303,9 @@ namespace FintrakBanking.Repositories.credit
                                                       }).ToList(),
                                     lcUsanceExtensions = (from ux in context.TBL_TEMP_LC_USSANCE
                                                           join u in context.TBL_LC_USSANCE on ux.LCUSSANCEID equals u.LCUSSANCEID
-                                                          join a in context.TBL_LC_ISSUANCE on ux.LCISSUANCEID equals a.LCISSUANCEID
                                                           let usstrail = context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.LCUsanceExtensionApproval &&
                                                           t.TARGETID == ux.TEMPLCUSSANCEID).OrderByDescending(t => t.APPROVALTRAILID).FirstOrDefault()
-                                                          where
+                                                          where ux.LCISSUANCEID == a.LCISSUANCEID &&
                                                           ux.USANCEEXTENSIONAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcUsanceExtensionCompleted
                                                           && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                                           select new LcUssanceViewModel
@@ -332,7 +332,34 @@ namespace FintrakBanking.Repositories.credit
                                                                 approvalStatus = (usstrail == null) ? "N/A" : context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == usstrail.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                                                 currentApprovalLevel = (usstrail.TOAPPROVALLEVELID != null) ? ((usstrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && usstrail.LOOPEDSTAFFID != null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == usstrail.TOAPPROVALLEVELID).LEVELNAME) : context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == ux.CREATEDBY).TBL_STAFF_ROLE.STAFFROLENAME,
                                                             }).ToList(),
-                                    //operationId = x.OPERATIONID,
+                                                lcUsances = (from u in context.TBL_LC_USSANCE
+                                                             where a.LCISSUANCEID == u.LCISSUANCEID &&
+                                                             u.DELETED == false
+                                                             select new LcUssanceViewModel
+                                                             {
+                                                                 lcIssuanceId = u.LCISSUANCEID,
+                                                                 lcUssanceId = u.LCUSSANCEID,
+                                                                 tempLcUsanceId = 0,
+                                                                 ussanceAmount = u.USSANCEAMOUNT,
+                                                                 ussanceRate = u.USSANCERATE,
+                                                                 oldUssanceTenor = 0,
+                                                                 ussanceTenor = u.USSANCETENOR,
+                                                                 lcEffectiveDate = u.LCUSSANCEEFFECTIVEDATE,
+                                                                 oldLcMaturityDate = DateTime.Now,
+                                                                 lcMaturityDate = u.LCUSSANCEMATURITYDATE,
+                                                                 currencyId = (int)u.USANCEAMOUNTCURRENCYID,
+                                                                 customerName = "N/A",
+                                                                 createdBy = 1,
+                                                                 operationId = 1,
+                                                                 dateTimeCreated = DateTime.Now,
+                                                                 currentlyWith = "N/A",
+                                                                 arrivalDate = DateTime.Now,
+                                                                 requestApprovalLevel = "N/A",
+                                                                 requestStaffName = "N/A",
+                                                                 approvalStatus = "N/A",
+                                                                 currentApprovalLevel = "N/A",
+                                                             }).ToList(),
+                                                //operationId = x.OPERATIONID,
                                 }).GroupBy(a => a.lcIssuanceId).Select(g => g.OrderByDescending(l => l.lcApprovalTrailId)
                                     .FirstOrDefault())
                                     .ToList();
