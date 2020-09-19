@@ -201,37 +201,7 @@
                   <Width>1.425in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.31667in</Width>
-                </TablixColumn>
-                <TablixColumn>
                   <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1.1657in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -270,7 +240,37 @@
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.15833in</Width>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -1707,9 +1707,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!maturityDate.Value</Value>
-                                  <Style>
-                                    <Format>MM/dd/yyyy</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1859,9 +1857,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!loanAmountLcy.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1879,7 +1875,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1892,9 +1887,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!totalExposureLcy.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1924,9 +1917,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!collections.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -2136,9 +2127,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!actualRecovery.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -2168,9 +2157,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!commission.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -2242,7 +2229,7 @@
             <Top>0.98833in</Top>
             <Left>0.405in</Left>
             <Height>0.48334in</Height>
-            <Width>32.36569in</Width>
+            <Width>31.72499in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -2269,7 +2256,7 @@
         <Height>3.74167in</Height>
         <Style />
       </Body>
-      <Width>32.77069in</Width>
+      <Width>32.44666in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>

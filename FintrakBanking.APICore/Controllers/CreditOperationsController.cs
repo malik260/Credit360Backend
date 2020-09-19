@@ -1267,10 +1267,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/bulk-recovery-approval/{accreditedConsultantId}")]
-        public HttpResponseMessage GetAllBulkLoansRecoveredByAgent(int accreditedConsultantId)
+        [Route("loan-operation/bulk-recovery-approval/{accreditedConsultantId}/{referenceId}")]
+        public HttpResponseMessage GetAllBulkLoansRecoveredByAgent(int accreditedConsultantId, string referenceId)
         {
-            var data = repo.getAllLoansRecoveryAnalysisByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId);
+            var data = repo.getAllLoansRecoveryAnalysisByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId, referenceId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,

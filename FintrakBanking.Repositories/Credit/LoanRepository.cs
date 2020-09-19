@@ -18501,7 +18501,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (validate == null)
                 {
-                    var data = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == models.referenceId).FirstOrDefault();
+                    var data = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == models.referenceId && x.DELETED == false).FirstOrDefault();
                     data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                     if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
 

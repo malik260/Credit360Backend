@@ -1103,22 +1103,22 @@
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.40833in</Width>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.51667in</Width>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.38333in</Width>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.04166in</Width>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.65in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.79167in</Width>
+                  <Width>1.35in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.61667in</Width>
@@ -1738,9 +1738,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!amountRecoveredOrl.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1770,9 +1768,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!creditCardMinimumAssigned.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1802,9 +1798,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!amountRecoveredCreditCard.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1834,9 +1828,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!paydayLoanMinimumAssigned.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1866,9 +1858,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!amountRecoveredPaydayLoan.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1898,9 +1888,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!totalAmountAssigned.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1930,9 +1918,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!totalAmountRecovered.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1962,9 +1948,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!target.Value</Value>
-                                  <Style>
-                                    <Format>0.00;(0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1994,9 +1978,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!commissionOne.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -2026,9 +2008,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!commissionTwo.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -2058,9 +2038,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!accountNumber.Value</Value>
-                                  <Style>
-                                    <Format>#,0.00;(#,0.00)</Format>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -2116,7 +2094,7 @@
             <Top>1.57167in</Top>
             <Left>0.08833in</Left>
             <Height>0.5in</Height>
-            <Width>18.57499in</Width>
+            <Width>15.78333in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -2143,9 +2121,9 @@
             </Paragraphs>
             <rd:DefaultName>Textbox43</rd:DefaultName>
             <Top>1.105in</Top>
-            <Left>2.4771in</Left>
+            <Left>2.68in</Left>
             <Height>0.25in</Height>
-            <Width>3.34456in</Width>
+            <Width>2.83333in</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -2161,7 +2139,7 @@
         <Height>2.46667in</Height>
         <Style />
       </Body>
-      <Width>18.66332in</Width>
+      <Width>15.87166in</Width>
       <Page>
         <PageHeader>
           <Height>1in</Height>
@@ -2192,7 +2170,7 @@
               <Top>0.18167in</Top>
               <Left>2.4771in</Left>
               <Height>0.38667in</Height>
-              <Width>3.34456in</Width>
+              <Width>4.31956in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>

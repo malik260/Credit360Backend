@@ -19474,12 +19474,7 @@ namespace FintrakBanking.Repositories.Credit
             var dataLoan = (from ln in context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
                             join atrail in context.TBL_APPROVAL_TRAIL on ln.BULKRECOVERYAPPROVALID equals atrail.TARGETID
                             where
-                            (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
-                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                            atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             && atrail.OPERATIONID == ln.OPERATIONID
                             && source.ToLower() == source.ToLower()
 
@@ -19488,9 +19483,9 @@ namespace FintrakBanking.Repositories.Credit
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                 referenceId = ln.REFERENCEBATCHID,
                                 accreditedConsultant = ln.ACCREDITEDCONSULTANTID,
-                                numberOfLoans = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == ln.REFERENCEBATCHID).Count(),
-                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID).FirstOrDefault().NAME,
-                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID).FirstOrDefault().FIRMNAME,
+                                numberOfLoans = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == ln.REFERENCEBATCHID && x.DELETED == false && x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && x.APPROVALSTATUSID==(int)ApprovalStatusEnum.Processing).Count(),
+                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID && x.DELETED == false).FirstOrDefault().NAME,
+                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID && x.DELETED == false).FirstOrDefault().FIRMNAME,
                                 approvalStatusId = (int)ln.APPROVALSTATUSID,
                                 approverComment = atrail.COMMENT,
                                 requestDate = ln.REQUESTDATE,
@@ -19514,9 +19509,9 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 referenceId = ln.REFERENCEBATCHID,
                                 accreditedConsultant = ln.ACCREDITEDCONSULTANTID,
-                                numberOfLoans = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == ln.REFERENCEBATCHID).Count(),
-                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID).FirstOrDefault().NAME,
-                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID).FirstOrDefault().FIRMNAME,
+                                numberOfLoans = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == ln.REFERENCEBATCHID && x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).Count(),
+                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID && x.DELETED==false).FirstOrDefault().NAME,
+                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID && x.DELETED == false).FirstOrDefault().FIRMNAME,
                                 approvalStatusId = (int)ln.APPROVALSTATUSID,
                                 requestDate = ln.REQUESTDATE,
                                 bulkRecoveryApprovalId = ln.BULKRECOVERYAPPROVALID,
@@ -31817,7 +31812,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId)
+        public IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId,string referenceId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
 
@@ -31835,8 +31830,10 @@ namespace FintrakBanking.Repositories.Credit
                             lr.ISFULLYRECOVERED == false
                             && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
                             && pr.EXCLUDEFROMLITIGATION == false
-                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && (lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            || lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                             && lr.DELETED == false
+                            && lr.REFERENCEID == referenceId
 
                             select new LoanReviewOperationApprovalViewModel
                             {
@@ -31928,8 +31925,10 @@ namespace FintrakBanking.Repositories.Credit
                                      lr.ISFULLYRECOVERED == false
                                      && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
                                      && pr.EXCLUDEFROMLITIGATION == false
-                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && (lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                     || lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                                      && lr.DELETED == false
+                                     && lr.REFERENCEID == referenceId
 
                                      select new LoanReviewOperationApprovalViewModel
                                      {
