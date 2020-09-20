@@ -6325,7 +6325,8 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                 OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
                 REQUESTDATE = DateTime.Now,
-                SOURCE = source
+                SOURCE = source,
+                ASSIGNMENTTYPE = assignmentType
             });
 
             int resultStatus = context.SaveChanges();

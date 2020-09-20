@@ -19,5 +19,7 @@ namespace FintrakBanking.Entities.Models
         public int OPERATIONID { get; set; }
         public DateTime REQUESTDATE { get; set; }
         public string SOURCE { get; set; }
+        public string ASSIGNMENTTYPE { get; set; }
+
     }
 }

@@ -193,7 +193,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>0.53236in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -1726,7 +1726,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!principalAmount.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1756,7 +1758,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!interest.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1786,7 +1790,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!penalCharges.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1816,7 +1822,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!amountDue.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1846,7 +1854,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!loanAmountLcy.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1876,7 +1886,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!totalExposureLcy.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1906,7 +1918,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!collections.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1924,6 +1938,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -2156,7 +2171,7 @@
             <Top>1.01333in</Top>
             <Left>0.34667in</Left>
             <Height>0.5in</Height>
-            <Width>28in</Width>
+            <Width>27.53236in</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>

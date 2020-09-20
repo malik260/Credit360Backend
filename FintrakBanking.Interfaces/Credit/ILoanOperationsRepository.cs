@@ -5,6 +5,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -16,7 +17,15 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
-        int GoForBulkAssignLoansToAgentApproval(List<BulkRecoveryApprovalViewModel> entity, UserInfo user, int approvalStatusId, string comment);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansForExternalRecoveryAnalysisByAgent(string source, int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansForRecoveryAnalysisByAgent(string source, int staffId, int companyId);
+        IEnumerable<RetailLoanRecoveryCommissionViewModel> getAllInternalRecoveryCommissonByAgents(int staffId, int companyId);
+        IEnumerable<AccreditedConsultantsViewModel> GetAllInternalRecoveryAgents(int staffId, int companyId, DateTime month);
+        IEnumerable<AccreditedConsultantsViewModel> GetAllRecoveryAgents(int staffId, int companyId);
+        IEnumerable<RetailLoanRecoveryCommissionViewModel> getAllRecoveryReportCollectionByAgents(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllPendingEmailAlert(string source, int staffId, int companyId);
+        bool generateRecoveryMailToAgents(string source, int staffId, int companyId);
+        WorkflowResponse GoForBulkAssignLoansToAgentApproval(List<BulkRecoveryApprovalViewModel> entity, UserInfo user, int approvalStatusId, string comment);
         IEnumerable<RetailLoanRecoveryCommissionViewModel> getAllRecoveryCommissonByAgents(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgents(int staffId, int companyId);
         bool GoForDocumentationFillingApproval(ApprovalViewModel entity);
@@ -39,7 +48,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApprovalList(string source, int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId, string referenceId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApproval(int staffId, int companyId);
-        int GoForAssignLoansToAgentApproval(ApprovalViewModel entity);
+        WorkflowResponse GoForAssignLoansToAgentApproval(ApprovalViewModel entity);
         int GoForLienRemovalApproval(ApprovalViewModel entity);
         IEnumerable<RemoveLienViewModel> GetLienRemovalDocuments(int lienRemovalId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLienRemovalAwaitingApproval(int staffId, int companyId);

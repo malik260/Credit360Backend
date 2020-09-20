@@ -34,7 +34,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
-                                             && DbFunctions.DiffDays(lr.DATEASSIGNED, DateTime.UtcNow).Value >= dpd
+                                             && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= dpd
                                              && lr.TOTALAMOUNTRECOVERY < 50000000
                                              && lr.ISFULLYRECOVERED == false
                                              && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -84,7 +84,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                   join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                                   where
                                                   (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
-                                                  && DbFunctions.DiffDays(lr.DATEASSIGNED, DateTime.UtcNow).Value >= dpd
+                                                  && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= dpd
                                                   && lr.TOTALAMOUNTRECOVERY < 50000000
                                                   && lr.ISFULLYRECOVERED == false
                                                   && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
