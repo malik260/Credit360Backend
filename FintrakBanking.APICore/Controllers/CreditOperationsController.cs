@@ -1237,6 +1237,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-operation/recovery-assignment-by-single-agents/{source}")]
+        public HttpResponseMessage getAllLoansForRecoveryAnalysisBySingleAgent(string source)
+        {
+            var data = repo.getAllLoansForRecoveryAnalysisBySingleAgent(source, token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-operation/recovery-commission-external-analysis-agents/{source}")]
         public HttpResponseMessage getAllLoansForExternalRecoveryAnalysisByAgent(string source)
         {
