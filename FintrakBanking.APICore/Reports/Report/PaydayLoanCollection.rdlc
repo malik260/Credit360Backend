@@ -1455,7 +1455,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!loanAmountLcy.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1485,7 +1487,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!principalOutstandingBalLcy.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1515,7 +1519,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!totalExposureLcy.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1545,7 +1551,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!bookingDate.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>M/d/yyyy</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1575,7 +1583,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!valueDate.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>M/d/yyyy</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1605,7 +1615,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!maturityDate.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>M/d/yyyy</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1635,7 +1647,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!referenceDate.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>M/d/yyyy</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1725,7 +1739,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!processDate.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>M/d/yyyy</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1785,7 +1801,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!accountOfficerName.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1803,6 +1821,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -2034,7 +2053,7 @@
             <Top>0.06944in</Top>
             <Left>0.105in</Left>
             <Height>0.5in</Height>
-            <Width>26.69167in</Width>
+            <Width>26.69166in</Width>
             <Style>
               <Border>
                 <Style>None</Style>

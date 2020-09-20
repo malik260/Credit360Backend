@@ -140,7 +140,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>0.67166in</Width>
+                  <Width>0.48833in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -1575,7 +1575,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!maturityDate.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>M/d/yyyy</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1605,7 +1607,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!principalAmount.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1635,7 +1639,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!interest.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1665,7 +1671,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!penalCharges.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1695,7 +1703,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!amountDue.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>M/d/yyyy</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1725,7 +1735,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!loanAmountLcy.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1755,7 +1767,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!totalExposureLcy.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1773,6 +1787,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1785,7 +1800,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!collections.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -2034,7 +2051,7 @@
             <Top>0.155in</Top>
             <Left>0.125in</Left>
             <Height>0.5in</Height>
-            <Width>26.67166in</Width>
+            <Width>26.48833in</Width>
             <Style>
               <Border>
                 <Style>None</Style>

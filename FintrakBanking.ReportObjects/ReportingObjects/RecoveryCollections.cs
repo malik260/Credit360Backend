@@ -34,7 +34,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
-                                             && DbFunctions.DiffDays(lr.DATEASSIGNED, DateTime.UtcNow).Value >= dpd
+                                             && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= dpd
                                              && lr.TOTALAMOUNTRECOVERY < 50000000
                                              && lr.ISFULLYRECOVERED == false
                                              && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -84,7 +84,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                   join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                                   where
                                                   (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
-                                                  && DbFunctions.DiffDays(lr.DATEASSIGNED, DateTime.UtcNow).Value >= dpd
+                                                  && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= dpd
                                                   && lr.TOTALAMOUNTRECOVERY < 50000000
                                                   && lr.ISFULLYRECOVERED == false
                                                   && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -700,8 +700,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  loanAmountLcy = ld.APPROVEDAMOUNT,
                                                  totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
                                                  collections = lr.TOTALAMOUNTRECOVERY,
-                                                 actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANASSIGNID == lr.LOANASSIGNID).Sum(c => c.AMOUNTRECOVERED),
-                                                 commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANASSIGNID == lr.LOANASSIGNID).Sum(c => c.COMMISSIONPAYABLE),
+                                                 actualRecovery = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.REFERENCEID == lr.REFERENCEID && (DbFunctions.TruncateTime(c.COLLECTIONDATE).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.COLLECTIONDATE).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.COLLECTIONDATE).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.COLLECTIONDATE).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED),
+                                                 commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == lr.ACCREDITEDCONSULTANT && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE),
                                                  facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                  staffCode = st.STAFFCODE,
                                                  supervisorId = st.SUPERVISOR_STAFFID,
@@ -763,8 +763,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       loanAmountLcy = ld.APPROVEDAMOUNT,
                                                       totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
                                                       collections = lr.TOTALAMOUNTRECOVERY,
-                                                      actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANASSIGNID == lr.LOANASSIGNID).Sum(c => c.AMOUNTRECOVERED),
-                                                      commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANASSIGNID == lr.LOANASSIGNID).Sum(c => c.COMMISSIONPAYABLE),
+                                                      actualRecovery = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.REFERENCEID == lr.REFERENCEID && (DbFunctions.TruncateTime(c.COLLECTIONDATE).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.COLLECTIONDATE).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.COLLECTIONDATE).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.COLLECTIONDATE).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED),
+                                                      commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == lr.ACCREDITEDCONSULTANT && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE),
                                                       facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                       staffCode = st.STAFFCODE,
                                                       supervisorId = st.SUPERVISOR_STAFFID,
@@ -833,8 +833,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  loanAmountLcy = ld.APPROVEDAMOUNT,
                                                  totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
                                                  collections = lr.TOTALAMOUNTRECOVERY,
-                                                 actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.AMOUNTRECOVERED),
-                                                 commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.COMMISSIONPAYABLE),
+                                                 actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == ra.ACCREDITEDCONSULTANTID).Sum(c => c.AMOUNTRECOVERED),
+                                                 commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == ra.ACCREDITEDCONSULTANTID).Sum(c => c.COMMISSIONPAYABLE),
                                                  facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                  staffCode = st.STAFFCODE,
                                                  supervisorId = st.SUPERVISOR_STAFFID,
@@ -886,8 +886,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       loanAmountLcy = ld.APPROVEDAMOUNT,
                                                       totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
                                                       collections = lr.TOTALAMOUNTRECOVERY,
-                                                      actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.AMOUNTRECOVERED),
-                                                      commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.COMMISSIONPAYABLE),
+                                                      actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == ra.ACCREDITEDCONSULTANTID).Sum(c => c.AMOUNTRECOVERED),
+                                                      commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == ra.ACCREDITEDCONSULTANTID).Sum(c => c.COMMISSIONPAYABLE),
                                                       facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                       staffCode = st.STAFFCODE,
                                                       supervisorId = st.SUPERVISOR_STAFFID,
@@ -904,13 +904,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 {
                     consultant.orlMinimumAssigned = 0.0;
                     consultant.amountRecoveredOrl = 0.0;
-                    consultant.commissionOne = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber).Sum(c => c.COMMISSIONPAYABLE);
-                    consultant.commissionTwo = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber).Sum(c => c.COMMISSIONPAYABLE);
-                    consultant.target = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber).Sum(c => c.TOTALRECOVERYAMOUNT);
-                    consultant.totalAmountRecovered = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber).Sum(c => c.AMOUNTRECOVERED);
-                    consultant.totalAmountAssigned = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber).Sum(c => c.TOTALRECOVERYAMOUNT);
-                    consultant.amountRecoveredCreditCard = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber && c.PRODUCTCLASSID == (int)ProductClassEnum.Creditcards).Sum(c => c.AMOUNTRECOVERED);
-                    consultant.creditCardMinimumAssigned = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber && c.PRODUCTCLASSID == (int)ProductClassEnum.Creditcards).Sum(c => c.TOTALRECOVERYAMOUNT);
+                    consultant.commissionOne = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == consultant.accreditedConsultant && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month+1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month+1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE);
+                    consultant.commissionTwo = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == consultant.accreditedConsultant && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE);
+                    consultant.target = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(c => c.ACCREDITEDCONSULTANT == consultant.accreditedConsultant && (DbFunctions.TruncateTime(c.DATEASSIGNED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATEASSIGNED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATEASSIGNED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATEASSIGNED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.TOTALAMOUNTRECOVERY);
+                    consultant.totalAmountRecovered = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == consultant.accreditedConsultant && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED);
+                    consultant.totalAmountAssigned = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(c => c.ACCREDITEDCONSULTANT == consultant.accreditedConsultant && (DbFunctions.TruncateTime(c.DATEASSIGNED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATEASSIGNED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATEASSIGNED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATEASSIGNED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.TOTALAMOUNTRECOVERY);
+                    consultant.amountRecoveredCreditCard = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.ACCREDITEDCONSULTANT == consultant.accreditedConsultant && c.PRODUCTCLASSID == (int)ProductClassEnum.Creditcards && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED);
+                    consultant.creditCardMinimumAssigned = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber && c.PRODUCTCLASSID == (int)ProductClassEnum.Creditcards && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.TOTALRECOVERYAMOUNT);
                                                       
                 }
 

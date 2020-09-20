@@ -1208,7 +1208,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RetailRecoveryCustomerTransactionsViewModels 
     {
-        public string foracid { get; set; } 
+        
+        public decimal totalExposure { get; set; }
+        public string foracid { get; set; }
         public string cust_Id { get; set; } 
         public string schm_Type { get; set; } 
         public string period { get; set; } 

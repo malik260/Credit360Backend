@@ -7,12 +7,14 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Transactions;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -29,7 +31,7 @@ namespace FintrakBanking.Repositories.Credit
         private IConditionPrecedentRepository conditionsRepo;
         private ICustomerCollateralRepository collateralRepo;
         private IGeneralSetupRepository _genSetup;
-
+        private IWorkflow workflow;
 
         public ExternalAlertRepository(
             FinTrakBankingContext context,
@@ -41,9 +43,11 @@ namespace FintrakBanking.Repositories.Credit
             ITransactionDynamicsRepository transactionsRepo,
             IConditionPrecedentRepository conditionsRepo,
             ICustomerCollateralRepository collateralRepo,
-           IGeneralSetupRepository genSetup
+           IGeneralSetupRepository genSetup,
+           IWorkflow _workflow
             )
         {
+            this.workflow = _workflow;
             this.context = context;
             this.context2 = context2;
             this.memo = memo;
@@ -6280,7 +6284,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public bool saveBulkLoanAssignmentToAgent(List<RecoveryAutoAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source)
+        public bool saveBulkLoanAssignmentToAgent(List<RecoveryAutoAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType)
         {
             bool result = false;
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -6290,12 +6294,12 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var customerRequest in models)
             {
-                assignOperations.createdBy = 2;
+                assignOperations.createdBy = 7165;
                 assignOperations.accreditedConsultant = accreditedConsultant;
                 assignOperations.loanReferenceNumber = customerRequest.loanReferenceNumber;
                 assignOperations.expCompletionDate = expCompletionDate;
                 assignOperations.referenceId = referenceNumber;
-                assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+                assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Processing;
                 assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
                 assignOperations.operationCompleted = false;
                 assignOperations.totalAmountRecovery = customerRequest.totalAmountRecovery;
@@ -6303,6 +6307,7 @@ namespace FintrakBanking.Repositories.Credit
                 assignOperations.productId = customerRequest.productId;
                 assignOperations.productClassId = customerRequest.productClassId;
                 assignOperations.loanId = customerRequest.loanId;
+                assignOperations.assignmentType = assignmentType;
                 assignOperations.applicationReferenceNumber = customerRequest.applicationReferenceNumber;
                 assignOperations.customerId = customerRequest.customerId;
                 var loanData = addBulkLoanAssignmentToAgent(assignOperations);
@@ -6317,13 +6322,34 @@ namespace FintrakBanking.Repositories.Credit
             {
                 ACCREDITEDCONSULTANTID = accreditedConsultant,
                 REFERENCEBATCHID = referenceNumber,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                 OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
                 REQUESTDATE = DateTime.Now,
-                SOURCE = source
+                SOURCE = source,
+                ASSIGNMENTTYPE = assignmentType
             });
 
             int resultStatus = context.SaveChanges();
+
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+
+                workflow.StaffId = 7165;
+                workflow.CompanyId = 1;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = removeLienOperation.BULKRECOVERYAPPROVALID;
+                workflow.Comment = "Kindly help approve the loan recovery assignment to agent";
+                workflow.OperationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                workflow.DeferredExecution = true;
+                workflow.ExternalInitialization = false;
+
+                var response = workflow.LogActivity();
+                context.SaveChanges();
+
+                transactionScope.Complete();
+
+                transactionScope.Dispose();
+            }
             if (resultStatus > 0)
             {
                 result = true;
@@ -6351,7 +6377,8 @@ namespace FintrakBanking.Repositories.Credit
                 SOURCE = entity.source,
                 LOANREFERENCE = entity.loanReferenceNumber,
                 PRODUCTCLASSID = entity.productClassId,
-                PRODUCTID = entity.productId
+                PRODUCTID = entity.productId,
+                ASSIGNMENTTYPE = entity.assignmentType
             };
             return data;
         }
@@ -6441,7 +6468,7 @@ namespace FintrakBanking.Repositories.Credit
                     var customerRecords = GetLoanOperationRecoveryAnalysis(record.customerId).ToList();
                     if (recoveryAgents.Count()>0 && customerRecords.Count() > 0 ) {
                         var consultant = recoveryAgents.ElementAt(0).accreditedConsultantId;
-                        saveBulkLoanAssignmentToAgent(customerRecords, consultant, DateTime.Now,"RETAIL");
+                        saveBulkLoanAssignmentToAgent(customerRecords, consultant, DateTime.Now,"RETAIL","AUTO");
                     }
 
                 }
@@ -6526,7 +6553,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (recoveryAgents.Count() > 0 && customerRecords.Count() > 0)
                     {
                         var consultant = recoveryAgents.ElementAt(0).accreditedConsultantId;
-                        saveBulkLoanAssignmentToAgent(customerRecords, consultant, DateTime.Now, "RETAIL");
+                        saveBulkLoanAssignmentToAgent(customerRecords, consultant, DateTime.Now, "RETAIL","AUTO");
                         deletePreviousAssignment(record.customerId);
                     }
 
