@@ -276,7 +276,7 @@ namespace FintrakBanking.APICore.Controllers
                     atc.companyId = token.GetCompanyId;
                 }
                 var response = repo.AddAtcRelease(model);
-                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                if (response != null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = response.responseMessage });
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error Occurred, Please Contact the System Administartor" });
             }
 
@@ -352,9 +352,9 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
 
                 var response = repo.SubmitReferredAtcBackIntoWorkflow(model);
-                if (response)
+                if (response != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = response.responseMessage });
                 }
                 else
                 {
@@ -387,8 +387,11 @@ namespace FintrakBanking.APICore.Controllers
                 var modelCount = model.Count();
 
                 var response = repo.SubmitApproval(model);
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = modelCount });
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = modelCount });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error processing this request" });
                 //if ( response.Item2 == 0)
                 //{
                 //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = $"Application Status: <strong>{response.Item1.statusName}</strong>, Sent to: {response.Item1.nextLevelName} <i>{response.Item1.nextPersonName}</i>" });
