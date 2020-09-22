@@ -912,8 +912,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareDateSectorLimit() == true)
             {
-                TimeSpan start2 = new TimeSpan(12, 0, 0);
-                TimeSpan end2 = new TimeSpan(12, 30, 0);
+                TimeSpan start2 = new TimeSpan(11, 30, 0);
+                TimeSpan end2 = new TimeSpan(12, 0, 0);
 
                 if ((now >= start2) && (now <= end2))
                 {

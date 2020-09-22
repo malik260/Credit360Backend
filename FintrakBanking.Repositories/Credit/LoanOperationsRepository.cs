@@ -31383,8 +31383,9 @@ namespace FintrakBanking.Repositories.Credit
                                         && pr.EXCLUDEFROMLITIGATION == false
                                         && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                         && ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                        && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= 30
 
-                                        orderby ln.DATETIMECREATED descending
+                                         orderby ln.DATETIMECREATED descending
                                         select new LoanReviewOperationApprovalViewModel
                                         {
                                             creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
@@ -31489,7 +31490,8 @@ namespace FintrakBanking.Repositories.Credit
                                              && pr.EXCLUDEFROMLITIGATION == false
                                              && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                              && ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                                     
+                                             && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= 30
+
                                              orderby ln.DATETIMECREATED descending
                                              select new LoanReviewOperationApprovalViewModel
                                              {
