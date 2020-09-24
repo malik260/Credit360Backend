@@ -36,5 +36,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string valuationReason { get; set; }
         public string valuationName { get; set; }
         public string approvalComment { get; set; }
+        public string referenceNumber { get; set; }
+
+        public int? currentApprovalLevelId { get; set; }
+        
+        public string currentApprovalLevel { get; set; }
+        public string responsiblePerson { get; set; }
+        public DateTime arrivalDate { get; set; }
+
+
     }
 }
