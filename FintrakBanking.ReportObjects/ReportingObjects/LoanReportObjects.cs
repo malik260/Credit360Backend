@@ -4141,12 +4141,14 @@ namespace FintrakBanking.ReportObjects
                 }
             }
         }
-        public List<InsuranceViewModel> InsuranceReport(DateTime startDate, DateTime endDate, int companyId, short? branchId)
+        public List<InsuranceViewModel> InsuranceReport(int companyId)
         {
 
-            //var getRunningLoan = new RunningLoan();
+            var getRunningLoan = new RunningLoan();
 
-            //var data = getRunningLoan.GetRunningLoan(startDate, endDate,companyId, branchId);
+            //var data = getRunningLoan.GetRunningLoan(companyId);
+
+            var data = getRunningLoan.GetRunningInsuranceLoan(companyId);
 
 
 
@@ -4177,19 +4179,19 @@ namespace FintrakBanking.ReportObjects
 
                                          collateralType = ct.COLLATERALTYPENAME,
                                        //  perfectionStatus = pe.PERFECTIONSTATUSNAME,
-                                       //  insuranceType = ccp.INSURANCETYPE,
+                                        // insuranceType = ccp.INSURANCETYPEID,
                                          insurancePolicyNumber = ccp.POLICYREFERENCENUMBER,
                                        //  insuranceCompanyName = ccp.INSURANCECOMPANYNAME,
                                          insuredValue = ccp.SUMINSURED,
                                          //account = l.LOANREFERENCENUMBER,
-                                         //accountName = cu.FIRSTNAME + " " + " " + cu.MIDDLENAME + " " + " " + cu.LASTNAME,
+                                         accountName = cu.FIRSTNAME + " " + " " + cu.MIDDLENAME + " " + " " + cu.LASTNAME,
 
                                          startDate = ccp.STARTDATE,
 
                                         // maturityDate = l.MATURITYDATE,
 
                                          //days = (int)DbFunctions.DiffDays((DateTime?)l.MATURITYDATE, (DateTime?)l.EFFECTIVEDATE),
-                                         workFlowID = "",
+                                         //workFlowID = "",
                                        //  status = l.TBL_LOAN_STATUS.ACCOUNTSTATUS,
                                          //staffCode = st.STAFFCODE,
                                          //rmName = st.FIRSTNAME + " " + " " + st.MIDDLENAME + " " + " " + st.LASTNAME,
@@ -4200,36 +4202,36 @@ namespace FintrakBanking.ReportObjects
                                      }).ToList().Select(x =>
                                      {
 
-                                         //foreach (var d in data)
-                                         //{
+                                         foreach (var d in data)
+                                         {
 
 
 
 
-                                         //    var checkForRemarks = context.TBL_COLLATERAL_POLICY.Where(u => u.COLLATERALCUSTOMERID == x.customerId).Select(u => u.REMARK).FirstOrDefault();
+                                             var checkForRemarks = context.TBL_COLLATERAL_POLICY.Where(u => u.COLLATERALCUSTOMERID == x.customerId).Select(u => u.REMARK).FirstOrDefault();
 
-                                         //    if (checkForRemarks == null)
-                                         //    {
-                                         //        x.remarks = "";
-                                         //    }
-                                         //    else if (checkForRemarks != null)
-                                         //    {
-                                         //        x.remarks = checkForRemarks;
-                                         //    }
+                                             if (checkForRemarks == null)
+                                             {
+                                                 x.remarks = "";
+                                             }
+                                             else if (checkForRemarks != null)
+                                             {
+                                                 x.remarks = checkForRemarks;
+                                             }
 
 
-                                         //    var checkForPremiumPaid = context.TBL_COLLATERAL_POLICY.Where(u => u.COLLATERALCUSTOMERID == x.customerId).Select(u => u.PREMIUMAMOUNT).FirstOrDefault();
+                                             var checkForPremiumPaid = context.TBL_COLLATERAL_POLICY.Where(u => u.COLLATERALCUSTOMERID == x.customerId).Select(u => u.PREMIUMAMOUNT).FirstOrDefault();
 
-                                         //    if (checkForPremiumPaid == 0)
-                                         //    {
-                                         //        x.premiumPaid = 0;
-                                         //    }
-                                         //    else if (checkForPremiumPaid != 0)
-                                         //    {
-                                         //        x.premiumPaid = checkForPremiumPaid;
-                                         //    }
+                                             if (checkForPremiumPaid == 0)
+                                             {
+                                                 x.premiumPaid = 0;
+                                             }
+                                             else if (checkForPremiumPaid != 0)
+                                             {
+                                                 x.premiumPaid = checkForPremiumPaid;
+                                             }
 
-                                         //}
+                                         }
 
                                          return x;
                                      }).ToList();
