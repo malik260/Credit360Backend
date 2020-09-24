@@ -396,7 +396,7 @@ namespace FintrakBanking.ReportObjects
 
         }
 
-        public IEnumerable<CorporateLoansDeptViewModel> GetCorporateLoansReport()
+        public List<CorporateLoansDeptViewModel> GetCorporateLoansReport(DateTime startDate, DateTime endDate)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -3594,7 +3594,7 @@ namespace FintrakBanking.ReportObjects
                                        expireDate = l.MATURITYDATE,
                                        pastDueDays = (int)DbFunctions.DiffDays((l.PASTDUEDATE.Value == null ? default(DateTime) : l.PASTDUEDATE.Value), dateTime),
                                        sanctionLimit = 0,
-                                       businessDevelopmentManager = "",
+                                       //businessDevelopmentManager = "",
 
 
 
