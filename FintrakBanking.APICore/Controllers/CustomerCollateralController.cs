@@ -2684,6 +2684,22 @@ namespace FintrakBanking.APICore.Controllers
             //return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The COLLATERAL SWAP request has been sent for approval!" });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-next-level-for-collateral-swap/{collateralSwapId}")]
+        public HttpResponseMessage GetNextLevelForCollateralSwap(int collateralSwapId)
+        {
+            var data = repo.GetNextLevelForCollateralSwap(collateralSwapId, token.GetStaffId, token.GetCompanyId);
+
+            if (data > 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data, message = "NextLevelId fetching was successfull!" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = "NextLevelId fetching was unsuccessful!" });
+
+        }
 
         [HttpPut]
         [ClaimsAuthorization]

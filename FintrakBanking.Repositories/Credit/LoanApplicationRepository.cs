@@ -4239,6 +4239,7 @@ namespace FintrakBanking.Repositories.Credit
                 interestRepayment = d.INTERESTREPAYMENT,
                 isMoratorium = d.ISMORATORIUM,
                 moratorium = d.MORATORIUM,
+                //productPriceIndexId = d.PRODUCTPRICEINDEXID
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
@@ -7915,6 +7916,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             approvalStatusId = a.APPROVALSTATUSID,
+                            productPriceIndexId = b.PRODUCTPRICEINDEXID
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
