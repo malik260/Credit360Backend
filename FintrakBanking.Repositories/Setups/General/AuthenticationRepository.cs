@@ -19,6 +19,11 @@ using FintrakBanking.Repositories.Admin;
 using FintrakBanking.Repositories.Risk;
 using FintrakBanking.Interfaces.Risk;
 using FintrakBanking.ViewModels.Risk;
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Xml;
+using System.IO;
+using System.Security.Cryptography.Xml;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -1173,5 +1178,219 @@ namespace FintrakBanking.Repositories.Setups.General
             //return endOfDayStatus;
 
         }
+
+        #region Licence
+
+
+        public const string ProgramTitle = "The FinTrak License Project";
+
+        public const string NotAuthorizedMessage = "You are not authorized to perform this task.";
+
+        public const int UseDBVersion = 1;
+
+        public const string DefaultLicenseFile = "FintrakCredit360License.lic";
+
+        public const int MatchPresent = 0;
+
+        public const int MatchNone = 1;
+
+
+
+        public LicenseFileDetail ExamineLicense()
+        {
+            //  ----- Examine the application's license file, and report back on what's inside.
+            LicenseFileDetail result = new LicenseFileDetail();
+            string usePath;
+            XmlDocument licenseContent;
+            XmlDocument keyContent;
+            RSA publicKey;
+            SignedXml signedDocument;
+            XmlNodeList matchingNodes;
+            string[] versionParts;
+            int counter;
+            string comparePart;
+            //  ----- See if the license file exists.
+            result.Status = LicenseStatus.MissingLicenseFile;
+            usePath = System.Web.Hosting.HostingEnvironment.MapPath(System.Configuration.ConfigurationManager.AppSettings["licencePath"]); // "C:\\inetpub\\wwwroot\\FinTrakLicensePath\\FinTrakCredit360License.lic";
+            var keyPath = System.Web.Hosting.HostingEnvironment.MapPath(System.Configuration.ConfigurationManager.AppSettings["publicKeyPath"]);
+            if ((usePath == ""))
+            {
+                //usePath = FileSystem.CombinePath(My.Application.Info.DirectoryPath, DefaultLicenseFile);
+            }
+
+            string path = usePath;
+            string filename = "FintrakCREDIT360License.lic";
+            string keyFile = "FinTrakPublicKey.xml";
+
+            DirectoryInfo directory = new DirectoryInfo(path);
+            FileInfo[] files = directory.GetFiles();
+
+            bool fileFound = false;
+            foreach (FileInfo file in files)
+            {
+                if (String.Compare(file.Name, filename) == 0)
+                {
+                    fileFound = true;
+                }
+            }
+
+            if (!fileFound)
+            {
+                return result;
+            }
+
+
+            usePath = usePath + "\\" + filename;
+            keyPath = keyPath + "\\" + keyFile;
+            //if (Directory.Exists(usePath))
+            //{
+            //    return result;
+            //}
+            var test = Directory.Exists(usePath);
+            var ktest = Directory.Exists(keyPath);
+
+            //  ----- Try to read in the file.
+            result.Status = LicenseStatus.CorruptLicenseFile;
+            try
+            {
+                licenseContent = new XmlDocument();
+                licenseContent.Load(usePath);
+
+
+                keyContent = new XmlDocument();
+                keyContent.Load(keyPath);
+
+
+            }
+            catch (Exception ex)
+            {
+                //  ----- Silent error.
+                return result;
+            }
+
+            //  ----- Prepare the public key resource for use.
+            publicKey = RSA.Create();
+
+            var Nodes = keyContent.InnerXml;
+            // var recs = Nodes[0].InnerText;
+
+            publicKey.FromXmlString(Nodes);
+            // --------Put the Path in here
+            //  ----- Confirm the digital signature.
+            try
+            {
+                signedDocument = new SignedXml(licenseContent);
+                matchingNodes = licenseContent.GetElementsByTagName("Signature");
+                signedDocument.LoadXml(((XmlElement)(matchingNodes[0])));
+            }
+            catch (Exception ex)
+            {
+                //  ----- Still a corrupted document.
+                return result;
+            }
+
+            if ((signedDocument.CheckSignature(publicKey) == false))
+            {
+                result.Status = LicenseStatus.InvalidSignature;
+                return result;
+            }
+
+            //  ----- The license file is valid. Extract its members.
+            try
+            {
+                CultureInfo provider = CultureInfo.InvariantCulture;
+
+                //  ----- Get the licensee name.
+                matchingNodes = licenseContent.GetElementsByTagName("Licensee");
+                result.Licensee = matchingNodes[0].InnerText;
+                //  ----- Get the license date.
+                matchingNodes = licenseContent.GetElementsByTagName("LicenseDate");
+                // DateTime oDate1 = DateTime.ParseExact(matchingNodes[0].InnerText, "YYYY/mm/dd", System.Globalization.CultureInfo.InvariantCulture);
+                //DateTime oDate1 = DateTime.ParseExact(matchingNodes[0].InnerText, new string[] { "MM.dd.yyyy", "MM-dd-yyyy", "MM/dd/yyyy" }, provider, DateTimeStyles.None);
+                result.LicenseDate = DateTime.Parse(matchingNodes[0].InnerText, provider);
+                matchingNodes = licenseContent.GetElementsByTagName("ExpireDate");
+                //DateTime oDate = DateTime.ParseExact(matchingNodes[0].InnerText, "yyyy-MM-dd HH:mm tt", System.Globalization.CultureInfo.InvariantCulture);
+                result.ExpireDate = DateTime.Parse(matchingNodes[0].InnerText, provider);
+                matchingNodes = licenseContent.GetElementsByTagName("CoveredVersion");
+                result.CoveredVersion = matchingNodes[0].InnerText;
+                //  ----- Get the Product.
+                matchingNodes = licenseContent.GetElementsByTagName("Product");
+                result.Product = matchingNodes[0].InnerText;
+            }
+            catch (Exception ex)
+            {
+                //  ----- Still a corrupted document.
+                return result;
+            }
+
+            //  ----- Check for out-of-range dates.
+            if ((result.LicenseDate > DateTime.Now))
+            {
+                result.Status = LicenseStatus.NotYetLicensed;
+                return result;
+            }
+
+            if ((result.ExpireDate < DateTime.Now))
+            {
+                result.Status = LicenseStatus.LicenseExpired;
+                return result;
+            }
+
+            //  ----- Check the version.
+            //versionParts = result.CoveredVersion.Split('.');
+            //for (counter = 0; (counter <= versionParts.Length); counter++)
+            //{
+
+            //    //double myVal = counter;
+            //    //String myVar = versionParts;
+
+            //    //if (Double.TryParse(myVar, out myNum))
+            //    //{
+            //    //    // it is a number
+            //    //}
+            //    //else
+            //    //{
+            //    //    // it is not a number
+            //    //}
+
+            //    if (( IsNumeric(versionParts[counter]) == true))
+            //    {
+            //        //  ----- The version format is major.minor.build.revision.
+            //        switch (counter)
+            //        {
+            //            case 0:
+            //                comparePart = Assembly.GetExecutingAssembly().GetName().Version.Major.ToString(); // My.Application.Info.Version.Major.ToString();
+            //                break;
+            //            case 1:
+            //                comparePart = Assembly.GetExecutingAssembly().GetName().Version.Minor.ToString();
+            //                break;
+            //            case 2:
+            //                comparePart = Assembly.GetExecutingAssembly().GetName().Version.Build.ToString();
+            //                break;
+            //            case 3:
+            //                comparePart = Assembly.GetExecutingAssembly().GetName().Version.Revision.ToString();
+            //                break;
+            //            default:
+            //                return result;
+            //                break;
+            //        }
+            //        if ((double.Parse(comparePart) != double.Parse(versionParts[counter])))
+            //        {
+            //            result.Status = LicenseStatus.VersionMismatch;
+            //            return result;
+            //        }
+
+            //    }
+
+            //}
+
+            //  ----- Everything seems to be in order.
+            result.Status = LicenseStatus.ValidLicense;
+            return result;
+        }
+
+
+
+        #endregion Licence
     }
 }

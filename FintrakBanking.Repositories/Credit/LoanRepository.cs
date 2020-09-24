@@ -4757,6 +4757,7 @@ namespace FintrakBanking.Repositories.Credit
                             foreach (var fee in allTargetLoanFees)
                             {
                                 fee.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                fee.FEESOURCEMODULE = "LOS";
                             }
 
                             ApprovalViewModel approvalModel = new ApprovalViewModel();
@@ -6643,7 +6644,8 @@ namespace FintrakBanking.Repositories.Credit
                         RECURRINGPAYMENTDAY = 28,
                         CREATEDBY = loanModel.createdBy,
                         DATETIMECREATED = DateTime.Now.Date,
-                        ISPOSTED = ent.isPosted
+                        ISPOSTED = ent.isPosted,
+                        FEESOURCEMODULE = "LOS",
                     };
                     if (loanModel.feeOverride)
                     {
@@ -7504,6 +7506,7 @@ namespace FintrakBanking.Repositories.Credit
                             feeAmount = c.FEEAMOUNT,
                             feeIntervalId = c.TBL_CHARGE_FEE.FEEINTERVALID,
                             feeIntervalName = c.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                            feeSourceModule = c.FEESOURCEMODULE == null ? "LOS": c.FEESOURCEMODULE,
                         }).ToList();
             return data;
         }
@@ -7522,6 +7525,7 @@ namespace FintrakBanking.Repositories.Credit
                             feeAmount = c.FEEAMOUNT,
                             feeIntervalId = c.TBL_CHARGE_FEE.FEEINTERVALID,
                             feeIntervalName = c.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                            feeSourceModule = c.FEESOURCEMODULE == null ? "LOS" : c.FEESOURCEMODULE,
                         }).ToList();
             return data;
         }

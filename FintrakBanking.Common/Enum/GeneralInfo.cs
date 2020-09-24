@@ -494,6 +494,42 @@ namespace FintrakBanking.Common.Enum
         CompanySize = 10,
         FundingSource = 11,
     }
+    public struct LicenseFileDetail
+    {
+
+        public LicenseStatus Status;
+
+        public string Licensee;
+
+        public DateTime LicenseDate;
+
+        public DateTime ExpireDate;
+
+        public string CoveredVersion;
+
+        public string ServrMAC;
+
+        public string Product;
+
+        public string ServerMotherBoard;
+    }
+    public enum LicenseStatus
+    {
+
+        ValidLicense,
+
+        MissingLicenseFile,
+
+        CorruptLicenseFile,
+
+        InvalidSignature,
+
+        NotYetLicensed,
+
+        LicenseExpired,
+
+        VersionMismatch,
+    }
 
     public static class General
     {

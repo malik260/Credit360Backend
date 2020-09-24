@@ -18113,6 +18113,7 @@ namespace FintrakBanking.Repositories.Credit
                         feeDetails.applicationUrl = model.applicationUrl;
                         feeDetails.companyId = model.companyId;
                         feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                        feeDetails.feeSourceModule = model.feeSourceModule;
                         result = SubmitTakeFee(feeDetails);
                     }
                     else
@@ -18186,6 +18187,7 @@ namespace FintrakBanking.Repositories.Credit
                         feeDetails.applicationUrl = model.applicationUrl;
                         feeDetails.companyId = model.companyId;
                         feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                        feeDetails.feeSourceModule = model.feeSourceModule;
                         result = SubmitTakeFee(feeDetails);
                     }
                     else
@@ -18424,6 +18426,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = applicationDate,
                     CASAACCOUNTID = detail.casaAccount,
                     LOANREVIEWOPERATIONID = model.loanOperationReviewId,
+                    FEESOURCEMODULE = model.feeSourceModule,
 
                 });
                 if (context.SaveChanges() == 0) throw new SecureException("An error occured while saving the data!"); // this save is necessary to grab targetid
@@ -24298,6 +24301,7 @@ namespace FintrakBanking.Repositories.Credit
                                 feeDetails.applicationUrl = userModel.applicationUrl;
                                 feeDetails.companyId = userModel.companyId;
                                 feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                                feeDetails.feeSourceModule = userModel.feeSourceModule;
                                 output = SubmitTakeFee(feeDetails);
                             }
                             else
@@ -24361,6 +24365,7 @@ namespace FintrakBanking.Repositories.Credit
                     feeDetails.applicationUrl = userModel.applicationUrl;
                     feeDetails.companyId = userModel.companyId;
                     feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                    feeDetails.feeSourceModule = userModel.feeSourceModule;
                     output = SubmitTakeFee(feeDetails);
                 }
                 else
@@ -24774,6 +24779,7 @@ namespace FintrakBanking.Repositories.Credit
                                     feeDetails.applicationUrl = userModel.applicationUrl;
                                     feeDetails.companyId = userModel.companyId;
                                     feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                                    feeDetails.feeSourceModule = userModel.feeSourceModule;
                                     output = SubmitTakeFee(feeDetails);
                                 }
                                 else
@@ -24830,6 +24836,7 @@ namespace FintrakBanking.Repositories.Credit
                         feeDetails.applicationUrl = userModel.applicationUrl;
                         feeDetails.companyId = userModel.companyId;
                         feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                        feeDetails.feeSourceModule = userModel.feeSourceModule;
                         output = SubmitTakeFee(feeDetails);
                     }
                     else
@@ -31383,8 +31390,9 @@ namespace FintrakBanking.Repositories.Credit
                                         && pr.EXCLUDEFROMLITIGATION == false
                                         && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                         && ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                        && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= 30
 
-                                        orderby ln.DATETIMECREATED descending
+                                         orderby ln.DATETIMECREATED descending
                                         select new LoanReviewOperationApprovalViewModel
                                         {
                                             creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
@@ -31489,7 +31497,8 @@ namespace FintrakBanking.Repositories.Credit
                                              && pr.EXCLUDEFROMLITIGATION == false
                                              && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                              && ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                                     
+                                             && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= 30
+
                                              orderby ln.DATETIMECREATED descending
                                              select new LoanReviewOperationApprovalViewModel
                                              {
