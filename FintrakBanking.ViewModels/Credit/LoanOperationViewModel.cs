@@ -67,8 +67,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int targetId { get; set; }
         public IEnumerable<feeDetails> fees { get; set; }
-
-
+        public string feeSourceModule { get; set; }
     }
 
     //public class LoanReviewViewModel : GeneralEntity

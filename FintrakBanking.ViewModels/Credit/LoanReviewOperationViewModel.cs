@@ -95,7 +95,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool isPrimaryDocument { get; set; }
         public string formData { get; set; }
-
+        public string feeSourceModule { get; set; }
     }
 
     public class LoanIrregularScheduleViewModel

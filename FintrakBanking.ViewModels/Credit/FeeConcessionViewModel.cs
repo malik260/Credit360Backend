@@ -34,7 +34,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal defaultValue { get; set; }
         public int? loanOperationReviewId { get; set; }
         public IEnumerable<feeDetails> feeDetails { get; set; }
-
+        public string feeSourceModule { get; set; }
     }
     public class feeDetails
     {
