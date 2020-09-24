@@ -185,7 +185,8 @@ namespace FintrakBanking.Repositories.credit
                                 where
                                 //y.RESPONSESTAFFID == null
                                 (
-                                 (operations.Contains(canct.OPERATIONID) || canct == null)
+                                 //(operations.Contains(canct.OPERATIONID) || canct == null)
+                                 ((canct.OPERATIONID == (int)OperationsEnum.LCTerminationApproval) || canct == null)
                                  &&
                                 (
                                 (a.LCREFERENCENUMBER.Trim().ToLower().Contains(searchString))
@@ -232,9 +233,10 @@ namespace FintrakBanking.Repositories.credit
                                     invoiceDueDate = a.INVOICEDUEDATE,
                                     transactionCycle = a.TRANSACTIONCYCLE,
                                     lastComment = canct == null ? "N/A" : canct.COMMENT,
-                                    currentApprovalLevel = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? "N/A" : canct.TBL_APPROVAL_LEVEL.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                                    currentApprovalLevel = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? "N/A" : canct.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                                    currentlyWith = (canct == null) ? "N/A" : (canct.TOSTAFFID > 0) ? canct.TBL_STAFF2.FIRSTNAME + " " + canct.TBL_STAFF2.MIDDLENAME + " " + canct.TBL_STAFF2.LASTNAME : (canct.LOOPEDSTAFFID > 0) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == canct.LOOPEDSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == canct.LOOPEDSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == canct.LOOPEDSTAFFID).LASTNAME : canct.TBL_APPROVAL_LEVEL1.TBL_STAFF_ROLE.STAFFROLENAME,
                                     responsiblePerson = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? "N/A" : canct.TBL_STAFF1.STAFFCODE + " - " + canct.TBL_STAFF1.FIRSTNAME + " " + canct.TBL_STAFF1.MIDDLENAME + " " + canct.TBL_STAFF1.LASTNAME,
-                                    currentApprovalLevelTypeId = canct == null ? 0 : canct.TBL_APPROVAL_LEVEL.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
+                                    currentApprovalLevelTypeId = canct == null ? 0 : canct.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                                     lcApprovalTrailId = canct == null ? 0 : canct.APPROVALTRAILID, // for inner sequence ordering
                                     approvalStatus = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? "N/A" : context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == canct.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                     lcApplicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o => o.APPLICATIONSTATUSID == a.APPLICATIONSTATUSID).Select(o => o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
@@ -263,7 +265,7 @@ namespace FintrakBanking.Repositories.credit
                                                          createdBy = (int)b.CREATEDBY,
                                                          operationId = (int)OperationsEnum.LCEnhancementApproval,
                                                          dateTimeCreated = (DateTime)b.DATETIMECREATED,
-                                                         currentlyWith = (usstrail == null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).LASTNAME : context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.TOSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.TOSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.TOSTAFFID).LASTNAME,
+                                                         currentlyWith = (usstrail == null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).LASTNAME : (usstrail.TOSTAFFID > 0) ? usstrail.TBL_STAFF2.FIRSTNAME + " " + usstrail.TBL_STAFF2.MIDDLENAME + " " + usstrail.TBL_STAFF2.LASTNAME : (usstrail.LOOPEDSTAFFID > 0) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).LASTNAME : usstrail.TBL_APPROVAL_LEVEL1.TBL_STAFF_ROLE.STAFFROLENAME,
                                                          arrivalDate = (usstrail == null) ? (DateTime)b.DATETIMECREATED : usstrail.SYSTEMARRIVALDATETIME,
                                                          requestApprovalLevel = (usstrail != null) ? ((usstrail.FROMAPPROVALLEVELID == usstrail.TOAPPROVALLEVELID || usstrail.FROMAPPROVALLEVELID == null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == usstrail.FROMAPPROVALLEVELID).LEVELNAME) : "N/A",
                                                          requestStaffName = (usstrail == null) ? "N/A" : context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).LASTNAME,
@@ -293,7 +295,7 @@ namespace FintrakBanking.Repositories.credit
                                                           createdBy = (int)b.CREATEDBY,
                                                           operationId = (int)OperationsEnum.LCIssuanceExtensionApproval,
                                                           dateTimeCreated = (DateTime)b.DATETIMECREATED,
-                                                          currentlyWith = (usstrail == null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).LASTNAME : context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.TOSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.TOSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.TOSTAFFID).LASTNAME,
+                                                          currentlyWith = (usstrail == null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == b.CREATEDBY).LASTNAME : (usstrail.TOSTAFFID > 0) ? usstrail.TBL_STAFF2.FIRSTNAME + " " + usstrail.TBL_STAFF2.MIDDLENAME + " " + usstrail.TBL_STAFF2.LASTNAME : (usstrail.LOOPEDSTAFFID > 0) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).LASTNAME : usstrail.TBL_APPROVAL_LEVEL1.TBL_STAFF_ROLE.STAFFROLENAME,
                                                           arrivalDate = (usstrail == null) ? (DateTime)b.DATETIMECREATED : usstrail.SYSTEMARRIVALDATETIME,
                                                           requestApprovalLevel = (usstrail != null) ? ((usstrail.FROMAPPROVALLEVELID == usstrail.TOAPPROVALLEVELID || usstrail.FROMAPPROVALLEVELID == null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == usstrail.FROMAPPROVALLEVELID).LEVELNAME) : "N/A",
                                                           requestStaffName = (usstrail == null) ? "N/A" : context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).LASTNAME,
@@ -302,10 +304,9 @@ namespace FintrakBanking.Repositories.credit
                                                       }).ToList(),
                                     lcUsanceExtensions = (from ux in context.TBL_TEMP_LC_USSANCE
                                                           join u in context.TBL_LC_USSANCE on ux.LCUSSANCEID equals u.LCUSSANCEID
-                                                          join a in context.TBL_LC_ISSUANCE on ux.LCISSUANCEID equals a.LCISSUANCEID
                                                           let usstrail = context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.LCUsanceExtensionApproval &&
                                                           t.TARGETID == ux.TEMPLCUSSANCEID).OrderByDescending(t => t.APPROVALTRAILID).FirstOrDefault()
-                                                          where
+                                                          where ux.LCISSUANCEID == a.LCISSUANCEID &&
                                                           ux.USANCEEXTENSIONAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcUsanceExtensionCompleted
                                                           && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                                           select new LcUssanceViewModel
@@ -325,14 +326,41 @@ namespace FintrakBanking.Repositories.credit
                                                                 createdBy = ux.CREATEDBY,
                                                                 operationId = (int)OperationsEnum.LCIssuanceExtensionApproval,
                                                                 dateTimeCreated = ux.DATETIMECREATED,
-                                                                currentlyWith = (usstrail == null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == ux.CREATEDBY).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == ux.CREATEDBY).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == ux.CREATEDBY).LASTNAME : context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.TOSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.TOSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.TOSTAFFID).LASTNAME,
+                                                                currentlyWith = (usstrail == null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == ux.CREATEDBY).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == ux.CREATEDBY).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == ux.CREATEDBY).LASTNAME : (usstrail.TOSTAFFID > 0) ? usstrail.TBL_STAFF2.FIRSTNAME + " " + usstrail.TBL_STAFF2.MIDDLENAME + " " + usstrail.TBL_STAFF2.LASTNAME : (usstrail.LOOPEDSTAFFID > 0) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).LASTNAME : usstrail.TBL_APPROVAL_LEVEL1.TBL_STAFF_ROLE.STAFFROLENAME,
                                                                 arrivalDate = (usstrail == null) ? (DateTime)ux.DATETIMECREATED : usstrail.SYSTEMARRIVALDATETIME,
                                                                 requestApprovalLevel = (usstrail != null) ? ((usstrail.FROMAPPROVALLEVELID == usstrail.TOAPPROVALLEVELID || usstrail.FROMAPPROVALLEVELID == null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == usstrail.FROMAPPROVALLEVELID).LEVELNAME) : "N/A",
                                                                 requestStaffName = (usstrail == null) ? "N/A" : context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.REQUESTSTAFFID).LASTNAME,
                                                                 approvalStatus = (usstrail == null) ? "N/A" : context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == usstrail.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                                                 currentApprovalLevel = (usstrail.TOAPPROVALLEVELID != null) ? ((usstrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && usstrail.LOOPEDSTAFFID != null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == usstrail.TOAPPROVALLEVELID).LEVELNAME) : context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == ux.CREATEDBY).TBL_STAFF_ROLE.STAFFROLENAME,
                                                             }).ToList(),
-                                    //operationId = x.OPERATIONID,
+                                                lcUsances = (from u in context.TBL_LC_USSANCE
+                                                             where a.LCISSUANCEID == u.LCISSUANCEID &&
+                                                             u.DELETED == false
+                                                             select new LcUssanceViewModel
+                                                             {
+                                                                 lcIssuanceId = u.LCISSUANCEID,
+                                                                 lcUssanceId = u.LCUSSANCEID,
+                                                                 tempLcUsanceId = 0,
+                                                                 ussanceAmount = u.USSANCEAMOUNT,
+                                                                 ussanceRate = u.USSANCERATE,
+                                                                 oldUssanceTenor = 0,
+                                                                 ussanceTenor = u.USSANCETENOR,
+                                                                 lcEffectiveDate = u.LCUSSANCEEFFECTIVEDATE,
+                                                                 oldLcMaturityDate = DateTime.Now,
+                                                                 lcMaturityDate = u.LCUSSANCEMATURITYDATE,
+                                                                 currencyId = (int)u.USANCEAMOUNTCURRENCYID,
+                                                                 customerName = "N/A",
+                                                                 createdBy = 1,
+                                                                 operationId = 1,
+                                                                 dateTimeCreated = DateTime.Now,
+                                                                 currentlyWith = "N/A",
+                                                                 arrivalDate = DateTime.Now,
+                                                                 requestApprovalLevel = "N/A",
+                                                                 requestStaffName = "N/A",
+                                                                 approvalStatus = "N/A",
+                                                                 currentApprovalLevel = "N/A",
+                                                             }).ToList(),
+                                                //operationId = x.OPERATIONID,
                                 }).GroupBy(a => a.lcIssuanceId).Select(g => g.OrderByDescending(l => l.lcApprovalTrailId)
                                     .FirstOrDefault())
                                     .ToList();

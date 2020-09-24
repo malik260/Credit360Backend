@@ -6051,9 +6051,10 @@ namespace FintrakBanking.Repositories.Credit
                                                 approvalStatusId = a.APPROVALSTATUSID,
                                                 approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
                                                 approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                                                fromStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME
-                                                //toStaffName = (current.TOSTAFFID == null) ? "N/A" : current.TBL_STAFF2.LASTNAME + " " + current.TBL_STAFF2.MIDDLENAME + " " + current.TBL_STAFF2.FIRSTNAME,
-                                             }).OrderByDescending(x => x.approvalTrailId).ToList()
+                                                fromStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
+                                                toStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                                                  //toStaffName = (current.TOSTAFFID == null) ? "N/A" : current.TBL_STAFF2.LASTNAME + " " + current.TBL_STAFF2.MIDDLENAME + " " + current.TBL_STAFF2.FIRSTNAME,
+                                              }).OrderByDescending(x => x.approvalTrailId).ToList()
                                 })).OrderByDescending(o => o.approvalTrailId).ToList();
 
                 //var test = preBookingrecord.ToList();
@@ -9000,12 +9001,12 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-        public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate)
+        public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId)
         {
             IEnumerable<RetailRecoveryCustomerTransactionsViewModels> records = null;
 
             var dataTermLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                            join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                            join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                             join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -9015,7 +9016,8 @@ namespace FintrakBanking.Repositories.Credit
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             where
-                            lr.ISFULLYRECOVERED == false
+                            lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                            && lr.ISFULLYRECOVERED == false
                             && pr.EXCLUDEFROMLITIGATION == false
                             && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -9039,6 +9041,7 @@ namespace FintrakBanking.Repositories.Credit
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                 casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                 branchId = ln.BRANCHID,
+                                totalExposure = lp.TOTALEXPOSUREAMOUNT,
                                 totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
@@ -9075,7 +9078,7 @@ namespace FintrakBanking.Repositories.Credit
                             }).ToList();
 
             var dataRevolvingLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -9085,7 +9088,8 @@ namespace FintrakBanking.Repositories.Credit
                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                      where
-                                     lr.ISFULLYRECOVERED == false
+                                     lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                     && lr.ISFULLYRECOVERED == false
                                      && pr.EXCLUDEFROMLITIGATION == false
                                      && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -9095,6 +9099,7 @@ namespace FintrakBanking.Repositories.Credit
                                      {
                                          loanApplicationId = lp.LOANAPPLICATIONID,
                                          totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
+                                         totalExposure = lp.TOTALEXPOSUREAMOUNT,
                                          currencyId = ld.CURRENCYID,
                                          accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
                                          accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
@@ -9148,6 +9153,8 @@ namespace FintrakBanking.Repositories.Credit
                              && (DbFunctions.TruncateTime(a.APPROVEDDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.APPROVEDDATE) <= DbFunctions.TruncateTime(endDate))
                              select new RetailRecoveryCustomerTransactionsViewModels
                              {
+                                 totalExposure = record.totalExposure,
+                                 totalAmountRecovery = record.totalAmountRecovery,
                                  startDate = startDate,
                                  endDate = endDate,
                                  productName = record.productName,

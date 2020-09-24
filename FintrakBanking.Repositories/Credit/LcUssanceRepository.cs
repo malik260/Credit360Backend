@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Common;
 using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -78,7 +79,35 @@ namespace FintrakBanking.Repositories.credit
                               lcEffectiveDate = u.LCUSSANCEEFFECTIVEDATE,
                               oldLcMaturityDate = ux.OLDLCUSSANCEMATURITYDATE,
                               lcMaturityDate = ux.NEWLCUSSANCEMATURITYDATE,
-                              usanceAmountCurrencyId = u.USANCEAMOUNTCURRENCYID
+                              usanceAmountCurrencyId = u.USANCEAMOUNTCURRENCYID,
+                              //comments = (from t in context.TBL_APPROVAL_TRAIL
+                              //           where ux.TEMPLCUSSANCEID == t.TARGETID
+                              //           && t.OPERATIONID == (int)OperationsEnum.LCIssuanceExtensionApproval
+                              //            select new ApprovalTrailViewModel
+                              //            {
+                              //                approvalTrailId = t.APPROVALTRAILID,
+                              //                comment = t.COMMENT,
+                              //                targetId = t.TARGETID,
+                              //                operationId = t.OPERATIONID,
+                              //                arrivalDate = t.ARRIVALDATE,
+                              //                systemArrivalDateTime = t.SYSTEMARRIVALDATETIME,
+                              //                responseDate = t.RESPONSEDATE,
+                              //                systemResponseDateTime = t.SYSTEMRESPONSEDATETIME,
+                              //                responseStaffId = t.RESPONSESTAFFID,
+                              //                requestStaffId = t.REQUESTSTAFFID,
+                              //                loopedStaffId = t.LOOPEDSTAFFID,
+                              //                toStaffId = t.TOSTAFFID,
+                              //                fromApprovalLevelId = t.FROMAPPROVALLEVELID,
+                              //                fromApprovalLevelName = t.FROMAPPROVALLEVELID == null ? t.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME : t.TBL_APPROVAL_LEVEL.LEVELNAME,
+                              //                toApprovalLevelName = t.TOAPPROVALLEVELID == null ? "N/A" : t.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                              //                toApprovalLevelId = t.TOAPPROVALLEVELID,
+                              //                approvalStateId = t.APPROVALSTATEID,
+                              //                approvalStatusId = t.APPROVALSTATUSID,
+                              //                approvalState = t.TBL_APPROVAL_STATE.APPROVALSTATE,
+                              //                approvalStatus = t.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                              //                fromStaffName = t.TBL_STAFF.LASTNAME + " " + t.TBL_STAFF.MIDDLENAME + " " + t.TBL_STAFF.FIRSTNAME,
+                              //                toStaffName = t.TBL_STAFF1.LASTNAME + " " + t.TBL_STAFF1.MIDDLENAME + " " + t.TBL_STAFF1.FIRSTNAME,
+                              //            }).OrderByDescending(x => x.approvalTrailId).ToList(),
                           }).ToList();
 
             return entity;

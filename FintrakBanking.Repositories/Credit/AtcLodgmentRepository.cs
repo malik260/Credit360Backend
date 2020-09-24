@@ -231,7 +231,7 @@ namespace FintrakBanking.Repositories.credit
         }
         
 
-        public bool SubmitReferredAtcBackIntoWorkflow(AtcReleaseViewModel model)
+        public WorkflowResponse SubmitReferredAtcBackIntoWorkflow(AtcReleaseViewModel model)
         {
             workflow.StaffId = model.createdBy;
             workflow.CompanyId = model.companyId;
@@ -241,8 +241,8 @@ namespace FintrakBanking.Repositories.credit
             workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
             workflow.DeferredExecution = true;
             workflow.LogActivity();
-
-            return context.SaveChanges() > 0;
+            var saved = context.SaveChanges() > 0;
+            return workflow.Response;
         }
 
         public Tuple<WorkflowResponse, int> SubmitApproval(IEnumerable<AtcReleaseViewModel> model)
@@ -456,7 +456,7 @@ namespace FintrakBanking.Repositories.credit
             return entity;
         }
 
-        public bool AddAtcRelease(IEnumerable<AtcReleaseViewModel> model)
+        public WorkflowResponse AddAtcRelease(IEnumerable<AtcReleaseViewModel> model)
         {
             //Doing a Check to confirm if none of the ATC in the incoming list is already being Processed 
             foreach(var atc in model)
@@ -528,8 +528,8 @@ namespace FintrakBanking.Repositories.credit
                     // Audit Section end ------------------------
 
             }
-
-            return context.SaveChanges() != 0;
+            var saved = context.SaveChanges() > 0;
+            return workflow.Response;
         }
         public bool AddAtcLodgment(AtcLodgmentViewModel model)
         {
