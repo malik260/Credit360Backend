@@ -11,7 +11,7 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class CorporateLoansReport : System.Web.UI.Page
+    public partial class JobRequestReport : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -21,10 +21,11 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 {
                     DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                     DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                   // int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                    //string crmSCode = Request.QueryString["crmsCode"];
 
-                    //companyId.Text = Request.QueryString["companyId"]; //"1",
 
-                    
+                    //int staffId = Int32.Parse(Request.QueryString["staffId"]);
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -53,12 +54,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     }
 
                     LoanReportObjects Jobs = new LoanReportObjects();
-                    var data = Jobs.GetCorporateLoansReport(startDate, endDate);
+                    var data = Jobs.GetAllGlobalJobRequest(startDate,endDate );
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "CorporateLoansReport";
+                    reportDataSource.Name = "JobRequestTransactions";
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
@@ -67,8 +68,13 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         System.Reflection.FieldInfo fieldInfo = extension.GetType().GetField("m_isVisible", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
                         fieldInfo.SetValue(extension, false);
                     }
+
+                    //ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/CorporateLoansReport.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/JobRequestReport.rdlc");
+                    //ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }
                 catch (Exception ex)
@@ -78,6 +84,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     return;
                 }
             }
+
         }
     }
 }

@@ -191,7 +191,7 @@ namespace FintrakBanking.Interfaces.Credit
         WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 
         String ResponseMessage(WorkflowResponse response, string itemHeading);
-
+        int GetNextLevelForCollateralSwap(int collateralSwapId, int createdBy, int companyId);
 
 
         #region collateralInsuranceRequest

@@ -204,9 +204,24 @@ namespace FintrakBanking.APICore.Controllers
             entity.staffId = token.GetStaffId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
 
-            WorkflowResponse response = repo.LcExtensionMemorandum(entity);
+            WorkflowResponse response = repo.LcIssuanceExtensionMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC ENHANCEMENT") });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC EXTENSION") });
+        }
+
+        [HttpPost]
+        [Route("lc/ussance-extension-forward")]
+        public HttpResponseMessage LcUsanceExtensionMemorandum([FromBody] LcForwardViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.LcUsanceExtensionMemorandum(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC USSANCE EXTENSION") });
         }
 
         [HttpPost]

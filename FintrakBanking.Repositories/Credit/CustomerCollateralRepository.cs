@@ -46,6 +46,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository lien;
         private ICasaRepository casa;
         private IIntegrationWithFinacle finacle;
+        private ICreditDrawdownRepository drawdownRepo;
         //private IAlertRepository alert;
 
         public string collateralReleaseStatusName { get; private set; }
@@ -62,7 +63,8 @@ namespace FintrakBanking.Repositories.Credit
             IApprovalLevelStaffRepository _level,
             ICasaLienRepository _lien,
             ICasaRepository _casa,
-            IIntegrationWithFinacle _finacle
+            IIntegrationWithFinacle _finacle,
+            ICreditDrawdownRepository _drawdownRepo
             //IAlertRepository _alert
             )
         {
@@ -79,6 +81,7 @@ namespace FintrakBanking.Repositories.Credit
             this.lien = _lien;
             this.casa = _casa;
             this.finacle = _finacle;
+            this.drawdownRepo = _drawdownRepo;
             //this.alert = _alert;
         }
 
@@ -11658,7 +11661,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //workflow.Vote = model.vote;
             workflow.NextLevelId = null;
-            //workflow.ToStaffId = null;
+            workflow.ToStaffId = model.toStaffId;
             workflow.StatusId = (int)model.forwardAction;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(model.customerId);
@@ -11705,6 +11708,20 @@ namespace FintrakBanking.Repositories.Credit
             //cs.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
             return workflow.Response;
+        }
+
+        public int GetNextLevelForCollateralSwap(int collateralSwapId, int createdBy, int companyId)
+        {
+            var approvalModel = new ForwardViewModel
+            {
+                createdBy = createdBy,
+                companyId = companyId,
+                applicationId = collateralSwapId,
+                comment = "Get next level for collateral swap",
+            };
+
+            var response = drawdownRepo.LogApprovalForMessage(approvalModel, (short)OperationsEnum.CollateralSwap, true, (int)ApprovalStatusEnum.Pending);
+            return response.nextLevelId.Value;
         }
 
         private void ArchiveOldCollateralOfLoan(int loanAppCollateralId, int newCollateralCustomerId, int createdBy)
