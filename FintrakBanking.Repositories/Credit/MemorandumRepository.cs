@@ -105,6 +105,9 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string groupFacilitySummaryHolder = "@{{GroupFacilitySummary}}";
 
         private readonly string recoveryAnalysisHolder = "@{{RecoveryAnalysisData}}";
+        private readonly string recoveryAnalysisFirmNameHolder = "@{{firmName}}";
+        private readonly string recoveryAnalysisAddressHolder = "@{{address}}";
+        private readonly string recoveryAnalysisDateHolder = "@{{recoveryDate}}";
 
 
 
@@ -431,6 +434,9 @@ namespace FintrakBanking.Repositories.Credit
         private string originalDocumentNonCreditProgramData;
         private string originalDocumentCreditProgramData;
         private string recoveryAnalysisData;
+        private string recoveryAnalysisFirmNameData;
+        private string recoveryAnalysisAddressData;
+        private string recoveryAnalysisDateData;
 
 
         // init
@@ -5887,6 +5893,9 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(originalDocumentCreditProgramHolder, originalDocumentCreditProgramData);
 
             content = content.Replace(recoveryAnalysisHolder, recoveryAnalysisData);
+            content = content.Replace(recoveryAnalysisFirmNameHolder, recoveryAnalysisFirmNameData);
+            content = content.Replace(recoveryAnalysisAddressHolder, recoveryAnalysisAddressData);
+            content = content.Replace(recoveryAnalysisDateHolder, recoveryAnalysisDateData);
 
             return content;
         }
@@ -12230,7 +12239,7 @@ namespace FintrakBanking.Repositories.Credit
             return transactionDynamicsDetails;
         }
 
-        private string GetOutstandingLoans(int accreditedConsultantId)
+        private string GetOutstandingLoans(int accreditedConsultantId, string referenceId)
         {
                 var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                 join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
@@ -12247,6 +12256,7 @@ namespace FintrakBanking.Repositories.Credit
                                 && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
                                 && pr.EXCLUDEFROMLITIGATION == false
                                 && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                && lr.REFERENCEID == referenceId
 
                                 select new LoanReviewOperationApprovalViewModel
                                 {
@@ -12273,6 +12283,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
                                          && pr.EXCLUDEFROMLITIGATION == false
                                          && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                         && lr.REFERENCEID == referenceId
 
                                          select new LoanReviewOperationApprovalViewModel
                                          {
@@ -12293,6 +12304,11 @@ namespace FintrakBanking.Repositories.Credit
                             rec.address = rec.address + " " + address;
                         }
                     }
+
+            var consult = context.TBL_ACCREDITEDCONSULTANT.Find(accreditedConsultantId);
+            this.recoveryAnalysisFirmNameData = consult.FIRMNAME;
+            this.recoveryAnalysisAddressData = consult.ADDRESS;
+            this.recoveryAnalysisDateData = DateTime.Now.ToString("dd-MM-yyyy");
 
             int i = 0;
             var result = String.Empty;
@@ -12326,9 +12342,9 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public bool InitRecoveryDate(int accreditedConsultantId)
+        public bool InitRecoveryDate(int accreditedConsultantId, string referenceId)
         {
-            this.recoveryAnalysisData = GetOutstandingLoans(accreditedConsultantId);
+            this.recoveryAnalysisData = GetOutstandingLoans(accreditedConsultantId,referenceId);
 
             return true;
         }

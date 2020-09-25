@@ -464,6 +464,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string agentCategory { get; set; }
         public string agentAccountNumber { get; set; }
         public int? stateId { get; set; }
+        public string assignedBy { get; set; }
     }
 
 

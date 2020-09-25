@@ -18450,15 +18450,15 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Kindly select an accredited consultant/expected completion date is empty.");
             }
 
-            var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
-                                                          && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                                          && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
-                                                          && x.DELETED == false
-                                                          ).ToList();
-            if (validate != null && validate.Count() > 0)
-            {
-                throw new SecureException("Request already exist and undergoing approval");
-            }
+            //var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
+            //                                              && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+            //                                              && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+            //                                              && x.DELETED == false
+            //                                              ).ToList();
+            //if (validate != null && validate.Count() > 0)
+            //{
+            //    throw new SecureException("Request already exist and undergoing approval");
+            //}
 
             LoanRecoveryAssignmentViewModel assignOperations = new LoanRecoveryAssignmentViewModel();
 
@@ -18469,7 +18469,7 @@ namespace FintrakBanking.Repositories.Credit
                 assignOperations.loanReferenceNumber = customerRequest.loanReferenceNumber;
                 assignOperations.expCompletionDate = expCompletionDate;
                 assignOperations.referenceId = referenceNumber;
-                assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+                assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Pending;
                 assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
                 assignOperations.operationCompleted = false;
                 assignOperations.totalAmountRecovery = customerRequest.totalAmountRecovery;
@@ -18492,7 +18492,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 ACCREDITEDCONSULTANTID = accreditedConsultant,
                 REFERENCEBATCHID = referenceNumber,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
                 REQUESTDATE = DateTime.Now,
                 SOURCE = source,
@@ -18524,6 +18524,87 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public bool saveBulkLoanReAssignmentToAgentRem(LoanRecoveryAssignmentViewModel model, UserInfo user)
+        {
+
+            bool result = false;
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+            if (model == null)
+            {
+                throw new ConditionNotMetException("Kindly select an accredited consultant.");
+            }
+
+            try
+            {
+                TBL_LOAN_RECOVERY_ASSIGNMENT assignOperations = new TBL_LOAN_RECOVERY_ASSIGNMENT();
+                var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+
+                assignOperations.CREATEDBY = user.createdBy;
+                assignOperations.ACCREDITEDCONSULTANT = model.accreditedConsultant;
+                assignOperations.LOANREFERENCE = validate.LOANREFERENCE;
+                assignOperations.EXPCOMPLETIONDATE = model.expCompletionDate;
+                assignOperations.REFERENCEID = referenceNumber;
+                assignOperations.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                assignOperations.OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                assignOperations.OPERATIONCOMPLETED = false;
+                assignOperations.TOTALAMOUNTRECOVERY = validate.TOTALAMOUNTRECOVERY;
+                assignOperations.SOURCE = model.source;
+                assignOperations.PRODUCTID = validate.PRODUCTID;
+                assignOperations.PRODUCTCLASSID = validate.PRODUCTCLASSID;
+                assignOperations.LOANID = validate.LOANID;
+                assignOperations.ASSIGNMENTTYPE = validate.ASSIGNMENTTYPE;
+                assignOperations.APPLICATIONREFERENCENUMBER = validate.APPLICATIONREFERENCENUMBER;
+                assignOperations.CUSTOMERID = validate.CUSTOMERID;
+                assignOperations.DATEASSIGNED = DateTime.Now;
+                context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(assignOperations);
+                if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+            }catch(Exception ex)
+            {
+                throw ex;
+            }
+            TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL removeLienOperation = new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL();
+            removeLienOperation = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
+            {
+                ACCREDITEDCONSULTANTID = model.accreditedConsultant,
+                REFERENCEBATCHID = referenceNumber,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
+                REQUESTDATE = DateTime.Now,
+                SOURCE = model.source,
+                ASSIGNMENTTYPE = "MANUAL"
+            });
+            if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+            var flagDelete = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+            flagDelete.DELETED = true;
+            flagDelete.DELETEDBY = user.createdBy;
+            flagDelete.DATETIMEDELETED = DateTime.Now;
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ referenceNumber}' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            });
+
+            int resultStatus = context.SaveChanges();
+            if (resultStatus > 0)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+
         public WorkflowResponse saveBulkLoanReAssignmentToAgent(LoanRecoveryAssignmentViewModel model, UserInfo user)
         {
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -18546,6 +18627,7 @@ namespace FintrakBanking.Repositories.Credit
                     validate.OPERATIONCOMPLETED = false;
                     validate.SOURCE = model.source;
                     context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(validate);
+                    context.SaveChanges();
 
                     TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL removeLienOperation = new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL();
                     removeLienOperation = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
@@ -18557,8 +18639,9 @@ namespace FintrakBanking.Repositories.Credit
                         REQUESTDATE = DateTime.Now,
                         SOURCE = model.source
                     });
+                   context.SaveChanges();
 
-                    var flagDelete = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+                var flagDelete = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
                     flagDelete.DELETED = true;
                     flagDelete.DELETEDBY = user.createdBy;
                     flagDelete.DATETIMEDELETED = DateTime.Now;
@@ -18605,7 +18688,7 @@ namespace FintrakBanking.Repositories.Credit
             List<TBL_LOAN_RECOVERY_ASSIGNMENT> bulkLoanTable = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
             if (model == null)
             {
-                throw new ConditionNotMetException("Kindly selectat least one transaction.");
+                throw new ConditionNotMetException("Kindly select at least one transaction.");
             }
 
 

@@ -19481,7 +19481,7 @@ namespace FintrakBanking.Repositories.Credit
                             where
                             atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             && atrail.OPERATIONID == ln.OPERATIONID
-                            && source.ToLower() == source.ToLower()
+                            && ln.SOURCE.ToLower() == source.ToLower()
 
                             select new LoanReviewOperationApprovalViewModel
                             {
@@ -31597,6 +31597,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             select new LoanReviewOperationApprovalViewModel
                             {
+                                assignedBy = context.TBL_STAFF.Where(s=>s.STAFFID == lr.CREATEDBY).Select(s=>s.FIRSTNAME +" "+s.MIDDLENAME +" "+ s.LASTNAME).FirstOrDefault(),
                                 assignmentType = lr.ASSIGNMENTTYPE,
                                 loanApplicationId = lp.LOANAPPLICATIONID,
                                 currencyId = ld.CURRENCYID,
@@ -31709,6 +31710,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                      select new LoanReviewOperationApprovalViewModel
                                      {
+                                         assignedBy = context.TBL_STAFF.Where(s => s.STAFFID == lr.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
                                          assignmentType = lr.ASSIGNMENTTYPE,
                                          //totalAmountRecovery = (ln.PASTDUEPRINCIPAL + ln.PASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.PENALCHARGEAMOUNT),
                                          loanApplicationId = lp.LOANAPPLICATIONID,
@@ -32905,8 +32907,7 @@ namespace FintrakBanking.Repositories.Credit
                             lr.ISFULLYRECOVERED == false
                             && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
                             && pr.EXCLUDEFROMLITIGATION == false
-                            && (lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                            || lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
+                            && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             && lr.DELETED == false
                             && lr.REFERENCEID == referenceId
 
@@ -33001,8 +33002,7 @@ namespace FintrakBanking.Repositories.Credit
                                      lr.ISFULLYRECOVERED == false
                                      && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
                                      && pr.EXCLUDEFROMLITIGATION == false
-                                     && (lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                                     || lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
+                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                      && lr.DELETED == false
                                      && lr.REFERENCEID == referenceId
 
@@ -33667,6 +33667,7 @@ namespace FintrakBanking.Repositories.Credit
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
                                 totalAllrecoveryAmount = lr.TOTALAMOUNTRECOVERY,
+                                outstandingAmount = (lr.TOTALAMOUNTRECOVERY- lr.AMOUNTRECOVERED),
                                 accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(d => d.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(d => d.FIRMNAME).FirstOrDefault(),
                                 amountRecovered = (decimal)lr.AMOUNTRECOVERED,
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
@@ -33767,6 +33768,7 @@ namespace FintrakBanking.Repositories.Credit
                                          productId = ln.PRODUCTID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          totalAllrecoveryAmount = lr.TOTALAMOUNTRECOVERY,
+                                         outstandingAmount = (lr.TOTALAMOUNTRECOVERY - lr.AMOUNTRECOVERED),
                                          casaAccountId = ln.CASAACCOUNTID,
                                          amountRecovered = (decimal)lr.AMOUNTRECOVERED,
                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
@@ -34422,6 +34424,7 @@ namespace FintrakBanking.Repositories.Credit
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
                                 totalAllrecoveryAmount = lr.TOTALAMOUNTRECOVERY,
+                                outstandingAmount = (lr.TOTALAMOUNTRECOVERY-lr.AMOUNTRECOVERED),
                                 accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(d => d.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(d => d.FIRMNAME).FirstOrDefault(),
                                 amountRecovered = (decimal)lr.AMOUNTRECOVERED,
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
@@ -34515,6 +34518,7 @@ namespace FintrakBanking.Repositories.Credit
                                          totalAllrecoveryAmount = lr.TOTALAMOUNTRECOVERY,
                                          casaAccountId = ln.CASAACCOUNTID,
                                          amountRecovered = (decimal)lr.AMOUNTRECOVERED,
+                                         outstandingAmount = (lr.TOTALAMOUNTRECOVERY - lr.AMOUNTRECOVERED),
                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                          branchId = ln.BRANCHID,
