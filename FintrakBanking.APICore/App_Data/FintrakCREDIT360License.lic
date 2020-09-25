@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<License>
+  <Product>CREDIT360</Product>
+  <LicenseDate>8/1/2020</LicenseDate>
+  <ExpireDate>12/31/2020</ExpireDate>
+  <CoveredVersion>1.0.0.1</CoveredVersion>
+  <Licensee>First Bank Nigeria</Licensee>
+  <ServerMotherBoard>B4:89:HN:94:09</ServerMotherBoard>
+  <ServerMAC>HF:90:HT:HT:59</ServerMAC>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <DigestValue>T5/Bw3DAUcum91hnaLIiUlkXGGo=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>Z7kYcvsmGbmpfzfytlkcPsYfhWzlf7b3kS4bTDKQ1Rv4JiFBNO4indKe1OUQ7Tgqm1AJ+JJeBGMnCT+CRdmTC1jH0SX1tjdp1lxtjvIFRl7YkGpSPga3O366Fy02uop+StnF68tpF1imoEF0KAQEuQLbrJgBjtIWwW1kKIJlAG0=</SignatureValue>
+  </Signature>
+</License>

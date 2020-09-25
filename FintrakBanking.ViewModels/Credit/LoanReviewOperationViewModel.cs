@@ -95,7 +95,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool isPrimaryDocument { get; set; }
         public string formData { get; set; }
-
+        public string feeSourceModule { get; set; }
     }
 
     public class LoanIrregularScheduleViewModel
@@ -201,6 +201,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
+        public int mgtOperationId { get; set; }
         public decimal? prepaymentAmount { get; set; }
         public decimal? TotalExposure { get; set; }
         public string source { get; set; }

@@ -891,82 +891,82 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareDate() == true)
             {
-                //TimeSpan start = new TimeSpan(17, 0, 0); 
-                //TimeSpan end = new TimeSpan(19, 0, 0); 
+                TimeSpan start = new TimeSpan(17, 0, 0);
+                TimeSpan end = new TimeSpan(17, 30, 0);
 
-                //if ((now >= start) && (now <= end))
-                //{
-                //    //GetStaffLoanPortfolioReport();
-                //    GetValuationReminder();
-                //    GetSiteVisitationAccountReminder();
-                //    GetExpiredValuationReport();
-                //    GetFacilityRestructuredNotification();
-                //    GetSLAReport();
-                //    GetPastDueDeferredDocuments();
-                //    GetExpiredInsurancePolicies();
-                //    GetLoanRepaymentReminder();
-                //    GetGroupCreditFileChecklistReminder();
-                //    state = true;
-                //}
+                if ((now >= start) && (now <= end))
+                {
+                    //GetStaffLoanPortfolioReport();
+                    GetValuationReminder();
+                    GetSiteVisitationAccountReminder();
+                    GetExpiredValuationReport();
+                    GetFacilityRestructuredNotification();
+                    GetSLAReport();
+                    GetPastDueDeferredDocuments();
+                    GetExpiredInsurancePolicies();
+                    GetLoanRepaymentReminder();
+                    GetGroupCreditFileChecklistReminder();
+                    state = true;
+                }
             }
 
             if (CompareDateSectorLimit() == true)
             {
-                //TimeSpan start2 = new TimeSpan(8, 0, 0); 
-                //TimeSpan end2 = new TimeSpan(17, 0, 0);
+                TimeSpan start2 = new TimeSpan(11, 30, 0);
+                TimeSpan end2 = new TimeSpan(12, 0, 0);
 
-                //if ((now >= start2) && (now <= end2))
-                //{
-                //    GetSectorLimitExceedeBBDReminder();
-                //    GetSectorLimitExceedeCBDReminder();
-                //    GetSectorLimitExceedeCIBDReminder();
-                //    GetSectorLimitExceedeRBDReminder();
-                //    GetSectorLimitExceededBankReminder();
-                //    state = true;
-                //}
+                if ((now >= start2) && (now <= end2))
+                {
+                    GetSectorLimitExceedeBBDReminder();
+                    GetSectorLimitExceedeCBDReminder();
+                    GetSectorLimitExceedeCIBDReminder();
+                    GetSectorLimitExceedeRBDReminder();
+                    GetSectorLimitExceededBankReminder();
+                    state = true;
+                }
 
-                
+
             }
 
 
             if (CompareDigitalLoanDate() == true)
             {
-                //TimeSpan start11 = new TimeSpan(11, 0, 0); 
-                //TimeSpan end13 = new TimeSpan(13, 0, 0); 
+                TimeSpan start11 = new TimeSpan(11, 0, 0);
+                TimeSpan end13 = new TimeSpan(11, 30, 0);
 
-                //if ((now >= start11) && (now <= end13))
-                //{
-                //    GetDigitalLoanExceptionNPLIncrease();
-                //    GetDigitalLoanExceptionNPLDecrease();
-                //    GetDigitalLoanExceptionNPLModuleIncrease();
-                //    GetDigitalLoanExceptionNPLModuleDecrease();
-                //    GetDigitalLoanDisbursementIncrease();
-                //    GetDigitalLoanDisbursementDecrease();
-                //    GetDigitalLoanDisbursementModuleIncrease();
-                //    GetDigitalLoanDisbursementModuleDecrease();
-                //    GetDigitalLoanDPDIncrease();
-                //    GetDigitalLoanDPDDecrease();
-                //    GetDigitalLoanDPDModuleIncrease();
-                //    GetDigitalLoanDPDModuleDecrease();
-                //    GetDigitalLoanLiquidationIncrease();
-                //    GetDigitalLoanLiquidationModuleIncrease();
-                //    state = true;
-                //}
+                if ((now >= start11) && (now <= end13))
+                {
+                    //GetDigitalLoanExceptionNPLIncrease();
+                    //GetDigitalLoanExceptionNPLDecrease();
+                    //GetDigitalLoanDisbursementIncrease();
+                    //GetDigitalLoanDisbursementDecrease();
+                    //GetDigitalLoanDPDIncrease();
+                    //GetDigitalLoanDPDDecrease();
+                    //GetDigitalLoanLiquidationIncrease();
+                    GetDigitalLoanLiquidationModuleIncrease();
+                    GetDigitalLoanExceptionNPLModuleIncrease();
+                    GetDigitalLoanExceptionNPLModuleDecrease();
+                    GetDigitalLoanDPDModuleIncrease();
+                    GetDigitalLoanDPDModuleDecrease();
+                    GetDigitalLoanDisbursementModuleIncrease();
+                    GetDigitalLoanDisbursementModuleDecrease();
+                    state = true;
+                }
 
 
             }
 
             if (CompareDefaultRepayment() == true)
             {
-                //TimeSpan start11 = new TimeSpan(14, 0, 0);
-                //TimeSpan end13 = new TimeSpan(16, 0, 0);
+                TimeSpan start11 = new TimeSpan(14, 0, 0);
+                TimeSpan end13 = new TimeSpan(14, 30, 0);
 
-                //if ((now >= start11) && (now <= end13))
-                //{
-                //    GetRepaymentDefaultersAlert();
-                //    GetRepaymentPayDownAlert();
-                //    state = true;
-                //}
+                if ((now >= start11) && (now <= end13))
+                {
+                    GetRepaymentDefaultersAlert();
+                    GetRepaymentPayDownAlert();
+                    state = true;
+                }
             }
 
             
@@ -1066,21 +1066,22 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             DateTime currentDate = DateTime.Now;
             var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
-                         && (m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationModuleIncrease"
-                         )).FirstOrDefault();
+                         && (//m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLIncrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLDecrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementIncrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementDecrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDIncrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDDecrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationIncrease"
+
+                             m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleIncrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleDecrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationModuleIncrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleIncrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleDecrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleIncrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleDecrease"
+                             )).FirstOrDefault();
 
             if (DBdate == null)
             {
@@ -3751,7 +3752,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue) || (exceptionNPL.NPL >= (decimal)twoPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -3810,7 +3811,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue) || (exceptionNPL.NPL <= -(decimal)twoPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -3868,7 +3869,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue) || (exceptionNPL.NPL >= (decimal)twoPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -3927,7 +3928,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue) || (exceptionNPL.NPL <= -(decimal)twoPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -3987,7 +3988,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue) 
                        || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4046,7 +4047,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT <= -(decimal)tenPercentValue && exceptionNPL.DISBURSEMENT > -(decimal)fifteenPercentValue)
                        || (exceptionNPL.DISBURSEMENT <= -(decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4105,7 +4106,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue)
                        || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4164,7 +4165,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.NPL <= -(decimal)tenPercentValue && exceptionNPL.NPL > -(decimal)fifteenPercentValue)
                        || (exceptionNPL.NPL <= -(decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4224,7 +4225,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4283,7 +4284,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4342,7 +4343,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4401,7 +4402,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4460,7 +4461,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
                        || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4519,7 +4520,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
                        || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4545,7 +4546,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var defaultEmail = "";
             if (alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+                defaultEmail = alertTitleInfo.DEFAULTEMAIL;
             }
 
             if (sectorLimitBBD != null && sectorLimitBBD.Count() > 0)
