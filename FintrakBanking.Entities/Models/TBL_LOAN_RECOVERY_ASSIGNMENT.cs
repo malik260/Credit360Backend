@@ -29,5 +29,11 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
         public string SOURCE { get; set; }
+        public string LOANREFERENCE { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
+        public int? PRODUCTID { get; set; }
+        public int? PRODUCTCLASSID { get; set; }
+        public string ASSIGNMENTTYPE { get; set; }
+        public bool ISMAILSENT { get; set; }
     }
 }

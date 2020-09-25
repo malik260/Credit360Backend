@@ -471,7 +471,14 @@ namespace FintrakBanking.Common.Enum
         RemoveLien = 564,
         BulkLoanRecoveryAssignment = 565,
         BulkLoanRecoveryReport = 566,
-
+        LcExtensionAdded = 567,
+        LcExtensionUpdated = 568,
+        LcExtensionDeleted = 569,
+        LcCashBuildUpPlanAdded = 570,
+        LcCashBuildUpPlanUpdated = 571,
+        LcCashBuildUpPlanDeleted = 572,
+        LcUsanceExtensionAdded = 573,
+        LcUsanceExtensionUpdated = 574,
 
     };
     public enum RegulatoryTypeEnum
@@ -486,6 +493,42 @@ namespace FintrakBanking.Common.Enum
         RelationshipType = 9,
         CompanySize = 10,
         FundingSource = 11,
+    }
+    public struct LicenseFileDetail
+    {
+
+        public LicenseStatus Status;
+
+        public string Licensee;
+
+        public DateTime LicenseDate;
+
+        public DateTime ExpireDate;
+
+        public string CoveredVersion;
+
+        public string ServrMAC;
+
+        public string Product;
+
+        public string ServerMotherBoard;
+    }
+    public enum LicenseStatus
+    {
+
+        ValidLicense,
+
+        MissingLicenseFile,
+
+        CorruptLicenseFile,
+
+        InvalidSignature,
+
+        NotYetLicensed,
+
+        LicenseExpired,
+
+        VersionMismatch,
     }
 
     public static class General

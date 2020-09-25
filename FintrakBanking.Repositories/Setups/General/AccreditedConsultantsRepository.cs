@@ -261,7 +261,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 TBL_TEMP_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates,
                 DATEOFENGAGEMENT = entity.dateOfEngagement,
-                CATEGORY = entity.category
+                CATEGORY = entity.category,
+                STAFFCODE = entity.staffCode
             };
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
@@ -360,7 +361,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 DELETED = false,
                 TBL_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates,
                 DATEOFENGAGEMENT = entity.dateOfEngagement,
-                CATEGORY = entity.category
+                CATEGORY = entity.category,
+                STAFFCODE = entity.staffCode
                 };
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
@@ -461,9 +463,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempAccreditedConsultantsToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 tempAccreditedConsultantsToUpdate.DATEOFENGAGEMENT = entity.dateOfEngagement;
                 tempAccreditedConsultantsToUpdate.CATEGORY = entity.category;
-
-
-
+                tempAccreditedConsultantsToUpdate.STAFFCODE = entity.staffCode;
 
                 context.TBL_TEMP_ACCREDITEDCONSULTANT.Add(tempAccreditedConsultantsToUpdate);
                 context.SaveChanges();
@@ -513,7 +513,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     ISCURRENT = true,
                     OPERATION = "update",
                     DATEOFENGAGEMENT = entity.dateOfEngagement,
-                    CATEGORY = entity.category
+                    CATEGORY = entity.category,
+                    STAFFCODE = entity.staffCode
                 };              
 
                 context.TBL_TEMP_ACCREDITEDCONSULTANT.Add(tempAccreditedConsultants);
@@ -605,6 +606,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 consultants.CORECOMPETENCE = entity.coreCompetence;
                 consultants.DATEOFENGAGEMENT = entity.dateOfEngagement;
                 consultants.CATEGORY = entity.category;
+                consultants.STAFFCODE = entity.staffCode;
 
             };
             AccreditedConsultantId = entity.accreditedConsultantId;
@@ -747,6 +749,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingaccreditedConsultant.DELETED = false;
                     existingaccreditedConsultant.DATEOFENGAGEMENT = accreditedConsultantModel.DATEOFENGAGEMENT;
                     existingaccreditedConsultant.CATEGORY = accreditedConsultantModel.CATEGORY;
+                    existingaccreditedConsultant.STAFFCODE = accreditedConsultantModel.STAFFCODE;
                 }
 
                 accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
@@ -791,6 +794,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         DELETED = false,
                         DATEOFENGAGEMENT = accreditedConsultantModel.DATEOFENGAGEMENT,
                         CATEGORY = accreditedConsultantModel.CATEGORY,
+                        STAFFCODE = accreditedConsultantModel.STAFFCODE,
 
                     };
                     accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
@@ -1217,6 +1221,12 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = this.context.TBL_LOAN_APPLICATION_DETL_CON.Find(id);
             if (data == null) return false;
+
+            var validateRecoveryCollection = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == id && x.DELETED == false).ToList();
+            if (validateRecoveryCollection.Count() > 0 )
+            {
+                throw new SecureException("The agent is currently on recovery collection list. Kindly unassign before deleting");
+            }
 
             data.DELETED = true;
             data.DATETIMEDELETED = DateTime.Now;

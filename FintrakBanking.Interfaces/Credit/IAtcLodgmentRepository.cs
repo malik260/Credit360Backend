@@ -28,7 +28,7 @@ namespace FintrakBanking.Interfaces.credit
         //IEnumerable<AtcReleaseViewModel> GetAtcRelease(int id);
         AtcReleaseViewModel GetAtcRelease(int id);
 
-        bool AddAtcRelease(IEnumerable <AtcReleaseViewModel> model);
+        WorkflowResponse AddAtcRelease(IEnumerable <AtcReleaseViewModel> model);
 
         bool DeleteAtcRelease(int id, UserInfo user);
 
@@ -45,6 +45,6 @@ namespace FintrakBanking.Interfaces.credit
         bool atclodgmentApproval(AtcLodgmentViewModel model);
         bool SaveEditedATCRelease(AtcReleaseViewModel model, int id);
         IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentsByCustomerId(int customerId);
-        bool SubmitReferredAtcBackIntoWorkflow(AtcReleaseViewModel model);
+        WorkflowResponse SubmitReferredAtcBackIntoWorkflow(AtcReleaseViewModel model);
     }
 }

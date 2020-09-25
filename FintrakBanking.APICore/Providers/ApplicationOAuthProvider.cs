@@ -281,6 +281,42 @@ namespace FintrakBanking.APICore.Providers
                 FinTrakBankingContext _bankingContext = new FinTrakBankingContext();
                 var authRepo = new AuthenticationRepository(_bankingContext, null, null);
 
+                /*
+                 * this section is for lisence validation
+                 * 
+                var result = authRepo.ExamineLicense();
+                if (result.Status == LicenseStatus.CorruptLicenseFile)
+                {
+                    context.SetError("invalid_grant", "Currupt License File!");
+
+                    return;
+                }
+                else if (result.Status == LicenseStatus.InvalidSignature)
+                {
+                    context.SetError("invalid_grant", "Invalid Signature!");
+                    return;
+                }
+                else if (result.Status == LicenseStatus.LicenseExpired)
+                {
+                    context.SetError("invalid_grant", "License Expired!");
+                    return;
+                }
+                else if (result.Status == LicenseStatus.MissingLicenseFile)
+                {
+                    context.SetError("invalid_grant", "Missing License File!");
+                    return;
+                }
+                else if (result.Status == LicenseStatus.NotYetLicensed)
+                {
+                    context.SetError("invalid_grant", "Application Not Licensed!");
+                    return;
+                }
+                else if (result.Status == LicenseStatus.VersionMismatch)
+                {
+                    context.SetError("invalid_grant", "Application License Version Mismatch!");
+                    return;
+                } end of lisence validation*/
+
 
                 ActiveUserDetails userInfo = authRepo.GetUserAuthenticationInfo(userVm.username);
                 ActiveUserDetails userInformation = authRepo.GetUserInformation(userVm.username);

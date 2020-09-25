@@ -13,12 +13,13 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.ViewModels.Finance;
 
 namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
-        RetailRecoveryCustomerTransactionsViewModels GetRetailRecoveryReporting(DateTime startDate, DateTime endDate);
+        IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId);
         bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsLMSViewModel model, int id, UserInfo user);
         LoanApplicationTagsLMSViewModel GetLoanApplicationTagsLMS(int id);
         IQueryable<LoanReviewApplicationViewModel> GetRejectedReviewLoanApplications(UserInfo user);
@@ -35,6 +36,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool CheckExistingCertificateOfOwnership(string certificateOfOwnership, int companyId);
 
         IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId);
+        CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId);
 
         IEnumerable<LoanApplicationViewModel> GetAllLoanApplications(int companyId);
 
@@ -66,7 +68,7 @@ namespace FintrakBanking.Interfaces.Credit
 
 
 
-        LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
+        LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan, bool isExceptionalLoan = false);
         bool ValidateDuplicateLoanApplication( LoanApplicationViewModel loan);
         string GetRefrenceNumber();
 
@@ -171,6 +173,11 @@ namespace FintrakBanking.Interfaces.Credit
         CurrentCustomerExposure GetCurrentCompanyExposure();
 
         CurrentCustomerExposure GetCurrentCustomerExposure(int customerId);
+
+        String ResponseMessage(WorkflowResponse response, string itemHeading);
+        IEnumerable<LoanApplicationDetailViewModel> GetExceptionalLoansForApproval(int staffId);
+
+        WorkflowResponse GoForApprovalExceptionalLoan(ExceptionalLoanViewModel model);
 
         LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId);
 

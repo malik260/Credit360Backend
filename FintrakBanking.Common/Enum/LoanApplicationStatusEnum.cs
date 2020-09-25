@@ -46,9 +46,13 @@ namespace FintrakBanking.Common.Enum
         LcEnhancementCompleted = 37,
         ArchiveInProgress = 38,
         ArchiveCompleted = 39,
-        CRMSCODECapturingInprogress =40,
+        CRMSCODECapturingInprogress = 40,
         CreditFillingInProgress =41,
         DocumentUploadInProgress = 41,
+        LcIssuanceExtensionInProgress = 43,
+        LcIssuanceExtensionCompleted = 44,
+        LcUsanceExtensionInProgress = 45,
+        LcUsanceExtensionCompleted = 46,
         //AdhocApprovalInProgress =23,
     }
 }

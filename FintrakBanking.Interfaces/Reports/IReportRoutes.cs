@@ -12,6 +12,11 @@ namespace FintrakBanking.Interfaces.Reports
 {
     public interface IReportRoutes
     {
+        string GetComputationForInternalAgentsReport(DateTime startDate, DateTime endDate);
+        string GetRecoveryCollectionReport(DateTime startDate, DateTime endDate);
+        string GetComputationForExternalAgentsReport(DateTime startDate, DateTime endDate);
+        string GetPaydayLoanRecoveryCollectionReport(DateTime startDate, DateTime endDate);
+        string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate, int dpd);
         string GetOutOfCourtSettlement(DateTime startDate, DateTime endDate);
         string GetCollateralSales(DateTime startDate, DateTime endDate);
         string GetRecoveryAgentUpdate(DateTime startDate, DateTime endDate);
@@ -23,7 +28,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetFullAndFinalSettlementAndWaivers(DateTime startDate, DateTime endDate);
         int GetLoanApplicationIdByReferenceNumberLMS(string applicationRefNumber);
         string GetProductSpecificTemplateCFL(short? productClassProcessId, short? productClassId, string applicationRefNumber,
-                       string StatusCode, string RequestId, string WorkflowStage, string ReasonForRejection, string ActionByName);
+        string StatusCode, string RequestId, string WorkflowStage, string ReasonForRejection, string ActionByName);
         string DeferralWaiverReport(int staffId, int operationId, int targetId, int loanApplicationDetailId);
         string GetWorkflowSLA(int loanApplicationId, int companyId, int staffId);
         string GetLoanScheduleReport(int tearmLoanId, int companyId, int staffId);
@@ -164,9 +169,11 @@ namespace FintrakBanking.Interfaces.Reports
         string GetInterestIncome(DateTime startDate, DateTime endDate);
         string GetCreditBureauReport(DateRange dateRange);
         string GetCollateralPerfection(DateRange dateRange);
+        string CorporateLoansReport(DateRange dateRange);
         string GetCollateralRegister(DateRange dateRange);
         string GetFixedDepositCollaterals(int companyId, string collateralCode, int staffId);
         string GetValidCollaterals(DateTime startDate, DateTime endDate);
+        string GetJobRequestReport(DateRange dateRange, int companyId, int staffId);
 
     }
 

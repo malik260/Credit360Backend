@@ -976,6 +976,29 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("corporate-loans-report")]
+        public HttpResponseMessage CorporateLoansReport(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.CorporateLoansReport(dateRange);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("Collateral-Perfection")]
         public HttpResponseMessage GetCollateralPerfection([FromBody]DateRange param)
         {
@@ -1783,6 +1806,31 @@ namespace FintrakBanking.APICore.Controllers
                 param.companyId = token.GetCompanyId;
 
                 var data = repo.GetStaffRoleProfileGroupReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-request-report")]
+        public HttpResponseMessage GetJobRequestReport(DateRange dateRange)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetJobRequestReport(dateRange, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -3565,6 +3613,127 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("recovery-delinquent-accounts-report")]
+        public HttpResponseMessage GetRecoveryDelinquentAccountsReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetRecoveryDelinquentAccountsReport(obj.startDate, obj.endDate, obj.dpd);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        
+
+      [HttpPost]
+        [ClaimsAuthorization]
+        [Route("payday-loan-recovery-collection-report")]
+        public HttpResponseMessage GetPaydayLoanRecoveryCollectionReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetPaydayLoanRecoveryCollectionReport(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("computation-for-external-agents-report")]
+        public HttpResponseMessage GetComputationForExternalAgentsReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetComputationForExternalAgentsReport(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("recovery-collection-report")]
+        public HttpResponseMessage GetRecoveryCollectionReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetRecoveryCollectionReport(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("computation-for-internal-agents-report")]
+        public HttpResponseMessage GetComputationForInternalAgentsReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetComputationForInternalAgentsReport(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }

@@ -108,12 +108,14 @@ namespace FintrakBanking.Entities.Models
         public decimal? LCTOLERANCEPERCENTAGE { get; set; }
 
         public decimal? LCTOLERANCEVALUE { get; set; }
+        public decimal? TOTALUSANCEAMOUNTLOCAL { get; set; }
         public int TRANSACTIONCYCLE { get; set; }
 
         public decimal RELEASEDAMOUNT { get; set; }
 
 
         public int? OPERATIONID { get; set; }
+        public int? ARCHIVINGOPERATIONID { get; set; }
         public DateTime DATETIMEARCHIVED { get; set; }
     }
 }

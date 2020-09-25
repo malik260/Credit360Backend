@@ -490,11 +490,11 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("retail-recovery-report/{startDate}/{endDate}")]
-        public HttpResponseMessage GetRetailRecoveryReporting([FromUri] DateTime startDate, [FromUri] DateTime endDate)
+        [Route("retail-recovery-report/{startDate}/{endDate}/{accreditedConsultantId}")]
+        public HttpResponseMessage GetRetailRecoveryReporting([FromUri] DateTime startDate, [FromUri] DateTime endDate, [FromUri] int accreditedConsultantId)
         {
             
-                var records = repo.GetRetailRecoveryReporting(startDate, endDate);
+                var records = repo.GetRetailRecoveryReporting(startDate, endDate, accreditedConsultantId);
             if (records != null) {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = records });
             }
@@ -1878,6 +1878,39 @@ namespace FintrakBanking.APICore.Controllers
                 count = data.Count(),
                 loanApplicationId = id
             });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-exceptional-loans-for-approval")]
+        public HttpResponseMessage GetExceptionalLoansForApproval()
+        {
+            var data = repo.GetExceptionalLoansForApproval(token.GetStaffId);
+
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpPost]
+        [Route("exceptional-loan/forward-for-approval")]
+        public HttpResponseMessage GoForApprovalExceptionalLoan([FromBody] ExceptionalLoanViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.GoForApprovalExceptionalLoan(entity);
+
+            if (response.responseMessage != "") {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, $"EXCEPTIONAL LOAN - {response.responseMessage}") });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "EXCEPTIONAL LOAN") });
         }
 
         [HttpGet]

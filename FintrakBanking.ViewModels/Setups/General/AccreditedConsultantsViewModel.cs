@@ -39,6 +39,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string stateName { get; set; }
         public string category { get; set; }
         public DateTime? dateOfEngagement { get; set; }
+        public int totalRecordsAssigned { get; set; }
+        public decimal? totalRecoveryAmount { get; set; }
+        public decimal? amountRecovered { get; set; }
+        public string staffCode { get; set; }
     }
     public class AccreditedPrincipalsViewModel : GeneralEntity
     {

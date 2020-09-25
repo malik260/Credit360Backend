@@ -991,6 +991,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal feeRate { get; set; }
         public string description { get; set; }
         public bool isDeferred { get; set; }
+        public string feeSourceModule { get; set; }
         //public double? rate { get; set; }
 
     }

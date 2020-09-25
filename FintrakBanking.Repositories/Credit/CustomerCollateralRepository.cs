@@ -46,6 +46,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository lien;
         private ICasaRepository casa;
         private IIntegrationWithFinacle finacle;
+        private ICreditDrawdownRepository drawdownRepo;
         //private IAlertRepository alert;
 
         public string collateralReleaseStatusName { get; private set; }
@@ -62,7 +63,8 @@ namespace FintrakBanking.Repositories.Credit
             IApprovalLevelStaffRepository _level,
             ICasaLienRepository _lien,
             ICasaRepository _casa,
-            IIntegrationWithFinacle _finacle
+            IIntegrationWithFinacle _finacle,
+            ICreditDrawdownRepository _drawdownRepo
             //IAlertRepository _alert
             )
         {
@@ -79,6 +81,7 @@ namespace FintrakBanking.Repositories.Credit
             this.lien = _lien;
             this.casa = _casa;
             this.finacle = _finacle;
+            this.drawdownRepo = _drawdownRepo;
             //this.alert = _alert;
         }
 
@@ -7109,7 +7112,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CollateralValuersViewModel> GetCollateralValuer(int companyId)
         {
             return (from m in context.TBL_ACCREDITEDCONSULTANT
-                    where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTTYPEID == 2
+                    where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.Valuer
                     select new CollateralValuersViewModel
                     {
                         collateralValuerId = (short)m.ACCREDITEDCONSULTANTID,
@@ -11655,15 +11658,13 @@ namespace FintrakBanking.Repositories.Credit
             workflow.StaffId = model.createdBy;
             workflow.TargetId = model.collateralSwapId;
             workflow.CompanyId = model.companyId;
-            workflow.Vote = model.vote;
-            //var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
-            //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-            workflow.NextLevelId = 0;
-            workflow.ToStaffId = null;
+
+            //workflow.Vote = model.vote;
+            workflow.NextLevelId = null;
+            workflow.ToStaffId = model.toStaffId;
             workflow.StatusId = (int)model.forwardAction;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(model.customerId);
-            //var c = context.TBL_CUSTOMER.Find(cs.TBL_CUSTOMER.CUSTOMERID);
 
             workflow.BusinessUnitId = c?.BUSINESSUNTID;
             var placeholders = new AlertPlaceholders();
@@ -11707,6 +11708,20 @@ namespace FintrakBanking.Repositories.Credit
             //cs.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
             return workflow.Response;
+        }
+
+        public int GetNextLevelForCollateralSwap(int collateralSwapId, int createdBy, int companyId)
+        {
+            var approvalModel = new ForwardViewModel
+            {
+                createdBy = createdBy,
+                companyId = companyId,
+                applicationId = collateralSwapId,
+                comment = "Get next level for collateral swap",
+            };
+
+            var response = drawdownRepo.LogApprovalForMessage(approvalModel, (short)OperationsEnum.CollateralSwap, true, (int)ApprovalStatusEnum.Pending);
+            return response.nextLevelId.Value;
         }
 
         private void ArchiveOldCollateralOfLoan(int loanAppCollateralId, int newCollateralCustomerId, int createdBy)

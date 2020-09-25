@@ -398,7 +398,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Cron setup has been created successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-              new { success = false, message = "There was an error saving this record, Branch Name Exist" });
+              new { success = false, message = "There was an error saving this record" });
 
             }
             catch (SecureException ex)
