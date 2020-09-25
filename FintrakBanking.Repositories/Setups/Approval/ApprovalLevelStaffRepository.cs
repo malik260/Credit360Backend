@@ -930,15 +930,15 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
                               join d in context.TBL_LOAN_APPLICATION on a.TARGETID equals d.LOANAPPLICATIONID
                               join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                              where (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
-                                 && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate))
+                              where (DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) <= DbFunctions.TruncateTime(param.endDate))
                                  && operations.Contains(a.OPERATIONID)
-                                 && a.RESPONSESTAFFID == null
+                                 //&& a.RESPONSESTAFFID == null
                                  && d.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                                 && d.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                                && !approvals.Contains(a.APPROVALSTATUSID)
-                                && !disbursedLoans.Contains(d.LOANAPPLICATIONID)
-                                && a.APPROVALSTATEID != (int)ApprovalState.Ended 
+                                //&& !approvals.Contains(a.APPROVALSTATUSID)
+                                //&& !disbursedLoans.Contains(d.LOANAPPLICATIONID)
+                                //&& a.APPROVALSTATEID != (int)ApprovalState.Ended 
                                select (new WorkflowTrackerViewModel
                               {
                                   approvalStatusId = a.APPROVALSTATUSID,
@@ -1081,10 +1081,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               join d in context.TBL_LOAN_APPLICATION_DETAIL on bo.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                               join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                               join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                              where (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
-                                 && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)) &&
-                                 operations.Contains(a.OPERATIONID) && a.RESPONSESTAFFID == null && !approvals.Contains(a.APPROVALSTATUSID)
-                                 && a.APPROVALSTATEID != (int)ApprovalState.Ended
+                              where (DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) <= DbFunctions.TruncateTime(param.endDate)) &&
+                                 operations.Contains(a.OPERATIONID) 
+                                 //&& a.RESPONSESTAFFID == null && !approvals.Contains(a.APPROVALSTATUSID)
+                                 //&& a.APPROVALSTATEID != (int)ApprovalState.Ended
                                  && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                                  && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                               // a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 

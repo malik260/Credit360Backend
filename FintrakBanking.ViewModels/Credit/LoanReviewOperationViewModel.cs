@@ -393,6 +393,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int creditAppraisalOperationId { get; set; }
         public string lmsrApplicationReferenceNumber { get; set; }
         public decimal amount { get; set; }
+        public string divisionCode { get; set; }
+        public string divisionShortCode { get; set; }
 
 
         public int collateralLiquidationRecoveryId { get; set; }
