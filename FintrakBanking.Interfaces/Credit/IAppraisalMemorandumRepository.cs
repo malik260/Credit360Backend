@@ -71,6 +71,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool SelfAssignMultpleApplication(List<ForwardViewModel> models, GeneralEntity userEntity);
 
+        bool ReturnAssignApplicationToPool(int approvalTrailId, GeneralEntity model);
+
         IQueryable<LoanApplicationViewModel> GetPendingAdhocApplications(int applicationId, int countryId, int branchId, int staffId, int? classId);
 
         IEnumerable<CurrentCommitteeViewModel> GetCurrentCommittee(int loanApplicationId);
