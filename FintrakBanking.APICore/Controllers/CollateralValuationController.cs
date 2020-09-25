@@ -219,7 +219,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("go-for-approval")]
+        [Route("go-for-collateral-valuation-approval")]
         public HttpResponseMessage GoForApproval([FromBody] ValuationPrerequisiteViewModel model)
         {
             try
@@ -229,11 +229,9 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                var response = _colValuationRepo.GoForCollateralValuationApproval(model);
 
-                var res = _colValuationRepo.GoForCollateralValuationApproval(model);
-                //int totalItems = requestTypes.Count();
-                //requestTypes = requestTypes.OrderBy(x => x.dateTimeCreated).ToList();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = _colValuationRepo.ResponseMessage(response, $"COLLATERAL VALUATION {response.responseMessage}") });
             }
             catch (SecureException ex)
             {
@@ -315,6 +313,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("search-for-collateral-valuation/{searchString}")]
+        public HttpResponseMessage SearchForCollateralValuation(string searchString)
+        {
+            try
+            {
+                List<ValuationPrerequisiteViewModel> response = _colValuationRepo.SearchForCollateralValuation(searchString);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-valuation-waiting-for-approval/{collateralId}/collateralId")]
         public HttpResponseMessage GetAllValuationRequestWaitingForApproval(int collateralId)
         {
@@ -331,7 +346,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("submit-approval")]
+        [Route("submit-collateral-valuation-for-approval")]
         public HttpResponseMessage SubmitApproval([FromBody] ValuationPrerequisiteViewModel model)
         {
             try
@@ -341,11 +356,9 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-
-                var res = _colValuationRepo.SubmitApproval(model);
-                //int totalItems = requestTypes.Count();
-                //requestTypes = requestTypes.OrderBy(x => x.dateTimeCreated).ToList();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
+                var response = _colValuationRepo.SubmitApproval(model);
+              
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = _colValuationRepo.ResponseMessage(response, $"COLLATERAL VALUATION {response.responseMessage}") });
             }
             catch (SecureException ex)
             {
