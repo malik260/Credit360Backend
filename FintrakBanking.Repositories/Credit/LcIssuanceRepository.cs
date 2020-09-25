@@ -185,8 +185,8 @@ namespace FintrakBanking.Repositories.credit
                                 where
                                 //y.RESPONSESTAFFID == null
                                 (
-                                 //(operations.Contains(canct.OPERATIONID) || canct == null)
-                                 ((canct.OPERATIONID == (int)OperationsEnum.LCTerminationApproval) || canct == null)
+                                 (operations.Contains(canct.OPERATIONID) || canct == null)
+                                 //((canct.OPERATIONID == (int)OperationsEnum.LCTerminationApproval) || canct == null)
                                  &&
                                 (
                                 (a.LCREFERENCENUMBER.Trim().ToLower().Contains(searchString))
@@ -232,12 +232,12 @@ namespace FintrakBanking.Repositories.credit
                                     invoiceDate = a.INVOICEDATE,
                                     invoiceDueDate = a.INVOICEDUEDATE,
                                     transactionCycle = a.TRANSACTIONCYCLE,
-                                    lastComment = canct == null ? "N/A" : canct.COMMENT,
+                                    lastComment = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? "N/A" : canct.COMMENT,
                                     currentApprovalLevel = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? "N/A" : canct.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
-                                    currentlyWith = (canct == null) ? "N/A" : (canct.TOSTAFFID > 0) ? canct.TBL_STAFF2.FIRSTNAME + " " + canct.TBL_STAFF2.MIDDLENAME + " " + canct.TBL_STAFF2.LASTNAME : (canct.LOOPEDSTAFFID > 0) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == canct.LOOPEDSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == canct.LOOPEDSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == canct.LOOPEDSTAFFID).LASTNAME : canct.TBL_APPROVAL_LEVEL1.TBL_STAFF_ROLE.STAFFROLENAME,
+                                    currentlyWith = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? "N/A" : (canct.TOSTAFFID > 0) ? canct.TBL_STAFF2.FIRSTNAME + " " + canct.TBL_STAFF2.MIDDLENAME + " " + canct.TBL_STAFF2.LASTNAME : (canct.LOOPEDSTAFFID > 0) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == canct.LOOPEDSTAFFID).FIRSTNAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == canct.LOOPEDSTAFFID).MIDDLENAME + " " + context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == canct.LOOPEDSTAFFID).LASTNAME : canct.TBL_APPROVAL_LEVEL1.TBL_STAFF_ROLE.STAFFROLENAME,
                                     responsiblePerson = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? "N/A" : canct.TBL_STAFF1.STAFFCODE + " - " + canct.TBL_STAFF1.FIRSTNAME + " " + canct.TBL_STAFF1.MIDDLENAME + " " + canct.TBL_STAFF1.LASTNAME,
-                                    currentApprovalLevelTypeId = canct == null ? 0 : canct.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
-                                    lcApprovalTrailId = canct == null ? 0 : canct.APPROVALTRAILID, // for inner sequence ordering
+                                    currentApprovalLevelTypeId = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? 0 : canct.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
+                                    lcApprovalTrailId = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? 0 : canct.APPROVALTRAILID, // for inner sequence ordering
                                     approvalStatus = (canct == null || canct.OPERATIONID != (int)OperationsEnum.LCTerminationApproval) ? "N/A" : context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == canct.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                     lcApplicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o => o.APPLICATIONSTATUSID == a.APPLICATIONSTATUSID).Select(o => o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
                                     createdBy = (int)a.CREATEDBY,

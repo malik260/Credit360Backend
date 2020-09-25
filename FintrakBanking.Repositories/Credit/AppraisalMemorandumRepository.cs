@@ -3235,7 +3235,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             
             var staffs = general.GetStaffRlieved(staffId);
-            var currentStaff = context.TBL_STAFF.Find(staffs[0]);
+            //var currentStaff = context.TBL_STAFF.Find(staffs[0]);
 
             IQueryable<LoanApplicationViewModel> applications = null;
 

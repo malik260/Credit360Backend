@@ -112,6 +112,20 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
+        [HttpGet]
+        [Route("loan-application/global-completed/{searchString}")]
+        public HttpResponseMessage GetGlobalEmployerLoansDueForInitiateBooking(string searchString)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var response = repo.GetGlobalEmployerLoansDueForInitiateBooking(token.GetCompanyId, searchString);
+            if (!response.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application/request-booking/{applicationId}")]
