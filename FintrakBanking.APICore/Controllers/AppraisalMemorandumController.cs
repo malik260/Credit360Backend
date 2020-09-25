@@ -560,6 +560,26 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
         }
 
+        [HttpPut, Route("revert-transaction-to-general-pool/{trailId}")]
+        public HttpResponseMessage ReturnAssignApplicationToPool([FromBody] List<ForwardViewModel> model, int trailId)
+        {
+            var entity = new GeneralEntity
+            {
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path
+            };
+
+            var reassigned = repo.ReturnAssignApplicationToPool(trailId, entity);
+            if (reassigned)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request has been returned to general pool successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
+        }
+
         [HttpPut, Route("selfAssign-application")]
         public HttpResponseMessage AssignApplication([FromBody] int approvalTrailId)
         {
