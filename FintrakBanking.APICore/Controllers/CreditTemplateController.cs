@@ -601,12 +601,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("recovery-analysis-document-section/operation/{operationId}/target/{targetId}/section/{sectionId}")]
-        public HttpResponseMessage GetRecoveryAnalysisDocumentSection(int operationId, int targetId, int sectionId)
+        [Route("recovery-analysis-document-section/operation/{operationId}/target/{targetId}/referenceId/{referenceId}/section/{sectionId}")]
+        public HttpResponseMessage GetRecoveryAnalysisDocumentSection(int operationId, int targetId, string referenceId, int sectionId)
         {
             try
             {
-                LoadedDocumentSectionViewModel response = repo.GetRecoveryAnalysisDocumentSection(token.GetStaffId, operationId, targetId, sectionId);
+                LoadedDocumentSectionViewModel response = repo.GetRecoveryAnalysisDocumentSection(token.GetStaffId, operationId, targetId, referenceId,  sectionId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
@@ -693,8 +693,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("recovery-analysis-documentation/operation/{operationId}/target/{targetId}/templateId/{templateId}")]
-        public HttpResponseMessage getRecoveryAnalysisDocumentation(int operationId, int targetId, int templateId)
+        [Route("recovery-analysis-documentation/operation/{operationId}/target/{targetId}/referenceId/{referenceId}/templateId/{templateId}")]
+        public HttpResponseMessage getRecoveryAnalysisDocumentation(int operationId, int targetId, string referenceId, int templateId)
         {
             try
             {
@@ -702,7 +702,7 @@ namespace FintrakBanking.APICore.Controllers
                 user.BranchId = token.GetBranchId;
                 user.staffId = token.GetStaffId;
                 user.companyId = token.GetCompanyId;
-                List<LoadedDocumentSectionViewModel> response = repo.getRecoveryAnalysisDocumentation(token.GetStaffId, operationId, targetId, user, templateId);
+                List<LoadedDocumentSectionViewModel> response = repo.getRecoveryAnalysisDocumentation(token.GetStaffId, operationId, targetId, referenceId, user, templateId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
