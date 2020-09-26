@@ -18,7 +18,7 @@ namespace FintrakBanking.Interfaces.Customer
         List<CustomerViewModels> GetIntegratedCustomerInformation(string searchTerm, bool isProspectConversion);
         //Task<CustomerIntegrationViewModels> GetIntegratedCustomerInformation(string searchTerm);
         //Task<List<CustomerIntegrationViewModels>> GetIntegratedCustomerInformation(string searchTerm);
-
+        bool MergeDuplicateCustomers(string accounNumber, string prospectiveCustomerCode, int createdBy);
 
     }
 }

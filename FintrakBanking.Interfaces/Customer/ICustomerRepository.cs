@@ -159,5 +159,6 @@ namespace FintrakBanking.Interfaces.Customer
         bool GetPoliticallyExposedPerson(string customerCode);
         void UpdateCustomerCollateralId(string customerCode);
         bool refreshCustomerAccount(int customerCode);
+        bool UpdateCustomerInformation(string customerCode, string accountNumber, int createdBy);
     }
 }

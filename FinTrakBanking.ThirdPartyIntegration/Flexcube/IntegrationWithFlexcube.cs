@@ -139,7 +139,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
 
-
         }
 
         public ResponseMessageViewModel FlexcubeOverDraft(FlexcubeCreateOverdraftViewModel model, short loanSystemTypeId, TwoFactorAutheticationViewModel twoFADetails = null)
