@@ -4239,6 +4239,7 @@ namespace FintrakBanking.Repositories.Credit
                 interestRepayment = d.INTERESTREPAYMENT,
                 isMoratorium = d.ISMORATORIUM,
                 moratorium = d.MORATORIUM,
+                //productPriceIndexId = d.PRODUCTPRICEINDEXID
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
@@ -6051,9 +6052,10 @@ namespace FintrakBanking.Repositories.Credit
                                                 approvalStatusId = a.APPROVALSTATUSID,
                                                 approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
                                                 approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                                                fromStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME
-                                                //toStaffName = (current.TOSTAFFID == null) ? "N/A" : current.TBL_STAFF2.LASTNAME + " " + current.TBL_STAFF2.MIDDLENAME + " " + current.TBL_STAFF2.FIRSTNAME,
-                                             }).OrderByDescending(x => x.approvalTrailId).ToList()
+                                                fromStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
+                                                toStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                                                  //toStaffName = (current.TOSTAFFID == null) ? "N/A" : current.TBL_STAFF2.LASTNAME + " " + current.TBL_STAFF2.MIDDLENAME + " " + current.TBL_STAFF2.FIRSTNAME,
+                                              }).OrderByDescending(x => x.approvalTrailId).ToList()
                                 })).OrderByDescending(o => o.approvalTrailId).ToList();
 
                 //var test = preBookingrecord.ToList();
@@ -7914,6 +7916,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             approvalStatusId = a.APPROVALSTATUSID,
+                            productPriceIndexId = b.PRODUCTPRICEINDEXID
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
