@@ -829,6 +829,10 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? collectionDate { get; set; }
         public string modeOfCollection { get; set; }
         public decimal? commissionRate { get; set; }
+        public decimal? commissionAmount { get; set; }
+        public decimal? commissionAmountLessWht { get; set; }
+        public decimal? whtAmount { get; set; }
+        public decimal? whtRate { get; set; }
     }
 
 

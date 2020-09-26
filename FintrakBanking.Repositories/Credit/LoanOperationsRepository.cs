@@ -33598,7 +33598,14 @@ namespace FintrakBanking.Repositories.Credit
                                 dateOfEngagement = (from a in context.TBL_LOAN_RECOVERY_COMMISSION_BATCH join c in context.TBL_ACCREDITEDCONSULTANT on a.ACCREDITEDCONSULTANT equals c.ACCREDITEDCONSULTANTID select c.DATEOFENGAGEMENT).FirstOrDefault(),
                             }).ToList();
             var LoanData = dataLoan.GroupBy(x => x.loanRecoveryCommissionApprovalId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanRecoveryCommissionApprovalId);
-
+            foreach(var i in LoanData)
+            {
+                 var recoveryCommission = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(s => s.REFERENCEID == i.referenceId).Select(s => s).FirstOrDefault();
+                i.amountRecovered = recoveryCommission.AMOUNTRECOVERED;
+                var recoveryReport = context.TBL_LOAN_RECOVERY_REPORTING_BATCH.Where(s => s.LOANRECOVERYREPORTBATCHID == (int)recoveryCommission.LOANRECOVERYREPORTBATCHID).Select(s => s).FirstOrDefault();
+                var captureRecovery = context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Where(s => s.COLLATERALLIQUIDATIONRECOVERYID == (int)recoveryReport.COLLATERALLIQUIDATIONRECOVERYID).Select(s => s).FirstOrDefault();
+                i.commissionRate = captureRecovery.PERCENTAGECOMMISSION;
+            }
             return LoanData;
         }
 
