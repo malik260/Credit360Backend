@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels;
+﻿using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
@@ -16,13 +17,14 @@ namespace FintrakBanking.Interfaces.Credit
         CollateralValuationViewModel GetCollateralValuation(int collteralValuationId);
         List<CollateralValuationViewModel> GetAllCollateralValuations(int collateralId);
         List<ValuationPrerequisiteViewModel> GetAllValuationPrerequisitesById(int staffId, int collateralValuationId);
-        bool GoForCollateralValuationApproval(ValuationPrerequisiteViewModel entity);
+        WorkflowResponse GoForCollateralValuationApproval(ValuationPrerequisiteViewModel entity);
+        String ResponseMessage(WorkflowResponse response, string itemHeading);
 
         IEnumerable<ValuationPrerequisiteViewModel> GetAllValuationRequest(int staffId);
 
         IEnumerable<ValuationPrerequisiteViewModel> GetCollateralValuationRequestWaitingForApproval(int staffId);
 
-        bool SubmitApproval(ValuationPrerequisiteViewModel model);
+        WorkflowResponse SubmitApproval(ValuationPrerequisiteViewModel model);
 
         bool AddCollateralValurerInfo(ValuationPrerequisiteViewModel model);
         List<ValuationPrerequisiteViewModel> GetAllCollateralValuerIformation();
@@ -34,5 +36,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<ValuationPrerequisiteViewModel> GetCollateralValuationPrerequisiteById(int staffId, int valuationPrerequisiteId);
 
         bool UpdateValuationPrerequisiteStatus(int valuationPrerequisiteId, UserInfo user);
+        List<ValuationPrerequisiteViewModel> SearchForCollateralValuation(string searchString);
     }
 }

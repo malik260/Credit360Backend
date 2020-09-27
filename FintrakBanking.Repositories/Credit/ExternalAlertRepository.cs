@@ -5843,6 +5843,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && pr.EXCLUDEFROMLITIGATION == false
                                          && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                          && ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                         && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= 30
 
                                          orderby ln.DATETIMECREATED descending
                                          select new RecoveryAutoAssignmentViewModel
@@ -5950,6 +5951,7 @@ namespace FintrakBanking.Repositories.Credit
                                               && pr.EXCLUDEFROMLITIGATION == false
                                               && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                               && ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                              && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= 30
 
                                               orderby ln.DATETIMECREATED descending
                                               select new RecoveryAutoAssignmentViewModel
@@ -6418,6 +6420,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && pr.EXCLUDEFROMLITIGATION == false
                                          && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                          && ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                         && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= 30
 
                                          orderby ln.DATETIMECREATED descending
                                          select new LoanReviewOperationApprovalViewModel
@@ -6443,6 +6446,7 @@ namespace FintrakBanking.Repositories.Credit
                                               && pr.EXCLUDEFROMLITIGATION == false
                                               && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                               && ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                              && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= 30
 
                                               orderby ln.DATETIMECREATED descending
                                               select new LoanReviewOperationApprovalViewModel

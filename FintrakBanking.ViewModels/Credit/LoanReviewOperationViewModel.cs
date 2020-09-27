@@ -95,7 +95,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool isPrimaryDocument { get; set; }
         public string formData { get; set; }
-
+        public string feeSourceModule { get; set; }
     }
 
     public class LoanIrregularScheduleViewModel
@@ -201,6 +201,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
+        public int mgtOperationId { get; set; }
         public decimal? prepaymentAmount { get; set; }
         public decimal? TotalExposure { get; set; }
         public string source { get; set; }
@@ -395,6 +396,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int creditAppraisalOperationId { get; set; }
         public string lmsrApplicationReferenceNumber { get; set; }
         public decimal amount { get; set; }
+        public string divisionCode { get; set; }
+        public string divisionShortCode { get; set; }
 
 
         public int collateralLiquidationRecoveryId { get; set; }
@@ -464,6 +467,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string agentCategory { get; set; }
         public string agentAccountNumber { get; set; }
         public int? stateId { get; set; }
+        public string assignedBy { get; set; }
     }
 
 

@@ -3398,13 +3398,13 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.customerId.ToString().StartsWith(searchQuery)
                                    && g.CUSTOMERGROUPID == groupId
                              select x);
-
             var customerInfo = customers.ToList();
 
             if (customerInfo.Count > 0)
             {
                 return customerInfo;
             }
+
 
             return null;
         }

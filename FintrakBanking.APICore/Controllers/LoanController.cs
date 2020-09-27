@@ -1732,6 +1732,29 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("bulk-loan-recovery-re-assignment-remedial")]
+        public HttpResponseMessage saveBulkLoanReAssignmentToAgentRem([FromBody] LoanRecoveryAssignmentViewModel model)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            bool data = repo.saveBulkLoanReAssignmentToAgentRem(model, user);
+
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Re-assignment saved successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery re-assignment unsuccessfully" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("bulk-loan-recovery-un-assignment")]
         public HttpResponseMessage saveBulkLoanUnAssignmentToAgent([FromBody] LoanRecoveryAssignmentViewModel model)
         {
@@ -1835,11 +1858,11 @@ namespace FintrakBanking.APICore.Controllers
             user.createdBy = token.GetStaffId;
             models.createdBy = token.GetStaffId;
                 var response = repo.AddCollateralLiquidationRecoveryWithoutFile(models);
-                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Receipt has been uploaded successfully" });
-                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Receipt already exist" });
+                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Recoveries has been successfully uploaded" });
+                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The recoveries already exist" });
             }
-            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this Receipt:  " + ex.Message }); }
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this Receipt" });
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading recoveries:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading recoveries" });
         }
 
 
@@ -1891,11 +1914,11 @@ namespace FintrakBanking.APICore.Controllers
                 var buffer = await file.ReadAsByteArrayAsync();
                 int response = repo.AddCollateralLiquidationRecovery(entity, buffer);
 
-                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Receipt has been uploaded successfully" });
-                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Receipt already exist" });
+                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Recoveries has been successfully uploaded" });
+                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The recoveries already exist" });
             }
-            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this Receipt:  " + ex.Message }); }
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this Receipt" });
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading recoveries:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading recoveries" });
 
         }
 
