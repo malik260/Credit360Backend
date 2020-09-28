@@ -231,7 +231,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
                 var response = _colValuationRepo.GoForCollateralValuationApproval(model);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = _colValuationRepo.ResponseMessage(response, $"COLLATERAL VALUATION {response.responseMessage}") });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = _colValuationRepo.ResponseMessage(response, $"COLLATERAL VALUATION ({response.responseMessage})") });
             }
             catch (SecureException ex)
             {
@@ -358,7 +358,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
                 var response = _colValuationRepo.SubmitApproval(model);
               
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = _colValuationRepo.ResponseMessage(response, $"COLLATERAL VALUATION {response.responseMessage}") });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = _colValuationRepo.ResponseMessage(response, $"COLLATERAL VALUATION ({response.responseMessage})") });
             }
             catch (SecureException ex)
             {

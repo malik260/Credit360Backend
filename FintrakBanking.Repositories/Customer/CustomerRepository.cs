@@ -159,7 +159,6 @@ namespace FintrakBanking.Repositories.Customer
                 ADDRESSOFSIGNATORY = entity.addressofSignatories,
                 PHONENUMBEROFSIGNATORY = entity.phoneNumberofSignatories,
                 EMAILOFSIGNATORY = entity.emailofSignatories,
-
             };
             context.TBL_CUSTOMER.Add(customer);
 
@@ -295,6 +294,98 @@ namespace FintrakBanking.Repositories.Customer
                 context.TBL_CUSTOMER_ADDRESS.Add(address);
 
             }
+        }
+
+        public bool UpdateCustomerInformation(string customerCode, string accountNumber, int createdBy)
+        {
+            var currentCustomer = context.TBL_CUSTOMER.Where(O => O.CUSTOMERCODE == customerCode).FirstOrDefault();
+
+            if (currentCustomer != null) {
+                var result = integration.GetCustomerByAccountsNumber(accountNumber).FirstOrDefault();
+
+                if (result != null) {
+                    integration.AddCustomerAccounts(customerCode);
+
+                    context.TBL_CUSTOMER_ARCHIVE.Add(new TBL_CUSTOMER_ARCHIVE()
+                    {
+                        CUSTOMERID = currentCustomer.CUSTOMERID,
+                        ACCOUNTCREATIONCOMPLETE = currentCustomer.ACCOUNTCREATIONCOMPLETE,
+                        BRANCHID = currentCustomer.BRANCHID,
+                        COMPANYID = currentCustomer.COMPANYID,
+                        CREATEDBY = currentCustomer.CREATEDBY,
+                        CREATIONMAILSENT = currentCustomer.CREATIONMAILSENT,
+                        CUSTOMERCODE = currentCustomer.CUSTOMERCODE,
+                        CUSTOMERSENSITIVITYLEVELID = currentCustomer.CUSTOMERSENSITIVITYLEVELID,
+                        CUSTOMERTYPEID = currentCustomer.CUSTOMERTYPEID,
+                        DATEOFBIRTH = currentCustomer.DATEOFBIRTH,
+                        DATETIMECREATED = currentCustomer.DATETIMECREATED,
+                        EMAILADDRESS = currentCustomer.EMAILADDRESS,
+                        FIRSTNAME = currentCustomer.FIRSTNAME,
+                        GENDER = currentCustomer.GENDER,
+                        LASTNAME = currentCustomer.LASTNAME,
+                        MAIDENNAME = currentCustomer.MAIDENNAME,
+                        MARITALSTATUS = currentCustomer.MARITALSTATUS,
+                        TITLE = currentCustomer.TITLE,
+                        MIDDLENAME = currentCustomer.MIDDLENAME,
+                        MISCODE = currentCustomer.MISCODE,
+                        MISSTAFF = currentCustomer.MISSTAFF,
+                        NATIONALITYID = currentCustomer.NATIONALITYID,
+                        OCCUPATION = currentCustomer.OCCUPATION,
+                        PLACEOFBIRTH = currentCustomer.PLACEOFBIRTH,
+                        ISPOLITICALLYEXPOSED = currentCustomer.ISPOLITICALLYEXPOSED,
+                        ISINVESTMENTGRADE = currentCustomer.ISINVESTMENTGRADE,
+                        ISREALATEDPARTY = currentCustomer.ISREALATEDPARTY,
+                        RELATIONSHIPOFFICERID = currentCustomer.RELATIONSHIPOFFICERID,
+                        SPOUSE = currentCustomer.SPOUSE,
+                        SUBSECTORID = currentCustomer.SUBSECTORID,
+                        TAXNUMBER = currentCustomer.TAXNUMBER,
+                        RISKRATINGID = currentCustomer.RISKRATINGID,
+                        CUSTOMERBVN = currentCustomer.CUSTOMERBVN,
+                        PROSPECTCUSTOMERCODE = currentCustomer.PROSPECTCUSTOMERCODE,
+                        ISPROSPECT = currentCustomer.ISPROSPECT,
+                        CRMSCOMPANYSIZEID = currentCustomer.CRMSCOMPANYSIZEID,
+                        CRMSLEGALSTATUSID = currentCustomer.CRMSLEGALSTATUSID,
+                        CRMSRELATIONSHIPTYPEID = currentCustomer.CRMSRELATIONSHIPTYPEID,
+                        COUNTRYOFRESIDENTID = currentCustomer.COUNTRYOFRESIDENTID,
+                        NUMBEROFDEPENDENTS = currentCustomer.NUMBEROFDEPENDENTS,
+                        NUMBEROFLOANSTAKEN = currentCustomer.NUMBEROFLOANSTAKEN,
+                        MONTHLYLOANREPAYMENT = currentCustomer.MONTHLYLOANREPAYMENT,
+                        DATEOFRELATIONSHIPWITHBANK = currentCustomer.DATEOFRELATIONSHIPWITHBANK,
+                        RELATIONSHIPTYPEID = currentCustomer.RELATIONSHIPTYPEID,
+                        TEAMLDR = currentCustomer.TEAMLDR,
+                        TEAMNPL = currentCustomer.TEAMNPL,
+                        CORR = currentCustomer.CORR,
+                        PASTDUEOBLIGATIONS = currentCustomer.PASTDUEOBLIGATIONS,
+                        BUSINESSUNTID = currentCustomer.BUSINESSUNTID,
+                        OWNERSHIP = currentCustomer.OWNERSHIP,
+                        NAMEOFSIGNATORY = currentCustomer.NAMEOFSIGNATORY,
+                        ADDRESSOFSIGNATORY = currentCustomer.ADDRESSOFSIGNATORY,
+                        PHONENUMBEROFSIGNATORY = currentCustomer.PHONENUMBEROFSIGNATORY,
+                        EMAILOFSIGNATORY = currentCustomer.EMAILOFSIGNATORY,
+                    });
+
+                    currentCustomer.FIRSTNAME = result.firstName;
+                    currentCustomer.LASTNAME = result.lastName;
+                    currentCustomer.MIDDLENAME = result.middleName;
+                    currentCustomer.SPOUSE = result.spouse;
+                    //currentCustomer.MARITALSTATUS  = result.maritalStatus;
+
+                    currentCustomer.OCCUPATION = result.occupation;
+                    //currentCustomer.EMAILADDRESS = result.emailAddress;
+                    //currentCustomer.TBL_CUSTOMER_PHONECONTACT. = result.emailAddress;
+                    currentCustomer.EMAILADDRESS = result.emailAddress;
+                    currentCustomer.DATETIMEUPDATED = DateTime.Now;
+                    currentCustomer.LASTUPDATEDBY = createdBy;
+
+                    context.SaveChanges();
+                    return true;
+
+                }
+
+                return false;
+            }
+
+            return false;
         }
 
         public bool AddCustomerAddresses(CustomerAddressViewModels entity)

@@ -115,6 +115,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             companyId = (short)a.COMPANYID,
                             staffRoleId = a.STAFFROLEID,
                             staffRoleCode = b.STAFFROLECODE.Trim().ToUpper(),
+                            staffRoleShortCode = b.STAFFROLESHORTCODE.Trim().ToUpper(),
                             workEndDuration = a.WORKENDDURATION,
                             workStartDuration = a.WORKSTARTDURATION,
                             allocationTypeId = b.APPROVALFLOWTYPEID,
