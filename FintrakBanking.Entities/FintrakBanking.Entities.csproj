@@ -89,6 +89,7 @@
     <Compile Include="Models\TBL_CONTRACTOR_CRITERIA_OPTION.cs" />
     <Compile Include="Models\TBL_CONTRACTOR_TIERING.cs" />
     <Compile Include="Models\TBL_CURRENCY_LIMIT.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_ARCHIVE.cs" />
     <Compile Include="Models\TBL_DOCUMENTATION_FILLING_APPROVAL.cs" />
     <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPLICATION.cs" />
     <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPLICATION_DETAIL.cs" />
