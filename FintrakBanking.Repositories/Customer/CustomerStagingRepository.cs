@@ -126,82 +126,60 @@ namespace FintrakBanking.Repositories.Customer
             if (account != null) { throw new SecureException($"Account Number is already attached to {account.customerCode} on Credit360!"); }
         }
 
-        //public async Task<CustomerIntegrationViewModels> GetIntegratedCustomerInformation(string searchTerm)
-        //{
-        //    var data = new CustomerIntegrationViewModels();
-        //    var setup = mainContext.TBL_SETUP_GLOBAL.FirstOrDefault();
-        //    if (setup.USE_THIRD_PARTY_INTEGRATION)
-        //    {
-        //        CustomerDetails customer = new CustomerDetails();
-        //        //return await customer.GetCustomerByAccountNumber(searchTerm);GetAllCustomers
-        //        //return customer.GetAllCustomers(searchTerm).GetAwaiter().GetResult();
-        //        customer.RunAsync().GetAwaiter().GetResult();
-        //        //return  customer.GetCustomerByAccountNumber(searchTerm).GetAwaiter().GetResult();
-        //        Task.Run(async () => { data = await customer.GetAllCustomers(searchTerm); }).GetAwaiter().GetResult();
+        public bool MergeDuplicateCustomers(string accounNumber, string prospectiveCustomerCode, int createdBy)
+        {
+            var account = (from a in mainContext.TBL_CASA
+                           join b in mainContext.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                           where a.PRODUCTACCOUNTNUMBER == accounNumber && a.DELETED == false
+                           select new CasaViewModel
+                           {
+                               productAccountNumber = a.PRODUCTACCOUNTNUMBER,
+                               customerCode = b.CUSTOMERCODE,
+                               customerId = b.CUSTOMERID
+                           }).FirstOrDefault();
 
-        //        return data;
+            if (account != null) {
+                var prospectiveCustomer = mainContext.TBL_CUSTOMER.Where(O => O.CUSTOMERCODE == prospectiveCustomerCode).FirstOrDefault();
 
-        //        //return customer.GetCustomerByAccountNumber(searchTerm).GetAwaiter().GetResult();
-        //    }
-        //    else
-        //    {
-        //        IQueryable<CustomerViewModels> allCustomers = null;
-        //        allCustomers = GetIntegratedCustomerInformation();
-        //        if (allCustomers.ToList().Count() > 0)
-        //        {
-        //            if (!String.IsNullOrEmpty(searchTerm))
-        //            {
-        //                allCustomers = allCustomers.Where(x =>
-        //                x.firstName.ToLower().Contains(searchTerm.ToLower())
-        //                || x.lastName.ToLower().Contains(searchTerm.ToLower())
-        //                || x.middleName.ToLower().Contains(searchTerm.ToLower())
-        //                || x.customerCode.ToLower().Contains(searchTerm.ToLower())
-        //                || x.customerAccountNo.ToLower().Contains(searchTerm.ToLower())
-        //                );
-        //            }
-        //            //return allCustomers.ToList();
-        //            return null;
-        //        }
-        //        else
-        //            return null;
-        //    }
+                if (prospectiveCustomer != null) {
+                    prospectiveCustomer.DELETED = true;
+                    prospectiveCustomer.DELETEDBY = createdBy;
+                    prospectiveCustomer.DATETIMEDELETED = DateTime.Now;
 
+                    var application = mainContext.TBL_LOAN_APPLICATION.Where(O => O.CUSTOMERID == prospectiveCustomer.CUSTOMERID).FirstOrDefault();
 
-        //}
+                    if (application != null) {
+                        application.CUSTOMERID = account.customerId;
+                    }
 
-        //public async Task <CustomerViewModels> GetIntegratedCustomerInformation(string searchTerm)
-        //{
-        //    var setup = mainContext.TBL_SETUP_GLOBAL.FirstOrDefault();
-        //    if (setup.USE_THIRD_PARTY_INTEGRATION)
-        //    {
-        //        CustomerDetails customer = new CustomerDetails();
-        //        return await customer.GetCustomerByAccountNumber2(searchTerm);
-        //        //RunAsync().GetAwaiter().GetResult();
-        //        //return  customer.GetCustomerByAccountNumber(searchTerm).GetAwaiter().GetResult();
-        //    }
-        //    else
-        //    {
-        //        IQueryable<CustomerViewModels> allCustomers = null;
-        //        allCustomers = GetIntegratedCustomerInformation();
-        //        if (allCustomers.ToList().Count() > 0)
-        //        {
-        //            if (!String.IsNullOrEmpty(searchTerm))
-        //            {
-        //                allCustomers = allCustomers.Where(x =>
-        //                x.firstName.ToLower().Contains(searchTerm.ToLower())
-        //                || x.lastName.ToLower().Contains(searchTerm.ToLower())
-        //                || x.middleName.ToLower().Contains(searchTerm.ToLower())
-        //                || x.customerCode.ToLower().Contains(searchTerm.ToLower())
-        //                || x.customerAccountNo.ToLower().Contains(searchTerm.ToLower())
-        //                );
-        //            }
-        //            return null;
-        //        }
-        //        else
-        //            return null;
-        //    }
+                    var applicationDetails = mainContext.TBL_LOAN_APPLICATION_DETAIL.Where(O => O.CUSTOMERID == prospectiveCustomer.CUSTOMERID).ToList();
 
+                    if (applicationDetails != null) {
+                        foreach (var applicationDetail in applicationDetails)
+                        {
+                            applicationDetail.CUSTOMERID = account.customerId;
+                        }
+                    }
 
-        //}
+                    var prospectiveAccounts = mainContext.TBL_CASA.Where(O => O.CUSTOMERID == prospectiveCustomer.CUSTOMERID && O.DELETED == false).ToList();
+
+                    if (prospectiveAccounts != null) {
+                        foreach (var prospectiveAccount in prospectiveAccounts)
+                        {
+                            prospectiveAccount.DELETED = true;
+                            prospectiveAccount.DELETEDBY = createdBy;
+                            prospectiveAccount.DATETIMEDELETED = DateTime.Now;
+                        }
+                    }
+                }
+
+                mainContext.SaveChanges();
+                return true;
+            }
+
+            return false;
+        }
+
+        
     }
 }

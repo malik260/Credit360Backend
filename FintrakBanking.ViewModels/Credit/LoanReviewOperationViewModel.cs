@@ -467,6 +467,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string agentCategory { get; set; }
         public string agentAccountNumber { get; set; }
         public int? stateId { get; set; }
+        public string assignedBy { get; set; }
+        public string staffFullName { get; set; }
+        public string accreditedConsultantEmail { get; set; }
     }
 
 
@@ -828,6 +831,10 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? collectionDate { get; set; }
         public string modeOfCollection { get; set; }
         public decimal? commissionRate { get; set; }
+        public decimal? commissionAmount { get; set; }
+        public decimal? commissionAmountLessWht { get; set; }
+        public decimal? whtAmount { get; set; }
+        public decimal? whtRate { get; set; }
     }
 
 

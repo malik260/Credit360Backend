@@ -31,5 +31,10 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
         public int? LOANRECOVERYREPORTBATCHID { get; set; }
 
+        public decimal? COMMISSIONAMOUNTLESSWHT { get; set; }
+        public decimal? WHTAMOUNT { get; set; }
+        public decimal? WHTRATE { get; set; }
+        public decimal? COMMISSIONAMOUNT { get; set; }
+
     }
 }
