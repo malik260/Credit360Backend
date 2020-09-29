@@ -19687,13 +19687,13 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Kindly select at least one loan.");
             }
 
-            var validate = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == referenceNumber
-                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
-                                                          || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
-            if (validate != null)
-            {
-                throw new SecureException("Request already exist and undergoing approval");
-            }
+            //var validate = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == referenceNumber
+            //                                              && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
+            //                                              || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
+            //if (validate != null)
+            //{
+            //    throw new SecureException("Request already exist and undergoing approval");
+            //}
 
             LoanRecoveryCommissionBatchViewModel request = new LoanRecoveryCommissionBatchViewModel();
 
@@ -19760,23 +19760,26 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
             }
 
-            var validate = context.TBL_LOAN_RECOVERY_COMMISSION_APPROVAL.Where(x => x.REFERENCEID == models.referenceId
-                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Pending
-                                                          || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
-            if (validate != null)
-            {
-                throw new SecureException("Request already exist and undergoing approval");
-            }
+            //var validate = context.TBL_LOAN_RECOVERY_COMMISSION_APPROVAL.Where(x => x.REFERENCEID == models.referenceId
+            //                                              && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Pending
+            //                                              || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
+            //if (validate != null)
+            //{
+            //    throw new SecureException("Request already exist and undergoing approval");
+            //}
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
 
-                if (validate == null)
-                {
+                
                     var data = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == models.referenceId).ToList();
                     foreach (var d in data)
                     {
                         d.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                        d.COMMISSIONAMOUNT = models.commissionAmount;
+                        d.COMMISSIONAMOUNTLESSWHT = models.commissionAmountLessWht;
+                        d.WHTAMOUNT = models.whtAmount;
+                        d.WHTRATE = models.whtRate;
                     }
                     context.SaveChanges();
 
@@ -19802,7 +19805,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var response = workflow.LogActivity();
                     context.SaveChanges();
-                }
+                
                 transactionScope.Complete();
 
                 transactionScope.Dispose();
