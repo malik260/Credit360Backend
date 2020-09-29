@@ -468,6 +468,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string agentAccountNumber { get; set; }
         public int? stateId { get; set; }
         public string assignedBy { get; set; }
+        public string staffFullName { get; set; }
+        public string accreditedConsultantEmail { get; set; }
     }
 
 

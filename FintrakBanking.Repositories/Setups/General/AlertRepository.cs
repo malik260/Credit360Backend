@@ -891,23 +891,23 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareDate() == true)
             {
-                TimeSpan start = new TimeSpan(17, 0, 0);
-                TimeSpan end = new TimeSpan(17, 30, 0);
+                /* TimeSpan start = new TimeSpan(17, 0, 0);
+                 TimeSpan end = new TimeSpan(17, 30, 0);
 
-                if ((now >= start) && (now <= end))
-                {
-                    //GetStaffLoanPortfolioReport();
-                    GetValuationReminder();
-                    GetSiteVisitationAccountReminder();
-                    GetExpiredValuationReport();
-                    GetFacilityRestructuredNotification();
-                    GetSLAReport();
-                    GetPastDueDeferredDocuments();
-                    GetExpiredInsurancePolicies();
-                    GetLoanRepaymentReminder();
-                    GetGroupCreditFileChecklistReminder();
-                    state = true;
-                }
+                 if ((now >= start) && (now <= end))
+                 {
+                     //GetStaffLoanPortfolioReport();
+                     GetValuationReminder();
+                     GetSiteVisitationAccountReminder();
+                     GetExpiredValuationReport();
+                     GetFacilityRestructuredNotification();
+                     GetSLAReport();
+                     GetPastDueDeferredDocuments();
+                     GetExpiredInsurancePolicies();
+                     GetLoanRepaymentReminder();
+                     GetGroupCreditFileChecklistReminder();
+                     state = true;
+                 }*/
             }
 
             if (CompareDateSectorLimit() == true)
@@ -936,21 +936,22 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start11) && (now <= end13))
                 {
-                    //GetDigitalLoanExceptionNPLIncrease();
-                    //GetDigitalLoanExceptionNPLDecrease();
-                    //GetDigitalLoanDisbursementIncrease();
-                    //GetDigitalLoanDisbursementDecrease();
-                    //GetDigitalLoanDPDIncrease();
-                    //GetDigitalLoanDPDDecrease();
-                    //GetDigitalLoanLiquidationIncrease();
-                    GetDigitalLoanLiquidationModuleIncrease();
-                    GetDigitalLoanExceptionNPLModuleIncrease();
-                    GetDigitalLoanExceptionNPLModuleDecrease();
-                    GetDigitalLoanDPDModuleIncrease();
-                    GetDigitalLoanDPDModuleDecrease();
-                    GetDigitalLoanDisbursementModuleIncrease();
-                    GetDigitalLoanDisbursementModuleDecrease();
-                    state = true;
+                    /*GetDigitalLoanExceptionNPLIncrease();
+                    GetDigitalLoanExceptionNPLDecrease();
+                    GetDigitalLoanDisbursementIncrease();
+                    GetDigitalLoanDisbursementDecrease();
+                    GetDigitalLoanDPDIncrease();
+                    GetDigitalLoanDPDDecrease();
+                    GetDigitalLoanLiquidationIncrease();*/
+
+                    //GetDigitalLoanLiquidationModuleIncrease();
+                    //GetDigitalLoanExceptionNPLModuleIncrease();
+                    //GetDigitalLoanExceptionNPLModuleDecrease();
+                    //GetDigitalLoanDPDModuleIncrease();
+                    //GetDigitalLoanDPDModuleDecrease();
+                    //GetDigitalLoanDisbursementModuleIncrease();
+                    //GetDigitalLoanDisbursementModuleDecrease();
+                    //state = true;
                 }
 
 
@@ -958,7 +959,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareDefaultRepayment() == true)
             {
-                TimeSpan start11 = new TimeSpan(14, 0, 0);
+                /*TimeSpan start11 = new TimeSpan(14, 0, 0);
                 TimeSpan end13 = new TimeSpan(14, 30, 0);
 
                 if ((now >= start11) && (now <= end13))
@@ -966,23 +967,35 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetRepaymentDefaultersAlert();
                     GetRepaymentPayDownAlert();
                     state = true;
-                }
+                }*/
             }
 
             
             if (CompareDate() == true)
             {
-                //TimeSpan start = new TimeSpan(8, 0, 0); 
-                //TimeSpan end = new TimeSpan(11, 0, 0); 
-                
-                //if ((now >= start) && (now <= end))
-                //{
-                //    GroupImminentMaturitiesByGroupHeads();
-                //    GetImminentMaturities();
-                //    GetPastDueObligationsReminder();
-                //    GetPastDueObligationsReminderByGroupHeads();
-                //    state = true;
-                //}
+                TimeSpan start = new TimeSpan(8, 0, 0);
+                TimeSpan end = new TimeSpan(11, 0, 0);
+
+                if ((now >= start) && (now <= end))
+                {
+                    GroupImminentMaturitiesByGroupHeads();
+                    GetImminentMaturities();
+                    GetPastDueObligationsReminder();
+                    GetPastDueObligationsReminderByGroupHeads();
+                    state = true;
+                }
+            }
+
+            if (CompareRecoveryExpectedDueDate() == true)
+            {
+                /*TimeSpan start = new TimeSpan(7, 30, 0);
+                TimeSpan end = new TimeSpan(8, 0, 0);
+
+                if ((now >= start) && (now <= end))
+                {
+                    GetRecoveryAssignmentDueCompletionDate();
+                    state = true;
+                }*/
             }
 
             var getCronSetup = context.TBL_COLLECTION_RETAIL_CRON_SETUP.Where(x => x.DELETED == false).ToList();
@@ -1034,6 +1047,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return state;
         }
 
+        
         private bool CompareDate()
         {
             DateTime currentDate = DateTime.Now;
@@ -1060,6 +1074,21 @@ namespace FintrakBanking.Repositories.Setups.General
                 return true;
             }else
             return false;
+        }
+
+        private bool CompareRecoveryExpectedDueDate()
+        {
+            DateTime currentDate = DateTime.Now;
+            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                         && (m.OPERATIONMETHOD.Trim() == "GetRecoveryAssignmentDueCompletionDate"
+                         )).FirstOrDefault();
+
+            if (DBdate == null)
+            {
+                return true;
+            }
+            else
+                return false;
         }
 
         private bool CompareDigitalLoanDate()
@@ -5013,6 +5042,98 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.canFire = true;
                     alert.operationMethod = "RepaymentPayDown";
                     alerts.Add(alert);
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+
+        public void GetRecoveryAssignmentDueCompletionDate()
+        {
+            //GetRecoveryAssignmentDueCompletionDate method
+            var aboutToExpiredList = externalAlertRepository.GetRecoveryAssignmentDueCompletionDate();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetRecoveryAssignmentDueCompletionDate").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (aboutToExpiredList != null && aboutToExpiredList.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var aboutToExpired in aboutToExpiredList)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    string emailList = "";
+                    
+                    emailList = GetBusinessUsersEmails(aboutToExpired.misCode);
+
+                    var loanInformation = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(d => d.REFERENCEID == aboutToExpired.referenceId).ToList();
+
+                    if (loanInformation != null && loanInformation.Count() > 0)
+                    {
+                        var n = 0;
+                        var result = $@"
+                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td>LIST FOR ASSIGNED RECOVERY FOR {aboutToExpired.accreditedConsultantCompany}</b></td>
+                        </tr>
+                        <tr>
+                            <td><b>S/N</b></td>
+                            <td><b>Customer Name</b></td>
+                            <td><b>Reference Number</b></td>
+                            <td><b>Amount</b></td>
+                            <td><b>Product</b></td>
+                            <td><b>Number Of Days Left</b></td>
+                        </tr>
+                     ";
+
+                        foreach (var t in loanInformation)
+                        {
+                            n++;
+
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.TOTALAMOUNTRECOVERY));
+                            var maturityDate = t.EXPCOMPLETIONDATE?.ToString("dd-MM-yyyy");
+                            int numberOfDays = (t.EXPCOMPLETIONDATE.Value - DateTime.Now).Days;
+                            var staffFullName = context.TBL_STAFF.Where(s => s.STAFFID == t.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                            var customerName = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == t.CUSTOMERID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                            result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{customerName}</td>
+                            <td>{t.LOANREFERENCE}</td>
+                            <td>{$"{amount}"}</td>
+                            <td>{$"{maturityDate}"}</td>
+                            <td>{numberOfDays}</td>
+                        </tr>
+                        ";
+                        }
+
+                        result = result + $"</table>";
+
+                        if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{accreditedConsultantCompany}}", aboutToExpired.accreditedConsultantCompany);
+                            alertTemplate = alertTemplate.Replace("@{{@{{recoveries}}}}", result);
+
+                            emailList = emailList + ";"+ aboutToExpired.accreditedConsultantEmail + defaultEmail;
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                            alerts.Add(alert);
+                        }
+                    }
                 }
 
                 if (alerts.Count() > 0)
