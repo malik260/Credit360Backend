@@ -89,6 +89,7 @@
     <Compile Include="Models\TBL_CONTRACTOR_CRITERIA_OPTION.cs" />
     <Compile Include="Models\TBL_CONTRACTOR_TIERING.cs" />
     <Compile Include="Models\TBL_CURRENCY_LIMIT.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_ARCHIVE.cs" />
     <Compile Include="Models\TBL_DOCUMENTATION_FILLING_APPROVAL.cs" />
     <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPLICATION.cs" />
     <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPLICATION_DETAIL.cs" />
@@ -167,6 +168,7 @@
     <Compile Include="Models\TBL_LOAN_RECOVERY_ASSIGNMENT.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_COMMISSION_APPROVAL.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_COMMISSION_BATCH.cs" />
+    <Compile Include="Models\TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_COMMISSION_RETAIL.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_REPORTING_APPROVAL.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_REPORTING_BATCH.cs" />
@@ -246,6 +248,7 @@
     <Compile Include="Models\TBL_RAC_OPTION_ITEM.cs" />
     <Compile Include="Models\TBL_CORR_RISK_MATRIX.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.cs" />
+    <Compile Include="Models\TBL_RECOVERY_REPORT_COLLECTION.cs" />
     <Compile Include="Models\TBL_REPAYMENT_TERM.cs" />
     <Compile Include="Models\TBL_SECTOR_GLOBAL_LIMIT.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />

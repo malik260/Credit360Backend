@@ -156,6 +156,20 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("update-customer-information/customerCode/{customerCode}/accountNumber/{accountNumber}")]
+        public HttpResponseMessage UpdateCustomerInformation(string customerCode, string accountNumber)
+        {
+            var result = repo.UpdateCustomerInformation(customerCode, accountNumber, token.GetStaffId);
+
+            if (!result)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Customer information update failed" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Customer information updated successfully" });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("crms-type-company-size")]
         public HttpResponseMessage GetAllCRMSCompanySize()
         {
@@ -322,6 +336,32 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $" {e.Message}" });
             }
             
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("merge-duplicate-customers/accounNumber/{accounNumber}/prospectiveCustomerCode/{prospectiveCustomerCode}")]
+        public HttpResponseMessage MergeDuplicateCustomers(string accounNumber, string prospectiveCustomerCode)
+        {
+            try
+            {
+                var result = stagingRepo.MergeDuplicateCustomers(accounNumber, prospectiveCustomerCode, token.GetStaffId);
+
+                if (result)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "Duplicate customer records have been merged successfully!" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "Duplicate customer records failed to merge!" });
+            }
+            catch (APIErrorException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $" {e.Message}" });
+            }
+
         }
 
         [HttpGet]
@@ -512,7 +552,7 @@ namespace FintrakBanking.APICore.Controllers
         [ClaimsAuthorization]
         [Route("group-customer-members/{groupId}/")]
         public HttpResponseMessage SearchGroupCustomersBySearchQuery(string searchQuery, int groupId)
-       {
+        {
             var data = repo.SearchGroupCustomersBySearchQuery(searchQuery, groupId);
             if (data == null)
             {
@@ -2164,7 +2204,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-
                 var data = repo.ValidateCustomerCode(customerCode);
                 if (data)
                 {
@@ -2188,7 +2227,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-
                 var data = repo.ValidateCustomerModification(customerId);
                 if (data)
                 {

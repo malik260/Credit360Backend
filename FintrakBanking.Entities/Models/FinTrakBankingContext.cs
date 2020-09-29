@@ -18,7 +18,9 @@ namespace FintrakBanking.Entities.Models
         }
 
 
-        //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }  
+        //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; } 
+        public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_INTERNAL> TBL_LOAN_RECOVERY_COMMISSION_INTERNAL { get; set; }
+        public virtual DbSet<TBL_LOAN_RECOVERY_REPORT_COLLECTION> TBL_LOAN_RECOVERY_REPORT_COLLECTION { get; set; }
         public virtual DbSet<TBL_TEMP_LC_USSANCE> TBL_TEMP_LC_USSANCE { get; set; }
         public virtual DbSet<TBL_LC_USSANCE_ARCHIVE> TBL_LC_USSANCE_ARCHIVE { get; set; }
         public virtual DbSet<TBL_CASHBUILDUPREFERENCETYPE> TBL_CASHBUILDUPREFERENCETYPE { get; set; }
@@ -637,6 +639,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_EXCEPTIONAL_LOAN_APPL_DETL_SYN> TBL_EXCEPTIONAL_LOAN_APPL_DETL_SYN { get; set; }
         //public virtual DbSet<TBL_EXCEPTIONAL_RAC_DEFINITION> TBL_EXCEPTIONAL_RAC_DEFINITION { get; set; }
         public virtual DbSet<TBL_EXCEPTIONAL_RAC_DETAIL> TBL_EXCEPTIONAL_RAC_DETAIL { get; set; }
+        public virtual DbSet<TBL_CUSTOMER_ARCHIVE> TBL_CUSTOMER_ARCHIVE { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

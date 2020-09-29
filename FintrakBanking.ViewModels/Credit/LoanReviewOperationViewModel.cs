@@ -95,7 +95,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool isPrimaryDocument { get; set; }
         public string formData { get; set; }
-
+        public string feeSourceModule { get; set; }
     }
 
     public class LoanIrregularScheduleViewModel
@@ -123,6 +123,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? productClassId { get; set; }
         public string loanReferenceNumber { get; set; }
         public int loanAssignId { get; set; }
+        public string assignmentType { get; set; }
         public string referenceId { get; set; }
         public int? approvalStatusId { get; set; }
         public int? operationId { get; set; }
@@ -200,10 +201,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
+        public int mgtOperationId { get; set; }
         public decimal? prepaymentAmount { get; set; }
         public decimal? TotalExposure { get; set; }
         public string source { get; set; }
-
+        public string assignmentType { get; set; }
+        
         public DateTime? expCompletionDate { get; set; }
         public int loanAssignId { get; set; }
         public int loanChargeFeeId { get; set; }
@@ -240,7 +243,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
-
+        public int dpd { get { return (DateTime.UtcNow - this.maturityDate).Days; } }
         public short principalFrequencyTypeId { get; set; }
         public short interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
@@ -429,6 +432,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string referenceId { get; set; }
         public DateTime requestDate { get; set; }
         public int numberOfLoans { get; set; }
+        public string category { get; set; }
         public int bulkRecoveryApprovalId { get; set; }
         public int accreditedConsultantId { get; set; }
         public decimal? agentCommission { get; set; }
@@ -463,6 +467,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string agentCategory { get; set; }
         public string agentAccountNumber { get; set; }
         public int? stateId { get; set; }
+        public string assignedBy { get; set; }
     }
 
 
@@ -1115,7 +1120,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
-        public int dpd { get { return (DateTime.Now - this.dateAssigned).Days; } }
+        public int dpd { get { return (DateTime.Now - this.maturityDate).Days; } }
         public string dpdRange
         {
             get
@@ -1429,6 +1434,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? prepaymentAmount { get; set; }
         public decimal? TotalExposure { get; set; }
         public string source { get; set; }
+        public string assignmentType { get; set; }
 
         public DateTime? expCompletionDate { get; set; }
         public int loanAssignId { get; set; }
