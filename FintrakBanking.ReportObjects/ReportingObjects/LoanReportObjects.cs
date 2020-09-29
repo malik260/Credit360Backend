@@ -488,8 +488,8 @@ namespace FintrakBanking.ReportObjects
                                 DateTimeInitiated = a.SYSTEMDATETIME,
                                 loanapplicationid = a.LOANAPPLICATIONID,
                                 bookingrequestid = allLoans.Where(x => x.appDetailId == b.LOANAPPLICATIONDETAILID).FirstOrDefault().LOAN_BOOKING_REQUESTID,
-                                //status= context.TBL_LOAN_APPLICATION_STATUS.Where(x=>x.APPLICATIONSTATUSID==a.APPLICATIONSTATUSID).FirstOrDefault().APPLICATIONSTATUSNAME,
-                                // PreviousStage = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == a.LOANAPPLICATIONID && x.APPROVALTRAILID == context.TBL_APPROVAL_TRAIL.Where(y => y.TARGETID == a.LOANAPPLICATIONID).Max(z => z.APPROVALTRAILID)).FirstOrDefault().TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                status= context.TBL_LOAN_APPLICATION_STATUS.Where(x=>x.APPLICATIONSTATUSID==a.APPLICATIONSTATUSID).FirstOrDefault().APPLICATIONSTATUSNAME,
+                                PreviousStage = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == a.LOANAPPLICATIONID && x.APPROVALTRAILID == context.TBL_APPROVAL_TRAIL.Where(y => y.TARGETID == a.LOANAPPLICATIONID).Max(z => z.APPROVALTRAILID)).FirstOrDefault().TBL_APPROVAL_LEVEL1.LEVELNAME,
                                 DisburseOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == b.TBL_LOAN.FirstOrDefault().DISBURSEDBY).Select(x => new { name = x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME }).FirstOrDefault().name,
                                 disburseDateTime = allLoans.Where(x => x.appDetailId == b.LOANAPPLICATIONDETAILID).FirstOrDefault().DISBURSEDATE,
                                 verificationOfficer = context.TBL_STAFF.Where(w => w.STAFFID == context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == a.LOANAPPLICATIONID && x.OPERATIONID == 1 && x.APPROVALTRAILID == (context.TBL_APPROVAL_TRAIL.Where(y => y.TARGETID == a.LOANAPPLICATIONID && y.OPERATIONID == 1).Max(z => z.APPROVALTRAILID))).FirstOrDefault().REQUESTSTAFFID).Select(v => new { name = v.FIRSTNAME + " " + v.LASTNAME }).FirstOrDefault().name,
@@ -510,41 +510,41 @@ namespace FintrakBanking.ReportObjects
                                 refferBackUser = context.TBL_STAFF.Where(w => w.STAFFID == context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == a.LOANAPPLICATIONID && x.APPROVALSTATUSID == 5 && x.APPROVALTRAILID == (context.TBL_APPROVAL_TRAIL.Where(y => y.TARGETID == a.LOANAPPLICATIONID && y.APPROVALSTATUSID == 5).Max(z => z.APPROVALTRAILID))).FirstOrDefault().REQUESTSTAFFID).Select(v => new { name = v.FIRSTNAME + " " + v.LASTNAME }).FirstOrDefault().name,
                                 completedComment = allLoans.Where(x => x.appDetailId == b.LOANAPPLICATIONDETAILID).FirstOrDefault().APPROVERCOMMENT
                             }).ToList();
-                data = data.Select(w => {
+                //data = data.Select(w => {
 
 
-                    var traildata = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == w.loanapplicationid).ToList();
-                    //var dt = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == w.loanapplicationid).Count();
-                    var approvaleleveldata = context.TBL_APPROVAL_LEVEL.ToList();
-                    if (traildata.Count > 0)
-                    {
-                        var recentTrail = traildata.Where(x => x.TARGETID == w.loanapplicationid && x.APPROVALTRAILID == traildata.Where(y => y.TARGETID == x.TARGETID).Max(z => z.APPROVALTRAILID)).Select(u => new { u.FROMAPPROVALLEVELID, u.REQUESTSTAFFID, u.TOAPPROVALLEVELID, u.RESPONSESTAFFID, u.RESPONSEDATE, u.SYSTEMARRIVALDATETIME }).FirstOrDefault();
-                        if (recentTrail.FROMAPPROVALLEVELID != null)
-                        {
-                            w.PreviousStage = approvaleleveldata.Where(k => traildata.Where(x => x.TARGETID == w.loanapplicationid && x.APPROVALTRAILID == traildata.Where(y => y.TARGETID == x.TARGETID).Max(z => z.APPROVALTRAILID)).FirstOrDefault().FROMAPPROVALLEVELID == k.APPROVALLEVELID).FirstOrDefault().LEVELNAME;
-                        }
-                        else if (recentTrail.REQUESTSTAFFID != null)
-                        {
-                            w.PreviousStage = staffdata.Where(v => recentTrail.REQUESTSTAFFID == v.STAFFID).FirstOrDefault().TBL_STAFF_ROLE.STAFFROLENAME;
-                        }
-                        if (recentTrail.TOAPPROVALLEVELID != null)
-                        {
-                            w.status = approvaleleveldata.Where(k => traildata.Where(x => x.TARGETID == w.loanapplicationid && x.APPROVALTRAILID == traildata.Where(y => y.TARGETID == x.TARGETID).Max(z => z.APPROVALTRAILID)).FirstOrDefault().TOAPPROVALLEVELID == k.APPROVALLEVELID).FirstOrDefault().LEVELNAME;
-                        }
-                        else if (recentTrail.RESPONSESTAFFID != null)
-                        {
-                            w.status = staffdata.Where(v => recentTrail.RESPONSESTAFFID == v.STAFFID).FirstOrDefault().TBL_STAFF_ROLE.STAFFROLENAME;
-                        }
-                        if (traildata.Where(q => q.TARGETID == w.bookingrequestid && q.FROMAPPROVALLEVELID == 569 && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID) && q.APPROVALTRAILID == traildata.Where(z => z.TARGETID == w.bookingrequestid && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID)).Max(aa => aa.APPROVALTRAILID)).Count() > 0)
-                        {
-                            w.verificationOfficer = staffdata.Where(a => a.STAFFID == traildata.Where(q => q.TARGETID == w.bookingrequestid && q.FROMAPPROVALLEVELID == 569 && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID) && q.APPROVALTRAILID == traildata.Where(z => z.TARGETID == w.bookingrequestid && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID)).Max(aa => aa.APPROVALTRAILID)).FirstOrDefault().REQUESTSTAFFID).Select(d => new { fullname = d.FIRSTNAME + " " + d.MIDDLENAME + " " + d.LASTNAME }).FirstOrDefault().fullname;
-                            w.verificationDateTime = traildata.Where(q => q.TARGETID == w.bookingrequestid && q.FROMAPPROVALLEVELID == 569 && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID) && q.APPROVALTRAILID == traildata.Where(z => z.TARGETID == w.bookingrequestid && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID)).Max(aa => aa.APPROVALTRAILID)).FirstOrDefault().SYSTEMARRIVALDATETIME;
-                        }
+                //    var traildata = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == w.loanapplicationid).ToList();
+                //    //var dt = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == w.loanapplicationid).Count();
+                //    var approvaleleveldata = context.TBL_APPROVAL_LEVEL.ToList();
+                //    if (traildata.Count > 0)
+                //    {
+                //        var recentTrail = traildata.Where(x => x.TARGETID == w.loanapplicationid && x.APPROVALTRAILID == traildata.Where(y => y.TARGETID == x.TARGETID).Max(z => z.APPROVALTRAILID)).Select(u => new { u.FROMAPPROVALLEVELID, u.REQUESTSTAFFID, u.TOAPPROVALLEVELID, u.RESPONSESTAFFID, u.RESPONSEDATE, u.SYSTEMARRIVALDATETIME }).FirstOrDefault();
+                //        if (recentTrail.FROMAPPROVALLEVELID != null)
+                //        {
+                //            w.PreviousStage = approvaleleveldata.Where(k => traildata.Where(x => x.TARGETID == w.loanapplicationid && x.APPROVALTRAILID == traildata.Where(y => y.TARGETID == x.TARGETID).Max(z => z.APPROVALTRAILID)).FirstOrDefault().FROMAPPROVALLEVELID == k.APPROVALLEVELID).FirstOrDefault().LEVELNAME;
+                //        }
+                //        else if (recentTrail.REQUESTSTAFFID != null)
+                //        {
+                //            w.PreviousStage = staffdata.Where(v => recentTrail.REQUESTSTAFFID == v.STAFFID).FirstOrDefault().TBL_STAFF_ROLE.STAFFROLENAME;
+                //        }
+                //        if (recentTrail.TOAPPROVALLEVELID != null)
+                //        {
+                //            w.status = approvaleleveldata.Where(k => traildata.Where(x => x.TARGETID == w.loanapplicationid && x.APPROVALTRAILID == traildata.Where(y => y.TARGETID == x.TARGETID).Max(z => z.APPROVALTRAILID)).FirstOrDefault().TOAPPROVALLEVELID == k.APPROVALLEVELID).FirstOrDefault().LEVELNAME;
+                //        }
+                //        else if (recentTrail.RESPONSESTAFFID != null)
+                //        {
+                //            w.status = staffdata.Where(v => recentTrail.RESPONSESTAFFID == v.STAFFID).FirstOrDefault().TBL_STAFF_ROLE.STAFFROLENAME;
+                //        }
+                //        if (traildata.Where(q => q.TARGETID == w.bookingrequestid && q.FROMAPPROVALLEVELID == 569 && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID) && q.APPROVALTRAILID == traildata.Where(z => z.TARGETID == w.bookingrequestid && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID)).Max(aa => aa.APPROVALTRAILID)).Count() > 0)
+                //        {
+                //            w.verificationOfficer = staffdata.Where(a => a.STAFFID == traildata.Where(q => q.TARGETID == w.bookingrequestid && q.FROMAPPROVALLEVELID == 569 && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID) && q.APPROVALTRAILID == traildata.Where(z => z.TARGETID == w.bookingrequestid && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID)).Max(aa => aa.APPROVALTRAILID)).FirstOrDefault().REQUESTSTAFFID).Select(d => new { fullname = d.FIRSTNAME + " " + d.MIDDLENAME + " " + d.LASTNAME }).FirstOrDefault().fullname;
+                //            w.verificationDateTime = traildata.Where(q => q.TARGETID == w.bookingrequestid && q.FROMAPPROVALLEVELID == 569 && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID) && q.APPROVALTRAILID == traildata.Where(z => z.TARGETID == w.bookingrequestid && context.TBL_OPERATIONS.Where(i => i.OPERATIONTYPEID == 1).Select(s => s.OPERATIONID).Contains(q.OPERATIONID)).Max(aa => aa.APPROVALTRAILID)).FirstOrDefault().SYSTEMARRIVALDATETIME;
+                //        }
 
-                    }
+                //    }
 
-                    return w;
-                }).ToList();
+                //    return w;
+                //}).ToList();
                 return data;
             }
 
@@ -3616,27 +3616,46 @@ namespace FintrakBanking.ReportObjects
                 //subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION, teamUnit = sl.TEAM_UNIT, businessDevelopmentManger = sl.DIRECTORATE, deptName = sl.DEPT_NAME }).ToList();
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
-                    var creditSchedule = (from a in context.TBL_LOAN_COLLATERAL_MAPPING
-                                          join l in context.TBL_LOAN on a.LOANID equals l.TERMLOANID
-                                          join ccu in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals ccu.COLLATERALCUSTOMERID
-                                          join st  in context.TBL_STAFF on l.CREATEDBY equals st.STAFFID
-                                          join cu in context.TBL_CUSTOMER on ccu.CUSTOMERID equals cu.CUSTOMERID
-                                          
-                                          join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
-                                          join cas in context.TBL_COLLATERAL_CASA on a.COLLATERALCUSTOMERID equals cas.COLLATERALCUSTOMERID
-                                          join lpd in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals lpd.LOANAPPLICATIONDETAILID
-                                        
-                                          join c in context.TBL_SUB_SECTOR on l.SUBSECTORID equals c.SUBSECTORID
-                                          join s in context.TBL_SECTOR on c.SECTORID equals s.SECTORID
-                                          join cgm in context.TBL_CUSTOMER_GROUP_MAPPING on ccu.CUSTOMERID equals cgm.CUSTOMERID
-                                          join cg in context.TBL_CUSTOMER_GROUP on cgm.CUSTOMERGROUPID equals cg.CUSTOMERGROUPID
-                                         
-                                          join f in context.TBL_FREQUENCY_TYPE on l.INTERESTFREQUENCYTYPEID equals f.FREQUENCYTYPEID
-                                          join fs in context.TBL_FREQUENCY_TYPE on l.PRINCIPALFREQUENCYTYPEID equals fs.FREQUENCYTYPEID
-                                          join pg in context.TBL_LOAN_PRUDENTIALGUIDELINE on l.USER_PRUDENTIAL_GUIDE_STATUSID equals pg.PRUDENTIALGUIDELINESTATUSID
-                                          join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
+                         var creditSchedule = (from l in context.TBL_LOAN
+                                               //join ccu in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals ccu.COLLATERALCUSTOMERID
+                                               join st in context.TBL_STAFF on l.CREATEDBY equals st.STAFFID
+                                               //join cu in context.TBL_CUSTOMER on ccu.CUSTOMERID equals cu.CUSTOMERID
 
-                                          let glInfo = (from gl in context.TBL_CHART_OF_ACCOUNT
+                                               join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
+                                               //join cas in context.TBL_COLLATERAL_CASA on a.COLLATERALCUSTOMERID equals cas.COLLATERALCUSTOMERID
+                                               join lpd in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals lpd.LOANAPPLICATIONDETAILID
+
+                                               join c in context.TBL_SUB_SECTOR on l.SUBSECTORID equals c.SUBSECTORID
+                                               join s in context.TBL_SECTOR on c.SECTORID equals s.SECTORID
+                                               //join cgm in context.TBL_CUSTOMER_GROUP_MAPPING on ccu.CUSTOMERID equals cgm.CUSTOMERID
+                                               //join cg in context.TBL_CUSTOMER_GROUP on cgm.CUSTOMERGROUPID equals cg.CUSTOMERGROUPID
+
+                                               join f in context.TBL_FREQUENCY_TYPE on l.INTERESTFREQUENCYTYPEID equals f.FREQUENCYTYPEID
+                                               join fs in context.TBL_FREQUENCY_TYPE on l.PRINCIPALFREQUENCYTYPEID equals fs.FREQUENCYTYPEID
+                                               join pg in context.TBL_LOAN_PRUDENTIALGUIDELINE on l.USER_PRUDENTIAL_GUIDE_STATUSID equals pg.PRUDENTIALGUIDELINESTATUSID
+                                               join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
+
+                                               //from a in context.TBL_LOAN_COLLATERAL_MAPPING
+                                               //join l in context.TBL_LOAN on a.LOANID equals l.TERMLOANID
+                                               //join ccu in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals ccu.COLLATERALCUSTOMERID
+                                               //join st in context.TBL_STAFF on l.CREATEDBY equals st.STAFFID
+                                               //join cu in context.TBL_CUSTOMER on ccu.CUSTOMERID equals cu.CUSTOMERID
+
+                                               //join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
+                                               //join cas in context.TBL_COLLATERAL_CASA on a.COLLATERALCUSTOMERID equals cas.COLLATERALCUSTOMERID
+                                               //join lpd in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals lpd.LOANAPPLICATIONDETAILID
+
+                                               //join c in context.TBL_SUB_SECTOR on l.SUBSECTORID equals c.SUBSECTORID
+                                               //join s in context.TBL_SECTOR on c.SECTORID equals s.SECTORID
+                                               //join cgm in context.TBL_CUSTOMER_GROUP_MAPPING on ccu.CUSTOMERID equals cgm.CUSTOMERID
+                                               //join cg in context.TBL_CUSTOMER_GROUP on cgm.CUSTOMERGROUPID equals cg.CUSTOMERGROUPID
+
+                                               //join f in context.TBL_FREQUENCY_TYPE on l.INTERESTFREQUENCYTYPEID equals f.FREQUENCYTYPEID
+                                               //join fs in context.TBL_FREQUENCY_TYPE on l.PRINCIPALFREQUENCYTYPEID equals fs.FREQUENCYTYPEID
+                                               //join pg in context.TBL_LOAN_PRUDENTIALGUIDELINE on l.USER_PRUDENTIAL_GUIDE_STATUSID equals pg.PRUDENTIALGUIDELINESTATUSID
+                                               //join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
+
+                                               let glInfo = (from gl in context.TBL_CHART_OF_ACCOUNT
                                                         join cst in context.TBL_CUSTOM_CHART_OF_ACCOUNT on gl.ACCOUNTCODE equals cst.PLACEHOLDERID
                                                         join pr in context.TBL_PRODUCT on gl.GLACCOUNTID equals pr.PRINCIPALBALANCEGL
                                                         where pr.PRODUCTID == p.PRODUCTID && cst.CURRENCYCODE == cur.CURRENCYCODE
@@ -3644,22 +3663,22 @@ namespace FintrakBanking.ReportObjects
 
                                           where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                                                          DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
-                                                      && cu.COMPANYID == companyid
-                                          orderby a.DATETIMECREATED descending
+                                                      //&& cu.COMPANYID == companyid
+                                          //orderby a.DATETIMECREATED descending
 
 
                                           select new CreditScheduleViewModel()
                                           {
-                                              accountNumber = cas.ACCOUNTNUMBER,
-                                              bvn = cu.CUSTOMERBVN,
-                                              customerName = cu.FIRSTNAME + " " + " " + cu.MIDDLENAME + " " + " " + cu.LASTNAME,
-                                              tin = cu.TAXNUMBER,
+                                              //accountNumber = cas.ACCOUNTNUMBER,
+                                              //bvn = cu.CUSTOMERBVN,
+                                              //customerName = cu.FIRSTNAME + " " + " " + cu.MIDDLENAME + " " + " " + cu.LASTNAME,
+                                              //tin = cu.TAXNUMBER,
                                               facilityType = context.TBL_PRODUCT_TYPE.Where(o => o.PRODUCTTYPEID == lpd.TBL_PRODUCT.PRODUCTTYPEID).Select(o => o.PRODUCTTYPENAME).FirstOrDefault(),
                                               glSubHeadCode = glInfo,
                                               sector = s.NAME,
                                               subSector = c.NAME,
-                                              customerId = cu.CUSTOMERID,
-                                              groupOrganization = cg.GROUPNAME,
+                                              //customerId = cu.CUSTOMERID,
+                                              //groupOrganization = cg.GROUPNAME,
                                               dateGranted = l.EFFECTIVEDATE,
                                               lastCreditDate = DateTime.Now,
                                               expiryDate = l.MATURITYDATE,
@@ -3673,12 +3692,12 @@ namespace FintrakBanking.ReportObjects
                                               cumPrincipalDueNotYetPaid = l.PASTDUEPRINCIPAL,
                                               interestRate = l.INTERESTRATE,
                                               tenor = (int)DbFunctions.DiffDays(l.MATURITYDATE, l.EFFECTIVEDATE),
-                                              balance = cas.AVAILABLEBALANCE,
+                                              //balance = cas.AVAILABLEBALANCE,
                                               curr = cur.CURRENCYNAME,
                                               bankClassification = pg.STATUSNAME,
-                                              detailsOfSecuritiesOthers = ccu.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                                              collateralValue = ccu.COLLATERALVALUE,
-                                              collateralStatus = ccu.APPROVALSTATUS,
+                                              //detailsOfSecuritiesOthers = ccu.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                              //collateralValue = ccu.COLLATERALVALUE,
+                                              //collateralStatus = ccu.APPROVALSTATUS,
                                               staffCode = st.STAFFCODE,
 
 
