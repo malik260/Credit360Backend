@@ -4568,7 +4568,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeBBDReminder()
         {
             // GetSectorLimitExceedeBBDReminder method
-            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a=>a.SECTOR != null).Sum(a=>a.BANK);
+            var sectorBankSum = context2.TBL_SECTOR_LIMIT_ALERT.Where(a=>a.SECTOR != null).Sum(a=>a.BANK);
             var sectorLimitBBD = externalAlertRepository.GetSectorLimitValidationBBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeBBDReminder").FirstOrDefault();
@@ -4637,7 +4637,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeCBDReminder()
         {
             // GetSectorLimitExceedeCBDReminder method
-            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorBankSum = context2.TBL_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitCBD = externalAlertRepository.GetSectorLimitValidationCBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeCBDReminder").FirstOrDefault();
@@ -4706,7 +4706,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeCIBDReminder()
         {
             // GetSectorLimitExceedeCIBDReminder method
-            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorBankSum = context2.TBL_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitCIBD = externalAlertRepository.GetSectorLimitValidationCIBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeCIBDReminder").FirstOrDefault();
@@ -4775,7 +4775,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeRBDReminder()
         {
             // GetSectorLimitExceedeRBDReminder method
-            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorBankSum = context2.TBL_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitRBD = externalAlertRepository.GetSectorLimitValidationRBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeRBDReminder").FirstOrDefault();
@@ -4844,7 +4844,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceededBankReminder()
         {
             // GetSectorLimitExceededBankReminder method
-            var sectorbankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorbankSum = context2.TBL_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitBank = externalAlertRepository.GetSectorLimitValidationBank();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceededBankReminder").FirstOrDefault();
