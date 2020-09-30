@@ -30146,6 +30146,7 @@ namespace FintrakBanking.Repositories.Credit
                                        isLineFacility = d.ISLINEFACILITY,
                                        loanId = a.TERMLOANID,
                                        approvalDate = a.DATEAPPROVED,
+                                       loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
                                        isLineMaintained = m.APPROVEDLINESTATUSID != null,
                                        requestDate = s.DATETIMECREATED,
@@ -30231,6 +30232,7 @@ namespace FintrakBanking.Repositories.Credit
                                              amountDisbursed = a.OVERDRAFTLIMIT,
                                              bookingRequestStatusId = s.APPROVALSTATUSID,
                                              isLineFacility = d.ISLINEFACILITY,
+                                             loanReferenceNumber = a.LOANREFERENCENUMBER,
                                              isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
                                              isLineMaintained = m.APPROVEDLINESTATUSID != null,
                                              requestDate = s.DATETIMECREATED,
@@ -30313,6 +30315,7 @@ namespace FintrakBanking.Repositories.Credit
                                          select new CamProcessedLoanViewModel()
                                          {
                                              bookingAmountRequested = s.AMOUNT_REQUESTED,
+                                             loanReferenceNumber = a.LOANREFERENCENUMBER,
                                              loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                                              amountDisbursed = a.CONTINGENTAMOUNT,
                                              bookingRequestStatusId = s.APPROVALSTATUSID,
@@ -30397,7 +30400,7 @@ namespace FintrakBanking.Repositories.Credit
             IEnumerable<CamProcessedLoanViewModel> allLoans = null;
 
             var dataTermLoans = (from b in context.TBL_DOCUMENTATION_FILLING_APPROVAL
-                                 join a in context.TBL_LOAN on b.LOANID equals a.TERMLOANID
+                                 join a in context.TBL_LOAN on b.LOANREFERENCE equals a.LOANREFERENCENUMBER
                                  join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
                                  join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                                  join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -30405,15 +30408,15 @@ namespace FintrakBanking.Repositories.Credit
                                  join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                                  join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
                                  join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                 where m.COMPANYID == companyId
-                                 && b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
+                                 where 
+                                 b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                  && a.ISPRINTED == false
-                                 && b.LOANID == a.TERMLOANID
-                                 
                                  
                                  orderby a.DATEAPPROVED descending
                                  select new CamProcessedLoanViewModel()
                                  {
+                                     module = b.MODULE,
+                                     loanReferenceNumber = a.LOANREFERENCENUMBER,
                                      fillingRequestDate = b.DATETIMECREATED,
                                      documentationFillingId = b.DOCUMENTATIONFILLINGID,
                                      bookingAmountRequested = s.AMOUNT_REQUESTED,
@@ -30451,7 +30454,7 @@ namespace FintrakBanking.Repositories.Credit
                                      applicationTenor = m.APPLICATIONTENOR,
                                      effectiveDate = (DateTime)d.EFFECTIVEDATE,
                                      expiryDate = (DateTime)d.EXPIRYDATE,
-                                     currencyId = d.CURRENCYID, //d.TBL_CURRENCY.CURRENCYID,
+                                     currencyId = d.CURRENCYID, 
                                      currencyCode = (from y in context.TBL_CURRENCY.Where(i => i.CURRENCYID == d.CURRENCYID) select y.CURRENCYCODE).FirstOrDefault(), //d.TBL_CURRENCY.CURRENCYCODE,
                                      exchangeRate = d.EXCHANGERATE,
                                      loanTypeId = m.LOANAPPLICATIONTYPEID,
@@ -30478,7 +30481,7 @@ namespace FintrakBanking.Repositories.Credit
                                  }).ToList().Take(50);
 
             var dataRevolvingLoans = (from b in context.TBL_DOCUMENTATION_FILLING_APPROVAL
-                                      join a in context.TBL_LOAN_REVOLVING on b.LOANID equals a.REVOLVINGLOANID
+                                      join a in context.TBL_LOAN_REVOLVING on b.LOANREFERENCE equals a.LOANREFERENCENUMBER
                                       join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
                                       join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                                       join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -30486,8 +30489,8 @@ namespace FintrakBanking.Repositories.Credit
                                       join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                                       join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
                                       join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                      where m.COMPANYID == companyId
-                                      && b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
+                                      where 
+                                      b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                       && a.ISPRINTED == false
                                       
 
@@ -30495,6 +30498,8 @@ namespace FintrakBanking.Repositories.Credit
                                       select new CamProcessedLoanViewModel()
                                       {
                                           fillingRequestDate = b.DATETIMECREATED,
+                                          module = b.MODULE,
+                                          loanReferenceNumber = a.LOANREFERENCENUMBER,
                                           documentationFillingId = b.DOCUMENTATIONFILLINGID,
                                           bookingAmountRequested = s.AMOUNT_REQUESTED,
                                           loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
@@ -30530,7 +30535,7 @@ namespace FintrakBanking.Repositories.Credit
                                           applicationTenor = m.APPLICATIONTENOR,
                                           effectiveDate = (DateTime)d.EFFECTIVEDATE,
                                           expiryDate = (DateTime)d.EXPIRYDATE,
-                                          currencyId = d.CURRENCYID, //d.TBL_CURRENCY.CURRENCYID,
+                                          currencyId = d.CURRENCYID, 
                                           currencyCode = (from y in context.TBL_CURRENCY.Where(i => i.CURRENCYID == d.CURRENCYID) select y.CURRENCYCODE).FirstOrDefault(), //d.TBL_CURRENCY.CURRENCYCODE,
                                           exchangeRate = d.EXCHANGERATE,
                                           loanTypeId = m.LOANAPPLICATIONTYPEID,
@@ -30559,7 +30564,7 @@ namespace FintrakBanking.Repositories.Credit
                                       }).ToList().Take(50);
 
             var dataContingentLoans = (from b in context.TBL_DOCUMENTATION_FILLING_APPROVAL
-                                       join a in context.TBL_LOAN_CONTINGENT on b.LOANID equals a.CONTINGENTLOANID
+                                       join a in context.TBL_LOAN_CONTINGENT on b.LOANREFERENCE equals a.LOANREFERENCENUMBER
                                        join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
                                        join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                                        join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -30567,14 +30572,16 @@ namespace FintrakBanking.Repositories.Credit
                                        join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                                        join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
                                        join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                       where m.COMPANYID == companyId
-                                       && b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
+                                       where 
+                                       b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                        && a.ISPRINTED == false
 
 
                                        orderby a.DATEAPPROVED descending
                                        select new CamProcessedLoanViewModel()
                                        {
+                                           module = b.MODULE,
+                                           loanReferenceNumber = a.LOANREFERENCENUMBER,
                                            fillingRequestDate = b.DATETIMECREATED,
                                            documentationFillingId = b.DOCUMENTATIONFILLINGID,
                                            bookingAmountRequested = s.AMOUNT_REQUESTED,
@@ -30611,7 +30618,7 @@ namespace FintrakBanking.Repositories.Credit
                                            applicationTenor = m.APPLICATIONTENOR,
                                            effectiveDate = (DateTime)d.EFFECTIVEDATE,
                                            expiryDate = (DateTime)d.EXPIRYDATE,
-                                           currencyId = d.CURRENCYID, //d.TBL_CURRENCY.CURRENCYID,
+                                           currencyId = d.CURRENCYID, 
                                            currencyCode = (from y in context.TBL_CURRENCY.Where(i => i.CURRENCYID == d.CURRENCYID) select y.CURRENCYCODE).FirstOrDefault(), //d.TBL_CURRENCY.CURRENCYCODE,
                                            exchangeRate = d.EXCHANGERATE,
                                            loanTypeId = m.LOANAPPLICATIONTYPEID,
@@ -30716,7 +30723,7 @@ namespace FintrakBanking.Repositories.Credit
                                 effectiveDate = ln.EFFECTIVEDATE,
                                 maturityDate = ln.MATURITYDATE,
                                 bookingDate = ln.BOOKINGDATE,
-                                principalAmount = ln.OUTSTANDINGPRINCIPAL, //\\\ln.PrincipalAmount,
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL, 
                                 principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
                                 interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
                                 approvalStatusId = op.APPROVALSTATUSID,
@@ -33312,6 +33319,7 @@ namespace FintrakBanking.Repositories.Credit
                 TBL_DOCUMENTATION_FILLING_APPROVAL _FILLING_APPROVAL = new TBL_DOCUMENTATION_FILLING_APPROVAL();
                 _FILLING_APPROVAL.LOANID = model.loanId;
                 _FILLING_APPROVAL.CREATEDBY = model.createdBy;
+                _FILLING_APPROVAL.LOANREFERENCE = model.loanReferenceNumber;
                 _FILLING_APPROVAL.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 _FILLING_APPROVAL.COMMENT = "Kindly help approve approve the printed document for filling";
                 _FILLING_APPROVAL.DATETIMECREATED = DateTime.Now;
@@ -33330,7 +33338,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Error loan id requred");
             }
 
-            var validate = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Where(x => x.LOANID == model.loanId
+            var validate = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Where(x => x.LOANREFERENCE == model.loanReferenceNumber
                                                           && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                                           || x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
             if (validate != null)
@@ -33343,6 +33351,7 @@ namespace FintrakBanking.Repositories.Credit
                     TBL_DOCUMENTATION_FILLING_APPROVAL _FILLING_APPROVAL = new TBL_DOCUMENTATION_FILLING_APPROVAL();
                     _FILLING_APPROVAL.LOANID = model.loanId;
                     _FILLING_APPROVAL.CREATEDBY = model.createdBy;
+                    _FILLING_APPROVAL.LOANREFERENCE = model.loanReferenceNumber;
                     _FILLING_APPROVAL.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                     _FILLING_APPROVAL.COMMENT = "Kindly help approve approve the printed document for filling";
                     _FILLING_APPROVAL.DATETIMECREATED = DateTime.Now;
