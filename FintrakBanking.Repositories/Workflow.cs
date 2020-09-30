@@ -716,7 +716,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.toStaffId != null)
             {
                 var p = context.TBL_STAFF.Find(this.toStaffId);
-                response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;
+                response.nextPersonName = p?.STAFFCODE + " -- " + p?.FIRSTNAME + " " + p?.MIDDLENAME + " " + p?.LASTNAME;
             }
 
             if (this.loopedStaffId != null && this.loopedStaffId > 0)
@@ -1868,7 +1868,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (this.toStaffId != null)
                 {
                     reciever = context.TBL_STAFF.Find(this.toStaffId);
-                    recipientName = reciever.FIRSTNAME;
+                    recipientName = reciever?.FIRSTNAME;
                     this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x=>x.RELIEFSTAFFID).FirstOrDefault();
                 }
                 else if (this.loopedStaffId != null)
@@ -1970,7 +1970,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         message = new TBL_MESSAGE_LOG // RECIEVERS
                         {
-                            TOADDRESS = this.toStaffId != null ? (reciever.EMAIL == null ? "N/A" : reciever.EMAIL) : string.Join(";", emails.Distinct()),
+                            TOADDRESS = this.toStaffId != null ? (reciever?.EMAIL == null ? "N/A" : reciever?.EMAIL) : string.Join(";", emails.Distinct()),
                             MESSAGESUBJECT = messageSubject,
                             MESSAGEBODY = messageBody + links,
                             MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
