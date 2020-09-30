@@ -484,6 +484,8 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                         isLineFacility = d.ISLINEFACILITY,
                         isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
+                        isEmployerRelated = m.ISEMPLOYERRELATED,
+                        employer = context.TBL_CUSTOMER_EMPLOYER.FirstOrDefault(e => e.EMPLOYERID == m.RELATEDEMPLOYERID).EMPLOYER_NAME,
                         applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                         applicationStatusId = m.APPLICATIONSTATUSID,
                         appraisalOperationId = m.OPERATIONID,
@@ -903,20 +905,22 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
             var company = context.TBL_COMPANY.Find(companyId);
             var data2 = new List<CamProcessedLoanViewModel>();
-            searchString = searchString.Trim();
+            searchString = searchString.ToLower().Trim();
 
             data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                      join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                      join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+                     let employer = context.TBL_CUSTOMER_EMPLOYER.FirstOrDefault(e => e.EMPLOYERID == a.RELATEDEMPLOYERID).EMPLOYER_NAME
                      where a.COMPANYID == companyId && d.DELETED == false
                      //&& staffIds.Contains(a.OWNEDBY)
                      && a.ISEMPLOYERRELATED
                      &&
                      (
                      a.APPLICATIONREFERENCENUMBER == searchString
-                     || d.TBL_CUSTOMER.FIRSTNAME.Contains(searchString)
-                     || d.TBL_CUSTOMER.MIDDLENAME.Contains(searchString)
-                     || d.TBL_CUSTOMER.LASTNAME.Contains(searchString)
+                     || d.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(searchString)
+                     || d.TBL_CUSTOMER.MIDDLENAME.ToLower().Contains(searchString)
+                     || d.TBL_CUSTOMER.LASTNAME.ToLower().Contains(searchString)
+                     || employer.ToLower().Contains(searchString)
                      )
                      && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                      && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
@@ -933,7 +937,7 @@ namespace FintrakBanking.Repositories.Credit
                          isLineMaintained = a.APPROVEDLINESTATUSID != null,
                          customerTypeId = (int)context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == d.CUSTOMERID).Select(s => s.CUSTOMERTYPEID).FirstOrDefault(),
                          isEmployerRelated = a.ISEMPLOYERRELATED,
-                         employer = context.TBL_CUSTOMER_EMPLOYER.FirstOrDefault(e => e.EMPLOYERID == a.RELATEDEMPLOYERID).EMPLOYER_NAME,
+                         employer = employer,
                          appraisalOperationId = a.OPERATIONID,
                          requestedAmount = 0,
                          loanApplicationId = a.LOANAPPLICATIONID,
