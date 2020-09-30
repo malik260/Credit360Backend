@@ -2681,7 +2681,6 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.CollateralSwapMemorandum(entity);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "COLLATERAL SWAP") });
-            //return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The COLLATERAL SWAP request has been sent for approval!" });
         }
 
         [HttpGet]
