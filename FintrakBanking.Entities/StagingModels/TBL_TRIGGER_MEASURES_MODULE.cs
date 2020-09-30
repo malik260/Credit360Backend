@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.StagingModels
 {
-    [Table("TBL_TRIGGER_MEASURESPRODUCTNAME")]
-    public partial class TBL_TRIGGER_MEASURESPRODUCTNAME
+    [Table("TBL_TRIGGER_MEASURES_MODULE")]
+    public partial class TBL_TRIGGER_MEASURES_MODULE
     {
         [Key]
         public int ID { get; set; }
         public DateTime DATE { get; set; }
-        public string PRODUCTNAME { get; set; }
+        public string MODULE { get; set; }
         public decimal DPD { get; set; }
         public decimal NPL { get; set; }
         public decimal DISBURSEMENT { get; set; }
