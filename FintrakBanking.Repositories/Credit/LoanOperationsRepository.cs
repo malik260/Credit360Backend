@@ -20257,7 +20257,7 @@ namespace FintrakBanking.Repositories.Credit
                         };
 
                         workFlow.LogForApproval(approval);
-
+                        context.SaveChanges();
                         if (approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                         {
 
