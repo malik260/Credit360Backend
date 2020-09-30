@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.StagingModels
 {
-    [Table("STG_SECTOR_LIMIT_ALERT")]
+    [Table("TBL_SECTOR_LIMIT_ALERT")]
     public partial class TBL_SECTOR_LIMIT_ALERT
     {
         [Key]
