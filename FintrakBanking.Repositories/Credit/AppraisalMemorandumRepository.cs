@@ -3235,7 +3235,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             
             var staffs = general.GetStaffRlieved(staffId);
-            var currentStaff = context.TBL_STAFF.Find(staffs[0]);
+            //var currentStaff = context.TBL_STAFF.Find(staffs[0]);
 
             IQueryable<LoanApplicationViewModel> applications = null;
 
@@ -3717,6 +3717,46 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
+        public bool ReturnAssignApplicationToPool(int approvalTrailId, GeneralEntity model)
+        {
+            using (var trans = context.Database.BeginTransaction())
+            {
+                if (approvalTrailId > 0)
+                {
+                    var systemDateNow = DateTime.Now;
+                    var trail = context.TBL_APPROVAL_TRAIL.Find(approvalTrailId);
+                    var trailForAudit = context.TBL_APPROVAL_TRAIL.Find(approvalTrailId);
+                    var trails = new List<TBL_APPROVAL_TRAIL>();
+                    TBL_STAFF staff = new TBL_STAFF();
+
+                    var level = context.TBL_APPROVAL_LEVEL.Find(trail.TOAPPROVALLEVELID);
+                    if (trail != null)
+                    {
+                        staff = context.TBL_STAFF.Find(trail.TOSTAFFID);
+                        trail.TOSTAFFID = null;
+                    }
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.ApplicationReassigned,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = $"Transaction that was previously assigned to {staff?.FIRSTNAME} {staff?.MIDDLENAME} {staff?.LASTNAME} ({staff.STAFFCODE}) {level.LEVELNAME} approval group was to {level.LEVELNAME}.",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(), 
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = systemDateNow,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
+                    };
+                    this.audit.AddAuditTrail(audit);
+
+                    trans.Commit();
+                }
+            }
+
+            return context.SaveChanges() > 0;
+        }
         public List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user)
         {
             int staffId = user.staffId;

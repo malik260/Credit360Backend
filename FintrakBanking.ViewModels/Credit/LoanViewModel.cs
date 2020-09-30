@@ -928,6 +928,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string module { get; set; }
         public int? flagStatus { get; set; }
         public DateTime fillingRequestDate { get; set; }
+        public bool isProjectRelate { get; set; }
 
 
 
@@ -991,6 +992,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal feeRate { get; set; }
         public string description { get; set; }
         public bool isDeferred { get; set; }
+        public string feeSourceModule { get; set; }
         //public double? rate { get; set; }
 
     }

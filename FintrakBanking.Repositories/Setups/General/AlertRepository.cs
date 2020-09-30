@@ -891,98 +891,111 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareDate() == true)
             {
-                //TimeSpan start = new TimeSpan(17, 0, 0); 
-                //TimeSpan end = new TimeSpan(19, 0, 0); 
+                 TimeSpan start = new TimeSpan(17, 0, 0);
+                 TimeSpan end = new TimeSpan(17, 30, 0);
 
-                //if ((now >= start) && (now <= end))
-                //{
-                //    //GetStaffLoanPortfolioReport();
-                //    GetValuationReminder();
-                //    GetSiteVisitationAccountReminder();
-                //    GetExpiredValuationReport();
-                //    GetFacilityRestructuredNotification();
-                //    GetSLAReport();
-                //    GetPastDueDeferredDocuments();
-                //    GetExpiredInsurancePolicies();
-                //    GetLoanRepaymentReminder();
-                //    GetGroupCreditFileChecklistReminder();
-                //    state = true;
-                //}
+                 if ((now >= start) && (now <= end))
+                 {
+                     //GetStaffLoanPortfolioReport();
+                     GetValuationReminder();
+                     GetSiteVisitationAccountReminder();
+                     GetExpiredValuationReport();
+                     GetFacilityRestructuredNotification();
+                     GetSLAReport();
+                     GetPastDueDeferredDocuments();
+                     GetExpiredInsurancePolicies();
+                     GetLoanRepaymentReminder();
+                     GetGroupCreditFileChecklistReminder();
+                     state = true;
+                 }
             }
 
             if (CompareDateSectorLimit() == true)
             {
-                //TimeSpan start2 = new TimeSpan(8, 0, 0); 
-                //TimeSpan end2 = new TimeSpan(17, 0, 0);
+                TimeSpan start2 = new TimeSpan(11, 30, 0);
+                TimeSpan end2 = new TimeSpan(12, 0, 0);
 
-                //if ((now >= start2) && (now <= end2))
-                //{
-                //    GetSectorLimitExceedeBBDReminder();
-                //    GetSectorLimitExceedeCBDReminder();
-                //    GetSectorLimitExceedeCIBDReminder();
-                //    GetSectorLimitExceedeRBDReminder();
-                //    GetSectorLimitExceededBankReminder();
-                //    state = true;
-                //}
+                if ((now >= start2) && (now <= end2))
+                {
+                    GetSectorLimitExceedeBBDReminder();
+                    GetSectorLimitExceedeCBDReminder();
+                    GetSectorLimitExceedeCIBDReminder();
+                    GetSectorLimitExceedeRBDReminder();
+                    GetSectorLimitExceededBankReminder();
+                    state = true;
+                }
 
-                
+
             }
 
 
             if (CompareDigitalLoanDate() == true)
             {
-                //TimeSpan start11 = new TimeSpan(11, 0, 0); 
-                //TimeSpan end13 = new TimeSpan(13, 0, 0); 
+                TimeSpan start11 = new TimeSpan(11, 0, 0);
+                TimeSpan end13 = new TimeSpan(11, 30, 0);
 
-                //if ((now >= start11) && (now <= end13))
-                //{
-                //    GetDigitalLoanExceptionNPLIncrease();
-                //    GetDigitalLoanExceptionNPLDecrease();
-                //    GetDigitalLoanExceptionNPLModuleIncrease();
-                //    GetDigitalLoanExceptionNPLModuleDecrease();
-                //    GetDigitalLoanDisbursementIncrease();
-                //    GetDigitalLoanDisbursementDecrease();
-                //    GetDigitalLoanDisbursementModuleIncrease();
-                //    GetDigitalLoanDisbursementModuleDecrease();
-                //    GetDigitalLoanDPDIncrease();
-                //    GetDigitalLoanDPDDecrease();
-                //    GetDigitalLoanDPDModuleIncrease();
-                //    GetDigitalLoanDPDModuleDecrease();
-                //    GetDigitalLoanLiquidationIncrease();
-                //    GetDigitalLoanLiquidationModuleIncrease();
-                //    state = true;
-                //}
+                if ((now >= start11) && (now <= end13))
+                {
+                    /*GetDigitalLoanExceptionNPLIncrease();
+                    GetDigitalLoanExceptionNPLDecrease();
+                    GetDigitalLoanDisbursementIncrease();
+                    GetDigitalLoanDisbursementDecrease();
+                    GetDigitalLoanDPDIncrease();
+                    GetDigitalLoanDPDDecrease();
+                    GetDigitalLoanLiquidationIncrease();*/
+
+                    GetDigitalLoanLiquidationModuleIncrease();
+                    GetDigitalLoanExceptionNPLModuleIncrease();
+                    GetDigitalLoanExceptionNPLModuleDecrease();
+                    GetDigitalLoanDPDModuleIncrease();
+                    GetDigitalLoanDPDModuleDecrease();
+                    GetDigitalLoanDisbursementModuleIncrease();
+                    GetDigitalLoanDisbursementModuleDecrease();
+                    state = true;
+                }
 
 
             }
 
             if (CompareDefaultRepayment() == true)
             {
-                //TimeSpan start11 = new TimeSpan(14, 0, 0);
-                //TimeSpan end13 = new TimeSpan(16, 0, 0);
+                TimeSpan start11 = new TimeSpan(14, 0, 0);
+                TimeSpan end13 = new TimeSpan(14, 30, 0);
 
-                //if ((now >= start11) && (now <= end13))
-                //{
-                //    GetRepaymentDefaultersAlert();
-                //    GetRepaymentPayDownAlert();
-                //    state = true;
-                //}
+                if ((now >= start11) && (now <= end13))
+                {
+                    GetRepaymentDefaultersAlert();
+                    GetRepaymentPayDownAlert();
+                    state = true;
+                }
             }
 
             
             if (CompareDate() == true)
             {
-                //TimeSpan start = new TimeSpan(8, 0, 0); 
-                //TimeSpan end = new TimeSpan(11, 0, 0); 
-                
-                //if ((now >= start) && (now <= end))
-                //{
-                //    GroupImminentMaturitiesByGroupHeads();
-                //    GetImminentMaturities();
-                //    GetPastDueObligationsReminder();
-                //    GetPastDueObligationsReminderByGroupHeads();
-                //    state = true;
-                //}
+                /*TimeSpan start = new TimeSpan(8, 0, 0);
+                TimeSpan end = new TimeSpan(11, 0, 0);
+
+                if ((now >= start) && (now <= end))
+                {
+                    GroupImminentMaturitiesByGroupHeads();
+                    GetImminentMaturities();
+                    GetPastDueObligationsReminder();
+                    GetPastDueObligationsReminderByGroupHeads();
+                    state = true;
+                }*/
+            }
+
+            if (CompareRecoveryExpectedDueDate() == true)
+            {
+                TimeSpan start = new TimeSpan(7, 30, 0);
+                TimeSpan end = new TimeSpan(8, 0, 0);
+
+                if ((now >= start) && (now <= end))
+                {
+                    GetRecoveryAssignmentDueCompletionDate();
+                    state = true;
+                }
             }
 
             var getCronSetup = context.TBL_COLLECTION_RETAIL_CRON_SETUP.Where(x => x.DELETED == false).ToList();
@@ -1034,6 +1047,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return state;
         }
 
+        
         private bool CompareDate()
         {
             DateTime currentDate = DateTime.Now;
@@ -1062,25 +1076,41 @@ namespace FintrakBanking.Repositories.Setups.General
             return false;
         }
 
+        private bool CompareRecoveryExpectedDueDate()
+        {
+            DateTime currentDate = DateTime.Now;
+            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                         && (m.OPERATIONMETHOD.Trim() == "GetRecoveryAssignmentDueCompletionDate"
+                         )).FirstOrDefault();
+
+            if (DBdate == null)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
         private bool CompareDigitalLoanDate()
         {
             DateTime currentDate = DateTime.Now;
             var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
-                         && (m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleDecrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationIncrease"
-                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationModuleIncrease"
-                         )).FirstOrDefault();
+                         && (//m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLIncrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLDecrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementIncrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementDecrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDIncrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDDecrease"
+                             //|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationIncrease"
+
+                             m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleIncrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleDecrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationModuleIncrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleIncrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleDecrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleIncrease"
+                             || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleDecrease"
+                             )).FirstOrDefault();
 
             if (DBdate == null)
             {
@@ -3711,7 +3741,7 @@ namespace FintrakBanking.Repositories.Setups.General
         // trigger alerts methods
         public void GetDigitalLoanExceptionNPLIncrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_PRODUCT select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
            
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -3751,7 +3781,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue) || (exceptionNPL.NPL >= (decimal)twoPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -3769,7 +3799,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanExceptionNPLDecrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_PRODUCT select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
            
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -3810,7 +3840,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue) || (exceptionNPL.NPL <= -(decimal)twoPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -3827,7 +3857,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanExceptionNPLModuleIncrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_MODULE select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
             
             string emailList = "";
@@ -3868,7 +3898,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue) || (exceptionNPL.NPL >= (decimal)twoPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -3886,7 +3916,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanExceptionNPLModuleDecrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_MODULE select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
             string emailList = "";
 
@@ -3927,7 +3957,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue) || (exceptionNPL.NPL <= -(decimal)twoPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -3945,7 +3975,7 @@ namespace FintrakBanking.Repositories.Setups.General
         //Disbursement
         public void GetDigitalLoanDisbursementIncrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_PRODUCT select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
             
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -3987,7 +4017,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue) 
                        || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4004,7 +4034,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanDisbursementDecrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_PRODUCT select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
 
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -4046,7 +4076,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT <= -(decimal)tenPercentValue && exceptionNPL.DISBURSEMENT > -(decimal)fifteenPercentValue)
                        || (exceptionNPL.DISBURSEMENT <= -(decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4063,7 +4093,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanDisbursementModuleIncrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_MODULE select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
 
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -4105,7 +4135,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue)
                        || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4122,7 +4152,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanDisbursementModuleDecrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_MODULE select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
             
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -4164,7 +4194,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.NPL <= -(decimal)tenPercentValue && exceptionNPL.NPL > -(decimal)fifteenPercentValue)
                        || (exceptionNPL.NPL <= -(decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4182,7 +4212,7 @@ namespace FintrakBanking.Repositories.Setups.General
         //DPD
         public void GetDigitalLoanDPDIncrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_PRODUCT select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
 
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -4224,7 +4254,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4241,7 +4271,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanDPDDecrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_PRODUCT select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
 
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -4283,7 +4313,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4300,7 +4330,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanDPDModuleIncrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_MODULE select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
 
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -4342,7 +4372,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4359,7 +4389,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanDPDModuleDecrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_MODULE select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
 
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -4401,7 +4431,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4418,7 +4448,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanLiquidationIncrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_PRODUCT select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
 
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -4460,7 +4490,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
                        || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4477,7 +4507,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetDigitalLoanLiquidationModuleIncrease()
         {
-            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURES_MODULE select a).ToList();
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
 
             if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
@@ -4519,7 +4549,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
                        || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
                     {
-                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4538,14 +4568,14 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeBBDReminder()
         {
             // GetSectorLimitExceedeBBDReminder method
-            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a=>a.SECTOR != null).Sum(a=>a.BANK);
+            var sectorBankSum = context2.TBL_SECTOR_LIMIT_ALERT.Where(a=>a.SECTOR != null).Sum(a=>a.BANK);
             var sectorLimitBBD = externalAlertRepository.GetSectorLimitValidationBBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeBBDReminder").FirstOrDefault();
             var defaultEmail = "";
             if (alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+                defaultEmail = alertTitleInfo.DEFAULTEMAIL;
             }
 
             if (sectorLimitBBD != null && sectorLimitBBD.Count() > 0)
@@ -4607,7 +4637,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeCBDReminder()
         {
             // GetSectorLimitExceedeCBDReminder method
-            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorBankSum = context2.TBL_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitCBD = externalAlertRepository.GetSectorLimitValidationCBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeCBDReminder").FirstOrDefault();
@@ -4676,7 +4706,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeCIBDReminder()
         {
             // GetSectorLimitExceedeCIBDReminder method
-            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorBankSum = context2.TBL_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitCIBD = externalAlertRepository.GetSectorLimitValidationCIBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeCIBDReminder").FirstOrDefault();
@@ -4745,7 +4775,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeRBDReminder()
         {
             // GetSectorLimitExceedeRBDReminder method
-            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorBankSum = context2.TBL_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitRBD = externalAlertRepository.GetSectorLimitValidationRBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeRBDReminder").FirstOrDefault();
@@ -4814,7 +4844,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceededBankReminder()
         {
             // GetSectorLimitExceededBankReminder method
-            var sectorbankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorbankSum = context2.TBL_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitBank = externalAlertRepository.GetSectorLimitValidationBank();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceededBankReminder").FirstOrDefault();
@@ -5012,6 +5042,98 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.canFire = true;
                     alert.operationMethod = "RepaymentPayDown";
                     alerts.Add(alert);
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+
+        public void GetRecoveryAssignmentDueCompletionDate()
+        {
+            //GetRecoveryAssignmentDueCompletionDate method
+            var aboutToExpiredList = externalAlertRepository.GetRecoveryAssignmentDueCompletionDate();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetRecoveryAssignmentDueCompletionDate").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (aboutToExpiredList != null && aboutToExpiredList.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var aboutToExpired in aboutToExpiredList)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    string emailList = "";
+                    
+                    emailList = GetBusinessUsersEmails(aboutToExpired.misCode);
+
+                    var loanInformation = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(d => d.REFERENCEID == aboutToExpired.referenceId).ToList();
+
+                    if (loanInformation != null && loanInformation.Count() > 0)
+                    {
+                        var n = 0;
+                        var result = $@"
+                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td>LIST FOR ASSIGNED RECOVERY FOR {aboutToExpired.accreditedConsultantCompany}</b></td>
+                        </tr>
+                        <tr>
+                            <td><b>S/N</b></td>
+                            <td><b>Customer Name</b></td>
+                            <td><b>Reference Number</b></td>
+                            <td><b>Amount</b></td>
+                            <td><b>Product</b></td>
+                            <td><b>Number Of Days Left</b></td>
+                        </tr>
+                     ";
+
+                        foreach (var t in loanInformation)
+                        {
+                            n++;
+
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.TOTALAMOUNTRECOVERY));
+                            var maturityDate = t.EXPCOMPLETIONDATE?.ToString("dd-MM-yyyy");
+                            int numberOfDays = (t.EXPCOMPLETIONDATE.Value - DateTime.Now).Days;
+                            var staffFullName = context.TBL_STAFF.Where(s => s.STAFFID == t.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                            var customerName = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == t.CUSTOMERID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                            result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{customerName}</td>
+                            <td>{t.LOANREFERENCE}</td>
+                            <td>{$"{amount}"}</td>
+                            <td>{$"{maturityDate}"}</td>
+                            <td>{numberOfDays}</td>
+                        </tr>
+                        ";
+                        }
+
+                        result = result + $"</table>";
+
+                        if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{accreditedConsultantCompany}}", aboutToExpired.accreditedConsultantCompany);
+                            alertTemplate = alertTemplate.Replace("@{{@{{recoveries}}}}", result);
+
+                            emailList = emailList + ";"+ aboutToExpired.accreditedConsultantEmail + defaultEmail;
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                            alerts.Add(alert);
+                        }
+                    }
                 }
 
                 if (alerts.Count() > 0)

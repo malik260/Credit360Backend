@@ -923,22 +923,28 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 //     return x;
 
                 // }).OrderBy(o => o.approvalTrailId);
+                param.endDate = param.endDate.AddHours(23);
+                param.endDate = param.endDate.AddMinutes(59);
+                param.endDate = param.endDate.AddSeconds(59);
                 var currentDate = DateTime.Now;
+                
 
                 var record = (from a in context.TBL_APPROVAL_TRAIL
                               join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
                               join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
                               join d in context.TBL_LOAN_APPLICATION on a.TARGETID equals d.LOANAPPLICATIONID
                               join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                              where (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
-                                 && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate))
+                              where ((DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) <= DbFunctions.TruncateTime(param.endDate))
+                                 || (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)))
                                  && operations.Contains(a.OPERATIONID)
-                                 && a.RESPONSESTAFFID == null
+                                 //&& a.RESPONSESTAFFID == null
                                  && d.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                                 && d.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                                && !approvals.Contains(a.APPROVALSTATUSID)
-                                && !disbursedLoans.Contains(d.LOANAPPLICATIONID)
-                                && a.APPROVALSTATEID != (int)ApprovalState.Ended 
+                                //&& !approvals.Contains(a.APPROVALSTATUSID)
+                                //&& !disbursedLoans.Contains(d.LOANAPPLICATIONID)
+                                //&& a.APPROVALSTATEID != (int)ApprovalState.Ended 
                                select (new WorkflowTrackerViewModel
                               {
                                   approvalStatusId = a.APPROVALSTATUSID,
@@ -971,7 +977,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               
                               .OrderBy(o => o.approvalTrailId);
 
-                var records = record.OrderByDescending(o => o.approvalTrailId);
+                var records = record.OrderByDescending(o => o.TargetId).ThenByDescending(o => o.approvalTrailId);
 
                 int serial = 1;
                 foreach (var item in records.ToList())
@@ -980,10 +986,19 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     int count = serial;
                     var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == item.loanApplicationId).ToList();
                     decimal amount = 0;
-                    foreach (var rec in loanDetails.ToList())
+                    foreach (var rec in loanDetails)
                     {
-                        ProductName += rec.TBL_PRODUCT.PRODUCTNAME + ",";
-                        amount += (decimal)rec.APPROVEDAMOUNT * (decimal)rec.EXCHANGERATE;
+                        if (loanDetails.Count > 1)
+                        {
+                            ProductName += rec.TBL_PRODUCT.PRODUCTNAME + ", ";
+                            amount += (decimal)rec.APPROVEDAMOUNT * (decimal)rec.EXCHANGERATE;
+                        }
+                        else
+                        {
+                            ProductName += rec.TBL_PRODUCT.PRODUCTNAME;
+                            amount += (decimal)rec.APPROVEDAMOUNT * (decimal)rec.EXCHANGERATE;
+                        }
+                        
                     }
                     serial += 1;
                     item.productNames = ProductName;
@@ -1014,7 +1029,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved }; //(int)ApprovalStatusEnum.Authorised
                 List<WorkflowTrackerViewModel> approvalRecord = new List<WorkflowTrackerViewModel>();
 
-
+                param.endDate = param.endDate.AddHours(23);
+                param.endDate = param.endDate.AddMinutes(59);
+                param.endDate = param.endDate.AddSeconds(59);
 
                 var preBookingrecord = (from a in context.TBL_APPROVAL_TRAIL
                                         join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
@@ -1081,10 +1098,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               join d in context.TBL_LOAN_APPLICATION_DETAIL on bo.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                               join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                               join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                              where (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
-                                 && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)) &&
-                                 operations.Contains(a.OPERATIONID) && a.RESPONSESTAFFID == null && !approvals.Contains(a.APPROVALSTATUSID)
-                                 && a.APPROVALSTATEID != (int)ApprovalState.Ended
+                              where ((DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) <= DbFunctions.TruncateTime(param.endDate))
+                                 || (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)))
+                                 && operations.Contains(a.OPERATIONID) 
+                                 //&& a.RESPONSESTAFFID == null && !approvals.Contains(a.APPROVALSTATUSID)
+                                 //&& a.APPROVALSTATEID != (int)ApprovalState.Ended
                                  && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                                  && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                               // a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 

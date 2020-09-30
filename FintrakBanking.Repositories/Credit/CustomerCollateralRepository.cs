@@ -7112,7 +7112,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CollateralValuersViewModel> GetCollateralValuer(int companyId)
         {
             return (from m in context.TBL_ACCREDITEDCONSULTANT
-                    where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTTYPEID == 2
+                    where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.Valuer
                     select new CollateralValuersViewModel
                     {
                         collateralValuerId = (short)m.ACCREDITEDCONSULTANTID,

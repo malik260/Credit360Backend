@@ -53,6 +53,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISINTEGRALFEE { get; set; }
 
+        public string FEESOURCEMODULE { get; set; }
+
         public bool ISRECURRING { get; set; }
 
         public short RECURRINGPAYMENTDAY { get; set; }

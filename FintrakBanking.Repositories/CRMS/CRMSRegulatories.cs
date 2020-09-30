@@ -856,7 +856,8 @@ namespace FintrakBanking.Repositories.CRMS
                          join opn in context.TBL_OPERATIONS on e.OPERATIONID equals opn.OPERATIONID
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                          join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                         where x.COMPANYID == param.companyId && e.CRMSCODE != null
+                         where x.COMPANYID == param.companyId 
+                         && e.CRMSCODE != null
                          && DbFunctions.TruncateTime(e.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                          && DbFunctions.TruncateTime(e.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                          && operations.Contains((short)e.OPERATIONID)
@@ -886,7 +887,8 @@ namespace FintrakBanking.Repositories.CRMS
                              join opn in context.TBL_OPERATIONS on e.OPERATIONID equals opn.OPERATIONID
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                              join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                             where x.COMPANYID == param.companyId && e.CRMSCODE != null
+                             where x.COMPANYID == param.companyId 
+                             && e.CRMSCODE != null
                              && DbFunctions.TruncateTime(e.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                              && DbFunctions.TruncateTime(e.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                              && operations.Contains((short)e.OPERATIONID)
@@ -916,7 +918,8 @@ namespace FintrakBanking.Repositories.CRMS
                               join opn in context.TBL_OPERATIONS on e.OPERATIONID equals opn.OPERATIONID
                               join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                               join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                              where x.COMPANYID == param.companyId && e.CRMSCODE != null
+                              where x.COMPANYID == param.companyId 
+                              && e.CRMSCODE != null
                               && DbFunctions.TruncateTime(e.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                               && DbFunctions.TruncateTime(e.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                               && operations.Contains((short)e.OPERATIONID)

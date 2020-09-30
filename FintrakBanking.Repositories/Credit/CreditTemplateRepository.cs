@@ -490,7 +490,7 @@ var qry = Foo.GroupJoin(
             return replacedSections;
         }
 
-        public List<LoadedDocumentSectionViewModel> getRecoveryAnalysisDocumentation(int staffId, int operationId, int targetId, UserInfo user, int templateId)
+        public List<LoadedDocumentSectionViewModel> getRecoveryAnalysisDocumentation(int staffId, int operationId, int targetId, string referenceId, UserInfo user, int templateId)
         {
             // int staffId, is REDUNDANT!
             var printedDoc = "";
@@ -511,7 +511,7 @@ var qry = Foo.GroupJoin(
                 .ToList();
 
                List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
-                memo.InitRecoveryDate(templateId); //content = memo.Replace(content);
+                memo.InitRecoveryDate(templateId, referenceId); //content = memo.Replace(content);
                 foreach (var raw in rawSections)
                 {
                     var templateIds = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
@@ -762,7 +762,7 @@ var qry = Foo.GroupJoin(
         }
 
 
-        public LoadedDocumentSectionViewModel GetRecoveryAnalysisDocumentSection(int staffId, int operationId, int targetId, int sectionId)
+        public LoadedDocumentSectionViewModel GetRecoveryAnalysisDocumentSection(int staffId, int operationId, int targetId, string referenceId, int sectionId)
         {
             var staff = context.TBL_STAFF.Find(staffId);
             List<int> sectionIds = new List<int>();
@@ -780,7 +780,7 @@ var qry = Foo.GroupJoin(
             var section = context.TBL_DOC_TEMPLATE_SECTION.FirstOrDefault(s => s.TEMPLATESECTIONID == doc.TEMPLATESECTIONID);
             if (doc == null) return new LoadedDocumentSectionViewModel();
 
-            memo.InitRecoveryDate(targetId); //recovery analysis
+            memo.InitRecoveryDate(targetId, referenceId); //recovery analysis
             return new LoadedDocumentSectionViewModel
             {
                 sectionId = doc.DOCUMENTDETAILID,

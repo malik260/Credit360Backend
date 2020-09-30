@@ -19,7 +19,10 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 try
                 {
-                    companyId.Text = Request.QueryString["companyId"]; //"1",
+                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+
+                    //companyId.Text = Request.QueryString["companyId"]; //"1",
 
                     
                     string inputDateInfo = Request.QueryString["key1"];
@@ -38,7 +41,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
 
-                    var currentDate = DateTime.Now;
+                    //var currentDate = DateTime.Now;
 
                     //var dateDifference = currentDate - incomingDate;
 
@@ -48,13 +51,15 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     //    this.ReportViewer.LocalReport.Refresh();
                     //    return;
                     //}
+
                     LoanReportObjects Jobs = new LoanReportObjects();
-                    var data = Jobs.GetCorporateLoansReport();
+                    var data = Jobs.GetCorporateLoansReport(startDate, endDate);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
                     reportDataSource.Name = "CorporateLoansReport";
+
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
                     if (extension != null)

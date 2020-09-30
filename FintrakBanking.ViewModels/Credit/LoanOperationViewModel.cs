@@ -28,6 +28,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public int customerId { get; set; }
         public int requestId { get; set; }
+        public string loanReferenceNumber { get; set; }
     }
 
     public class LoanBulkInterestReviewViewModel : GeneralEntity
@@ -67,8 +68,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int targetId { get; set; }
         public IEnumerable<feeDetails> fees { get; set; }
-
-
+        public string feeSourceModule { get; set; }
     }
 
     //public class LoanReviewViewModel : GeneralEntity
