@@ -1112,6 +1112,7 @@ namespace FintrakBanking.Repositories.Credit
                              {
                                  loanBookingRequestId = 0,
                                  approvalTrailId = 0,
+                                 isProjectRelate = a.ISPROJECTRELATED,
                                  isLineFacility = d.ISLINEFACILITY,
                                  isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
                                  isLineMaintained = a.APPROVEDLINESTATUSID != null,
@@ -1204,6 +1205,7 @@ namespace FintrakBanking.Repositories.Credit
                                  loanBookingRequestId = 0,
                                  approvalTrailId = 0,
                                  isLineFacility = d.ISLINEFACILITY,
+                                 isProjectRelate = a.ISPROJECTRELATED,
                                  isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
                                  isLineMaintained = a.APPROVEDLINESTATUSID != null,
                                  customerTypeId = (int)context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == d.CUSTOMERID).Select(s => s.CUSTOMERTYPEID).FirstOrDefault(),

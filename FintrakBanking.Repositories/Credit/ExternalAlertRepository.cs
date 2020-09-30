@@ -950,7 +950,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBBD()
         {
-            var sectorLimitValidationBBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationBBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -963,7 +963,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCBD()
         {
-            var sectorLimitValidationCBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationCBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -976,7 +976,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCIBD()
         {
-            var sectorLimitValidationCIBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationCIBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                              where a.EXPOSURE != null && a.EXPOSURE > 0
                                              select new SectorLimitAlertViewModel
                                              {
@@ -989,7 +989,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationRBD()
         {
-            var sectorLimitValidationRBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationRBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -1002,7 +1002,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBank()
         {
-            var sectorLimitValidationRBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationRBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
