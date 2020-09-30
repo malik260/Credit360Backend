@@ -4216,9 +4216,9 @@ namespace FintrakBanking.Repositories.Customer
                                     {
                                         customerCode = a.CUSTOMERCODE,
                                     }).ToList();
+
                 if (customerinfo.Count > 0)
                 {
-
                     data = finacle.GetCustomerAccountsBalanceByCustomerCode(customerinfo[0].customerCode);
 
                     //Task.Run(async () =>
