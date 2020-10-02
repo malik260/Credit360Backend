@@ -1012,6 +1012,21 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
+        [Route("contractor-tiering-update/{contractorTieringId}")]
+        public HttpResponseMessage getContractorTieringForEdit(int contractorTieringId)
+        {
+            var response = repo.getContractorTieringForEdit(contractorTieringId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+
+        [HttpGet]
         [Route("all-project-risk-rating-criteria")]
         public HttpResponseMessage getAllProjectRiskRatingByCategories()
         {

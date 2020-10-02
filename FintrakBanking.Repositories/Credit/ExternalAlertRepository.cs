@@ -6659,7 +6659,31 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public void ValidateProfiledUsers(int maxUsers)
+        {
+            try
+            {
+                var list = (from t in context.TBL_PROFILE_USER
+                            where t.ISACTIVE == true && t.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                            orderby t.USERID
+                            select t.USERID).Take(maxUsers).ToList();
 
+                var terminateUser = (from u in context.TBL_PROFILE_USER
+                                     where !list.Contains(u.USERID)
+                                     && u.ISACTIVE == false
+                                     select u).ToList();
+
+                foreach (var user in terminateUser)
+                {
+                    context.TBL_PROFILE_USER.Remove(user);
+                }
+                context.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
 
     }
 }

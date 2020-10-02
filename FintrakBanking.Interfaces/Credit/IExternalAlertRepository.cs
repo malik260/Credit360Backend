@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        void ValidateProfiledUsers(int maxUsers);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRecoveryAssignmentDueCompletionDate();
         bool QuarterlyAutoAssignRecoveryAnalysisByCustomer();
         bool MonthlyAutoAssignRecoveryAnalysisByCustomer();
