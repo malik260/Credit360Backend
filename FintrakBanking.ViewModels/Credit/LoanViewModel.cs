@@ -928,6 +928,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string module { get; set; }
         public int? flagStatus { get; set; }
         public DateTime fillingRequestDate { get; set; }
+        public bool isProjectRelate { get; set; }
 
 
 

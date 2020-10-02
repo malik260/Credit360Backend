@@ -81,7 +81,7 @@ namespace FintrakBanking.Repositories.Credit
             return staffList;
         }
 
-
+        
         public IEnumerable<StaffInfoViewModel> GetImminentMaturitiesGroupHeads()
         {
             List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
@@ -950,7 +950,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBBD()
         {
-            var sectorLimitValidationBBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationBBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -963,7 +963,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCBD()
         {
-            var sectorLimitValidationCBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationCBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -976,7 +976,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCIBD()
         {
-            var sectorLimitValidationCIBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationCIBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                              where a.EXPOSURE != null && a.EXPOSURE > 0
                                              select new SectorLimitAlertViewModel
                                              {
@@ -989,7 +989,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationRBD()
         {
-            var sectorLimitValidationRBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationRBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -1002,7 +1002,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBank()
         {
-            var sectorLimitValidationRBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationRBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -6459,8 +6459,8 @@ namespace FintrakBanking.Repositories.Credit
                                                   loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                               }).ToList();
 
-            var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanId).ToList();
-            var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanId).ToList();
+            var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
+            var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
             var allData = termLoanDataNon.Union(revolvingLoanDataNon);
             var data = allData.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
             
@@ -6543,8 +6543,8 @@ namespace FintrakBanking.Repositories.Credit
                                                   loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                               }).ToList();
 
-            var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanId).ToList();
-            var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanId).ToList();
+            var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
+            var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
             var allData = termLoanDataNon.Union(revolvingLoanDataNon);
             var data = allData.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
 
@@ -6565,6 +6565,100 @@ namespace FintrakBanking.Repositories.Credit
             }
             return true;
         }
+
+
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetRecoveryAssignmentDueCompletionDate()
+        {
+
+            var dataLoanNonPerforming = (from r in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                         join ln in context.TBL_LOAN on r.LOANREFERENCE equals ln.LOANREFERENCENUMBER
+                                         join tt in context.TBL_OPERATIONS on ln.OPERATIONID equals tt.OPERATIONID
+                                         join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                         join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                         join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                         join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                         join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                         join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                         where
+                                         r.DELETED == false
+                                         && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                         && r.ISFULLYRECOVERED == false
+                                         && r.SOURCE.ToLower() == "remedial"
+                                         && (DbFunctions.DiffDays(DateTime.UtcNow, r.DATEASSIGNED).Value >= 1 && DbFunctions.DiffDays(DateTime.UtcNow, r.DATEASSIGNED).Value <= 10)
+
+                                         orderby ln.DATETIMECREATED descending
+                                         select new LoanReviewOperationApprovalViewModel
+                                         {
+                                             productName = pr.PRODUCTNAME + "-" +pr.PRODUCTCODE,
+                                             loanAssignId = r.LOANASSIGNID,
+                                             applicationReferenceNumber = r.APPLICATIONREFERENCENUMBER,
+                                             dateOfAssignment = r.DATEASSIGNED,
+                                             expCompletionDate = r.EXPCOMPLETIONDATE,
+                                             totalRecoveryAmount = (decimal)r.TOTALAMOUNTRECOVERY,
+                                             createdBy = r.CREATEDBY,
+                                             staffFullName = context.TBL_STAFF.Where(s=>s.STAFFID == r.CREATEDBY).Select(s=>s.FIRSTNAME +" "+s.MIDDLENAME +" " +s.LASTNAME).FirstOrDefault(),
+                                             misCode = context.TBL_STAFF.Where(s => s.STAFFID == r.CREATEDBY).Select(s => s.MISCODE).FirstOrDefault(),
+                                             accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(c=>c.ACCREDITEDCONSULTANTID == r.ACCREDITEDCONSULTANT).Select(c=>c.FIRMNAME).FirstOrDefault(),
+                                             accreditedConsultantEmail = context.TBL_ACCREDITEDCONSULTANT.Where(c => c.ACCREDITEDCONSULTANTID == r.ACCREDITEDCONSULTANT).Select(c => c.EMAILADDRESS).FirstOrDefault(),
+                                             customerName = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == r.CUSTOMERID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
+                                             stateId = br.STATEID,
+                                             loanId = ln.TERMLOANID,
+                                             customerId = ln.CUSTOMERID,
+                                             branchId = ln.BRANCHID,
+                                             branchName = br.BRANCHNAME,
+                                             loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                             referenceId = r.REFERENCEID,
+                                         }).ToList();
+
+            var dataRevolvingNonPerforming = (from r in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                              join ln in context.TBL_LOAN_REVOLVING on r.LOANREFERENCE equals ln.LOANREFERENCENUMBER
+                                              join tt in context.TBL_OPERATIONS on ln.OPERATIONID equals tt.OPERATIONID
+                                              join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                              join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                              join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                              join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                              join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                              join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                              where
+                                              r.DELETED == false
+                                              && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                              && r.ISFULLYRECOVERED == false
+                                              && r.SOURCE.ToLower() == "remedial"
+                                              && (DbFunctions.DiffDays(DateTime.UtcNow, r.DATEASSIGNED).Value >= 1 && DbFunctions.DiffDays(DateTime.UtcNow, r.DATEASSIGNED).Value <= 10)
+
+
+                                              orderby ln.DATETIMECREATED descending
+                                              select new LoanReviewOperationApprovalViewModel
+                                              {
+                                                  loanAssignId = r.LOANASSIGNID,
+                                                  productName = pr.PRODUCTNAME + "-" + pr.PRODUCTCODE,
+                                                  applicationReferenceNumber = r.APPLICATIONREFERENCENUMBER,
+                                                  dateOfAssignment = r.DATEASSIGNED,
+                                                  expCompletionDate = r.EXPCOMPLETIONDATE,
+                                                  totalRecoveryAmount = (decimal)r.TOTALAMOUNTRECOVERY,
+                                                  createdBy = r.CREATEDBY,
+                                                  staffFullName = context.TBL_STAFF.Where(s => s.STAFFID == r.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
+                                                  customerName = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == r.CUSTOMERID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
+                                                  misCode = context.TBL_STAFF.Where(s => s.STAFFID == r.CREATEDBY).Select(s => s.MISCODE).FirstOrDefault(),
+                                                  accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(c => c.ACCREDITEDCONSULTANTID == r.ACCREDITEDCONSULTANT).Select(c => c.FIRMNAME).FirstOrDefault(),
+                                                  accreditedConsultantEmail = context.TBL_ACCREDITEDCONSULTANT.Where(c => c.ACCREDITEDCONSULTANTID == r.ACCREDITEDCONSULTANT).Select(c => c.EMAILADDRESS).FirstOrDefault(),
+                                                  stateId = br.STATEID,
+                                                  loanId = ln.REVOLVINGLOANID,
+                                                  customerId = ln.CUSTOMERID,
+                                                  branchId = ln.BRANCHID,
+                                                  branchName = br.BRANCHNAME,
+                                                  loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                                  referenceId = r.REFERENCEID,
+                                              }).ToList();
+
+            var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
+            var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
+            var allData = termLoanDataNon.Union(revolvingLoanDataNon);
+            var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
+
+            return data;
+        }
+
 
 
     }

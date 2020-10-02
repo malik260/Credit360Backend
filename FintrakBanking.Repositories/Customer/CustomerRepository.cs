@@ -4216,9 +4216,9 @@ namespace FintrakBanking.Repositories.Customer
                                     {
                                         customerCode = a.CUSTOMERCODE,
                                     }).ToList();
+
                 if (customerinfo.Count > 0)
                 {
-
                     data = finacle.GetCustomerAccountsBalanceByCustomerCode(customerinfo[0].customerCode);
 
                     //Task.Run(async () =>
@@ -4771,8 +4771,10 @@ namespace FintrakBanking.Repositories.Customer
             TBL_CUSTOMER entity = null;
             var detail = string.Empty;
             var staff = context.TBL_STAFF.Find(user.staffId);
+
             //Check if Customer  exist in the temp table using the customerId
-            var temp = context.TBL_TEMP_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == targetId);
+            var temp = context.TBL_TEMP_CUSTOMER.OrderByDescending(x => x.TEMPCUSTOMERID).FirstOrDefault(x => x.CUSTOMERID == targetId);
+
             if (temp != null) //If temp record is not null select the information from the main table
             {
                 entity = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == targetId);

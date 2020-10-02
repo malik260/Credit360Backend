@@ -19,10 +19,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 try
                 {
-                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                    //DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    //DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
                     int companyId = Int32.Parse(Request.QueryString["companyId"]);
-                    short branchId = short.Parse(Request.QueryString["branchId"]);
+                    //short branchId = short.Parse(Request.QueryString["branchId"]);
+
+
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -39,23 +41,32 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
 
-                    var currentDate = DateTime.Now;
+                    //var currentDate = DateTime.Now;
 
-                    var dateDifference = currentDate - incomingDate;
+                    //var dateDifference = currentDate - incomingDate;
 
-                    if (dateDifference.Seconds > 30)
-                    {
-                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                        this.ReportViewer.LocalReport.Refresh();
-                        return;
-                    }
+                    //if (dateDifference.Seconds > 30)
+                    //{
+                    //    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    //    this.ReportViewer.LocalReport.Refresh();
+                    //    return;
+                    //}
+
                     LoanReportObjects insuranceReport = new LoanReportObjects();
-                    var data = insuranceReport.InsuranceReport(startDate, endDate,companyId, branchId);
+                    var data = insuranceReport.InsuranceReport(companyId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
                     reportDataSource.Name = "InsuranceReport";
+
+                    string exportOption = "PDF";
+                    RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
+                    if (extension != null)
+                    {
+                        System.Reflection.FieldInfo fieldInfo = extension.GetType().GetField("m_isVisible", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                        fieldInfo.SetValue(extension, false);
+                    }
 
                     //ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
                     //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
