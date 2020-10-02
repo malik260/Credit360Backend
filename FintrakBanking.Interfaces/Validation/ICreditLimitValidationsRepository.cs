@@ -10,6 +10,7 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
 {
     public interface ICreditLimitValidationsRepository
     {
+        IEnumerable<ContractorCriteriaViewModel> getContractorTieringForEdit(int contractorTieringId);
         IEnumerable<ContractorCriteriaOptionViewModel> getAllContractorCriteriaOption();
         bool UpdateContractorCriteriaOption(ContractorCriteriaOptionViewModel entity);
         bool AddContractorCriteriaOption(ContractorCriteriaOptionViewModel entity);

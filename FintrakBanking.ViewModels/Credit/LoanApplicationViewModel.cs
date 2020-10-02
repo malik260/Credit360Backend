@@ -1177,6 +1177,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal tierTwo { get; set; }
         public decimal tierThree { get; set; }
         public object options { get; set; }
+        public int contractorTieringId { get; set; }
     }
 
     public class ContractorCriteriaOptionViewModel : GeneralEntity
