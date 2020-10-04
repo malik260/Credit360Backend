@@ -1899,6 +1899,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.totalRecoveryAmount = Convert.ToDecimal(provider.FormData["totalRecoveryAmount"]);
                 entity.recoveredAmount = Convert.ToDecimal(provider.FormData["recoveredAmount"]);
                 entity.collateralCode = provider.FormData["collateralCode"];
+                entity.loanReference = provider.FormData["loanReference"];
                 entity.collectionMode = provider.FormData["collectionMode"];
                 var receiptDate = provider.FormData["receiptDate"];
                 var receiptDateSub = receiptDate.Substring(0, 15);

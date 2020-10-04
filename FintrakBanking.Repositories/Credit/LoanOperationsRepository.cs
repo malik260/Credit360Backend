@@ -33503,7 +33503,7 @@ namespace FintrakBanking.Repositories.Credit
             
             var dataLoan = (from l in context.TBL_LOAN_RECOVERY_REPORTING_BATCH
                             join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.COLLATERALLIQUIDATIONRECOVERYID equals lr.COLLATERALLIQUIDATIONRECOVERYID
-                            join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                            join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                             join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -33624,7 +33624,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var dataRevolvingLoan = (from l in context.TBL_LOAN_RECOVERY_REPORTING_BATCH
                                      join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.COLLATERALLIQUIDATIONRECOVERYID equals lr.COLLATERALLIQUIDATIONRECOVERYID
-                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -34011,6 +34011,12 @@ namespace FintrakBanking.Repositories.Credit
                                 region = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.REGION).FirstOrDefault(),
                                 agentAccountNumber = ln.AGENTACCOUNTNUMBER,
                                 dateOfEngagement = ln.DATEOFENGAGEMENT,
+
+                                commissionAmountLessWht = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.COMMISSIONAMOUNTLESSWHT).FirstOrDefault(),
+                                whtAmount = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.WHTAMOUNT).FirstOrDefault(),
+                                whtRate = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.WHTRATE).FirstOrDefault(),
+                                commissionAmount = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.COMMISSIONAMOUNT).FirstOrDefault(),
+                                amountRecovered = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.AMOUNTRECOVERED).FirstOrDefault(),
                             }).ToList();
 
             return dataLoan;
