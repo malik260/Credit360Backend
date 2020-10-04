@@ -6670,12 +6670,14 @@ namespace FintrakBanking.Repositories.Credit
 
                 var terminateUser = (from u in context.TBL_PROFILE_USER
                                      where !list.Contains(u.USERID)
-                                     && u.ISACTIVE == false
+                                     && u.ISACTIVE == true
                                      select u).ToList();
 
                 foreach (var user in terminateUser)
                 {
-                    context.TBL_PROFILE_USER.Remove(user);
+                    var lockUser = context.TBL_PROFILE_USER.Find(user.USERID);
+                    lockUser.ISLOCKED = true;
+                    //context.TBL_PROFILE_USER.Remove(user);
                 }
                 context.SaveChanges();
             }
