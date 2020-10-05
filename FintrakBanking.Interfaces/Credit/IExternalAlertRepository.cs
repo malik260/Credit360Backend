@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        string Decrypt(string cipher);
         void ValidateProfiledUsers(int maxUsers);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRecoveryAssignmentDueCompletionDate();
         bool QuarterlyAutoAssignRecoveryAnalysisByCustomer();

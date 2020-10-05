@@ -973,9 +973,12 @@ namespace FintrakBanking.APICore.Controllers
             entity.companyId = token.GetCompanyId;
             entity.createdBy = token.GetStaffId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
-            var response = repo.AddContractorTiering(entity);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
+            bool response = repo.AddContractorTiering(entity);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Error saving Contractor criteria" });
         }
 
         [HttpGet]
