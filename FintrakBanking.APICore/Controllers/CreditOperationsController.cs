@@ -1398,6 +1398,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-operation/bulk-recovery-approval-remedial/{accreditedConsultantId}/{referenceId}")]
+        public HttpResponseMessage getAllLoansRecoveryAnalysisByAgentRemedial(int accreditedConsultantId, string referenceId)
+        {
+            var data = repo.getAllLoansRecoveryAnalysisByAgentRemedial(token.GetStaffId, token.GetCompanyId, accreditedConsultantId, referenceId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-operation/approved-loan-review")]
         public HttpResponseMessage GetApprovedLoanReviewed()
         {

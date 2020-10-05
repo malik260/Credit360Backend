@@ -8,6 +8,8 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class OriginalDocumentReleaseViewModel : GeneralEntity
     {
+        public DateTime? dateRecieved { get; set; }
+
         public int originalDocumentReleaseId { get; set; }
         public int originalDocumentApprovalId { get; set; }
         public int documentUploadId { get; set; }

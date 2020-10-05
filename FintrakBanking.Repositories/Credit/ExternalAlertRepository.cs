@@ -12,8 +12,11 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Transactions;
 
 namespace FintrakBanking.Repositories.Credit
@@ -950,7 +953,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBBD()
         {
-            var sectorLimitValidationBBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationBBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -963,7 +966,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCBD()
         {
-            var sectorLimitValidationCBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationCBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -976,7 +979,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCIBD()
         {
-            var sectorLimitValidationCIBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationCIBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                              where a.EXPOSURE != null && a.EXPOSURE > 0
                                              select new SectorLimitAlertViewModel
                                              {
@@ -989,7 +992,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationRBD()
         {
-            var sectorLimitValidationRBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationRBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -1002,7 +1005,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBank()
         {
-            var sectorLimitValidationRBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+            var sectorLimitValidationRBD = (from a in context2.TBL_SECTOR_LIMIT_ALERT
                                             where a.EXPOSURE != null && a.EXPOSURE > 0
                                             select new SectorLimitAlertViewModel
                                             {
@@ -6659,6 +6662,49 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public void ValidateProfiledUsers(int maxUsers)
+        {
+            try
+            {
+                var list = (from t in context.TBL_PROFILE_USER
+                            where t.ISACTIVE == true && t.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                            orderby t.USERID
+                            select t.USERID).Take(maxUsers).ToList();
+
+                var terminateUser = (from u in context.TBL_PROFILE_USER
+                                     where !list.Contains(u.USERID)
+                                     && u.ISACTIVE == true
+                                     select u).ToList();
+
+                foreach (var user in terminateUser)
+                {
+                    var lockUser = context.TBL_PROFILE_USER.Find(user.USERID);
+                    lockUser.ISLOCKED = true;
+                    //context.TBL_PROFILE_USER.Remove(user);
+                }
+                context.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public string Decrypt(string cipher)
+        {
+            using (var md5 = new MD5CryptoServiceProvider())
+            {
+                using (var tdes = new TripleDESCryptoServiceProvider())
+                {
+                    using (var transform = tdes.CreateDecryptor())
+                    {
+                        byte[] cipherBytes = Convert.FromBase64String(cipher);
+                        byte[] bytes = transform.TransformFinalBlock(cipherBytes, 0, cipherBytes.Length);
+                        return UTF8Encoding.UTF8.GetString(bytes);
+                    }
+                }
+            }
+        }
 
 
     }

@@ -11661,7 +11661,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //workflow.Vote = model.vote;
             workflow.NextLevelId = null;
-            workflow.ToStaffId = model.toStaffId;
+            workflow.ToStaffId = model.toStaffId != 0 ? model.toStaffId : null;
             workflow.StatusId = (int)model.forwardAction;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(model.customerId);

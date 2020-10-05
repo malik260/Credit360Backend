@@ -253,6 +253,7 @@ namespace FintrakBanking.Repositories.Credit
                              originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
                              docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
                              approvalDate = dr.APPROVALDATE,
+                             dateRecieved = atrail.ARRIVALDATE,
                              collateralId = cc.COLLATERALCUSTOMERID,
                              customerId = c.CUSTOMERID,
                              collateralCode = cc.COLLATERALCODE,
@@ -261,6 +262,7 @@ namespace FintrakBanking.Repositories.Credit
                              perfectionStatusId = dr.PERFECTIONSTATUSID,
                              litigationStatusId = dr.LITIGATIONSTATUSID,
                              isOnAmconList = dr.ISONAMCONLIST
+
                          };
 
             var result = record.GroupBy(r => r.originalDocumentApprovalId)
@@ -273,8 +275,8 @@ namespace FintrakBanking.Repositories.Credit
             //var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.SecurityRelease).ToList();
             var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.SecurityRelease || o.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
 
-            var record = (from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
-                         join oda in _context.TBL_ORIGINAL_DOCUMENT_APPROVAL on dr.ORIGINALDOCUMENTAPPROVALID equals oda.ORIGINALDOCUMENTAPPROVALID
+            var record = (from oda in _context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                          join dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE  on oda.ORIGINALDOCUMENTAPPROVALID equals dr.ORIGINALDOCUMENTAPPROVALID
                          //join l in _context.TBL_LOAN_APPLICATION on oda.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                          join cc in _context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
@@ -301,6 +303,7 @@ namespace FintrakBanking.Repositories.Credit
                              originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
                              docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
                              approvalDate = dr.APPROVALDATE,
+                             dateRecieved = atrail.ARRIVALDATE,
                              collateralCode = cc.COLLATERALCODE,
                              collateralCustomerId = cc.COLLATERALCUSTOMERID,
                              operationId = (int)OperationsEnum.SecurityRelease,

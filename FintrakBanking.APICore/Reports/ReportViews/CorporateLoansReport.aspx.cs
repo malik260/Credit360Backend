@@ -41,16 +41,16 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
 
-                    var currentDate = DateTime.Now;
+                    //var currentDate = DateTime.Now;
 
-                    var dateDifference = currentDate - incomingDate;
+                    //var dateDifference = currentDate - incomingDate;
 
-                    if (dateDifference.Seconds > 30)
-                    {
-                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                        this.ReportViewer.LocalReport.Refresh();
-                        return;
-                    }
+                    //if (dateDifference.Seconds > 30)
+                    //{
+                    //    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    //    this.ReportViewer.LocalReport.Refresh();
+                    //    return;
+                    //}
 
                     LoanReportObjects Jobs = new LoanReportObjects();
                     var data = Jobs.GetCorporateLoansReport(startDate, endDate);

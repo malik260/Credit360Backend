@@ -20,5 +20,6 @@ namespace FintrakBanking.Entities.Models
         public string MODULE { get; set; }
         public string COMMENT { get; set; }
         public int REQUESTID { get; set; }
+        public string LOANREFERENCE { get; set; }
     }
 }
