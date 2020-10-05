@@ -30,6 +30,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private IGeneralSetupRepository general;
         //private ILoanArchiveRepository loanArchive;
         private string maxUsers = ConfigurationManager.AppSettings["muTrace"];
+        
         private string onePercent = "1%";
         private string onePointFivePercent = "1.5%";
         private string twoPercent = "2%";

@@ -33503,7 +33503,7 @@ namespace FintrakBanking.Repositories.Credit
             
             var dataLoan = (from l in context.TBL_LOAN_RECOVERY_REPORTING_BATCH
                             join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.COLLATERALLIQUIDATIONRECOVERYID equals lr.COLLATERALLIQUIDATIONRECOVERYID
-                            join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                            join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                             join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -33624,7 +33624,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var dataRevolvingLoan = (from l in context.TBL_LOAN_RECOVERY_REPORTING_BATCH
                                      join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.COLLATERALLIQUIDATIONRECOVERYID equals lr.COLLATERALLIQUIDATIONRECOVERYID
-                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -33791,7 +33791,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_COMMISSION_BATCH
                             join c in context.TBL_LOAN_RECOVERY_COMMISSION_APPROVAL on lr.REFERENCEID equals c.REFERENCEID
-                            join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                            join ln in context.TBL_LOAN on lr.LOANREFERENCENUMBER equals ln.LOANREFERENCENUMBER
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                             join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -33808,9 +33808,9 @@ namespace FintrakBanking.Repositories.Credit
                                 loanRecoveryCommissionBatchId = lr.LOANRECOVERYCOMMISSIONBATCHID,
                                 recoveryMisCode = lr.MISCODE,
                                 region = lr.REGION,
-                                creditToAgent = (lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
-                                amountToDebit = (lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
-                                amountToCredit = (lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
+                                creditToAgent = lr.COMMISSIONAMOUNTLESSWHT, //(lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
+                                amountToDebit = lr.COMMISSIONAMOUNTLESSWHT, //(lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
+                                amountToCredit = lr.COMMISSIONAMOUNTLESSWHT, //(lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
                                 dateOfEngagement = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.DATEOFENGAGEMENT).FirstOrDefault(),
                                 accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.ACCOUNTNUMBER).FirstOrDefault(),
                                 creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
@@ -33887,12 +33887,16 @@ namespace FintrakBanking.Repositories.Credit
                                 relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
                                 relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
                                 productName = pr.PRODUCTNAME,
-                                comment = ""
+                                comment = "",
+                                commissionAmountLessWht = lr.COMMISSIONAMOUNTLESSWHT,
+                                whtAmount = lr.WHTAMOUNT,
+                                whtRate = lr.WHTRATE,
+                                commissionAmount = lr.COMMISSIONAMOUNT,
                             }).ToList();
 
             var dataRevolvingLoan = (from lr in context.TBL_LOAN_RECOVERY_COMMISSION_BATCH
                                      join c in context.TBL_LOAN_RECOVERY_COMMISSION_APPROVAL on lr.REFERENCEID equals c.REFERENCEID
-                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCENUMBER equals ln.LOANREFERENCENUMBER
                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -33909,9 +33913,9 @@ namespace FintrakBanking.Repositories.Credit
                                          recoveryMisCode = lr.MISCODE,
                                          region = lr.REGION,
                                          loanRecoveryCommissionBatchId = lr.LOANRECOVERYCOMMISSIONBATCHID,
-                                         creditToAgent = (lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
-                                         amountToDebit = (lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
-                                         amountToCredit = (lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
+                                         creditToAgent = lr.COMMISSIONAMOUNTLESSWHT, //(lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
+                                         amountToDebit = lr.COMMISSIONAMOUNTLESSWHT, //(lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
+                                         amountToCredit = lr.COMMISSIONAMOUNTLESSWHT, //(lr.AMOUNTRECOVERED * (c.COMMISSIONRATE / 100)) - (lr.AMOUNTRECOVERED * (5 / 100)),
                                          dateOfEngagement = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.DATEOFENGAGEMENT).FirstOrDefault(),
                                          accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.FIRMNAME).FirstOrDefault(),
                                          accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.ACCOUNTNUMBER).FirstOrDefault(),
@@ -33963,6 +33967,12 @@ namespace FintrakBanking.Repositories.Credit
                                          relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
                                          productName = pr.PRODUCTNAME,
                                          comment = "",
+
+                                         commissionAmountLessWht = lr.COMMISSIONAMOUNTLESSWHT,
+                                         whtAmount = lr.WHTAMOUNT,
+                                         whtRate = lr.WHTRATE,
+                                         commissionAmount = lr.COMMISSIONAMOUNT,
+                                         
                                      }).ToList();
 
 
@@ -34011,6 +34021,12 @@ namespace FintrakBanking.Repositories.Credit
                                 region = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.REGION).FirstOrDefault(),
                                 agentAccountNumber = ln.AGENTACCOUNTNUMBER,
                                 dateOfEngagement = ln.DATEOFENGAGEMENT,
+
+                                commissionAmountLessWht = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.COMMISSIONAMOUNTLESSWHT).FirstOrDefault(),
+                                whtAmount = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.WHTAMOUNT).FirstOrDefault(),
+                                whtRate = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.WHTRATE).FirstOrDefault(),
+                                commissionAmount = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.COMMISSIONAMOUNT).FirstOrDefault(),
+                                amountRecovered = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == ln.REFERENCEID).Select(x => x.AMOUNTRECOVERED).FirstOrDefault(),
                             }).ToList();
 
             return dataLoan;

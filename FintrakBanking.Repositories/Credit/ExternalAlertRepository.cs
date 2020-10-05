@@ -12,8 +12,11 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Transactions;
 
 namespace FintrakBanking.Repositories.Credit
@@ -6670,12 +6673,14 @@ namespace FintrakBanking.Repositories.Credit
 
                 var terminateUser = (from u in context.TBL_PROFILE_USER
                                      where !list.Contains(u.USERID)
-                                     && u.ISACTIVE == false
+                                     && u.ISACTIVE == true
                                      select u).ToList();
 
                 foreach (var user in terminateUser)
                 {
-                    context.TBL_PROFILE_USER.Remove(user);
+                    var lockUser = context.TBL_PROFILE_USER.Find(user.USERID);
+                    lockUser.ISLOCKED = true;
+                    //context.TBL_PROFILE_USER.Remove(user);
                 }
                 context.SaveChanges();
             }
@@ -6684,6 +6689,23 @@ namespace FintrakBanking.Repositories.Credit
                 throw ex;
             }
         }
+
+        public string Decrypt(string cipher)
+        {
+            using (var md5 = new MD5CryptoServiceProvider())
+            {
+                using (var tdes = new TripleDESCryptoServiceProvider())
+                {
+                    using (var transform = tdes.CreateDecryptor())
+                    {
+                        byte[] cipherBytes = Convert.FromBase64String(cipher);
+                        byte[] bytes = transform.TransformFinalBlock(cipherBytes, 0, cipherBytes.Length);
+                        return UTF8Encoding.UTF8.GetString(bytes);
+                    }
+                }
+            }
+        }
+
 
     }
 }

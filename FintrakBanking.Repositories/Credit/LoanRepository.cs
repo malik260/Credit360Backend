@@ -18857,7 +18857,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal outstandingAmount = 0;
             if (model.recoveredAmount > model.totalRecoveryAmount)
             {
-                throw new SecureException("Sorry, the recovered amount cannot be greater then the total amount recovery");
+                throw new SecureException("Sorry, the recovered amount cannot be greater then the total outstanding balance");
             }
 
             var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
@@ -18942,7 +18942,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.recoveredAmount > model.totalRecoveryAmount)
             {
-                throw new SecureException("Sorry, the recovered amount cannot be greater then the total amount recovery");
+                throw new SecureException("Sorry, the recovered amount cannot be greater then the total outstanding balance");
             }
 
             var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);

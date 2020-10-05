@@ -470,6 +470,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string assignedBy { get; set; }
         public string staffFullName { get; set; }
         public string accreditedConsultantEmail { get; set; }
+        public decimal? commissionAmountLessWht { get; set; }
+        public decimal? whtAmount { get; set; }
+        public decimal? whtRate { get; set; }
+        public decimal? commissionAmount { get; set; }
     }
 
 
