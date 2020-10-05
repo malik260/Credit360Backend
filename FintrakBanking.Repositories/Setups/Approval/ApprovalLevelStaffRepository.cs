@@ -1021,7 +1021,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     (int)OperationsEnum.IndividualDrawdownRequest,
                     (int)OperationsEnum.CorporateDrawdownRequest,
                     (int)OperationsEnum.CreditCardDrawdownRequest,
-                    (int)OperationsEnum.CRMSApproval,
+                    //(int)OperationsEnum.CRMSApproval,
                     (int)OperationsEnum.CommercialLoanBooking,
                     (int)OperationsEnum.ForeignExchangeLoanBooking,
                     (int)OperationsEnum.RevolvingLoanBooking,
@@ -1038,17 +1038,23 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                         join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
                                         join e in context.TBL_LOAN_APPLICATION on a.TARGETID equals e.LOANAPPLICATIONID
                                         join d in context.TBL_LOAN_APPLICATION_DETAIL on e.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                        join r in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
+                                        //join r in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
                                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                                        where a.OPERATIONID == (int)OperationsEnum.LoanAvailment
+                                        where a.OPERATIONID == e.OPERATIONID
+                                        //where a.OPERATIONID == (int)OperationsEnum.LoanAvailment
+                                           && ((DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                           && DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) <= DbFunctions.TruncateTime(param.endDate))
+                                           || (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                           && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)))
                                            && a.RESPONSESTAFFID == null
                                            && a.APPROVALSTATEID == (int)ApprovalState.Ended
                                            && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                            && ((e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted)
                                             || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestInitiated)
-                                            || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestCompleted)
-                                            || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingInProgress)
-                                            || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingCompleted))
+                                            //|| (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestCompleted)
+                                            //|| (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingInProgress)
+                                            //|| (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingCompleted)
+                                            )
                                             && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                                             && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
 
@@ -1057,7 +1063,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                         select (new WorkflowTrackerViewModel
                                         {
                                             approvalStatusId = a.APPROVALSTATUSID,
-                                            loanBookingRequestId = r.LOAN_BOOKING_REQUESTID,
+                                            loanBookingRequestId = 0,
                                             operationName = a.TBL_OPERATIONS.OPERATIONNAME,
                                             currentLevel = "Booking Initiation",//context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault(),
                                             approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
@@ -1097,8 +1103,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               join bo in context.TBL_LOAN_BOOKING_REQUEST on a.TARGETID equals bo.LOAN_BOOKING_REQUESTID
                               join d in context.TBL_LOAN_APPLICATION_DETAIL on bo.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                               join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
-                              join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                              join cust in context.TBL_CUSTOMER on bo.CUSTOMERID equals cust.CUSTOMERID
                               let loopStaff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == a.LOOPEDSTAFFID)
+                              let isSpecialLoop = a.TOAPPROVALLEVELID == a.FROMAPPROVALLEVELID
                               where ((DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) >= DbFunctions.TruncateTime(param.startDate)
                                  && DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) <= DbFunctions.TruncateTime(param.endDate))
                                  || (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
@@ -1121,11 +1128,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   requestStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
                                   responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
                                   comment = a.COMMENT,
+                                  loanBookingRequestId = bo.LOAN_BOOKING_REQUESTID,
                                   systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                                   systemResponseDate = a.SYSTEMRESPONSEDATETIME,
                                   requestApprovalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
-                                  responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
-                                  customerName = d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
+                                  responseApprovalLevel = !(isSpecialLoop) ? a.TBL_APPROVAL_LEVEL1.LEVELNAME : context.TBL_STAFF_ROLE.FirstOrDefault(r => r.STAFFROLEID == a.TBL_STAFF1.STAFFROLEID).STAFFROLENAME,
+                                  customerName = cust.LASTNAME + " " + cust.MIDDLENAME + " " + cust.FIRSTNAME,
                                   //customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
                                   divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join t in context.TBL_CUSTOMER on p.BUSINESSUNITID equals t.BUSINESSUNTID where t.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                                   divisionName = (from p in context.TBL_PROFILE_BUSINESS_UNIT join t in context.TBL_CUSTOMER on p.BUSINESSUNITID equals t.BUSINESSUNTID where t.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITNAME).FirstOrDefault(),
@@ -1224,7 +1232,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     (int)OperationsEnum.IndividualDrawdownRequest,
                     (int)OperationsEnum.CorporateDrawdownRequest,
                     (int)OperationsEnum.CreditCardDrawdownRequest,
-                    (int)OperationsEnum.CRMSApproval,
+                    //(int)OperationsEnum.CRMSApproval,
                     (int)OperationsEnum.CommercialLoanBooking,
                     (int)OperationsEnum.ForeignExchangeLoanBooking,
                     (int)OperationsEnum.RevolvingLoanBooking,
@@ -1241,19 +1249,22 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   //join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
                                   // from j in apprStaff.DefaultIfEmpty()
                                   // join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
+                              let isSpecialLoop = a.TOAPPROVALLEVELID == a.FROMAPPROVALLEVELID
+                              let isLoop = (a.LOOPEDSTAFFID > 0)
+                              let loopStaff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == a.LOOPEDSTAFFID)
                               where a.COMPANYID == companyId
                               where a.TARGETID == targetId && operations.Contains(a.OPERATIONID)
                               select new WorkflowTrackerViewModel
                               {
                                   arrivalDate = a.ARRIVALDATE,
-                                  responseApprovalLevel = a.TOAPPROVALLEVELID.HasValue ? a.TBL_APPROVAL_LEVEL1.LEVELNAME : "N/A",
+                                  responseApprovalLevel = !(isSpecialLoop && isLoop) ? a.TBL_APPROVAL_LEVEL1.LEVELNAME : context.TBL_STAFF_ROLE.FirstOrDefault(r => r.STAFFROLEID == loopStaff.STAFFROLEID).STAFFROLENAME,
                                   responseDate = a.SYSTEMRESPONSEDATETIME ?? DateTime.Now,
                                   systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                                   systemResponseDate = a.SYSTEMRESPONSEDATETIME,
-                                  responseStaffName = !a.TOAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                  responseStaffName = !(isSpecialLoop && isLoop) ? a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME : loopStaff.FIRSTNAME + " " + loopStaff.LASTNAME,
                                   comment = a.COMMENT,
                                   requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
-                                  requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                  requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : (isLoop) ? a.TBL_APPROVAL_LEVEL.LEVELNAME : context.TBL_STAFF_ROLE.FirstOrDefault(r => r.STAFFROLEID == loopStaff.STAFFROLEID).STAFFROLENAME,
                                   TargetId = a.TARGETID,
                                   // operationId = e.OPERATIONID,
                                   // operationName = e.OPERATIONNAME,
