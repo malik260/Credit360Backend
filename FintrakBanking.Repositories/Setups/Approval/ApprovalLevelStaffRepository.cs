@@ -1098,6 +1098,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               join d in context.TBL_LOAN_APPLICATION_DETAIL on bo.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                               join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                               join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                              let loopStaff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == a.LOOPEDSTAFFID)
                               where ((DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) >= DbFunctions.TruncateTime(param.startDate)
                                  && DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) <= DbFunctions.TruncateTime(param.endDate))
                                  || (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
@@ -1113,7 +1114,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               {
                                   approvalStatusId = a.APPROVALSTATUSID,
                                   operationName = a.TBL_OPERATIONS.OPERATIONNAME,
-                                  currentLevel = "Booking Initiation",//context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault(),
+                                  currentLevel = (loopStaff == null) ? context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault() : context.TBL_STAFF_ROLE.FirstOrDefault(r => r.STAFFROLEID == loopStaff.STAFFROLEID).STAFFROLENAME,
                                   approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                   approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
                                   applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
