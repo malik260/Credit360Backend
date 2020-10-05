@@ -4269,32 +4269,45 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public ContractorTieringViewModel AddContractorTiering(ContractorTieringViewModel contractorCriteria)
+        public bool AddContractorTiering(ContractorTieringViewModel contractorCriteria)
         {
+            List<TBL_CONTRACTOR_CRITERIA> definitions = new List<TBL_CONTRACTOR_CRITERIA>();
+            var msg = new ContractorTieringViewModel();
+            if (contractorCriteria.form == null || contractorCriteria.form.Count == 0) return false;
+            var ids = contractorCriteria.form.Select(x => x.criteriaId);
+            definitions = context.TBL_CONTRACTOR_CRITERIA.Where(x => ids.Contains(x.CRITERIAID)
+              ).ToList();
+            var submission = new ContractorCriteriaFormControlValue();
+
+            List<TBL_CONTRACTOR_TIERING> details = new List<TBL_CONTRACTOR_TIERING>();
+
             var validateExisting = context.TBL_CONTRACTOR_TIERING.Where(c => c.LOANAPPLICATIONID == contractorCriteria.loanApplicationId && c.CUSTOMERID == contractorCriteria.customerId).ToList();
-                if(validateExisting != null && validateExisting.Count() > 0)
-                {
-                    throw new SecureException("Sorry contractor criteria already captured");
-                }
-            try
+            if (validateExisting != null && validateExisting.Count() > 0)
             {
-                List<TBL_CONTRACTOR_CRITERIA> definitions = new List<TBL_CONTRACTOR_CRITERIA>();
-                var msg = new ContractorTieringViewModel();
-                if (contractorCriteria.form == null || contractorCriteria.form.Count == 0) return null;
-                var ids = contractorCriteria.form.Select(x => x.criteriaId);
-
-                definitions = context.TBL_CONTRACTOR_CRITERIA.Where(x => ids.Contains(x.CRITERIAID)
-               ).ToList();
-
-                var submission = new ContractorCriteriaFormControlValue();
-
-                List<TBL_CONTRACTOR_TIERING> details = new List<TBL_CONTRACTOR_TIERING>();
-
                 for (int i = 0; i < definitions.Count; i++)
                 {
                     var definition = definitions[i];
                     submission = contractorCriteria.form.FirstOrDefault(x => x.criteriaId == definition.CRITERIAID);
                     if (submission == null) continue;
+                    var updateRecord = context.TBL_CONTRACTOR_TIERING.Where(c => c.CONTRACTORCRITERIAID == definition.CRITERIAID && c.LOANAPPLICATIONID == contractorCriteria.loanApplicationId).FirstOrDefault();
+                    updateRecord.ACTUALVALUE = submission.value;
+                    updateRecord.CONTRACTORCRITERIAID = submission.criteriaId;
+                    updateRecord.DATETIMEUPDATED = DateTime.Now;
+                    updateRecord.LASTUPDATEDBY = contractorCriteria.createdBy;
+                }
+                if (context.SaveChanges() > 0) return true;
+
+                return false;
+            }
+            else
+            {
+                try
+                {
+                    for (int i = 0; i < definitions.Count; i++)
+                    {
+                        var definition = definitions[i];
+                        submission = contractorCriteria.form.FirstOrDefault(x => x.criteriaId == definition.CRITERIAID);
+                        if (submission == null) continue;
                         details.Add(new TBL_CONTRACTOR_TIERING
                         {
                             LOANAPPLICATIONID = contractorCriteria.loanApplicationId,
@@ -4305,15 +4318,17 @@ namespace FintrakBanking.Repositories.Credit
                             DATETIMECREATED = DateTime.Now,
                         });
 
-                }
+                    }
 
-                context.TBL_CONTRACTOR_TIERING.AddRange(details);
-                context.SaveChanges();
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                    context.TBL_CONTRACTOR_TIERING.AddRange(details);
+                    if(context.SaveChanges()>0) return true;
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
 
@@ -4769,6 +4784,8 @@ namespace FintrakBanking.Repositories.Credit
                         CATEGORYVALUE = submission.value,
                         CREATEDBY = projectRiskRating.createdBy,
                         DATETIMECREATED = DateTime.Now,
+                        PROJECTLOCATION = projectRiskRating.projectLocation,
+                        PROJECTDETAILS = projectRiskRating.projectDetails,
                     });
 
                 }

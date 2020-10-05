@@ -2197,6 +2197,8 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                      {
                                          categoryId = a.CATEGORYID,
                                          categoryValue = a.CATEGORYVALUE,
+                                         projectLocation = a.PROJECTLOCATION,
+                                         projectDetails = a.PROJECTDETAILS
                                      }).ToList();
 
             return projectRiskrating;
@@ -2214,14 +2216,18 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                          loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                          loanBookingRequestId = a.LOANBOOKINGREQUESTID,
                                          categoryName = c.CATEGORYNAME,
-                                         categoryValue = a.CATEGORYVALUE
+                                         categoryValue = a.CATEGORYVALUE,
+                                         projectLocation = a.PROJECTLOCATION,
+                                         projectDetails = a.PROJECTDETAILS
                                      }).AsEnumerable().Select(a => new ProjectRiskRatingViewModel
                                      {
                                          loanApplicationId = a.loanApplicationId,
                                          loanApplicationDetailId = a.loanApplicationDetailId,
                                          loanBookingRequestId = a.loanBookingRequestId,
                                          categoryName = a.categoryName,
-                                         categoryValue = a.categoryValue
+                                         categoryValue = a.categoryValue,
+                                         projectLocation = a.projectLocation,
+                                         projectDetails = a.projectDetails
                                      }).ToList();
 
                                 var result = projectRiskRating.Select(a => new ProjectRiskRatingViewModel
@@ -2231,6 +2237,8 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                     loanBookingRequestId = a.loanBookingRequestId,
                                     categoryName = a.categoryName,
                                     categoryValue = a.categoryValue,
+                                    projectLocation = a.projectLocation,
+                                    projectDetails = a.projectDetails,
                                     computation = context.TBL_PROJECT_RISK_RATING.Where(d => d.LOANAPPLICATIONDETAILID == a.loanApplicationDetailId).Sum(d => d.CATEGORYVALUE),
                                 }).ToList();
 
