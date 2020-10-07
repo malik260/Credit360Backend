@@ -82,9 +82,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId, bool isExternal)
         {
+            var creditCheckReviewInterval = context.TBL_SETUP_COMPANY.Select(x=>x.CREDITCHECKREVIEWINTERVAL).FirstOrDefault();
+
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == customerId && x.DELETED == false
                                                                                             && x.COMPANYDIRECTORID == null
-                                                                                            && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 90)
+                                                                                            && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= creditCheckReviewInterval)
                                                                                             );
 
             int creditBureauCount = data.Count();
@@ -156,7 +158,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var directorData = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
                                                                                     && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
-                                                                                    && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 90)
+                                                                                    && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= creditCheckReviewInterval)
                                                                                      );
                     var b = directorData.ToList();
                     int directorCount = directorData.Count();
@@ -296,9 +298,11 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
 
+            var creditCheckReviewInterval = context.TBL_SETUP_COMPANY.Select(x => x.CREDITCHECKREVIEWINTERVAL).FirstOrDefault();
+
             var existing = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.CUSTOMERID == entity.customerId && O.CREDITBUREAUID == entity.creditBureauId 
                                                                                 && O.COMPANYDIRECTORID == entity.companyDirectorId && O.DELETED == false 
-                                                                                && (DbFunctions.DiffDays(O.DATETIMECREATED, DateTime.Now).Value <= 90));
+                                                                                && (DbFunctions.DiffDays(O.DATETIMECREATED, DateTime.Now).Value <= creditCheckReviewInterval));
 
             if (existing != null) {
                 return existing.CUSTOMERCREDITBUREAUID;
@@ -383,12 +387,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBureauViewModel model)
         {
+            var creditCheckReviewInterval = context.TBL_SETUP_COMPANY.Select(x => x.CREDITCHECKREVIEWINTERVAL).FirstOrDefault();
             var directorId = model.companyDirectorId > 0 ? model.companyDirectorId : null;
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(c => c.CREDITBUREAUID == model.creditBureauId
                                                                 && c.CUSTOMERID == model.customerId
                                                                 && c.COMPANYDIRECTORID == directorId
                                                                 && c.DELETED == false
-                                                                && (DbFunctions.DiffDays(c.DATETIMECREATED, DateTime.Now).Value <= 90)).FirstOrDefault();
+                                                                && (DbFunctions.DiffDays(c.DATETIMECREATED, DateTime.Now).Value <= creditCheckReviewInterval)).FirstOrDefault();
 
             if (data != null)
                 data.ISREPORTOKAY = status;
@@ -443,10 +448,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<LoanCreditBureauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {
+            var creditCheckReviewInterval = context.TBL_SETUP_COMPANY.Select(x => x.CREDITCHECKREVIEWINTERVAL).FirstOrDefault();
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                 where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                                 && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 90)
+                                                 && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= creditCheckReviewInterval)
                                                 select new LoanCreditBureauViewModel
                                                 {
                                                     customerCreditBureauId = a.CUSTOMERCREDITBUREAUID,
