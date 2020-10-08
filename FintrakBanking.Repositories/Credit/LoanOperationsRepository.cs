@@ -19925,6 +19925,10 @@ namespace FintrakBanking.Repositories.Credit
                             dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Approved";
                             LogEmailAlert(dynamicMessage, "CONTRACTUAL INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
                         }
+                        if (entity.operationId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                        {
+                            reviewRecord.REBOOKDATE = DateTime.Now;
+                        }
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         output = context.SaveChanges() > 0;
                         if (entity.operationId == (int)OperationsEnum.OverdraftTenorExtension || entity.operationId == (int)OperationsEnum.TenorChange || entity.operationId == (int)OperationsEnum.ContingentLiabilityTenorExtension)

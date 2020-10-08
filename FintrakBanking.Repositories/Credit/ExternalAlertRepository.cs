@@ -7117,6 +7117,7 @@ namespace FintrakBanking.Repositories.Credit
                     var lockUser = context.TBL_PROFILE_USER.Find(user.USERID);
                     lockUser.ISLOCKED = true;
                     lockUser.ISACTIVE = false;
+                    lockUser.FAILEDLOGONATTEMPT = 3;
                 }
                 context.SaveChanges();
             }
