@@ -28863,6 +28863,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATECREATED = DateTime.Now,
                     LOANREVIEWAPPLICATIONID = model.lmsApplicationDetailId == 0 ? null : model.lmsApplicationDetailId,
                     LEGALCONTINGENTCODE = model.legalContingentCode,
+                    CONTINGENTOUTSTANDINGPRINCIPAL = model.contingentOutstandingPrincipal,
                     //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
                 };
                 // Audit Section ---------------------------
@@ -29037,6 +29038,7 @@ namespace FintrakBanking.Repositories.Credit
                 reviewOperation.CREATEDBY = model.createdBy;
                 reviewOperation.DATECREATED = DateTime.Now;
                 reviewOperation.LEGALCONTINGENTCODE = model.legalContingentCode;
+                reviewOperation.CONTINGENTOUTSTANDINGPRINCIPAL = model.contingentOutstandingPrincipal;
                 //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
 
                 reviewApplicationDetail.OPERATIONPERFORMED = true;

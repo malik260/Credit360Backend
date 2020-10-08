@@ -1276,10 +1276,10 @@ namespace FintrakBanking.APICore.Controllers
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "mail sent successfully" });
+                   new { success = true, message = "mail sent successfully" });
             }
             else
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = data });
 
         }
 
