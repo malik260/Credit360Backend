@@ -199,10 +199,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
-                //if (this.IsClassifiedReferBack)
-                //{
-                //    this.referBackStateId = (int)ApprovalState.Initiation;
-                //}
             }
             else
             {
@@ -313,16 +309,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
             if (this.ignorePostApprovalReviewer == false && this.approvalTrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
             {
-                //var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
-                //var grouplevels = context.TBL_APPROVAL_LEVEL.Where(x => x.GROUPID == currentLevel.GROUPID);
-                //var reviewers = grouplevels.Where(x => x.ISPOSTAPPROVALREVIEWER == true && x.ISACTIVE);
-
-
-                //if (reviewers.Any() && currentlevel.ISPOSTAPPROVALREVIEWER == false && lastRequest.APPROVALSTATUSID != 10 && terminateOnApproval == false)
-                //{
-                //    this.nextLevelId = reviewers.FirstOrDefault().APPROVALLEVELID;
-                //    StartPostApprovalLevelsReview(reviewers.FirstOrDefault().APPROVALLEVELID);
-                //}
+                
                 if (this.reviewerLevelId > 0)
                 {
                     var level = context.TBL_APPROVAL_LEVEL.Find(this.reviewerLevelId);

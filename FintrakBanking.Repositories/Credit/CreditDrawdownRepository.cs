@@ -290,8 +290,6 @@ namespace FintrakBanking.Repositories.Credit
                             previousTrail2.SYSTEMRESPONSEDATETIME = DateTime.Now;
                         }
 
-                        //if (previousTrail == null)
-                        //{
                             request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                             var operationId = classifiedTrail.OPERATIONID;
 
@@ -310,7 +308,6 @@ namespace FintrakBanking.Repositories.Credit
                             trans.Commit();
 
                             return workflow.Response;
-                        //}
                     }
                 }
                 
