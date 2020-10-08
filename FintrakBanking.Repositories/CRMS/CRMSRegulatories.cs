@@ -59,6 +59,56 @@ namespace FintrakBanking.Repositories.CRMS
             drawdown = _drawdown;
         }
 
+        public string GetCRMSCode(CRMSViewModel param)
+        {
+
+            String response = string.Empty ;
+            if (param.isLms)
+            {
+                var loan = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == param.loanId).Select(x => x).FirstOrDefault();
+                if (loan != null)
+                {
+                    response = loan.CRMSCODE;
+                }
+            }
+            else
+            {
+                var loan = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOAN_BOOKING_REQUESTID == param.loanId).Select(x => x).FirstOrDefault();
+                if (loan != null)
+                {
+                    response = loan.CRMSCODE;
+                }
+            }
+            return response;
+        }
+
+        public bool ResetCrmsCode(CRMSViewModel param)
+        {
+            bool response = false;
+            if (param.isLms)
+            {
+                var loan = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == param.loanId).Select(x => x).FirstOrDefault();
+                if (loan != null)
+                {
+                    loan.CRMSCODE = " ";
+                    loan.CRMSDATE = null;
+                    loan.CRMSVALIDATED = null;
+                }
+            }
+            else
+            {
+                var loan = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOAN_BOOKING_REQUESTID == param.loanId).Select(x => x).FirstOrDefault();
+                if (loan != null)
+                {
+                    loan.CRMSCODE = " ";
+                    loan.CRMSDATE = null;
+                    loan.CRMSVALIDATED = null;
+                }
+            }
+            response = context.SaveChanges() > 0;
+            return response;
+        }
+
         public string AddCRMSCode(CRMSViewModel param)
         {
 
@@ -139,22 +189,28 @@ namespace FintrakBanking.Repositories.CRMS
                     throw new ConditionNotMetException("This Booking Request does not exist");
 
                 param.crmsCode = param.crmsCode.Trim();
+                var dateToday = DateTime.Today;
+                dateToday = dateToday.Date;
 
                 var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE.Trim() == param.crmsCode).Any();
                 if (codeExist == true)
                     throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
-                if (!(string.IsNullOrEmpty(loan.CRMSCODE)) && !(string.IsNullOrWhiteSpace(loan.CRMSCODE)) && (loan.CRMSVALIDATED ?? false))
+                //if (!(string.IsNullOrEmpty(loan.CRMSCODE)) && !(string.IsNullOrWhiteSpace(loan.CRMSCODE)) && (loan.CRMSVALIDATED ?? false))
+                //{
+                //    var crmsDate = loan.CRMSDATE.Value.Date;
+                //    //throw new ConditionNotMetException("CRMS code has already been captured for this request, kindly refresh your screen for confirmation!");
+                //}
+
+                if ((loan.CRMSDATE.HasValue && (dateToday > loan.CRMSDATE.Value.Date)) || !(loan.CRMSVALIDATED ?? false))
                 {
-                    throw new ConditionNotMetException("CRMS code has already been captured for this request, kindly refresh your screen for confirmation!");
+                    loan.CRMSCODE = param.crmsCode;
+                    loan.CRMSDATE = DateTime.Now;
+                    loan.CRMSVALIDATED = true;
+                    context.SaveChanges();//to handle issue of sending the request twice as result of screen loading response anomaly;
                 }
 
-                loan.CRMSCODE = param.crmsCode;
-                loan.CRMSDATE = DateTime.Now;
-                loan.CRMSVALIDATED = true;
-                context.SaveChanges();//to handle issue of sending the request twice as result of screen loading response anomaly;
-
                 var finishingJob = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
-                    && x.TARGETID == loan.LOAN_BOOKING_REQUESTID && x.OPERATIONID == loan.OPERATIONID);
+                    && x.TARGETID == loan.LOAN_BOOKING_REQUESTID && x.OPERATIONID == loan.OPERATIONID && x.RESPONSESTAFFID == null).ToList();
 
                 if (finishingJob.Any())
                 {
@@ -162,6 +218,7 @@ namespace FintrakBanking.Repositories.CRMS
                     var approvalModel = new LoanAvailmentApprovalViewModel
                     {
                         createdBy = param.createdBy,
+                        staffId = param.createdBy,
                         companyId = param.companyId,
                         targetId = loan.LOAN_BOOKING_REQUESTID,
                         comment = "Captured CRMS code",
@@ -169,6 +226,7 @@ namespace FintrakBanking.Repositories.CRMS
                         // amount = entity.principalAmount,
                         operationId = (short)loan.OPERATIONID,
                     };
+                    //throw new Exception("");
 
                     response = drawdown.GoForBookingRequestApproval(approvalModel, loan.LOAN_BOOKING_REQUESTID);
                     return response.responseMessage;
@@ -180,7 +238,8 @@ namespace FintrakBanking.Repositories.CRMS
                     {
                         return "CRMS Code Captured";
                     }
-                    throw new ConditionNotMetException("An error occured while trying to Capture CRMS CODE!");
+                    return "Moved to Inputter";
+                    //throw new ConditionNotMetException("An error occured while trying to Capture CRMS CODE!");
                 }
             }
 

@@ -449,6 +449,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationDetailId { get; set; }
         public string appraisalOperationName { get; set; }
         public short sectorId { get; set; }
+        public decimal? contigentOutstandingPrincipal { get; set; }
+        public decimal? totalPrepayment { get; set; }
 
 
 

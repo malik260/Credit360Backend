@@ -229,45 +229,85 @@ namespace FintrakBanking.Repositories.Credit
                      //&& x.RESPONSESTAFFID == null
                      && x.DESTINATIONOPERATIONID > 0
                      && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
-                     && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
+                     && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
+                     //&& x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
                      && x.TARGETID == entity.targetId
                     );
 
                     var previousTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
                      x.OPERATIONID == (int)entity.operationId
-                     && x.RESPONSESTAFFID == null
+                     //&& x.RESPONSESTAFFID == null
+                     && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
                      && x.DESTINATIONOPERATIONID == null
                      && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
                      && x.TARGETID == entity.targetId
                     );
 
-                    if (classifiedTrail != null && previousTrail ==  null)
+                    if (classifiedTrail != null && previousTrail == null)
                     {
-                        classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                        classifiedTrail.APPROVALSTATEID = (short)ApprovalState.Ended;
-                        classifiedTrail.RESPONSESTAFFID = entity.staffId;
-                        classifiedTrail.RESPONSEDATE = DateTime.Now;
-                        classifiedTrail.REFEREBACKSTATEID = (short)ApprovalState.Ended;
-
-
-                        request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                        var operationId = classifiedTrail.OPERATIONID;
-
-                        var approvalModel = new ForwardViewModel
+                        
+                        if (classifiedTrail.RESPONSESTAFFID == null)
                         {
-                            createdBy = entity.createdBy,
-                            companyId = entity.companyId,
-                            applicationId = request.LOAN_BOOKING_REQUESTID,
-                            comment = "A request for booking needs your attention",
-                            amount = request.AMOUNT_REQUESTED,
-                        };
-                        application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
-
-                        if (operationId > 0) LogApproval(approvalModel, classifiedTrail.DESTINATIONOPERATIONID ?? 0, true, (short)ApprovalStatusEnum.Pending);
+                            if (classifiedTrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
+                            {
+                                classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Closed;
+                            }
+                            else
+                            {
+                                classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            }
+                            classifiedTrail.APPROVALSTATEID = (short)ApprovalState.Ended;
+                            classifiedTrail.RESPONSESTAFFID = entity.staffId;
+                            classifiedTrail.RESPONSEDATE = DateTime.Now;
+                            classifiedTrail.SYSTEMRESPONSEDATETIME = DateTime.Now;
+                        }
+                            
+                        classifiedTrail.REFEREBACKSTATEID = (short)ApprovalState.Ended;
                         context.SaveChanges();
-                        trans.Commit();
 
-                        return workflow.Response;
+                        var previousTrail2 = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                         x.OPERATIONID == (int)entity.operationId
+                         && x.RESPONSESTAFFID == null
+                         && x.DESTINATIONOPERATIONID == null
+                         && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+                         && x.TARGETID == entity.targetId
+                        );
+
+                        if (previousTrail2 != null)
+                        {
+
+                            if (previousTrail2.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
+                            {
+                                previousTrail2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Closed;
+                            }
+                            else
+                            {
+                                previousTrail2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            }
+                            previousTrail2.APPROVALSTATEID = (short)ApprovalState.Ended;
+                            previousTrail2.RESPONSESTAFFID = entity.staffId;
+                            previousTrail2.RESPONSEDATE = DateTime.Now;
+                            previousTrail2.SYSTEMRESPONSEDATETIME = DateTime.Now;
+                        }
+
+                            request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                            var operationId = classifiedTrail.OPERATIONID;
+
+                            var approvalModel = new ForwardViewModel
+                            {
+                                createdBy = entity.createdBy,
+                                companyId = entity.companyId,
+                                applicationId = request.LOAN_BOOKING_REQUESTID,
+                                comment = "A request for booking needs your attention",
+                                amount = request.AMOUNT_REQUESTED,
+                            };
+                            application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+
+                            if (operationId > 0) LogApproval(approvalModel, classifiedTrail.DESTINATIONOPERATIONID ?? 0, true, (short)ApprovalStatusEnum.Pending);
+                            context.SaveChanges();
+                            trans.Commit();
+
+                            return workflow.Response;
                     }
                 }
                 
