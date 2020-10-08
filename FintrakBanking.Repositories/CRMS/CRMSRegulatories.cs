@@ -192,15 +192,6 @@ namespace FintrakBanking.Repositories.CRMS
                 var dateToday = DateTime.Today;
                 dateToday = dateToday.Date;
 
-                //var classifiedTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                //    x.OPERATIONID == loan.OPERATIONID
-                //    //&& x.RESPONSESTAFFID == null
-                //    && x.DESTINATIONOPERATIONID > 0
-                //    && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
-                //    && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
-                //    && x.TARGETID == loan.LOAN_BOOKING_REQUESTID
-                //   );
-
                 var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE.Trim() == param.crmsCode).Any();
                 if (codeExist == true)
                     throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
@@ -221,7 +212,6 @@ namespace FintrakBanking.Repositories.CRMS
                 var finishingJob = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
                     && x.TARGETID == loan.LOAN_BOOKING_REQUESTID && x.OPERATIONID == loan.OPERATIONID && x.RESPONSESTAFFID == null).ToList();
 
-                //if (finishingJob.Any() || classifiedTrail != null)
                 if (finishingJob.Any())
                 {
 
