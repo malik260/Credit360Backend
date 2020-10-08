@@ -25,6 +25,84 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("regulatory/fetch-crms-code")]
+        public HttpResponseMessage GetCRMSCode([FromBody] CRMSViewModel customer)
+        {
+            try
+            {
+                customer.companyId = token.GetCompanyId;
+                customer.createdBy = token.GetStaffId;
+                customer.userBranchId = (short)token.GetBranchId;
+                customer.companyId = token.GetCompanyId;
+                customer.lastUpdatedBy = token.GetStaffId;
+                customer.applicationUrl = HttpContext.Current.Request.Path;
+                var data = repo.GetCRMSCode(customer);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { data = "no-record", success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {ex.Message}" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("regulatory/reset-crms-code")]
+        public HttpResponseMessage ResetCrmsCode([FromBody] CRMSViewModel customer)
+        {
+            try
+            {
+                customer.companyId = token.GetCompanyId;
+                customer.createdBy = token.GetStaffId;
+                customer.userBranchId = (short)token.GetBranchId;
+                customer.companyId = token.GetCompanyId;
+                customer.lastUpdatedBy = token.GetStaffId;
+                customer.applicationUrl = HttpContext.Current.Request.Path;
+                var data = repo.ResetCrmsCode(customer);
+                if (!data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record reset" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "CRMS was reset successfully" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { data = "no-record", success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {ex.Message}" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("regulatory/crms-code")]
         public HttpResponseMessage AddCRMSCode([FromBody] CRMSViewModel customer)
         {
