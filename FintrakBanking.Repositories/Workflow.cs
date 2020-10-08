@@ -199,6 +199,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
+                //if (this.IsClassifiedReferBack)
+                //{
+                //    this.referBackStateId = (int)ApprovalState.Initiation;
+                //}
             }
             else
             {
@@ -333,11 +337,13 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.deferredExecution)
             {
+                this.fromLevelId = null;
                 return true;
             }
             this.saved = context.SaveChanges() > 0;
             if (this.saved)
             {
+                this.fromLevelId = null;
                 return true;
             }
 
@@ -739,7 +745,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     if (response.nextPersonId > 0)
                     {
-                        return "The " + itemHeading + " request has been REFERRED to " + response.nextPersonName;
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextPersonName + ", " + response.nextLevelName;
                     }
                     else
                     {
@@ -750,7 +756,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     if (response.nextPersonId > 0)
                     {
-                        return "The " + itemHeading + " request has been SENT to " + response.nextPersonName;
+                        return "The " + itemHeading + " request has been SENT to " + response.nextPersonName + ", " + response.nextLevelName;
                     }
                     else
                     {
@@ -884,17 +890,26 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return;
             }
+            var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
+
+            if (this.newStateId == (int)ApprovalState.Ended && this.statusId == (int)ApprovalStatusEnum.Closed)
+            {
+                if(allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Closed))
+                {
+                    new SecureException("The process is closed already!");
+                }
+            }
 
             if (this.newStateId != (int)ApprovalState.Ended || this.statusId != (int)ApprovalStatusEnum.Approved)
             {
                 return;
             }
                 
-            var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
             if (allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved))
             {
                 new SecureException("The process is closed already!");
             }
+
         }
 
         private void FurtherValidations()
@@ -952,9 +967,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             ValidateDestinationConfiguration();
 
             ValidateAgainstReinitiationOfClosedProcess();
-
-
-
         }
 
         private bool IsNormalEnd(TBL_APPROVAL_TRAIL request)
@@ -1488,7 +1500,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int SetState()
         {
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);//for test!!
-            if (this.nextLevelId == null && IsLastApprover(level))//for test!!
+            if ((this.nextLevelId == null && IsLastApprover(level)) || (this.statusId == (int)ApprovalStatusEnum.Closed))//for test!!
             {
                 if (ActionIsApprovalDecision() || this.amount == 0)
                 {
@@ -1546,6 +1558,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.EndProcess(this.statusId);
                 return statusId;
             }
+
+            //if (this.statusId == (int)ApprovalStatusEnum.Closed && ) // if its still approval decision end process
+            //{
+            //    this.EndProcess(this.statusId);
+            //    return statusId;
+            //}
 
             if (ActionIsApprovalDecision()) // if its still approval decision end process
             {
