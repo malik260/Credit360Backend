@@ -873,8 +873,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var disbursedLoans = (from a in context.TBL_LOAN
                                       join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                       select b.LOANAPPLICATIONID).ToList();
-                List<int> operations = new List<int> { (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.LoanAvailment };
-                operations.AddRange(context.TBL_LOAN_APPLICATION.Select(x => x.OPERATIONID).Distinct());
+                //List<int> operations = new List<int> { (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.LoanAvailment };
+                //operations.AddRange(context.TBL_LOAN_APPLICATION.Select(x => x.OPERATIONID).Distinct());
 
                 int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved,  }; //(int)ApprovalStatusEnum.Authorised
                 List<WorkflowTrackerViewModel> approvalRecord = new List<WorkflowTrackerViewModel>();
@@ -926,7 +926,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 param.endDate = param.endDate.AddHours(23);
                 param.endDate = param.endDate.AddMinutes(59);
                 param.endDate = param.endDate.AddSeconds(59);
-                var currentDate = DateTime.Now;
                 
 
                 var record = (from a in context.TBL_APPROVAL_TRAIL
@@ -934,11 +933,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
                               join d in context.TBL_LOAN_APPLICATION on a.TARGETID equals d.LOANAPPLICATIONID
                               join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                              where ((DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) >= DbFunctions.TruncateTime(param.startDate)
-                                 && DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) <= DbFunctions.TruncateTime(param.endDate))
-                                 || (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                              where ((DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
                                  && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)))
-                                 && operations.Contains(a.OPERATIONID)
+                                 && (a.OPERATIONID == d.OPERATIONID || a.OPERATIONID == (int)OperationsEnum.OfferLetterApproval)
+                                 //&& operations.Contains(a.OPERATIONID)
                                  //&& a.RESPONSESTAFFID == null
                                  && d.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                                 && d.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
@@ -949,13 +947,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               {
                                   approvalStatusId = a.APPROVALSTATUSID,
                                   operationName = a.TBL_OPERATIONS.OPERATIONNAME,
-                                  currentLevel = context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault(),
+                                  currentLevel = (a.TOAPPROVALLEVELID > 0) ? context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault() : "N/A",
                                   approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                   approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
                                   applicationReferenceNumber = d.APPLICATIONREFERENCENUMBER,
                                   requestStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
                                   responseStaffName = (a.RESPONSESTAFFID > 0) ? a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME : "N/A",
-                                   comment = a.COMMENT,
+                                  responsibleStaffName = (a.TOSTAFFID > 0) ? a.TBL_STAFF2.LASTNAME + " " + a.TBL_STAFF2.MIDDLENAME + " " + a.TBL_STAFF2.FIRSTNAME : "N/A",
+                                  comment = a.COMMENT,
                                   systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                                   systemResponseDate = a.SYSTEMRESPONSEDATETIME,
                                   requestApprovalLevel = (a.FROMAPPROVALLEVELID > 0) ? a.TBL_APPROVAL_LEVEL.LEVELNAME : context.TBL_STAFF_ROLE.FirstOrDefault(r => r.STAFFROLEID == a.TBL_STAFF.STAFFROLEID).STAFFROLENAME,
@@ -971,7 +970,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   branchName = d.TBL_BRANCH.BRANCHNAME + " (" + d.TBL_BRANCH.BRANCHCODE + ") ",
                                   loanApplicationId = d.LOANAPPLICATIONID,
                                   approvalTrailId = a.APPROVALTRAILID,
-
+                                  toStaffId = a.TOSTAFFID,
                               })
                               ).ToList()
                               
@@ -998,7 +997,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             ProductName += rec.TBL_PRODUCT.PRODUCTNAME;
                             amount += (decimal)rec.APPROVEDAMOUNT * (decimal)rec.EXCHANGERATE;
                         }
-                        
+                    }
+                    if (item.toStaffId > 0 && string.IsNullOrWhiteSpace(item.responsibleStaffName))
+                    {
+                        var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == item.toStaffId);
+                        item.responsibleStaffName = staff.LASTNAME + " " + staff.MIDDLENAME + " " + staff.FIRSTNAME;
                     }
                     serial += 1;
                     item.productNames = ProductName;
@@ -1038,19 +1041,18 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                         join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
                                         join e in context.TBL_LOAN_APPLICATION on a.TARGETID equals e.LOANAPPLICATIONID
                                         join d in context.TBL_LOAN_APPLICATION_DETAIL on e.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                        let owner = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == e.OWNEDBY)
                                         //join r in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
                                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                                        where a.OPERATIONID == e.OPERATIONID
+                                        where (a.OPERATIONID == e.OPERATIONID || a.OPERATIONID == (int)OperationsEnum.OfferLetterApproval)
                                         //where a.OPERATIONID == (int)OperationsEnum.LoanAvailment
-                                           && ((DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) >= DbFunctions.TruncateTime(param.startDate)
-                                           && DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) <= DbFunctions.TruncateTime(param.endDate))
-                                           || (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                           && ((DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
                                            && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)))
                                            && a.RESPONSESTAFFID == null
                                            && a.APPROVALSTATEID == (int)ApprovalState.Ended
                                            && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                            && ((e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted)
-                                            || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestInitiated)
+                                            //|| (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestInitiated)
                                             //|| (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestCompleted)
                                             //|| (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingInProgress)
                                             //|| (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingCompleted)
@@ -1071,6 +1073,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
                                             requestStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
                                             responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                                            responsibleStaffName = owner.LASTNAME + " " + owner.MIDDLENAME + " " + owner.FIRSTNAME,
                                             comment = a.COMMENT,
                                             systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                                             systemResponseDate = a.SYSTEMRESPONSEDATETIME,
@@ -1092,9 +1095,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                             //dueDate = (DateTime.Now.Date - a.SYSTEMARRIVALDATETIME.Date).Days,
                                             approvalTrailId = a.APPROVALTRAILID,
+                                            toStaffId = a.TOSTAFFID,
                                             productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                         })
-                           ).OrderByDescending(o => o.approvalTrailId);
+                           );
 
 
                 var record = (from a in context.TBL_APPROVAL_TRAIL
@@ -1106,9 +1110,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               join cust in context.TBL_CUSTOMER on bo.CUSTOMERID equals cust.CUSTOMERID
                               let loopStaff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == a.LOOPEDSTAFFID)
                               let isSpecialLoop = a.TOAPPROVALLEVELID == a.FROMAPPROVALLEVELID
-                              where ((DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) >= DbFunctions.TruncateTime(param.startDate)
-                                 && DbFunctions.TruncateTime(a.SYSTEMRESPONSEDATETIME) <= DbFunctions.TruncateTime(param.endDate))
-                                 || (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                              where ((DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
                                  && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)))
                                  && operations.Contains(a.OPERATIONID) 
                                  //&& a.RESPONSESTAFFID == null && !approvals.Contains(a.APPROVALSTATUSID)
@@ -1120,15 +1122,16 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               select (new WorkflowTrackerViewModel
                               {
                                   approvalStatusId = a.APPROVALSTATUSID,
+                                  loanBookingRequestId = bo.LOAN_BOOKING_REQUESTID,
                                   operationName = a.TBL_OPERATIONS.OPERATIONNAME,
-                                  currentLevel = (loopStaff == null) ? context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault() : context.TBL_STAFF_ROLE.FirstOrDefault(r => r.STAFFROLEID == loopStaff.STAFFROLEID).STAFFROLENAME,
+                                  currentLevel = (a.TOAPPROVALLEVELID == null) ? "N/A" : (loopStaff == null) ? context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault() : context.TBL_STAFF_ROLE.FirstOrDefault(r => r.STAFFROLEID == loopStaff.STAFFROLEID).STAFFROLENAME,
                                   approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                   approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
                                   applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
                                   requestStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
                                   responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                                  responsibleStaffName = (loopStaff == null) ? (a.TOSTAFFID == null) ? "N/A" : a.TBL_STAFF2.LASTNAME + " " + a.TBL_STAFF2.MIDDLENAME + " " + a.TBL_STAFF2.FIRSTNAME : loopStaff.LASTNAME + " " + loopStaff.MIDDLENAME + " " + loopStaff.FIRSTNAME,
                                   comment = a.COMMENT,
-                                  loanBookingRequestId = bo.LOAN_BOOKING_REQUESTID,
                                   systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                                   systemResponseDate = a.SYSTEMRESPONSEDATETIME,
                                   requestApprovalLevel = (a.FROMAPPROVALLEVELID > 0) ? a.TBL_APPROVAL_LEVEL.LEVELNAME : context.TBL_STAFF_ROLE.FirstOrDefault(r => r.STAFFROLEID == a.TBL_STAFF.STAFFROLEID).STAFFROLENAME,
@@ -1142,26 +1145,31 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
                                   arrivalDate = a.ARRIVALDATE,
                                   applicationDate = e.SYSTEMDATETIME,
-                                  amount = d.APPROVEDAMOUNT,
+                                  amount = bo.AMOUNT_REQUESTED,
                                   TargetId = a.TARGETID,
                                   branchName = e.TBL_BRANCH.BRANCHNAME + " (" + e.TBL_BRANCH.BRANCHCODE + ") ",
                                   loanApplicationId = d.LOANAPPLICATIONID,
                                   loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
-
+                                  //dueDate = (DateTime.Now.Date - a.SYSTEMARRIVALDATETIME.Date).Days,
                                   approvalTrailId = a.APPROVALTRAILID,
+                                  toStaffId = a.TOSTAFFID,
                                   productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                               })
-                           ).OrderByDescending(o => o.approvalTrailId);
+                           );
 
                 var test = preBookingrecord.ToList();
 
-                var records = record; //.Union(preBookingrecord).OrderByDescending(a => a.approvalTrailId).ToList();
+                var records = preBookingrecord.Union(record).OrderByDescending(o => o.approvalTrailId);
 
                 int serial = 1;
                 foreach (var item in records.ToList())
                 {
                     int count = serial;
-
+                    if (item.toStaffId > 0 && string.IsNullOrWhiteSpace(item.responsibleStaffName))
+                    {
+                        var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == item.toStaffId);
+                        item.responsibleStaffName = staff.LASTNAME + " " + staff.MIDDLENAME + " " + staff.FIRSTNAME;
+                    }
                     serial += 1;
                     item.serial = count;
                     approvalRecord.Add(item);
