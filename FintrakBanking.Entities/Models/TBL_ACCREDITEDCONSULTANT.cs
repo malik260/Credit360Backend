@@ -78,5 +78,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_JOB_REQUEST_DETAIL> TBL_JOB_REQUEST_DETAIL { get; set; }
         public string CATEGORY { get; set; }
         public string STAFFCODE { get; set; }
+        public string AGENTCATEGORY { get; set; }
     }
 }

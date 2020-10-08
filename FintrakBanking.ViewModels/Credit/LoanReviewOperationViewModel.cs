@@ -9,6 +9,7 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class LoanReviewOperationViewModel : GeneralEntity
     {
+        public decimal? contingentOutstandingPrincipal { get; set; }
         public int loanReviewOperationsId { get; set; }
         public string legalContingentCode { get; set; }
 
@@ -96,6 +97,12 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isPrimaryDocument { get; set; }
         public string formData { get; set; }
         public string feeSourceModule { get; set; }
+        public decimal? rebookAmount { get; set; }
+        public DateTime dateRebook { get; set; }
+        public decimal? exposureBeforeRebook { get; set; }
+        public string previousOperator { get; set; }
+        public decimal bondAmount { get; set; }
+        public DateTime? rebookDate { get; set; }
     }
 
     public class LoanIrregularScheduleViewModel

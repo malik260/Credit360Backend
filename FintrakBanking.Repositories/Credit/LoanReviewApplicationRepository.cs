@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
@@ -3156,14 +3157,27 @@ namespace FintrakBanking.Repositories.Credit
                        where op.LOANID == loanId && op.LOANSYSTEMTYPEID == loansystemTypeId
                        select new LoanReviewOperationViewModel
                        {
+                           operationId = op.OPERATIONTYPEID,
                            operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == op.OPERATIONTYPEID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                            reviewDetails = op.REVIEWDETAILS,
                            proposedEffectiveDate = op.EFFECTIVEDATE,
                            approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == op.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                            operationCompleted = op.OPERATIONCOMPLETED,
                            loanApplicationId = 0,
-                           loanReviewOperationsId = op.LOANREVIEWOPERATIONID
-                       });
+                           loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                           rebookAmount = op.CONTINGENTOUTSTANDINGPRINCIPAL,
+                           dateRebook = op.DATECREATED,
+                           rebookDate = op.REBOOKDATE,
+                           loanId = op.LOANID,
+                           bondAmount = context.TBL_LOAN_CONTINGENT.Where(c => c.CONTINGENTLOANID == op.LOANID).Select(c => c.CONTINGENTAMOUNT).FirstOrDefault(),
+                           contingentOutstandingPrincipal = op.CONTINGENTOUTSTANDINGPRINCIPAL,
+                       }).ToList();
+            foreach(var p in ops)
+            {
+                var staff = context.TBL_LOAN_REVIEW_OPERATION.Where(o => DbFunctions.TruncateTime(o.DATECREATED) != p.dateTimeCreated && o.LOANID == p.loanId && o.OPERATIONTYPEID == p.operationId).Select(o => o.CREATEDBY).FirstOrDefault();
+                p.previousOperator = context.TBL_STAFF.Where(s => s.STAFFID == staff).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                p.exposureBeforeRebook = p.bondAmount;
+            }
 
             return ops.ToList();
         }
