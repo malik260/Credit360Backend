@@ -679,7 +679,12 @@ namespace FintrakBanking.Repositories.Credit
                                 join atrail in _context.TBL_APPROVAL_TRAIL on valPre.VALUATIONPREREQUISITEID equals atrail.TARGETID
                                 join cus in _context.TBL_CUSTOMER on C.CUSTOMERID equals cus.CUSTOMERID
                                 where ((atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest)
-                                && (valPre.REFERENCENUMBER.Trim().ToLower().Contains(searchString)))
+                                && (valPre.REFERENCENUMBER.Trim().ToLower().Contains(searchString))
+                                || cus.CUSTOMERCODE.Contains(searchString)
+                                || cus.FIRSTNAME.ToLower().Contains(searchString)
+                                || cus.MIDDLENAME.ToLower().Contains(searchString)
+                                || cus.LASTNAME.ToLower().Contains(searchString)
+                                )
                                 select new ValuationPrerequisiteViewModel
                                 {
                                     customerName = cus.FIRSTNAME + " " + cus.LASTNAME + " " + cus.MAIDENNAME,
