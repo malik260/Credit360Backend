@@ -1955,6 +1955,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralTypeId = c.c.COLLATERALTYPEID,
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
                         customerId = c.c.CUSTOMERID,
+                        customerCode = c.c.CUSTOMERCODE,
                         currencyId = c.c.CURRENCYID,
                         currencyCode = c.c.TBL_CURRENCY.CURRENCYCODE,
                         baseCurrencyId = company.CURRENCYID,
@@ -8355,6 +8356,7 @@ namespace FintrakBanking.Repositories.Credit
                                    dateTimeCreated = x.DATETIMECREATED,
                                    requireVisitation = c.REQUIREVISITATION,
                                    customerName = a.FIRSTNAME + " " + a.LASTNAME + " " + a.MAIDENNAME,
+                                   customerCode = a.CUSTOMERCODE == null ? x.CUSTOMERCODE: a.CUSTOMERCODE,
 
                                }).ToList();
 
