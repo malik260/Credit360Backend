@@ -42,6 +42,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("original-document-search/{searchString}")]
+        public HttpResponseMessage GetOriginalDocumentSearch(string searchString)
+        {
+            IEnumerable<OriginalDocumentApprovalViewModel> response = repo.GetOriginalDocumentSearch(searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("original-document-approval/{id}")]
         public HttpResponseMessage GetOriginalDocumentApproval(int id)
         {

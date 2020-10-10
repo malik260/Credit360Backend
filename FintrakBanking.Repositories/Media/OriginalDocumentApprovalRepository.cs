@@ -92,6 +92,55 @@ namespace FintrakBanking.Repositories.Media
             return data;
         }
 
+        public IEnumerable<OriginalDocumentApprovalViewModel> GetOriginalDocumentSearch(string searchString)
+        {
+            searchString = searchString.ToLower().Trim();
+            var data = new List<OriginalDocumentApprovalViewModel>();
+            
+            data = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                    join o in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals o.COLLATERALCUSTOMERID
+                    join c in context.TBL_CUSTOMER on o.CUSTOMERID equals c.CUSTOMERID
+                    join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+                    where x.DELETED == false 
+                    && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
+                    && (c.CUSTOMERCODE == searchString
+                    || c.FIRSTNAME.Contains(searchString)
+                    || c.MIDDLENAME.Contains(searchString)
+                    || c.LASTNAME.Contains(searchString))
+
+                    select new OriginalDocumentApprovalViewModel
+                    {
+                        originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                        loanApplicationId = x.LOANAPPLICATIONID,
+                        description = x.DESCRIPTION,
+                        collateralCode = o.COLLATERALCODE,
+                        collateralType = context.TBL_COLLATERAL_TYPE.Where(a => a.COLLATERALTYPEID == o.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
+                        collateralTypeId = o.COLLATERALTYPEID,
+                        approvalStatusId = (short)x.APPROVALSTATUSID,
+                        applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                        referenceNumber = x.REFERENCENUMBER,
+                        dateTimeCreated = x.DATETIMECREATED,
+                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        customerCode = c.CUSTOMERCODE,
+                        customerId = c.CUSTOMERID,
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        operationId = atrail.OPERATIONID,
+                        approvalDate = x.APPROVALDATE,
+                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == c.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        createdBy = x.CREATEDBY,
+                        createdByName = context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        collateralCustomerId = x.COLLATERALCUSTOMERID,
+                        currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? ((atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && atrail.LOOPEDSTAFFID != null) ? _context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == atrail.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : _context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME) : "N/A",
+                        responsiblePerson = atrail.TOSTAFFID == null ? "N/A" : atrail.TBL_STAFF1.STAFFCODE + " - " + atrail.TBL_STAFF1.FIRSTNAME + " " + atrail.TBL_STAFF1.MIDDLENAME + " " + atrail.TBL_STAFF1.LASTNAME,
+                    });
+
+            var result = data.GroupBy(r => r.originalDocumentApprovalId)
+                               .Select(r => r.FirstOrDefault()).ToList();
+
+            return result;
+        }
+
         public OriginalDocumentApprovalViewModel GetOriginalDocumentApproval(int id)
         {
            return (from entity in  context.TBL_ORIGINAL_DOCUMENT_APPROVAL
