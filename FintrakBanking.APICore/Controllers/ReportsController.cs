@@ -518,7 +518,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-         [HttpPost] [ClaimsAuthorization]
+
+        [HttpPost] [ClaimsAuthorization]
         [Route("monitoring/bond-and-guarantee")]
         public HttpResponseMessage GetBondAndGuaranteeReport(DateRange dateRange)
         {
@@ -540,7 +541,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      
+        //edited report diff from initial report
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("monitoring/bond-and-guarantee-report")]
+        public HttpResponseMessage GetBondsAndGuaranteeReport(DateRange dateRange)
+        {
+            try
+            {
+                var data = repo.GetBondsAndGuaranteeReport(dateRange, token.GetCompanyId, token.GetStaffId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("monitoring/insurance-expiration")]
