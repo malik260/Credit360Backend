@@ -73,6 +73,7 @@ namespace FintrakBanking.Entities.Models
         public string OPERATION { get; set; }
         public bool? ISCURRENT { get; set; }
         public string STAFFCODE { get; set; }
+        public string AGENTCATEGORY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_ACCREDITEDCONSULTANT_STATE> TBL_TEMP_ACCREDITEDCONSULTANT_STATE { get; set; }

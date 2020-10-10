@@ -281,9 +281,9 @@ namespace FintrakBanking.APICore.Providers
                 FinTrakBankingContext _bankingContext = new FinTrakBankingContext();
                 var authRepo = new AuthenticationRepository(_bankingContext, null, null);
 
-                /*
-                 * this section is for lisence validation
-                 * 
+              // this section is for lisence validation
+                 
+               /*  
                 var result = authRepo.ExamineLicense();
                 if (result.Status == LicenseStatus.CorruptLicenseFile)
                 {
@@ -315,7 +315,9 @@ namespace FintrakBanking.APICore.Providers
                 {
                     context.SetError("invalid_grant", "Application License Version Mismatch!");
                     return;
-                } end of lisence validation*/
+                } 
+                */
+                //end of lisence validation*/
 
 
                 ActiveUserDetails userInfo = authRepo.GetUserAuthenticationInfo(userVm.username);

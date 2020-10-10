@@ -164,6 +164,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-all-collateral-valuations-request-list")]
+        public HttpResponseMessage GetAllValuationRequestList()
+        {
+            
+                var valuations = _colValuationRepo.GetAllValuationRequestList();
+                int totalItems = valuations.Count();
+                valuations = valuations.OrderBy(x => x.dateTimeCreated).ToList();
+            if (valuations != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = valuations, count = totalItems });
+            }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Record(s) not found" });
+            
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-valuation-Prerequisite/{valuationPrerequisiteId}/valuationPrerequisiteId")]
         public HttpResponseMessage GetCollateralValuationPrerequisiteById(int valuationPrerequisiteId)
         {
@@ -189,6 +206,25 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var Prerequisites = _colValuationRepo.GetAllValuationPrerequisitesById(token.GetStaffId, collateralValuationId);
+                int totalItems = Prerequisites.Count();
+
+                Prerequisites = Prerequisites.OrderBy(x => x.dateTimeCreated).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = Prerequisites, count = totalItems });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-all-valuation-Prerequisites-list/{collateralValuationId}/collateralValuationId")]
+        public HttpResponseMessage GetAllValuationPrerequisitesList(int collateralValuationId)
+        {
+            try
+            {
+                var Prerequisites = _colValuationRepo.GetAllValuationPrerequisitesListById(token.GetStaffId, collateralValuationId);
                 int totalItems = Prerequisites.Count();
 
                 Prerequisites = Prerequisites.OrderBy(x => x.dateTimeCreated).ToList();
