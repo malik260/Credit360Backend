@@ -1152,6 +1152,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string criteria { get; set; }
         public string tier { get; set; }
         public decimal computation { get; set; }
+        
     }
 
     public class ProjectRiskRatingViewModel : GeneralEntity

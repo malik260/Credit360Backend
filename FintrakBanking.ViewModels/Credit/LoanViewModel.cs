@@ -465,6 +465,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipTeam { get; set; }
         public string accountOfficer { get; set; }
         public decimal? exposureOnGuarantee { get; set; }
+        public string sbu { get; set; }
 
 
 
