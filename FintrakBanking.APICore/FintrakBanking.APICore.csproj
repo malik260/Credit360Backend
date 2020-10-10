@@ -525,11 +525,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportDataset\RecoveryCollections.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RecoveryCollections.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportDataset\ReportDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -574,6 +569,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\Blacklist.aspx.designer.cs">
       <DependentUpon>Blacklist.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\BandGReport.aspx.cs">
+      <DependentUpon>BandGReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\BandGReport.aspx.designer.cs">
+      <DependentUpon>BandGReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\BondAndGuarantee.aspx.cs">
       <DependentUpon>BondAndGuarantee.aspx</DependentUpon>
@@ -1511,6 +1513,7 @@
     <Content Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
     <Content Include="Reports\ReportViews\Blacklist.aspx" />
+    <Content Include="Reports\ReportViews\BandGReport.aspx" />
     <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
     <Content Include="Reports\ReportViews\CashBacked.aspx" />
     <Content Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx" />
@@ -1806,11 +1809,7 @@
     <Content Include="Reports\ReportDataset\RecoveryCollections.xsc">
       <DependentUpon>RecoveryCollections.xsd</DependentUpon>
     </Content>
-    <None Include="Reports\ReportDataset\RecoveryCollections.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>RecoveryCollections.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Reports\ReportDataset\RecoveryCollections.xsd" />
     <Content Include="Reports\ReportDataset\RecoveryCollections.xss">
       <DependentUpon>RecoveryCollections.xsd</DependentUpon>
     </Content>
@@ -1956,6 +1955,7 @@
     <EmbeddedResource Include="Reports\Report\AnalystReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc" />
+    <EmbeddedResource Include="Reports\Report\BandGReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\CancelledLoans.rdlc" />
