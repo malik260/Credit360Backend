@@ -663,25 +663,132 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     orderby a.MATURITYDATE descending
                                     select new LoanViewModel
                                     {
+                                        customerId = a.CUSTOMERID,
+                                        loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                         loanReferenceNumber = a.LOANREFERENCENUMBER,
                                         bookingDate = a.BOOKINGDATE,
                                         issueDate = a.DISBURSEDATE,
                                         expiryDate = a.MATURITYDATE,
+                                        sbu = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                                         guaranteeType = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                         customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
-                                        customerTier = getContractorTieringByApplicationAndCustomerBandG(a.LOANAPPLICATIONDETAILID, a.CUSTOMERID),
+                                        //customerTier = getContractorTieringByApplicationAndCustomerBandG(a.LOANAPPLICATIONDETAILID, a.CUSTOMERID),
                                         apgAccountNumber = s.PRODUCTACCOUNTNUMBER,
                                         projectDetails = context.TBL_PROJECT_RISK_RATING.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(x => x.PROJECTDETAILS).FirstOrDefault(),
                                         projectLocation = context.TBL_PROJECT_RISK_RATING.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(x => x.PROJECTLOCATION).FirstOrDefault(),
                                         contractEmployer = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(x=>x.CUSTOMERID == a.CUSTOMERID).Select(x=>x.EMPLOYERNAME).FirstOrDefault(),
-                                        projectRiskRatings = getProjectRiskRatingByBandG(a.LOANAPPLICATIONDETAILID),
+                                        //projectRiskRatings = getProjectRiskRatingByBandG(a.LOANAPPLICATIONDETAILID),
                                         ccy = context.TBL_CURRENCY.Where(x=>x.CURRENCYID == a.CURRENCYID).Select(x=>x.CURRENCYNAME).FirstOrDefault(),
                                         guaranteeAmount = a.CONTINGENTAMOUNT,
                                         exposureOnGuarantee = context.TBL_LOAN_REVIEW_OPERATION.Where(x=>x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook).Sum(x=>x.CONTINGENTOUTSTANDINGPRINCIPAL),
                                         accountOfficer = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                         relationshipTeam = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                     }).ToList();
+                var data = bondAndGuarantee.GroupBy(r => r.loanApplicationDetailId)
+                               .Select(r => r.FirstOrDefault()).ToList();
+                foreach (var rec in data)
+                {
+                    var loanApplication = context.TBL_LOAN_APPLICATION_DETAIL.Find(rec.loanApplicationDetailId).LOANAPPLICATIONID;
+                    var contractorTiering = (from a in context.TBL_CONTRACTOR_TIERING
+                                             where a.LOANAPPLICATIONID == loanApplication && a.CUSTOMERID == rec.customerId
+                                             select new
+                                             {
+                                                 contractorTierId = a.CONTRACTORTIERID,
+                                                 loanApplicationId = a.LOANAPPLICATIONID,
+                                                 customerId = a.CUSTOMERID,
+                                                 actualValue = a.ACTUALVALUE
+                                             }).AsEnumerable().Select(a => new ContractorTieringViewModel
+                                             {
+                                                 contractorTierId = a.contractorTierId,
+                                                 loanApplicationId = a.loanApplicationId,
+                                                 customerId = a.customerId,
+                                                 actualValue = a.actualValue
+                                             }).ToList();
 
+                    var result = contractorTiering.Select(a => new ContractorTieringViewModel
+                    {
+                        contractorTierId = a.contractorTierId,
+                        loanApplicationId = a.loanApplicationId,
+                        customerId = a.customerId,
+                        criteria = a.criteria,
+                        actualValue = a.actualValue,
+                        computation = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == a.loanApplicationId).Sum(d => d.ACTUALVALUE),
+                    }).ToList();
+
+                    foreach (var check in result)
+                    {
+                        if (check.computation >= 80)
+                        {
+                            rec.customerTier = "Tier 1";
+                        }
+                        if (check.computation >= 60 && check.computation <= 79)
+                        {
+                            rec.customerTier = "Tier 2";
+                        }
+                        if (check.computation <= 59)
+                        {
+                            rec.customerTier = "Tier 3";
+                        }
+                    }
+
+                    var customerTier1 = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == loanApplication).ToList();
+                    var projectRiskRating = (from a in context.TBL_PROJECT_RISK_RATING
+                                             join c in context.TBL_PROJECT_RISK_RATING_CATEGORY on a.CATEGORYID equals c.CATEGORYID
+                                             where a.LOANAPPLICATIONID == loanApplication && a.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId
+                                             select new
+                                             {
+                                                 loanApplicationId = a.LOANAPPLICATIONID,
+                                                 loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                                 loanBookingRequestId = a.LOANBOOKINGREQUESTID,
+                                                 categoryName = c.CATEGORYNAME,
+                                                 categoryValue = a.CATEGORYVALUE,
+                                                 projectLocation = a.PROJECTLOCATION,
+                                                 projectDetails = a.PROJECTDETAILS
+                                             }).AsEnumerable().Select(a => new ProjectRiskRatingViewModel
+                                             {
+                                                 loanApplicationId = a.loanApplicationId,
+                                                 loanApplicationDetailId = a.loanApplicationDetailId,
+                                                 loanBookingRequestId = a.loanBookingRequestId,
+                                                 categoryName = a.categoryName,
+                                                 categoryValue = a.categoryValue,
+                                                 projectLocation = a.projectLocation,
+                                                 projectDetails = a.projectDetails
+                                             }).ToList();
+
+                    var result2 = projectRiskRating.Select(a => new ProjectRiskRatingViewModel
+                    {
+                        loanApplicationId = a.loanApplicationId,
+                        loanApplicationDetailId = a.loanApplicationDetailId,
+                        loanBookingRequestId = a.loanBookingRequestId,
+                        categoryName = a.categoryName,
+                        categoryValue = a.categoryValue,
+                        projectLocation = a.projectLocation,
+                        projectDetails = a.projectDetails,
+                        computation = context.TBL_PROJECT_RISK_RATING.Where(d => d.LOANAPPLICATIONDETAILID == a.loanApplicationDetailId).Sum(d => d.CATEGORYVALUE),
+                    }).ToList();
+
+                    foreach (var i in result2)
+                    {
+                        int rating = 0;
+                        var overRallTotal = i.computation + rating;
+                        if (overRallTotal >= 81 && overRallTotal <= 100)
+                        {
+                            rec.projectRiskRatings = "LOW";
+                        }
+                        if (overRallTotal >= 66 && overRallTotal < 81)
+                        {
+                            rec.projectRiskRatings = "MODERATE";
+                        }
+                        if (overRallTotal >= 51 && overRallTotal < 66)
+                        {
+                            rec.projectRiskRatings = "ABOVE AVERAGE";
+                        }
+                        if (overRallTotal < 51)
+                        {
+                            rec.projectRiskRatings = "HIGH";
+                        }
+                    }
+                }
                 return bondAndGuarantee;
             }
             else
@@ -696,24 +803,132 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                                     select new LoanViewModel
                                     {
+                                        customerId = a.CUSTOMERID,
+                                        loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                         loanReferenceNumber = a.LOANREFERENCENUMBER,
                                         bookingDate = a.BOOKINGDATE,
                                         issueDate = a.DISBURSEDATE,
                                         expiryDate = a.MATURITYDATE,
+                                        sbu = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                                         guaranteeType = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                         customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
-                                        customerTier = getContractorTieringByApplicationAndCustomerBandG(a.LOANAPPLICATIONDETAILID, a.CUSTOMERID),
+                                       // customerTier = getContractorTieringByApplicationAndCustomerBandG(a.LOANAPPLICATIONDETAILID, a.CUSTOMERID),
                                         apgAccountNumber = s.PRODUCTACCOUNTNUMBER,
                                         projectDetails = context.TBL_PROJECT_RISK_RATING.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(x => x.PROJECTDETAILS).FirstOrDefault(),
                                         projectLocation = context.TBL_PROJECT_RISK_RATING.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(x => x.PROJECTLOCATION).FirstOrDefault(),
                                         contractEmployer = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => x.EMPLOYERNAME).FirstOrDefault(),
-                                        projectRiskRatings = getProjectRiskRatingByBandG(a.LOANAPPLICATIONDETAILID),
+                                       // projectRiskRatings = getProjectRiskRatingByBandG(a.LOANAPPLICATIONDETAILID),
                                         ccy = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.CURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
                                         guaranteeAmount = a.CONTINGENTAMOUNT,
                                         exposureOnGuarantee = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
                                         accountOfficer = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                         relationshipTeam = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                     }).ToList();
+                var data = bondAndGuarantee.GroupBy(r => r.loanApplicationDetailId)
+                               .Select(r => r.FirstOrDefault()).ToList();
+                foreach (var rec in data)
+                {
+                    var loanApplication = context.TBL_LOAN_APPLICATION_DETAIL.Find(rec.loanApplicationDetailId).LOANAPPLICATIONID;
+                    var contractorTiering = (from a in context.TBL_CONTRACTOR_TIERING
+                                             where a.LOANAPPLICATIONID == loanApplication && a.CUSTOMERID == rec.customerId
+                                             select new
+                                             {
+                                                 contractorTierId = a.CONTRACTORTIERID,
+                                                 loanApplicationId = a.LOANAPPLICATIONID,
+                                                 customerId = a.CUSTOMERID,
+                                                 actualValue = a.ACTUALVALUE
+                                             }).AsEnumerable().Select(a => new ContractorTieringViewModel
+                                             {
+                                                 contractorTierId = a.contractorTierId,
+                                                 loanApplicationId = a.loanApplicationId,
+                                                 customerId = a.customerId,
+                                                 actualValue = a.actualValue
+                                             }).ToList();
+
+                    var result = contractorTiering.Select(a => new ContractorTieringViewModel
+                    {
+                        contractorTierId = a.contractorTierId,
+                        loanApplicationId = a.loanApplicationId,
+                        customerId = a.customerId,
+                        criteria = a.criteria,
+                        actualValue = a.actualValue,
+                        computation = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == a.loanApplicationId).Sum(d => d.ACTUALVALUE),
+                    }).ToList();
+
+                    foreach (var check in result)
+                    {
+                        if (check.computation >= 80)
+                        {
+                            rec.customerTier = "Tier 1";
+                        }
+                        if (check.computation >= 60 && check.computation <= 79)
+                        {
+                            rec.customerTier = "Tier 2";
+                        }
+                        if (check.computation <= 59)
+                        {
+                            rec.customerTier = "Tier 3";
+                        }
+                    }
+
+                    var customerTier1 = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == loanApplication).ToList();
+                    var projectRiskRating = (from a in context.TBL_PROJECT_RISK_RATING
+                                             join c in context.TBL_PROJECT_RISK_RATING_CATEGORY on a.CATEGORYID equals c.CATEGORYID
+                                             where a.LOANAPPLICATIONID == loanApplication && a.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId
+                                             select new
+                                             {
+                                                 loanApplicationId = a.LOANAPPLICATIONID,
+                                                 loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                                 loanBookingRequestId = a.LOANBOOKINGREQUESTID,
+                                                 categoryName = c.CATEGORYNAME,
+                                                 categoryValue = a.CATEGORYVALUE,
+                                                 projectLocation = a.PROJECTLOCATION,
+                                                 projectDetails = a.PROJECTDETAILS
+                                             }).AsEnumerable().Select(a => new ProjectRiskRatingViewModel
+                                             {
+                                                 loanApplicationId = a.loanApplicationId,
+                                                 loanApplicationDetailId = a.loanApplicationDetailId,
+                                                 loanBookingRequestId = a.loanBookingRequestId,
+                                                 categoryName = a.categoryName,
+                                                 categoryValue = a.categoryValue,
+                                                 projectLocation = a.projectLocation,
+                                                 projectDetails = a.projectDetails
+                                             }).ToList();
+
+                    var result2 = projectRiskRating.Select(a => new ProjectRiskRatingViewModel
+                    {
+                        loanApplicationId = a.loanApplicationId,
+                        loanApplicationDetailId = a.loanApplicationDetailId,
+                        loanBookingRequestId = a.loanBookingRequestId,
+                        categoryName = a.categoryName,
+                        categoryValue = a.categoryValue,
+                        projectLocation = a.projectLocation,
+                        projectDetails = a.projectDetails,
+                        computation = context.TBL_PROJECT_RISK_RATING.Where(d => d.LOANAPPLICATIONDETAILID == a.loanApplicationDetailId).Sum(d => d.CATEGORYVALUE),
+                    }).ToList();
+
+                    foreach (var i in result2)
+                    {
+                        int rating = 0;
+                        var overRallTotal = i.computation + rating;
+                        if (overRallTotal >= 81 && overRallTotal <= 100)
+                        {
+                            rec.projectRiskRatings = "LOW";
+                        }
+                        if (overRallTotal >= 66 && overRallTotal < 81)
+                        {
+                            rec.projectRiskRatings = "MODERATE";
+                        }
+                        if (overRallTotal >= 51 && overRallTotal < 66)
+                        {
+                            rec.projectRiskRatings = "ABOVE AVERAGE";
+                        }
+                        if (overRallTotal < 51)
+                        {
+                            rec.projectRiskRatings = "HIGH";
+                        }
+                    }
+                }
                 return bondAndGuarantee;
             }
         }
