@@ -490,11 +490,10 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("retail-recovery-report/{startDate}/{endDate}/{accreditedConsultantId}")]
-        public HttpResponseMessage GetRetailRecoveryReporting([FromUri] DateTime startDate, [FromUri] DateTime endDate, [FromUri] int accreditedConsultantId)
+        [Route("retail-recovery-report/{startDate}/{endDate}/{accreditedConsultantId}/{customer}")]
+        public HttpResponseMessage GetRetailRecoveryReporting([FromUri] DateTime startDate, [FromUri] DateTime endDate, [FromUri] int customer, [FromUri] int accreditedConsultantId)
         {
-            
-                var records = repo.GetRetailRecoveryReporting(startDate, endDate, accreditedConsultantId);
+                var records = repo.GetRetailRecoveryReporting(startDate, endDate, accreditedConsultantId, customer);
             if (records != null) {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = records });
             }
