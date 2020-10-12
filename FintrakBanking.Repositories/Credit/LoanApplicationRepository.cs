@@ -9003,7 +9003,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-        public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId)
+        public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId, int customer)
         {
             IEnumerable<RetailRecoveryCustomerTransactionsViewModels> records = null;
 
@@ -9024,6 +9024,7 @@ namespace FintrakBanking.Repositories.Credit
                             && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && lr.SOURCE.ToLower() == "retail"
+                            && cu.CUSTOMERID == customer
 
                             select new RetailRecoveryCustomerTransactionsViewModels
                             {
@@ -9096,6 +9097,7 @@ namespace FintrakBanking.Repositories.Credit
                                      && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && lr.SOURCE.ToLower() == "retail"
+                                     && cu.CUSTOMERID == customer
 
                                      select new RetailRecoveryCustomerTransactionsViewModels
                                      {
