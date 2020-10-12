@@ -451,6 +451,21 @@ namespace FintrakBanking.ViewModels.Credit
         public short sectorId { get; set; }
         public decimal? contigentOutstandingPrincipal { get; set; }
         public decimal? totalPrepayment { get; set; }
+        public DateTime? issueDate { get; set; }
+        public DateTime expiryDate { get; set; }
+        public string guaranteeType { get; set; }
+        public string customerTier { get; set; }
+        public string apgAccountNumber { get; set; }
+        public string projectDetails { get; set; }
+        public string projectLocation { get; set; }
+        public string projectRiskRatings { get; set; }
+        public string contractEmployer { get; set; }
+        public string ccy { get; set; }
+        public decimal guaranteeAmount { get; set; }
+        public string relationshipTeam { get; set; }
+        public string accountOfficer { get; set; }
+        public decimal? exposureOnGuarantee { get; set; }
+        public string sbu { get; set; }
 
 
 
