@@ -35385,7 +35385,7 @@ namespace FintrakBanking.Repositories.Credit
                             accountNumber = ln.ACCOUNTNUMBER,
                             address = ln.ADDRESS,
                             totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY),
-                            amountRecovered = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && (DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Month == DbFunctions.TruncateTime(month).Value.Month+1 && DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Year == DbFunctions.TruncateTime(month).Value.Year)).Sum(x => x.AMOUNTRECOVERED)
+                            amountRecovered = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && (DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Month == DbFunctions.TruncateTime(month).Value.Month && DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Year == DbFunctions.TruncateTime(month).Value.Year)).Sum(x => x.AMOUNTRECOVERED)
                         }).ToList();
 
             var records = data.GroupBy(x => x.accreditedConsultantId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.accreditedConsultantId);
