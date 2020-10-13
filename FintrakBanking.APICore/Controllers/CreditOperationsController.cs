@@ -2260,6 +2260,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("recovery-agents-customers-list/{recoveryAgent}")]
+        public HttpResponseMessage GetAllRecoveryCustomersAssignedToAgent(int recoveryAgent)
+        {
+            var data = repo.GetAllRecoveryCustomersAssignedToAgent(recoveryAgent);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("recovery-internal-agents-list/{start}")]
         public HttpResponseMessage GetAllInternalRecoveryAgents([FromUri] DateTime start)
         {

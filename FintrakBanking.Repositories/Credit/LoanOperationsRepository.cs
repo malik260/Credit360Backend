@@ -35351,6 +35351,22 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public IEnumerable<RecoveryCollectionsViewModel> GetAllRecoveryCustomersAssignedToAgent(int recoveryAgent)
+        {
+            var customerIds = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == recoveryAgent && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Select(x => x.CUSTOMERID).Distinct().ToList();
+            var data = (from x in context.TBL_CUSTOMER
+                        where
+                        customerIds.Contains(x.CUSTOMERID)
+
+                        select new RecoveryCollectionsViewModel
+                        {
+                            customerId = x.CUSTOMERID,
+                            customerName = x.FIRSTNAME + " " + x.LASTNAME,
+                        }).ToList();
+
+            return data;
+        }
+
         public IEnumerable<AccreditedConsultantsViewModel> GetAllInternalRecoveryAgents(int staffId, int companyId, DateTime month)
         {
             var data = (from ln in context.TBL_ACCREDITEDCONSULTANT

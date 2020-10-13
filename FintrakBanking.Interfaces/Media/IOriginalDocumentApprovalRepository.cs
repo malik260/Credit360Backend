@@ -12,6 +12,7 @@ namespace FintrakBanking.Interfaces.Media
 {
     public interface IOriginalDocumentApprovalRepository
     {
+        IEnumerable<OriginalDocumentApprovalViewModel> GetOriginalDocumentSearch(string searchString);
         OriginalDocumentApprovalViewModel GetOriginalDocumentApproval(int id);
 
         IEnumerable<OriginalDocumentApprovalViewModel> GetOriginalDocumentApprovals(int staffId);

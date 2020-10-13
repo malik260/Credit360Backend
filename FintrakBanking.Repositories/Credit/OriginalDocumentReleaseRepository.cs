@@ -270,6 +270,53 @@ namespace FintrakBanking.Repositories.Credit
             return result;            
         }
 
+
+        public IEnumerable<OriginalDocumentReleaseViewModel> GetSecurityReleaseSearch(string  searchString)
+        {
+            searchString = searchString.Trim().ToLower();
+
+            var record = from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
+                         join oda in _context.TBL_ORIGINAL_DOCUMENT_APPROVAL on dr.ORIGINALDOCUMENTAPPROVALID equals oda.ORIGINALDOCUMENTAPPROVALID
+                         join cc in _context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                         join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+                         join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
+                         where dr.DELETED == false 
+                         && (atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease || atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval)
+                         && (c.CUSTOMERCODE.Contains(searchString)
+                                || c.FIRSTNAME.ToLower().Contains(searchString)
+                                || c.MIDDLENAME.ToLower().Contains(searchString)
+                                || c.LASTNAME.ToLower().Contains(searchString))
+
+                         select new OriginalDocumentReleaseViewModel
+                         {
+                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault().ToUpper(),
+                             customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                             documentReferenceNumber = oda.REFERENCENUMBER,
+                             docDateTimeCreated = dr.DATETIMECREATED,
+                             createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                             documentDescription = oda.DESCRIPTION,
+                             originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
+                             originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
+                             docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
+                             approvalDate = dr.APPROVALDATE,
+                             dateRecieved = atrail.ARRIVALDATE,
+                             collateralId = cc.COLLATERALCUSTOMERID,
+                             customerId = c.CUSTOMERID,
+                             collateralCode = cc.COLLATERALCODE,
+                             collateralCustomerId = cc.COLLATERALCUSTOMERID,
+                             operationId = atrail.OPERATIONID,
+                             perfectionStatusId = dr.PERFECTIONSTATUSID,
+                             litigationStatusId = dr.LITIGATIONSTATUSID,
+                             isOnAmconList = dr.ISONAMCONLIST,
+                             currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? ((atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && atrail.LOOPEDSTAFFID != null) ? _context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == atrail.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : _context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME) : "N/A",
+                             responsiblePerson = atrail.TOSTAFFID == null ? "N/A" : atrail.TBL_STAFF1.STAFFCODE + " - " + atrail.TBL_STAFF1.FIRSTNAME + " " + atrail.TBL_STAFF1.MIDDLENAME + " " + atrail.TBL_STAFF1.LASTNAME,
+                         };
+
+            var result = record.GroupBy(r => r.originalDocumentApprovalId)
+                               .Select(r => r.FirstOrDefault()).ToList();
+            return result;
+        }
+
         public IEnumerable<OriginalDocumentReleaseViewModel> GetRejectedAndReferredSecurityRelease(int staffId)
         {
             //var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.SecurityRelease).ToList();

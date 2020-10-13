@@ -596,6 +596,23 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                 throw ex;
             }
         }
+
+        public string GetBondsAndGuaranteeReport(DateRange dateRange, int companyId, int staffId)
+        {
+            try
+            {
+                HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+                string path = string.Empty;
+                path = reportPath + "ReportViews/BandGReport.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&approvalStatus=" + dateRange.approvalStatus + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+                return path;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
         public string GetCollateralInsuranceReport(DateRange dateRange, int companyId, int staffId)
         {
             try
