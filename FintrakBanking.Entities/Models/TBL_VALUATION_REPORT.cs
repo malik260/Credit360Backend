@@ -17,6 +17,8 @@ namespace FintrakBanking.Entities.Models
         public int COLLATERALVALUATIONID { get; set; }
 
         public int VALUERID { get; set; }
+        public decimal? OMV { get; set; }
+        public decimal? FSV { get; set; }
 
         //[Required]
         //[StringLength(500)]

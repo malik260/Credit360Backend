@@ -300,6 +300,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("update-valuer")]
+        public HttpResponseMessage UpdateCollateralValuerInfo([FromBody] ValuationPrerequisiteViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var res = _colValuationRepo.UpdateCollateralValurerInfo(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res, message = $"Success" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record. Error - {ex.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-valuer-info")]
@@ -331,6 +353,24 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-valuer-info-detail/{id}")]
+        public HttpResponseMessage GetAllCollateralValuerIformationById(int id)
+        {
+            try
+            {
+                var response = _colValuationRepo.GetAllCollateralValuerIformationById(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-valuation-waiting-for-approval")]

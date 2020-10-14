@@ -223,7 +223,9 @@ namespace FintrakBanking.Repositories.Credit
                            wht = x.WHT,
                            valuationComment = x.VALUERCOMMENT,
                            valuationReportId = x.VALUATIONREPORTID,
-                           operationId = (int) OperationsEnum.CollateralValuationRequest
+                           operationId = (int) OperationsEnum.CollateralValuationRequest,
+                           omv = x.OMV,
+                           fsv = x.FSV
                        };
             return data.ToList();
         }
@@ -244,9 +246,33 @@ namespace FintrakBanking.Repositories.Credit
                            valuationComment = x.VALUERCOMMENT,
                            //valuerComment = x.VALUERCOMMENT,
                            valuationReportId = x.VALUATIONREPORTID,
+                           omv = x.OMV,
+                           fsv = x.FSV
 
                        };
             return data.ToList();
+        }
+
+        public ValuationPrerequisiteViewModel GetAllCollateralValuerIformationById(int id)
+        {
+            var data = from x in _context.TBL_VALUATION_REPORT
+                       where x.VALUATIONREPORTID == id
+                       orderby x.VALUATIONREPORTID descending
+                       select new ValuationPrerequisiteViewModel
+                       {
+                           valuerId = x.VALUERID,
+                           valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.NAME).FirstOrDefault(),
+                           collateralValuationId = x.COLLATERALVALUATIONID,
+                           valuationFee = x.VALUATIONFEE,
+                           accountNumber = x.ACCOUNTNUMBER,
+                           wht = x.WHT,
+                           valuationComment = x.VALUERCOMMENT,
+                           valuationReportId = x.VALUATIONREPORTID,
+                           omv = x.OMV,
+                           fsv = x.FSV
+
+                       };
+            return data.FirstOrDefault();
         }
         public bool AddCollateralValurerInfo(ValuationPrerequisiteViewModel model)
         {
@@ -261,6 +287,8 @@ namespace FintrakBanking.Repositories.Credit
             
             var entity = new TBL_VALUATION_REPORT()
             {
+                OMV = model.omv,
+                FSV = model.fsv,
                 VALUERID = model.valuerId,
                 COLLATERALVALUATIONID = model.collateralValuationId,
                 VALUATIONFEE = model.valuationFee,
@@ -293,6 +321,33 @@ namespace FintrakBanking.Repositories.Credit
 
             _audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
+                return _context.SaveChanges() > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public bool UpdateCollateralValurerInfo(ValuationPrerequisiteViewModel model)
+        {
+            try
+            {
+                var exist = _context.TBL_VALUATION_REPORT.Find(model.valuationReportId);
+
+                if (exist != null)
+                {
+                    exist.VALUERID = model.valuerId;
+                    exist.COLLATERALVALUATIONID = model.collateralValuationId;
+                    exist.VALUATIONFEE = model.valuationFee;
+                    exist.ACCOUNTNUMBER = model.accountNumber;
+                    exist.WHT = model.wht;
+                    exist.WHTAMOUNT = model.whtAmount;
+                    exist.VALUERCOMMENT = model.valuationComment;
+                    exist.OMV = model.omv;
+                    exist.FSV = model.fsv;
+                }
+                
                 return _context.SaveChanges() > 0;
             }
             catch (Exception ex)

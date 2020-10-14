@@ -481,6 +481,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? whtAmount { get; set; }
         public decimal? whtRate { get; set; }
         public decimal? commissionAmount { get; set; }
+        public string phoneNumber { get; set; }
     }
 
 
