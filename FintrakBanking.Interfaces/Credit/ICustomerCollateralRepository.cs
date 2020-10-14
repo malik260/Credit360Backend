@@ -182,6 +182,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CollateralSwapViewModel> GetAllCollateralSwaps(int staffId);
         IEnumerable<CollateralSwapViewModel> GetCollateralSwapsForApproval(int staffId);
+        IEnumerable<CollateralSwapViewModel> SearchCollateralSwap(string searchString);
         CollateralSwapViewModel GetCollateralSwap(int collateralSwapId);
         CollateralSwapViewModel AddCollateralSwap(CollateralSwapViewModel model);
         bool UpdateCollateralSwap(CollateralSwapViewModel model, int id, UserInfo user);

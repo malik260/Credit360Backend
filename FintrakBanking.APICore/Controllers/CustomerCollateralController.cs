@@ -2626,6 +2626,16 @@ namespace FintrakBanking.APICore.Controllers
         #region collateral-swap
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("collateral-swap-search/{searchString}")]
+        public HttpResponseMessage SearchCollateralSwap(string searchString)
+        {
+            IEnumerable<CollateralSwapViewModel> response = repo.SearchCollateralSwap(searchString);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-swap")]
         public HttpResponseMessage GetAllCollateralSwaps()
         {
