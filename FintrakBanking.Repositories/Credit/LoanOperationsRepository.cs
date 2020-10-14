@@ -31091,6 +31091,7 @@ namespace FintrakBanking.Repositories.Credit
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
                                 loanCategory = "Written Off",
+                                divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cu.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                 casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                 branchId = ln.BRANCHID,
@@ -31116,7 +31117,7 @@ namespace FintrakBanking.Repositories.Credit
                                 maturityDate = ln.MATURITYDATE,
                                 bookingDate = ln.BOOKINGDATE,
                                 totalAmountRecovery = (ln.OUTSTANDINGPRINCIPAL + ln.PASTDUEINTEREST + ln.PASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL)+ (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
-                                principalAmount = ln.OUTSTANDINGPRINCIPAL, //\\\ln.PrincipalAmount,
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL, 
                                 principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
                                 interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
                                 approvalStatusId = op.APPROVALSTATUSID,
@@ -31161,6 +31162,7 @@ namespace FintrakBanking.Repositories.Credit
                                 relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
                                 productName = pr.PRODUCTNAME,
                                 comment = "",
+                                region = "",
                                 operationTypeId = op.OPERATIONTYPEID,
                                 operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
                                 newEffectiveDate = op.EFFECTIVEDATE,
@@ -31252,6 +31254,8 @@ namespace FintrakBanking.Repositories.Credit
                                          productTypeId = pr.PRODUCTTYPEID,
                                          prepaymentAmount = op.PREPAYMENT,
                                          casaAccountId = ln.CASAACCOUNTID,
+                                         region = "",
+                                         divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cu.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                          branchId = ln.BRANCHID,
@@ -31374,6 +31378,7 @@ namespace FintrakBanking.Repositories.Credit
                                             productTypeId = pr.PRODUCTTYPEID,
                                             casaAccountId = ln.CASAACCOUNTID,
                                             loanCategory = "Non Performing",
+                                            region = "",
                                             casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                             casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                             branchId = ln.BRANCHID,
@@ -31480,6 +31485,8 @@ namespace FintrakBanking.Repositories.Credit
                                                 productClassId = (int)pr.PRODUCTCLASSID,
                                                 productTypeId = pr.PRODUCTTYPEID,
                                                 casaAccountId = ln.CASAACCOUNTID,
+                                                region = "",
+                                                divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cu.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                                 casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                                 branchId = ln.BRANCHID,
@@ -31569,7 +31576,8 @@ namespace FintrakBanking.Repositories.Credit
                                 operationId = lr.OPERATIONID,
                                 accreditedConsultant = lr.ACCREDITEDCONSULTANT,
                                 referenceId = lr.REFERENCEID,
-
+                                divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cu.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                                region = "",
                                 assignedBy = context.TBL_STAFF.Where(s=>s.STAFFID == lr.CREATEDBY).Select(s=>s.FIRSTNAME +" "+s.MIDDLENAME +" "+ s.LASTNAME).FirstOrDefault(),
                                 assignmentType = lr.ASSIGNMENTTYPE,
                                 loanApplicationId = lp.LOANAPPLICATIONID,
@@ -31687,7 +31695,8 @@ namespace FintrakBanking.Repositories.Credit
                                          operationId = lr.OPERATIONID,
                                          accreditedConsultant = lr.ACCREDITEDCONSULTANT,
                                          referenceId = lr.REFERENCEID,
-
+                                         divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cu.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                                         region = "",
                                          assignedBy = context.TBL_STAFF.Where(s => s.STAFFID == lr.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
                                          assignmentType = lr.ASSIGNMENTTYPE,
                                          //totalAmountRecovery = (ln.PASTDUEPRINCIPAL + ln.PASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.PENALCHARGEAMOUNT),
@@ -32457,6 +32466,8 @@ namespace FintrakBanking.Repositories.Credit
                                         customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
                                         branchName = br.BRANCHNAME,
                                         relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                        email = cu.EMAILADDRESS,
+                                        phoneNumber = cu.PHONENUMBEROFSIGNATORY
                                     }).ToList();
 
                     var dataRevolvingLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
@@ -32494,6 +32505,8 @@ namespace FintrakBanking.Repositories.Credit
                                                  customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
                                                  branchName = br.BRANCHNAME,
                                                  relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                                 email = cu.EMAILADDRESS,
+                                                 phoneNumber = cu.PHONENUMBEROFSIGNATORY
                                              }).ToList();
 
 
@@ -32509,6 +32522,7 @@ namespace FintrakBanking.Repositories.Credit
                                 <tr>
                                     <td><b>S/N</b></td>
                                     <td><b>Customer Name</b></td>
+                                    <td><b>Email/Phone Number</b></td>
                                     <td><b>Reference Number</b></td>
                                     <td><b>Product Name</b></td>
                                     <td><b>Recovery Account</b></td>
@@ -32537,6 +32551,7 @@ namespace FintrakBanking.Repositories.Credit
                                     <td>{$"{amount}"}</td>
                                     <td>{single.relationshipOfficerName}</td>
                                     <td>{expCompletionDate}</td>
+                                    <td>{single.email} {single.phoneNumber}</td>
                                 </tr>
                                 ";
                             UpdateMailSent(single.loanAssignId);
