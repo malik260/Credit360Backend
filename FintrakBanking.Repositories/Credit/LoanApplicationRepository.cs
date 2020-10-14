@@ -9006,8 +9006,8 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId, int customer)
         {
             IEnumerable<RetailRecoveryCustomerTransactionsViewModels> records = null;
-            IEnumerable<RetailRecoveryCustomerTransactionsViewModels> dataTermLoan = null;
-            IEnumerable<RetailRecoveryCustomerTransactionsViewModels> dataRevolvingLoan = null;
+            List<RetailRecoveryCustomerTransactionsViewModels> dataTermLoan = null;
+            List<RetailRecoveryCustomerTransactionsViewModels> dataRevolvingLoan = null;
 
             if (customer > 0)
             {
