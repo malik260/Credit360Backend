@@ -803,18 +803,21 @@ namespace FintrakBanking.Repositories.Credit
                         var staffRole = _context.TBL_STAFF_ROLE.Where(r => r.STAFFROLEID == approvingStaff.STAFFROLEID).FirstOrDefault();
                         prereqisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.VALUATIONPREREQUISITEID == model.valuationPrerequisiteId && O.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing).Select(O => O).FirstOrDefault();
 
-                        if (staffRole.STAFFROLECODE == "VAL CR DOC OFF")
+                        if (staffRole.STAFFROLECODE == "GH Credit Doc")
                         {
                             var valuerReport = _context.TBL_VALUATION_REPORT.Where(o => o.COLLATERALVALUATIONID == prereqisite.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
                             var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
                             var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
                             
-                            var staffCreated = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
-                            var rem = _context.TBL_STAFF.Find(staffCreated.SUPERVISOR_STAFFID);
-                            var staffFullName = staffCreated.FIRSTNAME +" "+ staffCreated.MIDDLENAME + " " + staffCreated.LASTNAME;
-                            var messageBody = "Dear " + staffFullName + "</br> There " + collateral?.VALUATIONNAME + " valuation carried out by "+ valuer?.ToUpper() + " with fee note " + valuerReport?.VALUATIONFEE +" and valuation detail: "+ valuerReport?.VALUERCOMMENT;
+                            var valuationOfficer = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
+                            var accountOfficer = _context.TBL_STAFF.Find(collateral.CREATEDBY);
+                            var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
+
+                            var rem = _context.TBL_STAFF.Find(accountOfficer.SUPERVISOR_STAFFID);
+                            var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME;
+                            var messageBody = "Dear " + staffFullName + "</br> Kindly see the " + collateral?.VALUATIONNAME + " valuation carried out by "+ valuer?.ToUpper() + " with fee note " + valuerReport?.VALUATIONFEE +" and valuation detail: "+ valuerReport?.VALUERCOMMENT;
                             var alertSubject = "COLLATERAL VALUATION NOTIFICATION";
-                            var emailList = staffCreated?.EMAIL + ";" + rem?.EMAIL;
+                            var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL;
                             alert.receiverEmailList.Add(emailList);
                             LogEmailAlert(messageBody, alertSubject, alert.receiverEmailList, "98007", 98007, "CollateralValuationNotification");
                         }
@@ -836,14 +839,17 @@ namespace FintrakBanking.Repositories.Credit
                         var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
                         var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
 
-                        var staffCreated = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
-                        var staffFullName = staffCreated.FIRSTNAME + " " + staffCreated.MIDDLENAME + " " + staffCreated.LASTNAME;
-                        var messageBody = "Dear " + staffFullName + "</br> There " + collateral?.VALUATIONNAME + " valuation carried out by " + valuer?.ToUpper() + " with fee note " + valuerReport?.VALUATIONFEE + " and valuation detail: " + valuerReport?.VALUERCOMMENT;
+                        var valuationOfficer = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
+                        var accountOfficer = _context.TBL_STAFF.Find(collateral.CREATEDBY);
+                        var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
+
+                        var rem = _context.TBL_STAFF.Find(accountOfficer.SUPERVISOR_STAFFID);
+                        var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME;
+                        var messageBody = "Dear " + staffFullName + "</br> Kindly see the " + collateral?.VALUATIONNAME + " valuation carried out by " + valuer?.ToUpper() + " with fee note " + valuerReport?.VALUATIONFEE + " and valuation detail: " + valuerReport?.VALUERCOMMENT;
                         var alertSubject = "COLLATERAL VALUATION NOTIFICATION";
-                        var emailList = GetBusinessUsersEmailsToGroupHead(staffCreated.MISCODE);
+                        var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL;
                         alert.receiverEmailList.Add(emailList);
                         LogEmailAlert(messageBody, alertSubject, alert.receiverEmailList, "98007", 98007, "CollateralValuationNotification");
-
                     }
 
                     response = _context.SaveChanges() > 0;
