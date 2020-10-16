@@ -2684,7 +2684,8 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_CONDITION_DEFERRAL on a.LOANCONDITIONID equals b.LOANCONDITIONID
                         join c in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on a.LOANCONDITIONID equals atrail.TARGETID
-                        where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived) //&& (atrail.OPERATIONID == (int)OperationsEnum.DeferralExtension)
+                        where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived || b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                        
                         select new DeferredChecklistViewModel()
                         {
                             checklistDeferralId = b.CHECKLISTDEFERRALID,
