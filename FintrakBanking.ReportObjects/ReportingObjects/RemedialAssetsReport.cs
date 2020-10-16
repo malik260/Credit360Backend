@@ -238,6 +238,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 where (DbFunctions.TruncateTime(l.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
                                 && DbFunctions.TruncateTime(l.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                 && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                && l.DELETED == false
+                                && l.SOURCE.ToLower() == "remedial"
 
                                 select new RemedialAssetReportViewModel
                                 {
@@ -268,6 +270,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                          where (DbFunctions.TruncateTime(l.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
                                              && DbFunctions.TruncateTime(l.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                              && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                             && l.DELETED == false
+                                             && l.SOURCE.ToLower() == "remedial"
 
                                          select new RemedialAssetReportViewModel
                                          {

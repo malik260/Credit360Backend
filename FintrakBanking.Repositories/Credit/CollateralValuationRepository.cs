@@ -244,7 +244,7 @@ namespace FintrakBanking.Repositories.Credit
                            accountNumber = x.ACCOUNTNUMBER,
                            wht = x.WHT,
                            valuationComment = x.VALUERCOMMENT,
-                           //valuerComment = x.VALUERCOMMENT,
+                           whtAmount = x.WHTAMOUNT,
                            valuationReportId = x.VALUATIONREPORTID,
                            omv = x.OMV,
                            fsv = x.FSV
@@ -266,6 +266,7 @@ namespace FintrakBanking.Repositories.Credit
                            valuationFee = x.VALUATIONFEE,
                            accountNumber = x.ACCOUNTNUMBER,
                            wht = x.WHT,
+                           whtAmount = x.WHTAMOUNT,
                            valuationComment = x.VALUERCOMMENT,
                            valuationReportId = x.VALUATIONREPORTID,
                            omv = x.OMV,
