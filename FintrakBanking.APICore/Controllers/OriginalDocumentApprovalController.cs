@@ -181,7 +181,11 @@ namespace FintrakBanking.APICore.Controllers
                 var approvalStatusId = model.approvalStatusId;
 
                 var response = repo.GoForApproval(model, (short)approvalStatusId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, count = 1 });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = response.responseMessage });
             }
             catch (SecureException ex)
             {
@@ -203,7 +207,11 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
 
                 WorkflowResponse response = repo.SubmitApproval(model);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, count = 1 });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = response.responseMessage });
             }
             catch (SecureException ex)
             {

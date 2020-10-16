@@ -30,6 +30,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
         public DateTime? APPROVALDATE { get; set; }
         public int COLLATERALCUSTOMERID { get; set; }
+        public bool ISORIGINALTITLEDOCUMENT { get; set; }
     }
 }
 /*
