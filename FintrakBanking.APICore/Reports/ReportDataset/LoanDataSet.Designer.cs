@@ -11508,28 +11508,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
         public partial class RunningLoanReportDataTable : global::System.Data.TypedTableBase<RunningLoanReportRow> {
             
-            private global::System.Data.DataColumn columnapplicationReferenceNumber;
-            
-            private global::System.Data.DataColumn columnarrivalDate;
-            
-            private global::System.Data.DataColumn columninitiationAge;
-            
-            private global::System.Data.DataColumn columncurrentUserAge;
-            
-            private global::System.Data.DataColumn columndivisionName;
-            
-            private global::System.Data.DataColumn columnproduct;
-            
-            private global::System.Data.DataColumn columncurrentLevel;
-            
-            private global::System.Data.DataColumn columnstate;
-            
-            private global::System.Data.DataColumn columnlastTreatedDate;
-            
-            private global::System.Data.DataColumn columncurrentlyWith;
-            
-            private global::System.Data.DataColumn columnlastReviewComment;
-            
             private global::System.Data.DataColumn columngroupDescription;
             
             private global::System.Data.DataColumn columnteamDescription;
@@ -11661,94 +11639,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             protected RunningLoanReportDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn applicationReferenceNumberColumn {
-                get {
-                    return this.columnapplicationReferenceNumber;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn arrivalDateColumn {
-                get {
-                    return this.columnarrivalDate;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn initiationAgeColumn {
-                get {
-                    return this.columninitiationAge;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn currentUserAgeColumn {
-                get {
-                    return this.columncurrentUserAge;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn divisionNameColumn {
-                get {
-                    return this.columndivisionName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn productColumn {
-                get {
-                    return this.columnproduct;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn currentLevelColumn {
-                get {
-                    return this.columncurrentLevel;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn stateColumn {
-                get {
-                    return this.columnstate;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn lastTreatedDateColumn {
-                get {
-                    return this.columnlastTreatedDate;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn currentlyWithColumn {
-                get {
-                    return this.columncurrentlyWith;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn lastReviewCommentColumn {
-                get {
-                    return this.columnlastReviewComment;
-                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -12189,17 +12079,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public RunningLoanReportRow AddRunningLoanReportRow(
-                        string applicationReferenceNumber, 
-                        string arrivalDate, 
-                        string initiationAge, 
-                        string currentUserAge, 
-                        string divisionName, 
-                        string product, 
-                        string currentLevel, 
-                        string state, 
-                        string lastTreatedDate, 
-                        string currentlyWith, 
-                        string lastReviewComment, 
                         string groupDescription, 
                         string teamDescription, 
                         string buCode, 
@@ -12252,17 +12131,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string schemeType) {
                 RunningLoanReportRow rowRunningLoanReportRow = ((RunningLoanReportRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        applicationReferenceNumber,
-                        arrivalDate,
-                        initiationAge,
-                        currentUserAge,
-                        divisionName,
-                        product,
-                        currentLevel,
-                        state,
-                        lastTreatedDate,
-                        currentlyWith,
-                        lastReviewComment,
                         groupDescription,
                         teamDescription,
                         buCode,
@@ -12335,17 +12203,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             internal void InitVars() {
-                this.columnapplicationReferenceNumber = base.Columns["applicationReferenceNumber"];
-                this.columnarrivalDate = base.Columns["arrivalDate"];
-                this.columninitiationAge = base.Columns["initiationAge"];
-                this.columncurrentUserAge = base.Columns["currentUserAge"];
-                this.columndivisionName = base.Columns["divisionName"];
-                this.columnproduct = base.Columns["product"];
-                this.columncurrentLevel = base.Columns["currentLevel"];
-                this.columnstate = base.Columns["state"];
-                this.columnlastTreatedDate = base.Columns["lastTreatedDate"];
-                this.columncurrentlyWith = base.Columns["currentlyWith"];
-                this.columnlastReviewComment = base.Columns["lastReviewComment"];
                 this.columngroupDescription = base.Columns["groupDescription"];
                 this.columnteamDescription = base.Columns["teamDescription"];
                 this.columnbuCode = base.Columns["buCode"];
@@ -12401,28 +12258,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             private void InitClass() {
-                this.columnapplicationReferenceNumber = new global::System.Data.DataColumn("applicationReferenceNumber", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnapplicationReferenceNumber);
-                this.columnarrivalDate = new global::System.Data.DataColumn("arrivalDate", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnarrivalDate);
-                this.columninitiationAge = new global::System.Data.DataColumn("initiationAge", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columninitiationAge);
-                this.columncurrentUserAge = new global::System.Data.DataColumn("currentUserAge", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncurrentUserAge);
-                this.columndivisionName = new global::System.Data.DataColumn("divisionName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columndivisionName);
-                this.columnproduct = new global::System.Data.DataColumn("product", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnproduct);
-                this.columncurrentLevel = new global::System.Data.DataColumn("currentLevel", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncurrentLevel);
-                this.columnstate = new global::System.Data.DataColumn("state", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnstate);
-                this.columnlastTreatedDate = new global::System.Data.DataColumn("lastTreatedDate", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnlastTreatedDate);
-                this.columncurrentlyWith = new global::System.Data.DataColumn("currentlyWith", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncurrentlyWith);
-                this.columnlastReviewComment = new global::System.Data.DataColumn("lastReviewComment", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnlastReviewComment);
                 this.columngroupDescription = new global::System.Data.DataColumn("groupDescription", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columngroupDescription);
                 this.columnteamDescription = new global::System.Data.DataColumn("teamDescription", typeof(string), null, global::System.Data.MappingType.Element);
@@ -22797,183 +22632,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string applicationReferenceNumber {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.applicationReferenceNumberColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'applicationReferenceNumber\' in table \'RunningLoanReport\' is" +
-                                " DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.applicationReferenceNumberColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string arrivalDate {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.arrivalDateColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'arrivalDate\' in table \'RunningLoanReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.arrivalDateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string initiationAge {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.initiationAgeColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'initiationAge\' in table \'RunningLoanReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.initiationAgeColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string currentUserAge {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.currentUserAgeColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'currentUserAge\' in table \'RunningLoanReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.currentUserAgeColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string divisionName {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.divisionNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'divisionName\' in table \'RunningLoanReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.divisionNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string product {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.productColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'product\' in table \'RunningLoanReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.productColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string currentLevel {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.currentLevelColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'currentLevel\' in table \'RunningLoanReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.currentLevelColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string state {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.stateColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'state\' in table \'RunningLoanReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.stateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string lastTreatedDate {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.lastTreatedDateColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'lastTreatedDate\' in table \'RunningLoanReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.lastTreatedDateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string currentlyWith {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.currentlyWithColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'currentlyWith\' in table \'RunningLoanReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.currentlyWithColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string lastReviewComment {
-                get {
-                    try {
-                        return ((string)(this[this.tableRunningLoanReport.lastReviewCommentColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'lastReviewComment\' in table \'RunningLoanReport\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableRunningLoanReport.lastReviewCommentColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public string groupDescription {
                 get {
                     try {
@@ -23775,138 +23433,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 set {
                     this[this.tableRunningLoanReport.schemeTypeColumn] = value;
                 }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsapplicationReferenceNumberNull() {
-                return this.IsNull(this.tableRunningLoanReport.applicationReferenceNumberColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetapplicationReferenceNumberNull() {
-                this[this.tableRunningLoanReport.applicationReferenceNumberColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsarrivalDateNull() {
-                return this.IsNull(this.tableRunningLoanReport.arrivalDateColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetarrivalDateNull() {
-                this[this.tableRunningLoanReport.arrivalDateColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsinitiationAgeNull() {
-                return this.IsNull(this.tableRunningLoanReport.initiationAgeColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetinitiationAgeNull() {
-                this[this.tableRunningLoanReport.initiationAgeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IscurrentUserAgeNull() {
-                return this.IsNull(this.tableRunningLoanReport.currentUserAgeColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetcurrentUserAgeNull() {
-                this[this.tableRunningLoanReport.currentUserAgeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsdivisionNameNull() {
-                return this.IsNull(this.tableRunningLoanReport.divisionNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetdivisionNameNull() {
-                this[this.tableRunningLoanReport.divisionNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsproductNull() {
-                return this.IsNull(this.tableRunningLoanReport.productColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetproductNull() {
-                this[this.tableRunningLoanReport.productColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IscurrentLevelNull() {
-                return this.IsNull(this.tableRunningLoanReport.currentLevelColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetcurrentLevelNull() {
-                this[this.tableRunningLoanReport.currentLevelColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsstateNull() {
-                return this.IsNull(this.tableRunningLoanReport.stateColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetstateNull() {
-                this[this.tableRunningLoanReport.stateColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IslastTreatedDateNull() {
-                return this.IsNull(this.tableRunningLoanReport.lastTreatedDateColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetlastTreatedDateNull() {
-                this[this.tableRunningLoanReport.lastTreatedDateColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IscurrentlyWithNull() {
-                return this.IsNull(this.tableRunningLoanReport.currentlyWithColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetcurrentlyWithNull() {
-                this[this.tableRunningLoanReport.currentlyWithColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IslastReviewCommentNull() {
-                return this.IsNull(this.tableRunningLoanReport.lastReviewCommentColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetlastReviewCommentNull() {
-                this[this.tableRunningLoanReport.lastReviewCommentColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
