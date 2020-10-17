@@ -45,6 +45,7 @@ namespace FintrakBanking.Repositories.credit
                     lcCashBuildUpPlanId = x.LCCASHBUILDUPPLANID,
                     cashBuildUpReferenceTypeName = context.TBL_CASHBUILDUPREFERENCETYPE.FirstOrDefault(b => b.CASHBUILDUPREFERENCETYPEID == x.CASHBUILDUPREFERENCETYPEID).NAME,
                     lcIssuanceId = x.LCISSUANCEID,
+                    lcReferenceNumber = context.TBL_LC_ISSUANCE.FirstOrDefault(l => l.LCISSUANCEID == x.LCISSUANCEID).LCREFERENCENUMBER,
                     amount = x.AMOUNT,
                     currencyId = x.CURRENCYID,
                     cashBuildUpReferenceTypeId = x.CASHBUILDUPREFERENCETYPEID,
