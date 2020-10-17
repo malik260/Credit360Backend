@@ -1194,6 +1194,11 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ProjectRiskRatingCategoryViewModel : GeneralEntity
     {
+        public ProjectRiskRatingCategoryViewModel()
+        {
+
+            criterias = new List<ProjectRiskRatingCriteriaViewModel>();
+        }
         public int categoryId { get; set; }
         public string categoryName { get; set; }
         public List<ProjectRiskRatingCriteriaViewModel> criterias { get; set; }

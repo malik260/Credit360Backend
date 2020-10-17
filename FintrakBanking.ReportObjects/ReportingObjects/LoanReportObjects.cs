@@ -4382,72 +4382,55 @@ namespace FintrakBanking.ReportObjects
         public List<RuniningLoanViewModel> RunningLoanReport(DateTime startDate, DateTime endDate, int companyId, short? branchId)
         {
             //List<SubHead> subList = new List<SubHead>();
-
-
             //subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION, teamUnit = sl.TEAM_UNIT, businessDevelopmentManger = sl.DIRECTORATE, deptName = sl.DEPT_NAME }).ToList();
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var getRunningLoan = new RunningLoan();
-
                 var data = getRunningLoan.GetRunningLoan(startDate, endDate, companyId, branchId);
 
                 var runningLoanList = (from l in context.TBL_LOAN
-                                           //join al in context.TBL_LOAN_APPLICATION on l.CUSTOMERID equals al.CUSTOMERID
-
+                                       join al in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals al.LOANAPPLICATIONDETAILID
                                        join pg in context.TBL_LOAN_PRUDENTIALGUIDELINE on l.USER_PRUDENTIAL_GUIDE_STATUSID equals pg.PRUDENTIALGUIDELINESTATUSID
                                        join pgt in context.TBL_LOAN_PRUDENT_GUIDE_TYPE on pg.PRUDENTIALGUIDELINETYPEID equals pgt.PRUDENTIALGUIDELINETYPEID
                                        join d in context.TBL_COLLATERAL_CUSTOMER on l.CUSTOMERID equals d.CUSTOMERID
                                        join su in context.TBL_SUB_SECTOR on l.SUBSECTORID equals su.SUBSECTORID
                                        join s in context.TBL_SECTOR on su.SECTORID equals s.SECTORID
-
-
                                        where l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                       
                                            && l.COMPANYID == companyId
                                        orderby l.MATURITYDATE descending
-
-
-
                                        select new RuniningLoanViewModel
                                        {
-
+                                           applicationReferenceNumber = al.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                           product = context.TBL_PRODUCT.Where(x=>x.PRODUCTID == al.APPROVEDPRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
+                                           arrivalDate = al.DATETIMECREATED,
+                                           divisionName = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == l.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
 
                                            receivableAmount = 0,
-
                                            sanctionLimitDate = l.BOOKINGDATE,
-
                                            securityDetails = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                            sector = s.NAME,
                                            insiderFlag = (context.TBL_CUSTOMER_RELATED_PARTY.Where(x => x.CUSTOMERID == l.CUSTOMERID && x.DELETED == false).Count() > 1 ? "No" : "Yes"),
                                            //bookingDate = l.BOOKINGDATE,
-
                                            otherIncome = 0,
                                            interestInSupense = 0,
                                            endDate = DateTime.Now,
                                            maturityDate = l.MATURITYDATE,
+                                           effective = l.EFFECTIVEDATE,
                                            interestRate = l.INTERESTRATE,
                                            facilityGrantedAmount = l.PRINCIPALAMOUNT,
                                            customerId = l.CUSTOMERID,
                                            subSectorCode = su.CODE,
-
                                            otherCharges = 0,
                                            finalBalance = 0,
-
                                            lastCreditDate = DateTime.Now,
                                            lastCreditAmount = 0,
-
                                            fxRate = 0,
-
                                            subStandard = (pg.PRUDENTIALGUIDELINESTATUSID == 2 ? l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL : 0),
                                            doubtfull = (pg.PRUDENTIALGUIDELINESTATUSID == 3 ? l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL : 0),
                                            lost = (pg.PRUDENTIALGUIDELINESTATUSID == 5 ? l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL : 0),
                                            applicationDate = DateTime.Now,
-
                                            loanId = l.TERMLOANID,
                                            loanSytemTypeId = l.LOANSYSTEMTYPEID
-
-
-
                                        }).ToList().Select(x =>
                                        {
                                            foreach (var d in data)
@@ -4459,69 +4442,31 @@ namespace FintrakBanking.ReportObjects
                                                    x.branchCode = d.branchCode;
                                                    x.loanRefNo = d.loanRefNo;
                                                    x.customerName = d.customerName;
-
                                                    x.currencyType = d.currencyType;
-
-
-
                                                    x.transactionDateBalance = d.transactionDateBalance;
                                                    x.schemeType = d.schemeType;
-
                                                    x.schemeDescription = d.schemeDescription;
-
-
                                                    x.sanctionLimit = d.sanctionLimit;
-
-
                                                    x.expiryDate = d.expiryDate;
-
                                                    x.customerId = d.customerId;
-
                                                    x.schemeCode = d.schemeCode;
-
                                                    x.subUserClassification = d.subUserClassification;
                                                    x.userClassification = d.userClassification;
                                                    x.glSubHeadCode = d.glSubHeadCode;
                                                    x.classificationDate = d.classificationDate;
-
                                                    x.limitExpiryDate = d.limitExpiryDate;
                                                    x.pastDueDate = d.pastDueDate;
-
                                                    x.staffCode = d.staffCode;
                                                    x.buDescription = d.buDescription;
                                                    x.teamCode = d.teamCode;
                                                    x.deskCode = d.deskCode;
                                                    x.groupCode = d.groupCode;
                                                    x.buCode = d.buCode;
-
                                                    x.pastDueDays = d.pastDueDays;
-
-
-
-
-
-
-
                                                    x.groupDescription = d.groupDescription;
-
-
-
                                                    x.teamDescription = d.teamDescription;
-
-
-
                                                    x.deskDescription = d.deskDescription;
-
-
-
-
                                                    x.businessDevelopmentManger = d.businessDevelopmentManger;
-
-
-
-
-                                               
-
                                            }
 
                                            return x;
@@ -4529,13 +4474,7 @@ namespace FintrakBanking.ReportObjects
 
                 //data.Where(o => o.loanId == x.loanId && x.loanSytemTypeId == x.loanSytemTypeId
 
-
-
-
                 return runningLoanList;
-
-
-
             }
 
         }
