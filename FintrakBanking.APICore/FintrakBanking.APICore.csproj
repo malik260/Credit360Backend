@@ -2042,7 +2042,6 @@
     <EmbeddedResource Include="Reports\Report\RecoveryComputation.rdlc" />
     <EmbeddedResource Include="Reports\Report\RevalidationOfFullAndFinalSettlement.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
-    <EmbeddedResource Include="Reports\Report\RunningLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RunningFacilities.rdlc" />
     <EmbeddedResource Include="Reports\Report\SanctionLimitReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />
