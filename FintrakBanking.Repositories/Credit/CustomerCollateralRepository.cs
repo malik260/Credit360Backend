@@ -2132,6 +2132,59 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public IEnumerable<CollateralCoverageViewModel> GetProposedFacilitiesToCollateralByCollateralId(int collateralId)
+        {
+            var collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
+                               join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                               join d in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                               join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                               join r in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
+                               join cu in context.TBL_CUSTOMER on d.CUSTOMERID equals cu.CUSTOMERID
+                               join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+                               join tl in context.TBL_LOAN on r.LOAN_BOOKING_REQUESTID equals tl.LOAN_BOOKING_REQUESTID into tlr
+                               join cl in context.TBL_LOAN_CONTINGENT on r.LOAN_BOOKING_REQUESTID equals cl.LOAN_BOOKING_REQUESTID into clr
+                               join rl in context.TBL_LOAN_REVOLVING on r.LOAN_BOOKING_REQUESTID equals rl.LOAN_BOOKING_REQUESTID into rlr
+                               from tl in tlr.DefaultIfEmpty()
+                               from cl in clr.DefaultIfEmpty()
+                               from rl in rlr.DefaultIfEmpty()
+                               //let isProperty = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Any(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID)
+                               let isTermLoan = (tl != null)
+                               let isContingent = (cl != null)
+                               let isRevolving = (rl != null)
+                               let noDrawDown = (!isTermLoan && !isContingent && !isRevolving)
+                               where x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false
+
+                               select new CollateralCoverageViewModel
+                               {
+                                   loanAppCollateralId = x.LOANAPPCOLLATERALID,
+                                   collateralId = x.COLLATERALCUSTOMERID,
+                                   collateralCode = c.COLLATERALCODE,
+                                   currencyId = c.CURRENCYID,
+                                   collateralValue = c.COLLATERALVALUE,
+                                   actualCollateralCoverage = x.COLLATERALCOVERAGE,
+                                   loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                                   applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
+                                   customerName = cu.FIRSTNAME + " " + cu.MIDDLENAME + " " + cu.LASTNAME,
+                                   requestedAmount = r.AMOUNT_REQUESTED,
+                                   isBooked = r.ISUSED ?? false,
+                                   isDisbursed = (noDrawDown) ? false : (isRevolving) ? rl.ISDISBURSED : (isContingent) ? cl.ISDISBURSED : tl.ISDISBURSED,
+                                   disbursedAmount = (noDrawDown) ? 0 : (isRevolving) ? rl.OVERDRAFTLIMIT : (isContingent) ? cl.CONTINGENTAMOUNT : tl.PRINCIPALAMOUNT,
+                                   outstandingPrincipal = (noDrawDown) ? 0 : (isRevolving) ? rl.OVERDRAFTLIMIT : (isContingent) ? cl.CONTINGENTAMOUNT : tl.OUTSTANDINGPRINCIPAL,
+                                   bookingDate = (isRevolving) ? rl.BOOKINGDATE : (isContingent) ? cl.BOOKINGDATE : tl.BOOKINGDATE,
+                                   maturityDate = (isRevolving) ? rl.MATURITYDATE : (isContingent) ? cl.MATURITYDATE : tl.MATURITYDATE,
+                                   facilityAmount = d.APPROVEDAMOUNT,
+                                   productName = p.PRODUCTNAME,
+                                   baseCurrencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                                   customerId = (int)x.CUSTOMERID,
+                                   collateralOwnerId = (int)c.CUSTOMERID,
+                                   //omv = (isProperty) ? context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).OPENMARKETVALUE ?? 0 : c.COLLATERALVALUE,
+                                   //fsv = (isProperty) ? context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).FORCEDSALEVALUE ?? 0 : c.COLLATERALVALUE,
+                                   facilityCurrencyId = d.CURRENCYID,
+                               }).ToList();
+
+            return collaterals;
+        }
+
         public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId, bool getAll = false)
         {
 
@@ -2159,7 +2212,7 @@ namespace FintrakBanking.Repositories.Credit
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                let isProperty = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Any(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID)
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                               where c.CUSTOMERID == customerId && x.DELETED == false
+                               where c.CUSTOMERID == customerId && x.DELETED == false//where the owner of the collateral is the focus
 
                                select new CollateralCoverageViewModel
                                {
@@ -2191,7 +2244,7 @@ namespace FintrakBanking.Repositories.Credit
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                let isProperty = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Any(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID)
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                               where f.CUSTOMERID == customerId && x.DELETED == false
+                               where f.CUSTOMERID == customerId && x.DELETED == false//where the owner of the facility is the focus
 
                                select new CollateralCoverageViewModel
                                {

@@ -13,6 +13,7 @@ namespace FintrakBanking.ViewModels.Media
         public int loanApplicationId { get; set; }
 
         public string description { get; set; }
+        public bool isOriginalTitleDocument { get; set; }
 
         public short approvalStatusId { get; set; }
         public string applicationReferenceNumber { get; set; }

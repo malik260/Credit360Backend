@@ -1829,29 +1829,29 @@ namespace FintrakBanking.Repositories.Credit
 
                 var requestedFacility = context.TBL_PRODUCT.Find(entity.productId);
 
-                var request = new TBL_LOAN_BOOKING_REQUEST
-                {
-                    AMOUNT_REQUESTED = entity.amount_Requested,
-                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                    LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
-                    CASAACCOUNTID = entity.casaAccountId,
-                    CUSTOMERID = entity.customerId,
-                    CASAACCOUNTID2 = entity.casaAccountId2,
-                    ISUSED = false,
-                    PRODUCTID = entity.productId,
-                    DATETIMECREATED = DateTime.Now,
-                    CREATEDBY = entity.createdBy,
-                    TENOR = entity.tenor,
-                    TAKEFEEONCE = entity.chargeFeeOnce,
-                };
-                context.TBL_LOAN_BOOKING_REQUEST.Add(request);
-                context.SaveChanges();
+                //var request = new TBL_LOAN_BOOKING_REQUEST
+                //{
+                //    AMOUNT_REQUESTED = entity.amount_Requested,
+                //    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                //    LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
+                //    CASAACCOUNTID = entity.casaAccountId,
+                //    CUSTOMERID = entity.customerId,
+                //    CASAACCOUNTID2 = entity.casaAccountId2,
+                //    ISUSED = false,
+                //    PRODUCTID = entity.productId,
+                //    DATETIMECREATED = DateTime.Now,
+                //    CREATEDBY = entity.createdBy,
+                //    TENOR = entity.tenor,
+                //    TAKEFEEONCE = entity.chargeFeeOnce,
+                //};
+                //context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                //context.SaveChanges();
 
                 var approvalModel = new ForwardViewModel
                 {
                     createdBy = entity.createdBy,
                     companyId = entity.companyId,
-                    applicationId = request.LOAN_BOOKING_REQUESTID,
+                    applicationId = 1,
                     comment = entity.comment,
                     //comment = "Please approve this request for loan booking",
                     amount = entity.amount_Requested,

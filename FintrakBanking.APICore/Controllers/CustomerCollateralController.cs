@@ -165,6 +165,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         [HttpPost, Route("customer-collateral/release-collateral")]
         public HttpResponseMessage ReleaseCollateral([FromBody] CollateralViewModel entity)
         {
@@ -502,6 +503,21 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+        [HttpGet, ClaimsAuthorization, Route("collateral/failities/{collateralId}")]
+        public HttpResponseMessage GetProposedFacilitiesToCollateralByCollateralId(int collateralId)
+        {
+            try
+            {
+                var response = repo.GetProposedFacilitiesToCollateralByCollateralId(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
 
         [HttpGet, Route("collateral-lms/application/{customerId}/{getAll}")]
         public HttpResponseMessage GetProposedCustomerCollateralByCustomerIdLMS(int customerId, bool getAll)
