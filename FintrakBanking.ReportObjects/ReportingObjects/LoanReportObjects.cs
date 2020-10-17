@@ -4401,10 +4401,14 @@ namespace FintrakBanking.ReportObjects
                                        select new RuniningLoanViewModel
                                        {
                                            applicationReferenceNumber = al.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                           product = context.TBL_PRODUCT.Where(x=>x.PRODUCTID == al.APPROVEDPRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
+                                           product = context.TBL_PRODUCT.Where(x => x.PRODUCTID == al.APPROVEDPRODUCTID).Select(x => x.PRODUCTNAME).FirstOrDefault(),
                                            arrivalDate = al.DATETIMECREATED,
                                            divisionName = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == l.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
-
+                                           //currentLevel = "",
+                                           //state = "",
+                                           //lastTreatedDate 
+                                           //currentlyWith
+                                           //lastReviewComment
                                            receivableAmount = 0,
                                            sanctionLimitDate = l.BOOKINGDATE,
                                            securityDetails = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
