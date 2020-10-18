@@ -4201,7 +4201,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var d = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == detailId);
             //var inv = context.TBL_LOAN_APPLICATION_DETL_INV.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == detailId);
-
+            var product = context.TBL_PRODUCT.Find(d.APPROVEDPRODUCTID);
             fields = new LoanApplicationDetailViewModel
             {
                 proposedAmount = d.PROPOSEDAMOUNT,
@@ -4239,7 +4239,8 @@ namespace FintrakBanking.Repositories.Credit
                 interestRepayment = d.INTERESTREPAYMENT,
                 isMoratorium = d.ISMORATORIUM,
                 moratorium = d.MORATORIUM,
-                //productPriceIndexId = d.PRODUCTPRICEINDEXID
+                productClassId = product.PRODUCTCLASSID,
+                productTypeId = product.PRODUCTTYPEID
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
