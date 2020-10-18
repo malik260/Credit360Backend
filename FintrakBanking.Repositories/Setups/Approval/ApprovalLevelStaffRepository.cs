@@ -978,6 +978,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
                 var records = record.OrderByDescending(o => o.TargetId).ThenByDescending(o => o.approvalTrailId);
 
+                var company = context.TBL_COMPANY.FirstOrDefault(c => c.COMPANYID == param.companyId);
+                string baseCurrencyCode = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == company.CURRENCYID).CURRENCYCODE;
                 int serial = 1;
                 foreach (var item in records.ToList())
                 {
@@ -1006,6 +1008,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     serial += 1;
                     item.productNames = ProductName;
                     item.amount = amount;
+                    item.baseCurrencyCode = baseCurrencyCode;
                     item.serial = count;
                     approvalRecord.Add(item);
                 }

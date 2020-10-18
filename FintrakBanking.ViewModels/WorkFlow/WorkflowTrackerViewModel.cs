@@ -51,6 +51,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int loanApplicationId { get; set; }
         public string productNames { get; set; }
         public decimal amount { get; set; }
+        public string baseCurrencyCode { get; set; }
         public int serial { get; set; }
         public int loanApplicationDetailId { get; set; }
         public byte[] reportData { get; set; }
