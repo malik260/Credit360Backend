@@ -14,6 +14,7 @@ namespace FintrakBanking.ViewModels.credit
         public int currencyId { get; set; }
         public int cashBuildUpReferenceTypeId { get; set; }
         public string cashBuildUpReferenceTypeName { get; set; }
+        public string lcReferenceNumber { get; set; }
         public int collectionCasaAccountId { get; set; }
         public int daysInterval { get; set; }
         public DateTime? planDate { get; set; }

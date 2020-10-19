@@ -1667,6 +1667,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal interestInSupense { get; set; }
         public DateTime expiryDate { get; set; }
         public DateTime maturityDate { get; set; }
+        public DateTime effectiveDate { get; set; }
         public decimal facilityGrantedAmount { get; set; }
         public string subSectorCode { get; set; }
         public decimal otherCharges { get; set; }
@@ -1688,6 +1689,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public int loanSytemTypeId { get; set; }
         public string businessDevelopmentManger { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string product { get; set; }
+        public DateTime arrivalDate { get; set; }
+        public DateTime effective { get; set; }
+        public string divisionName { get; set; }
+        public int initiationAge { get { return (this.maturityDate - this.effectiveDate).Days; } }
+        public int currentUserAge { get { return (DateTime.UtcNow - this.maturityDate).Days; } }
     }
 
 

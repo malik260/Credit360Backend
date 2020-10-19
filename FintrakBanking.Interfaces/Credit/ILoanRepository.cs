@@ -219,6 +219,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         #region Loan Disbursement 
         IEnumerable<LoanDisbursementViewModel> GetAllLoanDisbursement(int loanId);
+        IEnumerable<CamProcessedLoanViewModel> GetEmployerRelatedData(int staffId, int companyId, DateRange dateRange);
         // bool AddUpdateLoanDisbursement(LoanDisbursementViewModel entity);
         #endregion
 

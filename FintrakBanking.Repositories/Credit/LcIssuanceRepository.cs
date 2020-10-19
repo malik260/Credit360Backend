@@ -1435,6 +1435,7 @@ namespace FintrakBanking.Repositories.credit
                 TRANSACTIONCYCLE = model.transactionCycle,
                 //COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
+                TOTALUSANCEAMOUNTLOCAL = 0,
                 DATETIMECREATED = DateTime.Now
             };
 

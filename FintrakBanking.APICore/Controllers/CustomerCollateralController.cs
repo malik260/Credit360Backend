@@ -165,6 +165,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         [HttpPost, Route("customer-collateral/release-collateral")]
         public HttpResponseMessage ReleaseCollateral([FromBody] CollateralViewModel entity)
         {
@@ -502,6 +503,21 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+        [HttpGet, ClaimsAuthorization, Route("collateral/failities/{collateralId}")]
+        public HttpResponseMessage GetProposedFacilitiesToCollateralByCollateralId(int collateralId)
+        {
+            try
+            {
+                var response = repo.GetProposedFacilitiesToCollateralByCollateralId(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
 
         [HttpGet, Route("collateral-lms/application/{customerId}/{getAll}")]
         public HttpResponseMessage GetProposedCustomerCollateralByCustomerIdLMS(int customerId, bool getAll)
@@ -2624,6 +2640,16 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region collateral-swap
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-swap-search/{searchString}")]
+        public HttpResponseMessage SearchCollateralSwap(string searchString)
+        {
+            IEnumerable<CollateralSwapViewModel> response = repo.SearchCollateralSwap(searchString);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("collateral-swap")]
