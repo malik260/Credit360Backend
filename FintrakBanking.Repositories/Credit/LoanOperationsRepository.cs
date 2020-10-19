@@ -19146,6 +19146,7 @@ namespace FintrakBanking.Repositories.Credit
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
             var searchValue = searchString.Trim().ToLower();
 
+            searchString = searchString.Trim();
             var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanManagement).Select(c => c.OPERATIONID).ToList();
             List<int> ids = new List<int>();
 
@@ -19177,11 +19178,11 @@ namespace FintrakBanking.Repositories.Credit
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId)
                             && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
-                            && (ln.LOANREFERENCENUMBER == searchValue
-                            || cu.FIRSTNAME.ToLower() == searchValue
-                            || cu.LASTNAME.ToLower() == searchValue
-                            || cu.MIDDLENAME.ToLower() == searchValue
-                            || cu.CUSTOMERCODE == searchValue)
+                            && (ln.LOANREFERENCENUMBER == searchString
+                            || cu.FIRSTNAME.Trim().ToLower() == searchString.ToLower()
+                            || cu.LASTNAME.Trim().ToLower() == searchString.ToLower()
+                            || cu.MIDDLENAME.Trim().ToLower() == searchString.ToLower()
+                            || cu.CUSTOMERCODE.Trim() == searchString)
 
                             orderby op.DATECREATED descending
 
@@ -19348,11 +19349,11 @@ namespace FintrakBanking.Repositories.Credit
                                      && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONCOMPLETED == false
                                       && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
-                                      && (ln.LOANREFERENCENUMBER == searchValue
-                                        || cu.FIRSTNAME.ToLower() == searchValue
-                                        || cu.LASTNAME.ToLower() == searchValue
-                                        || cu.MIDDLENAME.ToLower() == searchValue
-                                        || cu.CUSTOMERCODE == searchValue)
+                                      && (ln.LOANREFERENCENUMBER == searchString
+                                        || cu.FIRSTNAME.Trim().ToLower() == searchString.ToLower()
+                                        || cu.LASTNAME.Trim().ToLower() == searchString.ToLower()
+                                        || cu.MIDDLENAME.Trim().ToLower() == searchString.ToLower()
+                                        || cu.CUSTOMERCODE.Trim() == searchString)
 
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
@@ -19492,11 +19493,11 @@ namespace FintrakBanking.Repositories.Credit
                                       && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                       && op.OPERATIONCOMPLETED == false
                                       && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
-                                      && (ln.LOANREFERENCENUMBER == searchValue
-                                        || cu.FIRSTNAME.ToLower() == searchValue
-                                        || cu.LASTNAME.ToLower() == searchValue
-                                        || cu.MIDDLENAME.ToLower() == searchValue
-                                        || cu.CUSTOMERCODE == searchValue)
+                                      && (ln.LOANREFERENCENUMBER == searchString
+                                        || cu.FIRSTNAME.Trim().ToLower() == searchString.ToLower()
+                                        || cu.LASTNAME.Trim().ToLower() == searchString.ToLower()
+                                        || cu.MIDDLENAME.Trim().ToLower() == searchString.ToLower()
+                                        || cu.CUSTOMERCODE.Trim() == searchString)
 
                                       orderby op.DATECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
@@ -19631,11 +19632,11 @@ namespace FintrakBanking.Repositories.Credit
                                   && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                   && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId)
                                   && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
-                                  && (ln.LOANREFERENCENUMBER == searchValue
-                                    || cu.FIRSTNAME.ToLower() == searchValue
-                                    || cu.LASTNAME.ToLower() == searchValue
-                                    || cu.MIDDLENAME.ToLower() == searchValue
-                                    || cu.CUSTOMERCODE == searchValue)
+                                  && (ln.LOANREFERENCENUMBER == searchString
+                                    || cu.FIRSTNAME.Trim().ToLower() == searchString.ToLower()
+                                    || cu.LASTNAME.Trim().ToLower() == searchString.ToLower()
+                                    || cu.MIDDLENAME.Trim().ToLower() == searchString.ToLower()
+                                    || cu.CUSTOMERCODE == searchString)
 
                                   orderby op.DATECREATED descending
 
