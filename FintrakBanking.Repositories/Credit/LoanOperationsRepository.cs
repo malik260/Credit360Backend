@@ -18496,7 +18496,7 @@ namespace FintrakBanking.Repositories.Credit
                             && atrail.OPERATIONID == op.OPERATIONTYPEID
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                            //&& op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
+                            && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
                             && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId)
                             && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)// currency filter
 
@@ -18642,7 +18642,7 @@ namespace FintrakBanking.Repositories.Credit
                                     casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
 
                                 }).ToList(),
-                            }).Take(25).ToList();
+                            }).Take(50).ToList();
 
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
@@ -18670,7 +18670,7 @@ namespace FintrakBanking.Repositories.Credit
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                      && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONCOMPLETED == false
-                                      && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)//&& mp.OPERATIONPERFORMED == true
+                                     && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)//&& mp.OPERATIONPERFORMED == true
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
                                      {
@@ -18783,7 +18783,7 @@ namespace FintrakBanking.Repositories.Credit
                                              casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
 
                                          }).ToList(),
-                                     }).Take(25).ToList();
+                                     }).Take(50).ToList();
 
 
             var dataContingentLoan = (from ln in context.TBL_LOAN_CONTINGENT
@@ -18812,7 +18812,7 @@ namespace FintrakBanking.Repositories.Credit
                                       && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                       && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                       && op.OPERATIONCOMPLETED == false
-                                       && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null) //&& mp.OPERATIONPERFORMED == true
+                                      && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null) //&& mp.OPERATIONPERFORMED == true
 
                                       orderby op.DATECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
@@ -18928,7 +18928,7 @@ namespace FintrakBanking.Repositories.Credit
                                               casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
 
                                           }).ToList(),
-                                      }).Take(25).ToList();
+                                      }).Take(50).ToList();
 
             var thirdpartyLoan = (from ln in context.TBL_LOAN_EXTERNAL
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.EXTERNALLOANID equals op.LOANID
@@ -19094,7 +19094,7 @@ namespace FintrakBanking.Repositories.Credit
                                     casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
 
                                 }).ToList(),
-                            }).Take(25).ToList();
+                            }).Take(50).ToList();
 
             //foreach (var can in dataContingentLoan)
             //{
@@ -19144,7 +19144,7 @@ namespace FintrakBanking.Repositories.Credit
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
-
+            var searchValue = searchString.Trim().ToLower();
 
             var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanManagement).Select(c => c.OPERATIONID).ToList();
             List<int> ids = new List<int>();
@@ -19177,11 +19177,11 @@ namespace FintrakBanking.Repositories.Credit
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId)
                             && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
-                            && (ln.LOANREFERENCENUMBER == searchString
-                            || cu.FIRSTNAME.ToLower() == searchString.ToLower()
-                            || cu.LASTNAME.ToLower() == searchString.ToLower()
-                            || cu.MIDDLENAME.ToLower() == searchString.ToLower()
-                            || cu.CUSTOMERCODE == searchString)
+                            && (ln.LOANREFERENCENUMBER == searchValue
+                            || cu.FIRSTNAME.ToLower() == searchValue
+                            || cu.LASTNAME.ToLower() == searchValue
+                            || cu.MIDDLENAME.ToLower() == searchValue
+                            || cu.CUSTOMERCODE == searchValue)
 
                             orderby op.DATECREATED descending
 
@@ -19348,11 +19348,11 @@ namespace FintrakBanking.Repositories.Credit
                                      && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONCOMPLETED == false
                                       && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
-                                      && (ln.LOANREFERENCENUMBER == searchString
-                                        || cu.FIRSTNAME.ToLower() == searchString.ToLower()
-                                        || cu.LASTNAME.ToLower() == searchString.ToLower()
-                                        || cu.MIDDLENAME.ToLower() == searchString.ToLower()
-                                        || cu.CUSTOMERCODE == searchString)
+                                      && (ln.LOANREFERENCENUMBER == searchValue
+                                        || cu.FIRSTNAME.ToLower() == searchValue
+                                        || cu.LASTNAME.ToLower() == searchValue
+                                        || cu.MIDDLENAME.ToLower() == searchValue
+                                        || cu.CUSTOMERCODE == searchValue)
 
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
@@ -19492,11 +19492,11 @@ namespace FintrakBanking.Repositories.Credit
                                       && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                       && op.OPERATIONCOMPLETED == false
                                       && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
-                                      && (ln.LOANREFERENCENUMBER == searchString
-                                        || cu.FIRSTNAME.ToLower() == searchString.ToLower()
-                                        || cu.LASTNAME.ToLower() == searchString.ToLower()
-                                        || cu.MIDDLENAME.ToLower() == searchString.ToLower()
-                                        || cu.CUSTOMERCODE == searchString)
+                                      && (ln.LOANREFERENCENUMBER == searchValue
+                                        || cu.FIRSTNAME.ToLower() == searchValue
+                                        || cu.LASTNAME.ToLower() == searchValue
+                                        || cu.MIDDLENAME.ToLower() == searchValue
+                                        || cu.CUSTOMERCODE == searchValue)
 
                                       orderby op.DATECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
@@ -19631,11 +19631,11 @@ namespace FintrakBanking.Repositories.Credit
                                   && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                   && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId)
                                   && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
-                                  && (ln.LOANREFERENCENUMBER == searchString
-                                    || cu.FIRSTNAME.ToLower() == searchString.ToLower()
-                                    || cu.LASTNAME.ToLower() == searchString.ToLower()
-                                    || cu.MIDDLENAME.ToLower() == searchString.ToLower()
-                                    || cu.CUSTOMERCODE == searchString)
+                                  && (ln.LOANREFERENCENUMBER == searchValue
+                                    || cu.FIRSTNAME.ToLower() == searchValue
+                                    || cu.LASTNAME.ToLower() == searchValue
+                                    || cu.MIDDLENAME.ToLower() == searchValue
+                                    || cu.CUSTOMERCODE == searchValue)
 
                                   orderby op.DATECREATED descending
 
