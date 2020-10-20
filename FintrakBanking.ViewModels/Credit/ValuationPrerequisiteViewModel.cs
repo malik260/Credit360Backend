@@ -24,6 +24,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatus { get; set; }
         public string comment { get; set; }
         public int valuerId { get; set; }
+
+        public decimal? omv { get; set; }
+        public decimal? fsv { get; set; }
+
         public decimal? valuationFee { get; set; }
         public int valuationReportId { get; set; }
         public string valuer { get; set; } //

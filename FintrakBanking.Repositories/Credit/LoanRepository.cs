@@ -44,6 +44,7 @@ using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using System.Configuration;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using System.Transactions;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -2845,6 +2846,182 @@ namespace FintrakBanking.Repositories.Credit
             order by l.POSITION;*/
         }
 
+        public IEnumerable<CamProcessedLoanViewModel> GetEmployerRelatedData(int staffId, int companyId, DateRange param)
+        {
+            param.endDate = param.endDate.AddHours(23);
+            param.endDate = param.endDate.AddMinutes(59);
+            param.endDate = param.endDate.AddSeconds(59);
+
+            var loans = (from a in context.TBL_LOAN
+                         join r in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
+                         join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                         join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                         join m in context.TBL_CUSTOMER_EMPLOYER on l.RELATEDEMPLOYERID equals m.EMPLOYERID
+                         join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
+                         join s in context.TBL_LOAN_STATUS on a.LOANSTATUSID equals s.LOANSTATUSID
+                         let p = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(p => p.LOANID == a.TERMLOANID).OrderByDescending(p => p.PAYMENTNUMBER).FirstOrDefault()
+                         where ((DbFunctions.TruncateTime(a.BOOKINGDATE) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(a.BOOKINGDATE) <= DbFunctions.TruncateTime(param.endDate)))
+                                 && l.ISEMPLOYERRELATED == true
+                                 && (r.APPROVEDLINESTATUSID == null || r.APPROVEDLINESTATUSID == 0)
+                         select new CamProcessedLoanViewModel
+                         {
+                             loanBookingRequestId = r.LOAN_BOOKING_REQUESTID,
+                             requestDate = r.DATETIMECREATED,
+                             requestedAmount = r.AMOUNT_REQUESTED,
+                             loanApplicationId = l.LOANAPPLICATIONID,
+                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                             applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
+                             casaAccountId = a.CASAACCOUNTID,
+                             casaAccountId2 = a.CASAACCOUNTID2,
+                             accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                             customerId = d.CUSTOMERID,
+                             customerCode = c.CUSTOMERCODE,
+                             customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                             branchName = l.TBL_BRANCH.BRANCHNAME,
+                             bookingDate = a.BOOKINGDATE,
+                             maturityDate = a.MATURITYDATE,
+                             approvedTenor = d.APPROVEDTENOR,
+                             approvedInterestRate = d.APPROVEDINTERESTRATE,
+                             //applicationTenor = l.APPLICATIONTENOR,
+                             effectiveDate = (DateTime)d.EFFECTIVEDATE,
+                             expiryDate = (DateTime)d.EXPIRYDATE,
+                             employer = m.EMPLOYER_NAME,
+                             loanStatus = s.ACCOUNTSTATUS,
+                             //daysPastDue = a.PASTDUEDATE,
+                             datePastDue = a.PASTDUEDATE,
+                             currencyId = d.CURRENCYID,
+                             currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                             exchangeRate = d.EXCHANGERATE,
+                             interestRate = a.INTERESTRATE,
+                             submittedForAppraisal = l.SUBMITTEDFORAPPRAISAL,
+                             approvedAmount = d.APPROVEDAMOUNT,
+                             groupApprovedAmount = l.APPROVEDAMOUNT,
+                             availmentDate = l.AVAILMENTDATE,
+                             repaymentTerms = d.REPAYMENTTERMS,
+                             repaymentSchedule = d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
+                             createdBy = l.OWNEDBY,
+                             applicationDate = l.APPLICATIONDATE,
+                             dateTimeCreated = d.DATETIMECREATED,
+                             monthlyPayment = (p != null) ? p.PERIODPAYMENTAMOUNT : 0
+                             //isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
+                         }).ToList();
+
+            var contingents = (from a in context.TBL_LOAN_CONTINGENT
+                             join r in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
+                             join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                             join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                             join m in context.TBL_CUSTOMER_EMPLOYER on l.RELATEDEMPLOYERID equals m.EMPLOYERID
+                             join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
+                             join s in context.TBL_LOAN_STATUS on a.LOANSTATUSID equals s.LOANSTATUSID
+                             where ((DbFunctions.TruncateTime(a.BOOKINGDATE) >= DbFunctions.TruncateTime(param.startDate)
+                                     && DbFunctions.TruncateTime(a.BOOKINGDATE) <= DbFunctions.TruncateTime(param.endDate)))
+                                     && l.ISEMPLOYERRELATED == true
+                                     && (r.APPROVEDLINESTATUSID == null || r.APPROVEDLINESTATUSID == 0)
+                             select new CamProcessedLoanViewModel
+                             {
+                                 loanBookingRequestId = r.LOAN_BOOKING_REQUESTID,
+                                 requestDate = r.DATETIMECREATED,
+                                 requestedAmount = r.AMOUNT_REQUESTED,
+                                 loanApplicationId = l.LOANAPPLICATIONID,
+                                 loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                 applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
+                                 casaAccountId = a.CASAACCOUNTID,
+                                 casaAccountId2 = a.CASAACCOUNTID2,
+                                 accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                 customerId = d.CUSTOMERID,
+                                 customerCode = c.CUSTOMERCODE,
+                                 customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                                 branchName = l.TBL_BRANCH.BRANCHNAME,
+                                 bookingDate = a.BOOKINGDATE,
+                                 maturityDate = a.MATURITYDATE,
+                                 approvedTenor = d.APPROVEDTENOR,
+                                 approvedInterestRate = d.APPROVEDINTERESTRATE,
+                                 effectiveDate = (DateTime)d.EFFECTIVEDATE,
+                                 expiryDate = (DateTime)d.EXPIRYDATE,
+                                 employer = m.EMPLOYER_NAME,
+                                 loanStatus = s.ACCOUNTSTATUS,
+                                 //daysPastDue = a.PASTDUEDATE,
+                                 datePastDue = null,
+                                 currencyId = d.CURRENCYID,
+                                 currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                                 exchangeRate = d.EXCHANGERATE,
+                                 interestRate = d.APPROVEDINTERESTRATE,
+                                 submittedForAppraisal = l.SUBMITTEDFORAPPRAISAL,
+                                 approvedAmount = d.APPROVEDAMOUNT,
+                                 groupApprovedAmount = l.APPROVEDAMOUNT,
+                                 availmentDate = l.AVAILMENTDATE,
+                                 repaymentTerms = d.REPAYMENTTERMS,
+                                 repaymentSchedule = d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
+                                 createdBy = l.OWNEDBY,
+                                 applicationDate = l.APPLICATIONDATE,
+                                 dateTimeCreated = d.DATETIMECREATED,
+                                 monthlyPayment = 0
+                             }).ToList();
+
+            var revolving = (from a in context.TBL_LOAN_REVOLVING
+                            join r in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
+                            join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                            join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                            join m in context.TBL_CUSTOMER_EMPLOYER on l.RELATEDEMPLOYERID equals m.EMPLOYERID
+                            join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
+                            join s in context.TBL_LOAN_STATUS on a.LOANSTATUSID equals s.LOANSTATUSID
+                            where ((DbFunctions.TruncateTime(a.BOOKINGDATE) >= DbFunctions.TruncateTime(param.startDate)
+                                    && DbFunctions.TruncateTime(a.BOOKINGDATE) <= DbFunctions.TruncateTime(param.endDate)))
+                                    && l.ISEMPLOYERRELATED == true
+                                    && (r.APPROVEDLINESTATUSID == null || r.APPROVEDLINESTATUSID == 0)
+                            select new CamProcessedLoanViewModel
+                            {
+                                loanBookingRequestId = r.LOAN_BOOKING_REQUESTID,
+                                requestDate = r.DATETIMECREATED,
+                                requestedAmount = r.AMOUNT_REQUESTED,
+                                loanApplicationId = l.LOANAPPLICATIONID,
+                                loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
+                                casaAccountId = a.CASAACCOUNTID,
+                                casaAccountId2 = r.CASAACCOUNTID2,
+                                accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                customerId = d.CUSTOMERID,
+                                customerCode = c.CUSTOMERCODE,
+                                customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                                branchName = l.TBL_BRANCH.BRANCHNAME,
+                                bookingDate = a.BOOKINGDATE,
+                                maturityDate = a.MATURITYDATE,
+                                approvedTenor = d.APPROVEDTENOR,
+                                approvedInterestRate = d.APPROVEDINTERESTRATE,
+                                effectiveDate = (DateTime)d.EFFECTIVEDATE,
+                                expiryDate = (DateTime)d.EXPIRYDATE,
+                                employer = m.EMPLOYER_NAME,
+                                loanStatus = s.ACCOUNTSTATUS,
+                                //daysPastDue = a.PASTDUEDATE,
+                                datePastDue = null,
+                                currencyId = d.CURRENCYID,
+                                currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                                exchangeRate = d.EXCHANGERATE,
+                                interestRate = a.INTERESTRATE,
+                                submittedForAppraisal = l.SUBMITTEDFORAPPRAISAL,
+                                approvedAmount = d.APPROVEDAMOUNT,
+                                groupApprovedAmount = l.APPROVEDAMOUNT,
+                                availmentDate = l.AVAILMENTDATE,
+                                repaymentTerms = d.REPAYMENTTERMS,
+                                repaymentSchedule = d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
+                                createdBy = l.OWNEDBY,
+                                applicationDate = l.APPLICATIONDATE,
+                                dateTimeCreated = d.DATETIMECREATED,
+                                monthlyPayment = 0
+                            }).ToList();
+
+            var data = loans.Union(contingents).Union(revolving).ToList();
+            //var groups = data.GroupBy(g => g.loanApplicationDetailId);
+            foreach(var g in data.GroupBy(g => g.loanApplicationDetailId))
+            {
+                foreach(var h in g)
+                {
+                    h.totalUtilized += h.requestedAmount;
+                }
+            }
+            return data;
+        }
 
         public IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId, bool isInitiation = false)
         {
@@ -4126,7 +4303,7 @@ namespace FintrakBanking.Repositories.Credit
                             requestedBy = "",
                             appraisalOperationId = m.OPERATIONID,
                             requestedAmount = s.AMOUNT_REQUESTED,
-                            requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
+                            requestOperationId = (short)s.OPERATIONID,
                             approvalStatusId = (short)m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,

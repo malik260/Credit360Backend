@@ -7100,10 +7100,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public void ValidateProfiledUsers(int maxUsers)
         {
-            try
-            {
                 var list = (from t in context.TBL_PROFILE_USER
-                            where t.ISACTIVE == true && t.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                            where t.ISACTIVE == true 
                             orderby t.USERID
                             select t.USERID).Take(maxUsers).ToList();
 
@@ -7117,14 +7115,10 @@ namespace FintrakBanking.Repositories.Credit
                     var lockUser = context.TBL_PROFILE_USER.Find(user.USERID);
                     lockUser.ISLOCKED = true;
                     lockUser.ISACTIVE = false;
+                    lockUser.LASTLOCKOUTDATE = DateTime.Now;
                     lockUser.FAILEDLOGONATTEMPT = 3;
                 }
                 context.SaveChanges();
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
         }
 
         public string Decrypt(string cipher)

@@ -510,11 +510,6 @@
       <DependentUpon>DRAWDOWN.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\FORM3800B.Designer.cs" />
-    <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportDataset\MiddleOffice.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1759,17 +1754,6 @@
     <Content Include="Reports\ReportDataset\MiddleOffice.xsc">
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
     </Content>
-    <Content Include="Reports\ReportDataset\LoanDataSet.xsc">
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Content>
-    <None Include="Reports\ReportDataset\LoanDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>LoanDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Reports\ReportDataset\LoanDataSet.xss">
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Content>
     <None Include="Reports\ReportDataset\MiddleOffice.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>MiddleOffice.Designer.cs</LastGenOutput>
@@ -2042,7 +2026,6 @@
     <EmbeddedResource Include="Reports\Report\RecoveryComputation.rdlc" />
     <EmbeddedResource Include="Reports\Report\RevalidationOfFullAndFinalSettlement.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
-    <EmbeddedResource Include="Reports\Report\RunningLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RunningFacilities.rdlc" />
     <EmbeddedResource Include="Reports\Report\SanctionLimitReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />

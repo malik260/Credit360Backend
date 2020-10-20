@@ -1054,6 +1054,21 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-operation/by-loanreference-awaiting-approval/{loanReference}")]
+        public HttpResponseMessage GetLoanOperationByLoanReferenceAwaitingApproval(string loanReference)
+        {
+            var data = repo.GetLoanOperationByLoanReferenceAwaitingApproval(token.GetStaffId, token.GetCompanyId, loanReference);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lien-removal-operation/awaiting-approval")]
         public HttpResponseMessage GetLienRemovalAwaitingApproval()
         {

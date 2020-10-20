@@ -51,21 +51,21 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             if (watchlist.Any())
             {
                 string custCode = watchlist.FirstOrDefault().TBL_CUSTOMER.CUSTOMERCODE;
-                watchlistresults = this.customOverride.EffectOverride(custCode, (int)LoanPrudentialStatusEnum.WatchList, custCode );
+                watchlistresults = this.customOverride.EffectOverride(custCode, (int)LoanPrudentialStatusEnum.WatchList, custCode);
             }
 
             return watchlistresults;
         }
-        
+
         public IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode)
         {
             var customerEligibility = (from a in context.TBL_LOAN_CAMSOL
-                          join b in context.TBL_LOAN_CAMSOL_TYPE on a.CAMSOLTYPEID equals b.CAMSOLTYPEID
-                          where a.CUSTOMERCODE == customerCode && a.CANTAKELOAN == false
-                          select new CustomerEligibilityViewModel()
-                             {
-                                camsolType = b.CAMSOLTYPENAME.ToUpper()
-                             }).ToList();
+                                       join b in context.TBL_LOAN_CAMSOL_TYPE on a.CAMSOLTYPEID equals b.CAMSOLTYPEID
+                                       where a.CUSTOMERCODE == customerCode && a.CANTAKELOAN == false
+                                       select new CustomerEligibilityViewModel()
+                                       {
+                                           camsolType = b.CAMSOLTYPENAME.ToUpper()
+                                       }).ToList();
             return customerEligibility;
         }
 
@@ -145,36 +145,36 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
 
             var loanTotalExposure = (from d in context.TBL_LOAN
-                                          where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active || d.LOANSTATUSID == (short)LoanStatusEnum.Inactive
-                                          select new
-                                          {
-                                              d.OUTSTANDINGPRINCIPAL,
-                                              d.EXCHANGERATE
-                                          }).ToList();
+                                     where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active || d.LOANSTATUSID == (short)LoanStatusEnum.Inactive
+                                     select new
+                                     {
+                                         d.OUTSTANDINGPRINCIPAL,
+                                         d.EXCHANGERATE
+                                     }).ToList();
             var sumLoanTotalExposure = loanTotalExposure.Select(c => c.OUTSTANDINGPRINCIPAL * (decimal)c.EXCHANGERATE).Sum();
 
 
-            var ODTotalExposure  = (from d in context.TBL_LOAN_REVOLVING
-                                        where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active 
-                                        select new
-                                        {
-                                            d.OVERDRAFTLIMIT,
-                                              d.EXCHANGERATE
-                                        }).ToList();
-            var sumODTotalExposure = ODTotalExposure.Select(c => c.OVERDRAFTLIMIT * (decimal)c.EXCHANGERATE).Sum();
-
-            var contingentTotalExposure = (from d in context.TBL_LOAN_CONTINGENT
+            var ODTotalExposure = (from d in context.TBL_LOAN_REVOLVING
                                    where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active
                                    select new
                                    {
-                                       d.CONTINGENTAMOUNT,
-                                        d.EXCHANGERATE
+                                       d.OVERDRAFTLIMIT,
+                                       d.EXCHANGERATE
                                    }).ToList();
+            var sumODTotalExposure = ODTotalExposure.Select(c => c.OVERDRAFTLIMIT * (decimal)c.EXCHANGERATE).Sum();
+
+            var contingentTotalExposure = (from d in context.TBL_LOAN_CONTINGENT
+                                           where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                           select new
+                                           {
+                                               d.CONTINGENTAMOUNT,
+                                               d.EXCHANGERATE
+                                           }).ToList();
             var sumContingentTotalExposure = contingentTotalExposure.Select(c => c.CONTINGENTAMOUNT * (decimal)c.EXCHANGERATE).Sum();
 
             var loanOutstandingBalance = (from d in context.TBL_LOAN
-                                          where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active 
-                                          && d.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing 
+                                          where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                          && d.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
                                           select new
                                           {
                                               d.OUTSTANDINGPRINCIPAL,
@@ -480,7 +480,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public CreditLimitValidationsModel ValidateNPLBySector(int subSectorId)
         {
             var subSector = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == subSectorId).FirstOrDefault();//.SECTORID.Value;
-            if(subSector == null)
+            if (subSector == null)
             {
                 return null;
             }
@@ -561,33 +561,33 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                       where d.CUSTOMERID == customerId && d.STATUSID == (short)ApprovalStatusEnum.Approved
                                       && d.LOANAPPLICATIONDETAILID == e.LOANAPPLICATIONDETAILID
                                       select new
-                                          {
-                                              d.APPROVEDAMOUNT
-                                          }).ToList();
+                                      {
+                                          d.APPROVEDAMOUNT
+                                      }).ToList();
             var sumLoanApprovedAmount = loanApprovedAmount.Select(c => c.APPROVEDAMOUNT).Sum();
 
             var loanTotal = sumLoanApprovedAmount + sumLoanOutstandingBalance - sumLoanPrincipalAmount;
 
 
             var overDraftLimit = (from d in context.TBL_LOAN_REVOLVING
-                                          join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
-                                          join g in context.TBL_LOAN_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals g.LOANAPPLICATIONDETAILID
-                                          where d.LOANAPPLICATIONDETAILID == g.LOANAPPLICATIONDETAILID && d.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                          && g.STATUSID == (short)ApprovalStatusEnum.Approved
-                                          select new
-                                          {
-                                              d.OVERDRAFTLIMIT,
-                                          }).ToList();
+                                  join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
+                                  join g in context.TBL_LOAN_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals g.LOANAPPLICATIONDETAILID
+                                  where d.LOANAPPLICATIONDETAILID == g.LOANAPPLICATIONDETAILID && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                  && g.STATUSID == (short)ApprovalStatusEnum.Approved
+                                  select new
+                                  {
+                                      d.OVERDRAFTLIMIT,
+                                  }).ToList();
             var sumOverDraftLimit = overDraftLimit.Select(c => c.OVERDRAFTLIMIT).Sum();
 
             var oDApprovedAmount = (from d in context.TBL_LOAN_APPLICATION_DETAIL
-                                      join e in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
-                                      where d.CUSTOMERID == customerId && d.STATUSID == (short)ApprovalStatusEnum.Approved
-                                      && d.LOANAPPLICATIONDETAILID == e.LOANAPPLICATIONDETAILID
-                                      select new
-                                      {
-                                          d.APPROVEDAMOUNT
-                                      }).ToList();
+                                    join e in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
+                                    where d.CUSTOMERID == customerId && d.STATUSID == (short)ApprovalStatusEnum.Approved
+                                    && d.LOANAPPLICATIONDETAILID == e.LOANAPPLICATIONDETAILID
+                                    select new
+                                    {
+                                        d.APPROVEDAMOUNT
+                                    }).ToList();
             var sumODApprovedAmount = oDApprovedAmount.Select(c => c.APPROVEDAMOUNT).Sum();
 
             var oDTotal = sumODApprovedAmount - sumOverDraftLimit;
@@ -651,7 +651,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public bool ValidateIsInsiderCustomer(int customerId)
         {
-            var isRelatedcustomer = context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == customerId && c.ISREALATEDPARTY == true).Select(c => c.CUSTOMERCODE).FirstOrDefault();
+            var isRelatedcustomer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == customerId && c.ISREALATEDPARTY == true).Select(c => c.CUSTOMERCODE).FirstOrDefault();
             if (isRelatedcustomer != null)
                 return true;
             return false;
@@ -662,7 +662,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             IEnumerable<CurrentCustomerExposure> exposure = null;
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
 
-            foreach(var customerCode in customerCodes)
+            foreach (var customerCode in customerCodes)
             {
                 customerCode.Trim();
 
@@ -684,28 +684,28 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
             }
-            
+
             return exposures;
         }
 
         public List<CurrentCustomerExposure> GetGlobalCustomerExposureByCurrency()
         {
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
-                exposures = (from a in context.TBL_GLOBAL_EXPOSURE
-                           where a.ALPHACODE.ToUpper().Trim() != "NGN"
-                           select new CurrentCustomerExposure
-                           {
-                               facilityType = a.ADJFACILITYTYPE,
-                               existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                               proposedLimit = a.LOANAMOUNYLCY ?? 0,
-                               outstandings = a.TOTALEXPOSURE ?? 0,
-                               recommendedLimit = 0,
-                               //PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
-                               reviewDate = DateTime.Now,
-                               loanStatus = a.CBNCLASSIFICATION,
-                               referenceNumber = a.REFERENCENUMBER,
-                           }).ToList();
+            exposures = (from a in context.TBL_GLOBAL_EXPOSURE
+                         where a.ALPHACODE.ToUpper().Trim() != "NGN"
+                         select new CurrentCustomerExposure
+                         {
+                             facilityType = a.ADJFACILITYTYPE,
+                             existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                             proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                             outstandings = a.TOTALEXPOSURE ?? 0,
+                             recommendedLimit = 0,
+                             //PastDueObligationsInterest = a.PASTDUEINTEREST,
+                             pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+                             reviewDate = DateTime.Now,
+                             loanStatus = a.CBNCLASSIFICATION,
+                             referenceNumber = a.REFERENCENUMBER,
+                         }).ToList();
 
             return exposures;
         }
@@ -720,20 +720,20 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 customerCode.Trim();
 
                 exposure = (from a in context.TBL_GLOBAL_EXPOSURE
-                           where a.CUSTOMERID.Contains(customerCode)
-                           select new CurrentCustomerExposure
-                           {
-                               facilityType = a.ADJFACILITYTYPE,
-                               existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                               proposedLimit = a.LOANAMOUNYLCY ?? 0,
-                               outstandings = a.TOTALEXPOSURE ?? 0,
-                               recommendedLimit = 0,
-                               //PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
-                               reviewDate = DateTime.Now,
-                               loanStatus = a.CBNCLASSIFICATION,
-                               referenceNumber = a.REFERENCENUMBER,
-                           }).OrderByDescending(x => x.outstandings).ToList();
+                            where a.CUSTOMERID.Contains(customerCode)
+                            select new CurrentCustomerExposure
+                            {
+                                facilityType = a.ADJFACILITYTYPE,
+                                existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                                outstandings = a.TOTALEXPOSURE ?? 0,
+                                recommendedLimit = 0,
+                                //PastDueObligationsInterest = a.PASTDUEINTEREST,
+                                pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+                                reviewDate = DateTime.Now,
+                                loanStatus = a.CBNCLASSIFICATION,
+                                referenceNumber = a.REFERENCENUMBER,
+                            }).OrderByDescending(x => x.outstandings).ToList();
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
             }
@@ -881,7 +881,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel models = new CreditLimitValidationsModel();
             List<CurrentCustomerExposure> exposures;
             exposures = GetGlobalCustomerExposureByCurrency();
-            var currencyLimit = context.TBL_CURRENCY_LIMIT.Where(x=>x.DELETED == false).FirstOrDefault();
+            var currencyLimit = context.TBL_CURRENCY_LIMIT.Where(x => x.DELETED == false).FirstOrDefault();
             if (currencyLimit == null)
             {
                 return null;
@@ -889,7 +889,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             double maxLimit = (float?)currencyLimit?.CURRENCYLIMITVALUE ?? 0;
             models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
             models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
-               
+
             return models;
         }
 
@@ -905,7 +905,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
                 models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
             }
-                return models;
+            return models;
         }
 
         public CreditLimitValidationsModel ValidateNPLByGroupFirstHundred(LoanApplicationViewModel application)
@@ -930,7 +930,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             if (customerIds.Count() <= 0) return false;
             foreach (var id in customerIds)
             {
-                var bvn = context.TBL_CUSTOMER.Find(id) ?.CUSTOMERBVN;
+                var bvn = context.TBL_CUSTOMER.Find(id)?.CUSTOMERBVN;
 
                 var isDirector = context.TBL_COMPANY_DIRECTOR.Any(d => d.BVN.Trim() == bvn.Trim());
 
@@ -1018,7 +1018,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount;
             return model;
 
-            
+
         }
 
         public CreditLimitValidationsModel ValidateCreditLimitByRMBM(short staffId)
@@ -1030,14 +1030,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             decimal? accountOfficerMaximumNPLExposure = 0;
 
             var outstandingLoan = (from d in context.TBL_LOAN
-                               where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
-                               (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
-                               select (decimal?)d.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
+                                   where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
+                                   (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
+                                   select (decimal?)d.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
             var outstandingRevolving = (from d in context.TBL_LOAN_REVOLVING
-                                    where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
-                                    (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
-                                    select (decimal?)d.OVERDRAFTLIMIT).Sum() ?? 0;
+                                        where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
+                                        (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
+                                        select (decimal?)d.OVERDRAFTLIMIT).Sum() ?? 0;
 
             var accountOfficerNPLExposure = outstandingLoan + outstandingRevolving;
 
@@ -1136,10 +1136,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                   where a.DELETED == false
                                   select new CurrencyLimitViewModel
                                   {
-                                    currencyLimitId = a.CURRENCYLIMITID,
-                                    currencyLimitName = a.CURRENCYLIMITNAME,
-                                    currencyLimitValue = a.CURRENCYLIMITVALUE,
-                                    description = a.DESCRIPTION
+                                      currencyLimitId = a.CURRENCYLIMITID,
+                                      currencyLimitName = a.CURRENCYLIMITNAME,
+                                      currencyLimitValue = a.CURRENCYLIMITVALUE,
+                                      description = a.DESCRIPTION
                                   })?.ToList();
 
             return currencyLimits;
@@ -1159,13 +1159,13 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                     TBL_CURRENCY_LIMIT currencyLimit;
                     currencyLimit = new TBL_CURRENCY_LIMIT
                     {
-                            CURRENCYLIMITNAME = entity.currencyLimitName,
-                            DESCRIPTION = entity.description,
-                            CURRENCYLIMITVALUE = entity.currencyLimitValue,
-                            DELETED = false,
-                            CREATEDBY = entity.createdBy,
-                            DATETIMECREATED = DateTime.Now
-                        };
+                        CURRENCYLIMITNAME = entity.currencyLimitName,
+                        DESCRIPTION = entity.description,
+                        CURRENCYLIMITVALUE = entity.currencyLimitValue,
+                        DELETED = false,
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = DateTime.Now
+                    };
 
                     context.TBL_CURRENCY_LIMIT.Add(currencyLimit);
                     var response = context.SaveChanges() != 0;
@@ -1230,14 +1230,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public IEnumerable<GroupLimitViewModel> GetAllGroupLimit()
         {
             var groupLimits = (from a in context.TBL_GROUP_LIMIT where a.DELETED == false
-                                  select new GroupLimitViewModel
-                                  {
-                                      groupLimitId = a.GROUPLIMITID,
-                                      groupLimitValue = a.GROUPLIMITVALUE,
-                                      groupName = a.GROUPNAME,
-                                      description = a.DESCRIPTION,
-                                      limitNumber = a.LIMITNUMBER
-                                  }).ToList();
+                               select new GroupLimitViewModel
+                               {
+                                   groupLimitId = a.GROUPLIMITID,
+                                   groupLimitValue = a.GROUPLIMITVALUE,
+                                   groupName = a.GROUPNAME,
+                                   description = a.DESCRIPTION,
+                                   limitNumber = a.LIMITNUMBER
+                               }).ToList();
 
             return groupLimits;
         }
@@ -1526,14 +1526,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             if (staffId != null)
             {
                 outstandingLoan = (from d in context.TBL_LOAN
-                                       where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
-                                       (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
-                                       select (decimal?)d.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
+                                   where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
+                                   (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
+                                   select (decimal?)d.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
                 outstandingRevolving = (from d in context.TBL_LOAN_REVOLVING
-                                       where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
-                                       (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
-                                       select (decimal?)d.OVERDRAFTLIMIT).Sum() ?? 0;
+                                        where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
+                                        (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
+                                        select (decimal?)d.OVERDRAFTLIMIT).Sum() ?? 0;
 
                 result.AccountOfficerNPLExposure = outstandingLoan + outstandingRevolving;
 
@@ -1665,11 +1665,11 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                              select (decimal?)d.APPROVEDAMOUNT).Sum() ?? 0;
 
             var approved = (from a in context.TBL_LOAN_APPLICATION
-                             join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                             where d.STATUSID == (short)ApprovalStatusEnum.Approved && a.APPROVEDDATE != null &&
-                             (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestCompleted &&
-                             a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestInitiated)
-                             select (decimal?)d.APPROVEDAMOUNT).Sum() ?? 0;
+                            join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                            where d.STATUSID == (short)ApprovalStatusEnum.Approved && a.APPROVEDDATE != null &&
+                            (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestCompleted &&
+                            a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestInitiated)
+                            select (decimal?)d.APPROVEDAMOUNT).Sum() ?? 0;
 
             result.InitiatedLoansBalance = initiated;
 
@@ -1681,14 +1681,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public bool BranchLimitExceeded(int branchId, decimal applicationAmount)
         {
             var outstandingLoan = (from a in context.TBL_LOAN
-                               where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
-                               a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                               select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
+                                   where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
+                                   a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                   select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
             var outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
-                                    where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
-                                    a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                                    select (decimal?)a.OVERDRAFTLIMIT).Sum() ?? 0;
+                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
+                                        a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                        select (decimal?)a.OVERDRAFTLIMIT).Sum() ?? 0;
 
             var branchNPLExposure = outstandingLoan + outstandingRevolving;
 
@@ -1720,7 +1720,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public bool SectorLimitExceeded(int sectorId, decimal applicationAmount)
         {
-           
+
             var subSector = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == sectorId).FirstOrDefault();
             var sectorCode = context.TBL_SECTOR.Find(subSector.SECTORID);
             var sectorsExposures = (from a in context.TBL_SECTOR_GLOBAL_LIMIT
@@ -1790,7 +1790,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         }
 
         public TotalExposureLimit GetTotalExposureLimitReference(string reference, int companyId)
-        { 
+        {
             var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == reference);
 
             if (appl == null) return new TotalExposureLimit();
@@ -1804,11 +1804,11 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingCategories()
         {
             var categories = (from a in context.TBL_PROJECT_RISK_RATING_CATEGORY
-                               select new ProjectRiskRatingCategoryViewModel
-                               {
-                                   categoryId = a.CATEGORYID,
-                                   categoryName = a.CATEGORYNAME
-                               }).ToList();
+                              select new ProjectRiskRatingCategoryViewModel
+                              {
+                                  categoryId = a.CATEGORYID,
+                                  categoryName = a.CATEGORYNAME
+                              }).ToList();
 
             return categories;
         }
@@ -2049,19 +2049,19 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public IEnumerable<ContractorCriteriaViewModel> getAllContractorCriteria()
         {
             var contractorCriteria = (from a in context.TBL_CONTRACTOR_CRITERIA
-                              select new ContractorCriteriaViewModel
-                              {
-                                  criteriaId = a.CRITERIAID,
-                                  criteria = a.CRITERIA,
-                                  tierOne = a.TIERONE,
-                                  tierTwo = a.TIERTWO,
-                                  tierThree = a.TIERTHREE,
-                                  options = context.TBL_CONTRACTOR_CRITERIA_OPTION.Where(x => x.CRITERIAID == a.CRITERIAID).Select(x => new ContractorCriteriaOptionViewModel
-                                  {
-                                      optionName = x.OPTIONNAME,
-                                      optionValue = x.OPTIONVALUE
-                                  }).ToList(),
-                              }).ToList();
+                                      select new ContractorCriteriaViewModel
+                                      {
+                                          criteriaId = a.CRITERIAID,
+                                          criteria = a.CRITERIA,
+                                          tierOne = a.TIERONE,
+                                          tierTwo = a.TIERTWO,
+                                          tierThree = a.TIERTHREE,
+                                          options = context.TBL_CONTRACTOR_CRITERIA_OPTION.Where(x => x.CRITERIAID == a.CRITERIAID).Select(x => new ContractorCriteriaOptionViewModel
+                                          {
+                                              optionName = x.OPTIONNAME,
+                                              optionValue = x.OPTIONVALUE
+                                          }).ToList(),
+                                      }).ToList();
 
             return contractorCriteria;
         }
@@ -2069,14 +2069,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public IEnumerable<ContractorCriteriaOptionViewModel> getAllContractorCriteriaOption()
         {
             var contractorCriteria = (from a in context.TBL_CONTRACTOR_CRITERIA_OPTION
-                                      
+
                                       select new ContractorCriteriaOptionViewModel
                                       {
                                           criteriaId = a.CRITERIAID,
                                           optionId = a.OPTIONID,
                                           optionName = a.OPTIONNAME,
                                           optionValue = a.OPTIONVALUE,
-                                          criteria = context.TBL_CONTRACTOR_CRITERIA.Where(c=>c.CRITERIAID == a.CRITERIAID).Select(c=>c.CRITERIA).FirstOrDefault(),
+                                          criteria = context.TBL_CONTRACTOR_CRITERIA.Where(c => c.CRITERIAID == a.CRITERIAID).Select(c => c.CRITERIA).FirstOrDefault(),
                                       }).ToList();
 
             return contractorCriteria;
@@ -2086,13 +2086,13 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         {
             var contractorTiering = (from a in context.TBL_CONTRACTOR_TIERING
                                      where a.LOANAPPLICATIONID == loanApplicationId && a.CUSTOMERID == customerId
-                                      select new ContractorTieringViewModel
-                                      {
-                                          contractorTierId = a.CONTRACTORTIERID,
-                                          loanApplicationId = a.LOANAPPLICATIONID,
-                                          customerId = a.CUSTOMERID,
-                                          actualValue = a.ACTUALVALUE
-                                      }).ToList();
+                                     select new ContractorTieringViewModel
+                                     {
+                                         contractorTierId = a.CONTRACTORTIERID,
+                                         loanApplicationId = a.LOANAPPLICATIONID,
+                                         customerId = a.CUSTOMERID,
+                                         actualValue = a.ACTUALVALUE
+                                     }).ToList();
 
             return contractorTiering;
         }
@@ -2102,7 +2102,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var contractorTiering = (from a in context.TBL_CONTRACTOR_TIERING
                                      join c in context.TBL_CONTRACTOR_CRITERIA on a.CONTRACTORCRITERIAID equals c.CRITERIAID
                                      where a.LOANAPPLICATIONID == loanApplicationId && a.CUSTOMERID == customerId
-                                     select new 
+                                     select new
                                      {
                                          contractorTierId = a.CONTRACTORTIERID,
                                          loanApplicationId = a.LOANAPPLICATIONID,
@@ -2118,17 +2118,17 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                          actualValue = a.actualValue
                                      }).ToList();
 
-                            var result = contractorTiering.Select(a => new ContractorTieringViewModel
-                            {
-                                contractorTierId = a.contractorTierId,
-                                loanApplicationId = a.loanApplicationId,
-                                customerId = a.customerId,
-                                criteria = a.criteria,
-                                actualValue = a.actualValue,
-                                computation = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == a.loanApplicationId).Sum(d => d.ACTUALVALUE),
-                            }).ToList();
+            var result = contractorTiering.Select(a => new ContractorTieringViewModel
+            {
+                contractorTierId = a.contractorTierId,
+                loanApplicationId = a.loanApplicationId,
+                customerId = a.customerId,
+                criteria = a.criteria,
+                actualValue = a.actualValue,
+                computation = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == a.loanApplicationId).Sum(d => d.ACTUALVALUE),
+            }).ToList();
 
-                            return result;
+            return result;
         }
 
 
@@ -2157,18 +2157,18 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public IEnumerable<ProjectRiskRatingCriteriaViewModel> getAllProjectRiskRatingCriteria()
         {
-            var contractorCriteria = (from a in context.TBL_PROJECT_RISK_RATING_CRITERIA
-                                      where a.PROJECTRISKRATINGCATEGORYID > 0
-                                      select new ProjectRiskRatingCriteriaViewModel
-                                      {
-                                          projectRiskRatingCriteriaId = a.PROJECTRISKRATINGCRITERIAID,
-                                          projectRiskRatingCategoryId = a.PROJECTRISKRATINGCATEGORYID,
-                                          criteria = a.CRITERIA,
-                                          criteriaValue = a.CRITERIAVALUE,
-                                          category = context.TBL_PROJECT_RISK_RATING_CATEGORY.Where(p=>p.CATEGORYID == a.PROJECTRISKRATINGCATEGORYID).Select(p=>p.CATEGORYNAME).FirstOrDefault()
-                                      }).ToList();
+            
+                return (from a in context.TBL_PROJECT_RISK_RATING_CRITERIA
+                        where a.PROJECTRISKRATINGCRITERIAID > 0
+                        select new ProjectRiskRatingCriteriaViewModel
+                        {
+                            projectRiskRatingCriteriaId = a.PROJECTRISKRATINGCRITERIAID,
+                            projectRiskRatingCategoryId = a.PROJECTRISKRATINGCATEGORYID,
+                            criteria = a.CRITERIA,
+                            criteriaValue = a.CRITERIAVALUE,
+                            category = context.TBL_PROJECT_RISK_RATING_CATEGORY.Where(p => p.CATEGORYID == a.PROJECTRISKRATINGCATEGORYID).Select(p => p.CATEGORYNAME).FirstOrDefault()
+                        }).ToList();
 
-            return contractorCriteria;
         }
 
         public IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingByCategories()

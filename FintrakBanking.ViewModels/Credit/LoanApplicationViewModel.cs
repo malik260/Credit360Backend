@@ -69,13 +69,18 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatus { get; set; }
         public int relationshipOfficerId { get; set; }
         public int? relationshipManagerId { get; set; }
+        public int daysPastDue { get; set; }
+        public DateTime? datePastDue { get; set; }
         public DateTime applicationDate { get; set; }
         public DateTime? applicationDateArch { get; set; }
         public decimal applicationAmount { get; set; }
         public decimal approvedAmount { get; set; }
+        public decimal monthlyPayment { get; set; }
         public double applicationTenor { get; set; }
         public double interestRate { get; set; }
         public DateTime ? effectiveDate { get; set; }
+        public DateTime ? bookingDate { get; set; }
+        public DateTime ? maturityDate { get; set; }
         public DateTime? expiryDate { get; set; }
         public string customerAccount { get; set; }
         public short tenorModeId { get; set; }
@@ -469,6 +474,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short sectorId { get; set; }
 
         public short? productClassId { get; set; }
+        public short? productTypeId { get; set; }
 
         public short? productClassProcessId { get; set; }
 
@@ -1194,6 +1200,11 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ProjectRiskRatingCategoryViewModel : GeneralEntity
     {
+        public ProjectRiskRatingCategoryViewModel()
+        {
+
+            criterias = new List<ProjectRiskRatingCriteriaViewModel>();
+        }
         public int categoryId { get; set; }
         public string categoryName { get; set; }
         public List<ProjectRiskRatingCriteriaViewModel> criterias { get; set; }

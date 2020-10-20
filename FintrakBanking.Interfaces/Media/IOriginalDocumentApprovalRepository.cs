@@ -28,7 +28,7 @@ namespace FintrakBanking.Interfaces.Media
         List<OriginalDocumentApprovalViewModel> GetOriginalDocumentByCollateralCustomerId(int id);
         List<OriginalDocumentApprovalViewModel> GetApprovedOriginalDocumentByCollateralCustomerId(int id);
 
-        bool GoForApproval(OriginalDocumentApprovalViewModel model, short? approvalStatusId);
+        WorkflowResponse GoForApproval(OriginalDocumentApprovalViewModel model, short? approvalStatusId);
 
         //bool SubmitApproval(OriginalDocumentApprovalViewModel entity);
         WorkflowResponse SubmitApproval(OriginalDocumentApprovalViewModel entity);

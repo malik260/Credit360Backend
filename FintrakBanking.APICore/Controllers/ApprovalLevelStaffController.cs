@@ -273,15 +273,15 @@ namespace FintrakBanking.APICore.Controllers
         {
             var token = new TokenDecryptionHelper();
 
-            
-                var data = repo.GetApprovalMointoring(dateRange);
+            dateRange.companyId = token.GetCompanyId;
+            var data = repo.GetApprovalMointoring(dateRange);
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
-                }
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             
         }
 
@@ -291,14 +291,15 @@ namespace FintrakBanking.APICore.Controllers
         {
             var token = new TokenDecryptionHelper();
 
-                var data = repo.GetBookingMointoring(dateRange);
+            dateRange.companyId = token.GetCompanyId;
+            var data = repo.GetBookingMointoring(dateRange);
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
-                }
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]

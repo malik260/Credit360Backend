@@ -20,6 +20,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using System.Globalization;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -1434,6 +1435,22 @@ namespace FintrakBanking.APICore.Controllers
             var data = repo.getLoanInterestRateAmount(entity.principalAmount, entity.interestRate, entity.effectiveDate, entity.maturityDate,(DayCountConventionEnum)entity.scheduleDayCountConventionId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" , result = data, isDicounted = isDicounted });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("employer-related-loan-data")]
+        public HttpResponseMessage GetEmployerRelatedData(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            var data = repo.GetEmployerRelatedData(token.GetStaffId, token.GetCompanyId, dateRange);
+
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]
