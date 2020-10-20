@@ -148,7 +148,9 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 DELETED = false,
-                REMARK = entity.remark
+                REMARK = entity.remark,
+                LOANREFERENCENUMBER = entity.loanReferenceNumber,
+                LOANREVIEWAPPLICATIONID = entity.loanReviewApplicationId
             };
             var model = context.TBL_LOAN_CONTINGENT_USAGE.Add(data);
             if (context.SaveChanges() > 0)
@@ -232,24 +234,24 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<ContingentLoansViewModel> GetRequestWaitingApprovalByOperation(int staffId)
         {
-            int[] operations = { (int)OperationsEnum.APS_RelaseChecklist, (int)OperationsEnum.APS_ReleaseCAP, (int)OperationsEnum.APS_ReleasePrincipaRequest };
+            //int[] operations = { (int)OperationsEnum.APS_RelaseChecklist, (int)OperationsEnum.APS_ReleaseCAP, (int)OperationsEnum.APS_ReleasePrincipaRequest };
 
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContingentLiabilityUsage).ToList();
 
             var applications = (from lcu in context.TBL_LOAN_CONTINGENT_USAGE
-                               join d in context.TBL_LMSR_APPLICATION_DETAIL on lcu.CONTINGENTLOANID equals d.LOANID
+                               join d in context.TBL_LMSR_APPLICATION_DETAIL on lcu.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
                                join l in context.TBL_LMSR_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                                join atrail in context.TBL_APPROVAL_TRAIL on lcu.CONTINGENTLOANUSAGEID equals atrail.TARGETID
                                where atrail.OPERATIONID == (int)OperationsEnum.ContingentLiabilityUsage
+                               && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                               || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                               || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised)
+                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                && atrail.RESPONSESTAFFID == null
-                    && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
-                        atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised ||
-                        atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                    && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                    && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
-                    && d.OPERATIONPERFORMED == true
-                               orderby lcu.CONTINGENTLOANUSAGEID descending
+                               && d.OPERATIONPERFORMED == true
+                               && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
 
+                                orderby lcu.CONTINGENTLOANUSAGEID descending
                                select new ContingentLoansViewModel
                                {
                                    contingentLoanUsageId = lcu.CONTINGENTLOANUSAGEID,
