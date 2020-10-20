@@ -284,7 +284,8 @@ namespace FintrakBanking.APICore.Providers
 
               // this section is for lisence validation
                  
-               /* */
+               /* license*/
+               /*
                 var result = authRepo.ExamineLicense();
                 if (result.Status == LicenseStatus.CorruptLicenseFile)
                 {
@@ -316,7 +317,7 @@ namespace FintrakBanking.APICore.Providers
                 {
                     context.SetError("invalid_grant", "Application License Version Mismatch!");
                     return;
-                } 
+                } */
                 
                 /*end of lisence validation*/
 
