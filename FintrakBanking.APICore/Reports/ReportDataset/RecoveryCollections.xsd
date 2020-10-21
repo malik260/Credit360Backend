@@ -205,6 +205,45 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="Rebooking" msprop:Generator_TableClassName="RebookingDataTable" msprop:Generator_TableVarName="tableRebooking" msprop:Generator_RowChangedName="RebookingRowChanged" msprop:Generator_TablePropName="Rebooking" msprop:Generator_RowDeletingName="RebookingRowDeleting" msprop:Generator_RowChangingName="RebookingRowChanging" msprop:Generator_RowEvHandlerName="RebookingRowChangeEventHandler" msprop:Generator_RowDeletedName="RebookingRowDeleted" msprop:Generator_RowClassName="RebookingRow" msprop:Generator_UserTableName="Rebooking" msprop:Generator_RowEvArgName="RebookingRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="loanReferenceNumber" msprop:Generator_ColumnVarNameInTable="columnloanReferenceNumber" msprop:Generator_ColumnPropNameInRow="loanReferenceNumber" msprop:Generator_ColumnPropNameInTable="loanReferenceNumberColumn" msprop:Generator_UserColumnName="loanReferenceNumber" type="xs:string" minOccurs="0" />
+              <xs:element name="customerName" msprop:Generator_ColumnVarNameInTable="columncustomerName" msprop:Generator_ColumnPropNameInRow="customerName" msprop:Generator_ColumnPropNameInTable="customerNameColumn" msprop:Generator_UserColumnName="customerName" type="xs:string" minOccurs="0" />
+              <xs:element name="facilityType" msprop:Generator_ColumnVarNameInTable="columnfacilityType" msprop:Generator_ColumnPropNameInRow="facilityType" msprop:Generator_ColumnPropNameInTable="facilityTypeColumn" msprop:Generator_UserColumnName="facilityType" type="xs:string" minOccurs="0" />
+              <xs:element name="guaranteeAmount" msprop:Generator_ColumnVarNameInTable="columnguaranteeAmount" msprop:Generator_ColumnPropNameInRow="guaranteeAmount" msprop:Generator_ColumnPropNameInTable="guaranteeAmountColumn" msprop:Generator_UserColumnName="guaranteeAmount" type="xs:string" minOccurs="0" />
+              <xs:element name="currentExposure" msprop:Generator_ColumnVarNameInTable="columncurrentExposure" msprop:Generator_ColumnPropNameInRow="currentExposure" msprop:Generator_ColumnPropNameInTable="currentExposureColumn" msprop:Generator_UserColumnName="currentExposure" type="xs:string" minOccurs="0" />
+              <xs:element name="previousExposure" msprop:Generator_ColumnVarNameInTable="columnpreviousExposure" msprop:Generator_ColumnPropNameInRow="previousExposure" msprop:Generator_ColumnPropNameInTable="previousExposureColumn" msprop:Generator_UserColumnName="previousExposure" type="xs:string" minOccurs="0" />
+              <xs:element name="rebookedAmount" msprop:Generator_ColumnVarNameInTable="columnrebookedAmount" msprop:Generator_ColumnPropNameInRow="rebookedAmount" msprop:Generator_ColumnPropNameInTable="rebookedAmountColumn" msprop:Generator_UserColumnName="rebookedAmount" type="xs:string" minOccurs="0" />
+              <xs:element name="dateRebooked" msprop:Generator_ColumnVarNameInTable="columndateRebooked" msprop:Generator_ColumnPropNameInRow="dateRebooked" msprop:Generator_ColumnPropNameInTable="dateRebookedColumn" msprop:Generator_UserColumnName="dateRebooked" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Amortization" msprop:Generator_TableClassName="AmortizationDataTable" msprop:Generator_TableVarName="tableAmortization" msprop:Generator_RowChangedName="AmortizationRowChanged" msprop:Generator_TablePropName="Amortization" msprop:Generator_RowDeletingName="AmortizationRowDeleting" msprop:Generator_RowChangingName="AmortizationRowChanging" msprop:Generator_RowEvHandlerName="AmortizationRowChangeEventHandler" msprop:Generator_RowDeletedName="AmortizationRowDeleted" msprop:Generator_RowClassName="AmortizationRow" msprop:Generator_UserTableName="Amortization" msprop:Generator_RowEvArgName="AmortizationRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="loanReferenceNumber" msprop:Generator_ColumnVarNameInTable="columnloanReferenceNumber" msprop:Generator_ColumnPropNameInRow="loanReferenceNumber" msprop:Generator_ColumnPropNameInTable="loanReferenceNumberColumn" msprop:Generator_UserColumnName="loanReferenceNumber" type="xs:string" minOccurs="0" />
+              <xs:element name="customerName" msprop:Generator_ColumnVarNameInTable="columncustomerName" msprop:Generator_ColumnPropNameInRow="customerName" msprop:Generator_ColumnPropNameInTable="customerNameColumn" msprop:Generator_UserColumnName="customerName" type="xs:string" minOccurs="0" />
+              <xs:element name="facilityType" msprop:Generator_ColumnVarNameInTable="columnfacilityType" msprop:Generator_ColumnPropNameInRow="facilityType" msprop:Generator_ColumnPropNameInTable="facilityTypeColumn" msprop:Generator_UserColumnName="facilityType" type="xs:string" minOccurs="0" />
+              <xs:element name="guaranteeAmount" msprop:Generator_ColumnVarNameInTable="columnguaranteeAmount" msprop:Generator_ColumnPropNameInRow="guaranteeAmount" msprop:Generator_ColumnPropNameInTable="guaranteeAmountColumn" msprop:Generator_UserColumnName="guaranteeAmount" type="xs:string" minOccurs="0" />
+              <xs:element name="currentExposure" msprop:Generator_ColumnVarNameInTable="columncurrentExposure" msprop:Generator_ColumnPropNameInRow="currentExposure" msprop:Generator_ColumnPropNameInTable="currentExposureColumn" msprop:Generator_UserColumnName="currentExposure" type="xs:string" minOccurs="0" />
+              <xs:element name="previousExposure" msprop:Generator_ColumnVarNameInTable="columnpreviousExposure" msprop:Generator_ColumnPropNameInRow="previousExposure" msprop:Generator_ColumnPropNameInTable="previousExposureColumn" msprop:Generator_UserColumnName="previousExposure" type="xs:string" minOccurs="0" />
+              <xs:element name="amortisedAmount" msdata:Caption="rebookedAmount" msprop:Generator_ColumnVarNameInTable="columnamortisedAmount" msprop:Generator_ColumnPropNameInRow="amortisedAmount" msprop:Generator_ColumnPropNameInTable="amortisedAmountColumn" msprop:Generator_UserColumnName="amortisedAmount" type="xs:string" minOccurs="0" />
+              <xs:element name="dateAmortised" msdata:Caption="dateRebooked" msprop:Generator_ColumnVarNameInTable="columndateAmortised" msprop:Generator_ColumnPropNameInRow="dateAmortised" msprop:Generator_ColumnPropNameInTable="dateAmortisedColumn" msprop:Generator_UserColumnName="dateAmortised" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Discharge" msprop:Generator_TableClassName="DischargeDataTable" msprop:Generator_TableVarName="tableDischarge" msprop:Generator_RowChangedName="DischargeRowChanged" msprop:Generator_TablePropName="Discharge" msprop:Generator_RowDeletingName="DischargeRowDeleting" msprop:Generator_RowChangingName="DischargeRowChanging" msprop:Generator_RowEvHandlerName="DischargeRowChangeEventHandler" msprop:Generator_RowDeletedName="DischargeRowDeleted" msprop:Generator_RowClassName="DischargeRow" msprop:Generator_UserTableName="Discharge" msprop:Generator_RowEvArgName="DischargeRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="loanReferenceNumber" msprop:Generator_ColumnVarNameInTable="columnloanReferenceNumber" msprop:Generator_ColumnPropNameInRow="loanReferenceNumber" msprop:Generator_ColumnPropNameInTable="loanReferenceNumberColumn" msprop:Generator_UserColumnName="loanReferenceNumber" type="xs:string" minOccurs="0" />
+              <xs:element name="customerName" msprop:Generator_ColumnVarNameInTable="columncustomerName" msprop:Generator_ColumnPropNameInRow="customerName" msprop:Generator_ColumnPropNameInTable="customerNameColumn" msprop:Generator_UserColumnName="customerName" type="xs:string" minOccurs="0" />
+              <xs:element name="facilityType" msprop:Generator_ColumnVarNameInTable="columnfacilityType" msprop:Generator_ColumnPropNameInRow="facilityType" msprop:Generator_ColumnPropNameInTable="facilityTypeColumn" msprop:Generator_UserColumnName="facilityType" type="xs:string" minOccurs="0" />
+              <xs:element name="guaranteeAmount" msprop:Generator_ColumnVarNameInTable="columnguaranteeAmount" msprop:Generator_ColumnPropNameInRow="guaranteeAmount" msprop:Generator_ColumnPropNameInTable="guaranteeAmountColumn" msprop:Generator_UserColumnName="guaranteeAmount" type="xs:string" minOccurs="0" />
+              <xs:element name="dateDischarged" msdata:Caption="dateRebooked" msprop:Generator_ColumnVarNameInTable="columndateDischarged" msprop:Generator_ColumnPropNameInRow="dateDischarged" msprop:Generator_ColumnPropNameInTable="dateDischargedColumn" msprop:Generator_UserColumnName="dateDischarged" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>

@@ -541,6 +541,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("monitoring/contingents-report")]
+        public HttpResponseMessage GetAllContingentsReport(DateRange dateRange)
+        {
+            try
+            {
+                var data = repo.GetAllContingentsReport(dateRange, token.GetCompanyId, token.GetStaffId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         //edited report diff from initial report
         [HttpPost]
         [ClaimsAuthorization]
