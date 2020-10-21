@@ -466,6 +466,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountOfficer { get; set; }
         public decimal? exposureOnGuarantee { get; set; }
         public string sbu { get; set; }
+        public decimal? rebookedAmount { get; set; }
+        public DateTime? dateRebooked { get; set; }
+        public decimal? currentExposure { get; set; }
+        public decimal? previousExposure { get; set; }
+        public DateTime? dateAmortised { get; set; }
+        public decimal? amortisedAmount { get; set; }
+        public DateTime? dateDischarged { get; set; }
 
 
 

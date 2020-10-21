@@ -933,6 +933,98 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
         }
 
+
+        //rebook report
+        public List<LoanViewModel> ContingentRebookingReport(DateTime startDate, DateTime endDate)
+        {
+            List<LoanViewModel> bondAndGuarantee = new List<LoanViewModel>();
+                bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
+                                    join b in context.TBL_LOAN_REVIEW_OPERATION on a.CONTINGENTLOANID equals b.LOANID
+                                    join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                                    join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                    join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                                    join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
+                                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+                                    where (a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate)
+                                    && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook
+                                    && b.OPERATIONCOMPLETED == true
+                                    orderby a.MATURITYDATE descending
+
+                                    select new LoanViewModel
+                                    {
+                                        relatedloanReferenceNumber = a.LOANREFERENCENUMBER,
+                                        customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+                                        facilityType = p.PRODUCTNAME +"-"+pt.PRODUCTTYPENAME,
+                                        guaranteeAmount = a.CONTINGENTAMOUNT,
+                                        rebookedAmount = b.CONTINGENTOUTSTANDINGPRINCIPAL,
+                                        dateRebooked = b.REBOOKDATE,
+                                        currentExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && b.REBOOKDATE >= startDate && b.REBOOKDATE <= endDate).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                        previousExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && b.REBOOKDATE < startDate && b.REBOOKDATE > endDate).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                    }).ToList();
+                
+                return bondAndGuarantee;
+            
+        }
+
+        public List<LoanViewModel> ContingentAmortizationReport(DateTime startDate, DateTime endDate)
+        {
+            List<LoanViewModel> bondAndGuarantee = new List<LoanViewModel>();
+            bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
+                                join b in context.TBL_LOAN_REVIEW_OPERATION on a.CONTINGENTLOANID equals b.LOANID
+                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                                join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
+                                join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+                                where (a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate)
+                                && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction
+                                && b.OPERATIONCOMPLETED == true
+                                orderby a.MATURITYDATE descending
+
+                                select new LoanViewModel
+                                {
+                                    relatedloanReferenceNumber = a.LOANREFERENCENUMBER,
+                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+                                    facilityType = p.PRODUCTNAME + "-" + pt.PRODUCTTYPENAME,
+                                    guaranteeAmount = a.CONTINGENTAMOUNT,
+                                    amortisedAmount = b.PREPAYMENT,
+                                    dateAmortised = b.OPERATIONDATE,
+                                    currentExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction && b.REBOOKDATE >= startDate && b.REBOOKDATE <= endDate).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                    previousExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction && b.REBOOKDATE < startDate && b.REBOOKDATE > endDate).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                }).ToList();
+
+            return bondAndGuarantee;
+
+        }
+
+        public List<LoanViewModel> ContingentDischargeReport(DateTime startDate, DateTime endDate)
+        {
+            List<LoanViewModel> bondAndGuarantee = new List<LoanViewModel>();
+            bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
+                                join b in context.TBL_LOAN_REVIEW_OPERATION on a.CONTINGENTLOANID equals b.LOANID
+                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                                join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
+                                join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+                                where (a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate)
+                                && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction
+                                && b.OPERATIONCOMPLETED == true
+                                orderby a.MATURITYDATE descending
+
+                                select new LoanViewModel
+                                {
+                                    relatedloanReferenceNumber = a.LOANREFERENCENUMBER,
+                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+                                    facilityType = p.PRODUCTNAME + "-" + pt.PRODUCTTYPENAME,
+                                    guaranteeAmount = a.CONTINGENTAMOUNT,
+                                    dateDischarged = b.OPERATIONDATE,
+                                }).ToList();
+
+            return bondAndGuarantee;
+
+        }
+
         private string getContractorTieringByApplicationAndCustomerBandG(int loanApplicationId, int customerId)
         {
             var loanApplication = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationId).LOANAPPLICATIONID;
