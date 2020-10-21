@@ -1956,6 +1956,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
                         customerId = c.c.CUSTOMERID,
                         customerCode = c.c.CUSTOMERCODE,
+                        customerName = c.c.TBL_CUSTOMER.FIRSTNAME + c.c.TBL_CUSTOMER.MIDDLENAME + c.c.TBL_CUSTOMER.LASTNAME,
                         currencyId = c.c.CURRENCYID,
                         currencyCode = c.c.TBL_CURRENCY.CURRENCYCODE,
                         baseCurrencyId = company.CURRENCYID,
