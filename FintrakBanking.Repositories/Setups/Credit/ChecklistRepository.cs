@@ -2684,7 +2684,7 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_CONDITION_DEFERRAL on a.LOANCONDITIONID equals b.LOANCONDITIONID
                         join c in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on a.LOANCONDITIONID equals atrail.TARGETID
-                        where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived || b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                        where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived) //|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                         
                         select new DeferredChecklistViewModel()
                         {
@@ -2695,7 +2695,7 @@ namespace FintrakBanking.Repositories.Credit
                             checklistStatus = a.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                             condition = a.CONDITION,
                             approvalStatusId = b.APPROVALSTATUSID,
-                            approvalStatusName = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                            approvalStatusName = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(x=>x.APPROVALSTATUSNAME).FirstOrDefault(),
                             deferralReason = b.DEFERRALREASON,
                             createdBy = c.TBL_STAFF.FIRSTNAME + " " + c.TBL_STAFF.LASTNAME,
                             dateCreated = b.DATETIMECREATED,

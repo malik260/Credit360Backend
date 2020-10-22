@@ -163,7 +163,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = model.CONTINGENTLOANUSAGEID;
                 workflow.Comment = "APS Request approval";
-                workflow.OperationId = (int)OperationsEnum.ContingentLiabilityUsage;
+                workflow.OperationId = (int)OperationsEnum.APSReleaseAPGApproval;
                 //workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                 workflow.ExternalInitialization = true;
                 workflow.LogActivity();
@@ -236,13 +236,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             //int[] operations = { (int)OperationsEnum.APS_RelaseChecklist, (int)OperationsEnum.APS_ReleaseCAP, (int)OperationsEnum.APS_ReleasePrincipaRequest };
 
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContingentLiabilityUsage).ToList();
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.APSReleaseAPGApproval).ToList();
 
             var applications = (from lcu in context.TBL_LOAN_CONTINGENT_USAGE
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on lcu.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
                                join l in context.TBL_LMSR_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                                join atrail in context.TBL_APPROVAL_TRAIL on lcu.CONTINGENTLOANUSAGEID equals atrail.TARGETID
-                               where atrail.OPERATIONID == (int)OperationsEnum.ContingentLiabilityUsage
+                               where atrail.OPERATIONID == (int)OperationsEnum.APSReleaseAPGApproval
                                && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
                                || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised)
@@ -377,7 +377,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool SaveContigentLoansUsageApproval(ApproveAPSRequestViewModel entity)
         {
             workflow.StaffId = entity.staffId;
-            workflow.OperationId = (int)OperationsEnum.ContingentLiabilityUsage;
+            workflow.OperationId = (int)OperationsEnum.APSReleaseAPGApproval;
             workflow.TargetId = entity.targetId;
             workflow.CompanyId = entity.companyId;
             workflow.StatusId = entity.approvalStatusId;
@@ -394,7 +394,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (lien == null) throw new SecureException("No lien has been placed");
                 string lienReferenceNumber = lien.LIENREFERENCENUMBER;
 
-                decimal oldLien = usage.TBL_LOAN_CONTINGENT.CONTINGENTAMOUNT; // ???? 
+                decimal oldLien = usage.TBL_LOAN_CONTINGENT.CONTINGENTAMOUNT; 
                 var casaAccountId = usage.TBL_LOAN_CONTINGENT.CASAACCOUNTID;
 
                 casaLien.ReleaseLien(new CasaLienViewModel

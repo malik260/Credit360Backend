@@ -59,6 +59,7 @@
     CollateralMaintenance = 54,
     StaffRoleCreation = 55,
     ContingentLiabilityUsage = 56,
+    APSReleaseAPGApproval = 280,
     ReassigningOfAccount = 57,
     LoanSales = 58,
     LoanRecapitilization = 59,
