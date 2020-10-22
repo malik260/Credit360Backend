@@ -137,7 +137,11 @@ namespace FintrakBanking.APICore.Controllers
             entity.staffId = token.GetStaffId;
 
             bool response = repo.SaveContigentLoansUsageApproval(entity);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            if(response == true)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = response });
         }
 
         [HttpGet]
