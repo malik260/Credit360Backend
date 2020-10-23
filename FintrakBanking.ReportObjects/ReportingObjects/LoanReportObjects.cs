@@ -5148,7 +5148,9 @@ namespace FintrakBanking.ReportObjects
                                                         // join cc in context.TBL_COLLATERAL_CASA on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                                                         join ca in context.TBL_CASA on l.CASAACCOUNTID equals ca.CASAACCOUNTID
                                                         // join v in context.TBL_COLLATERAL_VISITATION on cim.COLLATERALCUSTOMERID equals v.COLLATERALCUSTOMERID
+
                                                         join p in context.TBL_COLLATERAL_ITEM_POLICY on ccu.COLLATERALCUSTOMERID equals p.COLLATERALCUSTOMERID
+
                                                         join rm in context.TBL_STAFF on l.RELATIONSHIPMANAGERID equals rm.STAFFID
                                                         join pr in context.TBL_PRODUCT on l.PRODUCTID equals pr.PRODUCTID
                                                         join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
@@ -5158,13 +5160,17 @@ namespace FintrakBanking.ReportObjects
                                                         let glInfo = (from gl in context.TBL_CHART_OF_ACCOUNT
                                                                       join cst in context.TBL_CUSTOM_CHART_OF_ACCOUNT on gl.ACCOUNTCODE equals cst.PLACEHOLDERID
                                                                       join pr in context.TBL_PRODUCT on gl.GLACCOUNTID equals pr.PRINCIPALBALANCEGL
-                                                                      where pr.PRODUCTID == pr.PRODUCTID && cst.CURRENCYCODE == cur.CURRENCYCODE
+                                                                      //where pr.PRODUCTID == pr.PRODUCTID
+                                                                      //&& cst.CURRENCYCODE == cur.CURRENCYCODE
                                                                       select cst.ACCOUNTID).FirstOrDefault()
 
-                                                        where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
-                                                         && l.COMPANYID == companyid && loansWithCollateral.Contains(l.TERMLOANID) && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                                        //&& (b.BRANCHID == branchId || branchId == null || branchId == 0)
-                                                        //orderby cm.DATETIMECREATED descending
+                                                        //where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                                         //&& l.COMPANYID == companyid
+                                                         //&& loansWithCollateral.Contains(l.TERMLOANID) 
+                                                         //&& l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                                         //&& (b.BRANCHID == branchId || branchId == null || branchId == 0)
+                                                         //orderby cm.DATETIMECREATED descending
+
                                                         select new CollateralRegisterViewModel
                                                         {
                                                             customerID = c.CUSTOMERID,
@@ -5177,7 +5183,7 @@ namespace FintrakBanking.ReportObjects
                                                             //    grossBalance = 0,
                                                             collateralValueOmv = (Decimal)cim.OPENMARKETVALUE,
                                                             collateralValueEfsv = (Decimal)cim.FORCEDSALEVALUE,
-                                                            //collateralCoverage = ((Decimal)lapd.APPROVEDAMOUNT/ (Decimal)cim.SECURITYVALUE) * 100,
+                                                            collateralCoverage = ((Decimal)lapd.APPROVEDAMOUNT/ (Decimal)cim.SECURITYVALUE) * 100,
                                                             approvedAmount = lapd.APPROVEDAMOUNT,
                                                             securityValue = cim.SECURITYVALUE,
                                                             collateralLocation = cim.PROPERTYADDRESS,
@@ -5187,9 +5193,12 @@ namespace FintrakBanking.ReportObjects
 
                                                             //   dateOfCollateralInspection = v.VISITATIONDATE,
                                                             collateralCustomerID = cim.COLLATERALCUSTOMERID,
+
                                                             dateOfInsurance = p.STARTDATE,
                                                             expiryDate = p.ENDDATE,//(DateTime)l.TBL_LOAN_APPLICATION_DETAIL.EXPIRYDATE,   
+
                                                             //insuranceCompany = p.INSURANCECOMPANYNAME,
+
                                                             rmCode = rm.STAFFCODE,
                                                             rmName = rm.FIRSTNAME + " " + " " + rm.MIDDLENAME + " " + " " + rm.LASTNAME,
                                                             dateOfExpiration = l.TBL_LOAN_APPLICATION_DETAIL.EXPIRYDATE,
@@ -5203,36 +5212,36 @@ namespace FintrakBanking.ReportObjects
                                                         {
 
                                                             //var cc = context.TBL_LOAN_APPLICATION_DETAIL.Where(z=> z.LOANAPPLICATIONDETAILID == x.loanApplicationId).Select(o=>o)
-                                                            var collateralCov = (x.approvedAmount / x.securityValue) * 100;
+                                                            //var collateralCov = (x.approvedAmount / x.securityValue) * 100;
 
-                                                            if (collateralCov != null)
-                                                            {
-                                                                x.collateralCoverage = collateralCov;
-                                                            }
-                                                            else if (collateralCov == null)
-                                                            {
-                                                                x.collateralCoverage = 0.0M;
-                                                            }
-                                                            var visitation = context.TBL_COLLATERAL_VISITATION.Where(z => z.COLLATERALCUSTOMERID == x.collateralCustomerID).Select(o => o.VISITATIONDATE).FirstOrDefault();
+                                                            //if (collateralCov != null)
+                                                            //{
+                                                            //    x.collateralCoverage = collateralCov;
+                                                            //}
+                                                            //else if (collateralCov == null)
+                                                            //{
+                                                            //    x.collateralCoverage = 0.0M;
+                                                            //}
+                                                            //var visitation = context.TBL_COLLATERAL_VISITATION.Where(z => z.COLLATERALCUSTOMERID == x.collateralCustomerID).Select(o => o.VISITATIONDATE).FirstOrDefault();
 
-                                                            if (visitation != null)
-                                                            {
-                                                                x.dateOfCollateralInspection = visitation;
-                                                            }
-                                                            else
-                                                            {
-                                                                x.dateOfCollateralInspection = null;
-                                                            }
-                                                            var nov = context.TBL_COLLATERAL_VALUER.Where(z => z.COLLATERALVALUERID == x.valuerId).Select(o => o.NAME).FirstOrDefault();
+                                                            //if (visitation != null)
+                                                            //{
+                                                            //    x.dateOfCollateralInspection = visitation;
+                                                            //}
+                                                            //else
+                                                            //{
+                                                            //    x.dateOfCollateralInspection = null;
+                                                            //}
+                                                            //var nov = context.TBL_COLLATERAL_VALUER.Where(z => z.COLLATERALVALUERID == x.valuerId).Select(o => o.NAME).FirstOrDefault();
 
-                                                            if (nov != null)
-                                                            {
-                                                                x.nameOfValuer = nov;
-                                                            }
-                                                            else if (nov == null)
-                                                            {
-                                                                x.nameOfValuer = "N/A";
-                                                            }
+                                                            //if (nov != null)
+                                                            //{
+                                                            //    x.nameOfValuer = nov;
+                                                            //}
+                                                            //else if (nov == null)
+                                                            //{
+                                                            //    x.nameOfValuer = "N/A";
+                                                            //}
 
                                                             //var businessUnitName = misInfo.Where(z => z.FIELD1 == x.misCode).Select(z => z.FIELD8).FirstOrDefault();
 
