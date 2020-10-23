@@ -2688,6 +2688,7 @@ namespace FintrakBanking.Repositories.Credit
                         
                         select new DeferredChecklistViewModel()
                         {
+                            targetId = atrail.TARGETID,
                             checklistDeferralId = b.CHECKLISTDEFERRALID,
                             deferredDate = b.DEFERREDDATE,
                             conditionId = b.LOANCONDITIONID,
@@ -2705,7 +2706,8 @@ namespace FintrakBanking.Repositories.Credit
                             toApprovalLevelName = atrail.TOSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.TOSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                             fromApprovalLevelName = atrail.REQUESTSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                         });
-            return data;
+            var records = data.GroupBy(x => x.targetId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.targetId); ;
+            return records;
         }
         public IEnumerable<DeferredChecklistViewModel> GetAllDeferralChecklist()
         {
