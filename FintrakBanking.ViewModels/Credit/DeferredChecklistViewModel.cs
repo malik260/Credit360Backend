@@ -30,5 +30,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int? deferredDays { get; set; }
         public int customerId { get; set; }
         public int accountOfficer { get; set; }
+        public int targetId { get; set; }
     }
 }
