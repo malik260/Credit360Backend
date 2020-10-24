@@ -608,6 +608,14 @@ namespace FintrakBanking.Repositories.Credit
                     if (staffRole.staffRoleCode == "AMCON OFFICER") {
                         foreach (var item in documents) {
                             item.ISONAMCONLIST = model.isOnAmconList;
+                        }
+                    }
+
+                    if (staffRole.staffRoleCode == "CRM VAULT OFFICER")
+                    {
+                        foreach (var item in documents)
+                        {
+                            item.ISONAMCONLIST = model.isOnAmconList;
                             item.NUMBEROFTIMESAPPROVE = item.NUMBEROFTIMESAPPROVE + 1;
                         }
                     }
