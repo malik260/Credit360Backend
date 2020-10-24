@@ -33,7 +33,7 @@
               <Width>3.7829cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>3.4525cm</Width>
+              <Width>3.98167cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>4.19334cm</Width>
@@ -1841,10 +1841,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>CollateralRegister</DataSetName>
-        <Top>3.03953cm</Top>
-        <Left>3.09245cm</Left>
+        <Top>2.6253cm</Top>
+        <Left>0.94932cm</Left>
         <Height>1.2cm</Height>
-        <Width>84.79021cm</Width>
+        <Width>85.31938cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1858,13 +1858,6 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value xml:space="preserve">             </Value>
-                <Style>
-                  <FontFamily>Garamond</FontFamily>
-                  <FontSize>14pt</FontSize>
-                </Style>
-              </TextRun>
-              <TextRun>
                 <Value>Collateral Register Report</Value>
                 <Style>
                   <FontFamily>Verdana</FontFamily>
@@ -1873,12 +1866,14 @@
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox52</rd:DefaultName>
         <Top>1.61079cm</Top>
-        <Left>1.3462cm</Left>
+        <Left>0.94932cm</Left>
         <Height>0.83812cm</Height>
         <Width>10.51688cm</Width>
         <ZIndex>1</ZIndex>
@@ -1898,30 +1893,6 @@
         <Paragraphs>
           <Paragraph>
             <TextRuns>
-              <TextRun>
-                <Value xml:space="preserve">             </Value>
-                <Style>
-                  <FontFamily>Garamond</FontFamily>
-                  <FontSize>15pt</FontSize>
-                </Style>
-              </TextRun>
-              <TextRun>
-                <Value xml:space="preserve"> </Value>
-                <Style>
-                  <FontFamily>Garamond</FontFamily>
-                  <FontSize>15pt</FontSize>
-                  <FontWeight>Heavy</FontWeight>
-                </Style>
-              </TextRun>
-              <TextRun>
-                <Value xml:space="preserve"> </Value>
-                <Style>
-                  <FontFamily>Verdana</FontFamily>
-                  <FontSize>15pt</FontSize>
-                  <FontWeight>Heavy</FontWeight>
-                  <Color>DarkBlue</Color>
-                </Style>
-              </TextRun>
               <TextRun>
                 <Value>Access Bank Plc</Value>
                 <Style>
@@ -1954,7 +1925,7 @@
     <Height>2in</Height>
     <Style />
   </Body>
-  <Width>34.59947in</Width>
+  <Width>34.80781in</Width>
   <Page>
     <PageHeader>
       <Height>2.54cm</Height>
