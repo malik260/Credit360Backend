@@ -263,7 +263,7 @@ namespace FintrakBanking.Repositories.Credit
                              litigationStatusId = dr.LITIGATIONSTATUSID,
                              isOnAmconList = dr.ISONAMCONLIST,
                              isAmconList = dr.ISONAMCONLIST !=null ? ((dr.ISONAMCONLIST == true) ? "Yes": "No") : "N/A",
-                             perfectionStatus = _context.TBL_COLLATERAL_PERFECTN_STAT.Where(p=>p.PERFECTIONSTATUSID == dr.PERFECTIONSTATUSID).Select(p=>p.PERFECTIONSTATUSNAME).FirstOrDefault(),
+                             perfectionStatus = dr.PERFECTIONSTATUSID !=null ? _context.TBL_COLLATERAL_PERFECTN_STAT.Where(p=>p.PERFECTIONSTATUSID == dr.PERFECTIONSTATUSID).Select(p=>p.PERFECTIONSTATUSNAME).FirstOrDefault() : "N/A",
                              litigationStatus = dr.LITIGATIONSTATUSID != null ? ((dr.LITIGATIONSTATUSID == 1) ? "Ongoing Court Case" : "No Ongoing Court Case") : "N/A",
                          };
 
