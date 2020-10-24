@@ -615,7 +615,6 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         foreach (var item in documents)
                         {
-                            item.ISONAMCONLIST = model.isOnAmconList;
                             item.NUMBEROFTIMESAPPROVE = item.NUMBEROFTIMESAPPROVE + 1;
                         }
                     }
