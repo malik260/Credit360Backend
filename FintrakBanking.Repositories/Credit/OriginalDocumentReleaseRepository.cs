@@ -262,6 +262,7 @@ namespace FintrakBanking.Repositories.Credit
                              perfectionStatusId = dr.PERFECTIONSTATUSID,
                              litigationStatusId = dr.LITIGATIONSTATUSID,
                              isOnAmconList = dr.ISONAMCONLIST,
+                             numberOfTimesApprove = dr.NUMBEROFTIMESAPPROVE,
                              isAmconList = dr.ISONAMCONLIST !=null ? ((dr.ISONAMCONLIST == true) ? "Yes": "No") : "N/A",
                              perfectionStatus = dr.PERFECTIONSTATUSID !=null ? _context.TBL_COLLATERAL_PERFECTN_STAT.Where(p=>p.PERFECTIONSTATUSID == dr.PERFECTIONSTATUSID).Select(p=>p.PERFECTIONSTATUSNAME).FirstOrDefault() : "N/A",
                              litigationStatus = dr.LITIGATIONSTATUSID != null ? ((dr.LITIGATIONSTATUSID == 1) ? "Ongoing Court Case" : "No Ongoing Court Case") : "N/A",
@@ -607,6 +608,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (staffRole.staffRoleCode == "AMCON OFFICER") {
                         foreach (var item in documents) {
                             item.ISONAMCONLIST = model.isOnAmconList;
+                            item.NUMBEROFTIMESAPPROVE = item.NUMBEROFTIMESAPPROVE + 1;
                         }
                     }
 
