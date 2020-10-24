@@ -5164,12 +5164,12 @@ namespace FintrakBanking.ReportObjects
                                                                       //&& cst.CURRENCYCODE == cur.CURRENCYCODE
                                                                       select cst.ACCOUNTID).FirstOrDefault()
 
-                                                        //where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
-                                                         //&& l.COMPANYID == companyid
+                                                        where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                                        //&& l.COMPANYID == companyid
                                                          //&& loansWithCollateral.Contains(l.TERMLOANID) 
                                                          //&& l.LOANSTATUSID == (short)LoanStatusEnum.Active
                                                          //&& (b.BRANCHID == branchId || branchId == null || branchId == 0)
-                                                         //orderby cm.DATETIMECREATED descending
+                                                         orderby cm.DATETIMECREATED descending
 
                                                         select new CollateralRegisterViewModel
                                                         {
@@ -5211,7 +5211,7 @@ namespace FintrakBanking.ReportObjects
 
                                                         {
 
-                                                            //var cc = context.TBL_LOAN_APPLICATION_DETAIL.Where(z=> z.LOANAPPLICATIONDETAILID == x.loanApplicationId).Select(o=>o)
+                                                            var cc = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONDETAILID == x.loanApplicationId).Select(o => o);
                                                             //var collateralCov = (x.approvedAmount / x.securityValue) * 100;
 
                                                             //if (collateralCov != null)
@@ -5222,26 +5222,26 @@ namespace FintrakBanking.ReportObjects
                                                             //{
                                                             //    x.collateralCoverage = 0.0M;
                                                             //}
-                                                            //var visitation = context.TBL_COLLATERAL_VISITATION.Where(z => z.COLLATERALCUSTOMERID == x.collateralCustomerID).Select(o => o.VISITATIONDATE).FirstOrDefault();
+                                                            var visitation = context.TBL_COLLATERAL_VISITATION.Where(z => z.COLLATERALCUSTOMERID == x.collateralCustomerID).Select(o => o.VISITATIONDATE).FirstOrDefault();
 
-                                                            //if (visitation != null)
-                                                            //{
-                                                            //    x.dateOfCollateralInspection = visitation;
-                                                            //}
-                                                            //else
-                                                            //{
-                                                            //    x.dateOfCollateralInspection = null;
-                                                            //}
-                                                            //var nov = context.TBL_COLLATERAL_VALUER.Where(z => z.COLLATERALVALUERID == x.valuerId).Select(o => o.NAME).FirstOrDefault();
+                                                            if (visitation != null)
+                                                            {
+                                                                x.dateOfCollateralInspection = visitation;
+                                                            }
+                                                            else
+                                                            {
+                                                                x.dateOfCollateralInspection = null;
+                                                            }
+                                                            var nov = context.TBL_COLLATERAL_VALUER.Where(z => z.COLLATERALVALUERID == x.valuerId).Select(o => o.NAME).FirstOrDefault();
 
-                                                            //if (nov != null)
-                                                            //{
-                                                            //    x.nameOfValuer = nov;
-                                                            //}
-                                                            //else if (nov == null)
-                                                            //{
-                                                            //    x.nameOfValuer = "N/A";
-                                                            //}
+                                                            if (nov != null)
+                                                            {
+                                                                x.nameOfValuer = nov;
+                                                            }
+                                                            else if (nov == null)
+                                                            {
+                                                                x.nameOfValuer = "N/A";
+                                                            }
 
                                                             //var businessUnitName = misInfo.Where(z => z.FIELD1 == x.misCode).Select(z => z.FIELD8).FirstOrDefault();
 
