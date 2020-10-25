@@ -2095,7 +2095,7 @@ namespace FintrakBanking.Repositories.Credit
             var availableAmount = lc.LCTOLERANCEVALUE - totalReleasedAmount;
             if (model.releaseAmount > availableAmount)
             {
-                throw new SecureException("Sorry, Released Amount is now " + currCode + " " + availableAmount);
+                throw new SecureException("Sorry, available Amount for release is now " + currCode + " " + availableAmount);
             }
             lc.RELEASEDAMOUNT = totalReleasedAmount;
             context.SaveChanges();
@@ -2261,35 +2261,20 @@ namespace FintrakBanking.Repositories.Credit
             
 
             data.OrderByDescending(d => d.approvalTrailId);
-            //foreach(var d in data)
-            //{
-            //    if (d.fromApprovalLevelId == d.toApprovalLevelId)
-            //    {
-            //        if (d.loopedStaffId > 0)
-            //        {
-            //            d.toApprovalLevelName = staffs.FirstOrDefault(s => s.STAFFID == d.loopedStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
-            //        }
-            //        else
-            //        {
-            //            d.fromApprovalLevelName = staffs.FirstOrDefault(s => s.STAFFID == d.requestStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
-            //        }
-            //    }
-            //}
-
-            //for Filtering multiple occuring levels
-            //var data2 = data.ToList();
-            //var testData = data.ToList();
-            //foreach (var t in testData)
-            //{
-            //    var firstTrailForLevel = testData.OrderBy(x => x.approvalTrailId).FirstOrDefault(x => x.fromApprovalLevelId == t.fromApprovalLevelId);
-            //    var multipleTrails = testData.Where(d => d.fromApprovalLevelId == firstTrailForLevel.fromApprovalLevelId && d.approvalTrailId != firstTrailForLevel.approvalTrailId).ToList();
-            //    foreach (var tr in multipleTrails)
-            //    {
-            //        data2.RemoveAll(d => d.approvalTrailId == tr.approvalTrailId);
-            //    }
-            //}
-            //data = data2;
-            //data.OrderByDescending(d => d.approvalTrailId);
+            foreach (var d in data)
+            {
+                if (d.fromApprovalLevelId == d.toApprovalLevelId)
+                {
+                    if (d.loopedStaffId > 0)
+                    {
+                        d.toApprovalLevelName = staffs.FirstOrDefault(s => s.STAFFID == d.loopedStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
+                    }
+                    else
+                    {
+                        d.fromApprovalLevelName = staffs.FirstOrDefault(s => s.STAFFID == d.requestStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
+                    }
+                }
+            }
 
             return data;
         }

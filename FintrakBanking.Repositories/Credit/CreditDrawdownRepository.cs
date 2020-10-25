@@ -71,19 +71,24 @@ namespace FintrakBanking.Repositories.Credit
                     });
         }
 
-        public WorkflowResponse LogApprovalForMessage(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId)
+        public WorkflowResponse LogApprovalForMessage(ForwardViewModel model, bool externalInitialization, bool saveChanges = false)
         {
             workflow.StaffId = model.createdBy;
-            workflow.OperationId = operationId;
-            workflow.TargetId = model.applicationId;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId > 0 ? model.applicationId : model.targetId;
             workflow.CompanyId = model.companyId;
             workflow.Comment = model.comment;
             workflow.ExternalInitialization = externalInitialization;
-            workflow.StatusId = ApprovalStatusId;
+            workflow.StatusId = model.forwardAction;
             workflow.DeferredExecution = true;
             workflow.Amount = model.amount;
             
             workflow.LogActivity();
+
+            if (saveChanges)
+            {
+                context.SaveChanges();
+            }
 
             return workflow.Response;
         }
@@ -1859,28 +1864,38 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (requestedFacility.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
                 {
-                    LogApprovalForMessage(approvalModel, (short)OperationsEnum.CreditCardDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    approvalModel.operationId = (short)OperationsEnum.CreditCardDrawdownRequest;
+                    approvalModel.forwardAction = (int)ApprovalStatusEnum.Pending;
+                    LogApprovalForMessage(approvalModel, true);
                 }
                 else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
                 {
                     if (requestedFacility.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
                     {
-                        LogApprovalForMessage(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                        approvalModel.operationId = (short)OperationsEnum.CorporateDrawdownRequest;
+                        approvalModel.forwardAction = (int)ApprovalStatusEnum.Pending;
+                        LogApprovalForMessage(approvalModel, true);
                     }
                     else
                     {
-                        LogApprovalForMessage(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                        approvalModel.operationId = (short)OperationsEnum.IndividualDrawdownRequest;
+                        approvalModel.forwardAction = (int)ApprovalStatusEnum.Pending;
+                        LogApprovalForMessage(approvalModel, true);
                     }
                 }
                 else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
                 {
                     if (GetRevolvingTrancheDisbursementOperationId(loanApplicationDetails.LOANAPPLICATIONDETAILID))
                     {
-                        LogApprovalForMessage(approvalModel, (short)OperationsEnum.RevolvingTranchDisbursement, true, (int)ApprovalStatusEnum.Pending);
+                        approvalModel.operationId = (short)OperationsEnum.RevolvingTranchDisbursement;
+                        approvalModel.forwardAction = (int)ApprovalStatusEnum.Pending;
+                        LogApprovalForMessage(approvalModel, true);
                     }
                     else
                     {
-                        LogApprovalForMessage(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                        approvalModel.operationId = (short)OperationsEnum.CorporateDrawdownRequest;
+                        approvalModel.forwardAction = (int)ApprovalStatusEnum.Pending;
+                        LogApprovalForMessage(approvalModel, true);
                     }
                 }
                 trans.Rollback();

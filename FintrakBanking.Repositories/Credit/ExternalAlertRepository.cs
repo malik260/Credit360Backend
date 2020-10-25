@@ -2131,7 +2131,7 @@ namespace FintrakBanking.Repositories.Credit
                                applicationStatusId = a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
                                submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                                loanInformation = a.LOANPURPOSE,
-                               isLMS = c.ISLMS == true,
+                               isLms = c.ISLMS == true,
                                reason = c.DEFERRALREASON,
                            }).ToList();
 
