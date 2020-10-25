@@ -10821,54 +10821,40 @@ namespace FintrakBanking.Repositories.Credit
             var customerId = customer.FirstOrDefault()?.customerId;
             var allGroupMappings = GetCustomerGroupMapping();
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
-            var customerIsAGroupMember = allGroupMappings.Any(m => m.customerId == customerId);
-            if (customerIsAGroupMember)
+            
+            if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
             {
-                var mappings = new List<CustomerGroupMappingViewModel>();
-                var customerGroups = allGroupMappings.Where(m => m.customerId == customerId).ToList();
-                var allGroupIds = customerGroups.Select(m => m.customerGroupId).Distinct().ToList();
-                foreach (var groupId in allGroupIds)
-                {
-                    var mapping = allGroupMappings.Where(m => m.customerGroupId == groupId).ToList();
-                    mappings.AddRange(mapping);
-                }
+                var customerGroupMappings = new List<CustomerGroupMappingViewModel>();
+                var mappings = allGroupMappings.Where(m => m.customerGroupId == customerId).ToList();
+
                 if (mappings.Count() > 0)
                 {
                     customer = mappings.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
                 }
             }
-            if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
+            else
             {
-                var customerGroupMappings = new List<CustomerGroupMappingViewModel>();
-                var mappings = allGroupMappings.Where(m => m.customerGroupId == customerId).ToList();
-                //foreach(var customerGroup in customerGroups)
-                //{
-                //   var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
-                //                                where a.CUSTOMERGROUPID == customerGroup.customerGroupId && a.DELETED == false
-                //                                select new CustomerGroupMappingViewModel
-                //                                {
-                //                                    customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
-                //                                    customerGroupId = a.CUSTOMERGROUPID,
-                //                                    relationshipTypeId = a.RELATIONSHIPTYPEID,
-                //                                    relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
-                //                                    customerId = a.CUSTOMERID,
-                //                                    customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                //                                    customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
-                //                                    customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                //                                }).ToList();
-                //    if (customerGroupMapping.Count() > 0) customerGroupMappings.AddRange(customerGroupMapping);
-                //}
-
-                if (mappings.Count() > 0)
+                var customerIsAGroupMember = allGroupMappings.Any(m => m.customerId == customerId);
+                if (customerIsAGroupMember)
                 {
-                    customer = mappings.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                    var mappings = new List<CustomerGroupMappingViewModel>();
+                    var customerGroups = allGroupMappings.Where(m => m.customerId == customerId).ToList();
+                    var allGroupIds = customerGroups.Select(m => m.customerGroupId).Distinct().ToList();
+                    foreach (var groupId in allGroupIds)
+                    {
+                        var mapping = allGroupMappings.Where(m => m.customerGroupId == groupId).ToList();
+                        mappings.AddRange(mapping);
+                    }
+                    if (mappings.Count() > 0)
+                    {
+                        customer = mappings.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                    }
                 }
             }
 
             foreach (var item in customer)
             {
                 var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId)?.CUSTOMERCODE.Trim();
-                //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
                 exposure = (from a in context.TBL_GLOBAL_EXPOSURE
                             where a.CUSTOMERID.Contains(customerCode)
