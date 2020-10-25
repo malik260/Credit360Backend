@@ -226,7 +226,8 @@ namespace FintrakBanking.Repositories.Credit
             var query = (from l in context.TBL_LETTER_GENERATION_REQUEST
                          where
                             (l.DELETED == false
-                            && l.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LetterGenerationRequestInProgress)
+                            //&& l.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LetterGenerationRequestInProgress
+                            )
                          orderby l.DATEACTEDON
                          join b in context.TBL_APPROVAL_TRAIL on l.LETTERGENERATIONREQUESTID equals b.TARGETID
                          where
