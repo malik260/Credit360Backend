@@ -11913,7 +11913,7 @@ namespace FintrakBanking.Repositories.Credit
                                applicationStatusId = a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
                                submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                                loanInformation = a.LOANPURPOSE,
-                               isLMS = c.ISLMS == true,
+                               isLms = c.ISLMS == true,
                                reason = c.DEFERRALREASON
                            }).ToList();
 
@@ -11953,7 +11953,7 @@ namespace FintrakBanking.Repositories.Credit
                                applicationStatusId = 0,//a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
                                submittedForAppraisal = true,//a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                                loanInformation = "",//a.LOANPURPOSE
-                               isLMS = c.ISLMS == true
+                               isLms = c.ISLMS == true
                            }).ToList();
 
 

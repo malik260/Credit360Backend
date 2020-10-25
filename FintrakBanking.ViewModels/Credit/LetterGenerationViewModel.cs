@@ -26,6 +26,7 @@ namespace FintrakBanking.ViewModels.Credit
         //public DateTime applicationDate { get; set; }
 
         public int requestType { get; set; }
+        public int requestTypeName { get; set; }
 
         public short? approvalStatusId { get; set; }
 

@@ -243,6 +243,7 @@ namespace FintrakBanking.Repositories.Credit
                              requestId = l.LETTERGENERATIONREQUESTID,
                              requestDate = l.REQUESTDATE,
                              requestType = l.REQUESTTYPE,
+                             approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                              asAtDate = l.ASATDATE,
                              comment = l.COMMENTS,
                              customerId = l.CUSTOMERID,

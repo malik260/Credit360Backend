@@ -115,6 +115,7 @@
         public bool? ISINTERVENTIONFUNDS { get; set; }
         public bool? WITHINSTRUCTION { get; set; }
         public bool? DOMICILIATIONNOTINPLACE { get; set; }
+        public decimal TOTALEXPOSUREAMOUNT { get; set; }
 
     }
 }
