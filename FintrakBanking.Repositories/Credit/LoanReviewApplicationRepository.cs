@@ -1431,8 +1431,8 @@ namespace FintrakBanking.Repositories.Credit
                                                             appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.ContingentLiability));
                     workflow.LevelBusinessRule = new LevelBusinessRule
                     {
-                        Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                        PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                        Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT), // totalApplicationAmount,
+                        PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT), // totalApplicationAmount,
                         Pep = model.politicallyExposed,
                         //InsiderRelated = appl.ISRELATEDPARTY ?? false,
                         ProjectRelated = appl.ISPROJECTRELATED ?? false,

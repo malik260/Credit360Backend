@@ -3107,7 +3107,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal obligorGFSProposedAmount = 0;
             if (isLMS)
             {
-                obligorGFSProposedAmount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT);
+                obligorGFSProposedAmount = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT);
             }
             else
             {
