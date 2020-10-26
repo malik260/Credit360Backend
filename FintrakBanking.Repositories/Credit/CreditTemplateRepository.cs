@@ -845,7 +845,7 @@ var qry = Foo.GroupJoin(
                 .ToList();
         }
 
-        public dynamic GetIsLLLVilated(int operationId, int targetId)
+        public dynamic GetIsLLLViolated(int operationId, int targetId)
         {
             memo.Init(operationId, targetId);
             //return new ()

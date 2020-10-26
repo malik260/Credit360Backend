@@ -70,10 +70,11 @@ namespace FintrakBanking.Repositories.Credit
         List<TBL_LMSR_APPLICATION_DETAIL> customerFacilitiesLms = null;
         List<CurrentCustomerExposure> globalExposure = new List<CurrentCustomerExposure>();
         int customerId;
-        private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
+        //private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
+        private List<int> lmsCamOperationIds = new List<int>();
         private long legalLendingLimit;
         //private long legalLendingLimit = 200000000000;
-
+        
         // place holders
         private readonly string customerNameHolder = "@{{CustomerName}}";
         private readonly string branchNameHolder = "@{{Branch}}";
@@ -449,6 +450,7 @@ namespace FintrakBanking.Repositories.Credit
 
             this.targetId = targetId;
             this.operationId = operationId;
+            this.lmsCamOperationIds = context.TBL_OPERATIONS.Where(o => o.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication).Select(o => o.OPERATIONID).ToList();
             if (operationId == (int)OperationsEnum.CreditAppraisal) // LOS 
             {
                 if (loanApplication == null)
@@ -660,6 +662,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
+                this.globalExposure = GetExposuresLMS();
                 this.groupExposure = GetGroupExposureMarkupLMS();
                 this.approvals = GetApprovalsMarkup();
                 this.currentDate = DateTime.Now.ToShortDateString();
@@ -3099,12 +3102,21 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        public decimal GetApprovalAmount()
+        public decimal GetApprovalAmount(bool isLMS = false)
         {
-            var totalSummary = GetTotalFacilitiesNGNLOS();
-            var totalSumaryFCY = GetTotalForeignFacilitiesLOS();
-            totalSummary.AddRange(totalSumaryFCY);
-            var obligorGFSProposedAmount = totalSummary.Sum(f => f.totalProposedAmount);
+            decimal obligorGFSProposedAmount = 0;
+            if (isLMS)
+            {
+                obligorGFSProposedAmount = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT);
+            }
+            else
+            {
+                var totalSummary = GetTotalFacilitiesNGNLOS();
+                var totalSumaryFCY = GetTotalForeignFacilitiesLOS();
+                totalSummary.AddRange(totalSumaryFCY);
+                obligorGFSProposedAmount = totalSummary.Sum(f => f.totalProposedAmount);
+            }
+            
 
             var custCode = context.TBL_CUSTOMER.Find(loanApplication?.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID)?.CUSTOMERCODE;
             var exposures = this.globalExposure.Where(e => e.customerCode != custCode).ToList();
