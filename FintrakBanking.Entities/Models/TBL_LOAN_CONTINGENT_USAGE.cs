@@ -22,6 +22,9 @@ namespace FintrakBanking.Entities.Models
         [Required]
         //[StringLength(2000)]
         public string REMARK { get; set; }
+        public string LOANREFERENCENUMBER { get; set; }
+        public int LOANREVIEWAPPLICATIONID { get; set; }
+
 
         public int CREATEDBY { get; set; }
 

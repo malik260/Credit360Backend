@@ -725,7 +725,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private String SetResponseMessage(WorkflowResponse response, string itemHeading = "")
         {
             var statuses = context.TBL_APPROVAL_STATUS.ToList();
-            var isFinishing = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId && x.OPERATIONID == operationId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && x.RESPONSESTAFFID == null).ToList();
+            //var isFinishing = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId && x.OPERATIONID == operationId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && x.RESPONSESTAFFID == null).ToList();
             if (response.stateId != (int)ApprovalState.Ended)
             {
                 if (response.statusId == (int)ApprovalStatusEnum.Referred)
@@ -1245,7 +1245,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             if (this.nextLevelId > 0)
-            {//to make sure is reviewer trail is logged
+            {//to enable isReviewer trail to be logged later
                 var level = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
                 var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
                 if (isReviewer)
@@ -1378,7 +1378,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     else
                     {
                         this.EndProcess(this.statusId);
-                    } 
+                    }
                 }
             }
             

@@ -51,10 +51,11 @@ namespace FintrakBanking.Repositories.Media
             var initiator = context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
 
             data = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
-                   join o in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals o.COLLATERALCUSTOMERID
+                    join o in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals o.COLLATERALCUSTOMERID
                     join c in context.TBL_CUSTOMER on o.CUSTOMERID equals c.CUSTOMERID
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
-                    where x.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                    where x.DELETED == false 
+                    && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
                      && atrail.RESPONSESTAFFID == null
                       && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                       && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
@@ -66,7 +67,7 @@ namespace FintrakBanking.Repositories.Media
                         loanApplicationId = x.LOANAPPLICATIONID,
                         description = x.DESCRIPTION,
                         collateralCode = o.COLLATERALCODE,
-                        collateralType = context.TBL_COLLATERAL_TYPE.Where(a=>a.COLLATERALTYPEID==o.COLLATERALTYPEID).Select(o=>o.COLLATERALTYPENAME).FirstOrDefault(),
+                        collateralType = context.TBL_COLLATERAL_TYPE.Where(a => a.COLLATERALTYPEID == o.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
                         collateralTypeId = o.COLLATERALTYPEID,
                         approvalStatusId = (short)x.APPROVALSTATUSID,
                         applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
@@ -80,10 +81,11 @@ namespace FintrakBanking.Repositories.Media
                         operationId = atrail.OPERATIONID,
                         approvalDate = x.APPROVALDATE,
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == c.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        atInitiator = staffId== context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID==x.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
+                        atInitiator = staffId == context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID == x.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
                         createdBy = x.CREATEDBY,
                         collateralCustomerId = x.COLLATERALCUSTOMERID,
-
+                        isOriginalTitleDocument = x.ISORIGINALTITLEDOCUMENT,
+                        isOriginalTitleDocumentString = x.ISORIGINALTITLEDOCUMENT ? "Yes" : "No",
                         //applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                         //customerId = x.COLLATERALCUSTOMERID,
                         //operationId = (int)OperationsEnum.OriginalDocumentApproval,

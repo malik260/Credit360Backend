@@ -11,7 +11,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         bool InitRecoveryDate(int accreditedConsultantId, string referenceId);
         decimal getTotalLLLImpact();
-        decimal GetApprovalAmount();
+        decimal GetApprovalAmount(bool isLMS = false);
         string GetCallMemoMarkup(int id);
         bool Init(int operationId, int targetId, bool isDrawdwon = false);
         bool InitForThirdpartyLoans(int operationId, int targetId);

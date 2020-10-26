@@ -47,7 +47,7 @@ namespace FintrakBanking.Interfaces.Credit
 
 
         List<DocumentTemplateViewModel> GetDocumentTemplates(int staffId, int operationId, int companyId);
-        dynamic GetIsLLLVilated(int operationId, int targetId);
+        dynamic GetIsLLLViolated(int operationId, int targetId);
         bool SaveApprovedDocumentation(int staffId, int operationId, int targetId);
         List<LoadedDocumentSectionViewModel> GetSavedDocumentation(int operationId, int targetId);
         LoadedDocumentSectionViewModel GetDocumentSectionBulkLiquidation(int staffId, int operationId, int targetId, int sectionId);

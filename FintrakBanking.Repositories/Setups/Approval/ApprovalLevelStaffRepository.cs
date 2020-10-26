@@ -1383,7 +1383,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     //    ws3.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
 
                     //}
-
+                    var t = new List<object>();
+                    var test1 = t.First().ToString();
                     var booking = GetBookingMointoring(param).ToList();
 
                     ExcelWorksheet ws3 = pck.Workbook.Worksheets.Add("Booking Approvals");

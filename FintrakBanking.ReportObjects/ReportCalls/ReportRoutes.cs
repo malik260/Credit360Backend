@@ -597,6 +597,23 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
+        public string GetAllContingentsReport(DateRange dateRange, int companyId, int staffId)
+        {
+            try
+            {
+                HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+                string path = string.Empty;
+                path = reportPath + "ReportViews/AllContingentsReport.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&reportAllType=" + dateRange.reportAllType + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+                return path;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public string GetBondsAndGuaranteeReport(DateRange dateRange, int companyId, int staffId)
         {
             try

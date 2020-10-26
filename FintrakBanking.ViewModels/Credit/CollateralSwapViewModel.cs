@@ -9,6 +9,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralSwapViewModel : GeneralEntity
     {
         public int collateralSwapId { get; set; }
+        public int operationId { get; set; }
         public int loanCollateralMappingId { get; set; }
         public int loanAppCollateralId { get; set; }
         public int oldCollateralId { get; set; }

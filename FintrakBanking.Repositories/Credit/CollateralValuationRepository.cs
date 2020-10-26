@@ -617,7 +617,10 @@ namespace FintrakBanking.Repositories.Credit
                        join atrail in _context.TBL_APPROVAL_TRAIL on V.VALUATIONPREREQUISITEID equals atrail.TARGETID
                        where 
                        C.DELETED == false 
-                       && (V.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || V.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
+                       && (V.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
+                       || V.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                       || V.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                       || V.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                        
                        orderby V.VALUATIONPREREQUISITEID descending
                        select new ValuationPrerequisiteViewModel
@@ -690,6 +693,7 @@ namespace FintrakBanking.Repositories.Credit
                        //where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                        where atrail.RESPONSESTAFFID == null
                         && atrail.LOOPEDSTAFFID == null
+                        && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                         && atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest

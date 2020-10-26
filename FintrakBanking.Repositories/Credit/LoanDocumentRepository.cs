@@ -17,12 +17,14 @@ namespace FintrakBanking.Repositories.Credit
 {
     public class LoanDocumentRepository : ILoanDocumentRepository
     {
-        private FinTrakBankingDocumentsContext context;
+        private FinTrakBankingDocumentsContext docContext;
+        private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
 
-        public LoanDocumentRepository(FinTrakBankingDocumentsContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+        public LoanDocumentRepository(FinTrakBankingDocumentsContext docContext, IGeneralSetupRepository general, IAuditTrailRepository audit, FinTrakBankingContext context)
         {
+            this.docContext = docContext;
             this.context = context;
             this.general = general;
             this.audit = audit;
@@ -32,7 +34,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public int AddLoanDocument(LoanDocumentViewModel model, byte[] file)
         {
-            var existing = context.TBL_MEDIA_LOAN_DOCUMENTS
+            var existing = docContext.TBL_MEDIA_LOAN_DOCUMENTS
                 .Where(x => x.FILENAME == model.fileName
                     && x.FILEEXTENSION == model.fileExtension
                     && x.LOANREFERENCENUMBER == model.loanReferenceNumber
@@ -42,7 +44,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (existing.Count() > 0 && model.overwrite == true)
             {
-                context.TBL_MEDIA_LOAN_DOCUMENTS.RemoveRange(existing);
+                docContext.TBL_MEDIA_LOAN_DOCUMENTS.RemoveRange(existing);
             }
 
             var data = new TBL_MEDIA_LOAN_DOCUMENTS
@@ -62,7 +64,7 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = (int)model.createdBy,
             };
 
-            context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+            docContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -81,12 +83,12 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
-            return context.SaveChanges() == 0 ? 1 : 2;
+            return docContext.SaveChanges() == 0 ? 1 : 2;
         }
 
         public bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId, byte[] file)
         {
-            var data = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
+            var data = this.docContext.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
             if (data == null)
             {
                 return false;
@@ -122,12 +124,12 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
-            return context.SaveChanges() != 0;
+            return docContext.SaveChanges() != 0;
         }
 
         public bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId)
         {
-            var data = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
+            var data = this.docContext.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
             if (data == null)
             {
                 return false;
@@ -162,12 +164,12 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
-            return context.SaveChanges() != 0;
+            return docContext.SaveChanges() != 0;
         }
 
         public IEnumerable<LoanDocumentViewModel> GetAllLoanDocument()
         {
-            return this.context.TBL_MEDIA_LOAN_DOCUMENTS.Select(x => new LoanDocumentViewModel
+            return this.docContext.TBL_MEDIA_LOAN_DOCUMENTS.Select(x => new LoanDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
                 loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
@@ -186,7 +188,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public void GetAllLoanDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result, int operationReviewId)
         {
-            result = this.context.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Where(x => x.TEMPLOANREVIEWOPERATIONID == operationReviewId)
+            result = this.docContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Where(x => x.TEMPLOANREVIEWOPERATIONID == operationReviewId)
                 .Select(x => new LoanDocumentViewModel
                 {
                     documentId = x.DOCUMENTID,
@@ -207,7 +209,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public void GetAllLoanDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
         {
-            result = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x => x.LOANAPPLICATIONNUMBER == model.loanApplicationNumber)
+            result = this.docContext.TBL_MEDIA_LOAN_DOCUMENTS.Where(x => x.LOANAPPLICATIONNUMBER == model.loanApplicationNumber)
                 .Select(x => new LoanDocumentViewModel
                 {
                     documentId = x.DOCUMENTID,
@@ -228,7 +230,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanDocumentViewModel GetLoanDocument(int documentId)
         {
-            var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
+            var data = (from x in this.docContext.TBL_MEDIA_LOAN_DOCUMENTS
                         where x.DOCUMENTID == documentId
                         select new LoanDocumentViewModel
                         {
@@ -277,7 +279,7 @@ namespace FintrakBanking.Repositories.Credit
         {
 
 
-            var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
+            var data = (from x in this.docContext.TBL_MEDIA_LOAN_DOCUMENTS
                         where x.DOCUMENTID == model.documentId 
                         select new LoanDocumentViewModel
                         {
@@ -303,20 +305,20 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             result = 0;
-            var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
+            var data = (from x in this.docContext.TBL_MEDIA_LOAN_DOCUMENTS
                         where x.DOCUMENTID == model.documentId
                         select (x)).FirstOrDefault();
 
             if (data!=null)
             {
-                context.TBL_MEDIA_LOAN_DOCUMENTS.Remove(data);
-                result = context.SaveChanges();
+                docContext.TBL_MEDIA_LOAN_DOCUMENTS.Remove(data);
+                result = docContext.SaveChanges();
             }
         }
 
         public LoanDocumentViewModel GetLoanDocumentByAppNoRefNo(string refNo, string applicationNumber)
         {
-            var media = this.context.TBL_MEDIA_LOAN_DOCUMENTS.
+            var media = this.docContext.TBL_MEDIA_LOAN_DOCUMENTS.
                 Where(h => h.LOANAPPLICATIONNUMBER == applicationNumber && h.LOANREFERENCENUMBER == refNo).
                 Select(x => new LoanDocumentViewModel
                 {
@@ -343,19 +345,132 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteLoanDocument(string invoiceNo, string applicationNumber)
         {
-            var data = (from a in context.TBL_MEDIA_LOAN_DOCUMENTS
+            var data = (from a in docContext.TBL_MEDIA_LOAN_DOCUMENTS
                         where a.LOANREFERENCENUMBER == invoiceNo
                          && a.LOANAPPLICATIONNUMBER == applicationNumber
                         select a).FirstOrDefault();
             if (data != null)
             {
-                this.context.TBL_MEDIA_LOAN_DOCUMENTS.Remove(data);
-                return context.SaveChanges() != 0;
+                this.docContext.TBL_MEDIA_LOAN_DOCUMENTS.Remove(data);
+                return docContext.SaveChanges() != 0;
             }
             return false;
         }
 
         #endregion
+
+
+        #region OPERATIONDOCUMENTATION
+        public IEnumerable<ChecklistApprovalViewModel> GetAllPendingDeferralDocumentation(bool checker)
+        {
+            var dataLOS = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                           join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
+                           join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
+                           where c.ISLMS == false
+                           && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                           && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
+                           && atrail.RESPONSESTAFFID == null
+                           && atrail.APPROVALSTATEID == (int)ApprovalState.Ended
+                           orderby a.DATETIMECREATED descending
+                           select new ChecklistApprovalViewModel()
+                           {
+                               customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                               approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               deferredDate = b.DEFEREDDATE,
+                               deferralDuration = 1,
+                               cummulativeDays = 1,
+                               condition = b.CONDITION,
+                               conditionId = b.LOANCONDITIONID,
+                               loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                               loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                               applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                               operationId = atrail.OPERATIONID,
+                               approvalStatusId = atrail.APPROVALSTATUSID,
+                               isLms = c.ISLMS == true,
+                               reason = c.DEFERRALREASON
+                           }).ToList();
+
+            var dataLMS = (from a in context.TBL_LMSR_APPLICATION_DETAIL
+                           join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
+                           join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
+                           join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
+                           where c.ISLMS == true
+                           && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
+                               && atrail.RESPONSESTAFFID == null
+                               && atrail.APPROVALSTATEID == (int)ApprovalState.Ended
+                           orderby a.DATETIMECREATED descending
+                           select new ChecklistApprovalViewModel()
+                           {
+                               customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                               approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == b.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                               deferredDate = b.DEFEREDDATE,
+                               deferralDuration = 1,
+                               cummulativeDays = 1,
+                               condition = b.CONDITION,
+                               conditionId = b.LOANCONDITIONID,
+                               loanApplicationId = a.LOANAPPLICATIONID,
+                               loanApplicationDetailId = 0,
+                               applicationReferenceNumber = a.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               checklistStatus = context.TBL_CHECKLIST_STATUS.Where(o => o.CHECKLISTSTATUSID == b.CHECKLISTSTATUSID).Select(o => o.CHECKLISTSTATUSNAME).FirstOrDefault(),
+                               operationId = atrail.OPERATIONID,
+                               approvalStatusId = atrail.APPROVALSTATUSID,
+                               isLms = c.ISLMS == true,
+                               reason = c.DEFERRALREASON
+                           }).ToList();
+
+
+            return dataLOS.Union(dataLMS);
+        }
+
+        //public IEnumerable<OperationDocumentationViewModel> GetAllPendingOperationDocumentation()
+        //{
+           
+
+
+        //    var projectSiteReportData = (from p in context.TBL_PSR_PROJECT_SITE_REPORT
+        //                                 where p.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+        //                                 && p.DELETED == false
+        //                                 select new OperationDocumentationViewModel
+        //                                 {
+        //                                     targetId = p.PROJECTSITEREPORTID,
+        //                                     operationId = (int)OperationsEnum.ProjectSiteReportApproval,
+        //                                     //customerName = 
+        //                                     operationName = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == (int)OperationsEnum.ProjectSiteReportApproval).OPERATIONNAME,
+        //                                 });
+
+
+
+
+        //}
+
+        //public IEnumerable<OperationDocumentationViewModel> GetAllPendingOperationDocumentationApproval()
+        //{
+
+        //}
+
+        //public bool AddOperationDocumentationApproval(OperationDocumentationViewModel param)
+        //{
+        //    var alreadyAdded = context.TBL_OPERATION_DOCUMENTATION.Any(o => o.TARGETID == param.targetId && o.OPERATIONID == param.operationId);
+        //    if (alreadyAdded)
+        //    {
+        //        throw new SecureException("The documents have been sent for Approval!");
+        //    }
+
+        //    var data = new TBL_OPERATION_DOCUMENTATION
+        //    {
+        //        TARGETID = param.targetId,
+        //        OPERATIONDOCUMENTATIONID = param.operationId,
+        //        DATETIMECREATED = DateTime.Now,
+        //        CREATEDBY = param.createdBy
+        //    };
+
+        //    var saved = context.SaveChanges() > 0;
+        //    return saved;
+        //}
+        #endregion OPERATIONDOCUMENTATION
 
         #region COMMITTEE MINUTES
 
@@ -379,7 +494,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = (int)model.createdBy,
                 };
 
-                context.TBL_LOAN_COMMITTEE_MINUTES.Add(data);
+                docContext.TBL_LOAN_COMMITTEE_MINUTES.Add(data);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -398,7 +513,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -410,9 +525,9 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var delete = context.TBL_LOAN_COMMITTEE_MINUTES.FirstOrDefault(o => o.DOCUMENTID == model.customerId);
+                var delete = docContext.TBL_LOAN_COMMITTEE_MINUTES.FirstOrDefault(o => o.DOCUMENTID == model.customerId);
 
-                context.TBL_LOAN_COMMITTEE_MINUTES.Remove(delete);
+                docContext.TBL_LOAN_COMMITTEE_MINUTES.Remove(delete);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -431,7 +546,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -442,7 +557,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanDocumentViewModel> GetCommitteeDocument(string applicationNumber)
         {
-            return this.context.TBL_LOAN_COMMITTEE_MINUTES.Where(x => x.LOANAPPLICATIONNUMBER == applicationNumber).Select(x => new LoanDocumentViewModel
+            return this.docContext.TBL_LOAN_COMMITTEE_MINUTES.Where(x => x.LOANAPPLICATIONNUMBER == applicationNumber).Select(x => new LoanDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
                 loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
@@ -462,7 +577,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public void GetCommitteeDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
         {
-            result = this.context.TBL_LOAN_COMMITTEE_MINUTES.Where(x => x.LOANAPPLICATIONNUMBER == model.loanApplicationNumber).Select(x => new LoanDocumentViewModel
+            result = this.docContext.TBL_LOAN_COMMITTEE_MINUTES.Where(x => x.LOANAPPLICATIONNUMBER == model.loanApplicationNumber).Select(x => new LoanDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
                 loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
@@ -481,7 +596,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanDocumentViewModel GetCommitteeDocument(int documentId)
         {
-            var data = this.context.TBL_LOAN_COMMITTEE_MINUTES.Find(documentId);
+            var data = this.docContext.TBL_LOAN_COMMITTEE_MINUTES.Find(documentId);
 
             if (data == null) { return null; }
 
@@ -503,7 +618,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public void GetCommitteeDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
         {
-            var data = (from x in context.TBL_LOAN_COMMITTEE_MINUTES
+            var data = (from x in docContext.TBL_LOAN_COMMITTEE_MINUTES
                        where x.DOCUMENTID == model.documentId
                        select new LoanDocumentViewModel
             {
@@ -527,13 +642,13 @@ namespace FintrakBanking.Repositories.Credit
         public void DeleteCommitteeDocument(LoanDocumentViewModel model, out int result)
         {
             result = 0;
-            var data = (from x in context.TBL_LOAN_COMMITTEE_MINUTES
+            var data = (from x in docContext.TBL_LOAN_COMMITTEE_MINUTES
                         where x.DOCUMENTID == model.documentId
                         select (x)).FirstOrDefault();
             if (data!=null)
             {
-                context.TBL_LOAN_COMMITTEE_MINUTES.Remove(data);
-                result = context.SaveChanges();
+                docContext.TBL_LOAN_COMMITTEE_MINUTES.Remove(data);
+                result = docContext.SaveChanges();
             }
             
         }
@@ -542,7 +657,7 @@ namespace FintrakBanking.Repositories.Credit
         #region CREDIT BUREAU REPORTS
         public List<LoanDocumentViewModel> GetCreditBureauReportDocument(int customerCreditBureauId)
         {
-            var data = (from x in this.context.TBL_CUSTOMER_CREDIT_BUREAU
+            var data = (from x in this.docContext.TBL_CUSTOMER_CREDIT_BUREAU
                         where x.CUSTOMERCREDITBUREAUID == customerCreditBureauId
                         select new LoanDocumentViewModel
                         {
@@ -560,7 +675,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public void GetCreditBureauReportDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
         {
-            var data = (from x in this.context.TBL_CUSTOMER_CREDIT_BUREAU
+            var data = (from x in this.docContext.TBL_CUSTOMER_CREDIT_BUREAU
                         where x.CUSTOMERCREDITBUREAUID == model.customerCreditBureauId
                         select new LoanDocumentViewModel
                         {
@@ -599,7 +714,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now,
                 };
 
-                context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
+                docContext.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -618,7 +733,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -629,7 +744,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateCreditBureauReportDocument(LoanDocumentViewModel model, int documentId)
         {
-            var data = this.context.TBL_CUSTOMER_CREDIT_BUREAU.Find(documentId);
+            var data = this.docContext.TBL_CUSTOMER_CREDIT_BUREAU.Find(documentId);
             if (data == null)
             {
                 return false;
@@ -658,7 +773,7 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
-            return context.SaveChanges() != 0;
+            return docContext.SaveChanges() != 0;
         }
 
 
@@ -683,7 +798,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = (int)model.createdBy,
                 };
 
-                context.TBL_LOAN_CONDITION_DOCUMENTS.Add(data);
+                docContext.TBL_LOAN_CONDITION_DOCUMENTS.Add(data);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -702,7 +817,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -715,7 +830,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = context.TBL_LOAN_CONDITION_DOCUMENTS.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
+                var record = docContext.TBL_LOAN_CONDITION_DOCUMENTS.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
 
                 if (record == null)
                 {
@@ -748,7 +863,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -761,7 +876,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = (context.TBL_LOAN_CONDITION_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                var record = (docContext.TBL_LOAN_CONDITION_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => new LoanDocumentViewModel
                     {
                         loanApplicationId = x.LOANAPPLICATIONID,
@@ -788,12 +903,12 @@ namespace FintrakBanking.Repositories.Credit
             result = 0;
             try
             {
-                var record = (context.TBL_LOAN_CONDITION_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                var record = (docContext.TBL_LOAN_CONDITION_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x=>x)).FirstOrDefault();
                 if (record != null)
                 {
-                    context.TBL_LOAN_CONDITION_DOCUMENTS.Remove(record);
-                    result = context.SaveChanges();
+                    docContext.TBL_LOAN_CONDITION_DOCUMENTS.Remove(record);
+                    result = docContext.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -806,7 +921,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = (context.TBL_LOAN_CONDITION_DOCUMENTS.Where(o => o.LOANAPPLICATIONID == model.loanApplicationId)
+                var record = (docContext.TBL_LOAN_CONDITION_DOCUMENTS.Where(o => o.LOANAPPLICATIONID == model.loanApplicationId)
                        .Select(x => new LoanDocumentViewModel
                        {
                            loanApplicationId = x.LOANAPPLICATIONID,
@@ -831,7 +946,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = (context.TBL_LOAN_CONDITION_DOCUMENTS.Where(o => o.LOANAPPLICATIONID == model.loanApplicationId)
+                var record = (docContext.TBL_LOAN_CONDITION_DOCUMENTS.Where(o => o.LOANAPPLICATIONID == model.loanApplicationId)
                        .Select(x => new LoanDocumentViewModel
                        {
                            loanApplicationId = x.LOANAPPLICATIONID,
@@ -875,7 +990,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 };
 
-                context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Add(data);
+                docContext.TBL_MEDIA_CHECKLIST_DOCUMENTS.Add(data);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -895,7 +1010,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -908,7 +1023,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = context.TBL_MEDIA_CHECKLIST_DOCUMENTS.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
+                var record = docContext.TBL_MEDIA_CHECKLIST_DOCUMENTS.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
 
                 if (record == null)
                 {
@@ -943,7 +1058,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -956,7 +1071,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_CHECKLIST_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => new LoanDocumentViewModel
                     {
                         fileData = x.FILEDATA,
@@ -984,12 +1099,12 @@ namespace FintrakBanking.Repositories.Credit
             result = 0;
             try
             {
-                var record = context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_CHECKLIST_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => x).FirstOrDefault();
                 if (record!=null)
                 {
-                    context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Remove(record);
-                    result = context.SaveChanges();
+                    docContext.TBL_MEDIA_CHECKLIST_DOCUMENTS.Remove(record);
+                    result = docContext.SaveChanges();
                 }
                 
             }
@@ -1004,7 +1119,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Where(o => o.LOANAPPLICATIONID == model.loanApplicationId)
+                var record = docContext.TBL_MEDIA_CHECKLIST_DOCUMENTS.Where(o => o.LOANAPPLICATIONID == model.loanApplicationId)
                    .Select(x => new LoanDocumentViewModel
                    {
                        fileData = x.FILEDATA,
@@ -1047,7 +1162,7 @@ namespace FintrakBanking.Repositories.Credit
                     DOCUMENTTYPEID = model.documentTypeId,
                 };
 
-                context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);
+                docContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -1066,7 +1181,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1079,7 +1194,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
+                var record = docContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
 
                 if (record == null)
                 {
@@ -1112,7 +1227,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1125,7 +1240,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
                       .Select(x => new LoanDocumentViewModel
                       {
                           fileData = x.FILEDATA,
@@ -1150,12 +1265,12 @@ namespace FintrakBanking.Repositories.Credit
             result = 0;
             try
             {
-                var record = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
                       .Select(x => x).FirstOrDefault();
                 if (record!=null)
                 {
-                    context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Remove(record);
-                    result = context.SaveChanges();
+                    docContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Remove(record);
+                    result = docContext.SaveChanges();
                 }
 
             }
@@ -1169,7 +1284,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(o => o.COLLATERALCUSTOMERID == model.collateralCustomerId)
+                var record = docContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(o => o.COLLATERALCUSTOMERID == model.collateralCustomerId)
                       .Select(x => new LoanDocumentViewModel
                       {
                           fileData = x.FILEDATA,
@@ -1211,7 +1326,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 };
 
-                context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Add(data);
+                docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Add(data);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -1230,7 +1345,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1244,7 +1359,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
+                var record = docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
 
                 if (record == null)
                 {
@@ -1280,7 +1395,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1294,7 +1409,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => new LoanDocumentViewModel
                     {
                         fileData = x.FILEDATA,
@@ -1324,7 +1439,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => new LoanDocumentViewModel
                     {
                         fileData = x.FILEDATA,
@@ -1354,13 +1469,13 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => x).FirstOrDefault();
 
                 if (record!=null)
                 {
-                    context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Remove(record);
-                    result = context.SaveChanges();
+                    docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Remove(record);
+                    result = docContext.SaveChanges();
                 }
 
             }
@@ -1377,7 +1492,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(o => o.DOCUMENTID == model.documentId)
                    .Select(x => new LoanDocumentViewModel
                    {
                        fileData = x.FILEDATA,
@@ -1428,7 +1543,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 };
 
-                context.TBL_MEDIA_KYC_DOCUMENTS.Add(data);
+                docContext.TBL_MEDIA_KYC_DOCUMENTS.Add(data);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -1447,7 +1562,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1460,7 +1575,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = context.TBL_MEDIA_KYC_DOCUMENTS.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
+                var record = docContext.TBL_MEDIA_KYC_DOCUMENTS.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
 
                 if (record == null)
                 {
@@ -1497,7 +1612,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1511,7 +1626,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_KYC_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_KYC_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => new LoanDocumentViewModel
                     {
                         fileData = x.FILEDATA,
@@ -1543,13 +1658,13 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_KYC_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_KYC_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => x).FirstOrDefault();
 
                 if (record!=null)
                 {
-                    context.TBL_MEDIA_KYC_DOCUMENTS.Remove(record);
-                    result = context.SaveChanges();
+                    docContext.TBL_MEDIA_KYC_DOCUMENTS.Remove(record);
+                    result = docContext.SaveChanges();
                 }
 
             }
@@ -1565,7 +1680,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_KYC_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_KYC_DOCUMENTS.Where(o => o.DOCUMENTID == model.documentId)
                      .Select(x => new LoanDocumentViewModel
                      {
                          fileData = x.FILEDATA,
@@ -1609,7 +1724,7 @@ namespace FintrakBanking.Repositories.Credit
                     STAFFCODE = model.staffCode
                 };
 
-                context.TBL_MEDIA_STAFF_PICTURE.Add(data);
+                docContext.TBL_MEDIA_STAFF_PICTURE.Add(data);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -1628,7 +1743,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1642,7 +1757,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_STAFF_PICTURE.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
+                var record = docContext.TBL_MEDIA_STAFF_PICTURE.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
 
                 if (record == null)
                 {
@@ -1676,7 +1791,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1690,7 +1805,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_STAFF_PICTURE.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_STAFF_PICTURE.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => new LoanDocumentViewModel
                     {
                         fileData = x.FILEDATA,
@@ -1714,7 +1829,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_STAFF_PICTURE.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_STAFF_PICTURE.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => new LoanDocumentViewModel
                     {
                         fileData = x.FILEDATA,
@@ -1741,13 +1856,13 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_STAFF_PICTURE.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_STAFF_PICTURE.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => x).FirstOrDefault();
 
                 if (true)
                 {
-                    context.TBL_MEDIA_STAFF_PICTURE.Remove(record);
-                    result = context.SaveChanges();
+                    docContext.TBL_MEDIA_STAFF_PICTURE.Remove(record);
+                    result = docContext.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -1777,7 +1892,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 };
 
-                context.TBL_MEDIA_STAFF_SIGNATURE.Add(data);
+                docContext.TBL_MEDIA_STAFF_SIGNATURE.Add(data);
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -1796,7 +1911,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1810,7 +1925,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_STAFF_SIGNATURE.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
+                var record = docContext.TBL_MEDIA_STAFF_SIGNATURE.FirstOrDefault(o => o.DOCUMENTID == model.documentId);
 
                 if (record == null)
                 {
@@ -1842,7 +1957,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1856,7 +1971,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_STAFF_SIGNATURE.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_STAFF_SIGNATURE.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => new LoanDocumentViewModel
                     {
                         fileData = x.FILEDATA,
@@ -1880,7 +1995,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_STAFF_SIGNATURE.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_STAFF_SIGNATURE.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => new LoanDocumentViewModel
                     {
                         fileData = x.FILEDATA,
@@ -1905,13 +2020,13 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var record = context.TBL_MEDIA_STAFF_SIGNATURE.Where(o => o.DOCUMENTID == model.documentId)
+                var record = docContext.TBL_MEDIA_STAFF_SIGNATURE.Where(o => o.DOCUMENTID == model.documentId)
                     .Select(x => x).FirstOrDefault();
 
                 if (record!=null)
                 {
-                    context.TBL_MEDIA_STAFF_SIGNATURE.Remove(record);
-                    result = context.SaveChanges();
+                    docContext.TBL_MEDIA_STAFF_SIGNATURE.Remove(record);
+                    result = docContext.SaveChanges();
                 }
 
             }
@@ -2013,7 +2128,7 @@ namespace FintrakBanking.Repositories.Credit
        
         public void GetCreditBureauReportDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
         {
-            var data = (from x in this.context.TBL_CUSTOMER_CREDIT_BUREAU
+            var data = (from x in this.docContext.TBL_CUSTOMER_CREDIT_BUREAU
                         where x.DOCUMENTID == model.documentId
                         select new LoanDocumentViewModel
                         {
@@ -2033,13 +2148,13 @@ namespace FintrakBanking.Repositories.Credit
         public void DeleteCreditBureauReportDocument(LoanDocumentViewModel model, out int result)
         {
             result = 0;
-            var data = (from x in this.context.TBL_CUSTOMER_CREDIT_BUREAU
+            var data = (from x in this.docContext.TBL_CUSTOMER_CREDIT_BUREAU
                         where x.CUSTOMERCREDITBUREAUID == model.customerCreditBureauId
                         select (x)).FirstOrDefault();
             if (data!=null)
             {
-                context.TBL_CUSTOMER_CREDIT_BUREAU.Remove(data);
-                result = context.SaveChanges();
+                docContext.TBL_CUSTOMER_CREDIT_BUREAU.Remove(data);
+                result = docContext.SaveChanges();
             }
      
         }

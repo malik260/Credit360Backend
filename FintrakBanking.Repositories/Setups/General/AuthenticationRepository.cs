@@ -24,6 +24,7 @@ using System.Security.Cryptography;
 using System.Xml;
 using System.IO;
 using System.Security.Cryptography.Xml;
+using System.Configuration;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -34,7 +35,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private  IAuditTrailRepository _auditTrail;
         private SessionStatusInfo _sessionInfo;
         private ICreditOfficerRiskRepository _creditOfficerRisk;
-
+        private string softwareVersion = ConfigurationManager.AppSettings["version"];
         TBL_PROFILE_SETTING profileSetting = null;
         TBL_FINANCECURRENTDATE applicationDate = null;
 
@@ -581,7 +582,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 // check 10ms
                 if (Math.Abs(DateTime.Now.Subtract(data.lastLockOutDate.Value).TotalMinutes) > 10)
                 {
-                    unlockUser(userName);
+                    UnlockUser(userName);
                     return false;
                 }
                 else
@@ -609,7 +610,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return false;
         }
 
-        public void unlockUser(string userName)
+        public void UnlockUser(string userName)
         {
             var user = context.TBL_PROFILE_USER.Where(u => u.USERNAME.ToLower() == userName.ToLower()).FirstOrDefault();
             if (user != null)
@@ -1344,6 +1345,12 @@ namespace FintrakBanking.Repositories.Setups.General
             if ((result.ExpireDate < DateTime.Now))
             {
                 result.Status = LicenseStatus.LicenseExpired;
+                return result;
+            }
+
+            if (!result.CoveredVersion.Equals(softwareVersion))
+            {
+                result.Status = LicenseStatus.VersionMismatch;
                 return result;
             }
 

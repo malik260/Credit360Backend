@@ -35,6 +35,15 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerCreditBureauId { get; set; }
         public bool isPrimaryDocument { get; set; }
         public bool overwrite { get; set; }
+        
     }
 
+    public class OperationDocumentationViewModel : LoanDocumentViewModel
+    {
+        public int targetId { get; set; }
+        public int operationId { get; set; }
+        public int operationDocumentationId { get; set; }
+        public string customerName { get; set; }
+        public string operationName { get; set; }
+    }
 }

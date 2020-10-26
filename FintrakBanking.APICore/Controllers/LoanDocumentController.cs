@@ -452,5 +452,89 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion COMMITTEE MINUTES
 
+        #region OPERATIONDOCUMENTATION
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("operation-documentation")]
+        //public HttpResponseMessage GetAllPendingOperationDocumentation()
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetAllPendingOperationDocumentation().ToList();
+        //        if (data.Any())
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "No record found" });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("operation-documentation/deferral/{checker}")]
+        //public HttpResponseMessage GetAllPendingDeferralDocumentation(bool checker)
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetAllPendingDeferralDocumentation(checker).ToList();
+        //        if (data.Any())
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "No record found" });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("operation-documentation-checker")]
+        //public HttpResponseMessage GetAllPendingOperationDocumentationApproval()
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetAllPendingOperationDocumentationApproval().ToList();
+        //        if (data.Any())
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "No record found" });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("operation-documentation")]
+        //public HttpResponseMessage AddOperationDocumentationApproval(OperationDocumentationViewModel param)
+        //{
+
+        //    param.createdBy = token.GetStaffId;
+        //    try
+        //    {
+        //        var data = repo.AddOperationDocumentationApproval(param);
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Documents sent for filing Approval" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "Documents not sent" });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        #endregion OPERATIONDOCUMENTATION
     }
 }

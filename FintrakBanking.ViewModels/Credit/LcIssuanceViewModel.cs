@@ -47,6 +47,7 @@ namespace FintrakBanking.ViewModels.credit
         public string proformaInvoiceId { get; set; }
 
         public decimal availableAmount { get; set; }
+        public decimal availableAmountForRelease { get; set; }
 
         public decimal letterOfCreditAmount { get; set; }
 
@@ -274,6 +275,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public decimal? releaseAmount { get; set; }
         public decimal releasedAmount { get; set; }
+        public decimal availableAmountForRelease { get; set; }
         public int? loopedStaffId { get; set; }
         public List<LcReleaseAmountViewModel> lcReleases { get; set; }
         public List<LcUssanceViewModel> lcUsances { get; set; }

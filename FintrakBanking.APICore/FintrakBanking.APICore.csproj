@@ -522,6 +522,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\RecoveryCollections.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RecoveryCollections.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\ReportDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -559,6 +564,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx.designer.cs">
       <DependentUpon>ApprovedForm3800BFacilities.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\AllContingentsReport.aspx.cs">
+      <DependentUpon>AllContingentsReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\AllContingentsReport.aspx.designer.cs">
+      <DependentUpon>AllContingentsReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\Blacklist.aspx.cs">
       <DependentUpon>Blacklist.aspx</DependentUpon>
@@ -1509,6 +1521,7 @@
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
+    <Content Include="Reports\ReportViews\AllContingentsReport.aspx" />
     <Content Include="Reports\ReportViews\Blacklist.aspx" />
     <Content Include="Reports\ReportViews\BandGReport.aspx" />
     <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
@@ -1795,7 +1808,11 @@
     <Content Include="Reports\ReportDataset\RecoveryCollections.xsc">
       <DependentUpon>RecoveryCollections.xsd</DependentUpon>
     </Content>
-    <None Include="Reports\ReportDataset\RecoveryCollections.xsd" />
+    <None Include="Reports\ReportDataset\RecoveryCollections.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>RecoveryCollections.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="Reports\ReportDataset\RecoveryCollections.xss">
       <DependentUpon>RecoveryCollections.xsd</DependentUpon>
     </Content>
@@ -1938,6 +1955,7 @@
     <Content Include="Reports\Report\Blacklist.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR 060219.rdlc" />
     <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Amortization.rdlc" />
     <EmbeddedResource Include="Reports\Report\AnalystReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc" />
@@ -1968,6 +1986,7 @@
     <EmbeddedResource Include="Reports\Report\DelinquentAccounts.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursedLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Discharge.rdlc" />
     <EmbeddedResource Include="Reports\Report\DrawdownMemo.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExcessReport.rdlc" />
@@ -2020,6 +2039,7 @@
     <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\PSR_APG.rdlc" />
     <EmbeddedResource Include="Reports\Report\PSR_Direct.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Rebooking.rdlc" />
     <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RecoveryAgentPerformance.rdlc" />
     <EmbeddedResource Include="Reports\Report\RecoveryAgentUpdate.rdlc" />

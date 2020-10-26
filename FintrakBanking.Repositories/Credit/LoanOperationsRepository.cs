@@ -20566,11 +20566,9 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         var feePostings = BuildLoanOperationsManualChargeFeesPosting(item.LOANCHARGEFEEID);
 
-                        if (feePostings != null)
+                        if (feePostings != null && feePostings.Count()>0)
                         {
-                            financeTransaction.PostTransaction(feePostings, false, twoFADetails);
-
-
+                            //financeTransaction.PostTransaction(feePostings, false, twoFADetails);
                             //financeTransaction.PostTransaction(disbursementTransactions, false, twoFADetails);
                         }
                         item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
