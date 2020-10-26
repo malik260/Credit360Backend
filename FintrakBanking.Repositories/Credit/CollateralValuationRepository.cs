@@ -693,6 +693,7 @@ namespace FintrakBanking.Repositories.Credit
                        //where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                        where atrail.RESPONSESTAFFID == null
                         && atrail.LOOPEDSTAFFID == null
+                        && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                         && atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest

@@ -751,8 +751,10 @@ namespace FintrakBanking.Repositories.credit
                    where x.DELETED == false 
                     && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                     || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                    || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                    && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                    || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                    || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
+                    //&& x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                    && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                     && atrail.RESPONSESTAFFID == null
                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                     && atrail.LOOPEDSTAFFID == null

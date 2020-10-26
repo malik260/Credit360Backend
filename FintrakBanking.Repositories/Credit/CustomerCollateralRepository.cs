@@ -3219,7 +3219,7 @@ namespace FintrakBanking.Repositories.Credit
                              join a in context.TBL_COLLATERAL_TYPE on s.COLLATERALTYPEID equals a.COLLATERALTYPEID
                              join c in context.TBL_CUSTOMER on s.CUSTOMERID equals c.CUSTOMERID
                              join b in context.TBL_COLLATERAL_TYPE_SUB on s.COLLATERALSUBTYPEID equals b.COLLATERALSUBTYPEID
-                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
                                      && atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                      && atrail.LOOPEDSTAFFID == null
@@ -11513,7 +11513,9 @@ namespace FintrakBanking.Repositories.Credit
                                     (
                                     s.DELETED == false
                                     && t.OPERATIONID == (int)OperationsEnum.CollateralSwap
-                                    && s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
+                                    && t.APPROVALSTATEID != (int)ApprovalState.Ended
+                                    && t.RESPONSESTAFFID == null
+                                    //&& s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
                                     )
                                    select new CollateralSwapViewModel
                                    {
@@ -11595,7 +11597,7 @@ namespace FintrakBanking.Repositories.Credit
                                               join t in context.TBL_APPROVAL_TRAIL on s.COLLATERALSWAPID equals t.TARGETID
                                               join d in context.TBL_LOAN_APPLICATION_DETAIL on s.TBL_LOAN_APPLICATION_COLLATERL.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                               where (s.DELETED == false && t.OPERATIONID == (int)OperationsEnum.CollateralSwap
-                                                && s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
+                                                //&& s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
                                                 && t.APPROVALSTATEID != (int)ApprovalState.Ended
                                                 && t.LOOPEDSTAFFID == null
                                                 && t.RESPONSESTAFFID == null
@@ -11610,6 +11612,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   loanAppCollateralId = s.LOANAPPCOLLATERALID,
                                                   oldCollateralId = s.OLDCOLLATERALID,
                                                   newCollateralId = s.NEWCOLLATERALID,
+                                                  operationId = t.OPERATIONID,
                                                   customerId = (s.CUSTOMERID > 0) ? s.CUSTOMERID : s.TBL_LOAN_APPLICATION_COLLATERL.CUSTOMERID,
                                                   loanApplicationId = s.TBL_LOAN_APPLICATION_COLLATERL.LOANAPPLICATIONID,
                                                   collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
@@ -11865,9 +11868,11 @@ namespace FintrakBanking.Repositories.Credit
                 companyId = companyId,
                 applicationId = collateralSwapId,
                 comment = "Get next level for collateral swap",
+                operationId = (short)OperationsEnum.CollateralSwap,
+                forwardAction = (int)ApprovalStatusEnum.Pending,
             };
 
-            var response = drawdownRepo.LogApprovalForMessage(approvalModel, (short)OperationsEnum.CollateralSwap, true, (int)ApprovalStatusEnum.Pending);
+            var response = drawdownRepo.LogApprovalForMessage(approvalModel, true);
             return response.nextLevelId.Value;
         }
 

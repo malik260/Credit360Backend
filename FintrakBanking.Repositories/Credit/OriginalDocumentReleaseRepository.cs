@@ -234,7 +234,8 @@ namespace FintrakBanking.Repositories.Credit
                          join cc in _context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                          join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
-                         where dr.DELETED == false && (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved || atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
+                         where dr.DELETED == false 
+                         && (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved || atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
                          && atrail.RESPONSESTAFFID == null
                          && (atrail.LOOPEDSTAFFID == null || atrail.LOOPEDSTAFFID == staffId)
                          && ((ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) || (!ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
@@ -262,6 +263,7 @@ namespace FintrakBanking.Repositories.Credit
                              perfectionStatusId = dr.PERFECTIONSTATUSID,
                              litigationStatusId = dr.LITIGATIONSTATUSID,
                              isOnAmconList = dr.ISONAMCONLIST,
+                             numberOfTimesApprove = dr.NUMBEROFTIMESAPPROVE,
                              isAmconList = dr.ISONAMCONLIST !=null ? ((dr.ISONAMCONLIST == true) ? "Yes": "No") : "N/A",
                              perfectionStatus = dr.PERFECTIONSTATUSID !=null ? _context.TBL_COLLATERAL_PERFECTN_STAT.Where(p=>p.PERFECTIONSTATUSID == dr.PERFECTIONSTATUSID).Select(p=>p.PERFECTIONSTATUSNAME).FirstOrDefault() : "N/A",
                              litigationStatus = dr.LITIGATIONSTATUSID != null ? ((dr.LITIGATIONSTATUSID == 1) ? "Ongoing Court Case" : "No Ongoing Court Case") : "N/A",
@@ -607,6 +609,14 @@ namespace FintrakBanking.Repositories.Credit
                     if (staffRole.staffRoleCode == "AMCON OFFICER") {
                         foreach (var item in documents) {
                             item.ISONAMCONLIST = model.isOnAmconList;
+                        }
+                    }
+
+                    if (staffRole.staffRoleCode == "CRM VAULT OFFICER")
+                    {
+                        foreach (var item in documents)
+                        {
+                            item.NUMBEROFTIMESAPPROVE = item.NUMBEROFTIMESAPPROVE + 1;
                         }
                     }
 

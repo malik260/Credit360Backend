@@ -30,7 +30,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? APPROVALDATE { get; set; }
         public int? COLLATERALCUSTOMERID { get; set; }
 
-
+        public int NUMBEROFTIMESAPPROVE { get; set; }
         public short? PERFECTIONSTATUSID { get; set; }
         public short? LITIGATIONSTATUSID { get; set; }
         public bool? ISONAMCONLIST { get; set; }
