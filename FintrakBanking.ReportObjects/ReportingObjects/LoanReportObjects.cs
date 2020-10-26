@@ -5129,7 +5129,7 @@ namespace FintrakBanking.ReportObjects
 
                     var loansWithCollateral = (from f in context.TBL_COLLATERAL_IMMOVE_PROPERTY
                                                join lc in context.TBL_LOAN_COLLATERAL_MAPPING on f.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
-                                               // where f.PERFECTIONSTATUSID == status
+                                               //where f.PERFECTIONSTATUSID == status
                                                select lc.LOANID);
 
 
@@ -5165,10 +5165,10 @@ namespace FintrakBanking.ReportObjects
                                                                       select cst.ACCOUNTID).FirstOrDefault()
 
                                                         where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
-                                                        //&& l.COMPANYID == companyid
-                                                         //&& loansWithCollateral.Contains(l.TERMLOANID) 
-                                                         //&& l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                                         //&& (b.BRANCHID == branchId || branchId == null || branchId == 0)
+                                                        && l.COMPANYID == companyid
+                                                        && loansWithCollateral.Contains(l.TERMLOANID) 
+                                                        && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                                        //&& (b.BRANCHID == branchId || branchId == null || branchId == 0)
                                                          orderby cm.DATETIMECREATED descending
 
                                                         select new CollateralRegisterViewModel
