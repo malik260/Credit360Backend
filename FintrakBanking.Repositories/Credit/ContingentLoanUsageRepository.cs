@@ -390,7 +390,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
             {
-                var lien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == entity.loanReferenceNumber && x.LIENTYPEID == (int)LienTypeEnum.APGBooking);
+               /* var lien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == entity.loanReferenceNumber && x.LIENTYPEID == (int)LienTypeEnum.APGBooking);
                 if (lien == null) throw new SecureException("No lien has been placed");
                 string lienReferenceNumber = lien.LIENREFERENCENUMBER;
 
@@ -429,7 +429,7 @@ namespace FintrakBanking.Repositories.Credit
                     createdBy = entity.createdBy,
                     userIPAddress = entity.userIPAddress,
                     applicationUrl = entity.applicationUrl,
-                });
+                });*/
 
                 usage.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
             }
