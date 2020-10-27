@@ -948,12 +948,12 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Only one operation request is allowed for APS release related applications!");
             }
 
-            if (model.applicationDetails.Count() > 0 &&
+            /*if (model.applicationDetails.Count() > 0 &&
                 model.applicationDetails.Any(x => apsOperationIds.Contains(x.operationId)) ||model.operationId == (int)OperationsEnum.APSReleaseApproval)
             {
                 var lien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == model.loanReferenceNumber && x.LIENTYPEID == (int)LienTypeEnum.APGBooking);
                 if (lien == null) throw new SecureException("No lien has been placed");
-            }
+            }*/
 
             
             //var synOperationId = context.TBL_OPERATIONS.Find(model.operationId).SYNCHOPERATIONID;
