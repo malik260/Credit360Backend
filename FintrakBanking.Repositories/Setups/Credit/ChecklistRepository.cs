@@ -1928,7 +1928,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.DEFEREDDATE = model.deferedDate;
                 }
 
-                data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+                data.DATETIMEUPDATED = DateTime.Now;
                 data.LASTUPDATEDBY = (int)model.createdBy;
             }
             else
@@ -1945,7 +1945,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.DEFEREDDATE = model.deferedDate;
                 }
 
-                data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+                data.DATETIMEUPDATED = DateTime.Now;
                 data.LASTUPDATEDBY = (int)model.createdBy;
             }
 
