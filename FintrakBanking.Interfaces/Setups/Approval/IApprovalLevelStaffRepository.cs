@@ -46,6 +46,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         List<WorkflowTrackerViewModel> GetBookingApprovalTrailByTargetId(int targetId, int companyId);
         List<WorkflowTrackerViewModel> GetApprovalTrailByTargetId(int targetId, int companyId);
         WorkflowTrackerViewModel GenerateApprovalMonitoringReport(DateRange param);
+        WorkflowTrackerViewModel ExportApprovalComments(List<ApprovalTrailViewModel> commentsData, bool requireAll);
 
     }
 }

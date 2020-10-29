@@ -452,7 +452,8 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion COMMITTEE MINUTES
 
-        #region OPERATIONDOCUMENTATION
+        #region OPERATIONDOCUMENTATION 
+        /*deprecated!!*/
         //[HttpGet]
         //[ClaimsAuthorization]
         //[Route("operation-documentation")]
