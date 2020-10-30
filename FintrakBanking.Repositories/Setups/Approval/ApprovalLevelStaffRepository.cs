@@ -1437,6 +1437,57 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return data;
         }
 
+        public WorkflowTrackerViewModel ExportApprovalComments(List<ApprovalTrailViewModel> commentsData, bool requireAll)
+        {
+
+            Byte[] fileBytes = null;
+            WorkflowTrackerViewModel data = new WorkflowTrackerViewModel();
+
+            if (commentsData != null)
+            {
+                using (ExcelPackage pck = new ExcelPackage())
+                {
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Approval Comments");
+
+                    ws.Cells[1, 1].Value = "FROM : STAFF NAME";
+                    ws.Cells[1, 2].Value = "FROM : APPROVAL LEVEL";
+                    ws.Cells[1, 3].Value = "TO : STAFF NAME";
+                    ws.Cells[1, 4].Value = "TO : APPROVAL LEVEL";
+                    ws.Cells[1, 5].Value = "ARRIVAL DATE TIME";
+                    ws.Cells[1, 6].Value = "RESPONSE DATE TIME";
+                    ws.Cells[1, 7].Value = "COMMENT";
+                    ws.Cells[1, 8].Value = "APPROVAL STATUS";
+                    ws.Cells[1, 9].Value = "STATE";
+                    if (requireAll)
+                    {
+                        ws.Cells[1, 10].Value = "STAGE";
+                    }
+
+                    for (int i = 2; i <= commentsData.Count + 1; i++)
+                    {
+                        var record = commentsData[i - 2];
+                        ws.Cells[i, 1].Value = record.fromStaffName;
+                        ws.Cells[i, 2].Value = record.fromApprovalLevelName;
+                        ws.Cells[i, 3].Value = record.toStaffName;
+                        ws.Cells[i, 4].Value = record.toApprovalLevelName;
+                        ws.Cells[i, 5].Value = record.systemArrivalDateTime;
+                        ws.Cells[i, 6].Value = record.systemResponseDateTime;
+                        ws.Cells[i, 7].Value = record.comment;
+                        ws.Cells[i, 8].Value = record.approvalStatus;
+                        ws.Cells[i, 9].Value = record.approvalState;
+                        if (requireAll)
+                        {
+                            ws.Cells[1, 10].Value = record.commentStage;
+                        }
+                    }
+                    fileBytes = pck.GetAsByteArray();
+                    data.reportData = fileBytes;
+                    data.templateTypeName = "Approval Comments";
+                }
+            }
+            return data;
+        }
+
         #endregion ALIEN CODE BLOCKS
     }
 }

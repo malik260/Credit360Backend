@@ -315,7 +315,12 @@ namespace FintrakBanking.Repositories.Credit
                             return workflow.Response;
                     }
                 }
-                
+
+                var drawdownAmt = (request.AMOUNT_REQUESTED * (decimal)applicationDet.EXCHANGERATE);
+                if (applicationDet.EXCHANGERATE == 0.0)
+                {
+                    drawdownAmt = request.AMOUNT_REQUESTED;
+                }
 
                 workflow.StaffId = entity.createdBy;
                 workflow.CompanyId = entity.companyId;
@@ -325,7 +330,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.OperationId = entity.operationId;
                 workflow.DeferredExecution = true;
                 workflow.ExternalInitialization = false;
-                workflow.Amount = request.AMOUNT_REQUESTED;
+                workflow.Amount = drawdownAmt;
                 workflow.BusinessUnitId = applicationDet.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = entity.isFromPc;
 
@@ -338,8 +343,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
-                    Amount = request.AMOUNT_REQUESTED,
-                    PepAmount = request.AMOUNT_REQUESTED,
+                    Amount = drawdownAmt,
+                    PepAmount = drawdownAmt,
                     Pep = application.ISPOLITICALLYEXPOSED,
                     InsiderRelated = application.ISRELATEDPARTY,
                     ProjectRelated = application.ISPROJECTRELATED,
@@ -1160,7 +1165,7 @@ namespace FintrakBanking.Repositories.Credit
                                  isProjectRelate = a.ISPROJECTRELATED,
                                  isLineFacility = d.ISLINEFACILITY,
                                  isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
-                                 isLineMaintained = a.APPROVEDLINESTATUSID != null,
+                                 isLineMaintained = d.APPROVEDLINESTATUSID != null,
                                  customerTypeId = (int)context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == d.CUSTOMERID).Select(s => s.CUSTOMERTYPEID).FirstOrDefault(),
                                  appraisalOperationId = a.OPERATIONID,
                                  requestedAmount = 0,
@@ -1252,7 +1257,7 @@ namespace FintrakBanking.Repositories.Credit
                                  isLineFacility = d.ISLINEFACILITY,
                                  isProjectRelate = a.ISPROJECTRELATED,
                                  isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
-                                 isLineMaintained = a.APPROVEDLINESTATUSID != null,
+                                 isLineMaintained = d.APPROVEDLINESTATUSID != null,
                                  customerTypeId = (int)context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == d.CUSTOMERID).Select(s => s.CUSTOMERTYPEID).FirstOrDefault(),
                                  appraisalOperationId = a.OPERATIONID,
                                  requestedAmount = 0,

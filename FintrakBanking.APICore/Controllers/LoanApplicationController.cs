@@ -778,11 +778,11 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        //[ClaimsAuthorization]
+       // [ClaimsAuthorization]
         [Route("loan/application")]
         public HttpResponseMessage AddLoanApplication([FromBody] LoanApplicationViewModel entity)
         {
-
+            try { 
             var loanDetail = entity.LoanApplicationDetail;
             string msg = "";
             if (entity.productClassId == (short)ProductClassEnum.BondAndGuarantees)
@@ -817,6 +817,16 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+           }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
         }
 
 

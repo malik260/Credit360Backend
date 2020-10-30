@@ -725,9 +725,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         {
                             rec.customerTier = "Tier 2";
                         }
-                        if (check.computation <= 59)
+                        if (check.computation >= 1 && check.computation <= 59)
                         {
                             rec.customerTier = "Tier 3";
+                        }
+                        if (check.computation <= 0)
+                        {
+                            rec.customerTier = "N/A";
                         }
                     }
 
@@ -783,9 +787,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         {
                             rec.projectRiskRatings = "ABOVE AVERAGE";
                         }
-                        if (overRallTotal < 51)
+                        if (overRallTotal >= 1 && overRallTotal < 51)
                         {
                             rec.projectRiskRatings = "HIGH";
+                        }
+                        if (overRallTotal <=0)
+                        {
+                            rec.projectRiskRatings = "N/A";
                         }
                     }
                 }
@@ -865,9 +873,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         {
                             rec.customerTier = "Tier 2";
                         }
-                        if (check.computation <= 59)
+                        if (check.computation >= 1 && check.computation <= 59)
                         {
                             rec.customerTier = "Tier 3";
+                        }
+                        if (check.computation <= 0)
+                        {
+                            rec.customerTier = "N/A";
                         }
                     }
 
@@ -923,9 +935,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         {
                             rec.projectRiskRatings = "ABOVE AVERAGE";
                         }
-                        if (overRallTotal < 51)
+                        if (overRallTotal >= 1 && overRallTotal < 51)
                         {
                             rec.projectRiskRatings = "HIGH";
+                        }
+                        if (overRallTotal <= 0)
+                        {
+                            rec.projectRiskRatings = "N/A";
                         }
                     }
                 }
