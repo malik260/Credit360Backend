@@ -778,7 +778,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        //[ClaimsAuthorization]
+       // [ClaimsAuthorization]
         [Route("loan/application")]
         public HttpResponseMessage AddLoanApplication([FromBody] LoanApplicationViewModel entity)
         {
