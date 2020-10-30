@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
@@ -1435,6 +1434,7 @@ namespace FintrakBanking.Repositories.credit
                 TRANSACTIONCYCLE = model.transactionCycle,
                 //COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
+                TOTALUSANCEAMOUNTLOCAL = 0,
                 DATETIMECREATED = DateTime.Now
             };
 
@@ -2087,6 +2087,7 @@ namespace FintrakBanking.Repositories.credit
                            lcToleranceValue = i.LCTOLERANCEVALUE,
                            releaseAmount = r.RELEASEAMOUNT,
                            releasedAmount = i.RELEASEDAMOUNT,
+                           availableAmountForRelease = ((i.LCTOLERANCEVALUE ?? 0) - i.RELEASEDAMOUNT),
                            letterOfCreditTypeId = i.LETTEROFCREDITTYPEID,
                            isDraftRequired = i.ISDRAFTREQUIRED,
                            beneficiaryAddress = i.BENEFICIARYADDRESS,
@@ -2119,10 +2120,10 @@ namespace FintrakBanking.Repositories.credit
                                  where
                                  (
                                  i.DELETED == false
-                                 && i.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                 //&& i.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                  && i.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
-                                 && r.RELEASEAPPLICATIONSTATUSID == null
-                                 && staffs.Contains(r.CREATEDBY ?? 0)
+                                 && (r.RELEASEAPPLICATIONSTATUSID == null || r == null)
+                                 && (staffs.Contains(r.CREATEDBY ?? 0) || r == null)
                                  && i.LCTOLERANCEVALUE > (context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == i.LCISSUANCEID).Sum(r => r.RELEASEAMOUNT) ?? 0)
                                  )
                                  select new LcIssuanceApprovalViewModel
@@ -2142,6 +2143,7 @@ namespace FintrakBanking.Repositories.credit
                                      lcToleranceValue = i.LCTOLERANCEVALUE,
                                      releaseAmount = r.RELEASEAMOUNT,
                                      releasedAmount = i.RELEASEDAMOUNT,
+                                     availableAmountForRelease = ((i.LCTOLERANCEVALUE ?? 0) - i.RELEASEDAMOUNT),
                                      letterOfCreditTypeId = i.LETTEROFCREDITTYPEID,
                                      isDraftRequired = i.ISDRAFTREQUIRED,
                                      beneficiaryAddress = i.BENEFICIARYADDRESS,
@@ -2349,8 +2351,9 @@ namespace FintrakBanking.Repositories.credit
                 LCISSUANCEID = entity.lcIssuanceId,
                 RELEASEREF = reference,
                 RELEASEAMOUNT = entity.releaseAmount,
-                DATETIMECREATED = DateTime.Now
-        });
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = entity.createdBy
+            });
 
             var systemDate = general.GetApplicationDate();
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == entity.createdBy).Select(x => x.STAFFCODE));

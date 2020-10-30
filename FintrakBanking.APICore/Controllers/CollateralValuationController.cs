@@ -164,6 +164,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-all-collateral-valuations-request-list")]
+        public HttpResponseMessage GetAllValuationRequestList()
+        {
+            
+                var valuations = _colValuationRepo.GetAllValuationRequestList();
+                int totalItems = valuations.Count();
+                valuations = valuations.OrderBy(x => x.dateTimeCreated).ToList();
+            if (valuations != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = valuations, count = totalItems });
+            }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Record(s) not found" });
+            
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-valuation-Prerequisite/{valuationPrerequisiteId}/valuationPrerequisiteId")]
         public HttpResponseMessage GetCollateralValuationPrerequisiteById(int valuationPrerequisiteId)
         {
@@ -189,6 +206,25 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var Prerequisites = _colValuationRepo.GetAllValuationPrerequisitesById(token.GetStaffId, collateralValuationId);
+                int totalItems = Prerequisites.Count();
+
+                Prerequisites = Prerequisites.OrderBy(x => x.dateTimeCreated).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = Prerequisites, count = totalItems });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-all-valuation-Prerequisites-list/{collateralValuationId}/collateralValuationId")]
+        public HttpResponseMessage GetAllValuationPrerequisitesList(int collateralValuationId)
+        {
+            try
+            {
+                var Prerequisites = _colValuationRepo.GetAllValuationPrerequisitesListById(token.GetStaffId, collateralValuationId);
                 int totalItems = Prerequisites.Count();
 
                 Prerequisites = Prerequisites.OrderBy(x => x.dateTimeCreated).ToList();
@@ -264,6 +300,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("update-valuer")]
+        public HttpResponseMessage UpdateCollateralValuerInfo([FromBody] ValuationPrerequisiteViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var res = _colValuationRepo.UpdateCollateralValurerInfo(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res, message = $"Success" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record. Error - {ex.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-valuer-info")]
@@ -295,6 +353,24 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-valuer-info-detail/{id}")]
+        public HttpResponseMessage GetAllCollateralValuerIformationById(int id)
+        {
+            try
+            {
+                var response = _colValuationRepo.GetAllCollateralValuerIformationById(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-valuation-waiting-for-approval")]

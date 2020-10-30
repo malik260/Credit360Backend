@@ -31,7 +31,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                              join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                              join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                             join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                              && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= dpd
@@ -54,10 +54,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
                                                  businessLine = "Nil",
                                                  subBusinessLine = "Nil",
-                                                 groupHeadName = "Nil",
-                                                 regionName = "Nil",
-                                                 groupName = "Nil",
-                                                 teamName = "Nil",
                                                  productCode = pr.PRODUCTCODE,
                                                  maturityDate = ln.MATURITYDATE,
                                                  principalAmount = ln.PRINCIPALAMOUNT,
@@ -66,7 +62,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  amountDue = ln.PRINCIPALINSTALLMENTLEFT,
                                                  loanAmountLcy = ld.APPROVEDAMOUNT,
                                                  totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
-                                                 collections = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANID == ln.TERMLOANID).Sum(c => c.AMOUNTRECOVERED),
+                                                 collections = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE).Sum(c => c.AMOUNTRECOVERED),
                                                  facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                  staffCode = st.STAFFCODE,
                                                  supervisorId = st.SUPERVISOR_STAFFID,
@@ -81,7 +77,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                   join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                                   join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                                   join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                                  join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                                  join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
                                                   where
                                                   (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                                   && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= dpd
@@ -104,10 +100,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
                                                       businessLine = "Nil",
                                                       subBusinessLine = "Nil",
-                                                      groupHeadName = "Nil",
-                                                      regionName = "Nil",
-                                                      groupName = "Nil",
-                                                      teamName = "Nil",
                                                       productCode = pr.PRODUCTCODE,
                                                       maturityDate = ln.MATURITYDATE,
                                                       principalAmount = ln.OVERDRAFTLIMIT,
@@ -116,7 +108,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       amountDue = ln.PASTDUEPRINCIPAL,
                                                       loanAmountLcy = ld.APPROVEDAMOUNT,
                                                       totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
-                                                      collections = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANID == ln.REVOLVINGLOANID).Sum(c => c.AMOUNTRECOVERED),
+                                                      collections = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE).Sum(c => c.AMOUNTRECOVERED),
                                                       facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                       staffCode = st.STAFFCODE,
                                                       supervisorId = st.SUPERVISOR_STAFFID,
@@ -133,6 +125,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 {
                     foreach (var i in allData)
                     {
+                        i.regionName = "";
+                        i.groupName = "";
+                        i.teamName = "";
+                        i.groupHeadName = "";
                         var rm = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == i.supervisorId).FirstOrDefault();
                         if (rm != null)
                         {
@@ -169,7 +165,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                                  join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                                  join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                                 join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                                 join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
                                                  where
                                                  (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                                  && lr.ISFULLYRECOVERED == false
@@ -192,10 +188,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                      main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
                                                      businessLine = "Nil",
                                                      subBusinessLine = "Nil",
-                                                     groupHeadName = "Nil",
-                                                     regionName = "Nil",
-                                                     groupName = "Nil",
-                                                     teamName = "Nil",
                                                      mobileNumber = "Nil",
                                                      divisionName = "Nil",
                                                      productCode = pr.PRODUCTCODE,
@@ -214,7 +206,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                      amountDue = ln.PRINCIPALINSTALLMENTLEFT,
                                                      loanAmountLcy = ld.APPROVEDAMOUNT,
                                                      totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
-                                                     collections = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANID == ln.TERMLOANID).Sum(c => c.AMOUNTRECOVERED),
+                                                     collections = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE).Sum(c => c.AMOUNTRECOVERED),
                                                      facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                      staffCode = st.STAFFCODE,
                                                      supervisorId = st.SUPERVISOR_STAFFID,
@@ -229,7 +221,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                                       join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                                       join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                                      join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
                                                       where
                                                       (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                                       && lr.ISFULLYRECOVERED == false
@@ -251,10 +243,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                           main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
                                                           businessLine = "Nil",
                                                           subBusinessLine = "Nil",
-                                                          groupHeadName = "Nil",
-                                                          regionName = "Nil",
-                                                          groupName = "Nil",
-                                                          teamName = "Nil",
                                                           mobileNumber = "Nil",
                                                           divisionName = "Nil",
                                                           productCode = pr.PRODUCTCODE,
@@ -272,7 +260,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                           amountDue = ln.PASTDUEPRINCIPAL,
                                                           loanAmountLcy = ld.APPROVEDAMOUNT,
                                                           totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
-                                                          collections = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANID == ln.REVOLVINGLOANID).Sum(c => c.AMOUNTRECOVERED),
+                                                          collections = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE).Sum(c => c.AMOUNTRECOVERED),
                                                           facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                           staffCode = st.STAFFCODE,
                                                           supervisorId = st.SUPERVISOR_STAFFID,
@@ -289,6 +277,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     {
                         foreach (var i in allData)
                         {
+                            i.groupHeadName = "Nil";
+                            i.regionName = "Nil";
+                            i.groupName = "Nil";
+                            i.teamName = "Nil";
                             var rm = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == i.supervisorId).FirstOrDefault();
                             if (rm != null)
                             {
@@ -329,7 +321,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                              join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                              join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                             join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                              && lr.ISFULLYRECOVERED == false
@@ -353,10 +345,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
                                                  businessLine = "Nil",
                                                  subBusinessLine = "Nil",
-                                                 groupHeadName = "Nil",
-                                                 regionName = "Nil",
-                                                 groupName = "Nil",
-                                                 teamName = "Nil",
                                                  mobileNumber = "Nil",
                                                  divisionName = "Nil",
                                                  productCode = pr.PRODUCTCODE,
@@ -376,8 +364,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  loanAmountLcy = ld.APPROVEDAMOUNT,
                                                  totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
                                                  collections = lr.TOTALAMOUNTRECOVERY, 
-                                                 actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.AMOUNTRECOVERED),
-                                                 commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.COMMISSIONPAYABLE),
+                                                 actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER && (DbFunctions.TruncateTime(c.COLLECTIONDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(c.COLLECTIONDATE) <= DbFunctions.TruncateTime(endDate))).Sum(c => c.AMOUNTRECOVERED),
+                                                 commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER && (DbFunctions.TruncateTime(c.COLLECTIONDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(c.COLLECTIONDATE) <= DbFunctions.TruncateTime(endDate))).Sum(c => c.COMMISSIONPAYABLE),
                                                  facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                  staffCode = st.STAFFCODE,
                                                  supervisorId = st.SUPERVISOR_STAFFID,
@@ -392,7 +380,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                   join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                                   join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                                   join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                                  join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                                  join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
                                                   where
                                                   (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                                   && lr.ISFULLYRECOVERED == false
@@ -414,10 +402,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
                                                       businessLine = "Nil",
                                                       subBusinessLine = "Nil",
-                                                      groupHeadName = "Nil",
-                                                      regionName = "Nil",
-                                                      groupName = "Nil",
-                                                      teamName = "Nil",
                                                       mobileNumber = "Nil",
                                                       divisionName = "Nil",
                                                       productCode = pr.PRODUCTCODE,
@@ -436,8 +420,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       loanAmountLcy = ld.APPROVEDAMOUNT,
                                                       totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
                                                       collections = lr.TOTALAMOUNTRECOVERY,
-                                                      actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.AMOUNTRECOVERED),
-                                                      commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.COMMISSIONPAYABLE),
+                                                      actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER && (DbFunctions.TruncateTime(c.COLLECTIONDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(c.COLLECTIONDATE) <= DbFunctions.TruncateTime(endDate))).Sum(c => c.AMOUNTRECOVERED),
+                                                      commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER && (DbFunctions.TruncateTime(c.COLLECTIONDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(c.COLLECTIONDATE) <= DbFunctions.TruncateTime(endDate))).Sum(c => c.COMMISSIONPAYABLE),
                                                       facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                       staffCode = st.STAFFCODE,
                                                       supervisorId = st.SUPERVISOR_STAFFID,
@@ -454,6 +438,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 {
                     foreach (var i in allData)
                     {
+                        i.groupHeadName = "Nil";
+                        i.regionName = "Nil";
+                        i.groupName = "Nil";
+                        i.teamName = "Nil";
                         var rm = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == i.supervisorId).FirstOrDefault();
                         if (rm != null)
                         {
@@ -492,7 +480,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                              join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                              join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                             join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                              && lr.ISFULLYRECOVERED == false
@@ -515,10 +503,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
                                                  businessLine = "Nil",
                                                  subBusinessLine = "Nil",
-                                                 groupHeadName = "Nil",
-                                                 regionName = "Nil",
-                                                 groupName = "Nil",
-                                                 teamName = "Nil",
                                                  mobileNumber = "Nil",
                                                  divisionName = "Nil",
                                                  productCode = pr.PRODUCTCODE,
@@ -554,7 +538,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                   join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                                   join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                                   join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                                  join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                                  join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
                                                   where
                                                   (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                                   && lr.ISFULLYRECOVERED == false
@@ -576,10 +560,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
                                                       businessLine = "Nil",
                                                       subBusinessLine = "Nil",
-                                                      groupHeadName = "Nil",
-                                                      regionName = "Nil",
-                                                      groupName = "Nil",
-                                                      teamName = "Nil",
                                                       mobileNumber = "Nil",
                                                       divisionName = "Nil",
                                                       productCode = pr.PRODUCTCODE,
@@ -616,6 +596,11 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 {
                     foreach (var i in allData)
                     {
+                        i.groupHeadName = "Nil";
+                        i.regionName = "Nil";
+                        i.groupName = "Nil";
+                        i.teamName = "Nil";
+
                         var rm = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == i.supervisorId).FirstOrDefault();
                         if (rm != null)
                         {
@@ -650,7 +635,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                              join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                              join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                             join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                              && lr.ISFULLYRECOVERED == false
@@ -685,7 +670,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  productName = pr.PRODUCTNAME,
                                                  principalOutstandingBalLcy = ln.OUTSTANDINGPRINCIPAL,
                                                  minimumAmountDueUnpaid = ln.OUTSTANDINGPRINCIPAL,
-                                                 totalOutstanding = (lr.TOTALAMOUNTRECOVERY - (context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.LOANASSIGNID == lr.LOANASSIGNID).Sum(c => c.AMOUNTRECOVERED))),
+                                                 totalOutstanding = lr.TOTALAMOUNTRECOVERY,
                                                  bookingDate = ln.BOOKINGDATE,
                                                  valueDate = ln.DATETIMECREATED,
                                                  referenceDate = ln.EFFECTIVEDATE,
@@ -700,8 +685,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  loanAmountLcy = ld.APPROVEDAMOUNT,
                                                  totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
                                                  collections = lr.TOTALAMOUNTRECOVERY,
-                                                 actualRecovery = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.LOANASSIGNID == lr.LOANASSIGNID).Sum(c => c.AMOUNTRECOVERED),
-                                                 commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == lr.ACCREDITEDCONSULTANT && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE),
+                                                 actualRecovery = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED),
+                                                 commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == lr.ACCREDITEDCONSULTANT && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE),
                                                  facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                  staffCode = st.STAFFCODE,
                                                  supervisorId = st.SUPERVISOR_STAFFID,
@@ -716,7 +701,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                   join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                                   join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
                                                   join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                                  join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                                  join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
                                                   where
                                                   (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                                   && lr.ISFULLYRECOVERED == false
@@ -746,7 +731,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       mobileNumber = "Nil",
                                                       divisionName = "Nil",
                                                       productCode = pr.PRODUCTCODE,
-                                                      totalOutstanding = (lr.TOTALAMOUNTRECOVERY - (context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.LOANASSIGNID == lr.LOANASSIGNID).Sum(c => c.AMOUNTRECOVERED))),
+                                                      totalOutstanding = lr.TOTALAMOUNTRECOVERY,
+                                                      //totalOutstanding = lr.TOTALAMOUNTRECOVERY - (context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED)),
                                                       accountOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
                                                       processDate = ln.BOOKINGDATE,
                                                       productName = pr.PRODUCTNAME,
@@ -763,8 +749,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       loanAmountLcy = ld.APPROVEDAMOUNT,
                                                       totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
                                                       collections = lr.TOTALAMOUNTRECOVERY,
-                                                      actualRecovery = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.LOANASSIGNID == lr.LOANASSIGNID).Sum(c => c.AMOUNTRECOVERED),
-                                                      commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == lr.ACCREDITEDCONSULTANT && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month + 1 && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE),
+                                                      actualRecovery = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED),
+                                                      commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == lr.ACCREDITEDCONSULTANT && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE),
                                                       facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
                                                       staffCode = st.STAFFCODE,
                                                       supervisorId = st.SUPERVISOR_STAFFID,

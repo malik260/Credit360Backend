@@ -1955,6 +1955,8 @@ namespace FintrakBanking.Repositories.Credit
                         collateralTypeId = c.c.COLLATERALTYPEID,
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
                         customerId = c.c.CUSTOMERID,
+                        customerCode = c.c.CUSTOMERCODE,
+                        customerName = c.c.TBL_CUSTOMER.FIRSTNAME + c.c.TBL_CUSTOMER.MIDDLENAME + c.c.TBL_CUSTOMER.LASTNAME,
                         currencyId = c.c.CURRENCYID,
                         currencyCode = c.c.TBL_CURRENCY.CURRENCYCODE,
                         baseCurrencyId = company.CURRENCYID,
@@ -2131,6 +2133,59 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public IEnumerable<CollateralCoverageViewModel> GetProposedFacilitiesToCollateralByCollateralId(int collateralId)
+        {
+            var collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
+                               join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                               join d in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                               join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                               join r in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
+                               join cu in context.TBL_CUSTOMER on d.CUSTOMERID equals cu.CUSTOMERID
+                               join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+                               join tl in context.TBL_LOAN on r.LOAN_BOOKING_REQUESTID equals tl.LOAN_BOOKING_REQUESTID into tlr
+                               join cl in context.TBL_LOAN_CONTINGENT on r.LOAN_BOOKING_REQUESTID equals cl.LOAN_BOOKING_REQUESTID into clr
+                               join rl in context.TBL_LOAN_REVOLVING on r.LOAN_BOOKING_REQUESTID equals rl.LOAN_BOOKING_REQUESTID into rlr
+                               from tl in tlr.DefaultIfEmpty()
+                               from cl in clr.DefaultIfEmpty()
+                               from rl in rlr.DefaultIfEmpty()
+                               //let isProperty = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Any(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID)
+                               let isTermLoan = (tl != null)
+                               let isContingent = (cl != null)
+                               let isRevolving = (rl != null)
+                               let noDrawDown = (!isTermLoan && !isContingent && !isRevolving)
+                               where x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false
+
+                               select new CollateralCoverageViewModel
+                               {
+                                   loanAppCollateralId = x.LOANAPPCOLLATERALID,
+                                   collateralId = x.COLLATERALCUSTOMERID,
+                                   collateralCode = c.COLLATERALCODE,
+                                   currencyId = c.CURRENCYID,
+                                   collateralValue = c.COLLATERALVALUE,
+                                   actualCollateralCoverage = x.COLLATERALCOVERAGE,
+                                   loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                                   applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
+                                   customerName = cu.FIRSTNAME + " " + cu.MIDDLENAME + " " + cu.LASTNAME,
+                                   requestedAmount = r.AMOUNT_REQUESTED,
+                                   isBooked = r.ISUSED ?? false,
+                                   isDisbursed = (noDrawDown) ? false : (isRevolving) ? rl.ISDISBURSED : (isContingent) ? cl.ISDISBURSED : tl.ISDISBURSED,
+                                   disbursedAmount = (noDrawDown) ? 0 : (isRevolving) ? rl.OVERDRAFTLIMIT : (isContingent) ? cl.CONTINGENTAMOUNT : tl.PRINCIPALAMOUNT,
+                                   outstandingPrincipal = (noDrawDown) ? 0 : (isRevolving) ? rl.OVERDRAFTLIMIT : (isContingent) ? cl.CONTINGENTAMOUNT : tl.OUTSTANDINGPRINCIPAL,
+                                   bookingDate = (isRevolving) ? rl.BOOKINGDATE : (isContingent) ? cl.BOOKINGDATE : tl.BOOKINGDATE,
+                                   maturityDate = (isRevolving) ? rl.MATURITYDATE : (isContingent) ? cl.MATURITYDATE : tl.MATURITYDATE,
+                                   facilityAmount = d.APPROVEDAMOUNT,
+                                   productName = p.PRODUCTNAME,
+                                   baseCurrencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                                   customerId = (int)x.CUSTOMERID,
+                                   collateralOwnerId = (int)c.CUSTOMERID,
+                                   //omv = (isProperty) ? context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).OPENMARKETVALUE ?? 0 : c.COLLATERALVALUE,
+                                   //fsv = (isProperty) ? context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).FORCEDSALEVALUE ?? 0 : c.COLLATERALVALUE,
+                                   facilityCurrencyId = d.CURRENCYID,
+                               }).ToList();
+
+            return collaterals;
+        }
+
         public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId, bool getAll = false)
         {
 
@@ -2158,7 +2213,7 @@ namespace FintrakBanking.Repositories.Credit
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                let isProperty = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Any(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID)
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                               where c.CUSTOMERID == customerId && x.DELETED == false
+                               where c.CUSTOMERID == customerId && x.DELETED == false//where the owner of the collateral is the focus
 
                                select new CollateralCoverageViewModel
                                {
@@ -2190,7 +2245,7 @@ namespace FintrakBanking.Repositories.Credit
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                let isProperty = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Any(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID)
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                               where f.CUSTOMERID == customerId && x.DELETED == false
+                               where f.CUSTOMERID == customerId && x.DELETED == false//where the owner of the facility is the focus
 
                                select new CollateralCoverageViewModel
                                {
@@ -2867,51 +2922,32 @@ namespace FintrakBanking.Repositories.Credit
                 currencyCode = x.TBL_CURRENCY.CURRENCYCODE,
                 collateralCode = x.COLLATERALCODE,
                 collateralValue = x.COLLATERALVALUE,
+                customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME,
                 camRefNumber = x.CAMREFNUMBER,
                 allowSharing = x.ALLOWSHARING,
                 isLocationBased = (bool)x.ISLOCATIONBASED,
                 valuationCycle = x.VALUATIONCYCLE,
                 haircut = x.HAIRCUT,
                 approvalStatusName = x.APPROVALSTATUS,
-                //collateralValue = x.CollateralValue
                 exchangeRate = x.EXCHANGERATE,
                 collateralSummary = x.COLLATERALSUMMARY
 
             }).FirstOrDefault();
-            return collateral;
-        }
 
-        private CollateralViewModel GetCustomerCollateralByCollateralId(int collateralId)
-        {
-            var collateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false
-                && x.COLLATERALCUSTOMERID == collateralId
-            )
-            .Select(x => new CollateralViewModel
-            {
-                collateralId = x.COLLATERALCUSTOMERID,
-                collateralTypeId = x.COLLATERALTYPEID,
-                collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                customerId = x.CUSTOMERID.Value,
-                currencyId = x.CURRENCYID,
-                currency = x.TBL_CURRENCY.CURRENCYNAME,
-                currencyCode = x.TBL_CURRENCY.CURRENCYCODE,
-                collateralCode = x.COLLATERALCODE,
-                collateralValue = x.COLLATERALVALUE,
-                camRefNumber = x.CAMREFNUMBER,
-                allowSharing = x.ALLOWSHARING,
-                isLocationBased = (bool)x.ISLOCATIONBASED,
-                valuationCycle = x.VALUATIONCYCLE,
-                haircut = x.HAIRCUT,
-                approvalStatusName = x.APPROVALSTATUS,
-                //collateralValue = x.CollateralValue
-                exchangeRate = x.EXCHANGERATE,
-                collateralSummary = x.COLLATERALSUMMARY
-            }).FirstOrDefault();
+            var company = context.TBL_COMPANY.FirstOrDefault();
+
+            var baseCurrencyId = company.TBL_CURRENCY.CURRENCYID;
+            decimal usage;
+            usage = 0;
+            var proposes = context.TBL_LOAN_APPLICATION_COLLATERL.Where(pc => pc.DELETED == false && pc.COLLATERALCUSTOMERID == collateral.collateralId).ToList();
+            usage = proposes.Sum(p => p.COLLATERALCOVERAGE);
+            var exchangeRate = repo.GetExchangeRate(DateTime.Now, collateral.currencyId, company.COMPANYID);
+            collateral.baseCurrencyCode = context.TBL_CURRENCY.Find(baseCurrencyId).CURRENCYCODE;
+            collateral.collateralValueLcy = (collateral.currencyId == baseCurrencyId) ? (decimal)collateral.collateralValue : (decimal)collateral.collateralValue * (decimal)exchangeRate.sellingRate;
+            collateral.availableCollateralValue = (collateral.currencyId == baseCurrencyId) ? ((decimal)collateral.collateralValue - usage) : (decimal)collateral.collateralValueLcy - usage;
 
             return collateral;
         }
-
 
         // GET TYPE SPICIFIC & INSURANCE DETAILS
 
@@ -3183,7 +3219,7 @@ namespace FintrakBanking.Repositories.Credit
                              join a in context.TBL_COLLATERAL_TYPE on s.COLLATERALTYPEID equals a.COLLATERALTYPEID
                              join c in context.TBL_CUSTOMER on s.CUSTOMERID equals c.CUSTOMERID
                              join b in context.TBL_COLLATERAL_TYPE_SUB on s.COLLATERALSUBTYPEID equals b.COLLATERALSUBTYPEID
-                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
                                      && atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                      && atrail.LOOPEDSTAFFID == null
@@ -8355,6 +8391,7 @@ namespace FintrakBanking.Repositories.Credit
                                    dateTimeCreated = x.DATETIMECREATED,
                                    requireVisitation = c.REQUIREVISITATION,
                                    customerName = a.FIRSTNAME + " " + a.LASTNAME + " " + a.MAIDENNAME,
+                                   customerCode = a.CUSTOMERCODE == null ? x.CUSTOMERCODE: a.CUSTOMERCODE,
 
                                }).ToList();
 
@@ -11466,13 +11503,19 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CollateralSwapViewModel> GetAllCollateralSwaps(int staffId)
         {
             var requests = context.TBL_COLLATERAL_SWAP_REQUEST.ToList();
+            var staffs = genSetup.GetStaffRlieved(staffId).ToList();
+            var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
             var swapsInProgress = (from s in context.TBL_COLLATERAL_SWAP_REQUEST
+                                   join c in context.TBL_CUSTOMER on s.TBL_LOAN_APPLICATION_COLLATERL.CUSTOMERID equals c.CUSTOMERID
+                                   join d in context.TBL_LOAN_APPLICATION_DETAIL on s.TBL_LOAN_APPLICATION_COLLATERL.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                    join t in context.TBL_APPROVAL_TRAIL on s.COLLATERALSWAPID equals t.TARGETID
                                    where
                                     (
                                     s.DELETED == false
                                     && t.OPERATIONID == (int)OperationsEnum.CollateralSwap
-                                    && s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
+                                    && t.APPROVALSTATEID != (int)ApprovalState.Ended
+                                    && t.RESPONSESTAFFID == null
+                                    //&& s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
                                     )
                                    select new CollateralSwapViewModel
                                    {
@@ -11481,55 +11524,87 @@ namespace FintrakBanking.Repositories.Credit
                                        loanAppCollateralId = s.LOANAPPCOLLATERALID,
                                        oldCollateralId = s.OLDCOLLATERALID,
                                        newCollateralId = s.NEWCOLLATERALID,
-                                       customerId = s.CUSTOMERID,
+                                       customerId = (s.CUSTOMERID > 0) ? s.CUSTOMERID : s.TBL_LOAN_APPLICATION_COLLATERL.CUSTOMERID,
+                                       customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                                       loanApplicationId = s.TBL_LOAN_APPLICATION_COLLATERL.LOANAPPLICATIONID,
                                        oldCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.OLDCOLLATERALID).COLLATERALCODE,
                                        newCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.NEWCOLLATERALID).COLLATERALCODE,
                                        collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
                                        approvalStatusId = t.APPROVALSTATUSID,
                                        approvalTrailId = t.APPROVALTRAILID,
+                                       systemArrivalDateTime = t.SYSTEMARRIVALDATETIME,
                                        loopedStaffId = t.LOOPEDSTAFFID,
-                                       swapRef = s.SWAPREF
+                                       toRoleId = t.LOOPEDSTAFFID > 0 ? context.TBL_STAFF.FirstOrDefault(a=> a.STAFFID == t.LOOPEDSTAFFID).STAFFROLEID : 0,
+                                       applicationReferenceNumber = s.TBL_LOAN_APPLICATION_COLLATERL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                       productName = d.TBL_PRODUCT1.PRODUCTNAME,
+                                       swapRef = s.SWAPREF,
+                                       coverage = s.TBL_LOAN_APPLICATION_COLLATERL.COLLATERALCOVERAGE,
                                    }).GroupBy(l => l.collateralSwapId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
                                        .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                                                 || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
-                                                && l.loopedStaffId == staffId)).ToList();
+                                                && staffs.Contains(l.loopedStaffId ?? 0))).ToList();
 
             var swapsNotStarted = (from s in context.TBL_COLLATERAL_SWAP_REQUEST
+                                   join c in context.TBL_CUSTOMER on s.TBL_LOAN_APPLICATION_COLLATERL.CUSTOMERID equals c.CUSTOMERID
+                                   join d in context.TBL_LOAN_APPLICATION_DETAIL on s.TBL_LOAN_APPLICATION_COLLATERL.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                    where s.COLLATERALSWAPSTATUSID == null
+                                   && staffs.Contains(s.CREATEDBY)
                                    select new CollateralSwapViewModel
                                    {
                                        collateralSwapId = s.COLLATERALSWAPID,
                                        loanCollateralMappingId = s.LOANCOLLATERALMAPPINGID,
                                        loanAppCollateralId = s.LOANAPPCOLLATERALID,
                                        oldCollateralId = s.OLDCOLLATERALID,
-                                       customerId = s.CUSTOMERID,
                                        newCollateralId = s.NEWCOLLATERALID,
-                                       collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
-                                       swapRef = s.SWAPREF,
+                                       customerId = (s.CUSTOMERID > 0) ? s.CUSTOMERID : s.TBL_LOAN_APPLICATION_COLLATERL.CUSTOMERID,
+                                       customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                                       loanApplicationId = s.TBL_LOAN_APPLICATION_COLLATERL.LOANAPPLICATIONID,
                                        oldCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.OLDCOLLATERALID).COLLATERALCODE,
                                        newCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.NEWCOLLATERALID).COLLATERALCODE,
+                                       collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
+                                       approvalStatusId = 1,
+                                       approvalTrailId = 0,
+                                       systemArrivalDateTime = s.DATETIMECREATED,
+                                       loopedStaffId = 0,
+                                       toRoleId = context.TBL_STAFF.FirstOrDefault(a => a.STAFFID == s.CREATEDBY).STAFFROLEID,
+                                       applicationReferenceNumber = s.TBL_LOAN_APPLICATION_COLLATERL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                       productName = d.TBL_PRODUCT1.PRODUCTNAME,
+                                       swapRef = s.SWAPREF,
+                                       coverage = s.TBL_LOAN_APPLICATION_COLLATERL.COLLATERALCOVERAGE,
+
                                    }).ToList();
 
             var result = swapsNotStarted.Union(swapsInProgress);
+            foreach (var s in result)
+            {
+                if (s.toRoleId > 0)
+                {
+                    s.isBusiness = businessRoleIds.Contains(s.toRoleId);
+                }
+            }
             return result;
         }
 
         public IEnumerable<CollateralSwapViewModel> GetCollateralSwapsForApproval(int staffId)
         {
-            //var operationId = (int)OperationsEnum.lcReleaseOfShippingDocuments;
             var operationId = (int)OperationsEnum.CollateralSwap;
             var levelIds = genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+            var staffs = genSetup.GetStaffRlieved(staffId).ToList();
+            var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
 
             var collateralSwapsForApproval = (from s in context.TBL_COLLATERAL_SWAP_REQUEST
+                                              join c in context.TBL_CUSTOMER on s.TBL_LOAN_APPLICATION_COLLATERL.CUSTOMERID equals c.CUSTOMERID
                                               join t in context.TBL_APPROVAL_TRAIL on s.COLLATERALSWAPID equals t.TARGETID
+                                              join d in context.TBL_LOAN_APPLICATION_DETAIL on s.TBL_LOAN_APPLICATION_COLLATERL.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                               where (s.DELETED == false && t.OPERATIONID == (int)OperationsEnum.CollateralSwap
-                                               && s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
-                                               && t.APPROVALSTATEID != (int)ApprovalState.Ended
-                                               && t.RESPONSESTAFFID == null
-                                               && (t.LOOPEDSTAFFID == null || t.LOOPEDSTAFFID == staffId)
-                                               && ((levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == null) || (!levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == staffId))
-                                               //&& levelIds.Contains((int)t.TOAPPROVALLEVELID)
-                                               && (t.TOSTAFFID == null || t.TOSTAFFID == staffId))
+                                                //&& s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
+                                                && t.APPROVALSTATEID != (int)ApprovalState.Ended
+                                                && t.LOOPEDSTAFFID == null
+                                                && t.RESPONSESTAFFID == null
+                                                && (levelIds.Contains((int)t.TOAPPROVALLEVELID))
+                                                //|| (!levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == staffId)
+                                                //&& levelIds.Contains((int)t.TOAPPROVALLEVELID)
+                                                && (t.TOSTAFFID == null || staffs.Contains(t.TOSTAFFID ?? 0)))
                                               select new CollateralSwapViewModel
                                               {
                                                   collateralSwapId = s.COLLATERALSWAPID,
@@ -11537,20 +11612,34 @@ namespace FintrakBanking.Repositories.Credit
                                                   loanAppCollateralId = s.LOANAPPCOLLATERALID,
                                                   oldCollateralId = s.OLDCOLLATERALID,
                                                   newCollateralId = s.NEWCOLLATERALID,
-                                                  customerId = s.CUSTOMERID,
+                                                  operationId = t.OPERATIONID,
+                                                  customerId = (s.CUSTOMERID > 0) ? s.CUSTOMERID : s.TBL_LOAN_APPLICATION_COLLATERL.CUSTOMERID,
+                                                  loanApplicationId = s.TBL_LOAN_APPLICATION_COLLATERL.LOANAPPLICATIONID,
                                                   collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
                                                   approvalStatusId = t.APPROVALSTATUSID,
                                                   approvalTrailId = t.APPROVALTRAILID,
                                                   currentApprovalLevelId = t.TOAPPROVALLEVELID,
                                                   currentApprovalLevel = t.TBL_APPROVAL_LEVEL1.LEVELNAME,
                                                   approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME.ToUpper(),
-                                                  customerName = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.MIDDLENAME + " " + s.TBL_CUSTOMER.LASTNAME,
+                                                  customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                                                  applicationReferenceNumber = s.TBL_LOAN_APPLICATION_COLLATERL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                                  productName = d.TBL_PRODUCT1.PRODUCTNAME,
                                                   swapRef = s.SWAPREF,
+                                                  systemArrivalDateTime = t.SYSTEMARRIVALDATETIME,
                                                   oldCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.OLDCOLLATERALID).COLLATERALCODE,
                                                   newCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.NEWCOLLATERALID).COLLATERALCODE,
-                                                  dateTimeCreated = (DateTime)s.DATETIMECREATED
+                                                  coverage = s.TBL_LOAN_APPLICATION_COLLATERL.COLLATERALCOVERAGE,
+                                                  toRoleId = t.TOSTAFFID > 0 ? context.TBL_STAFF.FirstOrDefault(a => t.TOSTAFFID == a.STAFFID).STAFFROLEID : (t.TBL_APPROVAL_LEVEL1.STAFFROLEID ?? 0),
+                                                  dateTimeCreated = s.DATETIMECREATED
                                               }).GroupBy(d => d.collateralSwapId)
                                                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault()).ToList();
+            foreach(var s in collateralSwapsForApproval)
+            {
+                if (s.toRoleId > 0)
+                {
+                    s.isBusiness = businessRoleIds.Contains(s.toRoleId);
+                }
+            }
             return collateralSwapsForApproval;
         }
 
@@ -11566,16 +11655,77 @@ namespace FintrakBanking.Repositories.Credit
                             loanAppCollateralId = s.LOANAPPCOLLATERALID,
                             oldCollateralId = s.OLDCOLLATERALID,
                             newCollateralId = s.NEWCOLLATERALID,
-                            customerId = s.CUSTOMERID,
+                            customerId = !(s.CUSTOMERID > 0) ? s.TBL_LOAN_APPLICATION_COLLATERL.CUSTOMERID : s.CUSTOMERID,
                             collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
                             swapRef = s.SWAPREF
                         }).FirstOrDefault();
             return swap;
         }
 
+        public IEnumerable<CollateralSwapViewModel> SearchCollateralSwap(string searchString)
+        {
+            searchString = searchString.Trim();
+
+            var collateralSwapsForApproval = (from s in context.TBL_COLLATERAL_SWAP_REQUEST
+                                              join c in context.TBL_CUSTOMER on s.TBL_LOAN_APPLICATION_COLLATERL.CUSTOMERID equals c.CUSTOMERID
+                                              join d in context.TBL_LOAN_APPLICATION_DETAIL on s.TBL_LOAN_APPLICATION_COLLATERL.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                                              join t in context.TBL_APPROVAL_TRAIL on s.COLLATERALSWAPID equals t.TARGETID into swap
+                                              from t in swap.DefaultIfEmpty()
+                                              let isInitiation = s.COLLATERALSWAPSTATUSID == null
+                                              let isLoop = t.LOOPEDSTAFFID > 0
+                                              let loopStaff = context.TBL_STAFF.FirstOrDefault(a => a.STAFFID == t.LOOPEDSTAFFID)
+                                              let isLoop2 = t.FROMAPPROVALLEVELID == t.FROMAPPROVALLEVELID
+                                              where (s.DELETED == false && t.OPERATIONID == (int)OperationsEnum.CollateralSwap
+                                                &&
+                                                (
+                                                   c.FIRSTNAME.Trim().Contains(searchString)
+                                                || c.MIDDLENAME.Trim().Contains(searchString)
+                                                || c.LASTNAME.Trim().Contains(searchString)
+                                                || d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER.Trim().Contains(searchString)
+                                                || s.SWAPREF.Trim().Contains(searchString)
+                                                ))
+                                              select new CollateralSwapViewModel
+                                              {
+                                                  collateralSwapId = s.COLLATERALSWAPID,
+                                                  loanCollateralMappingId = s.LOANCOLLATERALMAPPINGID,
+                                                  loanAppCollateralId = s.LOANAPPCOLLATERALID,
+                                                  oldCollateralId = s.OLDCOLLATERALID,
+                                                  newCollateralId = s.NEWCOLLATERALID,
+                                                  customerId = (s.CUSTOMERID > 0) ? s.CUSTOMERID : s.TBL_LOAN_APPLICATION_COLLATERL.CUSTOMERID,
+                                                  loanApplicationId = s.TBL_LOAN_APPLICATION_COLLATERL.LOANAPPLICATIONID,
+                                                  collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
+                                                  approvalStatusId = t.APPROVALSTATUSID,
+                                                  approvalTrailId = t.APPROVALTRAILID,
+                                                  currentApprovalLevelId = t.TOAPPROVALLEVELID,
+                                                  currentApprovalLevel = (isInitiation) ? context.TBL_STAFF.FirstOrDefault(a => a.STAFFID == s.CREATEDBY).TBL_STAFF_ROLE.STAFFROLENAME : (isLoop) ? context.TBL_STAFF.FirstOrDefault(a => a.STAFFID == t.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : t.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                                  fromLevel = (isLoop2 && !isLoop) ? t.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME : t.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                                  responsiblePerson = (isLoop) ? loopStaff.FIRSTNAME + " " + loopStaff.MIDDLENAME + " " + loopStaff.LASTNAME : (t.TOSTAFFID > 0) ? t.TBL_STAFF2.FIRSTNAME + " " + t.TBL_STAFF2.MIDDLENAME + " " + t.TBL_STAFF2.LASTNAME : "N/A",
+                                                  approvalStatus = (isInitiation) ? "Pending" : context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME.ToUpper(),
+                                                  customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                                                  applicationReferenceNumber = s.TBL_LOAN_APPLICATION_COLLATERL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                                  productName = d.TBL_PRODUCT1.PRODUCTNAME,
+                                                  swapRef = s.SWAPREF,
+                                                  systemArrivalDateTime = (isInitiation) ? s.DATETIMECREATED : t.SYSTEMARRIVALDATETIME,
+                                                  oldCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.OLDCOLLATERALID).COLLATERALCODE,
+                                                  newCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.NEWCOLLATERALID).COLLATERALCODE,
+                                                  coverage = s.TBL_LOAN_APPLICATION_COLLATERL.COLLATERALCOVERAGE,
+                                                  dateTimeCreated = s.DATETIMECREATED,
+                                                  
+                                              }).GroupBy(d => d.collateralSwapId)
+                                                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault()).ToList();
+            return collateralSwapsForApproval;
+        }
+
         public CollateralSwapViewModel AddCollateralSwap(CollateralSwapViewModel model)
         {
             var reference = CommonHelpers.GenerateRandomDigitCode(10);
+            var swapAlreadyExists = context.TBL_COLLATERAL_SWAP_REQUEST.Any(s => s.LOANAPPCOLLATERALID == model.loanAppCollateralId 
+            && s.COLLATERALSWAPSTATUSID != (int)LoanApplicationStatusEnum.collateralSwapCompleted && s.COLLATERALSWAPSTATUSID != (int)ApprovalStatusEnum.Disapproved);
+
+            if (swapAlreadyExists)
+            {
+                throw new SecureException("This collateral Swap still has an instance undergoing approval!");
+            }
             var swap = new TBL_COLLATERAL_SWAP_REQUEST()
             {
                 SWAPREF = reference,
@@ -11669,9 +11819,9 @@ namespace FintrakBanking.Repositories.Credit
             workflow.BusinessUnitId = c?.BUSINESSUNTID;
             var placeholders = new AlertPlaceholders();
             placeholders.customerName = "<br />CUSTOMER NAME: " + c?.FIRSTNAME + " " + c?.MIDDLENAME + " " + c?.LASTNAME;
-            placeholders.referenceNumber = "<br />LETTER GEN REQ REFERENCENUMBER: " + cs?.COLLATERALSWAPID;
-            placeholders.facilityType = "<br />FACILITY INFORMATION: LETTER LETTER GEN REQ";
-            placeholders.operationName = "<br />OPERATION NAME: LETTER GEN REQ";
+            placeholders.referenceNumber = "<br />COLLATERAL SWAP REFERENCENUMBER: " + cs?.SWAPREF;
+            placeholders.facilityType = "<br />COLLATERAL SWAP";
+            placeholders.operationName = "<br />OPERATION NAME: COLLATERAL SWAP";
             placeholders.branchName = "<br />BRANCH NAME: " + c?.TBL_BRANCH.BRANCHNAME;
             workflow.Placeholders = placeholders;
 
@@ -11688,7 +11838,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
-                if (workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
                     cs.COLLATERALSWAPSTATUSID = (int)LoanApplicationStatusEnum.collateralSwapCompleted;
                     //cs.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
@@ -11718,9 +11868,11 @@ namespace FintrakBanking.Repositories.Credit
                 companyId = companyId,
                 applicationId = collateralSwapId,
                 comment = "Get next level for collateral swap",
+                operationId = (short)OperationsEnum.CollateralSwap,
+                forwardAction = (int)ApprovalStatusEnum.Pending,
             };
 
-            var response = drawdownRepo.LogApprovalForMessage(approvalModel, (short)OperationsEnum.CollateralSwap, true, (int)ApprovalStatusEnum.Pending);
+            var response = drawdownRepo.LogApprovalForMessage(approvalModel, true);
             return response.nextLevelId.Value;
         }
 

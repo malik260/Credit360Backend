@@ -182,5 +182,33 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("log-approval/workflow")]
+        public HttpResponseMessage LogApproval(ForwardViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+
+            try
+            {
+                var response = repo.LogApprovalForMessage(model, false, true);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = response.responseMessage });
+                }
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = "Documentation approval was unsuccessful!" });
+
+        }
+
     }
 }

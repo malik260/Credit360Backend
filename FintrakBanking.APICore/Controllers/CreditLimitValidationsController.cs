@@ -734,7 +734,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("project-risk-rating-categories")]
-        public HttpResponseMessage getAllProjectRiskRatingCategories()
+        public HttpResponseMessage GetAllProjectRiskRatingCategories()
         {
             var response = repo.getAllProjectRiskRatingCategories();
             if (response != null)
@@ -748,7 +748,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("all-criteria-list")]
-        public HttpResponseMessage getAllCriteriaList()
+        public HttpResponseMessage GetAllCriteriaList()
         {
             var response = repo.getAllCriteriaList();
             if (response != null)
@@ -942,7 +942,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("contractor-criteria")]
-        public HttpResponseMessage getAllContractorCriteria()
+        public HttpResponseMessage GetAllContractorCriteria()
         {
             var response = repo.getAllContractorCriteria();
             if (response != null)
@@ -956,7 +956,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("contractor-criteria-option")]
-        public HttpResponseMessage getAllContractorCriteriaOption()
+        public HttpResponseMessage GetAllContractorCriteriaOption()
         {
             var response = repo.getAllContractorCriteriaOption();
             if (response != null)
@@ -970,7 +970,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("project-risk-rating-criteria")]
-        public HttpResponseMessage getAllProjectRiskCriteria()
+        public HttpResponseMessage GetAllProjectRiskCriteria()
         {
             var response = repo.getAllProjectRiskRatingCriteria();
             if (response != null)
@@ -984,7 +984,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("contractor-tiering/{loanApplicationId}/{customerId}")]
-        public HttpResponseMessage getContractorTieringByApplication(int loanApplicationId, int customerId)
+        public HttpResponseMessage GetContractorTieringByApplication(int loanApplicationId, int customerId)
         {
             var response = repo.getContractorTieringByApplication(loanApplicationId, customerId);
             if (response != null)
@@ -998,7 +998,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("contractor-tiering-computation/{loanApplicationId}/{customerId}")]
-        public HttpResponseMessage getContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId)
+        public HttpResponseMessage GettContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId)
         {
             var response = repo.getContractorTieringByApplicationAndCustomer(loanApplicationId, customerId);
             if (response != null)
@@ -1012,8 +1012,23 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
+        [Route("contractor-tiering-update/{contractorTieringId}")]
+        public HttpResponseMessage GetContractorTieringForEdit(int contractorTieringId)
+        {
+            var response = repo.getContractorTieringForEdit(contractorTieringId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+
+        [HttpGet]
         [Route("all-project-risk-rating-criteria")]
-        public HttpResponseMessage getAllProjectRiskRatingByCategories()
+        public HttpResponseMessage GetAllProjectRiskRatingByCategories()
         {
             var response = repo.getAllProjectRiskRatingByCategories();
             if (response != null)
@@ -1028,7 +1043,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("project-risk-rating/{loanApplicationId}/{loanApplicationDetailId}/{loanBookingRequestId}")]
-        public HttpResponseMessage getContractorTieringByApplication(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
+        public HttpResponseMessage GetContractorTieringByApplication(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
         {
             var response = repo.getProjectRiskRatingByApplicationDetailId(loanApplicationId, loanApplicationDetailId, loanBookingRequestId);
             if (response != null)
@@ -1042,7 +1057,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("project-risk-rating-computation/{loanApplicationId}/{loanApplicationDetailId}/{loanBookingRequestId}")]
-        public HttpResponseMessage getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
+        public HttpResponseMessage GetProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
         {
             var response = repo.getProjectRiskRatingByApplicationAndApplicationDetailId(loanApplicationId, loanApplicationDetailId, loanBookingRequestId);
             if (response != null)

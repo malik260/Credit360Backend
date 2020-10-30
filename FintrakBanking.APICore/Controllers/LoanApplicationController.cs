@@ -490,11 +490,10 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("retail-recovery-report/{startDate}/{endDate}/{accreditedConsultantId}")]
-        public HttpResponseMessage GetRetailRecoveryReporting([FromUri] DateTime startDate, [FromUri] DateTime endDate, [FromUri] int accreditedConsultantId)
+        [Route("retail-recovery-report/{startDate}/{endDate}/{accreditedConsultantId}/{customer}")]
+        public HttpResponseMessage GetRetailRecoveryReporting([FromUri] DateTime startDate, [FromUri] DateTime endDate, [FromUri] int customer, [FromUri] int accreditedConsultantId)
         {
-            
-                var records = repo.GetRetailRecoveryReporting(startDate, endDate, accreditedConsultantId);
+                var records = repo.GetRetailRecoveryReporting(startDate, endDate, accreditedConsultantId, customer);
             if (records != null) {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = records });
             }
@@ -779,11 +778,11 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        //[ClaimsAuthorization]
+       // [ClaimsAuthorization]
         [Route("loan/application")]
         public HttpResponseMessage AddLoanApplication([FromBody] LoanApplicationViewModel entity)
         {
-
+            try { 
             var loanDetail = entity.LoanApplicationDetail;
             string msg = "";
             if (entity.productClassId == (short)ProductClassEnum.BondAndGuarantees)
@@ -818,6 +817,16 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+           }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
         }
 
 

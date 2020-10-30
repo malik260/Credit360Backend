@@ -271,7 +271,6 @@ namespace FintrakBanking.Repositories.Finance
         public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false, TwoFactorAutheticationViewModel twoFADetails = null)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
             var transactionCount = (inputTransactions.Count());
 
             if (transactionCount < 2) 

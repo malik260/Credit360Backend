@@ -12,6 +12,7 @@ namespace FintrakBanking.Interfaces.Media
 {
     public interface IOriginalDocumentApprovalRepository
     {
+        IEnumerable<OriginalDocumentApprovalViewModel> GetOriginalDocumentSearch(string searchString);
         OriginalDocumentApprovalViewModel GetOriginalDocumentApproval(int id);
 
         IEnumerable<OriginalDocumentApprovalViewModel> GetOriginalDocumentApprovals(int staffId);
@@ -27,7 +28,7 @@ namespace FintrakBanking.Interfaces.Media
         List<OriginalDocumentApprovalViewModel> GetOriginalDocumentByCollateralCustomerId(int id);
         List<OriginalDocumentApprovalViewModel> GetApprovedOriginalDocumentByCollateralCustomerId(int id);
 
-        Tuple<bool, string> GoForApproval(OriginalDocumentApprovalViewModel model, short? approvalStatusId);
+        WorkflowResponse GoForApproval(OriginalDocumentApprovalViewModel model, short? approvalStatusId);
 
         //bool SubmitApproval(OriginalDocumentApprovalViewModel entity);
         WorkflowResponse SubmitApproval(OriginalDocumentApprovalViewModel entity);

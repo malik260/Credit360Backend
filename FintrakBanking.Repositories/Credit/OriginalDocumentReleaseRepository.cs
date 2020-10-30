@@ -234,7 +234,8 @@ namespace FintrakBanking.Repositories.Credit
                          join cc in _context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                          join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
-                         where dr.DELETED == false && (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved || atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
+                         where dr.DELETED == false 
+                         && (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved || atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
                          && atrail.RESPONSESTAFFID == null
                          && (atrail.LOOPEDSTAFFID == null || atrail.LOOPEDSTAFFID == staffId)
                          && ((ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) || (!ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
@@ -261,13 +262,63 @@ namespace FintrakBanking.Repositories.Credit
                              operationId = atrail.OPERATIONID,
                              perfectionStatusId = dr.PERFECTIONSTATUSID,
                              litigationStatusId = dr.LITIGATIONSTATUSID,
-                             isOnAmconList = dr.ISONAMCONLIST
-
+                             isOnAmconList = dr.ISONAMCONLIST,
+                             numberOfTimesApprove = dr.NUMBEROFTIMESAPPROVE,
+                             isAmconList = dr.ISONAMCONLIST !=null ? ((dr.ISONAMCONLIST == true) ? "Yes": "No") : "N/A",
+                             perfectionStatus = dr.PERFECTIONSTATUSID !=null ? _context.TBL_COLLATERAL_PERFECTN_STAT.Where(p=>p.PERFECTIONSTATUSID == dr.PERFECTIONSTATUSID).Select(p=>p.PERFECTIONSTATUSNAME).FirstOrDefault() : "N/A",
+                             litigationStatus = dr.LITIGATIONSTATUSID != null ? ((dr.LITIGATIONSTATUSID == 1) ? "Ongoing Court Case" : "No Ongoing Court Case") : "N/A",
                          };
 
             var result = record.GroupBy(r => r.originalDocumentApprovalId)
                                .Select( r =>r.FirstOrDefault()).ToList();
             return result;            
+        }
+
+
+        public IEnumerable<OriginalDocumentReleaseViewModel> GetSecurityReleaseSearch(string  searchString)
+        {
+            searchString = searchString.Trim().ToLower();
+
+            var record = from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
+                         join oda in _context.TBL_ORIGINAL_DOCUMENT_APPROVAL on dr.ORIGINALDOCUMENTAPPROVALID equals oda.ORIGINALDOCUMENTAPPROVALID
+                         join cc in _context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                         join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+                         join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
+                         where dr.DELETED == false 
+                         && (atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease || atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval)
+                         && (c.CUSTOMERCODE.Contains(searchString)
+                                || c.FIRSTNAME.ToLower().Contains(searchString)
+                                || c.MIDDLENAME.ToLower().Contains(searchString)
+                                || c.LASTNAME.ToLower().Contains(searchString))
+
+                         select new OriginalDocumentReleaseViewModel
+                         {
+                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault().ToUpper(),
+                             customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                             documentReferenceNumber = oda.REFERENCENUMBER,
+                             docDateTimeCreated = dr.DATETIMECREATED,
+                             createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                             documentDescription = oda.DESCRIPTION,
+                             originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
+                             originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
+                             docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
+                             approvalDate = dr.APPROVALDATE,
+                             dateRecieved = atrail.ARRIVALDATE,
+                             collateralId = cc.COLLATERALCUSTOMERID,
+                             customerId = c.CUSTOMERID,
+                             collateralCode = cc.COLLATERALCODE,
+                             collateralCustomerId = cc.COLLATERALCUSTOMERID,
+                             operationId = atrail.OPERATIONID,
+                             perfectionStatusId = dr.PERFECTIONSTATUSID,
+                             litigationStatusId = dr.LITIGATIONSTATUSID,
+                             isOnAmconList = dr.ISONAMCONLIST,
+                             currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? ((atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && atrail.LOOPEDSTAFFID != null) ? _context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == atrail.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : _context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME) : "N/A",
+                             responsiblePerson = atrail.TOSTAFFID == null ? "N/A" : atrail.TBL_STAFF1.STAFFCODE + " - " + atrail.TBL_STAFF1.FIRSTNAME + " " + atrail.TBL_STAFF1.MIDDLENAME + " " + atrail.TBL_STAFF1.LASTNAME,
+                         };
+
+            var result = record.GroupBy(r => r.originalDocumentApprovalId)
+                               .Select(r => r.FirstOrDefault()).ToList();
+            return result;
         }
 
         public IEnumerable<OriginalDocumentReleaseViewModel> GetRejectedAndReferredSecurityRelease(int staffId)
@@ -558,6 +609,14 @@ namespace FintrakBanking.Repositories.Credit
                     if (staffRole.staffRoleCode == "AMCON OFFICER") {
                         foreach (var item in documents) {
                             item.ISONAMCONLIST = model.isOnAmconList;
+                        }
+                    }
+
+                    if (staffRole.staffRoleCode == "CRM VAULT OFFICER")
+                    {
+                        foreach (var item in documents)
+                        {
+                            item.NUMBEROFTIMESAPPROVE = item.NUMBEROFTIMESAPPROVE + 1;
                         }
                     }
 

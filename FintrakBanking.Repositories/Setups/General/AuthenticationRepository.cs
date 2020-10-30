@@ -24,6 +24,7 @@ using System.Security.Cryptography;
 using System.Xml;
 using System.IO;
 using System.Security.Cryptography.Xml;
+using System.Configuration;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -34,7 +35,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private  IAuditTrailRepository _auditTrail;
         private SessionStatusInfo _sessionInfo;
         private ICreditOfficerRiskRepository _creditOfficerRisk;
-
+        private string softwareVersion = ConfigurationManager.AppSettings["version"];
         TBL_PROFILE_SETTING profileSetting = null;
         TBL_FINANCECURRENTDATE applicationDate = null;
 
@@ -173,42 +174,53 @@ namespace FintrakBanking.Repositories.Setups.General
             ActiveUserDetails result = new ActiveUserDetails();
             // var user = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == username);
 
-             var user = (from u in context.TBL_PROFILE_USER
-                    join st in context.TBL_STAFF on u.STAFFID equals st.STAFFID
-                    where u.USERNAME.ToLower() == username
-                    select new UserViewModel
-                    {
-                        user_id = u.USERID,
-                        staffId = u.STAFFID,
-                        username = u.USERNAME,
-                        isActive = u.ISACTIVE,
-                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                        email = st.EMAIL,
-                        password = u.PASSWORD,
-                        securityQuestion = u.SECURITYQUESTION,
-                        securityAnswer = u.SECURITYANSWER,
-                        branchId = st.BRANCHID,
-                        roleId = st.STAFFROLEID,
-                        companyId = st.COMPANYID,
-                        groupId = u.TBL_PROFILE_USERGROUP.Where(x => x.USERID == u.USERID)
-                                    .Select(x => new UserGroupId
-                                    {
-                                        groupId = x.GROUPID,
-                                        groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
-                                    }).ToList(),
-                        isLocked = u.ISLOCKED,
-                    })
-                    .FirstOrDefault();
+            var user = (from u in context.TBL_PROFILE_USER
+                        join st in context.TBL_STAFF on u.STAFFID equals st.STAFFID
+                        where u.USERNAME.ToLower() == username
+                        select new UserViewModel
+                        {
+                            user_id = u.USERID,
+                            staffId = u.STAFFID,
+                            username = u.USERNAME,
+                            isActive = u.ISACTIVE,
+                            staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                            email = st.EMAIL,
+                            password = u.PASSWORD,
+                            securityQuestion = u.SECURITYQUESTION,
+                            securityAnswer = u.SECURITYANSWER,
+                            branchId = st.BRANCHID,
+                            roleId = st.STAFFROLEID,
+                            companyId = st.COMPANYID,
+                            groupId = u.TBL_PROFILE_USERGROUP.Where(x => x.USERID == u.USERID)
+                                        .Select(x => new UserGroupId
+                                        {
+                                            groupId = x.GROUPID,
+                                            groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
+                                        }).ToList(),
+                            isLocked = u.ISLOCKED,
+                        })
+                   .FirstOrDefault();
 
             if (user == null) throw new SecureException("The user is not registered in the application. Contact the system administrator.");
 
             result.grantMessage = "valid";
             result.companyId = user.companyId;
-            if (!user.isActive) result.grantMessage = "This account is INACTIVE";
-            if (IsAccountLocked(user.username)) result.grantMessage = "This account is LOCKED";
-            if (!ResumptionClosingTime(user)) result.grantMessage = "You cannot login at this time";
-            CheckAndUpdateUserAdditionalActivities(user);
-
+            if (!user.isActive)
+            {
+                result.grantMessage = "This account is INACTIVE";
+            }
+            else if (IsAccountLocked(user.username))
+            {
+                result.grantMessage = "This account is LOCKED";
+            }
+            else if (!ResumptionClosingTime(user))
+            {
+                result.grantMessage = "You cannot login at this time";
+            }
+            else
+            {
+                CheckAndUpdateUserAdditionalActivities(user);
+            }
             if (result.grantMessage != "valid")
             {
                 _auditTrail.AddAuditTrail(new TBL_AUDIT
@@ -570,7 +582,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 // check 10ms
                 if (Math.Abs(DateTime.Now.Subtract(data.lastLockOutDate.Value).TotalMinutes) > 10)
                 {
-                    unlockUser(userName);
+                    UnlockUser(userName);
                     return false;
                 }
                 else
@@ -598,7 +610,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return false;
         }
 
-        public void unlockUser(string userName)
+        public void UnlockUser(string userName)
         {
             var user = context.TBL_PROFILE_USER.Where(u => u.USERNAME.ToLower() == userName.ToLower()).FirstOrDefault();
             if (user != null)
@@ -1333,6 +1345,12 @@ namespace FintrakBanking.Repositories.Setups.General
             if ((result.ExpireDate < DateTime.Now))
             {
                 result.Status = LicenseStatus.LicenseExpired;
+                return result;
+            }
+
+            if (!result.CoveredVersion.Equals(softwareVersion))
+            {
+                result.Status = LicenseStatus.VersionMismatch;
                 return result;
             }
 

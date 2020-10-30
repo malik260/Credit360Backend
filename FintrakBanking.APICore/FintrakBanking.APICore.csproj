@@ -510,11 +510,6 @@
       <DependentUpon>DRAWDOWN.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\FORM3800B.Designer.cs" />
-    <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportDataset\MiddleOffice.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -568,12 +563,26 @@
     <Compile Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx.designer.cs">
       <DependentUpon>ApprovedForm3800BFacilities.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\AllContingentsReport.aspx.cs">
+      <DependentUpon>AllContingentsReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\AllContingentsReport.aspx.designer.cs">
+      <DependentUpon>AllContingentsReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\Blacklist.aspx.cs">
       <DependentUpon>Blacklist.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\Blacklist.aspx.designer.cs">
       <DependentUpon>Blacklist.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\BandGReport.aspx.cs">
+      <DependentUpon>BandGReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\BandGReport.aspx.designer.cs">
+      <DependentUpon>BandGReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\BondAndGuarantee.aspx.cs">
       <DependentUpon>BondAndGuarantee.aspx</DependentUpon>
@@ -1510,7 +1519,9 @@
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
+    <Content Include="Reports\ReportViews\AllContingentsReport.aspx" />
     <Content Include="Reports\ReportViews\Blacklist.aspx" />
+    <Content Include="Reports\ReportViews\BandGReport.aspx" />
     <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
     <Content Include="Reports\ReportViews\CashBacked.aspx" />
     <Content Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx" />
@@ -1689,6 +1700,7 @@
     <Content Include="Reports\Credit\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\BackPUB.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1754,17 +1766,6 @@
     </Content>
     <Content Include="Reports\ReportDataset\MiddleOffice.xsc">
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
-    </Content>
-    <Content Include="Reports\ReportDataset\LoanDataSet.xsc">
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Content>
-    <None Include="Reports\ReportDataset\LoanDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>LoanDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Reports\ReportDataset\LoanDataSet.xss">
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\MiddleOffice.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1952,9 +1953,11 @@
     <Content Include="Reports\Report\Blacklist.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR 060219.rdlc" />
     <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Amortization.rdlc" />
     <EmbeddedResource Include="Reports\Report\AnalystReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc" />
+    <EmbeddedResource Include="Reports\Report\BandGReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\CancelledLoans.rdlc" />
@@ -1981,6 +1984,7 @@
     <EmbeddedResource Include="Reports\Report\DelinquentAccounts.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursedLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Discharge.rdlc" />
     <EmbeddedResource Include="Reports\Report\DrawdownMemo.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExcessReport.rdlc" />
@@ -2033,6 +2037,7 @@
     <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\PSR_APG.rdlc" />
     <EmbeddedResource Include="Reports\Report\PSR_Direct.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Rebooking.rdlc" />
     <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RecoveryAgentPerformance.rdlc" />
     <EmbeddedResource Include="Reports\Report\RecoveryAgentUpdate.rdlc" />
@@ -2041,7 +2046,6 @@
     <EmbeddedResource Include="Reports\Report\RecoveryComputation.rdlc" />
     <EmbeddedResource Include="Reports\Report\RevalidationOfFullAndFinalSettlement.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
-    <EmbeddedResource Include="Reports\Report\RunningLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RunningFacilities.rdlc" />
     <EmbeddedResource Include="Reports\Report\SanctionLimitReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />

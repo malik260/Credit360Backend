@@ -20,6 +20,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using System.Globalization;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -1436,6 +1437,22 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" , result = data, isDicounted = isDicounted });
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("employer-related-loan-data")]
+        public HttpResponseMessage GetEmployerRelatedData(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            var data = repo.GetEmployerRelatedData(token.GetStaffId, token.GetCompanyId, dateRange);
+
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-repricing-mode")]
@@ -1899,6 +1916,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.totalRecoveryAmount = Convert.ToDecimal(provider.FormData["totalRecoveryAmount"]);
                 entity.recoveredAmount = Convert.ToDecimal(provider.FormData["recoveredAmount"]);
                 entity.collateralCode = provider.FormData["collateralCode"];
+                entity.loanReference = provider.FormData["loanReference"];
                 entity.collectionMode = provider.FormData["collectionMode"];
                 var receiptDate = provider.FormData["receiptDate"];
                 var receiptDateSub = receiptDate.Substring(0, 15);
@@ -2045,22 +2063,26 @@ namespace FintrakBanking.APICore.Controllers
         [Route("bulk-loan-recovery-reporting-initiate-approval")]
         public HttpResponseMessage bulkLoanRecoveryReportingGoForApproval([FromBody] LoanRecoveryReportApprovalViewModel models)
         {
-            UserInfo user = new UserInfo();
-            user.staffId = token.GetStaffId;
-            user.BranchId = (short)token.GetBranchId;
-            user.companyId = token.GetCompanyId;
-            user.createdBy = token.GetStaffId;
-
-            WorkflowResponse data = repo.bulkLoanRecoveryReportingGoForApproval(models, user);
-
-            if (data != null)
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = data.responseMessage });
-            }
-            return Request.CreateResponse(HttpStatusCode.OK,
+                UserInfo user = new UserInfo();
+                user.staffId = token.GetStaffId;
+                user.BranchId = (short)token.GetBranchId;
+                user.companyId = token.GetCompanyId;
+                user.createdBy = token.GetStaffId;
 
-                new { success = false, message = "Error occur forwarding for approval" });
+                WorkflowResponse data = repo.bulkLoanRecoveryReportingGoForApproval(models, user);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, data = data, message = data.responseMessage });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error occur forwarding for approval" });
+            }catch(Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
         }
 
         [HttpPost]

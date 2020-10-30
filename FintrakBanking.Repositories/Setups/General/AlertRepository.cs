@@ -29,7 +29,8 @@ namespace FintrakBanking.Repositories.Setups.General
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
         //private ILoanArchiveRepository loanArchive;
-
+        private string maxUsers = ConfigurationManager.AppSettings["muTrace"];
+        
         private string onePercent = "1%";
         private string onePointFivePercent = "1.5%";
         private string twoPercent = "2%";
@@ -887,7 +888,9 @@ namespace FintrakBanking.Repositories.Setups.General
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
 
-            
+            int users = Convert.ToInt32(maxUsers);
+            externalAlertRepository.ValidateProfiledUsers(users);
+
 
             if (CompareDate() == true)
             {

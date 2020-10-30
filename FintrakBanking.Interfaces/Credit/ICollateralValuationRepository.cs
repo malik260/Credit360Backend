@@ -11,6 +11,10 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ICollateralValuationRepository
     {
+        bool UpdateCollateralValurerInfo(ValuationPrerequisiteViewModel model);
+        ValuationPrerequisiteViewModel GetAllCollateralValuerIformationById(int id);
+        List<ValuationPrerequisiteViewModel> GetAllValuationPrerequisitesListById(int staffId, int collateralValuationId);
+        IEnumerable<ValuationPrerequisiteViewModel> GetAllValuationRequestList();
         CollateralValuationViewModel AddCollateralValuation(CollateralValuationViewModel model);
         ValuationPrerequisiteViewModel AddValuationPrerequisite(ValuationPrerequisiteViewModel model);
         bool UpdateValuationPrerequisite(int valuationPrerequisiteId, ValuationPrerequisiteViewModel model);

@@ -20,7 +20,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public decimal? valuationFee { get; set; }
 
-        public decimal WHT { get; set; }
+        public decimal? WHT { get; set; }
         
         public int approvalStatusId { get; set; }
     }

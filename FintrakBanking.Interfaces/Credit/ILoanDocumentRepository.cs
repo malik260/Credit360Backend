@@ -19,6 +19,10 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteLoanDocument(string invoiceNo, string applicationNumber);
 
         IEnumerable<LoanDocumentViewModel> GetLoanDocumentByReferenceNumber(string referenceNumber);
+        //IEnumerable<OperationDocumentationViewModel> GetAllPendingOperationDocumentation();
+        //IEnumerable<ChecklistApprovalViewModel> GetAllPendingDeferralDocumentation(bool checker);
+        //IEnumerable<OperationDocumentationViewModel> GetAllPendingOperationDocumentationApproval();
+        //bool AddOperationDocumentationApproval(OperationDocumentationViewModel data);
 
         LoanDocumentViewModel GetLoanDocumentByAppNoRefNo(string refNo, string applicationNumber);
 

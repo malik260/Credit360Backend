@@ -23,7 +23,7 @@ namespace FintrakBanking.ReportObjects.ReportHelper
                 {
 
                     var runiningLoanList = (from l in context.TBL_LOAN
-                                                //join al in context.TBL_LOAN_APPLICATION on l.CUSTOMERID equals al.CUSTOMERID
+                                            join al in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals al.LOANAPPLICATIONDETAILID
                                             join b in context.TBL_BRANCH on l.BRANCHID equals b.BRANCHID
                                             join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
                                             join cus in context.TBL_CUSTOMER on l.CUSTOMERID equals cus.CUSTOMERID
@@ -60,51 +60,33 @@ namespace FintrakBanking.ReportObjects.ReportHelper
 
                                             select new RuniningLoanViewModel
                                             {
-                                                
-
                                                 rmCode = rm.STAFFCODE,
                                                 rmName = rm.FIRSTNAME + " " + " " + rm.MIDDLENAME + " " + " " + rm.LASTNAME,
                                                 branchName = b.BRANCHNAME,
                                                 branchCode = b.BRANCHCODE,
                                                 loanRefNo = l.LOANREFERENCENUMBER,
                                                 customerName = cus.FIRSTNAME + " " + " " + cus.MIDDLENAME + " " + " " + cus.LASTNAME,
-
                                                 currencyType = cur.CURRENCYNAME,
-
                                                 loanId = l.TERMLOANID,
                                                 loanSytemTypeId = l.LOANSYSTEMTYPEID,
-                                                
                                                 transactionDateBalance = l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL,
                                                 schemeType = pt.PRODUCTTYPENAME,
-                                               
                                                 schemeDescription = p.PRODUCTNAME,
-                                               
-                                               
                                                 sanctionLimit = l.PRINCIPALAMOUNT,
-                                               
-                                                
                                                 expiryDate = l.MATURITYDATE,
-                                                
                                                 customerId = l.CUSTOMERID,
-                                               
                                                 schemeCode = p.PRODUCTCODE,
-                                               
                                                 subUserClassification = pg.STATUSNAME,
                                                 userClassification = pgt.PRUDENTIALGUIDELINETYPENAME,
-
                                                 glSubHeadCode = glInfo,
                                                 classificationDate = DateTime.Now,
-                                               
                                                 limitExpiryDate = l.MATURITYDATE,
                                                 pastDueDate = l.PASTDUEDATE,
-                                               
                                                 staffCode = st.STAFFCODE,
-                                               
                                                 teamCode = "",
                                                 deskCode = "",
                                                 groupCode = "",
                                                 buCode = "",
-                                               
                                                 pastDueDays = (int)DbFunctions.DiffDays((l.PASTDUEDATE.Value == null ? default(DateTime) : l.PASTDUEDATE.Value), DateTime.Now),
 
                                                 //groupDescription = (staffInfo == null ? "" : staffInfo.Select(x=>x.subHead).FirstOrDefault()),

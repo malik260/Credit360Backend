@@ -32,6 +32,7 @@ namespace FintrakBanking.APICore.Providers
         //private readonly FinTrakBankingContext _bankingContext;
         private TBL_SETUP_GLOBAL appSetup;
         private const string HttpContext = "MS_HttpContext";
+        
 
         public ApplicationOAuthProvider(string publicClientId)
         {
@@ -281,9 +282,10 @@ namespace FintrakBanking.APICore.Providers
                 FinTrakBankingContext _bankingContext = new FinTrakBankingContext();
                 var authRepo = new AuthenticationRepository(_bankingContext, null, null);
 
-                /*
-                 * this section is for lisence validation
-                 * 
+              // this section is for lisence validation
+                 
+               /* license*/
+               /*
                 var result = authRepo.ExamineLicense();
                 if (result.Status == LicenseStatus.CorruptLicenseFile)
                 {
@@ -315,7 +317,9 @@ namespace FintrakBanking.APICore.Providers
                 {
                     context.SetError("invalid_grant", "Application License Version Mismatch!");
                     return;
-                } end of lisence validation*/
+                } */
+                
+                /*end of lisence validation*/
 
 
                 ActiveUserDetails userInfo = authRepo.GetUserAuthenticationInfo(userVm.username);

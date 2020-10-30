@@ -449,6 +449,30 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationDetailId { get; set; }
         public string appraisalOperationName { get; set; }
         public short sectorId { get; set; }
+        public decimal? contigentOutstandingPrincipal { get; set; }
+        public decimal? totalPrepayment { get; set; }
+        public DateTime? issueDate { get; set; }
+        public DateTime expiryDate { get; set; }
+        public string guaranteeType { get; set; }
+        public string customerTier { get; set; }
+        public string apgAccountNumber { get; set; }
+        public string projectDetails { get; set; }
+        public string projectLocation { get; set; }
+        public string projectRiskRatings { get; set; }
+        public string contractEmployer { get; set; }
+        public string ccy { get; set; }
+        public decimal guaranteeAmount { get; set; }
+        public string relationshipTeam { get; set; }
+        public string accountOfficer { get; set; }
+        public decimal? exposureOnGuarantee { get; set; }
+        public string sbu { get; set; }
+        public decimal? rebookedAmount { get; set; }
+        public DateTime? dateRebooked { get; set; }
+        public decimal? currentExposure { get; set; }
+        public decimal? previousExposure { get; set; }
+        public DateTime? dateAmortised { get; set; }
+        public decimal? amortisedAmount { get; set; }
+        public DateTime? dateDischarged { get; set; }
 
 
 
@@ -1650,6 +1674,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal interestInSupense { get; set; }
         public DateTime expiryDate { get; set; }
         public DateTime maturityDate { get; set; }
+        public DateTime effectiveDate { get; set; }
         public decimal facilityGrantedAmount { get; set; }
         public string subSectorCode { get; set; }
         public decimal otherCharges { get; set; }
@@ -1671,6 +1696,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public int loanSytemTypeId { get; set; }
         public string businessDevelopmentManger { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string product { get; set; }
+        public DateTime arrivalDate { get; set; }
+        public DateTime effective { get; set; }
+        public string divisionName { get; set; }
+        public int initiationAge { get { return (this.maturityDate - this.effectiveDate).Days; } }
+        public int currentUserAge { get { return (DateTime.UtcNow - this.maturityDate).Days; } }
     }
 
 

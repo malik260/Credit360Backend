@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
         bool LogApproval(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId);
-        WorkflowResponse LogApprovalForMessage(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId);
+        WorkflowResponse LogApprovalForMessage(ForwardViewModel model, bool externalInitialization, bool saveChanges = false);
         int GetNextLevelForBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> entity);
         CurrentCustomerExposure GetCurrentCompanyExposure();
         WorkflowResponse GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);

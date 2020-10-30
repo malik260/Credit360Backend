@@ -24,12 +24,16 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatus { get; set; }
         public string comment { get; set; }
         public int valuerId { get; set; }
+
+        public decimal? omv { get; set; }
+        public decimal? fsv { get; set; }
+
         public decimal? valuationFee { get; set; }
         public int valuationReportId { get; set; }
         public string valuer { get; set; } //
         public string accountNumber { get; set; }
-        public decimal wht { get; set; }
-        public decimal whtAmount { get; set; }
+        public decimal? wht { get; set; }
+        public decimal? whtAmount { get; set; }
 
         public string customerName { get; set; }
         public decimal collateralValue { get; set; }
@@ -43,7 +47,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public string responsiblePerson { get; set; }
         public DateTime arrivalDate { get; set; }
-
-
+        public string customerAccount { get; set; }
+        public string createdByName { get; set; }
+        public int targetId { get; set; }
     }
 }

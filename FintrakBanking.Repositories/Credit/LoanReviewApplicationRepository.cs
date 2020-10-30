@@ -8,9 +8,11 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Repositories.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
@@ -23,8 +25,9 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workflow;
         private IAdminRepository admin;
         private IOfferLetterAndAvailmentRepository offerLetter;
-
         private CreditCommonRepository creditCommon;
+        private MemorandumRepository memo;
+
 
         private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // RMU(71), CAM(79)
         private List<int> apsOperationIds = new List<int> { 107, 108, 109 }; // 
@@ -38,7 +41,8 @@ namespace FintrakBanking.Repositories.Credit
             IWorkflow workflow,
             IAdminRepository admin,
             IOfferLetterAndAvailmentRepository _offerLetter,
-            CreditCommonRepository creditCommon
+            CreditCommonRepository creditCommon,
+            MemorandumRepository memo
             )
         {
             this.context = context;
@@ -48,6 +52,7 @@ namespace FintrakBanking.Repositories.Credit
             this.admin = admin;
             this.creditCommon = creditCommon;
             this.offerLetter = _offerLetter;
+            this.memo = memo;
         }
 
         public IQueryable<LoanReviewApplicationViewModel> GetLoanReviewForCRMS(UserInfo user, int operationId, int? classId)
@@ -943,6 +948,14 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Only one operation request is allowed for APS release related applications!");
             }
 
+            /*if (model.applicationDetails.Count() > 0 &&
+                model.applicationDetails.Any(x => apsOperationIds.Contains(x.operationId)) ||model.operationId == (int)OperationsEnum.APSReleaseApproval)
+            {
+                var lien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == model.loanReferenceNumber && x.LIENTYPEID == (int)LienTypeEnum.APGBooking);
+                if (lien == null) throw new SecureException("No lien has been placed");
+            }*/
+
+            
             //var synOperationId = context.TBL_OPERATIONS.Find(model.operationId).SYNCHOPERATIONID;
 
             var doesOperationExist = (from a in context.TBL_LOAN_REVIEW_OPERATION
@@ -1363,6 +1376,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
+            if(appl == null)
+            {
+                throw new SecureException("Please Kindly refresh your browser and try again, Thanks");
+            }
+            if (appl.TOTALEXPOSUREAMOUNT <= 0)
+            {
+                memo.Init(operationId, model.applicationId);
+                appl.TOTALEXPOSUREAMOUNT = memo.GetApprovalAmount(true);
+            }
             var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
             //string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
 
@@ -1386,6 +1408,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (currentOperationType == (short)OperationTypeEnum.LoanReviewApplication && (operationId != (int)OperationsEnum.LoanReviewApprovalAvailment))
                 {
                     workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
+                    //workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
                 }
 
                 var isDrawdownOperation = drawdownOperations.Contains((short)model.operationId);
@@ -1416,8 +1439,8 @@ namespace FintrakBanking.Repositories.Credit
                                                             appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.ContingentLiability));
                     workflow.LevelBusinessRule = new LevelBusinessRule
                     {
-                        Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                        PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                        Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT), // totalApplicationAmount,
+                        PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT), // totalApplicationAmount,
                         Pep = model.politicallyExposed,
                         //InsiderRelated = appl.ISRELATEDPARTY ?? false,
                         ProjectRelated = appl.ISPROJECTRELATED ?? false,
@@ -1427,12 +1450,6 @@ namespace FintrakBanking.Repositories.Credit
                         //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                         DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
                         tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
-                        //excludeLevel =  (appl.OPERATIONID != (int)OperationsEnum.OverdraftSubAllocationApproval &&
-                        //                appl.OPERATIONID != (int)OperationsEnum.LoanRecapitilizationApproval &&
-                        //                appl.OPERATIONID != (int)OperationsEnum.OverdraftTopUpApproval &&
-                        //                appl.OPERATIONID != (int)OperationsEnum.OverdraftTenorExtensionApproval &&
-                        //                !(appl.OPERATIONID == (int)OperationsEnum.TenorExtensionApproval &&
-                        //                appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.ContingentLiability))
                     };
 
                     if (model.receiverLevelId == 0) workflow.NextLevelId = null;
@@ -1575,7 +1592,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (currentOperationType == (short)OperationTypeEnum.LoanReviewApplication && (operationId != (int)OperationsEnum.LoanReviewApprovalAvailment))
                 {
-                    workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
+                    workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
+                    //workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
                 }
 
                 using (var trans = context.Database.BeginTransaction())
@@ -1599,8 +1617,10 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.IgnorePostApprovalReviewer = true;
                     workflow.LevelBusinessRule = new LevelBusinessRule
                     {
-                        Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                        PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                        Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
+                        //Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                        //PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                        PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
                         Pep = model.politicallyExposed,
                         //InsiderRelated = appl.ISRELATEDPARTY ?? false,
                         ProjectRelated = appl.ISPROJECTRELATED ?? false,
@@ -1610,12 +1630,6 @@ namespace FintrakBanking.Repositories.Credit
                         //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                         DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
                         tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
-                        //excludeLevel =  (appl.OPERATIONID != (int)OperationsEnum.OverdraftSubAllocationApproval &&
-                        //                appl.OPERATIONID != (int)OperationsEnum.LoanRecapitilizationApproval &&
-                        //                appl.OPERATIONID != (int)OperationsEnum.OverdraftTopUpApproval &&
-                        //                appl.OPERATIONID != (int)OperationsEnum.OverdraftTenorExtensionApproval &&
-                        //                !(appl.OPERATIONID == (int)OperationsEnum.TenorExtensionApproval &&
-                        //                appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.ContingentLiability))
                     };
 
                     if (model.receiverLevelId == 0) workflow.NextLevelId = null;
@@ -1746,6 +1760,262 @@ namespace FintrakBanking.Repositories.Credit
             }
             
         }
+
+        public List<CurrentCustomerExposure> GetCustomerExposureLMS(TBL_LMSR_APPLICATION lmsrApplication, int loanTypeId, int companyId) // not used!
+        {
+            var customerIds = new List<CustomerExposure>();
+            if (loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+            {
+                customerIds.Add(new CustomerExposure { customerId = (int)lmsrApplication.CUSTOMERGROUPID });
+            }
+            else
+            {
+                customerIds.Add(new CustomerExposure { customerId = (int)lmsrApplication.CUSTOMERID });
+            }
+            return GetCurrentCustomerExposure(customerIds, loanTypeId, companyId);
+        }
+
+        public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int loanTypeId, int companyId)
+        {
+            IEnumerable<CurrentCustomerExposure> exposure = null;
+            var customerId = customer.FirstOrDefault()?.customerId;
+            var allGroupMappings = GetCustomerGroupMapping();
+            List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+
+            if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
+            {
+                var customerGroupMappings = new List<CustomerGroupMappingViewModel>();
+                var mappings = allGroupMappings.Where(m => m.customerGroupId == customerId).ToList();
+
+                if (mappings.Count() > 0)
+                {
+                    customer = mappings.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                }
+            }
+            else
+            {
+                var customerIsAGroupMember = allGroupMappings.Any(m => m.customerId == customerId);
+                if (customerIsAGroupMember)
+                {
+                    var mappings = new List<CustomerGroupMappingViewModel>();
+                    var customerGroups = allGroupMappings.Where(m => m.customerId == customerId).ToList();
+                    var allGroupIds = customerGroups.Select(m => m.customerGroupId).Distinct().ToList();
+                    foreach (var groupId in allGroupIds)
+                    {
+                        var mapping = allGroupMappings.Where(m => m.customerGroupId == groupId).ToList();
+                        mappings.AddRange(mapping);
+                    }
+                    if (mappings.Count() > 0)
+                    {
+                        customer = mappings.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                    }
+                }
+            }
+
+            foreach (var item in customer)
+            {
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId)?.CUSTOMERCODE.Trim();
+
+                exposure = (from a in context.TBL_GLOBAL_EXPOSURE
+                            where a.CUSTOMERID.Contains(customerCode)
+                            select new CurrentCustomerExposure
+                            {
+                                customerName = a.CUSTOMERNAME,
+                                customerCode = a.CUSTOMERID.Trim(),
+                                facilityType = a.ADJFACILITYTYPE,
+                                approvedAmount = a.LOANAMOUNYTCY ?? 0,
+                                approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
+                                currency = a.CURRENCYNAME,
+                                currencyType = a.CURRENCYTYPE,
+                                exposureTypeCodeString = a.EXPOSURETYPECODE,
+                                adjFacilityTypeString = a.ADJFACILITYTYPE,
+                                adjFacilityTypeCode = a.ADJFACILITYTYPEid.Trim(),
+                                productIdString = a.PRODUCTID,
+                                productCode = a.PRODUCTCODE,
+                                productName = a.PRODUCTNAME,
+                                currencyCode = a.ALPHACODE,
+                                //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                //proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                                outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
+                                outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+                                reviewDate = DateTime.Now,
+                                bookingDate = a.BOOKINGDATE,
+                                maturityDate = a.MATURITYDATE,
+                                tenorString = a.TENOR,
+                                //maturityDateString = a.MATURITYDATE,
+                                loanStatus = a.CBNCLASSIFICATION,
+                                referenceNumber = a.REFERENCENUMBER,
+                            }).ToList();
+
+                if (exposure.Count() > 0)
+                {
+                    foreach (var e in exposure)
+                    {
+                        e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
+                        e.tenor = int.Parse(String.IsNullOrEmpty(e.tenorString) ? "0" : e.tenorString);
+                        e.bookingDate = e.bookingDate?.Date;
+                        e.maturityDate = e.maturityDate?.Date;
+                        //e.productId = int.Parse(e.productIdString);
+                        e.exposureTypeCode = int.Parse(String.IsNullOrEmpty(e.exposureTypeCodeString) ? "0" : e.exposureTypeCodeString);
+                        e.adjFacilityTypeId = int.Parse(String.IsNullOrEmpty(e.adjFacilityTypeCode) ? "0" : e.adjFacilityTypeCode);
+                    }
+                    exposures.AddRange(exposure);
+                }
+
+
+                //exposure = from a in context.TBL_LOAN
+                //           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                //           join b in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                //           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                //           select new CurrentCustomerExposure
+                //           {
+                //               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                //               existingLimit = a.PRINCIPALAMOUNT,
+                //               //proposedLimit = a.OUTSTANDINGPRINCIPAL,
+                //               proposedLimit = 0,
+                //               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                //               outstandings = a.OUTSTANDINGPRINCIPAL,
+                //               recommendedLimit = 0,
+                //               PastDueObligationsInterest = a.PASTDUEINTEREST,
+                //               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                //               reviewDate = DateTime.Now,
+                //               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                //               loanStatus = "Running",
+                //               referenceNumber = a.LOANREFERENCENUMBER,
+                //               applicationStatusId = b.APPLICATIONSTATUSID
+                //           };
+
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+                //exposure = (from a in context.TBL_LOAN_REVOLVING
+                //            join b in context.TBL_LOAN_APPLICATION on a.LOANREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                //            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                //            select new CurrentCustomerExposure
+                //            {
+                //                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                //                existingLimit = a.OVERDRAFTLIMIT,
+                //                //proposedLimit = a.OVERDRAFTLIMIT,
+                //                proposedLimit = 0,
+                //                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,   
+                //                outstandings = a.OVERDRAFTLIMIT,
+                //                recommendedLimit = 0,
+                //                casaAccountId = a.CASAACCOUNTID,
+                //                PastDueObligationsInterest = a.PASTDUEINTEREST,
+                //                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                //                reviewDate = DateTime.Now,
+                //                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                //                loanStatus = "Running",
+                //                referenceNumber = a.LOANREFERENCENUMBER,
+                //                applicationStatusId = b.APPLICATIONSTATUSID
+                //            }).ToList();
+                //.Select(x =>
+                //{
+                //    //var availableBalance = transRepo.GetCASABalance((int)x.casaAccountId).availableBalance;
+                //    var availableBalance = context.TBL_CASA.FirstOrDefault(m=>m.CASAACCOUNTID == (int)x.casaAccountId).AVAILABLEBALANCE;
+
+                //    if ( availableBalance >= 0)
+                //    {
+                //        x.outstandings = 0;
+                //    }
+                //    else
+                //    {
+                //        x.outstandings = Math.Abs(availableBalance); 
+                //    }
+                //    return x;
+                //});
+
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+                //exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
+                //           join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                //           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                //           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                //           select new CurrentCustomerExposure
+                //           {
+
+                //               applicationStatusId = b.APPLICATIONSTATUSID,
+                //               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                //               customerCode = c.CUSTOMERCODE.Trim(),
+                //               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                //               approvedAmount = a.APPROVEDAMOUNT,
+                //               currency = a.TBL_CURRENCY.CURRENCYNAME,
+                //               //exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
+                //               //adjFacilityType = a.ADJFACILITYTYPE,
+                //               productId = a.TBL_PRODUCT.PRODUCTID,
+                //               productName = a.TBL_PRODUCT.PRODUCTNAME,
+                //               outstandings = 0,
+                //               pastDueObligationsPrincipal = 0,
+                //               reviewDate = DateTime.Now,
+                //               //bookingDate = DateTime.Parse(a.BOOKINGDATE),
+                //               //maturityDate = DateTime.Parse(a.MATURITYDATE),
+                //               loanStatus = "Processing",
+                //               referenceNumber = b.APPLICATIONREFERENCENUMBER
+                //           };
+
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+
+                //var staggingLoan = from a in stgCon.STG_LOAN_MART
+                //                   where a.CUST_ID == customCode
+                //                   select new CurrentCustomerExposure
+                //                   {
+                //                       facilityType = a.SCHM_TYPE,
+                //                       existingLimit = a.FAC_GRANT_AMT,
+                //                       //proposedLimit = a.FINAL_BALANCE,
+                //                       proposedLimit = 0,
+                //                       recommendedLimit = 0,
+                //                       outstandings = a.FINAL_BALANCE,
+                //                       PastDueObligationsInterest = a.INT_DUE,
+                //                       PastDueObligationsPrincipal = a.DAYS_PAST_DUE,// 0,
+                //                       reviewDate = DateTime.Now,
+                //                       prudentialGuideline = a.USER_CLASSIFICATION == "1" ? "Performing" : "Non-Performing",
+                //                       loanStatus = "Running"
+                //                   };
+
+                //exposures.Union(staggingLoan);
+
+            }
+
+            if (exposures.Count() == 0)
+            {
+                return exposures;
+            }
+
+            //exposures.Add(new CurrentCustomerExposure
+            //{
+            //    facilityType = "TOTAL",
+            //    existingLimit = exposures.Sum(t => t.existingLimit),
+            //    proposedLimit = exposures.Sum(t => t.proposedLimit),
+            //    bookingDate = exposures.Max(t => t.bookingDate),
+            //    maturityDate = exposures.Max(t => t.maturityDate),
+            //    //approvedAmount = exposures.Sum(t => t.approvedAmount),
+            //    recommendedLimit = exposures.Sum(t => t.recommendedLimit),
+            //    outstandings = exposures.Sum(t => t.outstandings),
+            //    PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
+            //    pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
+            //    reviewDate = DateTime.Now,
+            //});
+
+            return exposures;
+        }
+        public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
+        {
+            var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                        where a.DELETED == false
+                                        select new CustomerGroupMappingViewModel
+                                        {
+                                            customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                            customerGroupId = a.CUSTOMERGROUPID,
+                                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                            //createdBy = a.CreatedBy,
+                                            customerId = a.CUSTOMERID,
+                                            //dateTimeCreated = a.DateTimeCreated
+                                        }).ToList();
+
+            return customerGroupMapping;
+        }
+
 
         private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short nextOperationId, short lastOperationId)
         {
@@ -3156,14 +3426,27 @@ namespace FintrakBanking.Repositories.Credit
                        where op.LOANID == loanId && op.LOANSYSTEMTYPEID == loansystemTypeId
                        select new LoanReviewOperationViewModel
                        {
+                           operationId = op.OPERATIONTYPEID,
                            operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == op.OPERATIONTYPEID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                            reviewDetails = op.REVIEWDETAILS,
                            proposedEffectiveDate = op.EFFECTIVEDATE,
                            approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == op.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                            operationCompleted = op.OPERATIONCOMPLETED,
                            loanApplicationId = 0,
-                           loanReviewOperationsId = op.LOANREVIEWOPERATIONID
-                       });
+                           loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                           rebookAmount = op.CONTINGENTOUTSTANDINGPRINCIPAL,
+                           dateRebook = op.DATECREATED,
+                           rebookDate = op.REBOOKDATE,
+                           loanId = op.LOANID,
+                           bondAmount = context.TBL_LOAN_CONTINGENT.Where(c => c.CONTINGENTLOANID == op.LOANID).Select(c => c.CONTINGENTAMOUNT).FirstOrDefault(),
+                           contingentOutstandingPrincipal = op.CONTINGENTOUTSTANDINGPRINCIPAL,
+                       }).ToList();
+            foreach(var p in ops)
+            {
+                var staff = context.TBL_LOAN_REVIEW_OPERATION.Where(o => DbFunctions.TruncateTime(o.DATECREATED) != p.dateTimeCreated && o.LOANID == p.loanId && o.OPERATIONTYPEID == p.operationId).Select(o => o.CREATEDBY).FirstOrDefault();
+                p.previousOperator = context.TBL_STAFF.Where(s => s.STAFFID == staff).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                p.exposureBeforeRebook = p.bondAmount;
+            }
 
             return ops.ToList();
         }

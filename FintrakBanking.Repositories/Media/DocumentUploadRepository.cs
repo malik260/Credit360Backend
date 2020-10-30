@@ -198,16 +198,27 @@ namespace FintrakBanking.Repositories.Media
                 var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
                 foreach (var f in facilities)
                 {
+                    var providedConditionCheckLists = context.TBL_LOAN_CONDITION_PRECEDENT.Where(c => c.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID && c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Provided).ToList();
+                    foreach (var c in providedConditionCheckLists)
+                    {
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.DefferedChecklistApproval, c.LOANCONDITIONID));
+                    }
                     var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID);
                     foreach (var r in request)
                     {
-                        if (r?.OPERATIONID != null) output.AddRange(GetDocumentUploadsByOperation(staffId, (short)r.OPERATIONID, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.IndividualDrawdownRequest, r.LOANAPPLICATIONDETAILID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.CorporateDrawdownRequest, r.LOANAPPLICATIONDETAILID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.CreditCardDrawdownRequest, r.LOANAPPLICATIONDETAILID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.TermLoanBooking, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.RevolvingLoanBooking, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.ContigentLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        if (r?.OPERATIONID != null)
+                        {
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)r.OPERATIONID, r.LOAN_BOOKING_REQUESTID));
+                        }
+                        else
+                        {
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.IndividualDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.CorporateDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.CreditCardDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
+                        }
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.TermLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.RevolvingLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.ContigentLoanBooking, r.LOAN_BOOKING_REQUESTID));
 
                     }
                 }
@@ -316,12 +327,12 @@ namespace FintrakBanking.Repositories.Media
                     foreach (var r in request)
                     {
                         if (r?.OPERATIONID != null) output.AddRange(GetDocumentUploadsByOperation(staffId, (short)r.OPERATIONID, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.IndividualDrawdownRequest, r.LOANAPPLICATIONDETAILID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.CorporateDrawdownRequest, r.LOANAPPLICATIONDETAILID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.CreditCardDrawdownRequest, r.LOANAPPLICATIONDETAILID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.TermLoanBooking, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.RevolvingLoanBooking, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.ContigentLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.IndividualDrawdownRequest, r.LOANAPPLICATIONDETAILID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.CorporateDrawdownRequest, r.LOANAPPLICATIONDETAILID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.CreditCardDrawdownRequest, r.LOANAPPLICATIONDETAILID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.TermLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.RevolvingLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.ContigentLoanBooking, r.LOAN_BOOKING_REQUESTID));
 
                     }
                 }

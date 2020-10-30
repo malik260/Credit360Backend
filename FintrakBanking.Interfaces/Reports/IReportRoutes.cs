@@ -12,6 +12,8 @@ namespace FintrakBanking.Interfaces.Reports
 {
     public interface IReportRoutes
     {
+        string GetAllContingentsReport(DateRange dateRange, int companyId, int staffId);
+        string GetBondsAndGuaranteeReport(DateRange dateRange, int companyId, int staffId);
         string GetComputationForInternalAgentsReport(DateTime startDate, DateTime endDate);
         string GetRecoveryCollectionReport(DateTime startDate, DateTime endDate);
         string GetComputationForExternalAgentsReport(DateTime startDate, DateTime endDate);

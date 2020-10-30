@@ -17,6 +17,8 @@ namespace FintrakBanking.Entities.Models
         public int COLLATERALVALUATIONID { get; set; }
 
         public int VALUERID { get; set; }
+        public decimal? OMV { get; set; }
+        public decimal? FSV { get; set; }
 
         //[Required]
         //[StringLength(500)]
@@ -30,7 +32,7 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         ////[StringLength(20)]
-        public decimal WHT { get; set; }
+        public decimal? WHT { get; set; }
         public decimal? WHTAMOUNT { get; set; }
 
         public int COMPANYID { get; set; }

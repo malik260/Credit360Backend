@@ -798,7 +798,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                dynamic response = repo.GetIsLLLVilated(operationId, targetId);
+                dynamic response = repo.GetIsLLLViolated(operationId, targetId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)

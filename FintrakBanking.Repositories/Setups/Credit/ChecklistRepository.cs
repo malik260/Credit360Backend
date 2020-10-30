@@ -1928,7 +1928,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.DEFEREDDATE = model.deferedDate;
                 }
 
-                data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+                data.DATETIMEUPDATED = DateTime.Now;
                 data.LASTUPDATEDBY = (int)model.createdBy;
             }
             else
@@ -1945,7 +1945,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.DEFEREDDATE = model.deferedDate;
                 }
 
-                data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+                data.DATETIMEUPDATED = DateTime.Now;
                 data.LASTUPDATEDBY = (int)model.createdBy;
             }
 
@@ -2064,8 +2064,8 @@ namespace FintrakBanking.Repositories.Credit
                                customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                customerId = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID : a.TBL_CUSTOMER.CUSTOMERID,
                                proposedAmount = a.APPROVEDAMOUNT,
-                               approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                               //approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               //approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                deferredDate = b.DEFEREDDATE,
                                deferralDuration = 1,
                                cummulativeDays = 1,
@@ -2092,7 +2092,7 @@ namespace FintrakBanking.Repositories.Credit
                                applicationStatusId = a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
                                submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                                loanInformation = a.LOANPURPOSE,
-                               isLMS = c.ISLMS == true,
+                               isLms = c.ISLMS == true,
                                reason = c.DEFERRALREASON,
                                toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
@@ -2150,7 +2150,7 @@ namespace FintrakBanking.Repositories.Credit
                                applicationStatusId = a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
                                submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                                loanInformation = a.LOANPURPOSE,
-                               isLMS = c.ISLMS == true,
+                               isLms = c.ISLMS == true,
                                reason = c.DEFERRALREASON,
                                toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
@@ -2358,7 +2358,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatusId = a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
                             submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                             loanInformation = a.LOANPURPOSE,
-                            isLMS = c.ISLMS == true,
+                            isLms = c.ISLMS == true,
                             reason = c.DEFERRALREASON
                         }).ToList();
 
@@ -2399,7 +2399,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatusId = 0,//a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
                             submittedForAppraisal = true,//a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                             loanInformation = "",//a.LOANPURPOSE
-                            isLMS = c.ISLMS==true
+                            isLms = c.ISLMS==true
                         }).ToList();
 
 
@@ -2417,7 +2417,7 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
                         join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
-                        where c.ISLMS == true && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                        where c.ISLMS == true && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing
                          && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
                         && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null
@@ -2470,7 +2470,8 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
                     workflow.TargetId = entity.targetId;
                     workflow.Comment = entity.comment;
-                    workflow.OperationId = entity.operationId; // (int)OperationsEnum.DefferedChecklistApproval;
+                    workflow.OperationId = entity.operationId; 
+                    // (int)OperationsEnum.DefferedChecklistApproval;
                     if (appl != null) workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
                     workflow.LogActivity();
@@ -2684,9 +2685,11 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_CONDITION_DEFERRAL on a.LOANCONDITIONID equals b.LOANCONDITIONID
                         join c in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on a.LOANCONDITIONID equals atrail.TARGETID
-                        where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived) //&& (atrail.OPERATIONID == (int)OperationsEnum.DeferralExtension)
+                        where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived) //|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                        
                         select new DeferredChecklistViewModel()
                         {
+                            targetId = atrail.TARGETID,
                             checklistDeferralId = b.CHECKLISTDEFERRALID,
                             deferredDate = b.DEFERREDDATE,
                             conditionId = b.LOANCONDITIONID,
@@ -2694,7 +2697,7 @@ namespace FintrakBanking.Repositories.Credit
                             checklistStatus = a.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                             condition = a.CONDITION,
                             approvalStatusId = b.APPROVALSTATUSID,
-                            approvalStatusName = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                            approvalStatusName = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(x=>x.APPROVALSTATUSNAME).FirstOrDefault(),
                             deferralReason = b.DEFERRALREASON,
                             createdBy = c.TBL_STAFF.FIRSTNAME + " " + c.TBL_STAFF.LASTNAME,
                             dateCreated = b.DATETIMECREATED,
@@ -2704,7 +2707,8 @@ namespace FintrakBanking.Repositories.Credit
                             toApprovalLevelName = atrail.TOSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.TOSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                             fromApprovalLevelName = atrail.REQUESTSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                         });
-            return data;
+            var records = data.GroupBy(x => x.targetId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.targetId); ;
+            return records;
         }
         public IEnumerable<DeferredChecklistViewModel> GetAllDeferralChecklist()
         {
