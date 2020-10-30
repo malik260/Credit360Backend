@@ -2349,11 +2349,12 @@ namespace FintrakBanking.Repositories.Credit
 
                 List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
 
-                int index; int ctr = 0;
+                //int index;
+                int ctr = 0;
                 for (int i = 0; i < definitions.Count; i++)
                 {
                     var definition = definitions[i];
-                    index = i;
+                    //index = i;
 
                     submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
 
