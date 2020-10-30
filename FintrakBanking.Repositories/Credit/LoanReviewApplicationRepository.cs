@@ -1367,6 +1367,7 @@ namespace FintrakBanking.Repositories.Credit
             //string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
 
             //var checklistValidation = ChecklistCompleted(model.applicationId);
+            List<short> drawdownOperations = new List<short> { (int)OperationsEnum.LoanReviewDrawdownForExtension, (int)OperationsEnum.OverdraftReviewDrawdownForExtension, (int)OperationsEnum.ContingentReviewDrawdownForExtension };
             if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
                 bool checklistValidation = true;
@@ -1387,7 +1388,6 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
                 }
 
-                List<short> drawdownOperations = new List<short> { (int)OperationsEnum.LoanReviewDrawdownForExtension, (int)OperationsEnum.OverdraftReviewDrawdownForExtension, (int)OperationsEnum.ContingentReviewDrawdownForExtension };
                 var isDrawdownOperation = drawdownOperations.Contains((short)model.operationId);
 
                 using (var trans = context.Database.BeginTransaction())

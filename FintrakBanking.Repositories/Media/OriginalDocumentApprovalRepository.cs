@@ -477,8 +477,9 @@ namespace FintrakBanking.Repositories.Media
                     }).ToList();
         }
 
-        public bool GoForApproval(OriginalDocumentApprovalViewModel entity , short? approvalStatusId )
+        public Tuple<bool,string> GoForApproval(OriginalDocumentApprovalViewModel entity , short? approvalStatusId )
         {
+
             var document = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(entity.originalDocumentApprovalId);
             if (document != null)
             {
@@ -512,7 +513,7 @@ namespace FintrakBanking.Repositories.Media
 
             }
 
-            return context.SaveChanges() != 0;
+            return new Tuple<bool, string>(context.SaveChanges() != 0, workflow.Response.responseMessage) ;
 
 
         }

@@ -180,8 +180,10 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
                 var approvalStatusId = model.approvalStatusId;
 
-                var response = repo.GoForApproval(model, (short)approvalStatusId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+                Tuple<bool, string> response;
+
+                response = repo.GoForApproval(model, (short)approvalStatusId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response.Item1, result = response.Item2.ToString(), count = 1 });
             }
             catch (SecureException ex)
             {
