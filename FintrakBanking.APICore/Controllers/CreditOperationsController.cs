@@ -1560,12 +1560,21 @@ namespace FintrakBanking.APICore.Controllers
             entity.applicationUrl = HttpContext.Current.Request.Path;
             entity.userIPAddress = Request.RequestUri.Host;
             entity.createdBy = token.GetStaffId;
-
+            
             var data = repo.GoForApproval(entity);
 
             if (data == 1)
             {
-                if (entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                if (entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && entity.operationId != (int)OperationsEnum.CompleteWriteOff)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation has been approved successfully. Sent to Credit Documentation for filling" });
+                }else if (entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && entity.currentUserCode == "COA" && entity.operationId == (int)OperationsEnum.CompleteWriteOff)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successfully. Sent to Domestic Operation Inputer" });
+                }
+                else if (entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && entity.currentUserCode != "COA" && entity.operationId == (int)OperationsEnum.CompleteWriteOff)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation has been approved successfully. Sent to Credit Documentation for filling" });
@@ -1583,10 +1592,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation has been disapproved successfully." });
             }
-            else if (data == 3)
+            else if (data == 3 && entity.operationId != (int)OperationsEnum.CompleteWriteOff)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                 new { success = true, message = "Operation successful, Sent to Credit Documentation for filling" });
+            }
+            else if (data == 3 && entity.operationId == (int)OperationsEnum.CompleteWriteOff && entity.currentUserCode != "COA")
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, message = "Operation successful, Sent to Credit Documentation for filling" });
+            }
+            else if (data == 3 && entity.operationId == (int)OperationsEnum.CompleteWriteOff && entity.currentUserCode == "COA")
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, message = "Operation successful, Sent to Domestic Operation Inputer" });
             }
             else if (data == 4)
             {
