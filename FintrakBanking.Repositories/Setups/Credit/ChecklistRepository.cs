@@ -2345,7 +2345,7 @@ namespace FintrakBanking.Repositories.Credit
                             checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                             dateCreated = b.DATETIMECREATED,
                             operationId = atrail.OPERATIONID,
-                            //Loan Information
+                            systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                             relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
                             relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
                             applicationAmount = a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
@@ -2387,6 +2387,8 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = a.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
                             checklistStatus = context.TBL_CHECKLIST_STATUS.Where(o=>o.CHECKLISTSTATUSID==b.CHECKLISTSTATUSID).Select(o=>o.CHECKLISTSTATUSNAME).FirstOrDefault(),
                             dateCreated = b.DATETIMECREATED,
+                            operationId = atrail.OPERATIONID,
+                            systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                             relationshipOfficerName ="",//context.TBL_STAFF.Where(o=>o.STAFFID ==a. a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
                             relationshipManagerName = "",//a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
                             applicationAmount = 0,//a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,

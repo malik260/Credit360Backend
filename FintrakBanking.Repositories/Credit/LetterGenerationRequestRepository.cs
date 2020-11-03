@@ -260,6 +260,7 @@ namespace FintrakBanking.Repositories.Credit
                              applicationStatusId = l.APPLICATIONSTATUSID,
                              createdBy = (int)l.CREATEDBY,
                              operationId = operationId,
+                             systemArrivalDateTime = b.SYSTEMARRIVALDATETIME,
                              dateTimeCreated = (DateTime)l.DATEACTEDON,
                              customerCode = l.TBL_CUSTOMER.CUSTOMERCODE,
                              requestRef = l.REQUESTREF,

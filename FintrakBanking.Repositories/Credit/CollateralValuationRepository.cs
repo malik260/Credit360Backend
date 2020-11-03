@@ -716,6 +716,7 @@ namespace FintrakBanking.Repositories.Credit
                            valuationRequestTypeId = valPre.VALUATIONREQUESTTYPEID,
                            //approvalStatusId = valPre.APPROVALSTATUSID,
                            approvalComment = atrail.COMMENT,
+                           systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                            approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
                            valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == valPre.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
                        }).ToList();
