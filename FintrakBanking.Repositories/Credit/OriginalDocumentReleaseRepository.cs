@@ -254,7 +254,7 @@ namespace FintrakBanking.Repositories.Credit
                              originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
                              docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
                              approvalDate = dr.APPROVALDATE,
-                             dateRecieved = atrail.ARRIVALDATE,
+                             dateRecieved = atrail.SYSTEMARRIVALDATETIME,
                              collateralId = cc.COLLATERALCUSTOMERID,
                              customerId = c.CUSTOMERID,
                              collateralCode = cc.COLLATERALCODE,
