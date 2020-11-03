@@ -56,6 +56,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public double feeRate { get; set; }
         public bool? documentProvided { get; set; }
         public object[] requestId { get; set; }
+        public string currentUserCode { get; set; }
     }
     public class ApprovalResponse
     {
