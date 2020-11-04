@@ -521,6 +521,7 @@ namespace FintrakBanking.Repositories.Credit
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Authorised
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                     && x.RESPONSESTAFFID == null
+                    && x.OPERATIONID != (int)OperationsEnum.APSReleaseApproval
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     && ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
                      //&& ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == staffId)
