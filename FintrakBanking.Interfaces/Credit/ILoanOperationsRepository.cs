@@ -17,6 +17,11 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllUnassignLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId, int referenceId);
+        WorkflowResponse GoForBulkUnassignLoansFromAgentApproval(List<BulkRecoveryApprovalViewModel> entity, UserInfo user, int approvalStatusId, string comment);
+        WorkflowResponse GoForUnassignLoansFromAgentApproval(ApprovalViewModel entity);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkUnassignmentRecoveryFromAgentAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllUnassignedRecoveryOperationByAgent(string source, int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationByLoanReferenceAwaitingApproval(int staffId, int companyId, string searchString);
         IEnumerable<RecoveryCollectionsViewModel> GetAllRecoveryCustomersAssignedToAgent(int recoveryAgent);
         IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgentRemedial(int staffId, int companyId, int accreditedConsultantId, string referenceId);

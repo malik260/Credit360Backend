@@ -12269,6 +12269,7 @@ namespace FintrakBanking.Repositories.Credit
                                 && pr.EXCLUDEFROMLITIGATION == false
                                 && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 && lr.REFERENCEID == referenceId
+                                && lr.DELETED == false
 
                                 select new LoanReviewOperationApprovalViewModel
                                 {
@@ -12296,6 +12297,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && pr.EXCLUDEFROMLITIGATION == false
                                          && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                          && lr.REFERENCEID == referenceId
+                                         && lr.DELETED == false
 
                                          select new LoanReviewOperationApprovalViewModel
                                          {
