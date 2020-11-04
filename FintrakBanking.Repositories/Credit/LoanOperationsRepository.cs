@@ -21099,7 +21099,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 var consultant = context.TBL_ACCREDITEDCONSULTANT.Find(reviewRecord.ACCREDITEDCONSULTANTID);
                                 alert.receiverEmailList.Add(consultant.EMAILADDRESS);
-                                dynamicMessage = "Dear " + consultant.FIRMNAME + "<br/> Kindly be informed that the recoveriies on your queue have been un-assign. Contact the bank for further details";
+                                dynamicMessage = "Dear " + consultant.FIRMNAME + "<br/> Kindly be informed that the recoveries on your queue have been un-assign. Contact the bank for further details";
                                 LogEmailAlert(dynamicMessage, "NOTIFICATION FOR LOAN(S) RECOVERY", alert.receiverEmailList, "80760", 80760, "NotifyRecoveryAgentForAssignedLoans");
 
                             }
