@@ -116,6 +116,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.fileName = provider.FormData["fileName"];
                 entity.fileExtension = provider.FormData["fileExtension"];
                 entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+                entity.isOriginalCopy = Convert.ToBoolean(provider.FormData["isOriginalCopy"]);
                 entity.documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]);
                 entity.issueDate = GetCulture(provider.FormData["issueDate"]);
                 entity.expiryDate = GetCulture(provider.FormData["expiryDate"]);

@@ -42,6 +42,7 @@ namespace FintrakBanking.Entities.DocumentModels
 
         ////[StringLength(20)]
         public string PHYSICALLOCATION { get; set; }
+        public bool ISORIGINALCOPY { get; set; }
 
         public bool DELETED { get; set; }
 
