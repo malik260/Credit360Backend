@@ -1116,6 +1116,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("bulk-recovery-unassignment-from-agent/awaiting-approval")]
+        public HttpResponseMessage getBulkUnassignmentRecoveryFromAgentAwaitingApproval()
+        {
+            var data = repo.GetBulkUnassignmentRecoveryFromAgentAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("bulk-recovery-assignment-to-agent/application-list/{source}")]
         public HttpResponseMessage BulkRecoveryToAgentAwaitingApprovalList(string source)
         {
@@ -1231,6 +1247,20 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "No record found" });
             }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [Route("unassignment-loan-operation/recovery-operation-agents/{source}")]
+        public HttpResponseMessage getAllUnassignedRecoveryOperationByAgent(string source)
+        {
+            var data = repo.getAllUnassignedRecoveryOperationByAgent(source, token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
         }
 
@@ -1401,6 +1431,23 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetAllBulkLoansRecoveredByAgent(int accreditedConsultantId, string referenceId)
         {
             var data = repo.getAllLoansRecoveryAnalysisByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId, referenceId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/bulk-unassign-recovery-approval/{accreditedConsultantId}/{referenceId}")]
+        public HttpResponseMessage GetAllBulkUnassignLoansRecoveredByAgent(int accreditedConsultantId, int referenceId)
+        {
+            var data = repo.getAllUnassignLoansRecoveryAnalysisByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId, referenceId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1683,6 +1730,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("unassign-nplloans-from-agent-approval")]
+        public HttpResponseMessage GoForUnassignLoansFromAgentApproval([FromBody]ApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.GoForUnassignLoansFromAgentApproval(entity);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
+        }
+
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -1699,6 +1771,34 @@ namespace FintrakBanking.APICore.Controllers
             };
 
             WorkflowResponse res = repo.GoForBulkAssignLoansToAgentApproval(entity,user, approvalStatusId,comment);
+
+            if (res != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = res.responseMessage });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("unassign-bulk-nplloans-from-agent-approval/{approvalStatusId}/{comment}")]
+        public HttpResponseMessage GoForBulkUnassignLoansFromAgentApproval(int approvalStatusId, string comment, [FromBody] List<BulkRecoveryApprovalViewModel> entity)
+        {
+
+            var user = new UserInfo
+            {
+                BranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            WorkflowResponse res = repo.GoForBulkUnassignLoansFromAgentApproval(entity, user, approvalStatusId, comment);
 
             if (res != null)
             {
