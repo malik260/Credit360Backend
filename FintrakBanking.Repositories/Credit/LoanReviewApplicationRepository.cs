@@ -223,8 +223,8 @@ namespace FintrakBanking.Repositories.Credit
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Authorised
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                      && x.RESPONSESTAFFID == null
-                     && ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && staffs.Contains(x.TOSTAFFID ?? 0))
-                     || (!levelIds.Contains((int)x.TOAPPROVALLEVELID)) && staffs.Contains(x.TOSTAFFID ?? 0))
+                     && ((levelIds.Contains((int)x.TOAPPROVALLEVELID)))
+                     && ((x.TOSTAFFID == null) || staffs.Contains(x.TOSTAFFID ?? 0))
              ),
                  alaba => alaba.ab.a.LOANAPPLICATIONID,
                  trail => trail.TARGETID,
