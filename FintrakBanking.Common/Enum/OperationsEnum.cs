@@ -192,6 +192,7 @@
     DeferralExtension = 260,
     LienRemoval = 261,
     AssignRecoveryLoansToAgent = 264,
+    UnAssignRecoveryLoansFromAgent = 281,
 
     ReversalOfPrepayment = 249,
     BulkLiquidation = 258,

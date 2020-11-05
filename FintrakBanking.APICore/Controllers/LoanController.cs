@@ -1781,12 +1781,12 @@ namespace FintrakBanking.APICore.Controllers
             user.companyId = token.GetCompanyId;
             user.createdBy = token.GetStaffId;
 
-            bool data = repo.saveBulkLoanUnAssignmentToAgent(model, user);
+            WorkflowResponse data = repo.saveBulkLoanUnAssignmentToAgent(model, user);
 
-            if (data)
+            if (data != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Un-Assignment successfully" });
+                    new { success = true, message = data.responseMessage });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
@@ -1828,12 +1828,12 @@ namespace FintrakBanking.APICore.Controllers
             user.companyId = token.GetCompanyId;
             user.createdBy = token.GetStaffId;
 
-            bool data = repo.saveMultipleLoanUnAssignmentToAgent(model, user);
+            WorkflowResponse data = repo.saveMultipleLoanUnAssignmentToAgent(model, user);
 
-            if (data)
+            if (data != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Un-Assignment successfully" });
+                    new { success = true, message = data.responseMessage });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 

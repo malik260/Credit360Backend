@@ -223,8 +223,8 @@ namespace FintrakBanking.Repositories.Credit
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Authorised
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                      && x.RESPONSESTAFFID == null
-                     && ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && staffs.Contains(x.TOSTAFFID ?? 0))
-                     || (!levelIds.Contains((int)x.TOAPPROVALLEVELID)) && staffs.Contains(x.TOSTAFFID ?? 0))
+                     && ((levelIds.Contains((int)x.TOAPPROVALLEVELID)))
+                     && ((x.TOSTAFFID == null) || staffs.Contains(x.TOSTAFFID ?? 0))
              ),
                  alaba => alaba.ab.a.LOANAPPLICATIONID,
                  trail => trail.TARGETID,
@@ -521,6 +521,7 @@ namespace FintrakBanking.Repositories.Credit
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Authorised
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                     && x.RESPONSESTAFFID == null
+                    && x.OPERATIONID != (int)OperationsEnum.APSReleaseApproval
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     && ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
                      //&& ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == staffId)
@@ -1389,6 +1390,7 @@ namespace FintrakBanking.Repositories.Credit
             //string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
 
             //var checklistValidation = ChecklistCompleted(model.applicationId);
+            List<short> drawdownOperations = new List<short> { (int)OperationsEnum.LoanReviewDrawdownForExtension, (int)OperationsEnum.OverdraftReviewDrawdownForExtension, (int)OperationsEnum.ContingentReviewDrawdownForExtension };
             if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
                 bool checklistValidation = true;
@@ -1410,7 +1412,6 @@ namespace FintrakBanking.Repositories.Credit
                     //workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
                 }
 
-                List<short> drawdownOperations = new List<short> { (int)OperationsEnum.LoanReviewDrawdownForExtension, (int)OperationsEnum.OverdraftReviewDrawdownForExtension, (int)OperationsEnum.ContingentReviewDrawdownForExtension };
                 var isDrawdownOperation = drawdownOperations.Contains((short)model.operationId);
 
                 using (var trans = context.Database.BeginTransaction())

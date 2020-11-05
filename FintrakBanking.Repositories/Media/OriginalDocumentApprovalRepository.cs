@@ -73,6 +73,7 @@ namespace FintrakBanking.Repositories.Media
                         applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                         referenceNumber = x.REFERENCENUMBER,
                         dateTimeCreated = x.DATETIMECREATED,
+                        systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                         approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
@@ -538,6 +539,7 @@ namespace FintrakBanking.Repositories.Media
 
         public WorkflowResponse GoForApproval(OriginalDocumentApprovalViewModel entity , short? approvalStatusId)
         {
+
             var document = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(entity.originalDocumentApprovalId);
             if (document != null)
             {

@@ -776,6 +776,7 @@ namespace FintrakBanking.Repositories.credit
                        approvalStatusId = x.APPROVALSTATUSID,
                        inspectionDate = x.INSPECTIONDATE,
                        operationId = atrail.OPERATIONID,
+                       systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                        psrRepeortType = (from r in context.TBL_PSR_REPORT_TYPE where r.PSRREPORTTYPEID == x.PSRREPORTTYPEID select r.REPORTTYPENAME).FirstOrDefault(),
                        currency = context.TBL_CURRENCY.Where(o=>o.CURRENCYID==x.CURRENCYID).Select(o=>o.CURRENCYNAME).FirstOrDefault(),
                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),

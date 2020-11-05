@@ -38,6 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <FilesToIncludeForPublish>AllFilesInTheProject</FilesToIncludeForPublish>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -1703,7 +1704,6 @@
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\BackPUB.pubxml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
