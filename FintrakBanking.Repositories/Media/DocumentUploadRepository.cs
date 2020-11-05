@@ -888,6 +888,18 @@ namespace FintrakBanking.Repositories.Media
             return docContext.SaveChanges() > 0;
         }
 
+        public bool DeleteRecoveryDocumentUpload(int id)
+        {
+            var usage = docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.Find(id);
+
+            if (usage != null)
+            {
+                docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.Remove(usage);
+            }
+
+            return docContext.SaveChanges() > 0;
+        }
+
         public DocumentUploadViewModel GetDocument(int documentId)
         {
             return (from x in docContext.TBL_DOCUMENT_UPLOAD
