@@ -212,6 +212,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<ValuationPrerequisiteViewModel> GetAllCollateralValuerIformation()
         {
             var data = from x in _context.TBL_VALUATION_REPORT
+                       where x.DELETED == false
                        orderby x.VALUATIONREPORTID descending
                        select new ValuationPrerequisiteViewModel
                        {
@@ -234,6 +235,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = from x in _context.TBL_VALUATION_REPORT
                        where x.COLLATERALVALUATIONID == id
+                       && x.DELETED == false
                        orderby x.VALUATIONREPORTID descending
                        select new ValuationPrerequisiteViewModel
                        {
@@ -257,6 +259,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = from x in _context.TBL_VALUATION_REPORT
                        where x.VALUATIONREPORTID == id
+                       && x.DELETED == false
                        orderby x.VALUATIONREPORTID descending
                        select new ValuationPrerequisiteViewModel
                        {

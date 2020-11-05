@@ -11125,6 +11125,20 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public bool DeleteAddedValuer(int valuerId, int createdById)
+        {
+            var data = context.TBL_VALUATION_REPORT.Find(valuerId);
+
+            if (data == null) return false;
+
+            data.DELETED = true;
+            data.DELETEDBY = createdById;
+            data.DATETIMEDELETED = genSetup.GetApplicationDate();
+
+            return context.SaveChanges() > 0;
+
+        }
+
         public bool DeleteInsuranceRequest(int insuranceRequestId)
         {
             var entity = context.TBL_INSURANCE_REQUEST.FirstOrDefault(ir => ir.INSURANCEREQUESTID == insuranceRequestId);
