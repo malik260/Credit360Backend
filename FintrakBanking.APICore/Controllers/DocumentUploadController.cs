@@ -193,6 +193,23 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-recovery-document-upload/{id}")]
+        public HttpResponseMessage DeleteRecoveryDocumentUpload(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteRecoveryDocumentUpload(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
 
         //[HttpPost]
         //[ClaimsAuthorization], string documentTypeName

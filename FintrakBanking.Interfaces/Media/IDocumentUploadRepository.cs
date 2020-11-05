@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Media
 {
     public interface IDocumentUploadRepository
     {
+        bool DeleteRecoveryDocumentUpload(int id);
         RecoveryReportingDocumentViewModel GetRecoveryReportDocument(int loanRecoveryReportApprovalId);
         IEnumerable<RecoveryReportingDocumentViewModel> getAllLoanRecoveryReportingDocuments(string referenceId);
         int AddRecoveryReportingDocumentUpload(RecoveryReportingDocumentViewModel model, byte[] buffer);
