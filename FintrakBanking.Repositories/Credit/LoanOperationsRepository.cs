@@ -18550,10 +18550,11 @@ namespace FintrakBanking.Repositories.Credit
                                 maturityDate = ln.MATURITYDATE,
                                 bookingDate = ln.BOOKINGDATE,
                                 principalAmount = ln.OUTSTANDINGPRINCIPAL, //\\\ln.PrincipalAmount,
+                                contingentOutstandingPrincipal = 0,
                                 principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
                                 interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
                                 approvalStatusId = op.APPROVALSTATUSID,
-                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == atrail.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                 approvedBy = (int)ln.APPROVEDBY,
                                 approverComment = ln.APPROVERCOMMENT,
                                 dateApproved = ln.DATEAPPROVED,
@@ -18712,7 +18713,7 @@ namespace FintrakBanking.Repositories.Credit
                                          maturityDate = ln.MATURITYDATE,
                                          bookingDate = ln.BOOKINGDATE,
                                          approvalStatusId = op.APPROVALSTATUSID,
-                                         approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                         approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == atrail.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                          approvedBy = (int)ln.APPROVEDBY,
                                          approverComment = ln.APPROVERCOMMENT,
                                          dateApproved = ln.DATEAPPROVED,
@@ -18748,7 +18749,7 @@ namespace FintrakBanking.Repositories.Credit
                                          newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
                                          newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
                                          newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
-
+                                         contingentOutstandingPrincipal = 0,
                                          newTenor = op.TENOR,
                                          cASA_AccountId = op.CASA_ACCOUNTID,
                                          cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
@@ -18851,12 +18852,13 @@ namespace FintrakBanking.Repositories.Credit
                                           misCode = ln.MISCODE,
                                           teamMiscode = ln.TEAMMISCODE,
                                           principalAmount = ln.CONTINGENTAMOUNT,
+                                          contingentOutstandingPrincipal = op.CONTINGENTOUTSTANDINGPRINCIPAL,
                                           //interestRate = ln.INTERESTRATE,
                                           effectiveDate = ln.EFFECTIVEDATE,
                                           maturityDate = ln.MATURITYDATE,
                                           bookingDate = ln.BOOKINGDATE,
                                           approvalStatusId = op.APPROVALSTATUSID,
-                                          approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                          approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == atrail.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                           approvedBy = (int)ln.APPROVEDBY,
                                           approverComment = ln.APPROVERCOMMENT,
                                           dateApproved = ln.DATEAPPROVED,
@@ -19002,10 +19004,11 @@ namespace FintrakBanking.Repositories.Credit
                                 maturityDate = ln.MATURITYDATE,
                                 bookingDate = ln.BOOKINGDATE,
                                 principalAmount = ln.OUTSTANDINGPRINCIPAL, //\\\ln.PrincipalAmount,
+                                contingentOutstandingPrincipal = 0,
                                 principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
                                 interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
                                 approvalStatusId = op.APPROVALSTATUSID,
-                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == atrail.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                 approvedBy = (int)ln.APPROVEDBY,
                                 approverComment = ln.APPROVERCOMMENT,
                                 dateApproved = ln.DATEAPPROVED,
@@ -21099,7 +21102,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 var consultant = context.TBL_ACCREDITEDCONSULTANT.Find(reviewRecord.ACCREDITEDCONSULTANTID);
                                 alert.receiverEmailList.Add(consultant.EMAILADDRESS);
-                                dynamicMessage = "Dear " + consultant.FIRMNAME + "<br/> Kindly be informed that the recoveries on your queue have been un-assign. Contact the bank for further details";
+                                dynamicMessage = "Dear " + consultant.FIRMNAME + "<br/> Kindly be informed that the recoveries on your queue have been un-assigned. Contact the bank for further details";
                                 LogEmailAlert(dynamicMessage, "NOTIFICATION FOR LOAN(S) RECOVERY", alert.receiverEmailList, "80760", 80760, "NotifyRecoveryAgentForAssignedLoans");
 
                             }
@@ -29721,7 +29724,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATECREATED = DateTime.Now,
                     LOANREVIEWAPPLICATIONID = model.lmsApplicationDetailId == 0 ? null : model.lmsApplicationDetailId,
                     LEGALCONTINGENTCODE = model.legalContingentCode,
-                    CONTINGENTOUTSTANDINGPRINCIPAL = model.contingentOutstandingPrincipal,
+                    CONTINGENTOUTSTANDINGPRINCIPAL = model.rebookAmount,
                     //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
                 };
                 // Audit Section ---------------------------
@@ -29896,7 +29899,7 @@ namespace FintrakBanking.Repositories.Credit
                 reviewOperation.CREATEDBY = model.createdBy;
                 reviewOperation.DATECREATED = DateTime.Now;
                 reviewOperation.LEGALCONTINGENTCODE = model.legalContingentCode;
-                reviewOperation.CONTINGENTOUTSTANDINGPRINCIPAL = model.contingentOutstandingPrincipal;
+                reviewOperation.CONTINGENTOUTSTANDINGPRINCIPAL = model.rebookAmount;
                 //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
 
                 reviewApplicationDetail.OPERATIONPERFORMED = true;
