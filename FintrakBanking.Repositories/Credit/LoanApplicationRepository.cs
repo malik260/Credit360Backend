@@ -3242,6 +3242,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
+            detail.EXCHANGERATE = update.exchangeRate;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
             detail.APPROVEDAMOUNT = update.proposedAmount;
             detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
