@@ -11738,7 +11738,11 @@ namespace FintrakBanking.Repositories.Credit
 
             if (swapAlreadyExists)
             {
-                throw new SecureException("This collateral Swap still has an instance undergoing approval!");
+                var existingSwap = context.TBL_COLLATERAL_SWAP_REQUEST.FirstOrDefault(s => s.LOANAPPCOLLATERALID == model.loanAppCollateralId
+                && s.COLLATERALSWAPSTATUSID != (int)LoanApplicationStatusEnum.collateralSwapCompleted && s.COLLATERALSWAPSTATUSID != (int)ApprovalStatusEnum.Disapproved);
+                var d = existingSwap.TBL_LOAN_APPLICATION_COLLATERL;
+                throw new SecureException("Collateral Swap has already been initiated for this proposed Collateral for this Application Ref " +  d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER +
+                    " and is currently undergoing approval, kindly search with the Reference to see the current status.");
             }
             var swap = new TBL_COLLATERAL_SWAP_REQUEST()
             {
