@@ -2701,9 +2701,16 @@ namespace FintrakBanking.APICore.Controllers
             model.applicationUrl = HttpContext.Current.Request.Path;
             model.createdBy = token.GetStaffId;
             model.companyId = token.GetCompanyId;
-            var response = repo.AddCollateralSwap(model);
-            if (response != null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                var response = repo.AddCollateralSwap(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]
