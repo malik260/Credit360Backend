@@ -432,6 +432,17 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet]
+        [Route("generic-lms-approval-trail/{targetId}/{operationId}")]
+        public HttpResponseMessage GenericLMSApprovalTrail([FromUri] int targetId, [FromUri] int operationId)
+        {
+            
+            var data = repo.GenericLMSApprovalTrail(targetId, operationId);
+            if (data == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
 
         #endregion
     }

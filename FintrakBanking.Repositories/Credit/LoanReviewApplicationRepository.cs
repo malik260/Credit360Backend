@@ -3427,14 +3427,16 @@ namespace FintrakBanking.Repositories.Credit
                        where op.LOANID == loanId && op.LOANSYSTEMTYPEID == loansystemTypeId
                        select new LoanReviewOperationViewModel
                        {
+                           
                            operationId = op.OPERATIONTYPEID,
                            operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == op.OPERATIONTYPEID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                            reviewDetails = op.REVIEWDETAILS,
                            proposedEffectiveDate = op.EFFECTIVEDATE,
                            approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == op.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                            operationCompleted = op.OPERATIONCOMPLETED,
-                           loanApplicationId = 0,
+                           //loanApplicationId = 0,
                            loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                           loanReviewApplicationId = op.LOANREVIEWAPPLICATIONID,
                            rebookAmount = op.CONTINGENTOUTSTANDINGPRINCIPAL,
                            dateRebook = op.DATECREATED,
                            rebookDate = op.REBOOKDATE,
@@ -3447,6 +3449,9 @@ namespace FintrakBanking.Repositories.Credit
                 var staff = context.TBL_LOAN_REVIEW_OPERATION.Where(o => DbFunctions.TruncateTime(o.DATECREATED) != p.dateTimeCreated && o.LOANID == p.loanId && o.OPERATIONTYPEID == p.operationId).Select(o => o.CREATEDBY).FirstOrDefault();
                 p.previousOperator = context.TBL_STAFF.Where(s => s.STAFFID == staff).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
                 p.exposureBeforeRebook = p.bondAmount;
+                p.reviewOperationId = (from a in context.TBL_LMSR_APPLICATION_DETAIL join b in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID where a.LOANREVIEWAPPLICATIONID == p.loanReviewApplicationId select b.OPERATIONID).FirstOrDefault();
+                p.loanApplicationId = (from a in context.TBL_LMSR_APPLICATION_DETAIL join b in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID where a.LOANREVIEWAPPLICATIONID == p.loanReviewApplicationId select b.LOANAPPLICATIONID).FirstOrDefault();
+
             }
 
             return ops.ToList();
