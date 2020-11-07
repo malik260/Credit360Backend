@@ -3185,7 +3185,7 @@ namespace FintrakBanking.Repositories.Credit
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
-                        join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                        join cust in context.TBL_CUSTOMER on s.CUSTOMERID equals cust.CUSTOMERID
                         where d.DELETED == false && s.DELETED == false
                         && m.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                         && s.ISUSED == true
@@ -3465,7 +3465,7 @@ namespace FintrakBanking.Repositories.Credit
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
-                        join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                        join cust in context.TBL_CUSTOMER on s.CUSTOMERID equals cust.CUSTOMERID
                         where m.APPLICATIONREFERENCENUMBER == searchString
                         && d.DELETED == false && s.DELETED == false
                         && m.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
