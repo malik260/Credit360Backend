@@ -103,6 +103,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string previousOperator { get; set; }
         public decimal bondAmount { get; set; }
         public DateTime? rebookDate { get; set; }
+        public int? syncsOperationId { get; set; }
+        public int? loanReviewApplicationId { get; set; }
+        public int reviewOperationId { get; set; }
     }
 
     public class LoanIrregularScheduleViewModel
