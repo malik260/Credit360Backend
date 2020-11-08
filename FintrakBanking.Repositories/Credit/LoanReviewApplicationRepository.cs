@@ -2761,6 +2761,55 @@ namespace FintrakBanking.Repositories.Credit
             //return applications;
         }
 
+
+        public IEnumerable<LoanReviewOperationViewModel> ContingentSearch(string searchString)
+        {
+            searchString = searchString.Trim().ToLower();
+            int staffId = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault();
+
+            var ops = (from op in context.TBL_LOAN_REVIEW_OPERATION
+                       join l in context.TBL_LOAN_CONTINGENT on op.LOANID equals l.CONTINGENTLOANID
+                       join g in context.TBL_CUSTOMER on l.CUSTOMERID equals g.CUSTOMERID
+                       where
+                        op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
+                        && ( l.LOANREFERENCENUMBER == searchString
+                        || g.FIRSTNAME.ToLower().Contains(searchString)
+                        || g.LASTNAME.ToLower().Contains(searchString)
+                        || g.MIDDLENAME.ToLower().Contains(searchString)
+                        || op.CREATEDBY == staffId)
+                        select new LoanReviewOperationViewModel
+                        {
+                            customersName = g.FIRSTNAME+ " "+ g.MIDDLENAME+ " "+ g.LASTNAME,
+                            loanReferenceNumber = l.LOANREFERENCENUMBER,
+                            operationId = op.OPERATIONTYPEID,
+                            operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == op.OPERATIONTYPEID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
+                            reviewDetails = op.REVIEWDETAILS,
+                            proposedEffectiveDate = op.EFFECTIVEDATE,
+                            approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == op.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                            operationCompleted = op.OPERATIONCOMPLETED,
+                            loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                            loanReviewApplicationId = op.LOANREVIEWAPPLICATIONID,
+                            rebookAmount = op.CONTINGENTOUTSTANDINGPRINCIPAL,
+                            dateRebook = op.DATECREATED,
+                            rebookDate = op.REBOOKDATE,
+                            loanId = op.LOANID,
+                            bondAmount = l.CONTINGENTAMOUNT,
+                            contingentOutstandingPrincipal = op.CONTINGENTOUTSTANDINGPRINCIPAL,
+                        }).ToList();
+                foreach (var p in ops)
+                {
+                    var staff = context.TBL_LOAN_REVIEW_OPERATION.Where(o => DbFunctions.TruncateTime(o.DATECREATED) != p.dateTimeCreated && o.LOANID == p.loanId && o.OPERATIONTYPEID == p.operationId).Select(o => o.CREATEDBY).FirstOrDefault();
+                    p.previousOperator = context.TBL_STAFF.Where(s => s.STAFFID == staff).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                    p.exposureBeforeRebook = p.bondAmount;
+                    p.reviewOperationId = (from a in context.TBL_LMSR_APPLICATION_DETAIL join b in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID where a.LOANREVIEWAPPLICATIONID == p.loanReviewApplicationId select b.OPERATIONID).FirstOrDefault();
+                    p.loanApplicationId = (from a in context.TBL_LMSR_APPLICATION_DETAIL join b in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID where a.LOANREVIEWAPPLICATIONID == p.loanReviewApplicationId select b.LOANAPPLICATIONID).FirstOrDefault();
+
+                }
+
+               return ops.ToList();
+
+        }
+
         public IEnumerable<LoanReviewOperationApprovalViewModel> SearchLien(string searchString)
         {
             searchString = searchString.Trim().ToLower();
