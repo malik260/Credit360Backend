@@ -1186,6 +1186,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 approvalTrailId = x.APPROVALTRAILID,
                 comment = x.COMMENT,
                 targetId = x.TARGETID,
+                vote = x.VOTE,
                 arrivalDate = x.ARRIVALDATE,
                 systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
                 responseDate = x.RESPONSEDATE,
@@ -1205,13 +1206,19 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
             }).OrderByDescending(x => x.approvalTrailId).ToList();
 
-            
+            var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => x).FirstOrDefault();
+            var reviewDetail = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWAPPLICATIONID == applicationDetail.LOANREVIEWAPPLICATIONID).Select(x => x).FirstOrDefault();
             data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalOfferLetter, "Offer Letter"));
             data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalAvailment, "Availment"));
+            data.AddRange(GetNonAppraisalTrail(reviewDetail.LOANREVIEWOPERATIONID, reviewDetail.OPERATIONTYPEID, "Domestic Operations"));
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewDrawdownForExtension, "Loan Review Drawdown"));
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.ContingentReviewDrawdownForExtension, "Contingent Review Drawdown"));
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.OverdraftReviewDrawdownForExtension, "Overdraft Review Drawdown"));
 
             data.OrderByDescending(d => d.approvalTrailId);
             foreach (var d in data)
             {
+
                 if (d.fromApprovalLevelId == d.toApprovalLevelId)
                 {
                     if (d.loopedStaffId > 0)

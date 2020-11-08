@@ -82,6 +82,9 @@ namespace FintrakBanking.Repositories.Credit
                  (alaba, trail) => new { application = alaba.ab.a, trail, branch = alaba.b, customer = alaba.c })
              .Select(x => new LoanReviewApplicationViewModel
              {
+                 lmsApplicationId = x.application.LOANAPPLICATIONID,
+                 lmsOperationId = x.application.OPERATIONID,
+
                  //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                  approvalState = x.trail == null ? "Pending" : x.trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                  approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
@@ -231,6 +234,9 @@ namespace FintrakBanking.Repositories.Credit
                  (alaba, trail) => new { application = alaba.ab.a, trail, branch = alaba.b, customer = alaba.c })
              .Select(x => new LoanReviewApplicationViewModel
              {
+                 lmsApplicationId = x.application.LOANAPPLICATIONID,
+                 lmsOperationId = x.application.OPERATIONID,
+
                  //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                  approvalState = x.trail == null ? "Pending" : x.trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                  approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
@@ -375,6 +381,9 @@ namespace FintrakBanking.Repositories.Credit
                  (alaba, trail) => new { application = alaba.ab.a, trail, branch = alaba.b, customer = alaba.c })
              .Select(x => new LoanReviewApplicationViewModel
              {
+                 lmsApplicationId = x.application.LOANAPPLICATIONID,
+                 lmsOperationId = x.application.OPERATIONID,
+
                  //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                  approvalState = x.trail == null ? "Pending" : x.trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                  approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
@@ -532,6 +541,10 @@ namespace FintrakBanking.Repositories.Credit
                  (alaba, trail) => new { application = alaba.ab.a, trail, branch = alaba.b, customer = alaba.c })
              .Select(x => new LoanReviewApplicationViewModel
              {
+
+                 lmsApplicationId = x.application.LOANAPPLICATIONID,
+                 lmsOperationId = x.application.OPERATIONID,
+
                  staffId = staffId,
                  staffRoleCode = context.TBL_STAFF_ROLE.FirstOrDefault(O => O.STAFFROLEID == staff.STAFFROLEID).STAFFROLECODE,
                  //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,

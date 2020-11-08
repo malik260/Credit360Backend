@@ -667,7 +667,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 this.globalExposure = GetExposuresLMS();
                 this.groupExposure = GetGroupExposureMarkupLMS();
-                this.approvals = GetApprovalsMarkup();
+                //this.approvals = GetApprovalsMarkup();
+                this.approvals = GetLMSApprovalsMarkup(this.lmsrApplication.LOANAPPLICATIONID, this.lmsrApplication.OPERATIONID);
                 this.currentDate = DateTime.Now.ToShortDateString();
                 this.annualReviewDate = this.lmsrApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.securityAnalysis = GetSecurityAnalysisMarkUP();
@@ -4720,6 +4721,39 @@ namespace FintrakBanking.Repositories.Credit
         private string GetApprovalsMarkup()
         {
             var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
+            var result = String.Empty;
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
+                        <th><b>Comment</b></th>
+                        <th><b>Date</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
+
+
+        private string GetLMSApprovalsMarkup(int targetId, int operationId)
+        {
+            var appraisals = GenericLMSApprovalTrail(targetId, operationId).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
@@ -12645,6 +12679,74 @@ namespace FintrakBanking.Repositories.Credit
                  <br />";
             return result;
         }
+
+
+        public IEnumerable<ApprovalTrailViewModel> GenericLMSApprovalTrail(int targetId, int operationId)
+        {
+
+            var staffRoles = context.TBL_STAFF_ROLE.ToList();
+            var staffs = from s in context.TBL_STAFF select s;
+
+            var allstaff = this.GetAllStaffNames();
+
+            var data = (from x in context.TBL_APPROVAL_TRAIL
+                        where
+                        x.OPERATIONID == operationId
+                        && x.TARGETID == targetId
+                        select new ApprovalTrailViewModel
+                        {
+                            approvalTrailId = x.APPROVALTRAILID,
+                            comment = x.COMMENT,
+                            vote = x.VOTE,
+                            targetId = x.TARGETID,
+                            arrivalDate = x.ARRIVALDATE,
+                            systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                            responseDate = x.RESPONSEDATE,
+                            systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                            responseStaffId = x.RESPONSESTAFFID,
+                            requestStaffId = x.REQUESTSTAFFID,
+                            fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                            fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                            toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                            toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
+                            approvalStateId = x.APPROVALSTATEID,
+                            approvalStatusId = x.APPROVALSTATUSID,
+                            commentStage = "Credit Appaisal",
+                            approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                            approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                            toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                            fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+                        }).OrderByDescending(x => x.approvalTrailId).ToList();
+
+            var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => x).FirstOrDefault();
+            var reviewDetail = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWAPPLICATIONID == applicationDetail.LOANREVIEWAPPLICATIONID).Select(x => x).FirstOrDefault();
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalOfferLetter, "Offer Letter"));
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalAvailment, "Availment"));
+            data.AddRange(GetNonAppraisalTrail(reviewDetail.LOANREVIEWOPERATIONID, reviewDetail.OPERATIONTYPEID, "Domestic Operations"));
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewDrawdownForExtension, "Loan Review Drawdown"));
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.ContingentReviewDrawdownForExtension, "Contingent Review Drawdown"));
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.OverdraftReviewDrawdownForExtension, "Overdraft Review Drawdown"));
+
+            data.OrderByDescending(d => d.approvalTrailId);
+            foreach (var d in data)
+            {
+
+                if (d.fromApprovalLevelId == d.toApprovalLevelId)
+                {
+                    if (d.loopedStaffId > 0)
+                    {
+                        d.toApprovalLevelName = staffs.FirstOrDefault(s => s.STAFFID == d.loopedStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
+                    }
+                    else
+                    {
+                        d.fromApprovalLevelName = staffs.FirstOrDefault(s => s.STAFFID == d.requestStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
+                    }
+                }
+            }
+
+            return data;
+        }
+
 
     }
 }
