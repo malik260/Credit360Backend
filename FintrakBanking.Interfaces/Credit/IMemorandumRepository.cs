@@ -9,6 +9,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IMemorandumRepository
     {
+        bool InitForExceptionalLoans(int operationId, int targetId);
         bool InitRecoveryDate(int accreditedConsultantId, string referenceId);
         decimal getTotalLLLImpact();
         decimal GetApprovalAmount(bool isLMS = false);
