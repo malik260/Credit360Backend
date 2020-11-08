@@ -106,6 +106,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? syncsOperationId { get; set; }
         public int? loanReviewApplicationId { get; set; }
         public int reviewOperationId { get; set; }
+        public string customersName { get; set; }
+        public string loanReferenceNumber { get; set; }
     }
 
     public class LoanIrregularScheduleViewModel

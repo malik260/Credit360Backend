@@ -4042,6 +4042,9 @@ namespace FintrakBanking.Repositories.Credit
                                                && (t.TOSTAFFID == null || t.TOSTAFFID == staffId))
                                               select new LoanApplicationDetailViewModel
                                               {
+                                                  
+                                                  customerName = context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == e.CUSTOMERID).Select(c=>c.FIRSTNAME + " "+ c.MIDDLENAME + " "+ c.LASTNAME).FirstOrDefault(),
+                                                  loanApplicationId = e.EXCEPTIONALLOANAPPLICATIONID,
                                                   dateTimeCreated = d.DATETIMECREATED,
                                                   proposedAmount = d.PROPOSEDAMOUNT,
                                                   proposedInterestRate = d.PROPOSEDINTERESTRATE,
@@ -4091,6 +4094,19 @@ namespace FintrakBanking.Repositories.Credit
                                                   approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME.ToUpper(),
                                               }).GroupBy(d => d.loanApplicationDetailId)
                                                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault()).ToList();
+            foreach(var x in exceptionalLoansForApproval)
+            {
+                var templateExist = context.TBL_DOC_TEMPLATE_DETAIL.Where(p => p.TARGETID == x.loanApplicationId && p.OPERATIONID == (int)OperationsEnum.ExceptionalLoan).ToList();
+                if (templateExist.Any())
+                {
+                    x.isTemplateUploaded = true;
+                }
+                else
+                {
+                    x.isTemplateUploaded = false;
+                }
+                 
+            }
             return exceptionalLoansForApproval;
         }
 
