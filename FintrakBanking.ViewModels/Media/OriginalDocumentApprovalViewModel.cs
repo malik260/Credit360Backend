@@ -23,6 +23,7 @@ namespace FintrakBanking.ViewModels.Media
         public string customerName { get; set; }
         public string customerCode { get; set; }
         public int customerId { get; set; }
+        public int? businessUnit { get; set; }
         public string branchName { get; set; }
         public DateTime applicationDate { get; set; }
         public decimal applicationAmount { get; set; }

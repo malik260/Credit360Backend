@@ -327,6 +327,7 @@ namespace FintrakBanking.Repositories.Media
                               dateTimeCreated = oda.DATETIMECREATED,
                               collateralCustomerId = cc.COLLATERALCUSTOMERID,
                               customerId = c.CUSTOMERID,
+                              businessUnit = c.BUSINESSUNTID,
                               branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                               operationId = (int)OperationsEnum.OriginalDocumentApproval,
                               approvalStatusId = atrail.APPROVALSTATUSID,
