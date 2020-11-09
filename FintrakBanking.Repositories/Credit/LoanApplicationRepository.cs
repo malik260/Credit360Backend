@@ -7679,6 +7679,17 @@ namespace FintrakBanking.Repositories.Credit
             val.LASTUPDATEDBY = data.createdBy;
             val.DATETIMEUPDATED = DateTime.Now;
             ArchiveLoanApplication(data.loanApplicationId, (int)OperationsEnum.LoanApplicationCancellation, val.APPLICATIONSTATUSID, data.createdBy);
+            var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == data.createdBy);
+            var lastTrail = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == val.LOANAPPLICATIONID && t.OPERATIONID == val.OPERATIONID).OrderByDescending(t => t.APPROVALTRAILID).FirstOrDefault();
+            if (lastTrail != null)
+            {
+                lastTrail.RESPONSEDATE = genSetup.GetApplicationDate();
+                lastTrail.SYSTEMRESPONSEDATETIME = DateTime.Now;
+                lastTrail.RESPONSESTAFFID = data.createdBy;
+                lastTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                lastTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                lastTrail.COMMENT += " Loan was Cancelled by " + staff.STAFFCODE + " Reason being : " + data.cancellationReason;
+            }
 
             var audit = new TBL_AUDIT
             {
