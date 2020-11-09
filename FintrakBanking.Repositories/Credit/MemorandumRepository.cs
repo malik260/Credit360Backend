@@ -12603,7 +12603,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetExceptionalApprovalsMarkup(int targetId, int operationId)
         {
-            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId, true).OrderBy(a => a.approvalTrailId).ToList();
+            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,true).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
@@ -12724,7 +12724,7 @@ namespace FintrakBanking.Repositories.Credit
             data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalAvailment, "Availment"));
             if (reviewDetail != null)
             {
-                data.AddRange(GetNonAppraisalTrail(reviewDetail.LOANREVIEWOPERATIONID, reviewDetail.OPERATIONTYPEID, "Domestic Operations"));
+                data.AddRange(GetNonAppraisalTrail(reviewDetail.LOANREVIEWOPERATIONID, reviewDetail.OPERATIONTYPEID, "Credit Operations"));
             }
             data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewDrawdownForExtension, "Loan Review Drawdown"));
             data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.ContingentReviewDrawdownForExtension, "Contingent Review Drawdown"));
