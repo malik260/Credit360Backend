@@ -12603,7 +12603,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetExceptionalApprovalsMarkup(int targetId, int operationId)
         {
-            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId, true).OrderBy(a => a.approvalTrailId).ToList();
+            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,true).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
