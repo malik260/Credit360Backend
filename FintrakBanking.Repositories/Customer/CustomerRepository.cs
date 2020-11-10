@@ -102,7 +102,27 @@ namespace FintrakBanking.Repositories.Customer
             int? maritalStatus = null;
             if (entity.customerTypeId == (short) CustomerTypeEnum.Individual)
             {
-                maritalStatus = Convert.ToInt32(entity.maritalStatus) ;
+                if (entity.maritalStatus.ToLower() == "s")
+                {
+                    maritalStatus = 1;
+                }
+                if (entity.maritalStatus.ToLower() == "m")
+                {
+                    maritalStatus = 2;
+                }
+                if (entity.maritalStatus.ToLower() == "d")
+                {
+                    maritalStatus = 3;
+                }
+                if (entity.maritalStatus.ToLower() == "w")
+                {
+                    maritalStatus = 4;
+                }
+                else
+                {
+                    maritalStatus = 0;
+                }
+                //maritalStatus = Convert.ToInt32(entity.maritalStatus) ;
             }
             var customer = new TBL_CUSTOMER
             {
