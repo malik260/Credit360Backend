@@ -1638,6 +1638,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.DeferredExecution = true;
                     workflow.IsFlowTest = model.isFlowTest;
                     workflow.IsFromPc = model.isFromPc;
+                    workflow.Tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0;
                     workflow.Tenor = lmsrDetail.Max(d => d.APPROVEDTENOR);
                     workflow.IgnorePostApprovalReviewer = true;
                     workflow.LevelBusinessRule = new LevelBusinessRule
@@ -1654,7 +1655,7 @@ namespace FintrakBanking.Repositories.Credit
                         WithInstruction = appl.WITHINSTRUCTION ?? false,
                         //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                         DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
-                        tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
+                        tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0,
                     };
 
                     if (model.receiverLevelId == 0) workflow.NextLevelId = null;
