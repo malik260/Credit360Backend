@@ -13217,6 +13217,8 @@ namespace FintrakBanking.Repositories.Credit
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
                                    currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
                                    accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.CONTINGENTLOANID && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
+                                   contigentOutstandingPrincipal = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.CONTINGENTOUTSTANDINGPRINCIPAL).FirstOrDefault(),
+                                   prePayment = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.PREPAYMENT).FirstOrDefault(),
 
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
@@ -13416,6 +13418,7 @@ namespace FintrakBanking.Repositories.Credit
                                    operationTypeName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == lp.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                                    accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.CONTINGENTLOANID && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
                                    contigentOutstandingPrincipal = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.CONTINGENTOUTSTANDINGPRINCIPAL).FirstOrDefault(),
+                                   prePayment = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.PREPAYMENT).FirstOrDefault(),
 
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
