@@ -1639,7 +1639,6 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.IsFlowTest = model.isFlowTest;
                     workflow.IsFromPc = model.isFromPc;
                     workflow.Tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0;
-                    workflow.Tenor = lmsrDetail.Max(d => d.APPROVEDTENOR);
                     workflow.IgnorePostApprovalReviewer = true;
                     workflow.LevelBusinessRule = new LevelBusinessRule
                     {
