@@ -935,6 +935,7 @@ namespace FintrakBanking.Repositories.Credit
             this.targetId = targetId;
             this.operationId = operationId;
             this.isThirdPartyFacility = true;
+            this.lmsCamOperationIds = context.TBL_OPERATIONS.Where(o => o.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication).Select(o => o.OPERATIONID).ToList();
             if (lmsCamOperationIds.Contains(operationId)) // LMS
             {
                 if (lmsrApplication == null)
