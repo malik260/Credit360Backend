@@ -473,6 +473,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? dateAmortised { get; set; }
         public decimal? amortisedAmount { get; set; }
         public DateTime? dateDischarged { get; set; }
+        public decimal? prePayment { get; set; }
 
 
 

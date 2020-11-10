@@ -1396,13 +1396,24 @@ namespace FintrakBanking.Repositories.Credit
             }
             if (appl.TOTALEXPOSUREAMOUNT <= 0)
             {
-                memo.Init(operationId, model.applicationId);
-                appl.TOTALEXPOSUREAMOUNT = memo.GetApprovalAmount(true);
+                var lmsrSystemTypeId = appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID;
+                if (lmsrSystemTypeId == (int)LoanSystemTypeEnum.ExternalFacility)
+                {
+                    memo.InitForThirdpartyLoans(operationId, model.applicationId);
+                    appl.TOTALEXPOSUREAMOUNT = memo.GetApprovalAmount(true);
+                }
+                else
+                {
+                    memo.Init(operationId, model.applicationId);
+                    appl.TOTALEXPOSUREAMOUNT = memo.GetApprovalAmount(true);
+                }
             }
             var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
             //string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
 
             //var checklistValidation = ChecklistCompleted(model.applicationId);
+            List<short> tenorExtensionOperations = new List<short> { (int)OperationsEnum.TenorExtensionApproval, (int)OperationsEnum.OverdraftTenorExtensionApproval, (int)OperationsEnum.ContingentLiabilityTenorExtensionApproval };
+            var operationIsTenorExtension = tenorExtensionOperations.Contains((short)appl.OPERATIONID);
             List<short> drawdownOperations = new List<short> { (int)OperationsEnum.LoanReviewDrawdownForExtension, (int)OperationsEnum.OverdraftReviewDrawdownForExtension, (int)OperationsEnum.ContingentReviewDrawdownForExtension };
             if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
@@ -1444,7 +1455,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.DeferredExecution = true;
                     workflow.IsFlowTest = model.isFlowTest;
                     workflow.IsFromPc = model.isFromPc;
-                    workflow.Tenor = lmsrDetail.Max(d => d.APPROVEDTENOR);
+                    workflow.Tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0;
                     workflow.IgnorePostApprovalReviewer = (appl.OPERATIONID != (int)OperationsEnum.OverdraftSubAllocationApproval &&
                                                             appl.OPERATIONID != (int)OperationsEnum.LoanRecapitilizationApproval &&
                                                             appl.OPERATIONID != (int)OperationsEnum.OverdraftTopUpApproval &&
@@ -1463,7 +1474,7 @@ namespace FintrakBanking.Repositories.Credit
                         WithInstruction = appl.WITHINSTRUCTION ?? false,
                         //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                         DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
-                        tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
+                        tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0,
                     };
 
                     if (model.receiverLevelId == 0) workflow.NextLevelId = null;
