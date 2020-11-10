@@ -1396,8 +1396,17 @@ namespace FintrakBanking.Repositories.Credit
             }
             if (appl.TOTALEXPOSUREAMOUNT <= 0)
             {
-                memo.Init(operationId, model.applicationId);
-                appl.TOTALEXPOSUREAMOUNT = memo.GetApprovalAmount(true);
+                var lmsrSystemTypeId = appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID;
+                if (lmsrSystemTypeId == (int)LoanSystemTypeEnum.ExternalFacility)
+                {
+                    memo.InitForThirdpartyLoans(operationId, model.applicationId);
+                    appl.TOTALEXPOSUREAMOUNT = memo.GetApprovalAmount(true);
+                }
+                else
+                {
+                    memo.Init(operationId, model.applicationId);
+                    appl.TOTALEXPOSUREAMOUNT = memo.GetApprovalAmount(true);
+                }
             }
             var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
             //string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
