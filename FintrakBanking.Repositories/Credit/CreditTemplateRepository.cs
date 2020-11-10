@@ -604,6 +604,16 @@ var qry = Foo.GroupJoin(
                 .Where(x => x.TEMPLATEID == entity.templateId && x.ISDISABLED == false && x.DELETED == false)
                 .ToList();
 
+            var ownerId = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == entity.staffId).STAFFROLEID;
+
+            var isOwner = context.TBL_DOC_TEMPLATE
+                .Any(x => x.DELETED == false && x.OPERATIONID == entity.operationId && x.COMPANYID == entity.companyId && x.STAFFROLEID == ownerId);
+
+            if (!isOwner)
+            {
+                return true;
+            }
+
             var loadedSections = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.TARGETID == entity.targetId && x.OPERATIONID == entity.operationId)
                 .ToList();
