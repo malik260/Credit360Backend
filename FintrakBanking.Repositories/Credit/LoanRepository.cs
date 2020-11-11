@@ -16647,6 +16647,7 @@ namespace FintrakBanking.Repositories.Credit
                         //&& d.EXPIRYDATE >= systemDate
                         select new CamProcessedLoanViewModel
                         {
+                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                             creditAppraisalOperationId = m.OPERATIONID,
                             creditAppraisalLoanApplicationId = m.LOANAPPLICATIONID,
                             loanSystemTypeId = l.LOANSYSTEMTYPEID,
@@ -17953,6 +17954,8 @@ namespace FintrakBanking.Repositories.Credit
                                    && ln.OPERATIONCOMPLETED == false && b.OPERATIONPERFORMED == true
                                    select new LoanViewModel
                                    {
+                                       divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                                       divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                        lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
                                        loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
