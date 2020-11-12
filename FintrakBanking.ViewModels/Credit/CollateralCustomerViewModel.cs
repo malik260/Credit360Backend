@@ -1203,5 +1203,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loopedStaffId { get; set; }
         public int userId { get; set; }
         public string comment { get; set; }
+        public int targetId { get; set; }
+        public int? approvalLevelId { get; set; }
+        public DateTime applicationDate { get; set; }
     }
 }
