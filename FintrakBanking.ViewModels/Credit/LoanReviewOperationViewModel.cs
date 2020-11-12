@@ -488,6 +488,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? commissionAmount { get; set; }
         public string phoneNumber { get; set; }
         public decimal? contingentOutstandingPrincipal { get; set; }
+        public decimal? contigentOutstandingPrincipal { get; set; }
+        public decimal? totalPrepayment { get; set; }
     }
 
 

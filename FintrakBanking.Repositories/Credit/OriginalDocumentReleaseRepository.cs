@@ -274,6 +274,59 @@ namespace FintrakBanking.Repositories.Credit
             return result;            
         }
 
+        public IEnumerable<CollateralCashReleaseViewModel> GetCashSecurityReleaseForApproval(int staffId)
+        {
+            var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.GuaranteeReleaseApproval).ToList();
+            var staffs = _general.GetStaffRlieved(staffId);
+
+            var record = from dr in _context.TBL_CASH_SECURITY_RELEASE_APPROVAL
+                         join atrail in _context.TBL_APPROVAL_TRAIL on dr.CASHSECURITYRELEASEID equals atrail.TARGETID
+                         join c in _context.TBL_CUSTOMER on dr.CUSTOMERID equals c.CUSTOMERID
+                         join b in _context.TBL_COLLATERAL_CUSTOMER on dr.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                         where
+                         (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved || atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
+                         && atrail.RESPONSESTAFFID == null
+                         && (atrail.LOOPEDSTAFFID == null || atrail.LOOPEDSTAFFID == staffId)
+                         && ((ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) || (!ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
+                         && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
+                         && atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval
+                         select new CollateralCashReleaseViewModel
+                         {
+                             collateralSummary = b.COLLATERALSUMMARY,
+                             cashSecurityReleaseIseId = dr.CASHSECURITYRELEASEID,
+                             approvalStatusId = atrail.APPROVALSTATUSID,
+                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault().ToUpper(),
+                             customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                             loanApplicationDetailId = (int)dr.LOANAPPLICATIONDETAILID,
+                             loanTypeName = (from y in _context.TBL_LOAN_APPLICATION_TYPE join p in _context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONTYPEID equals p.LOANAPPLICATIONTYPEID where dr.LOANAPPLICATIONID == p.LOANAPPLICATIONID select y.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
+                             applicationReferenceNumber = _context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(), 
+                             loanReferenceNumber = "", //c.LOANREFERENCENUMBER,
+                             loanAmount = _context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(x => x.APPROVEDAMOUNT).FirstOrDefault(), 
+                             lienAmount = (decimal)dr.LIENAMOUNT,
+                             facility = (from p in _context.TBL_PRODUCT join a in _context.TBL_LOAN_APPLICATION_DETAIL on p.PRODUCTID equals a.APPROVEDPRODUCTID where a.LOANAPPLICATIONDETAILID == dr.LOANAPPLICATIONDETAILID select p.PRODUCTNAME).FirstOrDefault(),
+                             collateralTypeName = b.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                             collateralSubTypeName = _context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == b.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                             collateralCode = b.COLLATERALCODE,
+                             collateralId = dr.COLLATERALCUSTOMERID,
+                             collateralTypeId = b.COLLATERALTYPEID,
+                             collateralSubTypeId = b.COLLATERALSUBTYPEID,
+                             customerId = (int)dr.CUSTOMERID,
+                             customerCode = b.CUSTOMERCODE,
+                             currencyId = b.CURRENCYID,
+                             currencyCode = b.TBL_CURRENCY.CURRENCYCODE,
+                             currency = b.TBL_CURRENCY.CURRENCYNAME,
+                             dateRecieved = atrail.SYSTEMARRIVALDATETIME,
+                             DateTimeCreated = dr.DATETIMECREATED,
+                             operationId = atrail.OPERATIONID,
+                             createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+
+                         };
+
+            var result = record.GroupBy(r => r.cashSecurityReleaseIseId)
+                               .Select(r => r.FirstOrDefault()).ToList();
+            return result;
+        }
+
 
         public IEnumerable<OriginalDocumentReleaseViewModel> GetSecurityReleaseSearch(string  searchString)
         {
@@ -370,7 +423,64 @@ namespace FintrakBanking.Repositories.Credit
 
             return result;
         }
-        
+
+        public IEnumerable<CollateralCashReleaseViewModel> GetRejectedAndReferredCashSecurityRelease(int staffId)
+        {
+            var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+
+            var record = (from dr in _context.TBL_CASH_SECURITY_RELEASE_APPROVAL
+                          join b in _context.TBL_COLLATERAL_CUSTOMER on dr.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.CASHSECURITYRELEASEID equals atrail.TARGETID
+                          join c in _context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
+                          where atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval
+                            && atrail.TARGETID == dr.CASHSECURITYRELEASEID
+                            && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
+                            && atrail.LOOPEDSTAFFID == initiator)
+                                || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                            && atrail.RESPONSESTAFFID == null
+                          orderby atrail.APPROVALTRAILID descending
+                          select new CollateralCashReleaseViewModel
+                          {
+                              approvalStatusId = atrail.APPROVALSTATUSID,
+                              approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                              customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                              collateralSummary = b.COLLATERALSUMMARY,
+                              cashSecurityReleaseIseId = dr.CASHSECURITYRELEASEID,
+                              loanApplicationDetailId = dr.LOANAPPLICATIONDETAILID,
+                              loanApplicationId = dr.LOANAPPLICATIONID,
+                              loanTypeName = (from y in _context.TBL_LOAN_APPLICATION_TYPE join p in _context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONTYPEID equals p.LOANAPPLICATIONTYPEID where dr.LOANAPPLICATIONID == p.LOANAPPLICATIONID select y.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
+                              applicationReferenceNumber = _context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                              loanReferenceNumber = "", //c.LOANREFERENCENUMBER,
+                              loanAmount = _context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(x => x.APPROVEDAMOUNT).FirstOrDefault(),
+                              lienAmount = (decimal)dr.LIENAMOUNT,
+                              facility = (from p in _context.TBL_PRODUCT join a in _context.TBL_LOAN_APPLICATION_DETAIL on p.PRODUCTID equals a.APPROVEDPRODUCTID where a.LOANAPPLICATIONDETAILID == dr.LOANAPPLICATIONDETAILID select p.PRODUCTNAME).FirstOrDefault(),
+                              collateralTypeName = b.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                              collateralSubTypeName = _context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == b.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                              collateralCode = b.COLLATERALCODE,
+                              collateralId = dr.COLLATERALCUSTOMERID,
+                              collateralTypeId = b.COLLATERALTYPEID,
+                              collateralSubTypeId = b.COLLATERALSUBTYPEID,
+                              customerId = (int)dr.CUSTOMERID,
+                              customerCode = b.CUSTOMERCODE,
+                              currencyId = b.CURRENCYID,
+                              currencyCode = b.TBL_CURRENCY.CURRENCYCODE,
+                              currency = b.TBL_CURRENCY.CURRENCYNAME,
+                              dateRecieved = atrail.SYSTEMARRIVALDATETIME,
+                              DateTimeCreated = dr.DATETIMECREATED,
+                              operationId = atrail.OPERATIONID,
+                              createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                              loopedStaffId = atrail.LOOPEDSTAFFID,
+                              approvalTrailId = atrail.APPROVALTRAILID,
+                          }).ToList();
+
+            var result = record.GroupBy(r => r.cashSecurityReleaseIseId)
+                               .Select(r => r.FirstOrDefault()).Where(first => (first.approvalStatusId == (short)ApprovalStatusEnum.Referred
+                               && first.loopedStaffId == initiator) || first.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                               .ToList();
+
+            return result;
+        }
+
         public bool reinitiateSecurityRelease(int id, int staffId, int companyId)
         {
             var output = false;
@@ -570,6 +680,87 @@ namespace FintrakBanking.Repositories.Credit
             return _workflow.Response;
         }
 
+
+        public WorkflowResponse GoForGuaranteeCashApproval(CollateralCashReleaseViewModel entity)
+        {
+            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Referred)
+            {
+                var cashRelease = _context.TBL_CASH_SECURITY_RELEASE_APPROVAL.Find(entity.cashSecurityReleaseIseId);
+                
+                    using (var transaction = _context.Database.BeginTransaction())
+                    {
+                        _workflow.StaffId = entity.createdBy;
+                        _workflow.CompanyId = entity.companyId;
+                        _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
+                        _workflow.TargetId = cashRelease.CASHSECURITYRELEASEID;
+                        _workflow.Comment = "Update has been applied, Request for Guarantee Cash Release Approval";
+                        _workflow.OperationId = (int)OperationsEnum.GuaranteeReleaseApproval;
+                        _workflow.DeferredExecution = true;
+                        _workflow.LogActivity();
+                        try
+                        {
+                        _context.SaveChanges();
+                        transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
+                    }
+                
+            }
+
+            if (entity != null)
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    var data = new TBL_CASH_SECURITY_RELEASE_APPROVAL
+                    {
+                        COLLATERALCUSTOMERID = entity.collateralId,
+                        LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
+                        LIENAMOUNT = entity.lienAmount,
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                        CUSTOMERID = entity.customerId,
+                        LOANAPPLICATIONID =entity.loanApplicationId,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                        COMMENT = "Request for Guarantee Cash Release Approval",
+                    };
+                    try
+                    {
+                        _context.TBL_CASH_SECURITY_RELEASE_APPROVAL.Add(data);
+                        _context.SaveChanges();
+                    }catch(Exception e)
+                    {
+                        throw e;
+                    }
+                    _workflow.StaffId = entity.createdBy;
+                    _workflow.CompanyId = entity.companyId;
+                    _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
+                    _workflow.TargetId = data.CASHSECURITYRELEASEID;
+                    _workflow.Comment = "Request for gurantee cash security release approval";
+                    _workflow.OperationId = (int)OperationsEnum.GuaranteeReleaseApproval;
+                    _workflow.DeferredExecution = true;
+                    _workflow.ExternalInitialization = true;
+                    _workflow.LogActivity();
+                    try
+                    {
+                        _context.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                }
+
+            }
+           
+            return _workflow.Response;
+        }
+
         public WorkflowResponse SubmitApproval(OriginalDocumentReleaseViewModel model)
         {
             bool responce = false;
@@ -656,6 +847,62 @@ namespace FintrakBanking.Repositories.Credit
                     throw ex;
                 }
                 //return false;
+            }
+        }
+
+        public WorkflowResponse SubmitCashSecurityReleaseApproval(CollateralCashReleaseViewModel model)
+        {
+            bool responce = false;
+
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                _workflow.StaffId = model.createdBy;
+                _workflow.CompanyId = model.companyId;
+                _workflow.StatusId = model.approvalStatusId == (short)ApprovalStatusEnum.Approved ? (short)ApprovalStatusEnum.Processing : model.approvalStatusId;
+                _workflow.TargetId = model.cashSecurityReleaseIseId;
+                _workflow.Comment = model.comment;
+                _workflow.OperationId = (int)model.operationId;
+                _workflow.DeferredExecution = true;
+                _workflow.LogActivity();
+
+                try
+                {
+                    var cashRelease = _context.TBL_CASH_SECURITY_RELEASE_APPROVAL.Where(o => o.CASHSECURITYRELEASEID == model.cashSecurityReleaseIseId
+                                                                                    && o.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).FirstOrDefault();
+
+                    if (_workflow.NewState == (int)ApprovalState.Ended)
+                    {
+
+                        if (cashRelease != null)
+                        {
+                            cashRelease.APPROVALSTATUSID = model.approvalStatusId;
+
+                            if (model.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                            {
+                                var lien = _context.TBL_APPLICATIONDETAIL_LIEN.Where(x => x.COLLATERALCUSTOMERID == cashRelease.COLLATERALCUSTOMERID && x.APPLICATIONDETAILID == cashRelease.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                                if (lien != null)
+                                {
+                                    lien.ISRELEASED = true;
+                                    lien.DELETED = true;
+                                }
+                            }
+                        }
+                    }
+
+                    responce = _context.SaveChanges() > 0;
+                    transaction.Commit();
+
+                    return _workflow.Response;
+                }
+                catch (Exception ex)
+                {
+
+                    transaction.Rollback();
+
+
+                    throw ex;
+                }
+               
             }
         }
 

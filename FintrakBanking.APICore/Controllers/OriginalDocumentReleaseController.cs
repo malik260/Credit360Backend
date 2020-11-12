@@ -60,6 +60,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("approval-cash-security-release")]
+        public HttpResponseMessage GetCashReleaseApproval()
+        {
+            try
+            {
+                var response = _repo.GetCashSecurityReleaseForApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("approval-security-release-search/{searchString}")]
         public HttpResponseMessage GetSecurityReleaseSearch(string searchString)
         {
@@ -83,6 +100,23 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = _repo.GetRejectedAndReferredSecurityRelease(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("rejected-referred-cash-security-release")]
+        public HttpResponseMessage GetRejectedAndReferredCashSecurityRelease()
+        {
+            try
+            {
+                var response = _repo.GetRejectedAndReferredCashSecurityRelease(token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (SecureException ex)
@@ -217,26 +251,53 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("guarantee-release-go-for-approval")]
+        //public HttpResponseMessage GoForGuaranteeApproval([FromBody] IEnumerable<OriginalDocumentReleaseViewModel> model)
+        //{
+        //    try
+        //    {
+        //        foreach (var x in model)
+        //        {
+        //            x.createdBy = token.GetStaffId;
+        //            x.companyId = token.GetCompanyId;
+        //        }
+        //        WorkflowResponse response = _repo.GoForGuaranteeApproval(model);
+        //        if (response != null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response , message = response.responseMessage });
+        //        }
+        //        else
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "One or More Document may currently be Undergoing Approval" });
+        //        }
+
+        //    }
+        //    catch (SecureException ex)
+        //    {
+
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("guarantee-release-go-for-approval")]
-        public HttpResponseMessage GoForGuaranteeApproval([FromBody] IEnumerable<OriginalDocumentReleaseViewModel> model)
+        [Route("guarantee-cash-release-go-for-approval")]
+        public HttpResponseMessage GoForGuaranteeApproval([FromBody] CollateralCashReleaseViewModel model)
         {
             try
             {
-                foreach (var x in model)
-                {
-                    x.createdBy = token.GetStaffId;
-                    x.companyId = token.GetCompanyId;
-                }
-                WorkflowResponse response = _repo.GoForGuaranteeApproval(model);
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                WorkflowResponse response = _repo.GoForGuaranteeCashApproval(model);
                 if (response != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response , message = response.responseMessage });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = response.responseMessage });
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "One or More Document may currently be Undergoing Approval" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = response.responseMessage });
                 }
 
             }
@@ -262,6 +323,29 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
 
                 WorkflowResponse response = _repo.SubmitApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("security-cash-release-approval")]
+        public HttpResponseMessage CashSecurityReleaseGoForApproval([FromBody] CollateralCashReleaseViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.createdBy = token.GetStaffId;
+                model.staffId = token.GetStaffId;
+                model.userId = token.GetUserId;
+                model.companyId = token.GetCompanyId;
+
+                WorkflowResponse response = _repo.SubmitCashSecurityReleaseApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
