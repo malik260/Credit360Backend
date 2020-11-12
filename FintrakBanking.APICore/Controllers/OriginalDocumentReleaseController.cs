@@ -345,7 +345,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.userId = token.GetUserId;
                 model.companyId = token.GetCompanyId;
 
-                WorkflowResponse response = _repo.SubmitApproval(model);
+                WorkflowResponse response = _repo.SubmitCashSecurityReleaseApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)

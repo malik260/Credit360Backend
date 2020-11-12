@@ -880,8 +880,11 @@ namespace FintrakBanking.Repositories.Credit
                             if (model.approvalStatusId == (short)ApprovalStatusEnum.Approved)
                             {
                                 var lien = _context.TBL_APPLICATIONDETAIL_LIEN.Where(x => x.COLLATERALCUSTOMERID == cashRelease.COLLATERALCUSTOMERID && x.APPLICATIONDETAILID == cashRelease.LOANAPPLICATIONDETAILID).FirstOrDefault();
-                                lien.ISRELEASED = true;
-                                lien.DELETED = true;
+                                if (lien != null)
+                                {
+                                    lien.ISRELEASED = true;
+                                    lien.DELETED = true;
+                                }
                             }
                         }
                     }

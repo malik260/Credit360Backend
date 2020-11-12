@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IOriginalDocumentReleaseRepository
     {
+        WorkflowResponse SubmitCashSecurityReleaseApproval(CollateralCashReleaseViewModel model);
         IEnumerable<CollateralCashReleaseViewModel> GetRejectedAndReferredCashSecurityRelease(int staffId);
         IEnumerable<CollateralCashReleaseViewModel> GetCashSecurityReleaseForApproval(int staffId);
         WorkflowResponse GoForGuaranteeCashApproval(CollateralCashReleaseViewModel entity);
