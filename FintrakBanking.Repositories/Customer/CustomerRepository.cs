@@ -100,10 +100,31 @@ namespace FintrakBanking.Repositories.Customer
             }
 
             int? maritalStatus = null;
-            if (entity.customerTypeId == (short) CustomerTypeEnum.Individual)
+            if (entity.customerTypeId == (short)CustomerTypeEnum.Individual)
             {
-                maritalStatus = Convert.ToInt32(entity.maritalStatus) ;
+                if (entity.maritalStatus.ToLower() == "s")
+                {
+                    maritalStatus = 1;
+                }
+                if (entity.maritalStatus.ToLower() == "m")
+                {
+                    maritalStatus = 2;
+                }
+                if (entity.maritalStatus.ToLower() == "d")
+                {
+                    maritalStatus = 3;
+                }
+                if (entity.maritalStatus.ToLower() == "w")
+                {
+                    maritalStatus = 4;
+                }
+                else
+                {
+                    maritalStatus = 0;
+                }
+                //maritalStatus = Convert.ToInt32(entity.maritalStatus) ;
             }
+
             var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete,
@@ -6036,128 +6057,134 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdatePropectToCustomer(int customerId, CustomerViewModels entity)
         {
-            var customerMain = context.TBL_CUSTOMER.Find(customerId);
-            if (customerMain != null)
+            try
             {
-                TBL_TEMP_CUSTOMER customer = new TBL_TEMP_CUSTOMER();
-                customer.CUSTOMERCODE = entity.customerCode;
-                customer.CUSTOMERTYPEID = entity.customerTypeId;
-                customer.FIRSTNAME = entity.firstName;
-                customer.MIDDLENAME = entity.middleName;
-                customer.LASTNAME = entity.lastName;
-
-                customer.CUSTOMERID = customerMain.CUSTOMERID;
-                customer.BRANCHID = customerMain.BRANCHID;
-                customer.COMPANYID = customerMain.COMPANYID;
-                customer.CUSTOMERSENSITIVITYLEVELID = customerMain.CUSTOMERSENSITIVITYLEVELID;
-                customer.DATEOFBIRTH = customerMain.DATEOFBIRTH;
-                customer.EMAILADDRESS = customerMain.EMAILADDRESS;
-                customer.GENDER = customerMain.GENDER;
-                customer.MAIDENNAME = customerMain.MAIDENNAME;
-                customer.MARITALSTATUS = customerMain.MARITALSTATUS;
-                customer.TITLE = customerMain.TITLE;
-                customer.MISCODE = customerMain.MISCODE;
-                customer.MISSTAFF = customerMain.MISSTAFF;
-                customer.NATIONALITYID = customerMain.NATIONALITYID;
-                customer.OCCUPATION = customerMain.OCCUPATION;
-                customer.PLACEOFBIRTH = customerMain.PLACEOFBIRTH;
-                customer.ISPOLITICALLYEXPOSED = customerMain.ISPOLITICALLYEXPOSED;
-                customer.ISINVESTMENTGRADE = customerMain.ISINVESTMENTGRADE;
-                customer.ISREALATEDPARTY = customerMain.ISREALATEDPARTY;
-                customer.RELATIONSHIPOFFICERID = customerMain.RELATIONSHIPOFFICERID;
-                customer.SPOUSE = customerMain.SPOUSE;
-                customer.SUBSECTORID = customerMain.SUBSECTORID;
-                customer.TAXNUMBER = customerMain.TAXNUMBER;
-                customer.RISKRATINGID = customerMain.RISKRATINGID;
-                customer.CUSTOMERBVN = customerMain.CUSTOMERBVN;
-                customer.CREATEDBY = customerMain.CREATEDBY;
-                customer.DATETIMECREATED = customerMain.DATETIMECREATED;
-                customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
-                customer.ISCURRENT = true;
-                customer.COUNTRYOFRESIDENTID = entity.countryOfResidentId;
-                customer.NUMBEROFDEPENDENTS = entity.numberOfDependents;
-                customer.NUMBEROFLOANSTAKEN = entity.numberOfLoansTaken;
-                customer.MONTHLYLOANREPAYMENT = entity.loanMonthlyRepaymentFromOtherBanks;
-                customer.DATEOFRELATIONSHIPWITHBANK = entity.dateOfRelationshipWithBank;
-                customer.RELATIONSHIPTYPEID = entity.relationshipTypeId;
-                customer.TEAMLDR = entity.teamLDP;
-                customer.TEAMNPL = entity.teamNPL;
-                customer.CORR = entity.corr;
-                customer.BUSINESSUNTID = entity.businessUnitId;
-                customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
-                context.TBL_TEMP_CUSTOMER.Add(customer);
-                //try
-                //{
-                //    var resul = context.SaveChanges() > 0;
-                //}
-                //catch(Exception ex)
-                //{
-                //    var a = ex;
-                //}
-
-            }
-
-            var modified = new TBL_CUSTOMER_MODIFICATION
-            {
-                CUSTOMERID = entity.customerId,
-                TARGETID = entity.customerId,
-                MODIFICATIONTYPEID = (int)CustomerInformationTrackerEnum.General_Information,
-                CREATEDBY = entity.createdBy,
-                DATETIMECREATED = DateTime.Now
-            };
-
-            context.TBL_CUSTOMER_MODIFICATION.Add(modified);
-            // Audit Section ----------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
-                STAFFID = entity.createdBy,
-                BRANCHID = (short)entity.userBranchId,
-                DETAIL = "Updated TBL_CUSTOMER: " + entity.customerName + " with code: " + entity.customerCode +
-                         " on" + " (" + entity.customerId + ") ",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = entity.applicationUrl,
-                APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName()
-            };
-            using (var trans = context.Database.BeginTransaction())
-            {
-                if (USE_THIRD_PARTY_INTEGRATION)
+                var customerMain = context.TBL_CUSTOMER.Find(customerId);
+                if (customerMain != null)
                 {
-                    if (customerMain.ISPROSPECT == true)
+                    TBL_TEMP_CUSTOMER customer = new TBL_TEMP_CUSTOMER();
+                    customer.CUSTOMERCODE = entity.customerCode;
+                    customer.CUSTOMERTYPEID = entity.customerTypeId;
+                    customer.FIRSTNAME = entity.firstName;
+                    customer.MIDDLENAME = entity.middleName;
+                    customer.LASTNAME = entity.lastName;
+
+                    customer.CUSTOMERID = customerMain.CUSTOMERID;
+                    customer.BRANCHID = customerMain.BRANCHID;
+                    customer.COMPANYID = customerMain.COMPANYID;
+                    customer.CUSTOMERSENSITIVITYLEVELID = customerMain.CUSTOMERSENSITIVITYLEVELID;
+                    customer.DATEOFBIRTH = customerMain.DATEOFBIRTH;
+                    customer.EMAILADDRESS = customerMain.EMAILADDRESS;
+                    customer.GENDER = customerMain.GENDER;
+                    customer.MAIDENNAME = customerMain.MAIDENNAME;
+                    customer.MARITALSTATUS = customerMain.MARITALSTATUS;
+                    customer.TITLE = customerMain.TITLE;
+                    customer.MISCODE = customerMain.MISCODE;
+                    customer.MISSTAFF = customerMain.MISSTAFF;
+                    customer.NATIONALITYID = customerMain.NATIONALITYID;
+                    customer.OCCUPATION = customerMain.OCCUPATION;
+                    customer.PLACEOFBIRTH = customerMain.PLACEOFBIRTH;
+                    customer.ISPOLITICALLYEXPOSED = customerMain.ISPOLITICALLYEXPOSED;
+                    customer.ISINVESTMENTGRADE = customerMain.ISINVESTMENTGRADE;
+                    customer.ISREALATEDPARTY = customerMain.ISREALATEDPARTY;
+                    customer.RELATIONSHIPOFFICERID = customerMain.RELATIONSHIPOFFICERID;
+                    customer.SPOUSE = customerMain.SPOUSE;
+                    customer.SUBSECTORID = customerMain.SUBSECTORID;
+                    customer.TAXNUMBER = customerMain.TAXNUMBER;
+                    customer.RISKRATINGID = customerMain.RISKRATINGID;
+                    customer.CUSTOMERBVN = customerMain.CUSTOMERBVN;
+                    customer.CREATEDBY = customerMain.CREATEDBY;
+                    customer.DATETIMECREATED = customerMain.DATETIMECREATED;
+                    customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                    customer.ISCURRENT = true;
+                    customer.COUNTRYOFRESIDENTID = entity.countryOfResidentId;
+                    customer.NUMBEROFDEPENDENTS = entity.numberOfDependents;
+                    customer.NUMBEROFLOANSTAKEN = entity.numberOfLoansTaken;
+                    customer.MONTHLYLOANREPAYMENT = entity.loanMonthlyRepaymentFromOtherBanks;
+                    customer.DATEOFRELATIONSHIPWITHBANK = entity.dateOfRelationshipWithBank;
+                    customer.RELATIONSHIPTYPEID = entity.relationshipTypeId;
+                    customer.TEAMLDR = entity.teamLDP;
+                    customer.TEAMNPL = entity.teamNPL;
+                    customer.CORR = entity.corr;
+                    customer.BUSINESSUNTID = entity.businessUnitId;
+                    customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
+                    context.TBL_TEMP_CUSTOMER.Add(customer);
+                    //try
+                    //{
+                    //    var resul = context.SaveChanges() > 0;
+                    //}
+                    //catch(Exception ex)
+                    //{
+                    //    var a = ex;
+                    //}
+
+                }
+
+                var modified = new TBL_CUSTOMER_MODIFICATION
+                {
+                    CUSTOMERID = entity.customerId,
+                    TARGETID = entity.customerId,
+                    MODIFICATIONTYPEID = (int)CustomerInformationTrackerEnum.General_Information,
+                    CREATEDBY = entity.createdBy,
+                    DATETIMECREATED = DateTime.Now
+                };
+
+                context.TBL_CUSTOMER_MODIFICATION.Add(modified);
+                // Audit Section ----------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = "Updated TBL_CUSTOMER: " + entity.customerName + " with code: " + entity.customerCode +
+                             " on" + " (" + entity.customerId + ") ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    if (USE_THIRD_PARTY_INTEGRATION)
                     {
-                        finacle.AddCustomerAccounts(customerId, entity.customerCode);
+                        if ((customerMain != null && customerMain.ISPROSPECT == true) || entity.isProspect == true)
+                        {
+                            finacle.AddCustomerAccounts(customerId, entity.customerCode);
+                        }
                     }
+                    //customerMain.ISPROSPECT = false;
+                    //context.TBL_CUSTOMER_MODIFICATION.Add(modified);
+                    this.auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------
+
+                    var output = context.SaveChanges() > 0;
+
+                    var targetId = modified.CUSTOMERMODIFICATIONID;
+
+
+                    workflow.StaffId = entity.createdBy;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    workflow.TargetId = targetId;
+                    workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                    workflow.ExternalInitialization = true;
+
+                    var response = workflow.LogActivity();
+
+                    if (response)
+                    {
+                        trans.Commit();
+
+                        return output;
+                    }
+                    trans.Rollback();
+                    return false;
                 }
-                customerMain.ISPROSPECT = false;
-                //context.TBL_CUSTOMER_MODIFICATION.Add(modified);
-                this.auditTrail.AddAuditTrail(audit);
-                //end of Audit section -------------------------------
-
-                var output = context.SaveChanges() > 0;
-
-                var targetId = modified.CUSTOMERMODIFICATIONID;
-
-
-                workflow.StaffId = entity.createdBy;
-                workflow.CompanyId = entity.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                workflow.TargetId = targetId;
-                workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
-                workflow.ExternalInitialization = true;
-
-                var response = workflow.LogActivity();
-
-                if (response)
-                {
-                    trans.Commit();
-
-                    return output;
-                }
-                trans.Rollback();
-                return false;
+            }catch(Exception e)
+            {
+                throw e;
             }
         }
         #endregion

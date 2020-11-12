@@ -103,6 +103,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string previousOperator { get; set; }
         public decimal bondAmount { get; set; }
         public DateTime? rebookDate { get; set; }
+        public int? syncsOperationId { get; set; }
+        public int? loanReviewApplicationId { get; set; }
+        public int reviewOperationId { get; set; }
+        public string customersName { get; set; }
+        public string loanReferenceNumber { get; set; }
     }
 
     public class LoanIrregularScheduleViewModel
@@ -482,6 +487,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? whtRate { get; set; }
         public decimal? commissionAmount { get; set; }
         public string phoneNumber { get; set; }
+        public decimal? contingentOutstandingPrincipal { get; set; }
     }
 
 
@@ -588,6 +594,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string staffRoleCode { get; set; }
 
         public string loanReferenceNumber { get; set; }
+        public int lmsOperationId { get; set; }
+        public int lmsApplicationId { get; set; }
     }
 
     public class applicationDetails

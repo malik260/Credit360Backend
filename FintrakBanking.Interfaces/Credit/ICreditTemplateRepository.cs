@@ -6,6 +6,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ICreditTemplateRepository
     {
+        List<LoadedDocumentSectionViewModel> GetLoadedExceptionDocumentation(int staffId, int operationId, int targetId, UserInfo user);
+        LoadedDocumentSectionViewModel GetExceptionDocumentSection(int staffId, int operationId, int targetId, int sectionId);
         List<LoadedDocumentSectionViewModel> getRecoveryAnalysisDocumentation(int staffId, int operationId, int targetId, string referenceId, UserInfo user, int templateId);
         LoadedDocumentSectionViewModel GetRecoveryAnalysisDocumentSection(int staffId, int operationId, int targetId, string referenceId, int sectionId);
         bool LoadDocumentTemplateLMS(DocumentTemplateViewModel entity);
@@ -47,7 +49,7 @@ namespace FintrakBanking.Interfaces.Credit
 
 
         List<DocumentTemplateViewModel> GetDocumentTemplates(int staffId, int operationId, int companyId);
-        dynamic GetIsLLLVilated(int operationId, int targetId);
+        dynamic GetIsLLLViolated(int operationId, int targetId);
         bool SaveApprovedDocumentation(int staffId, int operationId, int targetId);
         List<LoadedDocumentSectionViewModel> GetSavedDocumentation(int operationId, int targetId);
         LoadedDocumentSectionViewModel GetDocumentSectionBulkLiquidation(int staffId, int operationId, int targetId, int sectionId);

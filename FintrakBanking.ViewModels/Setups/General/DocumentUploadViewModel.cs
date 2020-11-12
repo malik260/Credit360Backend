@@ -60,6 +60,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool owner { get; set; }
         public string uploadedBy { get; set; }
         public string customerName { get; set; }
+        public bool isOriginalCopy { get; set; }
 
         public string fileSizeString { get {
                 string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB

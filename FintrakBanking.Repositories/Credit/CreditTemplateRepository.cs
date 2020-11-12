@@ -490,6 +490,63 @@ var qry = Foo.GroupJoin(
             return replacedSections;
         }
 
+
+        public List<LoadedDocumentSectionViewModel> GetLoadedExceptionDocumentation(int staffId, int operationId, int targetId, UserInfo user)
+        {
+            var printedDoc = "";
+            var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+                .OrderBy(x => x.POSITION)
+                .Select(x => new LoadedDocumentSectionViewModel
+                {
+                    position = x.POSITION,
+                    sectionId = x.DOCUMENTDETAILID,
+                    title = x.TITLE,
+                    description = x.DESCRIPTION,
+                    canEdit = x.CANEDIT, 
+                    templateSectionId = x.TEMPLATESECTIONID,
+                    templateDocument = x.TEMPLATEDOCUMENT,
+                })
+                .ToList();
+
+            List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
+            
+                memo.InitForExceptionalLoans(operationId, targetId); 
+                foreach (var raw in rawSections)
+                {
+                    var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
+                    raw.templateDocument = memo.Replace(raw.templateDocument);
+                    if (templateId == 1)
+                    {
+                        raw.templateDocument = memo.UpdateEsg(raw.templateDocument);
+                        raw.templateDocument = memo.UpdateGreenRating(raw.templateDocument);
+                    }
+                    replacedSections.Add(raw);
+                    printedDoc = raw.title;
+                }
+            
+
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplatePrinted,
+                STAFFID = staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Printed Document Template '{ printedDoc }' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = "localhost",//model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            };
+            this.audit.AddAuditTrail(audit);
+            context.SaveChanges();
+
+            return replacedSections;
+        }
+
         public List<LoadedDocumentSectionViewModel> getRecoveryAnalysisDocumentation(int staffId, int operationId, int targetId, string referenceId, UserInfo user, int templateId)
         {
             // int staffId, is REDUNDANT!
@@ -603,6 +660,16 @@ var qry = Foo.GroupJoin(
             var templateSections = context.TBL_DOC_TEMPLATE_SECTION
                 .Where(x => x.TEMPLATEID == entity.templateId && x.ISDISABLED == false && x.DELETED == false)
                 .ToList();
+
+            var ownerId = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == entity.staffId).STAFFROLEID;
+
+            var isOwner = context.TBL_DOC_TEMPLATE
+                .Any(x => x.DELETED == false && x.OPERATIONID == entity.operationId && x.COMPANYID == entity.companyId && x.STAFFROLEID == ownerId);
+
+            if (!isOwner)
+            {
+                return true;
+            }
 
             var loadedSections = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.TARGETID == entity.targetId && x.OPERATIONID == entity.operationId)
@@ -762,6 +829,37 @@ var qry = Foo.GroupJoin(
         }
 
 
+        public LoadedDocumentSectionViewModel GetExceptionDocumentSection(int staffId, int operationId, int targetId, int sectionId)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+            List<int> sectionIds = new List<int>();
+
+            if (staff != null)
+            {
+                sectionIds = context.TBL_DOC_TEMPLATE_SECTION_ROLE
+                    .Where(x => x.DELETED == false && x.STAFFROLEID == staff.STAFFROLEID)
+                    .Select(x => x.TEMPLATESECTIONID)
+                    .ToList();
+            }
+
+
+            var doc = context.TBL_DOC_TEMPLATE_DETAIL.FirstOrDefault(x => x.OPERATIONID == operationId && x.DOCUMENTDETAILID == sectionId);
+            var section = context.TBL_DOC_TEMPLATE_SECTION.FirstOrDefault(s => s.TEMPLATESECTIONID == doc.TEMPLATESECTIONID);
+            if (doc == null) return new LoadedDocumentSectionViewModel();
+
+            memo.InitForExceptionalLoans(operationId, targetId); 
+            return new LoadedDocumentSectionViewModel
+            {
+                sectionId = doc.DOCUMENTDETAILID,
+                title = doc.TITLE,
+                description = doc.DESCRIPTION,
+                templateDocument = memo.Replace(doc.TEMPLATEDOCUMENT),
+                canEdit = section.CANEDIT,
+                editable = section.CANEDIT && sectionIds.Contains(doc.TEMPLATESECTIONID),
+            };
+        }
+
+
         public LoadedDocumentSectionViewModel GetRecoveryAnalysisDocumentSection(int staffId, int operationId, int targetId, string referenceId, int sectionId)
         {
             var staff = context.TBL_STAFF.Find(staffId);
@@ -845,7 +943,7 @@ var qry = Foo.GroupJoin(
                 .ToList();
         }
 
-        public dynamic GetIsLLLVilated(int operationId, int targetId)
+        public dynamic GetIsLLLViolated(int operationId, int targetId)
         {
             memo.Init(operationId, targetId);
             //return new ()

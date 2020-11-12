@@ -476,6 +476,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+        [HttpGet, Route("customer-cash-collateral/customer/{id}/application/{applicationId}")]
+        public HttpResponseMessage GetCustomerCashCollateral(int id, int? applicationId)
+        {
+            try
+            {
+                var response = repo.GetCustomerCashCollateral(id, applicationId, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+
         [HttpGet, Route("collateral/application/{applicationId}/currencyId/{currencyId}")]
         public HttpResponseMessage GetProposedCustomerCollateral(int? applicationId, int currencyId)
         {
@@ -2386,6 +2402,17 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
+        [HttpDelete, Route("delete-valuation-valuer/{valuerId}")]
+        public HttpResponseMessage DeleteAddedValuer(int valuerId)
+        {
+            var response = repo.DeleteAddedValuer(valuerId, token.GetStaffId);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been deleted successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
         [HttpPost, Route("delete-proposed-collateral-coverage")]
         public HttpResponseMessage DeleteProposedCollateral(CollateralCoverageViewModel model)
         {
@@ -2690,9 +2717,16 @@ namespace FintrakBanking.APICore.Controllers
             model.applicationUrl = HttpContext.Current.Request.Path;
             model.createdBy = token.GetStaffId;
             model.companyId = token.GetCompanyId;
-            var response = repo.AddCollateralSwap(model);
-            if (response != null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                var response = repo.AddCollateralSwap(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]

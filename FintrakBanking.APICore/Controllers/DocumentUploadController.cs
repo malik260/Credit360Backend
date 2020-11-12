@@ -116,6 +116,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.fileName = provider.FormData["fileName"];
                 entity.fileExtension = provider.FormData["fileExtension"];
                 entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+                entity.isOriginalCopy = Convert.ToBoolean(provider.FormData["isOriginalCopy"]);
                 entity.documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]);
                 entity.issueDate = GetCulture(provider.FormData["issueDate"]);
                 entity.expiryDate = GetCulture(provider.FormData["expiryDate"]);
@@ -189,6 +190,23 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = repo.DeleteDocumentUpload(id, documentTypeId, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-recovery-document-upload/{id}")]
+        public HttpResponseMessage DeleteRecoveryDocumentUpload(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteRecoveryDocumentUpload(id);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 

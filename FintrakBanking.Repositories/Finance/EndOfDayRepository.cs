@@ -436,12 +436,10 @@ namespace FintrakBanking.Repositories.Finance
 
                 context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
                 context.SaveChanges();
-                
             }
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
-
                 try
                 {
                     var eodOperationProcess = context.TBL_EOD_OPERATION_LOG.Where(x => x.EODDATE == date && x.COMPANYID == companyId).FirstOrDefault();

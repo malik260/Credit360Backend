@@ -1928,7 +1928,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.DEFEREDDATE = model.deferedDate;
                 }
 
-                data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+                data.DATETIMEUPDATED = DateTime.Now;
                 data.LASTUPDATEDBY = (int)model.createdBy;
             }
             else
@@ -1945,7 +1945,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.DEFEREDDATE = model.deferedDate;
                 }
 
-                data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+                data.DATETIMEUPDATED = DateTime.Now;
                 data.LASTUPDATEDBY = (int)model.createdBy;
             }
 
@@ -2064,8 +2064,8 @@ namespace FintrakBanking.Repositories.Credit
                                customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                customerId = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID : a.TBL_CUSTOMER.CUSTOMERID,
                                proposedAmount = a.APPROVEDAMOUNT,
-                               approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                               //approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               //approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                deferredDate = b.DEFEREDDATE,
                                deferralDuration = 1,
                                cummulativeDays = 1,
@@ -2345,7 +2345,7 @@ namespace FintrakBanking.Repositories.Credit
                             checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                             dateCreated = b.DATETIMECREATED,
                             operationId = atrail.OPERATIONID,
-                            //Loan Information
+                            systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                             relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
                             relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
                             applicationAmount = a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
@@ -2387,6 +2387,8 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = a.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
                             checklistStatus = context.TBL_CHECKLIST_STATUS.Where(o=>o.CHECKLISTSTATUSID==b.CHECKLISTSTATUSID).Select(o=>o.CHECKLISTSTATUSNAME).FirstOrDefault(),
                             dateCreated = b.DATETIMECREATED,
+                            operationId = atrail.OPERATIONID,
+                            systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                             relationshipOfficerName ="",//context.TBL_STAFF.Where(o=>o.STAFFID ==a. a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
                             relationshipManagerName = "",//a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
                             applicationAmount = 0,//a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,

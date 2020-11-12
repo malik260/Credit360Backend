@@ -1781,12 +1781,12 @@ namespace FintrakBanking.APICore.Controllers
             user.companyId = token.GetCompanyId;
             user.createdBy = token.GetStaffId;
 
-            bool data = repo.saveBulkLoanUnAssignmentToAgent(model, user);
+            WorkflowResponse data = repo.saveBulkLoanUnAssignmentToAgent(model, user);
 
-            if (data)
+            if (data != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Un-Assignment successfully" });
+                    new { success = true, message = data.responseMessage });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
@@ -1828,12 +1828,12 @@ namespace FintrakBanking.APICore.Controllers
             user.companyId = token.GetCompanyId;
             user.createdBy = token.GetStaffId;
 
-            bool data = repo.saveMultipleLoanUnAssignmentToAgent(model, user);
+            WorkflowResponse data = repo.saveMultipleLoanUnAssignmentToAgent(model, user);
 
-            if (data)
+            if (data != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Un-Assignment successfully" });
+                    new { success = true, message = data.responseMessage });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
@@ -2063,22 +2063,26 @@ namespace FintrakBanking.APICore.Controllers
         [Route("bulk-loan-recovery-reporting-initiate-approval")]
         public HttpResponseMessage bulkLoanRecoveryReportingGoForApproval([FromBody] LoanRecoveryReportApprovalViewModel models)
         {
-            UserInfo user = new UserInfo();
-            user.staffId = token.GetStaffId;
-            user.BranchId = (short)token.GetBranchId;
-            user.companyId = token.GetCompanyId;
-            user.createdBy = token.GetStaffId;
-
-            WorkflowResponse data = repo.bulkLoanRecoveryReportingGoForApproval(models, user);
-
-            if (data != null)
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = data.responseMessage });
-            }
-            return Request.CreateResponse(HttpStatusCode.OK,
+                UserInfo user = new UserInfo();
+                user.staffId = token.GetStaffId;
+                user.BranchId = (short)token.GetBranchId;
+                user.companyId = token.GetCompanyId;
+                user.createdBy = token.GetStaffId;
 
-                new { success = false, message = "Error occur forwarding for approval" });
+                WorkflowResponse data = repo.bulkLoanRecoveryReportingGoForApproval(models, user);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, data = data, message = data.responseMessage });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error occur forwarding for approval" });
+            }catch(Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
         }
 
         [HttpPost]
