@@ -693,6 +693,7 @@ namespace FintrakBanking.Repositories.Credit
                        join C in _context.TBL_COLLATERAL_CUSTOMER on q.COLLATERALCUSTOMERID equals C.COLLATERALCUSTOMERID
                        join atrail in _context.TBL_APPROVAL_TRAIL on valPre.VALUATIONPREREQUISITEID equals atrail.TARGETID
                        join cus in _context.TBL_CUSTOMER on C.CUSTOMERID equals cus.CUSTOMERID
+                       let detailIds = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == C.COLLATERALCUSTOMERID && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID)
                        //where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                        where atrail.RESPONSESTAFFID == null
                         && atrail.LOOPEDSTAFFID == null
@@ -711,6 +712,7 @@ namespace FintrakBanking.Repositories.Credit
                            collateralValue = C.COLLATERALVALUE,
                            collateralValuationId = q.COLLATERALVALUATIONID,
                            collateralCustomerId = C.COLLATERALCUSTOMERID,
+                           facilityAmount = _context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE),
                            valuationComment = valPre.VALUATIONCOMMENT,
                            valuationName = q.VALUATIONNAME,
                            valuationReason = q.VALUATIONREASON,
