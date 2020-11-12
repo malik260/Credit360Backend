@@ -1166,4 +1166,38 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? exposure { get; set; }
         public decimal? bank { get; set; }
     }
+
+    public class CollateralCashReleaseViewModel : GeneralEntity
+    {
+        public int collateralId { get; set; }
+        public int collateralTypeId { get; set; }
+        public short collateralSubTypeId { get; set; }
+        public int customerId { get; set; }
+        public string customerCode { get; set; }
+        public string customerName { get; set; }
+        public short currencyId { get; set; }
+        public string currencyCode { get; set; }
+        public string currency { get; set; }
+        public decimal lienAmount { get; set; }
+        public decimal loanAmount { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public string productName { get; set; }
+        public string collateralTypeName { get; set; }
+        public string collateralSubTypeName { get; set; }
+        public string collateralCode { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string loanTypeName { get; set; }
+        public string facility { get; set; }
+        public string customerGroupName { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public int loanApplicationId { get; set; }
+        public int approvalStatusId { get; set; }
+        public int cashSecurityReleaseIseId { get; set; }
+        public string approvalStatus { get; set; }
+        public int operationId { get; set; }
+        public DateTime dateRecieved { get; set; }
+        public DateTime DateTimeCreated { get; set; }
+        public string createdByName { get; set; }
+        public string collateralSummary { get; set; }
+    }
 }

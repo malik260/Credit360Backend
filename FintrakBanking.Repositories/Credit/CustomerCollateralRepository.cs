@@ -2003,6 +2003,7 @@ namespace FintrakBanking.Repositories.Credit
             bool disAllowCollateral = false;
             bool isForiegnCurrencyFacility = false;
             var productIds = new List<short>();
+            var cashCollateralTypeIds = new List<int> {(int)CollateralTypeEnum.FixedDeposit, (int)CollateralTypeEnum.TreasuryBillsAndBonds, (int)CollateralTypeEnum.CASA};
             IEnumerable<CollateralViewModel> collaterals = null;
 
             if (applicationId != null && applicationId != 0)
@@ -2030,9 +2031,9 @@ namespace FintrakBanking.Repositories.Credit
                   .Distinct().ToList();
 
 
-                    collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId && typeIds.Contains(x.COLLATERALTYPEID))
+                    collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId && typeIds.Contains(x.COLLATERALTYPEID) && cashCollateralTypeIds.Contains(x.COLLATERALTYPEID))
                     .GroupJoin(
-                        context.TBL_LOAN_COLLATERAL_MAPPING,
+                        context.TBL_LOAN_APPLICATION_COLLATERL,
                         c => c.COLLATERALCUSTOMERID,
                         lc => lc.COLLATERALCUSTOMERID,
                         (c, lc) => new { c, m = lc }
@@ -2083,9 +2084,9 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                 collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId)
+                 collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId && cashCollateralTypeIds.Contains(x.COLLATERALTYPEID))
                 .GroupJoin(
-                    context.TBL_LOAN_COLLATERAL_MAPPING,
+                    context.TBL_LOAN_APPLICATION_COLLATERL,
                     c => c.COLLATERALCUSTOMERID,
                     lc => lc.COLLATERALCUSTOMERID,
                     (c, lc) => new { c, m = lc }
@@ -2138,6 +2139,46 @@ namespace FintrakBanking.Repositories.Credit
 
             collaterals = ResolveCollateralValues(collaterals.ToList(), company);
             return collaterals.OrderByDescending(x => x.collateralId);
+        }
+
+
+        public IEnumerable<CollateralCashReleaseViewModel> GetCustomerCashCollateralApplications(int id)
+        {
+
+            var collateralsA = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
+                               join b in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                               join c in context.TBL_APPLICATIONDETAIL_LIEN on x.LOANAPPLICATIONDETAILID equals c.APPLICATIONDETAILID
+                                where
+                               x.COLLATERALCUSTOMERID == id
+                               && c.COLLATERALCUSTOMERID == id
+                               && x.DELETED == false
+                               && b.DELETED == false
+                               && c.ISRELEASED == false
+                               
+                               select new CollateralCashReleaseViewModel
+                               {
+                                   loanApplicationDetailId = (int)x.LOANAPPLICATIONDETAILID,
+                                   loanApplicationId = x.LOANAPPLICATIONID,
+                                   loanTypeName = (from y in context.TBL_LOAN_APPLICATION_TYPE join p in context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONTYPEID equals p.LOANAPPLICATIONTYPEID where x.LOANAPPCOLLATERALID == x.LOANAPPCOLLATERALID select y.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
+                                   applicationReferenceNumber = context.TBL_LOAN_APPLICATION.Where(x=> x.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(x=>x.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //d.APPLICATIONREFERENCENUMBER,
+                                   loanAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(x => x.APPROVEDAMOUNT).FirstOrDefault(), //c.PRINCIPALAMOUNT,
+                                   lienAmount = c.AMOUNT,
+                                   facility = (from p in context.TBL_PRODUCT join a in context.TBL_LOAN_APPLICATION_DETAIL on p.PRODUCTID equals a.APPROVEDPRODUCTID where a.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select p.PRODUCTNAME).FirstOrDefault(),
+                                   collateralTypeName = b.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                   collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == b.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                                   collateralCode = b.COLLATERALCODE,
+                                   collateralId = x.COLLATERALCUSTOMERID,
+                                   collateralTypeId = b.COLLATERALTYPEID,
+                                   collateralSubTypeId = b.COLLATERALSUBTYPEID,
+                                   customerId = (int)x.CUSTOMERID,
+                                   customerCode = b.CUSTOMERCODE,
+                                   customerName = b.TBL_CUSTOMER.FIRSTNAME + b.TBL_CUSTOMER.MIDDLENAME + b.TBL_CUSTOMER.LASTNAME,
+                                   currencyId = b.CURRENCYID,
+                                   currencyCode = b.TBL_CURRENCY.CURRENCYCODE,
+                                   currency = b.TBL_CURRENCY.CURRENCYNAME,
+                               }).ToList();
+
+            return collateralsA;
         }
 
 

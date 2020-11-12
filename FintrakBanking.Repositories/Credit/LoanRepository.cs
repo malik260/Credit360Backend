@@ -13217,11 +13217,14 @@ namespace FintrakBanking.Repositories.Credit
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
                                    currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
                                    accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.CONTINGENTLOANID && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
-                                   contigentOutstandingPrincipal = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.CONTINGENTOUTSTANDINGPRINCIPAL).FirstOrDefault(),
-                                   prePayment = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.PREPAYMENT).FirstOrDefault(),
-
+                                   //contigentOutstandingPrincipal = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.CONTINGENTOUTSTANDINGPRINCIPAL).FirstOrDefault(),
+                                   //totalPrepayment = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.PREPAYMENT).FirstOrDefault(),
+                                   contigentOutstandingPrincipal = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                   totalPrepayment = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.PREPAYMENT),
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
+                                       contigentOutstandingPrincipal = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == op.LOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                       totalPrepayment = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == op.LOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.PREPAYMENT),
                                        loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                        operationTypeId = op.OPERATIONTYPEID,
                                        operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
@@ -13417,11 +13420,14 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
                                    operationTypeName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == lp.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                                    accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.CONTINGENTLOANID && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
-                                   contigentOutstandingPrincipal = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.CONTINGENTOUTSTANDINGPRINCIPAL).FirstOrDefault(),
-                                   prePayment = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.PREPAYMENT).FirstOrDefault(),
-
+                                   //contigentOutstandingPrincipal = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.CONTINGENTOUTSTANDINGPRINCIPAL).FirstOrDefault(),
+                                   //prePayment = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select x.PREPAYMENT).FirstOrDefault(),
+                                   contigentOutstandingPrincipal = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                   totalPrepayment = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.PREPAYMENT),
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
+                                       contigentOutstandingPrincipal = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == op.LOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                       totalPrepayment = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == op.LOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.PREPAYMENT),
                                        loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                        operationTypeId = op.OPERATIONTYPEID,
                                        operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
@@ -13849,6 +13855,9 @@ namespace FintrakBanking.Repositories.Credit
                                    orderby b.DATETIMECREATED descending
                                    select new LoanViewModel
                                    {
+                                       lmsLoanApplicationId = e.LOANAPPLICATIONID,
+                                       lmsOperationId = e.OPERATIONID,
+
                                        creditAppraisalOperationId = (b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == b.LOANREVIEWAPPLICATIONID select aa.OPERATIONID).FirstOrDefault() :
                                                      (b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == b.LOANREVIEWAPPLICATIONID select aa.OPERATIONID).FirstOrDefault() :
                                                      (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == b.LOANREVIEWAPPLICATIONID select aa.OPERATIONID).FirstOrDefault(),
@@ -13885,10 +13894,15 @@ namespace FintrakBanking.Repositories.Credit
                                        lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                        loanSystemTypeId = b.LOANSYSTEMTYPEID,
                                        legalContingentCode = a.LEGALCONTINGENTCODE,
-                                       contigentOutstandingPrincipal = (from x in context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select  x.CONTINGENTOUTSTANDINGPRINCIPAL).FirstOrDefault(),
-                                       totalPrepayment = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(m => m.PREPAYMENT),
+                                       //contigentOutstandingPrincipal = (from context.TBL_LOAN_REVIEW_OPERATION join y in context.TBL_LOAN_CONTINGENT on x.LOANID equals y.CONTINGENTLOANID where y.RELATED_LOAN_REFERENCE_NUMBER == a.RELATED_LOAN_REFERENCE_NUMBER && y.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved select  x.CONTINGENTOUTSTANDINGPRINCIPAL).FirstOrDefault(),
+                                       //totalPrepayment = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(m => m.PREPAYMENT),
+                                       contigentOutstandingPrincipal = context.TBL_LOAN_REVIEW_OPERATION.Where(x=>x.LOANID == a.CONTINGENTLOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x=>x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                       totalPrepayment = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.PREPAYMENT),
+
                                        operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                        {
+                                           contigentOutstandingPrincipal = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == op.LOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                           totalPrepayment = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == op.LOANID && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(x => x.PREPAYMENT),
                                            loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                            operationTypeId = op.OPERATIONTYPEID,
                                            operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,

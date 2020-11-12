@@ -84,6 +84,7 @@
     <Compile Include="Models\TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.cs" />
     <Compile Include="Models\TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL.cs" />
     <Compile Include="Models\TBL_CASHBUILDUPREFERENCETYPE.cs" />
+    <Compile Include="Models\TBL_CASH_SECURITY_RELEASE_APPROVAL.cs" />
     <Compile Include="Models\TBL_COLLATERAL_LIQUIDATION_RECOVERY.cs" />
     <Compile Include="Models\TBL_COLLECTION_RETAIL_CRON_SETUP.cs" />
     <Compile Include="Models\TBL_CONSUMER_PROTECTION.cs" />

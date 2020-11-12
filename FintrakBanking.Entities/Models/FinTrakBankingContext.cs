@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.Models
 
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; } 
+        public virtual DbSet<TBL_CASH_SECURITY_RELEASE_APPROVAL> TBL_CASH_SECURITY_RELEASE_APPROVAL { get; set; }
         public virtual DbSet<TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL> TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_INTERNAL> TBL_LOAN_RECOVERY_COMMISSION_INTERNAL { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_REPORT_COLLECTION> TBL_LOAN_RECOVERY_REPORT_COLLECTION { get; set; }
