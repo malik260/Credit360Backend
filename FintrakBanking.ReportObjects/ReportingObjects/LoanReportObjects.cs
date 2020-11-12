@@ -5154,8 +5154,8 @@ namespace FintrakBanking.ReportObjects
                                                         join rm in context.TBL_STAFF on l.RELATIONSHIPMANAGERID equals rm.STAFFID
                                                         join pr in context.TBL_PRODUCT on l.PRODUCTID equals pr.PRODUCTID
                                                         join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
-                                                        //where (DbFunctions.TruncateTime(cm.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
-                                                        //DbFunctions.TruncateTime(cm.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                                        where (DbFunctions.TruncateTime(cm.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                                        DbFunctions.TruncateTime(cm.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
 
                                                         let glInfo = (from gl in context.TBL_CHART_OF_ACCOUNT
                                                                       join cst in context.TBL_CUSTOM_CHART_OF_ACCOUNT on gl.ACCOUNTCODE equals cst.PLACEHOLDERID
