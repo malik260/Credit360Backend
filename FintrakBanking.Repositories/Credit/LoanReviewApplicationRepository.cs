@@ -2797,6 +2797,7 @@ namespace FintrakBanking.Repositories.Credit
                        where
                         op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
                         && ( l.LOANREFERENCENUMBER == searchString
+                        || l.RELATED_LOAN_REFERENCE_NUMBER == searchString
                         || g.FIRSTNAME.ToLower().Contains(searchString)
                         || g.LASTNAME.ToLower().Contains(searchString)
                         || g.MIDDLENAME.ToLower().Contains(searchString)

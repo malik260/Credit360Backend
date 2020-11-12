@@ -284,12 +284,15 @@ namespace FintrakBanking.Repositories.Credit
                          join c in _context.TBL_CUSTOMER on dr.CUSTOMERID equals c.CUSTOMERID
                          join b in _context.TBL_COLLATERAL_CUSTOMER on dr.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
                          where
-                         (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved || atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
-                         && atrail.RESPONSESTAFFID == null
-                         && (atrail.LOOPEDSTAFFID == null || atrail.LOOPEDSTAFFID == staffId)
-                         && ((ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) || (!ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
-                         && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
-                         && atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval
+                         (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            && atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && atrail.RESPONSESTAFFID == null && dr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
+                        
                          select new CollateralCashReleaseViewModel
                          {
                              collateralSummary = b.COLLATERALSUMMARY,
@@ -318,6 +321,7 @@ namespace FintrakBanking.Repositories.Credit
                              dateRecieved = atrail.SYSTEMARRIVALDATETIME,
                              DateTimeCreated = dr.DATETIMECREATED,
                              operationId = atrail.OPERATIONID,
+                             currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                              createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
 
                          };
@@ -850,60 +854,111 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public WorkflowResponse SubmitCashSecurityReleaseApproval(CollateralCashReleaseViewModel model)
+        public WorkflowResponse SubmitCashSecurityReleaseApproval(CollateralCashReleaseViewModel entity)
         {
-            bool responce = false;
 
-            using (var transaction = _context.Database.BeginTransaction())
+            entity.applicationDate = _general.GetApplicationDate();
+            using (var trans = _context.Database.BeginTransaction())
             {
-                _workflow.StaffId = model.createdBy;
-                _workflow.CompanyId = model.companyId;
-                _workflow.StatusId = model.approvalStatusId == (short)ApprovalStatusEnum.Approved ? (short)ApprovalStatusEnum.Processing : model.approvalStatusId;
-                _workflow.TargetId = model.cashSecurityReleaseIseId;
-                _workflow.Comment = model.comment;
-                _workflow.OperationId = (int)model.operationId;
+                var reviewRecord = (from s in _context.TBL_CASH_SECURITY_RELEASE_APPROVAL
+                                    where s.CASHSECURITYRELEASEID == entity.targetId
+                                    && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                    select s).FirstOrDefault();
+
+                if (entity.approvalStatusId == (short)ApprovalStatusEnum.Referred)
+                {
+
+                    int staffId = entity.staffId;
+                    var staff = _context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+                    var levels = _context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == entity.operationId)
+                         .Join(_context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                         .Join(_context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                             mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                             {
+                                 groupPosition = mg.m.POSITION,
+                                 levelPosition = l.POSITION,
+                                 levelId = l.APPROVALLEVELID,
+                                 levelName = l.LEVELNAME,
+                                 staffRoleId = l.STAFFROLEID,
+                             })
+                             .OrderBy(x => x.groupPosition)
+                             .ThenBy(x => x.levelPosition)
+                             .ToList();
+
+                    var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+                    var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+                    var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+                    _workflow.StaffId = entity.createdBy;
+                    _workflow.OperationId = entity.operationId;
+                    _workflow.TargetId = entity.targetId;
+                    _workflow.CompanyId = entity.companyId;
+                    _workflow.ProductClassId = null;
+                    _workflow.ProductId = null;
+                    _workflow.NextLevelId = entity.approvalLevelId;
+                    _workflow.ToStaffId = staffId;
+                    _workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+                    _workflow.Comment = entity.comment;
+                    _workflow.DeferredExecution = true;
+
+                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+                    _context.SaveChanges();
+                    trans.Commit();
+                    return _workflow.Response;
+                }
+
+                _workflow.StaffId = entity.staffId;
+                _workflow.CompanyId = entity.companyId;
+                _workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                _workflow.TargetId = entity.targetId;
+                _workflow.Comment = entity.comment;
+                _workflow.OperationId = entity.operationId;
                 _workflow.DeferredExecution = true;
                 _workflow.LogActivity();
 
-                try
+
+                bool output = false;
+                if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                 {
-                    var cashRelease = _context.TBL_CASH_SECURITY_RELEASE_APPROVAL.Where(o => o.CASHSECURITYRELEASEID == model.cashSecurityReleaseIseId
-                                                                                    && o.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).FirstOrDefault();
 
-                    if (_workflow.NewState == (int)ApprovalState.Ended)
-                    {
-
-                        if (cashRelease != null)
-                        {
-                            cashRelease.APPROVALSTATUSID = model.approvalStatusId;
-
-                            if (model.approvalStatusId == (short)ApprovalStatusEnum.Approved)
-                            {
-                                var lien = _context.TBL_APPLICATIONDETAIL_LIEN.Where(x => x.COLLATERALCUSTOMERID == cashRelease.COLLATERALCUSTOMERID && x.APPLICATIONDETAILID == cashRelease.LOANAPPLICATIONDETAILID).FirstOrDefault();
-                                if (lien != null)
-                                {
-                                    lien.ISRELEASED = true;
-                                    lien.DELETED = true;
-                                }
-                            }
-                        }
-                    }
-
-                    responce = _context.SaveChanges() > 0;
-                    transaction.Commit();
-
+                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    _context.SaveChanges();
+                    trans.Commit();
                     return _workflow.Response;
                 }
-                catch (Exception ex)
+
+                if (_workflow.NewState != (int)ApprovalState.Ended)
                 {
-
-                    transaction.Rollback();
-
-
-                    throw ex;
+                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    output = _context.SaveChanges() > 0;
+                    trans.Commit();
+                    return _workflow.Response;
                 }
-               
+                else if (_workflow.NewState == (int)ApprovalState.Ended)
+                {
+                    if (_workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                    {
+                        var lien = _context.TBL_APPLICATIONDETAIL_LIEN.Where(x => x.COLLATERALCUSTOMERID == reviewRecord.COLLATERALCUSTOMERID && x.APPLICATIONDETAILID == reviewRecord.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                        if (lien != null)
+                        {
+                            lien.ISRELEASED = true;
+                            lien.DELETED = true;
+                        }
+                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        output = _context.SaveChanges() > 0;
+                    }
+                    if (output == true)
+                    {
+                        trans.Commit();
+
+                    }
+
+                }
+                return _workflow.Response;
+
             }
+
         }
 
         public IEnumerable<DocumentUploadViewModel> GetReleasedDocUploadIds(int operationId, int targetId, int staffId)

@@ -1199,5 +1199,9 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime DateTimeCreated { get; set; }
         public string createdByName { get; set; }
         public string collateralSummary { get; set; }
+        public int approvalTrailId { get; set; }
+        public int? loopedStaffId { get; set; }
+        public int userId { get; set; }
+        public string comment { get; set; }
     }
 }
