@@ -39,6 +39,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public int collateralId { get; set; }
         public int? loopedStaffId { get; set; }
+        public string divisionCode { get; set; }
+        public string divisionShortCode { get; set; }
 
         public short? perfectionStatusId { get; set; }
         public short? litigationStatusId { get; set; }
