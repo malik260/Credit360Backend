@@ -87,6 +87,7 @@ namespace FintrakBanking.Repositories.Media
                         collateralCustomerId = x.COLLATERALCUSTOMERID,
                         isOriginalTitleDocument = x.ISORIGINALTITLEDOCUMENT,
                         isOriginalTitleDocumentString = x.ISORIGINALTITLEDOCUMENT ? "Yes" : "No",
+
                         //applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                         //customerId = x.COLLATERALCUSTOMERID,
                         //operationId = (int)OperationsEnum.OriginalDocumentApproval,
