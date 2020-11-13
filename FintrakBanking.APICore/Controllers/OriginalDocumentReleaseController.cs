@@ -94,6 +94,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("approval-cash-security-release-search/{searchString}")]
+        public HttpResponseMessage GetCashSecurityReleaseSearch(string searchString)
+        {
+            try
+            {
+                var response = _repo.GetCashSecurityReleaseSearch(searchString);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("rejected-referred-security-release")]
         public HttpResponseMessage GetRejectedAndReferredSecurityRelease()
         {
