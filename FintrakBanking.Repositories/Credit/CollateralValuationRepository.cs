@@ -594,6 +594,8 @@ namespace FintrakBanking.Repositories.Credit
                       orderby V.VALUATIONPREREQUISITEID descending
                       select new ValuationPrerequisiteViewModel
                       {
+                          divisionCode = (from p in _context.TBL_PROFILE_BUSINESS_UNIT join c in _context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                          divisionShortCode = (from p in _context.TBL_PROFILE_BUSINESS_UNIT join c in _context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == C.COLLATERALCUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                           valuationComment = V.VALUATIONCOMMENT,
                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == V.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
                           collateralCode = C.COLLATERALCODE,
@@ -606,6 +608,8 @@ namespace FintrakBanking.Repositories.Credit
                           referenceNumber = V.REFERENCENUMBER,
                           approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                           collateralCustomerId = C.COLLATERALCUSTOMERID,
+                          systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
+
                       };
 
             return res.ToList();

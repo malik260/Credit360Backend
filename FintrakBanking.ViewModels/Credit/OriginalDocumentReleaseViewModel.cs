@@ -36,9 +36,10 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime arrivalDate { get; set; }
         public string responsiblePerson { get; set; }
         public int approvalTrailId { get; set; }
-        public string currentApprovalLevel { get; set; }
         public int collateralId { get; set; }
         public int? loopedStaffId { get; set; }
+        public string divisionCode { get; set; }
+        public string divisionShortCode { get; set; }
 
         public short? perfectionStatusId { get; set; }
         public short? litigationStatusId { get; set; }
@@ -49,5 +50,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string perfectionStatus { get; set; }
         public string litigationStatus { get; set; }
         public int numberOfTimesApprove { get; set; }
+        public string currentApprovalLevel { get; set; }
     }
 }
