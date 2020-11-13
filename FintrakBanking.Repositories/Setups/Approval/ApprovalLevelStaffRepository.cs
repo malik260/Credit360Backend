@@ -761,11 +761,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int companyId)
         {
             var result = (from a in context.TBL_APPROVAL_TRAIL
-                          join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                          join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID into levelStaff
+                          from b in levelStaff.DefaultIfEmpty()
                           join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
                           join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
                           join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
-
                           join f in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals f.APPROVALLEVELID
                           join g in context.TBL_APPROVAL_GROUP on f.GROUPID equals g.GROUPID
                           join h in context.TBL_APPROVAL_GROUP_MAPPING on g.GROUPID equals h.GROUPID
@@ -796,7 +796,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return result;
         }
 
-
         private IQueryable<WorkflowTrackerViewModel> GetApprovalTrailProjectSitereport(int companyId)
         {
             var result = (from a in context.TBL_APPROVAL_TRAIL
@@ -825,6 +824,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
         public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
         {
             var result = GetApprovalTrail(companyId).Where(c=>c.TargetId==targetId && c.operationId==operationId).OrderByDescending(c => c.systemArrivalDate).ToList();
+            return result;
+        }
+
+        public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetIdCashRelease(int operationId, int targetId, int companyId)
+        {
+            var result = GetApprovalTrail(companyId).Where(c => c.TargetId == targetId && c.operationId == operationId).OrderByDescending(c => c.systemArrivalDate).ToList();
             return result;
         }
 

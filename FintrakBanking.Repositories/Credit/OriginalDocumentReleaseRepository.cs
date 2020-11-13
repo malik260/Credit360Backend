@@ -442,10 +442,11 @@ namespace FintrakBanking.Repositories.Credit
                           join c in _context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
                           where atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval
                             && atrail.TARGETID == dr.CASHSECURITYRELEASEID
-                            && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
-                            && atrail.LOOPEDSTAFFID == initiator)
-                                || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
-                            && atrail.RESPONSESTAFFID == null
+                            && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred && atrail.LOOPEDSTAFFID == initiator)
+                            || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved 
+                            || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing 
+                            || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                            
                           orderby atrail.APPROVALTRAILID descending
                           select new CollateralCashReleaseViewModel
                           {
@@ -458,13 +459,14 @@ namespace FintrakBanking.Repositories.Credit
                               loanApplicationId = dr.LOANAPPLICATIONID,
                               loanTypeName = (from y in _context.TBL_LOAN_APPLICATION_TYPE join p in _context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONTYPEID equals p.LOANAPPLICATIONTYPEID where dr.LOANAPPLICATIONID == p.LOANAPPLICATIONID select y.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
                               applicationReferenceNumber = _context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
-                              loanReferenceNumber = "", //c.LOANREFERENCENUMBER,
                               loanAmount = _context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(x => x.APPROVEDAMOUNT).FirstOrDefault(),
                               lienAmount = (decimal)dr.LIENAMOUNT,
                               facility = (from p in _context.TBL_PRODUCT join a in _context.TBL_LOAN_APPLICATION_DETAIL on p.PRODUCTID equals a.APPROVEDPRODUCTID where a.LOANAPPLICATIONDETAILID == dr.LOANAPPLICATIONDETAILID select p.PRODUCTNAME).FirstOrDefault(),
                               collateralTypeName = b.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                               collateralSubTypeName = _context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == b.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
                               collateralCode = b.COLLATERALCODE,
+                              collateralValue = b.COLLATERALVALUE,
+                              haircut = b.HAIRCUT,
                               collateralId = dr.COLLATERALCUSTOMERID,
                               collateralTypeId = b.COLLATERALTYPEID,
                               collateralSubTypeId = b.COLLATERALSUBTYPEID,
@@ -481,10 +483,7 @@ namespace FintrakBanking.Repositories.Credit
                               approvalTrailId = atrail.APPROVALTRAILID,
                           }).ToList();
 
-            var result = record.GroupBy(r => r.cashSecurityReleaseIseId)
-                               .Select(r => r.FirstOrDefault()).Where(first => (first.approvalStatusId == (short)ApprovalStatusEnum.Referred
-                               && first.loopedStaffId == initiator) || first.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
-                               .ToList();
+            var result = record.GroupBy(r => r.cashSecurityReleaseIseId).Select(r => r.FirstOrDefault()).ToList();
 
             return result;
         }
