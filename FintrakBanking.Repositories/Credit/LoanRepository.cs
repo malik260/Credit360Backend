@@ -16518,7 +16518,8 @@ namespace FintrakBanking.Repositories.Credit
                                    orderby b.DATETIMECREATED descending
                                    select new LoanViewModel
                                    {
-
+                                       divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                                       divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                        loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
