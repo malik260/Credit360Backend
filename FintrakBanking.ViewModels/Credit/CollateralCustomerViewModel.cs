@@ -1206,5 +1206,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int targetId { get; set; }
         public int? approvalLevelId { get; set; }
         public DateTime applicationDate { get; set; }
+        public int currentApprovalLevelId { get; set; }
+        public decimal collateralValue { get; set; }
+        public double haircut { get; set; }
     }
 }
