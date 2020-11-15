@@ -412,6 +412,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loopedStaffId { get; set; }
         public string lastApprovalComment { get; set; }
         public int loanApplicationId2 { get; set; }
+        public decimal facilityAmount { get; set; }
+        public string customerAccount { get; set; }
     }
 
     public class crossGarantee
