@@ -327,7 +327,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             var checklistDoc = (from ck in context.TBL_LOAN_CONDITION_DOCUMENTS
                                 where ck.CONDITIONID == conditionId
-                                && ck.LOANAPPLICATIONID == loanApplicationId
+                                && ck.LOANAPPLICATIONID == loanApplicationId && ck.DELETED == false
                                 select new ConditionsPrecedentUploadViewModel()
                                 {
                                     fileData = ck.FILEDATA,
@@ -339,7 +339,7 @@ namespace FintrakBanking.Repositories.Customer
         public ConditionsPrecedentUploadViewModel GetLoanConditionDocumentBydocumentId(int documentId)
         {
             var checklistDoc = (from ck in context.TBL_LOAN_CONDITION_DOCUMENTS
-                                where ck.DOCUMENTID == documentId
+                                where ck.DOCUMENTID == documentId && ck.DELETED == false
                                 select new ConditionsPrecedentUploadViewModel()
                                 {
                                     fileData = ck.FILEDATA,
@@ -348,9 +348,22 @@ namespace FintrakBanking.Repositories.Customer
                                 }).FirstOrDefault();
             return checklistDoc;
         }
+
+        public bool DeleteConditionDocumentBydocumentId(int documentId, int staffId)
+        {
+            var checklistDoc = context.TBL_LOAN_CONDITION_DOCUMENTS.Find(documentId);
+            if(checklistDoc != null)
+            {
+                checklistDoc.DELETED = true;
+                checklistDoc.DATETIMEDELETED = DateTime.Now;
+                checklistDoc.DELETEDBY = staffId;
+            }
+             return context.SaveChanges() != 0;
+                                
+        }
         public IEnumerable<ConditionsPrecedentUploadViewModel> GetLoanConditionDocumentByContionId(int conditionId)
         {
-            return this.context.TBL_LOAN_CONDITION_DOCUMENTS.Where(x => x.CONDITIONID == conditionId).Select(x => new ConditionsPrecedentUploadViewModel
+            return this.context.TBL_LOAN_CONDITION_DOCUMENTS.Where(x => x.CONDITIONID == conditionId && x.DELETED == false).Select(x => new ConditionsPrecedentUploadViewModel
             {
                 documentId = x.DOCUMENTID,
                 conditionId = x.CONDITIONID,
@@ -360,7 +373,40 @@ namespace FintrakBanking.Repositories.Customer
                 systemDateTime = x.SYSTEMDATETIME,
                 physicalFileNumber = x.PHYSICALFILENUMBER,
                 physicalLocation = x.PHYSICALLOCATION,
+                createdBy = x.CREATEDBY,
             });
+        }
+
+        public IEnumerable<ConditionsPrecedentUploadViewModel> GetDeletedLoanConditionDocumentByContionId(int conditionId)
+        {
+            
+                var data = (from x in context.TBL_LOAN_CONDITION_DOCUMENTS
+                            where
+                            x.CONDITIONID == conditionId
+                            && x.DELETED == true
+                            select new ConditionsPrecedentUploadViewModel
+                            {
+                                documentId = x.DOCUMENTID,
+                                conditionId = x.CONDITIONID,
+                                loanApplicationId = x.LOANAPPLICATIONID,
+                                fileName = x.FILENAME,
+                                fileExtension = x.FILEEXTENSION,
+                                systemDateTime = x.SYSTEMDATETIME,
+                                physicalFileNumber = x.PHYSICALFILENUMBER,
+                                physicalLocation = x.PHYSICALLOCATION,
+                                createdBy = x.CREATEDBY,
+                                dateTimeDeleted = x.DATETIMEDELETED,
+                                deletedBy = x.DELETEDBY
+                            }).ToList();
+
+                foreach(var p in data)
+                {
+                p.deletedByName = _finContext.TBL_STAFF.Where(s => s.STAFFID == p.deletedBy).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                                
+                }
+
+                return data;
+            
         }
         public bool ConditionsPrecedentDocumentUpload(ConditionsPrecedentUploadViewModel model, byte[] file)
         {

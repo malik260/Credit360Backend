@@ -18515,7 +18515,8 @@ namespace FintrakBanking.Repositories.Credit
                                                      (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
                                                      (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
                                 mgtOperationId = op.OPERATIONTYPEID,
-
+                                divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cu.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                                divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == ld.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
@@ -22547,7 +22548,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool result;
             bool output;
-            result = ProcessContingentLiabilityTermination(twoFactorAuth, model, approvalComment);
+            result = ProcessContingentLiabilityTermination2(twoFactorAuth, model, approvalComment); // because of tranch rebooking loan status still maintain active
+            
             if (result)
             {
                 output = ProcessContingentLiabilityRenewal(twoFactorAuth, model, approvalComment);
@@ -22892,7 +22894,80 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
-                oldContingent.LOANSTATUSID = (short)LoanStatusEnum.Terminated;
+                oldContingent.LOANSTATUSID = (short)LoanStatusEnum.Terminated; 
+                oldContingent.DATETIMEUPDATED = DateTime.Now.Date;
+                oldContingent.LASTUPDATEDBY = model.createdBy;
+
+                var result = context.SaveChanges() > 0;
+
+                if (renewalResult != null != false && result)
+                {
+                    var tempmedia = documentContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Where(x => x.TEMPLOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
+                    if (tempmedia != null)
+                    {
+                        var data = new TBL_MEDIA_LOAN_DOCUMENTS
+                        {
+                            FILEDATA = tempmedia.FILEDATA,
+                            DOCUMENTTITLE = tempmedia.DOCUMENTTITLE,
+                            FILENAME = tempmedia.FILENAME,
+                            FILEEXTENSION = tempmedia.FILEEXTENSION,
+                            LOANREFERENCENUMBER = tempmedia.LOANREFERENCENUMBER,
+                            LOANAPPLICATIONNUMBER = tempmedia.LOANAPPLICATIONNUMBER,
+                            SYSTEMDATETIME = tempmedia.SYSTEMDATETIME,
+                            CREATEDBY = tempmedia.CREATEDBY,
+                            ISPRIMARYDOCUMENT = tempmedia.ISPRIMARYDOCUMENT,
+                            COMPANYID = tempmedia.COMPANYID,
+                            LOANSYSTEMTYPEID = tempmedia.LOANSYSTEMTYPEID,
+                            LOANREVIEWOPERATIONID = tempmedia.TEMPLOANREVIEWOPERATIONID,
+                            PHYSICALLOCATION = tempmedia.PHYSICALLOCATION,
+                            DOCUMENTTYPEID = tempmedia.DOCUMENTTYPEID,
+
+                        };
+
+                        documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+                        try
+                        {
+                            documentContext.SaveChanges();
+                        }
+                        catch (Exception ex) { }
+                        var outcome = SendNotification((int)model.loanId, data.LOANREVIEWOPERATIONID);
+                    }
+                    output = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+
+            }
+
+            return output;
+        }
+
+        public bool ProcessContingentLiabilityTermination2(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
+        {
+
+            var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
+            bool output = false;
+
+            ResponseMessageViewModel renewalResult = new ResponseMessageViewModel();
+
+            try
+            {
+
+                var currentDate = DateTime.Now;
+
+                List<FinanceTransactionViewModel> transactionDetails = new List<FinanceTransactionViewModel>();
+
+                var loan = this.context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
+
+                if (loan.CONTINGENTAMOUNT > 0)
+                {
+                    transactionDetails.AddRange(financeTransaction.BuildContingentPrincipalPostingReversal(model, oldContingent.LOANREFERENCENUMBER, loan.CONTINGENTAMOUNT, "Contingent Amount ", (int)OperationsEnum.ContingentLiabilityTermination));
+                }
+
+                oldContingent.LOANSTATUSID = (short)LoanStatusEnum.Active;
                 oldContingent.DATETIMEUPDATED = DateTime.Now.Date;
                 oldContingent.LASTUPDATEDBY = model.createdBy;
 
@@ -25953,6 +26028,8 @@ namespace FintrakBanking.Repositories.Credit
                         //&& l.OPERATIONPERFORMED == true
                         select new CamProcessedLoanViewModel
                         {
+                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                             lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
                             lmsOperationId = atrail.OPERATIONID,
                             lmsOperationName = atrail.TBL_OPERATIONS.OPERATIONNAME,
