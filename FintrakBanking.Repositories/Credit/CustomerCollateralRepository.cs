@@ -2081,6 +2081,9 @@ namespace FintrakBanking.Repositories.Credit
                             isProposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),
                             companyId = companyId,
                             validTill = c.c.VALIDTILL,
+                            facilityAmount = (from a in context.TBL_LOAN_APPLICATION_COLLATERL join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONID == (int)c.c.LOANAPPLICATIONID select b.APPROVEDAMOUNT).FirstOrDefault(),
+                            customerAccount = context.TBL_CASA.Where(x => x.CUSTOMERID == c.c.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+
                         })
                         .ToList()
                         .GroupBy(x => x.collateralId).Select(g => g.First());
@@ -2099,6 +2102,8 @@ namespace FintrakBanking.Repositories.Credit
                     x => x.m.DefaultIfEmpty(),
                     (c, m) => new CollateralViewModel
                     {
+                        facilityAmount = (from a in context.TBL_LOAN_APPLICATION_COLLATERL join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONID == (int)c.c.LOANAPPLICATIONID select b.APPROVEDAMOUNT).FirstOrDefault(),
+                        customerAccount = context.TBL_CASA.Where(x => x.CUSTOMERID == c.c.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                         collateralId = c.c.COLLATERALCUSTOMERID,
                         collateralTypeId = c.c.COLLATERALTYPEID,
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
