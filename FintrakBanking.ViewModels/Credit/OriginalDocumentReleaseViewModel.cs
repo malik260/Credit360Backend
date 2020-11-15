@@ -51,5 +51,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string litigationStatus { get; set; }
         public int numberOfTimesApprove { get; set; }
         public string currentApprovalLevel { get; set; }
+        public decimal facilityAmount { get; set; }
+        public string customerAccount { get; set; }
+        public int targetId { get; set; }
     }
 }
