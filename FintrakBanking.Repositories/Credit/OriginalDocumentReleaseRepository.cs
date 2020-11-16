@@ -225,27 +225,28 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<OriginalDocumentReleaseViewModel> GetLeaseDocumentForApproval(int staffId)
         {
             var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.SecurityRelease).ToList();
-            ids.AddRange(_general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.GuaranteeReleaseApproval).ToList());
             var staffs = _general.GetStaffRlieved(staffId);
 
-            var record = from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
+            var record = (from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
                          join oda in _context.TBL_ORIGINAL_DOCUMENT_APPROVAL on dr.ORIGINALDOCUMENTAPPROVALID equals oda.ORIGINALDOCUMENTAPPROVALID
                          //join l in _context.TBL_LOAN_APPLICATION on oda.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                          join cc in _context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                          join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
-                         where dr.DELETED == false 
-                         && (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved || atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
-                         && atrail.RESPONSESTAFFID == null
-                         && (atrail.LOOPEDSTAFFID == null || atrail.LOOPEDSTAFFID == staffId)
-                         && ((ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) || (!ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
-                         && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
-                         && (atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease || atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval)
+                         where dr.DELETED == false
+                         && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && atrail.RESPONSESTAFFID == null && dr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
+                         
                          select new OriginalDocumentReleaseViewModel
                          {
                              divisionCode = (from p in _context.TBL_PROFILE_BUSINESS_UNIT join c in _context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                              divisionShortCode = (from p in _context.TBL_PROFILE_BUSINESS_UNIT join c in _context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cc.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
-
                              approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault().ToUpper(),
                              customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                              //applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
@@ -271,10 +272,12 @@ namespace FintrakBanking.Repositories.Credit
                              perfectionStatus = dr.PERFECTIONSTATUSID !=null ? _context.TBL_COLLATERAL_PERFECTN_STAT.Where(p=>p.PERFECTIONSTATUSID == dr.PERFECTIONSTATUSID).Select(p=>p.PERFECTIONSTATUSNAME).FirstOrDefault() : "N/A",
                              litigationStatus = dr.LITIGATIONSTATUSID != null ? ((dr.LITIGATIONSTATUSID == 1) ? "Ongoing Court Case" : "No Ongoing Court Case") : "N/A",
                              systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
-                         };
+                             facilityAmount = (from a in _context.TBL_LOAN_APPLICATION_COLLATERL join b in _context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONID == (int)cc.LOANAPPLICATIONID select b.APPROVEDAMOUNT).FirstOrDefault(),
+                             customerAccount = _context.TBL_CASA.Where(c => c.CUSTOMERID == cc.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                             targetId = atrail.TARGETID,
+                         }).ToList();
 
-            var result = record.GroupBy(r => r.originalDocumentApprovalId)
-                               .Select( r =>r.FirstOrDefault()).ToList();
+            var result = record.GroupBy(r => r.targetId).Select( r =>r.FirstOrDefault()).ToList();
             return result;            
         }
 
@@ -307,7 +310,6 @@ namespace FintrakBanking.Repositories.Credit
                              loanApplicationDetailId = (int)dr.LOANAPPLICATIONDETAILID,
                              loanTypeName = (from y in _context.TBL_LOAN_APPLICATION_TYPE join p in _context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONTYPEID equals p.LOANAPPLICATIONTYPEID where dr.LOANAPPLICATIONID == p.LOANAPPLICATIONID select y.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
                              applicationReferenceNumber = _context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(), 
-                             loanReferenceNumber = "", //c.LOANREFERENCENUMBER,
                              loanAmount = _context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(x => x.APPROVEDAMOUNT).FirstOrDefault(), 
                              lienAmount = (decimal)dr.LIENAMOUNT,
                              facility = (from p in _context.TBL_PRODUCT join a in _context.TBL_LOAN_APPLICATION_DETAIL on p.PRODUCTID equals a.APPROVEDPRODUCTID where a.LOANAPPLICATIONDETAILID == dr.LOANAPPLICATIONDETAILID select p.PRODUCTNAME).FirstOrDefault(),
@@ -325,12 +327,13 @@ namespace FintrakBanking.Repositories.Credit
                              dateRecieved = atrail.SYSTEMARRIVALDATETIME,
                              DateTimeCreated = dr.DATETIMECREATED,
                              operationId = atrail.OPERATIONID,
+                             targetId = atrail.TARGETID,
                              currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                              createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
 
                          };
 
-            var result = record.GroupBy(r => r.cashSecurityReleaseIseId)
+            var result = record.GroupBy(r => r.targetId)
                                .Select(r => r.FirstOrDefault()).ToList();
             return result;
         }
@@ -346,7 +349,7 @@ namespace FintrakBanking.Repositories.Credit
                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                          join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
                          where dr.DELETED == false 
-                         && (atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease || atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval)
+                         && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
                          && (c.CUSTOMERCODE.Contains(searchString)
                                 || c.FIRSTNAME.ToLower().Contains(searchString)
                                 || c.MIDDLENAME.ToLower().Contains(searchString)
@@ -378,6 +381,60 @@ namespace FintrakBanking.Repositories.Credit
                          };
 
             var result = record.GroupBy(r => r.originalDocumentApprovalId)
+                               .Select(r => r.FirstOrDefault()).ToList();
+            return result;
+        }
+
+        public IEnumerable<CollateralCashReleaseViewModel> GetCashSecurityReleaseSearch(string searchString)
+        {
+            searchString = searchString.Trim().ToLower();
+
+            var record = from dr in _context.TBL_CASH_SECURITY_RELEASE_APPROVAL
+                         join b in _context.TBL_COLLATERAL_CUSTOMER on dr.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                         join atrail in _context.TBL_APPROVAL_TRAIL on dr.CASHSECURITYRELEASEID equals atrail.TARGETID
+                         join c in _context.TBL_CUSTOMER on dr.CUSTOMERID equals c.CUSTOMERID
+                         join a in _context.TBL_LOAN_APPLICATION on dr.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                         where atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval
+                         && (c.CUSTOMERCODE.Contains(searchString)
+                                || c.FIRSTNAME.ToLower().Contains(searchString)
+                                || c.MIDDLENAME.ToLower().Contains(searchString)
+                                || c.LASTNAME.ToLower().Contains(searchString)
+                                || a.APPLICATIONREFERENCENUMBER == searchString
+                                )
+
+                         select new CollateralCashReleaseViewModel
+                         {
+                             responsiblePerson = atrail.TOSTAFFID == null ? "N/A" : atrail.TBL_STAFF1.STAFFCODE + " - " + atrail.TBL_STAFF1.FIRSTNAME + " " + atrail.TBL_STAFF1.MIDDLENAME + " " + atrail.TBL_STAFF1.LASTNAME,
+                             collateralSummary = b.COLLATERALSUMMARY,
+                             cashSecurityReleaseIseId = dr.CASHSECURITYRELEASEID,
+                             approvalStatusId = atrail.APPROVALSTATUSID,
+                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault().ToUpper(),
+                             customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                             loanApplicationDetailId = (int)dr.LOANAPPLICATIONDETAILID,
+                             loanTypeName = (from y in _context.TBL_LOAN_APPLICATION_TYPE join p in _context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONTYPEID equals p.LOANAPPLICATIONTYPEID where dr.LOANAPPLICATIONID == p.LOANAPPLICATIONID select y.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
+                             applicationReferenceNumber = _context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                             loanAmount = _context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(x => x.APPROVEDAMOUNT).FirstOrDefault(),
+                             lienAmount = (decimal)dr.LIENAMOUNT,
+                             facility = (from p in _context.TBL_PRODUCT join a in _context.TBL_LOAN_APPLICATION_DETAIL on p.PRODUCTID equals a.APPROVEDPRODUCTID where a.LOANAPPLICATIONDETAILID == dr.LOANAPPLICATIONDETAILID select p.PRODUCTNAME).FirstOrDefault(),
+                             collateralTypeName = b.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                             collateralSubTypeName = _context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == b.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                             collateralCode = b.COLLATERALCODE,
+                             collateralId = dr.COLLATERALCUSTOMERID,
+                             collateralTypeId = b.COLLATERALTYPEID,
+                             collateralSubTypeId = b.COLLATERALSUBTYPEID,
+                             customerId = (int)dr.CUSTOMERID,
+                             customerCode = b.CUSTOMERCODE,
+                             currencyId = b.CURRENCYID,
+                             currencyCode = b.TBL_CURRENCY.CURRENCYCODE,
+                             currency = b.TBL_CURRENCY.CURRENCYNAME,
+                             dateRecieved = atrail.SYSTEMARRIVALDATETIME,
+                             DateTimeCreated = dr.DATETIMECREATED,
+                             operationId = atrail.OPERATIONID,
+                             currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                             createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                         };
+
+            var result = record.GroupBy(r => r.cashSecurityReleaseIseId)
                                .Select(r => r.FirstOrDefault()).ToList();
             return result;
         }
@@ -422,6 +479,9 @@ namespace FintrakBanking.Repositories.Credit
                              collateralId = cc.COLLATERALCUSTOMERID,
                              loopedStaffId = atrail.LOOPEDSTAFFID,
                              approvalTrailId = atrail.APPROVALTRAILID,
+                             facilityAmount = (from a in _context.TBL_LOAN_APPLICATION_COLLATERL join b in _context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONID == (int)cc.LOANAPPLICATIONID select b.APPROVEDAMOUNT).FirstOrDefault(),
+                             customerAccount = _context.TBL_CASA.Where(c => c.CUSTOMERID == cc.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+
                           }).ToList();
 
             var result = record.GroupBy(r => r.originalDocumentApprovalId)

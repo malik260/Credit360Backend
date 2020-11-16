@@ -322,6 +322,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("update-valuer-narration")]
+        public HttpResponseMessage UpdateCollateralNarration([FromBody] ValuationPrerequisiteViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var res = _colValuationRepo.UpdateCollateralNarration(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res, message = $"Success" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record. Error - {ex.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-valuer-info")]
@@ -340,12 +362,28 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-valuer-info/{id}")]
-        public HttpResponseMessage GetAllCollateralValuerIformation(int id)
+        [Route("get-single-valuer-info/{id}")]
+        public HttpResponseMessage GetCollateralValuerIformations(int id)
         {
             try
             {
-                var response = _colValuationRepo.GetAllCollateralValuerIformation(id);
+                var response = _colValuationRepo.GetCollateralValuerIformations(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-valuer-info/{id}")]
+        public HttpResponseMessage GetCollateralValuerIformation(int id)
+        {
+            try
+            {
+                var response = _colValuationRepo.GetCollateralValuerIformation(id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
