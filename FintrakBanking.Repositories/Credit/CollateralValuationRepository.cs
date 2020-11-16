@@ -838,6 +838,13 @@ namespace FintrakBanking.Repositories.Credit
             
             List<ValuationPrerequisiteViewModel> vals = new List<ValuationPrerequisiteViewModel>();
             vals.AddRange(valuations);
+
+            foreach (var v in vals)
+            {
+                var detailIds = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == v.collateralCustomerId && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID);
+                var facilities = _context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).ToList();
+                v.facilityAmount = facilities.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            }
             return vals;
         }
 

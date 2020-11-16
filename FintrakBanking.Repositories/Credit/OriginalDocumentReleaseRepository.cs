@@ -273,7 +273,6 @@ namespace FintrakBanking.Repositories.Credit
                              perfectionStatus = dr.PERFECTIONSTATUSID !=null ? _context.TBL_COLLATERAL_PERFECTN_STAT.Where(p=>p.PERFECTIONSTATUSID == dr.PERFECTIONSTATUSID).Select(p=>p.PERFECTIONSTATUSNAME).FirstOrDefault() : "N/A",
                              litigationStatus = dr.LITIGATIONSTATUSID != null ? ((dr.LITIGATIONSTATUSID == 1) ? "Ongoing Court Case" : "No Ongoing Court Case") : "N/A",
                              systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
-                             facilityAmount = (from a in _context.TBL_LOAN_APPLICATION_COLLATERL join b in _context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONID == (int)cc.LOANAPPLICATIONID select b.APPROVEDAMOUNT).FirstOrDefault(),
                              customerAccount = _context.TBL_CASA.Where(c => c.CUSTOMERID == cc.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                              targetId = atrail.TARGETID,
                              approvalTrailId = atrail.APPROVALTRAILID,
@@ -281,6 +280,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var result = record.GroupBy(r => r.targetId)
                               .Select(p => p.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
+            foreach (var v in result)
+            {
+                var detailIds = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == v.collateralCustomerId && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID);
+                var facilities = _context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).ToList();
+                v.facilityAmount = facilities.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            }
             return result;            
         }
 
@@ -487,7 +492,6 @@ namespace FintrakBanking.Repositories.Credit
                              collateralId = cc.COLLATERALCUSTOMERID,
                              loopedStaffId = atrail.LOOPEDSTAFFID,
                              approvalTrailId = atrail.APPROVALTRAILID,
-                             facilityAmount = (from a in _context.TBL_LOAN_APPLICATION_COLLATERL join b in _context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONID == (int)cc.LOANAPPLICATIONID select b.APPROVEDAMOUNT).FirstOrDefault(),
                              customerAccount = _context.TBL_CASA.Where(c => c.CUSTOMERID == cc.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
 
                           }).ToList();
@@ -496,6 +500,13 @@ namespace FintrakBanking.Repositories.Credit
                                .Select(r => r.FirstOrDefault()).Where(first => (first.approvalStatusId == (short)ApprovalStatusEnum.Referred
                                && first.loopedStaffId == initiator) || first.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                                .ToList();
+
+            foreach (var v in result)
+            {
+                var detailIds = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == v.collateralCustomerId && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID);
+                var facilities = _context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).ToList();
+                v.facilityAmount = facilities.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            }
 
             return result;
         }
