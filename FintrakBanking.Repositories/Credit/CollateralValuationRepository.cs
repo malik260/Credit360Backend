@@ -879,12 +879,29 @@ namespace FintrakBanking.Repositories.Credit
                             var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
 
                             var rem = _context.TBL_STAFF.Find(accountOfficer.SUPERVISOR_STAFFID);
-                            var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME +" "+ accountOfficer?.PHONE;
-                            var messageBody = "Dear " + staffFullName + "</br> Kindly see the " + collateral?.VALUATIONNAME + " valuation carried out by "+ valuer?.ToUpper() + " with fee note " + valuerReport?.VALUATIONFEE +" and valuation detail: "+ valuerReport?.VALUERCOMMENT +"<p>This has been initiated by "+ staffFullName+"</p><p>Regards</p>";
-                            var alertSubject = "COLLATERAL VALUATION NOTIFICATION";
-                            var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL;
+                            var customerCollateral = _context.TBL_COLLATERAL_CUSTOMER.Find(collateral.COLLATERALCUSTOMERID);
+                            var collateralType = _context.TBL_COLLATERAL_TYPE.Find(customerCollateral.COLLATERALTYPEID);
+                            var customer = _context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == customerCollateral.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                            var collAddress = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c.PROPERTYADDRESS).FirstOrDefault();
+                            var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME;
+
+                            var letter = _context.TBL_ALERT_TITLE.Where(x=>x.BINDINGMETHOD == "CollateralValuationNotification").Select(x=>x).FirstOrDefault();
+                            var letterBody = letter?.TEMPLATE;
+                            var letterTitle = letter?.TITLE;
+                            letterBody = letterBody.Replace("@{{month}}", DateTime.Now.Month.ToString());
+                            letterBody = letterBody.Replace("@{{year}}", DateTime.Now.Year.ToString());
+                            letterBody = letterBody.Replace("@{{referenceNumber}}", prereqisite?.REFERENCENUMBER);
+                            letterBody = letterBody.Replace("@{{letterDate}}", DateTime.Now.ToString("MM-DD-YYYY"));
+                            letterBody = letterBody.Replace("@{{nameAndAddress}}", valuerDetail?.FIRMNAME + " " + valuerDetail?.ADDRESS);
+                            letterBody = letterBody.Replace("@{{assetType}}", collateralType?.COLLATERALTYPENAME);
+                            letterBody = letterBody.Replace("@{{customerName}}", customer);
+                            letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
+                            letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
+                            letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
+                            
+                            var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                             alert.receiverEmailList.Add(emailList);
-                            LogEmailAlert(messageBody, alertSubject, alert.receiverEmailList, "98007", 98007, "CollateralValuationNotification");
+                            LogEmailAlert(letterBody, letterTitle, alert.receiverEmailList, "98007", 98007, letter.BINDINGMETHOD);
                         }
                     }
                         
@@ -909,12 +926,29 @@ namespace FintrakBanking.Repositories.Credit
                         var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
 
                         var rem = _context.TBL_STAFF.Find(accountOfficer.SUPERVISOR_STAFFID);
+                        var customerCollateral = _context.TBL_COLLATERAL_CUSTOMER.Find(collateral.COLLATERALCUSTOMERID);
+                        var collateralType = _context.TBL_COLLATERAL_TYPE.Find(customerCollateral.COLLATERALTYPEID);
+                        var customer = _context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == customerCollateral.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                        var collAddress = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c.PROPERTYADDRESS).FirstOrDefault();
+
                         var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME +" "+ accountOfficer?.PHONE;
-                        var messageBody = "Dear " + staffFullName + "</br> Kindly see the " + collateral?.VALUATIONNAME + " valuation carried out by " + valuer?.ToUpper() + " with fee note " + valuerReport?.VALUATIONFEE + " and valuation detail: " + valuerReport?.VALUERCOMMENT + "<p>This has been initiated by " + staffFullName + "</p><p>Regards</p>";
-                        var alertSubject = "COLLATERAL VALUATION NOTIFICATION";
-                        var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL;
+                        var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationNotification").Select(x => x).FirstOrDefault();
+                        var letterBody = letter?.TEMPLATE;
+                        var letterTitle = letter?.TITLE;
+                        letterBody = letterBody.Replace("@{{month}}", DateTime.Now.Month.ToString());
+                        letterBody = letterBody.Replace("@{{year}}", DateTime.Now.Year.ToString());
+                        letterBody = letterBody.Replace("@{{referenceNumber}}", prereqisite?.REFERENCENUMBER);
+                        letterBody = letterBody.Replace("@{{letterDate}}", DateTime.Now.ToString("MM-DD-YYYY"));
+                        letterBody = letterBody.Replace("@{{nameAndAddress}}", valuerDetail?.FIRMNAME + " " + valuerDetail?.ADDRESS);
+                        letterBody = letterBody.Replace("@{{assetType}}", collateralType?.COLLATERALTYPENAME);
+                        letterBody = letterBody.Replace("@{{customerName}}", customer);
+                        letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
+                        letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
+                        letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
+
+                        var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                         alert.receiverEmailList.Add(emailList);
-                        LogEmailAlert(messageBody, alertSubject, alert.receiverEmailList, "98007", 98007, "CollateralValuationNotification");
+                        LogEmailAlert(letterBody, letterTitle, alert.receiverEmailList, "98007", 98007, letter.BINDINGMETHOD);
                     }
 
                     response = _context.SaveChanges() > 0;
