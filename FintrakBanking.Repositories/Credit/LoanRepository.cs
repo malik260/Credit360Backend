@@ -16944,6 +16944,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter                                                                                                                                  
                                    select new LoanViewModel
                                    {
+                                       lmsdatecreated = b.DATETIMECREATED,
                                        //creditAppraisalOperationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == a.TERMLOANID select aa.OPERATIONID).FirstOrDefault(),
                                        //creditAppraisalLoanApplicationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == a.TERMLOANID select aa.LOANAPPLICATIONID).FirstOrDefault(),
                                        creditAppraisalOperationId = (b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == b.LOANREVIEWAPPLICATIONID select aa.OPERATIONID).FirstOrDefault() :
@@ -17078,8 +17079,9 @@ namespace FintrakBanking.Repositories.Credit
                                    }).ToList();
 
             var externalLoans = GetApprovedThirdPartyLoanReview(companyId, staffId);
+            var data = allFilteredLoan.Union(externalLoans);
 
-            return allFilteredLoan.Union(externalLoans);
+            return data.OrderBy(x => x.lmsdatecreated);
         }
 
         public IEnumerable<LoanViewModel> GetProcessLoanReviewData(int companyId, int staffId, string searchString)
@@ -17688,6 +17690,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId)
                                    select new LoanViewModel
                                    {
+                                       lmsdatecreated = b.DATETIMECREATED,
                                        creditAppraisalOperationId = (from p in context.TBL_LOAN_EXTERNAL join c in context.TBL_LMSR_APPLICATION_DETAIL on p.EXTERNALLOANID equals c.LOANID where c.LOANREVIEWAPPLICATIONID == b.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
                                        creditAppraisalLoanApplicationId = 0,
                                        appraisalOperationId = e.OPERATIONID,
