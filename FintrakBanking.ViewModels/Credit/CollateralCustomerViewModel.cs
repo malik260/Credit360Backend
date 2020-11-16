@@ -1169,9 +1169,6 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralCashReleaseViewModel : GeneralEntity
     {
-        public int targetId { get; set; }
-        public int? approvalLevelId { get; set; }
-        public DateTime applicationDate { get; set; }
         public int collateralId { get; set; }
         public int collateralTypeId { get; set; }
         public short collateralSubTypeId { get; set; }

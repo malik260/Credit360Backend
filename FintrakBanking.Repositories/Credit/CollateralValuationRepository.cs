@@ -697,7 +697,6 @@ namespace FintrakBanking.Repositories.Credit
                        join C in _context.TBL_COLLATERAL_CUSTOMER on q.COLLATERALCUSTOMERID equals C.COLLATERALCUSTOMERID
                        join atrail in _context.TBL_APPROVAL_TRAIL on valPre.VALUATIONPREREQUISITEID equals atrail.TARGETID
                        join cus in _context.TBL_CUSTOMER on C.CUSTOMERID equals cus.CUSTOMERID
-                       let detailIds = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == C.COLLATERALCUSTOMERID && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID)
                        //where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                        where atrail.RESPONSESTAFFID == null
                         && atrail.LOOPEDSTAFFID == null
@@ -705,6 +704,7 @@ namespace FintrakBanking.Repositories.Credit
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                         && atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest
+                        && atrail.LOOPEDSTAFFID == null
                        orderby valPre.VALUATIONPREREQUISITEID descending
                        select new ValuationPrerequisiteViewModel
                        {
@@ -716,7 +716,6 @@ namespace FintrakBanking.Repositories.Credit
                             collateralValue = C.COLLATERALVALUE,
                             collateralValuationId = q.COLLATERALVALUATIONID,
                             collateralCustomerId = C.COLLATERALCUSTOMERID,
-                            facilityAmount = _context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE),
                             currentApprovalLevelId = atrail.TOAPPROVALLEVELID,
                             valuationComment = valPre.VALUATIONCOMMENT,
                             valuationName = q.VALUATIONNAME,
@@ -733,6 +732,13 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                             valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == valPre.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
                        }).ToList();
+
+            foreach(var v in res)
+            {
+                var detailIds = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == v.collateralCustomerId && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID);
+                var facilities = _context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).ToList();
+                v.facilityAmount = facilities.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            }
 
             //return res.GroupBy(O => O.collateralValuationId).Select(O => O.FirstOrDefault()).ToList();
             return res;
