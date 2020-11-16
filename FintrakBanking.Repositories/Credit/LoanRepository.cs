@@ -16256,6 +16256,8 @@ namespace FintrakBanking.Repositories.Credit
         public WorkflowResponse ReferBackBooking(ApprovalViewModel model)
         {
             int staffId = model.staffId;
+            int currentLevelIndex = 0;
+            int nextLevelIndex = 0;
 
             //if (model.loopedStaffId != null) staffId = (int)model.loopedStaffId;
 
@@ -16266,26 +16268,57 @@ namespace FintrakBanking.Repositories.Credit
             if (model.isClassified) { return invokeClassifiedReferBack(model); }
 
             var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
+                .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false),
+                    mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                    {
+                        groupPosition = mg.m.POSITION,
+                        levelPosition = l.POSITION,
+                        levelId = l.APPROVALLEVELID,
+                        levelName = l.LEVELNAME,
+                        staffRoleId = l.STAFFROLEID.Value,
+                    })
+                    .OrderBy(x => x.groupPosition)
+                    .ThenBy(x => x.levelPosition)
+                    .ToList();
+
+            if (model.myLevelId > 0)
+            {
+                currentLevelIndex = levels.FindIndex(p => p.levelId == model.myLevelId);
+                nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+            }
+            else
+            {
+                var levelStaffs = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
                  .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
-                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false), mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new {mg, l})
+                 .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false), mgl => mgl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (mgl, s) => new
                      {
-                         groupPosition = mg.m.POSITION,
-                         levelPosition = l.POSITION,
-                         levelId = l.APPROVALLEVELID,
-                         levelName = l.LEVELNAME,
-                         staffRoleId = l.STAFFROLEID,
+                         groupPosition = mgl.mg.m.POSITION,
+                         levelPosition = mgl.l.POSITION,
+                         levelId = mgl.l.APPROVALLEVELID,
+                         levelName = mgl.l.LEVELNAME,
+                         staffRoleId = s.TBL_STAFF.STAFFROLEID,
                      })
                      .OrderBy(x => x.groupPosition)
                      .ThenBy(x => x.levelPosition)
                      .ToList();
+                //levels.AddRange(levelStaffs);
 
-            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
-            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
-            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+                var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID).ToList();
 
-            int currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
-            int nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+                if (staffRoleLevels.Count == 0)
+                {
+                    staffRoleLevels = levelStaffs.Where(x => x.staffRoleId == staff.STAFFROLEID).ToList();
+                }
+                var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId).ToList();
+                var staffRoleLevelId = staffRoleLevelIds.LastOrDefault();
+
+                currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
+                nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+            }
+
+            
 
 
             if (nextLevelIndex > currentLevelIndex)

@@ -746,34 +746,42 @@ namespace FintrakBanking.Repositories.Credit
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                         && atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest
+                        && atrail.LOOPEDSTAFFID == null
                        orderby valPre.VALUATIONPREREQUISITEID descending
                        select new ValuationPrerequisiteViewModel
-                       {
-                           facilityAmount = (from a in _context.TBL_LOAN_APPLICATION_COLLATERL join b in _context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONID == (int)C.LOANAPPLICATIONID select b.APPROVEDAMOUNT).FirstOrDefault(),
-                           narration = q.NARRATION,
-                           customerName = cus.FIRSTNAME + " " + cus.LASTNAME + " " + cus.MAIDENNAME,
-                           customerId = cus.CUSTOMERID,
-                           customerAccount = _context.TBL_CASA.Where(c=>c.CUSTOMERID == cus.CUSTOMERID).Select(c=>c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-                           collateralCode = C.COLLATERALCODE,
-                           collateralType = _context.TBL_COLLATERAL_TYPE.Where(O => O.COLLATERALTYPEID == C.COLLATERALTYPEID).Select(O => O.COLLATERALTYPENAME).FirstOrDefault(),
-                           collateralValue = C.COLLATERALVALUE,
-                           collateralValuationId = q.COLLATERALVALUATIONID,
-                           collateralCustomerId = C.COLLATERALCUSTOMERID,
-                           valuationComment = valPre.VALUATIONCOMMENT,
-                           valuationName = q.VALUATIONNAME,
-                           valuationReason = q.VALUATIONREASON,
-                           operationId = valPre.OPERATIONID,
-                           valuationPrerequisiteId = valPre.VALUATIONPREREQUISITEID,
-                           referenceNumber = valPre.REFERENCENUMBER,
-                           approvalStatusId = atrail.APPROVALSTATUSID,
-                           approvalTrailId = atrail.APPROVALTRAILID,
-                           valuationRequestTypeId = valPre.VALUATIONREQUESTTYPEID,
-                           //approvalStatusId = valPre.APPROVALSTATUSID,
-                           approvalComment = atrail.COMMENT,
-                           systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
-                           approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == valPre.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
+                       {    
+                            narration = q.NARRATION,
+                            customerName = cus.FIRSTNAME + " " + cus.LASTNAME + " " + cus.MAIDENNAME,
+                            customerId = cus.CUSTOMERID,
+                            customerAccount = _context.TBL_CASA.Where(c=>c.CUSTOMERID == cus.CUSTOMERID).Select(c=>c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                            collateralCode = C.COLLATERALCODE,
+                            collateralType = _context.TBL_COLLATERAL_TYPE.Where(O => O.COLLATERALTYPEID == C.COLLATERALTYPEID).Select(O => O.COLLATERALTYPENAME).FirstOrDefault(),
+                            collateralValue = C.COLLATERALVALUE,
+                            collateralValuationId = q.COLLATERALVALUATIONID,
+                            collateralCustomerId = C.COLLATERALCUSTOMERID,
+                            currentApprovalLevelId = atrail.TOAPPROVALLEVELID,
+                            valuationComment = valPre.VALUATIONCOMMENT,
+                            valuationName = q.VALUATIONNAME,
+                            valuationReason = q.VALUATIONREASON,
+                            operationId = valPre.OPERATIONID,
+                            valuationPrerequisiteId = valPre.VALUATIONPREREQUISITEID,
+                            referenceNumber = valPre.REFERENCENUMBER,
+                            approvalStatusId = atrail.APPROVALSTATUSID,
+                            approvalTrailId = atrail.APPROVALTRAILID,
+                            valuationRequestTypeId = valPre.VALUATIONREQUESTTYPEID,
+                            //approvalStatusId = valPre.APPROVALSTATUSID,
+                            approvalComment = atrail.COMMENT,
+                            systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
+                            approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                            valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == valPre.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
                        }).ToList();
+
+            foreach(var v in res)
+            {
+                var detailIds = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == v.collateralCustomerId && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID);
+                var facilities = _context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).ToList();
+                v.facilityAmount = facilities.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            }
 
             //return res.GroupBy(O => O.collateralValuationId).Select(O => O.FirstOrDefault()).ToList();
             return res;
