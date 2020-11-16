@@ -2081,12 +2081,12 @@ namespace FintrakBanking.Repositories.Credit
                             isProposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),
                             companyId = companyId,
                             validTill = c.c.VALIDTILL,
-                            facilityAmount = (from a in context.TBL_LOAN_APPLICATION_COLLATERL join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONID == (int)c.c.LOANAPPLICATIONID select b.APPROVEDAMOUNT).FirstOrDefault(),
                             customerAccount = context.TBL_CASA.Where(x => x.CUSTOMERID == c.c.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
 
                         })
                         .ToList()
                         .GroupBy(x => x.collateralId).Select(g => g.First());
+                
             }
             else
             {
@@ -2102,7 +2102,6 @@ namespace FintrakBanking.Repositories.Credit
                     x => x.m.DefaultIfEmpty(),
                     (c, m) => new CollateralViewModel
                     {
-                        facilityAmount = (from a in context.TBL_LOAN_APPLICATION_COLLATERL join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONID == (int)c.c.LOANAPPLICATIONID select b.APPROVEDAMOUNT).FirstOrDefault(),
                         customerAccount = context.TBL_CASA.Where(x => x.CUSTOMERID == c.c.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                         collateralId = c.c.COLLATERALCUSTOMERID,
                         collateralTypeId = c.c.COLLATERALTYPEID,
@@ -2146,6 +2145,12 @@ namespace FintrakBanking.Repositories.Credit
 
 
             collaterals = ResolveCollateralValues(collaterals.ToList(), company);
+            foreach (var v in collaterals)
+            {
+                var detailIds = context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == v.collateralCustomerId && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID);
+                var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).ToList();
+                v.facilityAmount = facilities.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            }
             return collaterals.OrderByDescending(x => x.collateralId);
         }
 
