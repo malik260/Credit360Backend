@@ -476,6 +476,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? prepayment { get; set; }
         public int lmsOperationId { get; set; }
         public int lmsLoanApplicationId { get; set; }
+        public DateTime lmsdatecreated { get; set; }
 
 
 
