@@ -6713,13 +6713,13 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var customerRequest in models)
             {
-                assignOperations.createdBy = 7165;
+                assignOperations.createdBy = 11038;
                 assignOperations.accreditedConsultant = accreditedConsultant;
                 assignOperations.loanReferenceNumber = customerRequest.loanReferenceNumber;
                 assignOperations.expCompletionDate = expCompletionDate;
                 assignOperations.referenceId = referenceNumber;
                 assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Processing;
-                assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                assignOperations.operationId = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                 assignOperations.operationCompleted = false;
                 assignOperations.totalAmountRecovery = customerRequest.totalAmountRecovery;
                 assignOperations.source = source;
@@ -6742,7 +6742,7 @@ namespace FintrakBanking.Repositories.Credit
                 ACCREDITEDCONSULTANTID = accreditedConsultant,
                 REFERENCEBATCHID = referenceNumber,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
+                OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval,
                 REQUESTDATE = DateTime.Now,
                 SOURCE = source,
                 ASSIGNMENTTYPE = assignmentType
@@ -6753,12 +6753,12 @@ namespace FintrakBanking.Repositories.Credit
             using (TransactionScope transactionScope = new TransactionScope())
             {
 
-                workflow.StaffId = 7165;
+                workflow.StaffId = 11038;
                 workflow.CompanyId = 1;
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = removeLienOperation.BULKRECOVERYAPPROVALID;
                 workflow.Comment = "Kindly help approve the loan recovery assignment to agent";
-                workflow.OperationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                workflow.OperationId = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                 workflow.DeferredExecution = true;
                 workflow.ExternalInitialization = false;
 
