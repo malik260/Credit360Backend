@@ -20107,7 +20107,7 @@ namespace FintrakBanking.Repositories.Credit
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
 
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
-            var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication).Select(c => c.OPERATIONID).ToList();
+            var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)OperationsEnum.AssignRecoveryLoansToAgent).Select(c => c.OPERATIONID).ToList();
             List<int> ids = new List<int>();
 
             foreach (var operationId in operationIds)
