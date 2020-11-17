@@ -193,6 +193,7 @@
     LienRemoval = 261,
     AssignRecoveryLoansToAgent = 264,
     UnAssignRecoveryLoansFromAgent = 281,
+    RetailRecoveryAssignmentApproval = 283,
 
     ReversalOfPrepayment = 249,
     BulkLiquidation = 258,
