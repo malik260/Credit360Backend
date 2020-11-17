@@ -262,7 +262,7 @@ namespace FintrakBanking.Repositories.Credit
                        select new ValuationPrerequisiteViewModel
                        {
                            valuerId = x.VALUERID,
-                           valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.NAME).FirstOrDefault(),
+                           valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.FIRMNAME).FirstOrDefault(),
                            collateralValuationId = x.COLLATERALVALUATIONID,
                            valuationFee = x.VALUATIONFEE,
                            accountNumber = x.ACCOUNTNUMBER,
@@ -271,8 +271,8 @@ namespace FintrakBanking.Repositories.Credit
                            valuationReportId = x.VALUATIONREPORTID,
                            operationId = (int)OperationsEnum.CollateralValuationRequest,
                            omv = x.OMV,
-                           fsv = x.FSV
-
+                           fsv = x.FSV,
+                           whtAmount = x.WHTAMOUNT
                        };
             return data.ToList();
         }
@@ -840,6 +840,13 @@ namespace FintrakBanking.Repositories.Credit
             
             List<ValuationPrerequisiteViewModel> vals = new List<ValuationPrerequisiteViewModel>();
             vals.AddRange(valuations);
+
+            foreach (var v in vals)
+            {
+                var detailIds = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == v.collateralCustomerId && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID);
+                var facilities = _context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).ToList();
+                v.facilityAmount = facilities.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            }
             return vals;
         }
 
