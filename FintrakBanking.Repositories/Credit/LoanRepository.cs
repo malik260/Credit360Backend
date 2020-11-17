@@ -18593,7 +18593,7 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.expCompletionDate = expCompletionDate;
                     assignOperations.referenceId = referenceNumber;
                     assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Processing;
-                    assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                    assignOperations.operationId = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                     assignOperations.operationCompleted = false;
                     assignOperations.totalAmountRecovery = customerRequest.totalAmountRecovery; 
                     assignOperations.source = source;
@@ -18616,7 +18616,7 @@ namespace FintrakBanking.Repositories.Credit
                     ACCREDITEDCONSULTANTID = accreditedConsultant,
                     REFERENCEBATCHID = referenceNumber,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                    OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
+                    OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval,
                     REQUESTDATE = DateTime.Now,
                     SOURCE = source,
                     ASSIGNMENTTYPE = assignmentType
@@ -18631,7 +18631,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                     workflow.TargetId = removeLienOperation.BULKRECOVERYAPPROVALID;
                     workflow.Comment = "Kindly help approve the loan recovery assignment to agent";
-                    workflow.OperationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                    workflow.OperationId = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                     workflow.DeferredExecution = true;
                     workflow.ExternalInitialization = false;
 
@@ -18852,7 +18852,7 @@ namespace FintrakBanking.Repositories.Credit
                     validate.EXPCOMPLETIONDATE = model.expCompletionDate;
                     validate.REFERENCEID = referenceNumber;
                     validate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                    validate.OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                    validate.OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                     validate.OPERATIONCOMPLETED = false;
                     validate.SOURCE = model.source;
                     context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(validate);
@@ -18864,7 +18864,7 @@ namespace FintrakBanking.Repositories.Credit
                         ACCREDITEDCONSULTANTID = model.accreditedConsultant,
                         REFERENCEBATCHID = referenceNumber,
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                        OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
+                        OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval,
                         REQUESTDATE = DateTime.Now,
                         SOURCE = model.source
                     });
