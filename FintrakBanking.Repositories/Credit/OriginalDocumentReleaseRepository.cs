@@ -784,7 +784,7 @@ namespace FintrakBanking.Repositories.Credit
                         _workflow.CompanyId = entity.companyId;
                         _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                         _workflow.TargetId = cashRelease.CASHSECURITYRELEASEID;
-                        _workflow.Comment = "Update has been applied, Request for Guarantee Cash Release Approval";
+                        _workflow.Comment = entity.comment;
                         _workflow.OperationId = (int)OperationsEnum.GuaranteeReleaseApproval;
                         _workflow.DeferredExecution = true;
                         _workflow.LogActivity();
@@ -816,8 +816,8 @@ namespace FintrakBanking.Repositories.Credit
                         CUSTOMERID = entity.customerId,
                         LOANAPPLICATIONID =entity.loanApplicationId,
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                        COMMENT = "Request for Guarantee Cash Release Approval",
-                    };
+                        COMMENT = entity.comment,
+                };
                     try
                     {
                         _context.TBL_CASH_SECURITY_RELEASE_APPROVAL.Add(data);
@@ -830,7 +830,7 @@ namespace FintrakBanking.Repositories.Credit
                     _workflow.CompanyId = entity.companyId;
                     _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                     _workflow.TargetId = data.CASHSECURITYRELEASEID;
-                    _workflow.Comment = "Request for gurantee cash security release approval";
+                    _workflow.Comment = entity.comment;
                     _workflow.OperationId = (int)OperationsEnum.GuaranteeReleaseApproval;
                     _workflow.DeferredExecution = true;
                     _workflow.ExternalInitialization = true;
