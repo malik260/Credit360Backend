@@ -14885,6 +14885,7 @@ namespace FintrakBanking.Repositories.Credit
                         Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(customerSearchAccountNumber)).GetAwaiter().GetResult();
                         if (cust.Count() > 0)
                         {
+                        
                             foreach (var item in cust)
                             {
                                 item.userBranchId = entity.userBranchId;
@@ -14900,6 +14901,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 SaveCustomerAccounts(customer.CUSTOMERID, casaData);
                             }
+                        
                         }
 
                         if (customer == null) { throw new ConditionNotMetException("Third-party API call returned empty."); }

@@ -33764,13 +33764,13 @@ namespace FintrakBanking.Repositories.Credit
                                 <tr>
                                     <td><b>S/N</b></td>
                                     <td><b>Customer Name</b></td>
-                                    <td><b>Email/Phone Number</b></td>
                                     <td><b>Reference Number</b></td>
                                     <td><b>Product Name</b></td>
                                     <td><b>Recovery Account</b></td>
                                     <td><b>Total Recovery Amount</b></td>
                                     <td><b>Relationship Manager</b></td>
                                     <td><b>Expected Completion Date</b></td>
+                                    <td><b>Email/Phone Number</b></td>
                                 </tr>
                              ";
 

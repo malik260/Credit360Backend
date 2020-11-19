@@ -102,19 +102,23 @@ namespace FintrakBanking.Repositories.Customer
             int? maritalStatus = null;
             if (entity.customerTypeId == (short)CustomerTypeEnum.Individual)
             {
-                if (entity.maritalStatus.ToLower() == "s")
+                if (entity.maritalStatus == null)
+                {
+                    maritalStatus = 0;
+                }
+                else if (entity.maritalStatus.ToLower() == "s")
                 {
                     maritalStatus = 1;
                 }
-                if (entity.maritalStatus.ToLower() == "m")
+                else if(entity.maritalStatus.ToLower() == "m")
                 {
                     maritalStatus = 2;
                 }
-                if (entity.maritalStatus.ToLower() == "d")
+                else if(entity.maritalStatus.ToLower() == "d")
                 {
                     maritalStatus = 3;
                 }
-                if (entity.maritalStatus.ToLower() == "w")
+                else if(entity.maritalStatus.ToLower() == "w")
                 {
                     maritalStatus = 4;
                 }
