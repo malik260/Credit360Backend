@@ -23,6 +23,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int conditionId { get; set; }
         public DateTime? deferredDate { get; set; }
         public DateTime? dateCreated { get; set; }
+        public DateTime? systemArrivalDateTime { get; set; }
         public int deferralDuration { get; set; }
         public int cummulativeDays { get; set; }
 
@@ -46,5 +47,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string toApprovalLevelName { get; set; }
         public string fromApprovalLevelName { get; set; }
         public string comment { get; set; }
+        public string excludeLegal { get; set; }
     }
 }

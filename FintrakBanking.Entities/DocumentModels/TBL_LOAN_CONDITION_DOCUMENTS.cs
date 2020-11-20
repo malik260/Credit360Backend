@@ -39,5 +39,8 @@ namespace FintrakBanking.Entities.DocumentModels
         public int CREATEDBY { get; set; }
 
         public DateTime DATECREATED { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
+        public int? DELETEDBY { get; set; }
+        public bool DELETED { get; set; }
     }
 }

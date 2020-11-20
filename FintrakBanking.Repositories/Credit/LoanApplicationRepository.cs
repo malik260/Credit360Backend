@@ -3242,6 +3242,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
+            detail.EXCHANGERATE = update.exchangeRate;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
             detail.APPROVEDAMOUNT = update.proposedAmount;
             detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
@@ -4032,15 +4033,19 @@ namespace FintrakBanking.Repositories.Credit
             var exceptionalLoansForApproval = (from d in context.TBL_EXCEPTIONAL_LOAN_APPL_DETAIL
                                               join e in context.TBL_EXCEPTIONAL_LOAN_APPLICATION on d.EXCEPTIONALLOANAPPLICATIONID equals e.EXCEPTIONALLOANAPPLICATIONID
                                               join t in context.TBL_APPROVAL_TRAIL on d.EXCEPTIONALLOANAPPLDETAILID equals t.TARGETID
-                                              where (d.DELETED == false && t.OPERATIONID == (int)OperationsEnum.ExceptionalLoan
-                                               && d.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing
-                                               && t.APPROVALSTATEID != (int)ApprovalState.Ended
+                                              where d.DELETED == false && t.OPERATIONID == (int)OperationsEnum.ExceptionalLoan
+                                               && (d.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing
+                                               || t.APPROVALSTATEID != (int)ApprovalState.Ended
+                                               || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                               || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                                                && t.RESPONSESTAFFID == null
                                                && (t.LOOPEDSTAFFID == null || t.LOOPEDSTAFFID == staffId)
                                                && ((levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == null) || (!levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == staffId))
-                                               && (t.TOSTAFFID == null || t.TOSTAFFID == staffId))
+                                               && (t.TOSTAFFID == null || t.TOSTAFFID == staffId)
                                               select new LoanApplicationDetailViewModel
                                               {
+                                                  customerName = context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == e.CUSTOMERID).Select(c=>c.FIRSTNAME + " "+ c.MIDDLENAME + " "+ c.LASTNAME).FirstOrDefault(),
+                                                  loanApplicationId = e.EXCEPTIONALLOANAPPLICATIONID,
                                                   dateTimeCreated = d.DATETIMECREATED,
                                                   proposedAmount = d.PROPOSEDAMOUNT,
                                                   proposedInterestRate = d.PROPOSEDINTERESTRATE,
@@ -4090,6 +4095,19 @@ namespace FintrakBanking.Repositories.Credit
                                                   approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME.ToUpper(),
                                               }).GroupBy(d => d.loanApplicationDetailId)
                                                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault()).ToList();
+            foreach(var x in exceptionalLoansForApproval)
+            {
+                var templateExist = context.TBL_DOC_TEMPLATE_DETAIL.Where(p => p.TARGETID == x.loanApplicationId && p.OPERATIONID == (int)OperationsEnum.ExceptionalLoan).ToList();
+                if (templateExist.Any())
+                {
+                    x.isTemplateUploaded = true;
+                }
+                else
+                {
+                    x.isTemplateUploaded = false;
+                }
+                 
+            }
             return exceptionalLoansForApproval;
         }
 
@@ -4122,7 +4140,7 @@ namespace FintrakBanking.Repositories.Credit
             //workflow.BusinessUnitId = c?.BUSINESSUNTID;
             workflow.DeferredExecution = true;
             workflow.LogActivity();
-
+            context.SaveChanges();
             string loanAppReference = "";
             WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
 
@@ -4133,10 +4151,18 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
                 {
-                    cs.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                    workflow.SetResponse = true;
-                    loanAppReference = SaveExceptionalLoanApplication(model.loanApplicationDetailId);
-                }
+                    //try
+                    //{
+                        cs.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        workflow.SetResponse = true;
+                        loanAppReference = SaveExceptionalLoanApplication(model.loanApplicationDetailId);
+
+
+                    //}catch(Exception e)
+                    //{
+                    //    throw e;
+                    //}
+                    }
                 else
                 {
                     cs.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
@@ -7662,6 +7688,17 @@ namespace FintrakBanking.Repositories.Credit
             val.LASTUPDATEDBY = data.createdBy;
             val.DATETIMEUPDATED = DateTime.Now;
             ArchiveLoanApplication(data.loanApplicationId, (int)OperationsEnum.LoanApplicationCancellation, val.APPLICATIONSTATUSID, data.createdBy);
+            var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == data.createdBy);
+            var lastTrail = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == val.LOANAPPLICATIONID && t.OPERATIONID == val.OPERATIONID).OrderByDescending(t => t.APPROVALTRAILID).FirstOrDefault();
+            if (lastTrail != null)
+            {
+                lastTrail.RESPONSEDATE = genSetup.GetApplicationDate();
+                lastTrail.SYSTEMRESPONSEDATETIME = DateTime.Now;
+                lastTrail.RESPONSESTAFFID = data.createdBy;
+                lastTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                lastTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                lastTrail.COMMENT += " Loan was Cancelled by " + staff.STAFFCODE + " Reason being : " + data.cancellationReason;
+            }
 
             var audit = new TBL_AUDIT
             {

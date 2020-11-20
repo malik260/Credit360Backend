@@ -1781,16 +1781,39 @@ namespace FintrakBanking.APICore.Controllers
             user.companyId = token.GetCompanyId;
             user.createdBy = token.GetStaffId;
 
-            bool data = repo.saveBulkLoanUnAssignmentToAgent(model, user);
+            WorkflowResponse data = repo.saveBulkLoanUnAssignmentToAgent(model, user);
 
-            if (data)
+            if (data != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Un-Assignment successfully" });
+                    new { success = true, message = data.responseMessage });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
-                new { success = false, message = "saving loan recovery re-assignment unsuccessfully" });
+                new { success = false, message = "saving loan recovery unassignment unsuccessfully" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-retail-loan-recovery-un-assignment")]
+        public HttpResponseMessage saveRetailBulkLoanUnAssignmentToAgent([FromBody] LoanRecoveryAssignmentViewModel model)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.saveRetailBulkLoanUnAssignmentToAgent(model, user);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery unassignment unsuccessfully" });
         }
 
         [HttpPost]
@@ -1828,16 +1851,39 @@ namespace FintrakBanking.APICore.Controllers
             user.companyId = token.GetCompanyId;
             user.createdBy = token.GetStaffId;
 
-            bool data = repo.saveMultipleLoanUnAssignmentToAgent(model, user);
+            WorkflowResponse data = repo.saveMultipleLoanUnAssignmentToAgent(model, user);
 
-            if (data)
+            if (data != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Un-Assignment successfully" });
+                    new { success = true, message = data.responseMessage });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
-                new { success = false, message = "saving loan recovery re-assignment unsuccessfully" });
+                new { success = false, message = "saving loan recovery unassignment unsuccessfully" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("multiple-retail-loan-recovery-un-assignment")]
+        public HttpResponseMessage saveMultipleRetailLoanUnAssignmentToAgent([FromBody] List<LoanRecoveryAssignmentViewModel> model)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.saveMultipleRetailLoanUnAssignmentToAgent(model, user);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery unassignment unsuccessfully" });
         }
 
         [HttpPost]

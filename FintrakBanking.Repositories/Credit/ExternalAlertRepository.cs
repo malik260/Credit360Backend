@@ -6713,13 +6713,13 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var customerRequest in models)
             {
-                assignOperations.createdBy = 7165;
+                assignOperations.createdBy = 10065;
                 assignOperations.accreditedConsultant = accreditedConsultant;
                 assignOperations.loanReferenceNumber = customerRequest.loanReferenceNumber;
                 assignOperations.expCompletionDate = expCompletionDate;
                 assignOperations.referenceId = referenceNumber;
                 assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Processing;
-                assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                assignOperations.operationId = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                 assignOperations.operationCompleted = false;
                 assignOperations.totalAmountRecovery = customerRequest.totalAmountRecovery;
                 assignOperations.source = source;
@@ -6742,7 +6742,7 @@ namespace FintrakBanking.Repositories.Credit
                 ACCREDITEDCONSULTANTID = accreditedConsultant,
                 REFERENCEBATCHID = referenceNumber,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
+                OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval,
                 REQUESTDATE = DateTime.Now,
                 SOURCE = source,
                 ASSIGNMENTTYPE = assignmentType
@@ -6752,22 +6752,27 @@ namespace FintrakBanking.Repositories.Credit
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
+                try
+                {
+                    workflow.StaffId = 10065;
+                    workflow.CompanyId = 1;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = removeLienOperation.BULKRECOVERYAPPROVALID;
+                    workflow.Comment = "Kindly help approve the loan recovery assignment to agent";
+                    workflow.OperationId = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = false;
 
-                workflow.StaffId = 7165;
-                workflow.CompanyId = 1;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = removeLienOperation.BULKRECOVERYAPPROVALID;
-                workflow.Comment = "Kindly help approve the loan recovery assignment to agent";
-                workflow.OperationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
-                workflow.DeferredExecution = true;
-                workflow.ExternalInitialization = false;
+                    var response = workflow.LogActivity();
+                    context.SaveChanges();
 
-                var response = workflow.LogActivity();
-                context.SaveChanges();
+                    transactionScope.Complete();
 
-                transactionScope.Complete();
-
-                transactionScope.Dispose();
+                    transactionScope.Dispose();
+                }catch(Exception e)
+                {
+                    throw e;
+                }
             }
             if (resultStatus > 0)
             {
@@ -6890,15 +6895,21 @@ namespace FintrakBanking.Repositories.Credit
                     var customerRecordsExternal = GetLoanOperationRecoveryAnalysisExternal(record.customerId).ToList();
                     if (recoveryAgents.Count() > 0 && (customerRecordsInternal.Count() > 0 || customerRecordsExternal.Count() > 0))
                     {
-                        var consultant = recoveryAgents.ElementAt(0).accreditedConsultantId;
-                        var category = recoveryAgents.ElementAt(0).category;
-                        if (category.ToLower() == "internal" && customerRecordsInternal.Count() > 0)
+                        try
                         {
-                            saveBulkLoanAssignmentToAgent(customerRecordsInternal, consultant, DateTime.Now, "RETAIL", "AUTO");
-                        }
-                        else if (category.ToLower() == "external" && customerRecordsExternal.Count() > 0)
+                            var consultant = recoveryAgents.ElementAt(0).accreditedConsultantId;
+                            var category = recoveryAgents.ElementAt(0).category;
+                            if (category.ToLower() == "internal" && customerRecordsInternal.Count() > 0)
+                            {
+                                saveBulkLoanAssignmentToAgent(customerRecordsInternal, consultant, DateTime.Now, "RETAIL", "AUTO");
+                            }
+                            else if (category.ToLower() == "external" && customerRecordsExternal.Count() > 0)
+                            {
+                                saveBulkLoanAssignmentToAgent(customerRecordsExternal, consultant, DateTime.Now, "RETAIL", "AUTO");
+                            }
+                        }catch(Exception e)
                         {
-                            saveBulkLoanAssignmentToAgent(customerRecordsExternal, consultant, DateTime.Now, "RETAIL", "AUTO");
+                            throw e;
                         }
                     }
 

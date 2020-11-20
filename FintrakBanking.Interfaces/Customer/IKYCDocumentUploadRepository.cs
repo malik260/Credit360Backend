@@ -9,7 +9,8 @@ namespace FintrakBanking.Interfaces.Customer
 {
    public interface IKYCDocumentUploadRepository
     {
-      
+        bool DeleteConditionDocumentBydocumentId(int documentId, int staffId);
+        IEnumerable<ConditionsPrecedentUploadViewModel> GetDeletedLoanConditionDocumentByContionId(int conditionId);
         IEnumerable<CustomerDocumentUploadViewModel> GetKYCDocumentUploadByCustomerId(int customerId);
         bool KYCDocumentUpload(CustomerDocumentUploadViewModel model, byte[] file);
 

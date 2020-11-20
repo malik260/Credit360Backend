@@ -73,6 +73,7 @@ namespace FintrakBanking.Repositories.Media
                         applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                         referenceNumber = x.REFERENCENUMBER,
                         dateTimeCreated = x.DATETIMECREATED,
+                        systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                         approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
@@ -86,6 +87,7 @@ namespace FintrakBanking.Repositories.Media
                         collateralCustomerId = x.COLLATERALCUSTOMERID,
                         isOriginalTitleDocument = x.ISORIGINALTITLEDOCUMENT,
                         isOriginalTitleDocumentString = x.ISORIGINALTITLEDOCUMENT ? "Yes" : "No",
+
                         //applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                         //customerId = x.COLLATERALCUSTOMERID,
                         //operationId = (int)OperationsEnum.OriginalDocumentApproval,
@@ -112,6 +114,7 @@ namespace FintrakBanking.Repositories.Media
 
                     select new OriginalDocumentApprovalViewModel
                     {
+                        approvalTrailId = atrail.APPROVALTRAILID,
                         originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
                         loanApplicationId = x.LOANAPPLICATIONID,
                         description = x.DESCRIPTION,
@@ -129,6 +132,7 @@ namespace FintrakBanking.Repositories.Media
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                         operationId = atrail.OPERATIONID,
                         approvalDate = x.APPROVALDATE,
+                        isOriginalTitleDocumentString = x.ISORIGINALTITLEDOCUMENT == true ? "Yes" : "No",
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == c.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                         createdBy = x.CREATEDBY,
                         createdByName = context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
@@ -138,7 +142,7 @@ namespace FintrakBanking.Repositories.Media
                     });
 
             var result = data.GroupBy(r => r.originalDocumentApprovalId)
-                               .Select(r => r.FirstOrDefault()).ToList();
+                               .Select(p => p.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
 
             return result;
         }
@@ -326,6 +330,7 @@ namespace FintrakBanking.Repositories.Media
                               dateTimeCreated = oda.DATETIMECREATED,
                               collateralCustomerId = cc.COLLATERALCUSTOMERID,
                               customerId = c.CUSTOMERID,
+                              businessUnit = c.BUSINESSUNTID,
                               branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                               operationId = (int)OperationsEnum.OriginalDocumentApproval,
                               approvalStatusId = atrail.APPROVALSTATUSID,

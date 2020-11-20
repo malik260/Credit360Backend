@@ -589,6 +589,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatus { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public string currentApprovalLevel { get; set; }
+        public bool isTemplateUploaded { get; set; }
 
         // public int? loanreViewApplicationId { get; set; }
     }

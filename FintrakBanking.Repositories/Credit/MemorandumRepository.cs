@@ -70,8 +70,8 @@ namespace FintrakBanking.Repositories.Credit
         List<TBL_LMSR_APPLICATION_DETAIL> customerFacilitiesLms = null;
         List<CurrentCustomerExposure> globalExposure = new List<CurrentCustomerExposure>();
         int customerId;
-        //private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
-        private List<int> lmsCamOperationIds = new List<int>();
+        private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
+        //private List<int> lmsCamOperationIds = new List<int>();
         private long legalLendingLimit;
         //private long legalLendingLimit = 200000000000;
         
@@ -156,6 +156,7 @@ namespace FintrakBanking.Repositories.Credit
 
         // for output document 
         private readonly string memoHolder = "@{{memoData}}";
+        private readonly string exceptionMemoHolder = "@{{exceptionMemoData}}";
         private readonly string facilityUpgradeSupportSchemeHolder = "@{{facilityUpgradeSupportSchemeData}}";
         private readonly string invoiceDiscountingDataHolder = "@{{invoiceDiscountingData}}";
         private readonly string cashCollaterizedDataHolder = "@{{cashCollaterizedData}}";
@@ -378,6 +379,7 @@ namespace FintrakBanking.Repositories.Credit
 
         // out ducument properties definition
         private string memoData;
+        private string exceptionMemoData;
         private string facilityUpgradeSupportSchemeData;
         private string invoiceDiscountingData;
         private string cashCollaterizedData;
@@ -552,6 +554,7 @@ namespace FintrakBanking.Repositories.Credit
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
 
                 this.memoData = MemoMarkupHtml();
+                
                 this.facilityUpgradeSupportSchemeData = FacilityUpgradeSupportSchemeHtml();
                 this.invoiceDiscountingData = InvoiceDiscountingHtml();
                 this.cashCollaterizedData = CashCollaterizedHtml();
@@ -664,7 +667,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 this.globalExposure = GetExposuresLMS();
                 this.groupExposure = GetGroupExposureMarkupLMS();
-                this.approvals = GetApprovalsMarkup();
+                //this.approvals = GetApprovalsMarkup();
+                this.approvals = GetLMSApprovalsMarkup(this.lmsrApplication.LOANAPPLICATIONID, this.lmsrApplication.OPERATIONID);
                 this.currentDate = DateTime.Now.ToShortDateString();
                 this.annualReviewDate = this.lmsrApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.securityAnalysis = GetSecurityAnalysisMarkUP();
@@ -935,6 +939,7 @@ namespace FintrakBanking.Repositories.Credit
             this.targetId = targetId;
             this.operationId = operationId;
             this.isThirdPartyFacility = true;
+            this.lmsCamOperationIds = context.TBL_OPERATIONS.Where(o => o.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication).Select(o => o.OPERATIONID).ToList();
             if (lmsCamOperationIds.Contains(operationId)) // LMS
             {
                 if (lmsrApplication == null)
@@ -4747,6 +4752,39 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
+        private string GetLMSApprovalsMarkup(int targetId, int operationId)
+        {
+            var appraisals = GenericLMSApprovalTrail(targetId, operationId).OrderBy(a => a.approvalTrailId).ToList();
+            var result = String.Empty;
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
+                        <th><b>Comment</b></th>
+                        <th><b>Date</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
+
+
         //private string GetApprovalsMarkupForAllLOS(int targetId)
         //{
         //    var appraisals = GetAppraisalMemorandumTrail(targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
@@ -5849,6 +5887,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // for output document          
             content = content.Replace(memoHolder, memoData);
+            content = content.Replace(exceptionMemoHolder, exceptionMemoData);
             content = content.Replace(facilityUpgradeSupportSchemeHolder, facilityUpgradeSupportSchemeData);
             content = content.Replace(invoiceDiscountingDataHolder, invoiceDiscountingData);
             content = content.Replace(cashCollaterizedDataHolder, cashCollaterizedData);
@@ -12269,6 +12308,7 @@ namespace FintrakBanking.Repositories.Credit
                                 && pr.EXCLUDEFROMLITIGATION == false
                                 && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 && lr.REFERENCEID == referenceId
+                                && lr.DELETED == false
 
                                 select new LoanReviewOperationApprovalViewModel
                                 {
@@ -12296,6 +12336,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && pr.EXCLUDEFROMLITIGATION == false
                                          && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                          && lr.REFERENCEID == referenceId
+                                         && lr.DELETED == false
 
                                          select new LoanReviewOperationApprovalViewModel
                                          {
@@ -12360,6 +12401,356 @@ namespace FintrakBanking.Repositories.Credit
 
             return true;
         }
+
+        public string ExceptionMemoMarkupHtml(int customerId, int loanApplicationId, int company)
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h3><b>MEMO</b></h3>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
+                    <tr>
+                        <td><b>Date</b></td>
+                        <td>{DateTime.UtcNow}</td>
+                    </tr>
+                    <tr>
+                        <td><b>To:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>From:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Location:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Subject:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>No. Of Pages:</b></td>
+                        <td></td>
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            result = result + $@" 
+                    <p></p>
+                    <p><b>1. BACKGROUND</b></p>
+                    <p></p>
+                    <p><b>2. COLLATERAL</b></p>
+                    <p>{GetAllExceptionCustomerCollateralsMarkup(customerId, loanApplicationId, company)}</p>
+                    <p><b>3. ACCOUNT STATUS/ANALYSIS</b></p>
+                    <p>{ExceptionCustomerAccountActivityHtml(customerId, loanApplicationId)}</p>
+                    <p><b>4. ISSUES</b></p>
+                    <p></p>
+                    <p><b>5. CURRENT UPDATES</b></p>
+                    <p></p>
+                    <p><b>6. REQUEST/RECOMMENDATION</b></p>
+                    <p></p>
+                    <p><b>7. JUSTIFICATION</b></p>";
+            return result;
+        }
+
+
+        public bool InitForExceptionalLoans(int operationId, int targetId) // feeder
+        {
+            this.targetId = targetId;
+            this.operationId = operationId;
+                var exceptionalLoan = context.TBL_EXCEPTIONAL_LOAN_APPLICATION.Find(targetId);
+                var exceptionalLoanDetail = context.TBL_EXCEPTIONAL_LOAN_APPL_DETAIL.Where(x=>x.EXCEPTIONALLOANAPPLICATIONID == exceptionalLoan.EXCEPTIONALLOANAPPLICATIONID).Select(x=>x).FirstOrDefault();
+                this.interestRate = exceptionalLoanDetail.PROPOSEDINTERESTRATE;
+                this.customerRecord = context.TBL_CUSTOMER.Find(exceptionalLoanDetail.CUSTOMERID);
+                if (customerRecord != null) this.customerName = customerRecord.FIRSTNAME + " " + customerRecord.MIDDLENAME + " " + customerRecord.LASTNAME;
+                var customerFacilitiesLms = context.TBL_EXCEPTIONAL_LOAN_APPL_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == customerRecord.CUSTOMERID).ToList();
+                this.tenor = exceptionalLoanDetail.PROPOSEDTENOR;
+                this.branchName = context.TBL_BRANCH.Find(exceptionalLoan.BRANCHID).BRANCHNAME;
+                this.locationName = context.TBL_BRANCH.Find(exceptionalLoan.BRANCHID).ADDRESSLINE1 + " " + context.TBL_BRANCH.Find(exceptionalLoan.BRANCHID).ADDRESSLINE2;
+                this.dateCreated = exceptionalLoan.DATETIMECREATED.ToShortDateString();
+                this.rmCountry = context.TBL_COMPANY.Find(exceptionalLoan.COMPANYID).TBL_COUNTRY.NAME;
+                
+                this.reviewType = "Annual";
+                this.businessSectors = GetExceptionBusinessSectorsMarkup(customerRecord.CUSTOMERID);
+                this.approvals = GetExceptionalApprovalsMarkup(exceptionalLoanDetail.EXCEPTIONALLOANAPPLDETAILID, operationId);
+                this.currentDate = DateTime.Now.ToShortDateString();
+               this.exceptionMemoData = ExceptionMemoMarkupHtml(this.customerRecord.CUSTOMERID, exceptionalLoan.EXCEPTIONALLOANAPPLICATIONID, exceptionalLoan.COMPANYID);
+
+            if (this.customerIds?.Count > 0)
+            {
+                this.accountNumbers = AccountNumbersMarkup(this.customerIds?.Select(x => x.customerId).ToList());
+            }
+
+            this.approvalLevel = GetApprovalLevel();
+
+            return true;
+        }
+
+        private string GetAllExceptionCustomerCollateralsMarkup(int customerId, int loanApplicationId, int company)
+        {
+            var result = String.Empty;
+            var remark = string.Empty;
+            
+                var customerCollaterals = GetExceptionCustomerCollateral(customerId, loanApplicationId, company);
+
+                result += $@"
+                        <ul>
+                        ";
+                foreach (var cc in customerCollaterals)
+                {
+                    result += $@"
+                            <li>{cc.collateralSummary}</li>
+                        ";
+                }
+                result += $@"
+                        </ul>
+                        ";
+            
+            return result;
+        }
+
+        public IEnumerable<CollateralViewModel> GetExceptionCustomerCollateral(int customerId, int? applicationId, int companyId)
+        {
+            var typeIds = new List<int>();
+            var company = context.TBL_COMPANY.Find(companyId);
+            var baseCurrencyId = company.TBL_CURRENCY.CURRENCYID;
+            bool disAllowCollateral = false;
+            bool isForiegnCurrencyFacility = false;
+            var productIds = new List<short>();
+            if (applicationId != null && applicationId != 0)
+            {
+                
+                    productIds = context.TBL_EXCEPTIONAL_LOAN_APPL_DETAIL
+                    .Where(x => x.EXCEPTIONALLOANAPPLICATIONID == applicationId)
+                    .Select(x => x.PROPOSEDPRODUCTID)
+                    .Distinct().ToList();
+                    isForiegnCurrencyFacility = context.TBL_EXCEPTIONAL_LOAN_APPL_DETAIL.Where(x => x.CURRENCYID != company.CURRENCYID).Any();
+                
+
+                typeIds = context.TBL_PRODUCT_COLLATERALTYPE.Where(x => productIds.Contains(x.PRODUCTID))
+                   .Select(x => x.COLLATERALTYPEID)
+                   .Distinct().ToList();
+
+            }
+
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId)
+                .GroupJoin(
+                    context.TBL_LOAN_COLLATERAL_MAPPING,
+                    c => c.COLLATERALCUSTOMERID,
+                    lc => lc.COLLATERALCUSTOMERID,
+                    (c, lc) => new { c, m = lc }
+                )
+                .SelectMany
+                (
+                    x => x.m.DefaultIfEmpty(),
+                    (c, m) => new CollateralViewModel
+                    {
+                        collateralId = c.c.COLLATERALCUSTOMERID,
+                        collateralTypeId = c.c.COLLATERALTYPEID,
+                        collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
+                        customerId = c.c.CUSTOMERID,
+                        customerCode = c.c.CUSTOMERCODE,
+                        customerName = c.c.TBL_CUSTOMER.FIRSTNAME + c.c.TBL_CUSTOMER.MIDDLENAME + c.c.TBL_CUSTOMER.LASTNAME,
+                        currencyId = c.c.CURRENCYID,
+                        currencyCode = c.c.TBL_CURRENCY.CURRENCYCODE,
+                        baseCurrencyId = company.CURRENCYID,
+                        baseCurrencyCode = (c.c.CURRENCYID == baseCurrencyId) ? "" : company.TBL_CURRENCY.CURRENCYCODE,//so that only fcy will show
+                        currency = c.c.TBL_CURRENCY.CURRENCYNAME,
+                        disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
+                        collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                        collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == c.c.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                        collateralCode = c.c.COLLATERALCODE,
+                        collateralValue = c.c.COLLATERALVALUE,
+                        camRefNumber = c.c.CAMREFNUMBER,
+                        allowSharing = c.c.ALLOWSHARING,
+                        isLocationBased = c.c.ISLOCATIONBASED ?? false,
+                        valuationCycle = c.c.VALUATIONCYCLE,
+                        haircut = c.c.HAIRCUT,
+                        approvalStatusName = c.c.APPROVALSTATUS,
+                        allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
+                        requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
+                        exchangeRate = c.c.EXCHANGERATE,
+                        collateralReleaseStatusId = c.c.COLLATERALRELEASESTATUSID,
+                        collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == c.c.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
+                        accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
+                        collateralUsageStatus = c.c.COLLATERALUSAGESTATUSID,
+                        loanApplicationId = applicationId, //c.c.LOANAPPLICATIONID,
+                        collateralSummary = c.c.COLLATERALSUMMARY,
+                        isMapped = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),
+                        isProposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),
+                        companyId = companyId,//remark = c.c.
+                        validTill = c.c.VALIDTILL,
+                    })
+                    .ToList()
+                    .GroupBy(x => x.collateralId).Select(g => g.First());
+
+            return collaterals.OrderByDescending(x => x.collateralId);
+        }
+
+        private string GetExceptionBusinessSectorsMarkup(int customerId)
+        {
+            var result = String.Empty;
+            string sectorName;
+            var cust = context.TBL_CUSTOMER.Find(customerId);
+            sectorName = context.TBL_SUB_SECTOR.Find(cust.SUBSECTORID)?.TBL_SECTOR.NAME;
+            result += sectorName;
+            return result;
+        }
+
+        private string GetExceptionalApprovalsMarkup(int targetId, int operationId)
+        {
+            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,true).OrderBy(a => a.approvalTrailId).ToList();
+            var result = String.Empty;
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
+                        <th><b>Comment</b></th>
+                        <th><b>Date</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
+
+        public string ExceptionCustomerAccountActivityHtml(int customerId, int loanApplicationId)
+        {
+            var accountActivity = GetCustomerTransactions(customerId, loanApplicationId, false);
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h4><b>Account Activity with Current (Major) Banker per period of 6 months</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Account Number</b></th>
+                        <th><b>Product Account Name</b></th>
+                        <th><b>Period</b></th>
+                        <th><b>Max Debit Balance</b></th>
+                        <th><b>Min Debit Balance</b></th>
+                        <th><b>Max Credit Balance</b></th>
+                        <th><b>Min Credit Balance</b></th>
+                        <th><b>Debit Turnover</b></th>
+                        <th><b>Credit Turnover</b></th>
+                        <th><b>Month</b></th>
+                        <th><b>Year</b></th>
+                    </tr>";
+            foreach (var f in accountActivity)
+            {
+                result = result + $@"
+                        <tr>
+                        <td> {f.accountNumber}</td>
+                        <td> {f.productAccountName}</td>
+                        <td> {f.period}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.max_Debit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.min_Debit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.max_Credit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.min_Credit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.debit_Turnover))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.credit_Turnover))}</td>
+                        <td> {f.month}</td>
+                        <td> {f.year}</td>
+                    </tr>";
+
+            }
+
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+
+
+        public IEnumerable<ApprovalTrailViewModel> GenericLMSApprovalTrail(int targetId, int operationId)
+        {
+
+            var staffRoles = context.TBL_STAFF_ROLE.ToList();
+            var staffs = from s in context.TBL_STAFF select s;
+
+            var allstaff = this.GetAllStaffNames();
+
+            var data = (from x in context.TBL_APPROVAL_TRAIL
+                        where
+                        x.OPERATIONID == operationId
+                        && x.TARGETID == targetId
+                        select new ApprovalTrailViewModel
+                        {
+                            approvalTrailId = x.APPROVALTRAILID,
+                            comment = x.COMMENT,
+                            vote = x.VOTE,
+                            targetId = x.TARGETID,
+                            arrivalDate = x.ARRIVALDATE,
+                            systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                            responseDate = x.RESPONSEDATE,
+                            systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                            responseStaffId = x.RESPONSESTAFFID,
+                            requestStaffId = x.REQUESTSTAFFID,
+                            fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                            fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                            toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                            toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
+                            approvalStateId = x.APPROVALSTATEID,
+                            approvalStatusId = x.APPROVALSTATUSID,
+                            commentStage = "Credit Appaisal",
+                            approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                            approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                            toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                            fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+                        }).OrderByDescending(x => x.approvalTrailId).ToList();
+
+            var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => x).FirstOrDefault();
+            var reviewDetail = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWAPPLICATIONID == applicationDetail.LOANREVIEWAPPLICATIONID).Select(x => x).FirstOrDefault();
+            //data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalOfferLetter, "Offer Letter"));
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalAvailment, "Availment"));
+            if (reviewDetail != null)
+            {
+                data.AddRange(GetNonAppraisalTrail(reviewDetail.LOANREVIEWOPERATIONID, reviewDetail.OPERATIONTYPEID, "Credit Operations"));
+            }
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewDrawdownForExtension, "Loan Review Drawdown"));
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.ContingentReviewDrawdownForExtension, "Contingent Review Drawdown"));
+            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.OverdraftReviewDrawdownForExtension, "Overdraft Review Drawdown"));
+
+            data.OrderByDescending(d => d.approvalTrailId);
+            foreach (var d in data)
+            {
+
+                if (d.fromApprovalLevelId == d.toApprovalLevelId)
+                {
+                    if (d.loopedStaffId > 0)
+                    {
+                        d.toApprovalLevelName = staffs.FirstOrDefault(s => s.STAFFID == d.loopedStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
+                    }
+                    else
+                    {
+                        d.fromApprovalLevelName = staffs.FirstOrDefault(s => s.STAFFID == d.requestStaffId).TBL_STAFF_ROLE.STAFFROLENAME;
+                    }
+                }
+            }
+
+            return data;
+        }
+
 
     }
 }
