@@ -2237,9 +2237,10 @@ namespace FintrakBanking.Repositories.Credit
             if (getAll)
             {
                 data.AddRange(GetNonAppraisalTrail(applicationId, (short)OperationsEnum.OfferLetterApproval, "Offer Letter"));
-                data.AddRange(GetNonAppraisalTrail(applicationId, (short)OperationsEnum.LoanAvailment, "Availment"));
+                //data.AddRange(GetNonAppraisalTrail(applicationId, (short)OperationsEnum.LoanAvailment, "Availment"));
 
-                foreach (var t in data.ToList())
+                //foreach (var t in data.ToList())
+                if(application != null)
                 {
                     var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId).ToList();
                     foreach (var f in facilities)
