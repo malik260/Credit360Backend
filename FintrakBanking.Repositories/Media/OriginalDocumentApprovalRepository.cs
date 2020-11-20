@@ -114,6 +114,7 @@ namespace FintrakBanking.Repositories.Media
 
                     select new OriginalDocumentApprovalViewModel
                     {
+                        approvalTrailId = atrail.APPROVALTRAILID,
                         originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
                         loanApplicationId = x.LOANAPPLICATIONID,
                         description = x.DESCRIPTION,
@@ -140,7 +141,7 @@ namespace FintrakBanking.Repositories.Media
                     });
 
             var result = data.GroupBy(r => r.originalDocumentApprovalId)
-                               .Select(r => r.FirstOrDefault()).ToList();
+                               .Select(p => p.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
 
             return result;
         }

@@ -4140,7 +4140,7 @@ namespace FintrakBanking.Repositories.Credit
             //workflow.BusinessUnitId = c?.BUSINESSUNTID;
             workflow.DeferredExecution = true;
             workflow.LogActivity();
-
+            context.SaveChanges();
             string loanAppReference = "";
             WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
 
@@ -4151,10 +4151,18 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
                 {
-                    cs.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                    workflow.SetResponse = true;
-                    loanAppReference = SaveExceptionalLoanApplication(model.loanApplicationDetailId);
-                }
+                    //try
+                    //{
+                        cs.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        workflow.SetResponse = true;
+                        loanAppReference = SaveExceptionalLoanApplication(model.loanApplicationDetailId);
+
+
+                    //}catch(Exception e)
+                    //{
+                    //    throw e;
+                    //}
+                    }
                 else
                 {
                     cs.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
