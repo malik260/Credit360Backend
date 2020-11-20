@@ -31,5 +31,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public int accountOfficer { get; set; }
         public int targetId { get; set; }
+        public string excludeLegal { get; set; }
     }
 }

@@ -297,8 +297,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("loan-conditions-precedent-documentId/")]
+        [HttpGet] [ClaimsAuthorization]  
+        [Route("loan-conditions-precedent-documentId/{documentId}")]
         public HttpResponseMessage GetLoanConditionDocumentBydocumentId(int documentId)
         {
             try

@@ -217,7 +217,7 @@ namespace FintrakBanking.Repositories.Credit
                        select new ValuationPrerequisiteViewModel
                        {
                            valuerId = x.VALUERID,
-                           valuer =  _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.NAME).FirstOrDefault(),
+                           valuer =  _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.FIRMNAME).FirstOrDefault(),
                            collateralValuationId = x.COLLATERALVALUATIONID,
                            valuationFee = x.VALUATIONFEE,
                            accountNumber = x.ACCOUNTNUMBER,
@@ -240,7 +240,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new ValuationPrerequisiteViewModel
                         {
                             valuerId = x.VALUERID,
-                            valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.NAME).FirstOrDefault(),
+                            valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.FIRMNAME).FirstOrDefault(),
                             collateralValuationId = x.COLLATERALVALUATIONID,
                             valuationFee = x.VALUATIONFEE,
                             accountNumber = x.ACCOUNTNUMBER,
@@ -286,7 +286,7 @@ namespace FintrakBanking.Repositories.Credit
                        select new ValuationPrerequisiteViewModel
                        {
                            valuerId = x.VALUERID,
-                           valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.NAME).FirstOrDefault(),
+                           valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.FIRMNAME).FirstOrDefault(),
                            collateralValuationId = x.COLLATERALVALUATIONID,
                            valuationFee = x.VALUATIONFEE,
                            accountNumber = x.ACCOUNTNUMBER,
@@ -900,8 +900,8 @@ namespace FintrakBanking.Repositories.Credit
                             letterBody = letterBody.Replace("@{{month}}", DateTime.Now.Month.ToString());
                             letterBody = letterBody.Replace("@{{year}}", DateTime.Now.Year.ToString());
                             letterBody = letterBody.Replace("@{{referenceNumber}}", prereqisite?.REFERENCENUMBER);
-                            letterBody = letterBody.Replace("@{{letterDate}}", DateTime.Now.ToString("MM-DD-YYYY"));
-                            letterBody = letterBody.Replace("@{{nameAndAddress}}", valuerDetail?.FIRMNAME + " " + valuerDetail?.ADDRESS);
+                            letterBody = letterBody.Replace("@{{letterDate}}", DateTime.Now.ToString("dd-MM-yyyy"));
+                            letterBody = letterBody.Replace("@{{nameAndAddress}}", valuerDetail?.FIRMNAME + "</br>" + valuerDetail?.ADDRESS);
                             letterBody = letterBody.Replace("@{{assetType}}", collateralType?.COLLATERALTYPENAME);
                             letterBody = letterBody.Replace("@{{customerName}}", customer);
                             letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
@@ -947,8 +947,8 @@ namespace FintrakBanking.Repositories.Credit
                         letterBody = letterBody.Replace("@{{month}}", DateTime.Now.Month.ToString());
                         letterBody = letterBody.Replace("@{{year}}", DateTime.Now.Year.ToString());
                         letterBody = letterBody.Replace("@{{referenceNumber}}", prereqisite?.REFERENCENUMBER);
-                        letterBody = letterBody.Replace("@{{letterDate}}", DateTime.Now.ToString("MM-DD-YYYY"));
-                        letterBody = letterBody.Replace("@{{nameAndAddress}}", valuerDetail?.FIRMNAME + " " + valuerDetail?.ADDRESS);
+                        letterBody = letterBody.Replace("@{{letterDate}}", DateTime.Now.ToString("dd-MM-yyyy"));
+                        letterBody = letterBody.Replace("@{{nameAndAddress}}", valuerDetail?.FIRMNAME + "</br>" + valuerDetail?.ADDRESS);
                         letterBody = letterBody.Replace("@{{assetType}}", collateralType?.COLLATERALTYPENAME);
                         letterBody = letterBody.Replace("@{{customerName}}", customer);
                         letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
