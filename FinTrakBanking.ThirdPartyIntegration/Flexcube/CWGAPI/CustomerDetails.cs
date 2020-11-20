@@ -15,9 +15,8 @@
     using FintrakBanking.ViewModels.Finance;
     using FintrakBanking.Common.Enum;
     using FintrakBanking.Common.CustomException;
-    using System.Web.Script.Serialization;
     using Newtonsoft.Json.Linq;
-    using FintrakBanking.Interfaces.Setups.General;
+
 
     namespace CustomerInfo
     {
