@@ -70,8 +70,8 @@ namespace FintrakBanking.Repositories.Credit
         List<TBL_LMSR_APPLICATION_DETAIL> customerFacilitiesLms = null;
         List<CurrentCustomerExposure> globalExposure = new List<CurrentCustomerExposure>();
         int customerId;
-        //private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
-        private List<int> lmsCamOperationIds = new List<int>();
+        private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
+        //private List<int> lmsCamOperationIds = new List<int>();
         private long legalLendingLimit;
         //private long legalLendingLimit = 200000000000;
         
