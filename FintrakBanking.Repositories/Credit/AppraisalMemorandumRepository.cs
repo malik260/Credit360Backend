@@ -2281,7 +2281,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovalTrailViewModel> GetCallmemoApprovalTrail(int applicationId, int operationId)
         {
-           // var staffRoles = context.TBL_STAFF_ROLE.ToList();
             var staffs = from s in context.TBL_STAFF select s;
             var allstaff = this.GetAllStaffNames();
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
