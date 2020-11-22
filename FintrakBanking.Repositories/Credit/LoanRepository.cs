@@ -651,8 +651,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 var totalContingentAmount = totalPreviouslyBookedAmount + contingentLoanInput.contingentAmount;
                 // if (totalContingentAmount > entity.customerAvailableAmount)
-                if (totalContingentAmount > applicationDetail.APPROVEDAMOUNT)
-                    throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
+                if (applicationDetail.ISLINEFACILITY == false )
+                {
+                    if (totalContingentAmount > applicationDetail.APPROVEDAMOUNT)
+                        throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
+                }
 
                 if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                     throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
@@ -685,8 +688,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 var totaloverdraftLimit = totalPreviouslyBookedAmount + revolvingLoanInput.overdraftLimit;
 
-                if (totaloverdraftLimit > entity.customerAvailableAmount)
-                    throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
+                if (applicationDetail.ISLINEFACILITY == false)
+                {
+                    if (totaloverdraftLimit > entity.customerAvailableAmount)
+                        throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
+                }
 
                 if (entity.effectiveDate > entity.maturityDate)
                     throw new ConditionNotMetException("The effective cannot be greater than maturity date");
