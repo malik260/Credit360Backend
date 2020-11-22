@@ -778,47 +778,48 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-       // [ClaimsAuthorization]
+        // [ClaimsAuthorization]
         [Route("loan/application")]
         public HttpResponseMessage AddLoanApplication([FromBody] LoanApplicationViewModel entity)
         {
-            try { 
-            var loanDetail = entity.LoanApplicationDetail;
-            string msg = "";
-            if (entity.productClassId == (short)ProductClassEnum.BondAndGuarantees)
+            try
             {
-                foreach (var item in loanDetail)
+                var loanDetail = entity.LoanApplicationDetail;
+                string msg = "";
+                if (entity.productClassId == (short)ProductClassEnum.BondAndGuarantees)
                 {
-                    var bond = item.bondDetails;
-                    if (bond == null)
+                    foreach (var item in loanDetail)
                     {
-                        msg = "Kindly Enter Records Into Compulsary Fields";
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{msg}" });
+                        var bond = item.bondDetails;
+                        if (bond == null)
+                        {
+                            msg = "Kindly Enter Records Into Compulsary Fields";
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{msg}" });
+                        }
                     }
+
                 }
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;  //FinTrakBankingContext
+                entity.branchId = (short)token.GetBranchId;
+
+                entity.misCode = "001";
+                entity.teamMisCode = "004";
+                //if( entity.LoanApplicationDetail.Count == 0)
+                //     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No facility detail is provided" });
+
+                var response = repo.AddLoanApplication(entity);
+                if (response != null)
+                {
+                    if (response.jumpedDestination) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully. proceeds to drawdown." }); }
+
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 
             }
-            entity.userBranchId = (short)token.GetBranchId;
-            entity.applicationUrl = HttpContext.Current.Request.Path;
-            entity.createdBy = token.GetStaffId;
-            entity.companyId = token.GetCompanyId;  //FinTrakBankingContext
-            entity.branchId = (short)token.GetBranchId;
-
-            entity.misCode = "001";
-            entity.teamMisCode = "004";
-            //if( entity.LoanApplicationDetail.Count == 0)
-            //     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No facility detail is provided" });
-
-            var response = repo.AddLoanApplication(entity);
-            if (response != null)
-            {
-                if (response.jumpedDestination) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully. proceeds to drawdown." }); }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
-            }
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-
-           }
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
