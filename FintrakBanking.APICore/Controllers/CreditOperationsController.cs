@@ -1116,10 +1116,42 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("bulk-retail-recovery-assignment-to-agent/awaiting-approval")]
+        public HttpResponseMessage GetBulkRetailRecoveryToAgentAwaitingApproval()
+        {
+            var data = repo.GetBulkRetailRecoveryToAgentAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("bulk-recovery-unassignment-from-agent/awaiting-approval")]
         public HttpResponseMessage getBulkUnassignmentRecoveryFromAgentAwaitingApproval()
         {
             var data = repo.GetBulkUnassignmentRecoveryFromAgentAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("bulk-retail-recovery-unassignment-from-agent/awaiting-approval")]
+        public HttpResponseMessage getBulkUnassignmentRetailRecoveryFromAgentAwaitingApproval()
+        {
+            var data = repo.GetBulkUnassignmentRetailRecoveryFromAgentAwaitingApproval(token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1729,6 +1761,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
             }
         }
+
 
         [HttpPost]
         [ClaimsAuthorization]

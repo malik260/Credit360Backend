@@ -47,5 +47,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string toApprovalLevelName { get; set; }
         public string fromApprovalLevelName { get; set; }
         public string comment { get; set; }
+        public string excludeLegal { get; set; }
     }
 }

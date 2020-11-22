@@ -89,13 +89,13 @@ namespace FintrakBanking.Repositories.Risk
                 if (isCorporate)
                     {
                         var racDefinitionOnEmployerByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                                               && (x.EMPLOYMENTTYPE == employeeType)
+                                                                                               && (x.EMPLOYMENTTYPE == employeeType || (x.EMPLOYMENTTYPE == null || x.EMPLOYMENTTYPE == ""))
                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
 
                         var racDefinitionOnEmployerByProductClass = context.TBL_RAC_DEFINITION.Where(x => (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS")
-                                                                                               && (x.EMPLOYMENTTYPE == employeeType)
+                                                                                               && (x.EMPLOYMENTTYPE == employeeType || (x.EMPLOYMENTTYPE == null || x.EMPLOYMENTTYPE == ""))
                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
@@ -108,13 +108,13 @@ namespace FintrakBanking.Repositories.Risk
                 else if (!isCorporate)
                 {
                     var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                                         && (x.EMPLOYMENTTYPE == employeeType)
+                                                                                         && (x.EMPLOYMENTTYPE == employeeType || (x.EMPLOYMENTTYPE == null || x.EMPLOYMENTTYPE == ""))
                                                                                          && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                          && x.ISACTIVE == true
                                                                                          && x.DELETED == false).ToList();
 
                     var racDefinitionOnEmployeeByProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
-                                                                                        && (x.EMPLOYMENTTYPE == employeeType)
+                                                                                        && (x.EMPLOYMENTTYPE == employeeType || (x.EMPLOYMENTTYPE == null || x.EMPLOYMENTTYPE == ""))
                                                                                         && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                         && x.ISACTIVE == true
                                                                                         && x.DELETED == false).ToList();

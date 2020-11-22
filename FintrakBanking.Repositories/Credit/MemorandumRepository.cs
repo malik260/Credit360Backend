@@ -70,8 +70,8 @@ namespace FintrakBanking.Repositories.Credit
         List<TBL_LMSR_APPLICATION_DETAIL> customerFacilitiesLms = null;
         List<CurrentCustomerExposure> globalExposure = new List<CurrentCustomerExposure>();
         int customerId;
-        //private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
-        private List<int> lmsCamOperationIds = new List<int>();
+        private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
+        //private List<int> lmsCamOperationIds = new List<int>();
         private long legalLendingLimit;
         //private long legalLendingLimit = 200000000000;
         
@@ -12477,7 +12477,7 @@ namespace FintrakBanking.Repositories.Credit
                 
                 this.reviewType = "Annual";
                 this.businessSectors = GetExceptionBusinessSectorsMarkup(customerRecord.CUSTOMERID);
-                this.approvals = GetExceptionalApprovalsMarkup(exceptionalLoan.EXCEPTIONALLOANAPPLICATIONID, operationId);
+                this.approvals = GetExceptionalApprovalsMarkup(exceptionalLoanDetail.EXCEPTIONALLOANAPPLDETAILID, operationId);
                 this.currentDate = DateTime.Now.ToShortDateString();
                this.exceptionMemoData = ExceptionMemoMarkupHtml(this.customerRecord.CUSTOMERID, exceptionalLoan.EXCEPTIONALLOANAPPLICATIONID, exceptionalLoan.COMPANYID);
 
@@ -12721,7 +12721,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => x).FirstOrDefault();
             var reviewDetail = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWAPPLICATIONID == applicationDetail.LOANREVIEWAPPLICATIONID).Select(x => x).FirstOrDefault();
-            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalOfferLetter, "Offer Letter"));
+            //data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalOfferLetter, "Offer Letter"));
             data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalAvailment, "Availment"));
             if (reviewDetail != null)
             {

@@ -20107,7 +20107,7 @@ namespace FintrakBanking.Repositories.Credit
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
 
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
-            var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication).Select(c => c.OPERATIONID).ToList();
+            var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)OperationsEnum.AssignRecoveryLoansToAgent).Select(c => c.OPERATIONID).ToList();
             List<int> ids = new List<int>();
 
             foreach (var operationId in operationIds)
@@ -20147,6 +20147,52 @@ namespace FintrakBanking.Repositories.Credit
             return dataLoan;
         }
 
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRetailRecoveryToAgentAwaitingApproval(int staffId, int companyId)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
+
+            var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
+            var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)OperationsEnum.RetailRecoveryAssignmentApproval).Select(c => c.OPERATIONID).ToList();
+            List<int> ids = new List<int>();
+
+            foreach (var operationId in operationIds)
+            {
+                ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
+            }
+
+            var dataLoan = (from ln in context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
+                            join atrail in context.TBL_APPROVAL_TRAIL on ln.BULKRECOVERYAPPROVALID equals atrail.TARGETID
+                            where
+                            (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            && atrail.OPERATIONID == ln.OPERATIONID
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && atrail.RESPONSESTAFFID == null && ln.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
+
+                            select new LoanReviewOperationApprovalViewModel
+                            {
+                                currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                referenceId = ln.REFERENCEBATCHID,
+                                accreditedConsultant = ln.ACCREDITEDCONSULTANTID,
+                                numberOfLoans = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == ln.REFERENCEBATCHID).Count(),
+                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID).FirstOrDefault().NAME,
+                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID).FirstOrDefault().FIRMNAME,
+                                approvalStatusId = (int)ln.APPROVALSTATUSID,
+                                approverComment = atrail.COMMENT,
+                                requestDate = ln.REQUESTDATE,
+                                bulkRecoveryApprovalId = ln.BULKRECOVERYAPPROVALID,
+                                operationId = ln.OPERATIONID,
+                                source = ln.SOURCE,
+                                assignmentType = ln.ASSIGNMENTTYPE
+                            }).ToList();
+
+            return dataLoan;
+        }
+
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkUnassignmentRecoveryFromAgentAwaitingApproval(int staffId, int companyId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
@@ -20154,6 +20200,50 @@ namespace FintrakBanking.Repositories.Credit
 
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
             var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)OperationsEnum.UnAssignRecoveryLoansFromAgent).Select(c => c.OPERATIONID).ToList();
+            List<int> ids = new List<int>();
+
+            foreach (var operationId in operationIds)
+            {
+                ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
+            }
+
+            var dataLoan = (from ln in context.TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL
+                            join atrail in context.TBL_APPROVAL_TRAIL on ln.BULKRECOVERYUNASSIGNAPPROVALID equals atrail.TARGETID
+                            where
+                            (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                            && atrail.OPERATIONID == ln.OPERATIONID
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && atrail.RESPONSESTAFFID == null && ln.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
+
+                            select new LoanReviewOperationApprovalViewModel
+                            {
+                                currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                referenceId = ln.REFERENCEBATCHID,
+                                accreditedConsultant = ln.ACCREDITEDCONSULTANTID,
+                                numberOfLoans = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == ln.REFERENCEBATCHID).Count(),
+                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID).FirstOrDefault().NAME,
+                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANTID).FirstOrDefault().FIRMNAME,
+                                approvalStatusId = (int)ln.APPROVALSTATUSID,
+                                approverComment = atrail.COMMENT,
+                                requestDate = ln.REQUESTDATE,
+                                bulkRecoveryApprovalId = ln.BULKRECOVERYUNASSIGNAPPROVALID,
+                                operationId = ln.OPERATIONID,
+                                source = ln.SOURCE,
+                                loanId = (int)ln.LOANID
+                            }).ToList();
+
+            return dataLoan;
+        }
+
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkUnassignmentRetailRecoveryFromAgentAwaitingApproval(int staffId, int companyId)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
+
+            var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
+            var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (short)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent).Select(c => c.OPERATIONID).ToList();
             List<int> ids = new List<int>();
 
             foreach (var operationId in operationIds)
@@ -20890,6 +20980,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return workFlow.Response;
         }
+
 
         public WorkflowResponse GoForUnassignLoansFromAgentApproval(ApprovalViewModel entity)
         {
@@ -33580,7 +33671,6 @@ namespace FintrakBanking.Repositories.Credit
                     var result = string.Empty;
                     AlertsViewModel alert = new AlertsViewModel();
                     List<AlertsViewModel> alerts = new List<AlertsViewModel>();
-                    var alertTemplate = "";
                     string emailList = "";
 
                     var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
@@ -33667,20 +33757,20 @@ namespace FintrakBanking.Repositories.Credit
                     var unionAll = termLoanData.Union(revolvingLoanData);
 
                     var n = 0;
-                    alertTemplate = "Dear " + recoveryAgent.FIRMNAME + ",<br/> Kindly find below the list of assigned recoveries for your urgent attention.<br/>@{{list}}";
+                    var alertTemplate = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "RecoveryAssignmentNotification").Select(x => x).FirstOrDefault();
                     tempResult = $@"
                              <h3><b>LIST OF RECOVERIES ASSIGNED TO {recoveryAgent.FIRMNAME.ToUpper()}</b></h3>
                              <table cellpadding='0' cellspacing='0' border='1' width='800px'>
                                 <tr>
                                     <td><b>S/N</b></td>
                                     <td><b>Customer Name</b></td>
-                                    <td><b>Email/Phone Number</b></td>
                                     <td><b>Reference Number</b></td>
                                     <td><b>Product Name</b></td>
                                     <td><b>Recovery Account</b></td>
                                     <td><b>Total Recovery Amount</b></td>
                                     <td><b>Relationship Manager</b></td>
                                     <td><b>Expected Completion Date</b></td>
+                                    <td><b>Email/Phone Number</b></td>
                                 </tr>
                              ";
 
@@ -33713,19 +33803,19 @@ namespace FintrakBanking.Repositories.Credit
                         result = tempResult;
                     }
 
-                    if (result.Count() > 0 && alertTemplate.Replace("@{{list}}", result).Count() > 0)
+                    var template = alertTemplate.TEMPLATE;
+                    var title = alertTemplate.TITLE;
+                    if (result.Count() > 0 && template.Replace("@{{accountList}}", result).Count() > 0)
                     {
-                        alertTemplate = alertTemplate.Replace("@{{list}}", result);
+                        template = template.Replace("@{{accountList}}", result.ToString());
                         emailList = recoveryAgent.EMAILADDRESS;
                         alert.receiverEmailList.Add(emailList);
-                        alert.template = alertTemplate;
-                        alert.alertTitle = "NOTIFICATION FOR THE LOAN RECOVERY ASSIGNMENT";
+                        alert.template = template;
+                        alert.alertTitle = title;
                         alert.canFire = true;
-                        alert.operationMethod = "RecoveryAssignment";
-
+                        alert.operationMethod = alertTemplate.BINDINGMETHOD;
                         alerts.Add(alert);
                     }
-
 
                     if (alerts.Count() > 0)
                     {

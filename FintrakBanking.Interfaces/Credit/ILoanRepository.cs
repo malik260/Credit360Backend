@@ -20,6 +20,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        WorkflowResponse saveMultipleRetailLoanUnAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> model, UserInfo user);
+        WorkflowResponse saveRetailBulkLoanUnAssignmentToAgent(LoanRecoveryAssignmentViewModel model, UserInfo user);
         bool saveBulkLoanReAssignmentToAgentRem(LoanRecoveryAssignmentViewModel model, UserInfo user);
         bool RetailLoanRecoveryCommissionInternal(RetailLoanRecoveryCommissionViewModel models, UserInfo user);
         bool RetailLoanRecoveryReportCollection(RetailLoanRecoveryCommissionViewModel models, UserInfo user);

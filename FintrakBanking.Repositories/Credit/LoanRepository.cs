@@ -14885,6 +14885,7 @@ namespace FintrakBanking.Repositories.Credit
                         Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(customerSearchAccountNumber)).GetAwaiter().GetResult();
                         if (cust.Count() > 0)
                         {
+                        
                             foreach (var item in cust)
                             {
                                 item.userBranchId = entity.userBranchId;
@@ -14900,6 +14901,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 SaveCustomerAccounts(customer.CUSTOMERID, casaData);
                             }
+                        
                         }
 
                         if (customer == null) { throw new ConditionNotMetException("Third-party API call returned empty."); }
@@ -16256,6 +16258,8 @@ namespace FintrakBanking.Repositories.Credit
         public WorkflowResponse ReferBackBooking(ApprovalViewModel model)
         {
             int staffId = model.staffId;
+            int currentLevelIndex = 0;
+            int nextLevelIndex = 0;
 
             //if (model.loopedStaffId != null) staffId = (int)model.loopedStaffId;
 
@@ -16266,26 +16270,57 @@ namespace FintrakBanking.Repositories.Credit
             if (model.isClassified) { return invokeClassifiedReferBack(model); }
 
             var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
+                .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false),
+                    mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                    {
+                        groupPosition = mg.m.POSITION,
+                        levelPosition = l.POSITION,
+                        levelId = l.APPROVALLEVELID,
+                        levelName = l.LEVELNAME,
+                        staffRoleId = l.STAFFROLEID.Value,
+                    })
+                    .OrderBy(x => x.groupPosition)
+                    .ThenBy(x => x.levelPosition)
+                    .ToList();
+
+            if (model.myLevelId > 0)
+            {
+                currentLevelIndex = levels.FindIndex(p => p.levelId == model.myLevelId);
+                nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+            }
+            else
+            {
+                var levelStaffs = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
                  .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
-                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false), mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new {mg, l})
+                 .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false), mgl => mgl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (mgl, s) => new
                      {
-                         groupPosition = mg.m.POSITION,
-                         levelPosition = l.POSITION,
-                         levelId = l.APPROVALLEVELID,
-                         levelName = l.LEVELNAME,
-                         staffRoleId = l.STAFFROLEID,
+                         groupPosition = mgl.mg.m.POSITION,
+                         levelPosition = mgl.l.POSITION,
+                         levelId = mgl.l.APPROVALLEVELID,
+                         levelName = mgl.l.LEVELNAME,
+                         staffRoleId = s.TBL_STAFF.STAFFROLEID,
                      })
                      .OrderBy(x => x.groupPosition)
                      .ThenBy(x => x.levelPosition)
                      .ToList();
+                //levels.AddRange(levelStaffs);
 
-            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
-            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
-            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+                var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID).ToList();
 
-            int currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
-            int nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+                if (staffRoleLevels.Count == 0)
+                {
+                    staffRoleLevels = levelStaffs.Where(x => x.staffRoleId == staff.STAFFROLEID).ToList();
+                }
+                var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId).ToList();
+                var staffRoleLevelId = staffRoleLevelIds.LastOrDefault();
+
+                currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
+                nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+            }
+
+            
 
 
             if (nextLevelIndex > currentLevelIndex)
@@ -16911,6 +16946,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter                                                                                                                                  
                                    select new LoanViewModel
                                    {
+                                       lmsdatecreated = b.DATETIMECREATED,
                                        //creditAppraisalOperationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == a.TERMLOANID select aa.OPERATIONID).FirstOrDefault(),
                                        //creditAppraisalLoanApplicationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == a.TERMLOANID select aa.LOANAPPLICATIONID).FirstOrDefault(),
                                        creditAppraisalOperationId = (b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == b.LOANREVIEWAPPLICATIONID select aa.OPERATIONID).FirstOrDefault() :
@@ -17045,8 +17081,9 @@ namespace FintrakBanking.Repositories.Credit
                                    }).ToList();
 
             var externalLoans = GetApprovedThirdPartyLoanReview(companyId, staffId);
+            var data = allFilteredLoan.Union(externalLoans);
 
-            return allFilteredLoan.Union(externalLoans);
+            return data.OrderBy(x => x.lmsdatecreated);
         }
 
         public IEnumerable<LoanViewModel> GetProcessLoanReviewData(int companyId, int staffId, string searchString)
@@ -17655,6 +17692,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId)
                                    select new LoanViewModel
                                    {
+                                       lmsdatecreated = b.DATETIMECREATED,
                                        creditAppraisalOperationId = (from p in context.TBL_LOAN_EXTERNAL join c in context.TBL_LMSR_APPLICATION_DETAIL on p.EXTERNALLOANID equals c.LOANID where c.LOANREVIEWAPPLICATIONID == b.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
                                        creditAppraisalLoanApplicationId = 0,
                                        appraisalOperationId = e.OPERATIONID,
@@ -18560,7 +18598,7 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.expCompletionDate = expCompletionDate;
                     assignOperations.referenceId = referenceNumber;
                     assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Processing;
-                    assignOperations.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                    assignOperations.operationId = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                     assignOperations.operationCompleted = false;
                     assignOperations.totalAmountRecovery = customerRequest.totalAmountRecovery; 
                     assignOperations.source = source;
@@ -18583,7 +18621,7 @@ namespace FintrakBanking.Repositories.Credit
                     ACCREDITEDCONSULTANTID = accreditedConsultant,
                     REFERENCEBATCHID = referenceNumber,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                    OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
+                    OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval,
                     REQUESTDATE = DateTime.Now,
                     SOURCE = source,
                     ASSIGNMENTTYPE = assignmentType
@@ -18598,7 +18636,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                     workflow.TargetId = removeLienOperation.BULKRECOVERYAPPROVALID;
                     workflow.Comment = "Kindly help approve the loan recovery assignment to agent";
-                    workflow.OperationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                    workflow.OperationId = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                     workflow.DeferredExecution = true;
                     workflow.ExternalInitialization = false;
 
@@ -18819,7 +18857,7 @@ namespace FintrakBanking.Repositories.Credit
                     validate.EXPCOMPLETIONDATE = model.expCompletionDate;
                     validate.REFERENCEID = referenceNumber;
                     validate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                    validate.OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                    validate.OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                     validate.OPERATIONCOMPLETED = false;
                     validate.SOURCE = model.source;
                     context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(validate);
@@ -18831,7 +18869,7 @@ namespace FintrakBanking.Repositories.Credit
                         ACCREDITEDCONSULTANTID = model.accreditedConsultant,
                         REFERENCEBATCHID = referenceNumber,
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                        OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
+                        OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval,
                         REQUESTDATE = DateTime.Now,
                         SOURCE = model.source
                     });
@@ -18945,8 +18983,75 @@ namespace FintrakBanking.Repositories.Credit
                 return workflow.Response;
             }
 
+        public WorkflowResponse saveRetailBulkLoanUnAssignmentToAgent(LoanRecoveryAssignmentViewModel model, UserInfo user)
+        {
 
-            public WorkflowResponse saveMultipleLoanReAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> model, UserInfo user, DateTime expCompletionDate, int accreditedConsultant, string source)
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+            if (model == null)
+            {
+                throw new ConditionNotMetException("Kindly select at least one transaction.");
+            }
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+                validate.CREATEDBY = user.createdBy;
+                validate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                validate.OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent;
+                context.SaveChanges();
+
+                TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL data = new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL();
+                data = context.TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL
+                {
+                    ACCREDITEDCONSULTANTID = validate.ACCREDITEDCONSULTANT,
+                    REFERENCEBATCHID = validate.REFERENCEID,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                    OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent,
+                    REQUESTDATE = DateTime.Now,
+                    SOURCE = validate.SOURCE,
+                    LOANID = validate.LOANASSIGNID
+
+                });
+                context.SaveChanges();
+
+                var approval = new ApprovalViewModel
+                {
+                    staffId = user.createdBy,
+                    companyId = user.companyId,
+                    approvalStatusId = (short)ApprovalStatusEnum.Processing,
+                    comment = "Kindly help approve the recovery unassignment",
+                    targetId = data.BULKRECOVERYUNASSIGNAPPROVALID,
+                    operationId = data.OPERATIONID,
+                    BranchId = user.BranchId,
+                    deferredExecution = false
+                };
+
+                workflow.LogForApproval(approval);
+
+                auditTrail.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Added TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL '{ referenceNumber}' ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                });
+
+                context.SaveChanges();
+                trans.Commit();
+            }
+
+            return workflow.Response;
+        }
+
+
+        public WorkflowResponse saveMultipleLoanReAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> model, UserInfo user, DateTime expCompletionDate, int accreditedConsultant, string source)
             {
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
@@ -19086,6 +19191,74 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                
+                trans.Commit();
+            }
+
+            return workflow.Response;
+        }
+
+        public WorkflowResponse saveMultipleRetailLoanUnAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> model, UserInfo user)
+        {
+
+            if (model == null)
+            {
+                throw new ConditionNotMetException("Kindly select at least one transaction.");
+            }
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                foreach (var r in model)
+                {
+                    var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(r.loanAssignId);
+                    validate.CREATEDBY = user.createdBy;
+                    validate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    validate.OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent;
+
+                    TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL data = new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL();
+                    data = context.TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL
+                    {
+                        ACCREDITEDCONSULTANTID = validate.ACCREDITEDCONSULTANT,
+                        REFERENCEBATCHID = validate.REFERENCEID,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                        OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent,
+                        REQUESTDATE = DateTime.Now,
+                        SOURCE = validate.SOURCE,
+                        LOANID = validate.LOANASSIGNID
+                    });
+                    context.SaveChanges();
+
+                    var approval = new ApprovalViewModel
+                    {
+                        staffId = user.createdBy,
+                        companyId = user.companyId,
+                        approvalStatusId = (short)ApprovalStatusEnum.Processing,
+                        comment = "Kindly help approve the recovery unassignment",
+                        targetId = data.BULKRECOVERYUNASSIGNAPPROVALID,
+                        operationId = data.OPERATIONID,
+                        BranchId = user.BranchId,
+                        deferredExecution = false
+                    };
+
+                    workflow.LogForApproval(approval);
+
+                    auditTrail.AddAuditTrail(new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
+                        STAFFID = user.createdBy,
+                        BRANCHID = (short)user.BranchId,
+                        DETAIL = $"Added TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL '{ validate.REFERENCEID}' ",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                        URL = user.applicationUrl,
+                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
+                    });
+
+                    context.SaveChanges();
+                }
+
+
                 trans.Commit();
             }
 

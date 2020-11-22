@@ -1181,7 +1181,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                          where
                          x.OPERATIONID == operationId 
                          && x.TARGETID == targetId
-              select new ApprovalTrailViewModel
+                         && x.FROMAPPROVALLEVELID != null
+                        select new ApprovalTrailViewModel
               {
                 approvalTrailId = x.APPROVALTRAILID,
                 comment = x.COMMENT,
@@ -1208,7 +1209,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => x).FirstOrDefault();
             var reviewDetail = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWAPPLICATIONID == applicationDetail.LOANREVIEWAPPLICATIONID).Select(x => x).FirstOrDefault();
-            data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalOfferLetter, "Offer Letter"));
             data.AddRange(GetNonAppraisalTrail(targetId, (short)OperationsEnum.LoanReviewApprovalAvailment, "Availment"));
             if (reviewDetail != null)
             {
@@ -1245,7 +1245,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             var allstaff = this.GetAllStaffNames();
 
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationid && x.TARGETID == applicationId).ToList();
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationid && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
 
             var data = trail.Select(x => new ApprovalTrailViewModel
             {

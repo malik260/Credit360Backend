@@ -2837,6 +2837,88 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+
+        public IEnumerable<LoanApplicationDetailViewModel> ExceptionalSearch(string searchString)
+        {
+            searchString = searchString.Trim().ToLower();
+            int staffId = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault();
+
+            var exceptionalLoansForApproval = (from d in context.TBL_EXCEPTIONAL_LOAN_APPL_DETAIL
+                                               join e in context.TBL_EXCEPTIONAL_LOAN_APPLICATION on d.EXCEPTIONALLOANAPPLICATIONID equals e.EXCEPTIONALLOANAPPLICATIONID
+                                               join t in context.TBL_APPROVAL_TRAIL on d.EXCEPTIONALLOANAPPLDETAILID equals t.TARGETID
+                                               join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
+                                               where d.DELETED == false && t.OPERATIONID == (int)OperationsEnum.ExceptionalLoan
+                                                && (e.APPLICATIONREFERENCENUMBER == searchString
+                                                || e.RELATEDREFERENCENUMBER == searchString
+                                                || g.FIRSTNAME.ToLower().Contains(searchString)
+                                                || g.LASTNAME.ToLower().Contains(searchString)
+                                                || g.MIDDLENAME.ToLower().Contains(searchString)
+                                                || d.CREATEDBY == staffId)
+                                               select new LoanApplicationDetailViewModel
+                                               {
+                                                   customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == e.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault(),
+                                                   loanApplicationId = e.EXCEPTIONALLOANAPPLICATIONID,
+                                                   dateTimeCreated = d.DATETIMECREATED,
+                                                   proposedAmount = d.PROPOSEDAMOUNT,
+                                                   proposedInterestRate = d.PROPOSEDINTERESTRATE,
+                                                   proposedProductId = d.PROPOSEDPRODUCTID,
+                                                   applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+                                                   approvedAmount = d.APPROVEDAMOUNT,
+                                                   approvedInterestRate = d.APPROVEDINTERESTRATE,
+                                                   approvedProductId = d.APPROVEDPRODUCTID,
+                                                   approvedTenor = d.APPROVEDTENOR,
+                                                   exchangeRate = d.EXCHANGERATE,
+                                                   currencyId = d.CURRENCYID,
+                                                   customerId = d.CUSTOMERID,
+                                                   equityCasaAccountId = d.EQUITYCASAACCOUNTID,
+                                                   equityAmount = d.EQUITYAMOUNT,
+                                                   subSectorId = d.SUBSECTORID,
+                                                   loanPurpose = d.LOANPURPOSE,
+                                                   casaAccountId = d.CASAACCOUNTID,
+                                                   repaymentTerm = d.REPAYMENTTERMS,
+                                                   repaymentScheduleId = d.REPAYMENTSCHEDULEID,
+                                                   isTakeOverApplication = d.ISTAKEOVERAPPLICATION,
+                                                   crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
+                                                   crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
+                                                   crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,
+                                                   productPriceIndexId = d.PRODUCTPRICEINDEXID,
+                                                   productPriceIndexRate = d.PRODUCTPRICEINDEXRATE,
+                                                   operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
+                                                   loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
+                                                   tenorModeId = d.TENORFREQUENCYTYPEID,
+                                                   flowChangeId = d.TBL_EXCEPTIONAL_LOAN_APPLICATION.FLOWCHANGEID,
+                                                   isLineFacility = d.ISLINEFACILITY,
+                                                   approvedLineLimit = d.APPROVEDLINELIMIT,
+                                                   interestRepaymentId = d.INTERESTREPAYMENTID,
+                                                   interestRepayment = d.INTERESTREPAYMENT,
+                                                   isMoratorium = d.ISMORATORIUM,
+                                                   moratorium = d.MORATORIUM,
+                                                   proposedTenor = d.PROPOSEDTENOR,
+                                                   breachedLimitName = d.BREACHEDLIMITNAME,
+                                                   loanApplicationDetailId = d.EXCEPTIONALLOANAPPLDETAILID,
+                                                   approvalStatusId = t.APPROVALSTATUSID,
+                                                   approvalTrailId = t.APPROVALTRAILID,
+                                                   currentApprovalLevelId = t.TOAPPROVALLEVELID,
+                                                   currentApprovalLevel = t.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                                   approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME.ToUpper(),
+                                               }).GroupBy(d => d.loanApplicationDetailId)
+                                                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault()).ToList();
+            foreach (var x in exceptionalLoansForApproval)
+            {
+                var templateExist = context.TBL_DOC_TEMPLATE_DETAIL.Where(p => p.TARGETID == x.loanApplicationId && p.OPERATIONID == (int)OperationsEnum.ExceptionalLoan).ToList();
+                if (templateExist.Any())
+                {
+                    x.isTemplateUploaded = true;
+                }
+                else
+                {
+                    x.isTemplateUploaded = false;
+                }
+
+            }
+            return exceptionalLoansForApproval;
+        }
+
         public IEnumerable<LoanReviewOperationApprovalViewModel> SearchLien(string searchString)
         {
             searchString = searchString.Trim().ToLower();
