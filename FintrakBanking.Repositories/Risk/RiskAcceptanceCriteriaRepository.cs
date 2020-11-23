@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Risk
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerId ).FirstOrDefault();
             var employerType = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(x => x.CUSTOMERID == model.customerId).FirstOrDefault();
             
-        int? customerTypeId = customer != null ? customer.CUSTOMERTYPEID : null;
+           int? customerTypeId = customer != null ? customer.CUSTOMERTYPEID : null;
 
             bool isCorporate = customerTypeId == (short)CustomerTypeEnum.Corporate;
 
@@ -81,10 +81,10 @@ namespace FintrakBanking.Repositories.Risk
                                                                                                   && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                   && !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
                                                                                                   && x.ISACTIVE == true && x.DELETED == false).ToList();
-                    // var productRac = racDefinitionOnProduct.Union(racDefinitionOnProductClass);
-                    //racDefinition.AddRange(productRac);
+                    var productRac = racDefinitionOnProduct.Union(racDefinitionOnProductClass);
+                    racDefinition.AddRange(productRac);
 
-                    racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
+                   // racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
 
                 if (isCorporate)
                     {
@@ -100,9 +100,9 @@ namespace FintrakBanking.Repositories.Risk
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
 
-                    //var employerRac = racDefinitionOnEmployerByProduct.Union(racDefinitionOnEmployerByProductClass);
-                    racDefinitionOnEmployer = racDefinitionOnEmployerByProduct.Count() > 0 ? racDefinitionOnEmployerByProduct : racDefinitionOnEmployerByProductClass;
-                    racDefinition.AddRange(racDefinitionOnEmployer);
+                    var employerRac = racDefinitionOnEmployerByProduct.Union(racDefinitionOnEmployerByProductClass);
+                    //racDefinitionOnEmployer = racDefinitionOnEmployerByProduct.Count() > 0 ? racDefinitionOnEmployerByProduct : racDefinitionOnEmployerByProductClass;
+                    racDefinition.AddRange(employerRac);
 
                 }
                 else if (!isCorporate)
@@ -119,9 +119,9 @@ namespace FintrakBanking.Repositories.Risk
                                                                                         && x.ISACTIVE == true
                                                                                         && x.DELETED == false).ToList();
 
-                    racDefinitionOnEmployer = racDefinitionOnEmployeeByProduct.Count() > 0 ? racDefinitionOnEmployeeByProduct : racDefinitionOnEmployeeByProductClass;
-                    //var employerRac = racDefinitionOnEmployeeByProduct.Union(racDefinitionOnEmployeeByProductClass);
-                    racDefinition.AddRange(racDefinitionOnEmployer);
+                    //racDefinitionOnEmployer = racDefinitionOnEmployeeByProduct.Count() > 0 ? racDefinitionOnEmployeeByProduct : racDefinitionOnEmployeeByProductClass;
+                    var employerRac = racDefinitionOnEmployeeByProduct.Union(racDefinitionOnEmployeeByProductClass);
+                    racDefinition.AddRange(employerRac);
 
                 }
 
