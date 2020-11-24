@@ -72,7 +72,7 @@ namespace FintrakBanking.Repositories.Risk
                 var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
                                                                                                 && x.SEARCHPLACEHOLDER == "PRODUCT"
                                                                                                 && !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
-                                                                                                && (x.CUSTOMERTYPEID == (short)customerTypeId || x.CUSTOMERTYPEID == null)
+                                                                                                && (x.CUSTOMERTYPEID == (short)customerTypeId || x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID.Value < 1)
                                                                                                 && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                 && x.ISACTIVE == true
                                                                                                 && x.DELETED == false).ToList();
@@ -81,7 +81,7 @@ namespace FintrakBanking.Repositories.Risk
                                                                                                   && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
                                                                                                   && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                   && !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
-                                                                                                  && (x.CUSTOMERTYPEID == (short)customerTypeId || x.CUSTOMERTYPEID == null)
+                                                                                                  && (x.CUSTOMERTYPEID == (short)customerTypeId || x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID.Value < 1)
                                                                                                   && x.ISACTIVE == true && x.DELETED == false).ToList();
                     var productRac = racDefinitionOnProduct.Union(racDefinitionOnProductClass);
                     racDefinition.AddRange(productRac);
@@ -93,14 +93,14 @@ namespace FintrakBanking.Repositories.Risk
                         var racDefinitionOnEmployerByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
                                                                                                && (x.EMPLOYMENTTYPE == employeeType || (x.EMPLOYMENTTYPE == null || x.EMPLOYMENTTYPE == ""))
                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                               && x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate
+                                                                                               && (x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate || x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID.Value < 1)
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
 
                         var racDefinitionOnEmployerByProductClass = context.TBL_RAC_DEFINITION.Where(x => (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS")
                                                                                                && (x.EMPLOYMENTTYPE == employeeType || (x.EMPLOYMENTTYPE == null || x.EMPLOYMENTTYPE == ""))
                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                               && x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate
+                                                                                               && (x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate || x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID.Value < 1)
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
 
@@ -114,14 +114,14 @@ namespace FintrakBanking.Repositories.Risk
                     var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
                                                                                          && (x.EMPLOYMENTTYPE == employeeType || (x.EMPLOYMENTTYPE == null || x.EMPLOYMENTTYPE == ""))
                                                                                          && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                         && x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual
+                                                                                         && (x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual || x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID.Value < 1)
                                                                                          && x.ISACTIVE == true
                                                                                          && x.DELETED == false).ToList();
 
                     var racDefinitionOnEmployeeByProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
                                                                                         && (x.EMPLOYMENTTYPE == employeeType || (x.EMPLOYMENTTYPE == null || x.EMPLOYMENTTYPE == ""))
                                                                                         && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                        && x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual
+                                                                                        && (x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual || x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID.Value < 1)
                                                                                         && x.ISACTIVE == true
                                                                                         && x.DELETED == false).ToList();
 
