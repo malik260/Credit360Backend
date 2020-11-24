@@ -888,8 +888,6 @@ namespace FintrakBanking.Repositories.Credit
                             var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
                             var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
 
-                        if (staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR" && (prereqisite.NUMBEROFTIMESAPPROVE <= 1 || prereqisite.NUMBEROFTIMESAPPROVE == null || valuerReport.FSV < 1 || valuerReport.FSV == null))
-                        {
                             var valuationOfficer = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
                             var accountOfficer = _context.TBL_STAFF.Find(collateral.CREATEDBY);
                             var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
@@ -901,6 +899,8 @@ namespace FintrakBanking.Repositories.Credit
                             var collAddress = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c.PROPERTYADDRESS).FirstOrDefault();
                             var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME;
 
+                        if (staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR" && (prereqisite.NUMBEROFTIMESAPPROVE <= 1 || prereqisite.NUMBEROFTIMESAPPROVE == null || valuerReport.FSV < 1 || valuerReport.FSV == null))
+                        {
                             var letter = _context.TBL_ALERT_TITLE.Where(x=>x.BINDINGMETHOD == "CollateralValuationNotification").Select(x=>x).FirstOrDefault();
                             var letterBody = letter?.TEMPLATE;
                             var letterTitle = letter?.TITLE;
@@ -922,17 +922,6 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR" && prereqisite.NUMBEROFTIMESAPPROVE > 1  && valuerReport.FSV > 0)
                         {
-                            var valuationOfficer = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
-                            var accountOfficer = _context.TBL_STAFF.Find(collateral.CREATEDBY);
-                            var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
-
-                            var rem = _context.TBL_STAFF.Find(accountOfficer.SUPERVISOR_STAFFID);
-                            var customerCollateral = _context.TBL_COLLATERAL_CUSTOMER.Find(collateral.COLLATERALCUSTOMERID);
-                            var collateralType = _context.TBL_COLLATERAL_TYPE.Find(customerCollateral.COLLATERALTYPEID);
-                            var customer = _context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == customerCollateral.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
-                            var collAddress = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c.PROPERTYADDRESS).FirstOrDefault();
-                            var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME;
-
                             var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationNotification").Select(x => x).FirstOrDefault();
                             var letterBody = letter?.TEMPLATE;
                             var letterTitle = letter?.TITLE;
