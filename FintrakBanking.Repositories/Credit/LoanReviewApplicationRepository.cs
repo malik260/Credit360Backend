@@ -536,7 +536,8 @@ namespace FintrakBanking.Repositories.Credit
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     && ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
                      //&& ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == staffId)
-                    || (!levelIds.Contains((int)x.TOAPPROVALLEVELID) && (x.TOSTAFFID == staffId)))
+                    //|| (!levelIds.Contains((int)x.TOAPPROVALLEVELID) && (x.TOSTAFFID == staffId))
+                    )
              ),
                  alaba => alaba.ab.a.LOANAPPLICATIONID,
                  trail => trail.TARGETID,
