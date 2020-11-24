@@ -71,8 +71,8 @@ namespace FintrakBanking.Repositories.Risk
                 var productClass = context.TBL_PRODUCT.Where(x => x.PRODUCTID == model.productId).FirstOrDefault();
                 var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
                                                                                                 && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                                                && !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
-                                                                                                && (x.CUSTOMERTYPEID == (short)customerTypeId || x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID.Value < 1)
+                                                                                                && (x.EMPLOYMENTTYPE == employeeType || (x.EMPLOYMENTTYPE == null || x.EMPLOYMENTTYPE == ""))
+                                                                                                //&& !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
                                                                                                 && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                 && x.ISACTIVE == true
                                                                                                 && x.DELETED == false).ToList();
@@ -80,7 +80,8 @@ namespace FintrakBanking.Repositories.Risk
                         var racDefinitionOnProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId
                                                                                                   && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
                                                                                                   && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                                                                  && !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
+                                                                                                  && (x.EMPLOYMENTTYPE == employeeType || (x.EMPLOYMENTTYPE == null || x.EMPLOYMENTTYPE == ""))
+                                                                                                  //&& !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
                                                                                                   && (x.CUSTOMERTYPEID == (short)customerTypeId || x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID.Value < 1)
                                                                                                   && x.ISACTIVE == true && x.DELETED == false).ToList();
                     var productRac = racDefinitionOnProduct.Union(racDefinitionOnProductClass);
