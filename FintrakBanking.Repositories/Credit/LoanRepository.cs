@@ -16943,7 +16943,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
-                                  && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter                                                                                                                                  
+                                  && ((cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId)) // currency filter                                                                                                                                  
                                    select new LoanViewModel
                                    {
                                        lmsdatecreated = b.DATETIMECREATED,
@@ -17077,7 +17077,7 @@ namespace FintrakBanking.Repositories.Credit
                                            newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
                                            newMaturityDate = op.MATURITYDATE,
                                            dateTimeCreated = op.DATECREATED
-                                       }).FirstOrDefault(),
+                                       }).FirstOrDefault()
                                    }).ToList();
 
             var externalLoans = GetApprovedThirdPartyLoanReview(companyId, staffId);
@@ -17689,7 +17689,7 @@ namespace FintrakBanking.Repositories.Credit
                                   //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
                                   //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ContingentLiability
                                   //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.RevolvingLoan
-                                  && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId)
+                                  && ((cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId))
                                    select new LoanViewModel
                                    {
                                        lmsdatecreated = b.DATETIMECREATED,
