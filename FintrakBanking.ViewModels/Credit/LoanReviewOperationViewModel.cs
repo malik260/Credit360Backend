@@ -1724,4 +1724,21 @@ namespace FintrakBanking.ViewModels.Credit
         public bool operationCompleted { get; set; }
     }
 
+    public class GlobalExposureApplicationViewModel : GeneralEntity
+    {
+        public int loanId { get; set; }
+        public string customerCode { get; set; }
+        public string productId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public string customerName { get; set; }
+        public string relationshipManagerName { get; set; }
+        public string expiryBand { get; set; }
+        public string exposureType { get; set; }
+        public string divisionName { get; set; }
+        public decimal? totalAmountRecovery { get; set; }
+        public int? dpd { get; set; }
+        public string loanCategory { get; set; }
+        public string productName { get; set; }
+    }
+
 }
