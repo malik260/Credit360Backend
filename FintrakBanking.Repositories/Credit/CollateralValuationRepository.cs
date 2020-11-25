@@ -914,7 +914,10 @@ namespace FintrakBanking.Repositories.Credit
                             letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
                             letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
                             letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
-                            
+
+                            letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
+                            letterTitle = letterTitle.Replace("@{{initiator}}", staffFullName.ToUpper());
+
                             var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                             alert.receiverEmailList.Add(emailList);
                             LogEmailAlert(letterBody, letterTitle, alert.receiverEmailList, "98007", 98007, letter.BINDINGMETHOD);
@@ -922,19 +925,37 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR" && prereqisite.NUMBEROFTIMESAPPROVE > 1  && valuerReport.FSV > 0)
                         {
-                            var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationNotification").Select(x => x).FirstOrDefault();
+                            var tempResult = string.Empty;
+                            var omv = string.Format("{0:#,##.00}", Convert.ToDecimal(valuerReport?.OMV));
+                            var fsv = string.Format("{0:#,##.00}", Convert.ToDecimal(valuerReport?.FSV));
+                            var fee = string.Format("{0:#,##.00}", Convert.ToDecimal(valuerReport?.VALUATIONFEE));
+                            tempResult = $@"
+                             <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                                <tr>
+                                    <td><b>PROPERTY ADDRESS</b></td>
+                                    <td><b>MOV</b></td>
+                                    <td><b>FSV</b></td>
+                                    <td><b>VALUATION FEE TO BE DEBITED(NGN)</b></td>
+                                </tr>
+                             ";
+                            
+                            tempResult = tempResult + $@"
+                                <tr>
+                                    <td>{collAddress}</td>
+                                    <td>{$"{omv}"}</td>
+                                    <td>{$"{fsv}"}</td>
+                                    <td>{$"{fee}"}</td>
+                                </tr>
+                                ";
+                    tempResult = tempResult + $"</table><br/>";
+
+                    var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationSecondNotification").Select(x => x).FirstOrDefault();
                             var letterBody = letter?.TEMPLATE;
                             var letterTitle = letter?.TITLE;
-                            letterBody = letterBody.Replace("@{{month}}", DateTime.Now.Month.ToString());
-                            letterBody = letterBody.Replace("@{{year}}", DateTime.Now.Year.ToString());
-                            letterBody = letterBody.Replace("@{{referenceNumber}}", prereqisite?.REFERENCENUMBER);
-                            letterBody = letterBody.Replace("@{{letterDate}}", DateTime.Now.ToString("dd-MM-yyyy"));
-                            letterBody = letterBody.Replace("@{{nameAndAddress}}", valuerDetail?.FIRMNAME + "</br>" + valuerDetail?.ADDRESS);
-                            letterBody = letterBody.Replace("@{{assetType}}", collateralType?.COLLATERALTYPENAME);
                             letterBody = letterBody.Replace("@{{customerName}}", customer);
-                            letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
+                            letterBody = letterBody.Replace("@{{valuationDetail}}", tempResult);
                             letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
-                            letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
+                            letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
 
                             var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                             alert.receiverEmailList.Add(emailList);
@@ -988,6 +1009,9 @@ namespace FintrakBanking.Repositories.Credit
                         letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
                         letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
                         letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
+
+                        letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
+                        letterTitle = letterTitle.Replace("@{{initiator}}", staffFullName.ToUpper());
 
                         var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                         alert.receiverEmailList.Add(emailList);
