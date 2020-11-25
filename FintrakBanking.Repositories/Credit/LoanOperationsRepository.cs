@@ -32090,7 +32090,6 @@ namespace FintrakBanking.Repositories.Credit
                                 totalAmountRecovery = ln.TOTALEXPOSURE,
                                 dpd = ln.UNPODAYSOVERDUE,
                                 loanCategory = ln.CBNCLASSIFICATION
-
                             }).ToList();
 
             return data;
