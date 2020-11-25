@@ -1739,6 +1739,15 @@ namespace FintrakBanking.ViewModels.Credit
         public int? dpd { get; set; }
         public string loanCategory { get; set; }
         public string productName { get; set; }
+        public int accreditedConsultant { get; set; }
+        public DateTime? expCompletionDate { get; set; }
+        public string referenceId { get; set; }
+        public int approvalStatusId { get; set; }
+        public int operationId { get; set; }
+        public bool operationCompleted { get; set; }
+        public string source { get; set; }
+        public string assignmentType { get; set; }
+        public int customerId { get; set; }
     }
 
 }
