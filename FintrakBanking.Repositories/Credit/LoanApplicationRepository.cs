@@ -4042,19 +4042,38 @@ namespace FintrakBanking.Repositories.Credit
             var operationId = (int)OperationsEnum.ExceptionalLoan;
             var levelIds = genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
+            //var exceptionalLoansForApproval = (from d in context.TBL_EXCEPTIONAL_LOAN_APPL_DETAIL
+            //                                  join e in context.TBL_EXCEPTIONAL_LOAN_APPLICATION on d.EXCEPTIONALLOANAPPLICATIONID equals e.EXCEPTIONALLOANAPPLICATIONID
+            //                                  join t in context.TBL_APPROVAL_TRAIL on d.EXCEPTIONALLOANAPPLDETAILID equals t.TARGETID
+            //                                  where d.DELETED == false && t.OPERATIONID == (int)OperationsEnum.ExceptionalLoan
+            //                                   && (d.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing
+            //                                   || t.APPROVALSTATEID != (int)ApprovalState.Ended
+            //                                   || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+            //                                   || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+            //                                   && t.RESPONSESTAFFID == null
+            //                                   && (t.LOOPEDSTAFFID == null || t.LOOPEDSTAFFID == staffId)
+            //                                   && ((levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == null) || (!levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == staffId))
+            //                                   && (t.TOSTAFFID == null || t.TOSTAFFID == staffId)
             var exceptionalLoansForApproval = (from d in context.TBL_EXCEPTIONAL_LOAN_APPL_DETAIL
-                                              join e in context.TBL_EXCEPTIONAL_LOAN_APPLICATION on d.EXCEPTIONALLOANAPPLICATIONID equals e.EXCEPTIONALLOANAPPLICATIONID
-                                              join t in context.TBL_APPROVAL_TRAIL on d.EXCEPTIONALLOANAPPLDETAILID equals t.TARGETID
-                                              where d.DELETED == false && t.OPERATIONID == (int)OperationsEnum.ExceptionalLoan
-                                               && (d.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing
-                                               || t.APPROVALSTATEID != (int)ApprovalState.Ended
-                                               || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                               || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
-                                               && t.RESPONSESTAFFID == null
-                                               && (t.LOOPEDSTAFFID == null || t.LOOPEDSTAFFID == staffId)
-                                               && ((levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == null) || (!levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == staffId))
-                                               && (t.TOSTAFFID == null || t.TOSTAFFID == staffId)
-                                              select new LoanApplicationDetailViewModel
+                                               join e in context.TBL_EXCEPTIONAL_LOAN_APPLICATION on d.EXCEPTIONALLOANAPPLICATIONID equals e.EXCEPTIONALLOANAPPLICATIONID
+                                               join t in context.TBL_APPROVAL_TRAIL on d.EXCEPTIONALLOANAPPLDETAILID equals t.TARGETID
+                                               where d.DELETED == false && t.OPERATIONID == (int)OperationsEnum.ExceptionalLoan
+                                                &&
+                                                ((
+                                                d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                                && t.APPROVALSTATEID != (int)ApprovalState.Ended
+                                                && t.RESPONSESTAFFID == null
+                                                && (levelIds.Contains((int)t.TOAPPROVALLEVELID) && t.LOOPEDSTAFFID == null)
+                                                && (t.TOSTAFFID == null || t.TOSTAFFID == staffId)
+                                                )
+                                                ||
+                                                (
+                                                d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
+                                                && t.APPROVALSTATEID == (int)ApprovalState.Ended
+                                                && t.RESPONSESTAFFID == null
+                                                ))
+
+                                               select new LoanApplicationDetailViewModel
                                               {
                                                   customerName = context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == e.CUSTOMERID).Select(c=>c.FIRSTNAME + " "+ c.MIDDLENAME + " "+ c.LASTNAME).FirstOrDefault(),
                                                   loanApplicationId = e.EXCEPTIONALLOANAPPLICATIONID,
