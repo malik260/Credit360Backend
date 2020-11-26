@@ -2721,12 +2721,12 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<DeferredChecklistViewModel> GetAllDeferralChecklist()
         {
-            var groupedData = GetDeferralChecklist().GroupBy(r => r.loanConditionId).Select(y => y.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
+            var groupedData = GetDeferralChecklist().OrderByDescending(x => x.approvalTrailId).ToList();//.GroupBy(r => r.loanConditionId).Select(y => y.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
             return groupedData.ToList();
         }
         public IEnumerable<DeferredChecklistViewModel> GetDeferralChecklistByConditionId(int conditionId)
         {
-            var condition = GetDeferralChecklist().Where(x => x.conditionId == conditionId).GroupBy(r => r.loanConditionId).Select(y => y.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
+            var condition = GetDeferralChecklist().Where(x => x.conditionId == conditionId).OrderByDescending(x => x.approvalTrailId).ToList();  //.GroupBy(r => r.loanConditionId).Select(y => y.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
             return condition.ToList();
         }
 
