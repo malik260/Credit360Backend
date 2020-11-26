@@ -32089,9 +32089,12 @@ namespace FintrakBanking.Repositories.Credit
                                 divisionName = ln.DIVISIONNAME,
                                 totalAmountRecovery = ln.TOTALEXPOSURE,
                                 dpd = ln.UNPODAYSOVERDUE,
-                                loanCategory = ln.CBNCLASSIFICATION
+                                loanCategory = ln.CBNCLASSIFICATION,
+                                casaAccount = ln.ACCOUNTNUMBER,
+                                branchName = ln.BRANCHNAME,
+                                divisionCode = ln.DIVISIONCODE,
+                                region = ln.REGIONCODE,
                             }).ToList();
-
             return data;
         }
 
@@ -36821,7 +36824,7 @@ namespace FintrakBanking.Repositories.Credit
             var customerIds = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == recoveryAgent && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Select(x => x.CUSTOMERID).Distinct().ToList();
             var data = (from x in context.TBL_CUSTOMER
                         where
-                        customerIds.Contains(x.CUSTOMERID)
+                        customerIds.Contains(x.CUSTOMERCODE)
 
                         select new RecoveryCollectionsViewModel
                         {

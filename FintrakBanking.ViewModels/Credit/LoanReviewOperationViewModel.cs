@@ -1747,7 +1747,29 @@ namespace FintrakBanking.ViewModels.Credit
         public bool operationCompleted { get; set; }
         public string source { get; set; }
         public string assignmentType { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
+        public int? stateId { get; set; }
+        public string branchCode { get; set; }
+        public string branchName { get; set; }
+        public int loanAssignId { get; set; }
+        public DateTime dateOfAssignment { get; set; }
+        public decimal totalRecoveryAmount { get; set; }
+        public string staffFullName { get; set; }
+        public string misCode { get; set; }
+        public string accreditedConsultantCompany { get; set; }
+        public string accreditedConsultantEmail { get; set; }
+        public string accountNumber { get; set; }
+        public string accountName { get; set; }
+        public string nameOfRecoveryAgent { get; set; }
+        public string address { get; set; }
+        public string telephoneNumber { get; set; }
+        public DateTime expectedRecoveryDate { get; set; }
+        public decimal amountRecovered { get; set; }
+        public DateTime dateOfEngagement { get; set; }
+        public double accountBalance { get; set; }
+        public string casaAccount { get; set; }
+        public string divisionCode { get; set; }
+        public string region { get; set; }
     }
 
 }
