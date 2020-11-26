@@ -358,6 +358,9 @@ public class LienProcessViewModel //: GeneralEntity
 
     public class SubResponseLoanPrepaymentViewModel
     {
+        public double account_balance;
+
+        public string user_ref_no { get; set; }
         public string account_number { get; set; }
         public string customer_acct { get; set; }
         public DateTime due_date { get; set; }

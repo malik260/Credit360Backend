@@ -1110,6 +1110,7 @@
     <Compile Include="StagingModels\STG_CASA_BALANCE.cs" />
     <Compile Include="StagingModels\STG_CASA_DAILY_BALANCE.cs" />
     <Compile Include="StagingModels\STG_CASA_DAILY_BALANCE_INPUT.cs" />
+    <Compile Include="StagingModels\STG_CONTRACT_DAILY_REPAY.cs" />
     <Compile Include="StagingModels\STG_CURRENCY_EXCHANGERATE.cs" />
     <Compile Include="StagingModels\STG_CURRENCY_TBL.cs" />
     <Compile Include="StagingModels\STG_CUSTOMER.cs" />
@@ -1132,6 +1133,7 @@
     <Compile Include="StagingModels\STG_MODE_OF_ADV.cs" />
     <Compile Include="StagingModels\STG_NAT_OF_ADV.cs" />
     <Compile Include="StagingModels\STG_OCCUPATION_CODE.cs" />
+    <Compile Include="StagingModels\STG_OVERDRAFT_DAILY_REPAY.cs" />
     <Compile Include="StagingModels\STG_PRICE_INDEX_RATE.cs" />
     <Compile Include="StagingModels\STG_PURPOSE_OF_ADV.cs" />
     <Compile Include="StagingModels\STG_SANCTION_AUTH.cs" />
