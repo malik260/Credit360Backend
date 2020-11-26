@@ -2064,6 +2064,8 @@ namespace FintrakBanking.Repositories.Credit
                                customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                customerId = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID : a.TBL_CUSTOMER.CUSTOMERID,
                                proposedAmount = a.APPROVEDAMOUNT,
+                               loanConditionId = c.LOANCONDITIONID,
+                               approvalTrailId = atrail.APPROVALTRAILID,
                                //approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                deferredDate = b.DEFEREDDATE,
@@ -2097,10 +2099,11 @@ namespace FintrakBanking.Repositories.Credit
                                excludeLegal = (c.EXCLUDELEGAL == null) ? "No" : c.EXCLUDELEGAL == true ? "Yes" : "No",
                                toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
-
                            }).ToList();
 
-            return dataLOS;
+            var result = dataLOS.GroupBy(r => r.loanConditionId)
+                               .Select(p => p.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
+            return result;
         }
 
         public IEnumerable<ChecklistApprovalViewModel> GetDeferralExtensionsAwaitingApproval(int staffId, int companyId)
@@ -2695,6 +2698,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalTrailId = atrail.APPROVALTRAILID,
                             excludeLegal = (b.EXCLUDELEGAL == null) ? "No" : b.EXCLUDELEGAL == true ? "Yes" : "No",
                             targetId = atrail.TARGETID,
+                            loanConditionId = a.LOANCONDITIONID,
                             checklistDeferralId = b.CHECKLISTDEFERRALID,
                             deferredDate = b.DEFERREDDATE,
                             conditionId = b.LOANCONDITIONID,
@@ -2712,17 +2716,17 @@ namespace FintrakBanking.Repositories.Credit
                             toApprovalLevelName = atrail.TOSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.TOSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                             fromApprovalLevelName = atrail.REQUESTSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                         });
-            var records = data.GroupBy(x => x.targetId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.approvalTrailId); ;
-            return records;
+            //var records = data.GroupBy(x => x.loanConditionId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.approvalTrailId); ;
+            return data;
         }
         public IEnumerable<DeferredChecklistViewModel> GetAllDeferralChecklist()
         {
-            var groupedData = GetDeferralChecklist().GroupBy(c => c.conditionId).Select(y => y.FirstOrDefault());
+            var groupedData = GetDeferralChecklist().GroupBy(r => r.loanConditionId).Select(y => y.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
             return groupedData.ToList();
         }
         public IEnumerable<DeferredChecklistViewModel> GetDeferralChecklistByConditionId(int conditionId)
         {
-            var condition = GetDeferralChecklist().Where(x => x.conditionId == conditionId).Select(y => y);
+            var condition = GetDeferralChecklist().Where(x => x.conditionId == conditionId).GroupBy(r => r.loanConditionId).Select(y => y.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
             return condition.ToList();
         }
 
