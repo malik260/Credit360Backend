@@ -37,5 +37,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? APPROVALSTATUSID { get; set; }
         public int COLLATERALVALUATIONID { get; set; }
+        public int? NUMBEROFTIMESAPPROVE { get; set; }
+
     }
 }

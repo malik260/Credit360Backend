@@ -27,7 +27,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool RetailLoanRecoveryReportCollection(RetailLoanRecoveryCommissionViewModel models, UserInfo user);
         WorkflowResponse saveMultipleLoanUnAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> model, UserInfo user);
         WorkflowResponse saveBulkLoanUnAssignmentToAgent(LoanRecoveryAssignmentViewModel model, UserInfo user);
-        bool saveBulkLoanAssignmentToAgentRem(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user);
+        bool saveBulkLoanAssignmentToAgentRem(List<GlobalExposureApplicationViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user);
         bool RetailLoanRecoveryCommission(RetailLoanRecoveryCommissionViewModel models, UserInfo user);
         WorkflowResponse saveBulkLoanReAssignmentToAgent(LoanRecoveryAssignmentViewModel model, UserInfo user);
         WorkflowResponse saveMultipleLoanReAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> model, UserInfo user, DateTime expCompletionDate, int accreditedConsultant, string source);

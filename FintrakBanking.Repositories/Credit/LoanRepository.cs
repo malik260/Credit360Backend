@@ -16949,7 +16949,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
-                                  && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter                                                                                                                                  
+                                  && ((cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId)) // currency filter                                                                                                                                  
                                    select new LoanViewModel
                                    {
                                        lmsdatecreated = b.DATETIMECREATED,
@@ -17083,7 +17083,7 @@ namespace FintrakBanking.Repositories.Credit
                                            newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
                                            newMaturityDate = op.MATURITYDATE,
                                            dateTimeCreated = op.DATECREATED
-                                       }).FirstOrDefault(),
+                                       }).FirstOrDefault()
                                    }).ToList();
 
             var externalLoans = GetApprovedThirdPartyLoanReview(companyId, staffId);
@@ -17695,7 +17695,7 @@ namespace FintrakBanking.Repositories.Credit
                                   //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
                                   //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ContingentLiability
                                   //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.RevolvingLoan
-                                  && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId)
+                                  && ((cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId))
                                    select new LoanViewModel
                                    {
                                        lmsdatecreated = b.DATETIMECREATED,
@@ -18679,7 +18679,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public bool saveBulkLoanAssignmentToAgentRem(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user)
+        public bool saveBulkLoanAssignmentToAgentRem(List<GlobalExposureApplicationViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user)
         {
             bool result = false;
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -18690,17 +18690,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Kindly select an accredited consultant/expected completion date is empty.");
             }
 
-            //var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
-            //                                              && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-            //                                              && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
-            //                                              && x.DELETED == false
-            //                                              ).ToList();
-            //if (validate != null && validate.Count() > 0)
-            //{
-            //    throw new SecureException("Request already exist and undergoing approval");
-            //}
-
-            LoanRecoveryAssignmentViewModel assignOperations = new LoanRecoveryAssignmentViewModel();
+            GlobalExposureApplicationViewModel assignOperations = new GlobalExposureApplicationViewModel();
 
             foreach (var customerRequest in models)
             {
@@ -18715,10 +18705,8 @@ namespace FintrakBanking.Repositories.Credit
                 assignOperations.totalAmountRecovery = customerRequest.totalAmountRecovery;
                 assignOperations.source = source;
                 assignOperations.productId = customerRequest.productId;
-                assignOperations.productClassId = customerRequest.productClassId;
                 assignOperations.loanId = customerRequest.loanId;
                 assignOperations.assignmentType = assignmentType;
-                assignOperations.applicationReferenceNumber = customerRequest.applicationReferenceNumber;
                 assignOperations.customerId = customerRequest.customerId;
                 var loanData = addBulkLoanAssignmentToAgent(assignOperations);
                 bulkLoanTable.Add(loanData);
@@ -19881,12 +19869,11 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private TBL_LOAN_RECOVERY_ASSIGNMENT addBulkLoanAssignmentToAgent(LoanRecoveryAssignmentViewModel entity)
+        private TBL_LOAN_RECOVERY_ASSIGNMENT addBulkLoanAssignmentToAgent(GlobalExposureApplicationViewModel entity)
         {
             var data = new TBL_LOAN_RECOVERY_ASSIGNMENT
             {
                 LOANID = entity.loanId,
-                APPLICATIONREFERENCENUMBER = entity.applicationReferenceNumber,
                 CUSTOMERID = entity.customerId,
                 ACCREDITEDCONSULTANT = entity.accreditedConsultant,
                 DATEASSIGNED = DateTime.Now,
@@ -19899,8 +19886,7 @@ namespace FintrakBanking.Repositories.Credit
                 TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
                 SOURCE = entity.source,
                 LOANREFERENCE = entity.loanReferenceNumber,
-                PRODUCTCLASSID = entity.productClassId,
-                PRODUCTID = entity.productId,
+                PRODUCTID = Convert.ToInt32(entity.productId),
                 ASSIGNMENTTYPE = entity.assignmentType
             };
             return data;
