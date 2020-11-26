@@ -1679,7 +1679,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("bulk-loan-recovery-assignment/{accreditedConsultant}/{expCompletionDate}/{source}/{assignmentType}")]
-        public HttpResponseMessage saveBulkLoanAssignmentToAgent(int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, [FromBody] List<LoanRecoveryAssignmentViewModel> models)
+        public HttpResponseMessage saveBulkLoanAssignmentToAgent(int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, [FromBody] List<GlobalExposureApplicationViewModel> models)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1703,7 +1703,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("bulk-loan-recovery-assignment-rem/{accreditedConsultant}/{expCompletionDate}/{source}/{assignmentType}")]
-        public HttpResponseMessage saveBulkLoanAssignmentToAgentRem(int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, [FromBody] List<LoanRecoveryAssignmentViewModel> models)
+        public HttpResponseMessage saveBulkLoanAssignmentToAgentRem(int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, [FromBody] List<GlobalExposureApplicationViewModel> models)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1727,7 +1727,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("bulk-loan-recovery-re-assignment")]
-        public HttpResponseMessage saveBulkLoanReAssignmentToAgent([FromBody] LoanRecoveryAssignmentViewModel model)
+        public HttpResponseMessage saveBulkLoanReAssignmentToAgent([FromBody] GlobalExposureApplicationViewModel model)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1819,7 +1819,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("multiple-loan-recovery-re-assignment/{expCompletionDate}/{accreditedConsultant}/{source}")]
-        public HttpResponseMessage saveMultipleLoanReAssignmentToAgent(DateTime expCompletionDate, int accreditedConsultant, string source,  [FromBody] List<LoanRecoveryAssignmentViewModel> model)
+        public HttpResponseMessage saveMultipleLoanReAssignmentToAgent(DateTime expCompletionDate, int accreditedConsultant, string source,  [FromBody] List<GlobalExposureApplicationViewModel> model)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1843,7 +1843,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("multiple-loan-recovery-un-assignment")]
-        public HttpResponseMessage saveMultipleLoanUnAssignmentToAgent([FromBody] List<LoanRecoveryAssignmentViewModel> model)
+        public HttpResponseMessage saveMultipleLoanUnAssignmentToAgent([FromBody] List<GlobalExposureApplicationViewModel> model)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1866,7 +1866,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("multiple-retail-loan-recovery-un-assignment")]
-        public HttpResponseMessage saveMultipleRetailLoanUnAssignmentToAgent([FromBody] List<LoanRecoveryAssignmentViewModel> model)
+        public HttpResponseMessage saveMultipleRetailLoanUnAssignmentToAgent([FromBody] List<GlobalExposureApplicationViewModel> model)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1889,7 +1889,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("bulk-loan-recovery-assignment-initiate-approval")]
-        public HttpResponseMessage bulkLoanAssignmentToAgentGoForApproval([FromBody] LoanRecoveryAssignmentViewModel models)
+        public HttpResponseMessage bulkLoanAssignmentToAgentGoForApproval([FromBody] GlobalExposureApplicationViewModel models)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
