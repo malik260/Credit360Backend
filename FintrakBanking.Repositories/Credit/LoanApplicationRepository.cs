@@ -4118,7 +4118,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   //approvalStatusId = d.APPROVALSTATUSID,
                                                   breachedLimitName = d.BREACHEDLIMITNAME,
                                                   loanApplicationDetailId = d.EXCEPTIONALLOANAPPLDETAILID,
-
+                                                  
                                                   approvalStatusId = t.APPROVALSTATUSID,
                                                   approvalTrailId = t.APPROVALTRAILID,
                                                   currentApprovalLevelId = t.TOAPPROVALLEVELID,
