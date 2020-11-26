@@ -1772,6 +1772,11 @@ namespace FintrakBanking.Repositories.Credit
                                 {
                                     LogLMSOperationForRouting(model, items, nextOperatioId, (short)OperationsEnum.LoanReviewApprovalAvailment);
                                 }
+                                else
+                                {
+                                    appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                                    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationCompleted;
+                                }
                             }
                         }
 
@@ -2716,6 +2721,11 @@ namespace FintrakBanking.Repositories.Credit
                             x.approvalTrailId = appRecord2.APPROVALTRAILID;
                             x.currentOperationId = appRecord2.OPERATIONID;
                         }
+                    }
+                    else if (x.applicationStatusId == (int)LoanApplicationStatusEnum.ApplicationCompleted)
+                    {
+                        x.currentApprovalLevel = "N/A";
+                        x.responsiblePerson = "N/A";
                     }
                     else
                     {
