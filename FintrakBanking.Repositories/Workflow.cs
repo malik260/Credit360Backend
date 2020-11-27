@@ -177,7 +177,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             lastOpenRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
-            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && this.statusId != (int)ApprovalStatusEnum.Reroute && lastOpenRequest != null) //if it is not initiation
+            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && this.statusId != (int)ApprovalStatusEnum.Reroute && lastOpenRequest != null) //if it is not initiation or referred
             {
                 throw new SecureException("An error occured, Next Level can't be preset unless on refer back or re-routing. Kindly refresh your browser and try again.");
             }
@@ -829,6 +829,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             // set those before calling in
             this.skipLimitsCheck = false;
             this.fromLevelId = null;
+            if (this.statusId != (int)ApprovalStatusEnum.Referred && this.statusId != (int)ApprovalStatusEnum.Reroute)
+            {
+                this.NextLevelId = null;
+            }
             this.newStateId = (int)ApprovalState.Processing;
             if (this.statusId == (int)ApprovalStatusEnum.Pending) this.statusId = (int)ApprovalStatusEnum.Processing;
             // if (IsSpecialReferedBackResponse()) this.statusId = (int)ApprovalStatusEnum.Processing;

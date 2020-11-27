@@ -1724,4 +1724,52 @@ namespace FintrakBanking.ViewModels.Credit
         public bool operationCompleted { get; set; }
     }
 
+    public class GlobalExposureApplicationViewModel : GeneralEntity
+    {
+        public int loanId { get; set; }
+        public string customerCode { get; set; }
+        public string productId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public string customerName { get; set; }
+        public string relationshipManagerName { get; set; }
+        public string expiryBand { get; set; }
+        public string exposureType { get; set; }
+        public string divisionName { get; set; }
+        public decimal? totalAmountRecovery { get; set; }
+        public int? dpd { get; set; }
+        public string loanCategory { get; set; }
+        public string productName { get; set; }
+        public int accreditedConsultant { get; set; }
+        public DateTime? expCompletionDate { get; set; }
+        public string referenceId { get; set; }
+        public int approvalStatusId { get; set; }
+        public int operationId { get; set; }
+        public bool operationCompleted { get; set; }
+        public string source { get; set; }
+        public string assignmentType { get; set; }
+        public string customerId { get; set; }
+        public int? stateId { get; set; }
+        public string branchCode { get; set; }
+        public string branchName { get; set; }
+        public int loanAssignId { get; set; }
+        public DateTime dateOfAssignment { get; set; }
+        public decimal totalRecoveryAmount { get; set; }
+        public string staffFullName { get; set; }
+        public string misCode { get; set; }
+        public string accreditedConsultantCompany { get; set; }
+        public string accreditedConsultantEmail { get; set; }
+        public string accountNumber { get; set; }
+        public string accountName { get; set; }
+        public string nameOfRecoveryAgent { get; set; }
+        public string address { get; set; }
+        public string telephoneNumber { get; set; }
+        public DateTime expectedRecoveryDate { get; set; }
+        public decimal amountRecovered { get; set; }
+        public DateTime dateOfEngagement { get; set; }
+        public double accountBalance { get; set; }
+        public string casaAccount { get; set; }
+        public string divisionCode { get; set; }
+        public string region { get; set; }
+    }
+
 }

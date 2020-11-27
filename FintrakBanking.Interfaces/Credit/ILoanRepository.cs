@@ -20,17 +20,17 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
-        WorkflowResponse saveMultipleRetailLoanUnAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> model, UserInfo user);
+        WorkflowResponse saveMultipleRetailLoanUnAssignmentToAgent(List<GlobalExposureApplicationViewModel> model, UserInfo user);
         WorkflowResponse saveRetailBulkLoanUnAssignmentToAgent(LoanRecoveryAssignmentViewModel model, UserInfo user);
         bool saveBulkLoanReAssignmentToAgentRem(LoanRecoveryAssignmentViewModel model, UserInfo user);
         bool RetailLoanRecoveryCommissionInternal(RetailLoanRecoveryCommissionViewModel models, UserInfo user);
         bool RetailLoanRecoveryReportCollection(RetailLoanRecoveryCommissionViewModel models, UserInfo user);
-        WorkflowResponse saveMultipleLoanUnAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> model, UserInfo user);
+        WorkflowResponse saveMultipleLoanUnAssignmentToAgent(List<GlobalExposureApplicationViewModel> model, UserInfo user);
         WorkflowResponse saveBulkLoanUnAssignmentToAgent(LoanRecoveryAssignmentViewModel model, UserInfo user);
-        bool saveBulkLoanAssignmentToAgentRem(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user);
+        bool saveBulkLoanAssignmentToAgentRem(List<GlobalExposureApplicationViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user);
         bool RetailLoanRecoveryCommission(RetailLoanRecoveryCommissionViewModel models, UserInfo user);
-        WorkflowResponse saveBulkLoanReAssignmentToAgent(LoanRecoveryAssignmentViewModel model, UserInfo user);
-        WorkflowResponse saveMultipleLoanReAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> model, UserInfo user, DateTime expCompletionDate, int accreditedConsultant, string source);
+        WorkflowResponse saveBulkLoanReAssignmentToAgent(GlobalExposureApplicationViewModel model, UserInfo user);
+        WorkflowResponse saveMultipleLoanReAssignmentToAgent(List<GlobalExposureApplicationViewModel> model, UserInfo user, DateTime expCompletionDate, int accreditedConsultant, string source);
         IEnumerable<FacilityModificationViewModel> GetLMSFacilityModificationsForApproval(int staffId);
         WorkflowResponse ApproveLMSFacilityModification(ForwardViewModel model);
         FacilityModificationViewModel GetLMSFacilityModification(int facilityModificationId);
@@ -43,11 +43,11 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CamProcessedLoanViewModel> GetBookedLoanApplicationForBookingVerificationParam(int staffId, int companyId, string searchString);
         IEnumerable<CamProcessedLoanViewModel> getLoanFacilitiesAwaitingApprovalByParam(int companyId, int staffId, string searchString);
         int AddCollateralLiquidationRecoveryWithoutFile(CollateralLiquidationRecoveryViewModel model);
-        WorkflowResponse bulkLoanAssignmentToAgentGoForApproval(LoanRecoveryAssignmentViewModel models, UserInfo user);
+        WorkflowResponse bulkLoanAssignmentToAgentGoForApproval(GlobalExposureApplicationViewModel models, UserInfo user);
         RemoveLienViewModel GetLienRemovalLetter(int lienRemovalId);
         CollateralLiquidationRecoveryViewModel GetLiquidationReceipt(int liquidationRecoveryReceiptId);
         int AddCollateralLiquidationRecovery(CollateralLiquidationRecoveryViewModel model, byte[] buffer);
-        bool saveBulkLoanAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user);
+        bool saveBulkLoanAssignmentToAgent(List<GlobalExposureApplicationViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user);
         void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod);
         IQueryable<LoanViewModel> LoanPrepaymentApprovalList();
         CasaBalanceViewModel GetCASABalanceById(int casaAccountId, int companyId);

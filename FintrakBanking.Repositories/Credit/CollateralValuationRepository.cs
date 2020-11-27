@@ -222,6 +222,7 @@ namespace FintrakBanking.Repositories.Credit
                            valuationFee = x.VALUATIONFEE,
                            accountNumber = x.ACCOUNTNUMBER,
                            wht = x.WHT,
+                           whtAmount = x.WHTAMOUNT,
                            valuationComment = x.VALUERCOMMENT,
                            valuationReportId = x.VALUATIONREPORTID,
                            operationId = (int) OperationsEnum.CollateralValuationRequest,
@@ -245,6 +246,7 @@ namespace FintrakBanking.Repositories.Credit
                             valuationFee = x.VALUATIONFEE,
                             accountNumber = x.ACCOUNTNUMBER,
                             wht = x.WHT,
+                            whtAmount = x.WHTAMOUNT,
                             valuationComment = x.VALUERCOMMENT,
                             valuationReportId = x.VALUATIONREPORTID,
                             operationId = (int)OperationsEnum.CollateralValuationRequest,
@@ -876,13 +878,24 @@ namespace FintrakBanking.Repositories.Credit
                         var approvingStaff = _context.TBL_STAFF.Find(model.createdBy);
                         var staffRole = _context.TBL_STAFF_ROLE.Where(r => r.STAFFROLEID == approvingStaff.STAFFROLEID).FirstOrDefault();
                         prereqisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.VALUATIONPREREQUISITEID == model.valuationPrerequisiteId && O.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing).Select(O => O).FirstOrDefault();
+                        var valuerReport = _context.TBL_VALUATION_REPORT.Where(o => o.COLLATERALVALUATIONID == prereqisite.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
 
-                        if (staffRole.STAFFROLECODE == "GH Credit Doc")
+                        if (staffRole.STAFFROLECODE == "VAL CR DOC OFF")
                         {
-                            var valuerReport = _context.TBL_VALUATION_REPORT.Where(o => o.COLLATERALVALUATIONID == prereqisite.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
+                            var update = _context.TBL_COLLATERAL_VALUATION_PRE.Find(prereqisite.VALUATIONPREREQUISITEID);
+                            if(update.NUMBEROFTIMESAPPROVE == null)
+                            {
+                                update.NUMBEROFTIMESAPPROVE = 0;
+                            }
+                            update.NUMBEROFTIMESAPPROVE = (update.NUMBEROFTIMESAPPROVE + 1);
+                            _context.SaveChanges();
+                        }
+
+                        if ((staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR") && (prereqisite.NUMBEROFTIMESAPPROVE <= 1 || prereqisite.NUMBEROFTIMESAPPROVE == null) && (valuerReport.OMV < 1 || valuerReport.OMV == null))
+                        {
                             var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
                             var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
-                            
+
                             var valuationOfficer = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
                             var accountOfficer = _context.TBL_STAFF.Find(collateral.CREATEDBY);
                             var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
@@ -905,9 +918,65 @@ namespace FintrakBanking.Repositories.Credit
                             letterBody = letterBody.Replace("@{{assetType}}", collateralType?.COLLATERALTYPENAME);
                             letterBody = letterBody.Replace("@{{customerName}}", customer);
                             letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
-                            letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
+                            letterBody = letterBody.Replace("@{{initiator}}", valuerDetail?.FIRMNAME);
                             letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
+
+                            letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
+                            letterTitle = letterTitle.Replace("@{{initiator}}", staffFullName.ToUpper());
+
+                            var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
+                            alert.receiverEmailList.Add(emailList);
+                            LogEmailAlert(letterBody, letterTitle, alert.receiverEmailList, "98007", 98007, letter.BINDINGMETHOD);
+                        }
+
+                        if ((staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR") && prereqisite.NUMBEROFTIMESAPPROVE > 1 && valuerReport.OMV > 0 && valuerReport.FSV > 0)
+                        {
+                            var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
+                            var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
+
+                            var valuationOfficer = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
+                            var accountOfficer = _context.TBL_STAFF.Find(collateral.CREATEDBY);
+                            var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
+
+                            var rem = _context.TBL_STAFF.Find(accountOfficer.SUPERVISOR_STAFFID);
+                            var customerCollateral = _context.TBL_COLLATERAL_CUSTOMER.Find(collateral.COLLATERALCUSTOMERID);
+                            var collateralType = _context.TBL_COLLATERAL_TYPE.Find(customerCollateral.COLLATERALTYPEID);
+                            var customer = _context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == customerCollateral.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                            var collAddress = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c.PROPERTYADDRESS).FirstOrDefault();
+                            var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME;
+
+                            var tempResult = string.Empty;
+                            var omv = string.Format("{0:#,##.00}", Convert.ToDecimal(valuerReport?.OMV));
+                            var fsv = string.Format("{0:#,##.00}", Convert.ToDecimal(valuerReport?.FSV));
+                            var fee = string.Format("{0:#,##.00}", Convert.ToDecimal(valuerReport?.VALUATIONFEE));
+                            tempResult = $@"
+                             <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                                <tr>
+                                    <td><b>PROPERTY ADDRESS</b></td>
+                                    <td><b>OMV</b></td>
+                                    <td><b>FSV</b></td>
+                                    <td><b>VALUATION FEE TO BE DEBITED(NGN)</b></td>
+                                </tr>
+                             ";
                             
+                            tempResult = tempResult + $@"
+                                <tr>
+                                    <td>{collAddress}</td>
+                                    <td>{$"{omv}"}</td>
+                                    <td>{$"{fsv}"}</td>
+                                    <td>{$"{fee}"}</td>
+                                </tr>
+                                ";
+                    tempResult = tempResult + $"</table><br/>";
+
+                    var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationSecondNotification").Select(x => x).FirstOrDefault();
+                            var letterBody = letter?.TEMPLATE;
+                            var letterTitle = letter?.TITLE;
+                            letterBody = letterBody.Replace("@{{customerName}}", customer);
+                            letterBody = letterBody.Replace("@{{valuationDetail}}", tempResult);
+                            letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
+                            letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
+
                             var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                             alert.receiverEmailList.Add(emailList);
                             LogEmailAlert(letterBody, letterTitle, alert.receiverEmailList, "98007", 98007, letter.BINDINGMETHOD);
@@ -922,7 +991,7 @@ namespace FintrakBanking.Repositories.Credit
                         //{
                         prereqisite.APPROVALSTATUSID = (int) ApprovalStatusEnum.Approved;
                         var valuerReport = _context.TBL_VALUATION_REPORT.Where(o => o.COLLATERALVALUATIONID == prereqisite.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
-
+                        
                         if (valuerReport != null) 
                             valuerReport.APPROVALSTATUSID = (int) ApprovalStatusEnum.Approved;
                         //}
@@ -940,6 +1009,12 @@ namespace FintrakBanking.Repositories.Credit
                         var customer = _context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == customerCollateral.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
                         var collAddress = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c.PROPERTYADDRESS).FirstOrDefault();
 
+                        var updateValues = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c).FirstOrDefault();
+                        updateValues.FORCEDSALEVALUE = valuerReport.FSV;
+                        updateValues.OPENMARKETVALUE = valuerReport.OMV;
+                        updateValues.VALUATIONAMOUNT = valuerReport.FSV;
+                        customerCollateral.COLLATERALVALUE = (decimal)valuerReport.FSV;
+
                         var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME +" "+ accountOfficer?.PHONE;
                         var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationNotification").Select(x => x).FirstOrDefault();
                         var letterBody = letter?.TEMPLATE;
@@ -954,6 +1029,9 @@ namespace FintrakBanking.Repositories.Credit
                         letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
                         letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
                         letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
+
+                        letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
+                        letterTitle = letterTitle.Replace("@{{initiator}}", staffFullName.ToUpper());
 
                         var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                         alert.receiverEmailList.Add(emailList);
@@ -1017,7 +1095,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 string recipient = string.Join("", recipients.ToArray());
-                string messageSubject = alertSubject + " ALERT";
+                string messageSubject = alertSubject;
                 string messageContent = messageBody;
                 //string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
                 //string mailBody = templateUrl.Replace("{Description}", messageContent);  //EmailHelpers.PopulateBody(messageContent, templateUrl); 
