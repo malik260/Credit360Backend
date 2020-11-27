@@ -918,7 +918,7 @@ namespace FintrakBanking.Repositories.Credit
                             letterBody = letterBody.Replace("@{{assetType}}", collateralType?.COLLATERALTYPENAME);
                             letterBody = letterBody.Replace("@{{customerName}}", customer);
                             letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
-                            letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
+                            letterBody = letterBody.Replace("@{{initiator}}", valuerDetail?.FIRMNAME);
                             letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
 
                             letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
