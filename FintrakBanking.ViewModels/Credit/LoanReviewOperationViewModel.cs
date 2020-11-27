@@ -894,11 +894,17 @@ namespace FintrakBanking.ViewModels.Credit
         public int TenorAgreed { get { return (this.maturityDate.Value - this.effectiveDate).Days; } }
         public int TenorOfPayment { get { return (this.maturityDate.Value - this.effectiveDate).Days; } }
         public string AccountNumber { get; set; }
+        public string accountNumber { get; set; }
         public string AccountName { get; set; }
+        public string accountName { get; set; }
         public string NameOfRecoveryAgent { get; set; }
+        public string nameOfRecoveryAgent { get; set; }
         public string Address { get; set; }
+        public string address { get; set; }
         public string TelephoneNumber { get; set; }
+        public string telephoneNumber { get; set; }
         public DateTime ExpectedRecoveryDate { get; set; }
+        public DateTime expectedRecoveryDate { get; set; }
         public decimal AmountRecovered { get; set; }
         public DateTime DateOfAssignment { get; set; }
         public string Email { get; set; }
