@@ -32078,8 +32078,8 @@ namespace FintrakBanking.Repositories.Credit
                         select new GlobalExposureApplicationViewModel
                         {
                             loanId = ln.ID,
-                            customerId = ln.CUSTOMERID,
-                            productId = ln.PRODUCTID,
+                            customerCode = ln.CUSTOMERID,
+                            productCode = ln.PRODUCTID,
                             productClassId = 0,
                             applicationReferenceNumber = "",
                             loanReferenceNumber = ln.REFERENCENUMBER,
@@ -32097,6 +32097,13 @@ namespace FintrakBanking.Repositories.Credit
                             divisionCode = ln.DIVISIONCODE,
                             region = ln.REGIONCODE,
                         }).ToList();
+
+            foreach (var xx in exposureData)
+            {
+                xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
+            }
 
             var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
@@ -32139,8 +32146,8 @@ namespace FintrakBanking.Repositories.Credit
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
                                 loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
-                                customerId = ln.CUSTOMERID.ToString(),
-                                productId = ln.PRODUCTID.ToString(),
+                                customerId = ln.CUSTOMERID,
+                                productId = ln.PRODUCTID,
                                 productClassId = (int)pr.PRODUCTCLASSID,
                                 prepaymentAmount = op.PREPAYMENT,
                                 productTypeId = pr.PRODUCTTYPEID,
@@ -32296,8 +32303,8 @@ namespace FintrakBanking.Repositories.Credit
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
-                                         customerId = ln.CUSTOMERID.ToString(),
-                                         productId = ln.PRODUCTID.ToString(),
+                                         customerId = ln.CUSTOMERID,
+                                         productId = ln.PRODUCTID,
                                          productClassId = (int)pr.PRODUCTCLASSID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          prepaymentAmount = op.PREPAYMENT,
@@ -32409,8 +32416,8 @@ namespace FintrakBanking.Repositories.Credit
                                              loanApplicationDetailId = ld.LOANAPPLICATIONDETAILID,
                                              loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                              loanId = ln.TERMLOANID,
-                                             customerId = ln.CUSTOMERID.ToString(),
-                                             productId = ln.PRODUCTID.ToString(),
+                                             customerId = ln.CUSTOMERID,
+                                             productId = ln.PRODUCTID,
                                              productClassId = (int)pr.PRODUCTCLASSID,
                                              productTypeId = pr.PRODUCTTYPEID,
                                              casaAccountId = ln.CASAACCOUNTID,
@@ -32517,8 +32524,8 @@ namespace FintrakBanking.Repositories.Credit
                                                   creditAppraisalOperationId = lp.OPERATIONID,
                                                   loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                                   loanId = ln.REVOLVINGLOANID,
-                                                  customerId = ln.CUSTOMERID.ToString(),
-                                                  productId = ln.PRODUCTID.ToString(),
+                                                  customerId = ln.CUSTOMERID,
+                                                  productId = ln.PRODUCTID,
                                                   productClassId = (int)pr.PRODUCTCLASSID,
                                                   productTypeId = pr.PRODUCTTYPEID,
                                                   casaAccountId = ln.CASAACCOUNTID,
@@ -36800,7 +36807,7 @@ namespace FintrakBanking.Repositories.Credit
             var customerIds = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == recoveryAgent && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Select(x => x.CUSTOMERID).Distinct().ToList();
             var data = (from x in context.TBL_CUSTOMER
                         where
-                        customerIds.Contains(x.CUSTOMERCODE)
+                        customerIds.Contains(x.CUSTOMERID)
 
                         select new RecoveryCollectionsViewModel
                         {
