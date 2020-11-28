@@ -252,6 +252,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isEmployerRelated { get; set; }
         public int? relatedEmployerId { get; set; }
         public string employer { get; set; }
+        public int creditAppraisalOperationId { get; set; }
+        public int creditAppraisalLoanApplicationId { get; set; }
     }
 
     public class InterestIncomeViewModel
