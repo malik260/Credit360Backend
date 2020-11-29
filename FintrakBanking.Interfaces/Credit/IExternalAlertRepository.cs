@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         string Decrypt(string cipher);
         void ValidateProfiledUsers(int maxUsers);
-        IEnumerable<LoanReviewOperationApprovalViewModel> GetRecoveryAssignmentDueCompletionDate();
+        IEnumerable<GlobalExposureApplicationViewModel> GetRecoveryAssignmentDueCompletionDate();
         bool QuarterlyAutoAssignRecoveryAnalysisByCustomer();
         bool MonthlyAutoAssignRecoveryAnalysisByCustomer();
         IEnumerable<RepaymentAlertViewModel> GetRepaymentPayDownAlert();

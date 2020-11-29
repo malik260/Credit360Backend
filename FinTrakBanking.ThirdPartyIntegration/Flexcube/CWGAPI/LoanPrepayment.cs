@@ -16,7 +16,7 @@ using System.Web.Script.Serialization;
 
 namespace ThirdPartyIntegration
 {
-    public class LoanPrepayment
+    public class LoanPrepayment : ILoanPrepayment
     {
         private FinTrakBankingContext context;
         FinTrakBankingStagingContext staging;
@@ -568,7 +568,7 @@ namespace ThirdPartyIntegration
             return true;
         }
 
-        private void GetRepaymentEntriesToStaging()
+        public void GetRepaymentEntriesToStaging()
         {
             GetLoanRepaymentToStaging();
             GetOverdraftRepaymentToStaging(); 
