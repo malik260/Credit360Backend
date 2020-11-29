@@ -958,7 +958,6 @@ namespace FintrakBanking.Repositories.Credit
                                     <td><b>VALUATION FEE TO BE DEBITED(NGN)</b></td>
                                 </tr>
                              ";
-                            
                             tempResult = tempResult + $@"
                                 <tr>
                                     <td>{collAddress}</td>

@@ -5117,7 +5117,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             var maturityDate = t.EXPCOMPLETIONDATE?.ToString("dd-MM-yyyy");
                             int numberOfDays = (t.EXPCOMPLETIONDATE.Value - DateTime.Now).Days;
                             var staffFullName = context.TBL_STAFF.Where(s => s.STAFFID == t.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
-                            var customerName = context.TBL_CUSTOMER.Where(s => s.CUSTOMERCODE == t.CUSTOMERID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                            var customerName = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == t.CUSTOMERID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
                             result = result + $@"
                         <tr>
                             <td>{n}</td>
