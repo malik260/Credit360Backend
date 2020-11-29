@@ -571,7 +571,7 @@ namespace ThirdPartyIntegration
         private void GetRepaymentEntriesToStaging()
         {
             GetLoanRepaymentToStaging();
-            GetRepaymentEntriesToStaging();
+            GetOverdraftRepaymentToStaging(); 
         }
     }
 }
