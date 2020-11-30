@@ -895,14 +895,14 @@ namespace FintrakBanking.Repositories.Setups.General
             int users = Convert.ToInt32(maxUsers);
             externalAlertRepository.ValidateProfiledUsers(users);
 
-            TimeSpan startRepay = new TimeSpan(8, 0, 0);
-            TimeSpan endRepay = new TimeSpan(23, 30, 0);
+            //TimeSpan startRepay = new TimeSpan(8, 0, 0);
+            //TimeSpan endRepay = new TimeSpan(23, 30, 0);
 
-            if ((now >= startRepay) && (now <= endRepay))
-            {
-                loanPrepayment.GetRepaymentEntriesToStaging();
-            }
-                if (CompareDate() == true)
+            //if ((now >= startRepay) && (now <= endRepay))
+            //{
+            //    loanPrepayment.GetRepaymentEntriesToStaging();
+            //}
+            if (CompareDate() == true)
             {
                  TimeSpan start = new TimeSpan(17, 0, 0);
                  TimeSpan end = new TimeSpan(17, 30, 0);
