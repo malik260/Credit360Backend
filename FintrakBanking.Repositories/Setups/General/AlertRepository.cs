@@ -29,7 +29,8 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
-        private ILoanPrepayment loanPrepayment;
+        private LoanPrepayment loanPrepayment;
+
         //private ILoanArchiveRepository loanArchive;
         private string maxUsers = ConfigurationManager.AppSettings["muTrace"];
         
@@ -66,8 +67,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
 
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
-                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository,
-                                ILoanPrepayment _loanPrepayment
+                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository
                                 )
         {
             this.context = _context;
@@ -75,7 +75,6 @@ namespace FintrakBanking.Repositories.Setups.General
             this.audit = _audit;
             this.general = _general;
             this.externalAlertRepository = _externalAlertRepository;
-            this.loanPrepayment = _loanPrepayment;
             //this.loanArchive = _loanArchive;
             //ILoanArchiveRepository _loanArchive
         }
@@ -895,13 +894,15 @@ namespace FintrakBanking.Repositories.Setups.General
             int users = Convert.ToInt32(maxUsers);
             externalAlertRepository.ValidateProfiledUsers(users);
 
-            //TimeSpan startRepay = new TimeSpan(8, 0, 0);
-            //TimeSpan endRepay = new TimeSpan(23, 30, 0);
+            TimeSpan startRepay = new TimeSpan(8, 0, 0);
+            TimeSpan endRepay = new TimeSpan(23, 30, 0);
 
-            //if ((now >= startRepay) && (now <= endRepay))
-            //{
-            //    loanPrepayment.GetRepaymentEntriesToStaging();
-            //}
+            if ((now >= startRepay) && (now <= endRepay))
+            {
+                loanPrepayment.GetRepaymentEntriesToStaging();
+            }
+
+
             if (CompareDate() == true)
             {
                  TimeSpan start = new TimeSpan(17, 0, 0);

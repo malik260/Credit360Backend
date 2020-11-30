@@ -16,7 +16,7 @@ using System.Web.Script.Serialization;
 
 namespace ThirdPartyIntegration
 {
-    public class LoanPrepayment : ILoanPrepayment
+    public class LoanPrepayment
     {
         private FinTrakBankingContext context;
         FinTrakBankingStagingContext staging;

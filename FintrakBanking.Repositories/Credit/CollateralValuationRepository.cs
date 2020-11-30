@@ -918,18 +918,18 @@ namespace FintrakBanking.Repositories.Credit
                             letterBody = letterBody.Replace("@{{assetType}}", collateralType?.COLLATERALTYPENAME);
                             letterBody = letterBody.Replace("@{{customerName}}", customer);
                             letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
-                            letterBody = letterBody.Replace("@{{initiator}}", valuerDetail?.FIRMNAME);
+                            letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
                             letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
 
                             letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
-                            letterTitle = letterTitle.Replace("@{{initiator}}", staffFullName.ToUpper());
+                            letterTitle = letterTitle.Replace("@{{valuerName}}", valuerDetail?.FIRMNAME.ToUpper());
 
                             var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                             alert.receiverEmailList.Add(emailList);
                             LogEmailAlert(letterBody, letterTitle, alert.receiverEmailList, "98007", 98007, letter.BINDINGMETHOD);
                         }
 
-                        if ((staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR") && prereqisite.NUMBEROFTIMESAPPROVE > 1 && valuerReport.OMV > 0 && valuerReport.FSV > 0)
+                        if (staffRole.STAFFROLECODE == "VAL CR DOC OFF" && prereqisite.NUMBEROFTIMESAPPROVE > 1 && valuerReport.OMV > 0 && valuerReport.FSV > 0)
                         {
                             var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
                             var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
