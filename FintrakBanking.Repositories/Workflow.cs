@@ -829,10 +829,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             // set those before calling in
             this.skipLimitsCheck = false;
             this.fromLevelId = null;
-            if (this.statusId != (int)ApprovalStatusEnum.Referred && this.statusId != (int)ApprovalStatusEnum.Reroute)
-            {
-                this.NextLevelId = null;
-            }
             this.newStateId = (int)ApprovalState.Processing;
             if (this.statusId == (int)ApprovalStatusEnum.Pending) this.statusId = (int)ApprovalStatusEnum.Processing;
             // if (IsSpecialReferedBackResponse()) this.statusId = (int)ApprovalStatusEnum.Processing;
