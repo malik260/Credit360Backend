@@ -32080,7 +32080,6 @@ namespace FintrakBanking.Repositories.Credit
                             loanId = ln.ID,
                             customerCode = ln.CUSTOMERID,
                             productCode = ln.PRODUCTID,
-                            productClassId = 0,
                             applicationReferenceNumber = "",
                             loanReferenceNumber = ln.REFERENCENUMBER,
                             customerName = ln.CUSTOMERNAME,
@@ -32103,6 +32102,7 @@ namespace FintrakBanking.Repositories.Credit
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
                 xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
+                xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
             var dataLoan = (from ln in context.TBL_LOAN
