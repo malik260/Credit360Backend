@@ -35155,7 +35155,6 @@ namespace FintrakBanking.Repositories.Credit
                                          comment = "",
                                      }).ToList();
 
-
             var data = dataLoan.Union(dataRevolvingLoan).Union(exposureData);
 
             return data;
