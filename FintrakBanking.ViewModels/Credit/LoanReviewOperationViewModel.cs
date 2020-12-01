@@ -1115,6 +1115,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int? flagStatus { get; set; }
         public List<string> customerAddresses { get; set; }
         public string agentCategory { get; set; }
+        public int? dpdExposure { get; set; }
+        public string category { get; set; }
+        public string divisionCode { get; set; }
+        public string branchCode { get; set; }
     }
 
     public class RecoveryCollectionsViewModel
