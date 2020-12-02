@@ -45,6 +45,7 @@ namespace FintrakBanking.ViewModels.Customer
         public DateTime systemDateTime { get; set; }
         public string physicalFileNumber { get; set; }
         public string physicalLocation { get; set; }
+        public string deletedByName { get; set; }
     }
     public class KYCDocumentTypeViewModel
     {

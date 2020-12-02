@@ -1,5 +1,8 @@
 ﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Entities.StagingModels;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System;
 using System.Collections.Generic;
@@ -16,16 +19,20 @@ namespace ThirdPartyIntegration
     public class LoanPrepayment
     {
         private FinTrakBankingContext context;
+        FinTrakBankingStagingContext staging;
         string API_KEY, API_URL = string.Empty;
         private IEnumerable<TBL_API_URL> APIUrlConfig;
+        IGeneralSetupRepository genSetup;
 
-        public LoanPrepayment(FinTrakBankingContext _context)
+        public LoanPrepayment(FinTrakBankingContext _context, FinTrakBankingStagingContext _staging, IGeneralSetupRepository _genSetup)
         {
             this.context = _context;
+            this.staging = _staging;
             var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
             APIUrlConfig = context.TBL_API_URL;
             API_KEY = configdata.APIKEY;
             API_URL = configdata.APIURL;
+            this.genSetup = _genSetup;
 
         }
 
@@ -445,5 +452,126 @@ namespace ThirdPartyIntegration
 
         }
 
+        private bool GetLoanRepaymentToStaging()
+        {
+            MainResponseLoanPrepaymentViewModel response = new MainResponseLoanPrepaymentViewModel();
+            LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
+            model.auth_key = API_KEY;
+            model.channel_code = "FINTRAK";
+            model.review_date = genSetup.GetApplicationDate();
+
+
+            //var loans = (from x in context.TBL_LOAN
+            //            join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+            //            join cust in context.TBL_CUSTOMER on c.CUSTOMERID equals cust.CUSTOMERID
+            //            where x.LOANSTATUSID != (short)LoanStatusEnum.Inactive && x.LOANSTATUSID != (short)LoanStatusEnum.Cancelled
+            //            && (x.OUTSTANDINGPRINCIPAL > 0 || x.OUTSTANDINGINTEREST > 0)
+
+            //            select new SubResponseLoanPrepaymentViewModel()
+            //            {
+            //                account_number = x.LOANREFERENCENUMBER,
+            //                customer_acct = c.PRODUCTACCOUNTNUMBER,
+            //                user_ref_no = cust.CUSTOMERCODE
+            //            }).ToList();
+
+            //foreach(var item in loans)
+            //{
+            //    model.account_no = item.account_number;
+            //    model.review_date = genSetup.GetApplicationDate();
+            //    model.user_ref_no = item.user_ref_no;
+
+            //    Task.Run(async () => response = await GetTodayRepaymentLoans(model)).GetAwaiter().GetResult();
+
+            //    if(response.response_code == "00")
+            //    {
+
+            //    }
+            //};
+
+            Task.Run(async () => response = await GetTodayRepaymentLoans(model)).GetAwaiter().GetResult();
+            if (response.response_code == "00")
+            {
+                var repaymentDataReceived = response.getrepaymentdetailsresp.ToList();
+
+                foreach(var itemReceived in repaymentDataReceived)
+                {
+                    var data = new STG_CONTRACT_DAILY_REPAY
+                    {
+                        CONTRACTREFERENCENUMBER = itemReceived.account_number,
+                        LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,
+                        CUSTOMERACCOUNTNUMBER = itemReceived.customer_acct,
+                        BRANCHCODE = itemReceived.branch_code,
+                        PAYMENTDESCRIPTION = itemReceived.component_name,
+                        DUEDATE = itemReceived.due_date,
+                        PAYMENTDATE = itemReceived.paid_date,
+                        AMOUNTPAID = itemReceived.amount_paid
+                    };
+                    staging.STG_CONTRACT_DAILY_REPAY.Add(data);
+                }
+
+                
+            };
+
+            return context.SaveChanges() > 0;
+        }
+
+        private bool GetOverdraftRepaymentToStaging()
+        {
+            ResponseLoanPrepaymentViewModel response = new ResponseLoanPrepaymentViewModel();
+            LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
+            model.auth_key = API_KEY;
+            model.channel_code = "FINTRAK";
+            model.review_date = genSetup.GetApplicationDate();
+
+            var loans = (from x in context.TBL_LOAN_REVOLVING
+                         join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                         join cust in context.TBL_CUSTOMER on c.CUSTOMERID equals cust.CUSTOMERID
+                         where x.LOANSTATUSID != (short)LoanStatusEnum.Inactive 
+                         && x.LOANSTATUSID != (short)LoanStatusEnum.Cancelled 
+                         && x.LOANSTATUSID != (short)LoanStatusEnum.Completed
+                          && x.LOANSTATUSID != (short)LoanStatusEnum.Terminated
+
+                         select new SubResponseLoanPrepaymentViewModel()
+                         {
+                             account_number = x.LOANREFERENCENUMBER,
+                             customer_acct = c.PRODUCTACCOUNTNUMBER,
+                             user_ref_no = cust.CUSTOMERCODE,
+                             account_balance = 0,
+                             creditTurnover = 0,
+                             debitTurnover = 0,
+                             transactionDate = DateTime.Now,
+                         }).ToList();
+
+            foreach (var item in loans)
+            {
+                
+                Task.Run(async () => response = await GetOverdraftRepayment(model)).GetAwaiter().GetResult();
+                if (response.response_code == "00")
+                {
+                    var repaymentDataReceived = response;
+
+                    var data = new STG_OVERDRAFT_DAILY_REPAY
+                    {
+                        LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.OverdraftFacility,
+                        CUSTOMERACCOUNTNUMBER = item.customer_acct,
+                        ACCOUNTBALANCE = item.account_balance,
+                        CREDITTURNOVER = item.creditTurnover,
+                        DEBITTURNOVER = item.debitTurnover,
+                        TRANSACTIONDATE = item.transactionDate,
+                        STATUS = false,
+                    };
+                    staging.STG_OVERDRAFT_DAILY_REPAY.Add(data);
+                };
+                return context.SaveChanges() > 0;
+            };
+            
+            return true;
+        }
+
+        public void GetRepaymentEntriesToStaging()
+        {
+            GetLoanRepaymentToStaging();
+            GetOverdraftRepaymentToStaging(); 
+        }
     }
 }

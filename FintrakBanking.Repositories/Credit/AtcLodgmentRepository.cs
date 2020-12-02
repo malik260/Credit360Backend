@@ -259,6 +259,7 @@ namespace FintrakBanking.Repositories.credit
                     workflow.StatusId = mod.approvalStatusId == 2 ? (short)ApprovalStatusEnum.Processing : mod.approvalStatusId;
                     workflow.TargetId = mod.atcLodgmentId;
                     workflow.Comment = mod.comment;
+                    workflow.NextLevelId = null;
                     workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
                     workflow.DeferredExecution = true;
                     workflow.LogActivity();
@@ -272,7 +273,7 @@ namespace FintrakBanking.Repositories.credit
                             var document = context.TBL_ATC_RELEASE.Where(o => o.ATCLODGMENTID == mod.atcLodgmentId &&
                                                                     (o.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || o.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                                                                     .FirstOrDefault();
-
+                              
                             var doc = context.TBL_ATC_LODGMENT.Where(o => o.ATCLODGMENTID == mod.atcLodgmentId).FirstOrDefault();
                             if (document != null && doc != null)
                             {

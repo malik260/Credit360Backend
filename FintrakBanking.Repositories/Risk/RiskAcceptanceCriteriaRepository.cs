@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Risk
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerId ).FirstOrDefault();
             var employerType = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(x => x.CUSTOMERID == model.customerId).FirstOrDefault();
             
-        int? customerTypeId = customer != null ? customer.CUSTOMERTYPEID : null;
+           int? customerTypeId = customer != null ? customer.CUSTOMERTYPEID : null;
 
             bool isCorporate = customerTypeId == (short)CustomerTypeEnum.Corporate;
 
@@ -71,6 +71,7 @@ namespace FintrakBanking.Repositories.Risk
                 var productClass = context.TBL_PRODUCT.Where(x => x.PRODUCTID == model.productId).FirstOrDefault();
                 var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
                                                                                                 && x.SEARCHPLACEHOLDER == "PRODUCT"
+                                                                                                && (x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID < 1)
                                                                                                 && !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
                                                                                                 && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                 && x.ISACTIVE == true
@@ -80,29 +81,32 @@ namespace FintrakBanking.Repositories.Risk
                                                                                                   && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
                                                                                                   && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                                   && !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
+                                                                                                  && (x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID < 1)
                                                                                                   && x.ISACTIVE == true && x.DELETED == false).ToList();
-                    // var productRac = racDefinitionOnProduct.Union(racDefinitionOnProductClass);
-                    //racDefinition.AddRange(productRac);
+                    var productRac = racDefinitionOnProduct.Union(racDefinitionOnProductClass);
+                    racDefinition.AddRange(productRac);
 
-                    racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
+                   // racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
 
                 if (isCorporate)
                     {
                         var racDefinitionOnEmployerByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
                                                                                                && (x.EMPLOYMENTTYPE == employeeType)
                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                               && (x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
 
                         var racDefinitionOnEmployerByProductClass = context.TBL_RAC_DEFINITION.Where(x => (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS")
                                                                                                && (x.EMPLOYMENTTYPE == employeeType)
                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                               && (x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
 
-                    //var employerRac = racDefinitionOnEmployerByProduct.Union(racDefinitionOnEmployerByProductClass);
-                    racDefinitionOnEmployer = racDefinitionOnEmployerByProduct.Count() > 0 ? racDefinitionOnEmployerByProduct : racDefinitionOnEmployerByProductClass;
-                    racDefinition.AddRange(racDefinitionOnEmployer);
+                    var employerRac = racDefinitionOnEmployerByProduct.Union(racDefinitionOnEmployerByProductClass);
+                    //racDefinitionOnEmployer = racDefinitionOnEmployerByProduct.Count() > 0 ? racDefinitionOnEmployerByProduct : racDefinitionOnEmployerByProductClass;
+                    racDefinition.AddRange(employerRac);
 
                 }
                 else if (!isCorporate)
@@ -110,18 +114,20 @@ namespace FintrakBanking.Repositories.Risk
                     var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
                                                                                          && (x.EMPLOYMENTTYPE == employeeType)
                                                                                          && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                         && (x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
                                                                                          && x.ISACTIVE == true
                                                                                          && x.DELETED == false).ToList();
 
                     var racDefinitionOnEmployeeByProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
                                                                                         && (x.EMPLOYMENTTYPE == employeeType)
                                                                                         && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                        && (x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
                                                                                         && x.ISACTIVE == true
                                                                                         && x.DELETED == false).ToList();
 
-                    racDefinitionOnEmployer = racDefinitionOnEmployeeByProduct.Count() > 0 ? racDefinitionOnEmployeeByProduct : racDefinitionOnEmployeeByProductClass;
-                    //var employerRac = racDefinitionOnEmployeeByProduct.Union(racDefinitionOnEmployeeByProductClass);
-                    racDefinition.AddRange(racDefinitionOnEmployer);
+                    //racDefinitionOnEmployer = racDefinitionOnEmployeeByProduct.Count() > 0 ? racDefinitionOnEmployeeByProduct : racDefinitionOnEmployeeByProductClass;
+                    var employerRac = racDefinitionOnEmployeeByProduct.Union(racDefinitionOnEmployeeByProductClass);
+                    racDefinition.AddRange(employerRac);
 
                 }
 
@@ -802,8 +808,13 @@ namespace FintrakBanking.Repositories.Risk
                 TARGETID = entity.RACDEFINITIONID
             });
             // Audit Section end ------------------------
-
-            return context.SaveChanges() > 0;
+            try
+            {
+                return context.SaveChanges() > 0;
+            }catch(Exception e)
+            {
+                throw e;
+            }
         }
 
         public bool DeleteRacDefinition(int id, UserInfo user)

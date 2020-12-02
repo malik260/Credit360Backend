@@ -255,7 +255,30 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-conditions-precedent-deleted")]
+        public HttpResponseMessage GetDeletedLoanConditionDocumentByContionId(int conditionId)
+        {
+            try
+            {
+                var data = repo.GetDeletedLoanConditionDocumentByContionId(conditionId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("loan-conditions-precedent-upload/conditionId/{conditionId}/loanApplicationId/{loanApplicationId}")]
         public HttpResponseMessage GetLoanConditionPrecedentUpload(int conditionId,int loanApplicationId)
         {
@@ -274,8 +297,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("loan-conditions-precedent-documentId/")]
+        [HttpGet] [ClaimsAuthorization]  
+        [Route("loan-conditions-precedent-documentId/{documentId}")]
         public HttpResponseMessage GetLoanConditionDocumentBydocumentId(int documentId)
         {
             try
@@ -294,7 +317,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-conditions-precedent-documentId/")]
+        public HttpResponseMessage DeleteConditionDocumentBydocumentId(int documentId)
+        {
+            try
+            {
+                bool data = repo.DeleteConditionDocumentBydocumentId(documentId, token.GetStaffId);
+
+                if (data == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error deleting record" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Record deleted successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan-conditions-precedent-upload")]
         public async Task<HttpResponseMessage> ConditionsPrecedentDocumentUpload()
         {

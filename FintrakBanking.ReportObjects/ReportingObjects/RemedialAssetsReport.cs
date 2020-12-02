@@ -12,19 +12,18 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 {
     public partial class RemedialAssetsReport
     {
-        public IEnumerable<LoanReviewOperationApprovalViewModel> OutOfCourtSettlement(DateTime startDate, DateTime endDate)
+        public IEnumerable<GlobalExposureApplicationViewModel> OutOfCourtSettlement(DateTime startDate, DateTime endDate)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from ln in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                join a in context.TBL_LOAN_APPLICATION on ln.APPLICATIONREFERENCENUMBER equals a.APPLICATIONREFERENCENUMBER
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
-                                join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER  equals b.APPLICATIONREFERENCENUMBER
+                                join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.LOANREFERENCE  equals b.LOANREFERENCE
                                 where
                                 (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
                                 && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                 && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                select new LoanReviewOperationApprovalViewModel
+                                select new GlobalExposureApplicationViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
                                     accountName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
@@ -41,19 +40,18 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
 
         }
-        public IEnumerable<LoanReviewOperationApprovalViewModel> CollateralSales(DateTime startDate, DateTime endDate)
+        public IEnumerable<GlobalExposureApplicationViewModel> CollateralSales(DateTime startDate, DateTime endDate)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from ln in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                join a in context.TBL_LOAN_APPLICATION on ln.APPLICATIONREFERENCENUMBER equals a.APPLICATIONREFERENCENUMBER
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
                                 (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
                                 && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                 && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                select new LoanReviewOperationApprovalViewModel
+                                select new GlobalExposureApplicationViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
                                     accountName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
@@ -295,19 +293,19 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
 
         }
-        public IEnumerable<LoanReviewOperationApprovalViewModel> LitigationRecoveries(DateTime startDate, DateTime endDate)
+        public IEnumerable<GlobalExposureApplicationViewModel> LitigationRecoveries(DateTime startDate, DateTime endDate)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from ln in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                join a in context.TBL_LOAN_APPLICATION on ln.APPLICATIONREFERENCENUMBER equals a.APPLICATIONREFERENCENUMBER
+                                join a in context.TBL_GLOBAL_EXPOSURE on ln.LOANREFERENCE equals a.REFERENCENUMBER
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
-                                join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                                join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.LOANREFERENCE equals b.LOANREFERENCE
                                 where
                                 (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
                                 && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                 && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                select new LoanReviewOperationApprovalViewModel
+                                select new GlobalExposureApplicationViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
                                     accountName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
