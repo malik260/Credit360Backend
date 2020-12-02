@@ -507,7 +507,10 @@ namespace FintrakBanking.Repositories.Credit
             int companyId = user.companyId;
             var staff = context.TBL_STAFF.FirstOrDefault(O => O.STAFFID == staffId);
 
-            List<int> approvalOperations = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication)
+            List<int> approvalOperations = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication
+                                                                        && x.OPERATIONID != (short)OperationsEnum.LoanReviewDrawdownForExtension
+                                                                        && x.OPERATIONID != (short)OperationsEnum.ContingentReviewDrawdownForExtension
+                                                                        && x.OPERATIONID != (short)OperationsEnum.OverdraftReviewDrawdownForExtension)
                 .Select(x=>x.OPERATIONID).ToList();
             
 
@@ -517,7 +520,7 @@ namespace FintrakBanking.Repositories.Credit
            
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
-            //operationIds.AddRange(approvalOperations);
+            operationIds.AddRange(approvalOperations);
 
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
