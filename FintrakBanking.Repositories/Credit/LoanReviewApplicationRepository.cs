@@ -517,7 +517,7 @@ namespace FintrakBanking.Repositories.Credit
            
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
-            operationIds.AddRange(approvalOperations);
+            //operationIds.AddRange(approvalOperations);
 
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
