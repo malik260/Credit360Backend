@@ -1171,18 +1171,16 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public IEnumerable<ApprovalTrailViewModel> GenericLMSApprovalTrail(int targetId, int operationId)
         {
-
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
             var staffs = from s in context.TBL_STAFF select s;
 
             var allstaff = this.GetAllStaffNames();
-
             var data = (from x in context.TBL_APPROVAL_TRAIL
                          where
                          x.OPERATIONID == operationId 
                          && x.TARGETID == targetId
                          && x.FROMAPPROVALLEVELID != null
-                        select new ApprovalTrailViewModel
+              select new ApprovalTrailViewModel
               {
                 approvalTrailId = x.APPROVALTRAILID,
                 comment = x.COMMENT,
