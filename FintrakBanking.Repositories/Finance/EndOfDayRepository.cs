@@ -169,6 +169,7 @@ namespace FintrakBanking.Repositories.Finance
 
                 var validateTotalCompletion = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == currentDateNew && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODSTATUSID != (int)EodOperationStatusEnum.PartialCompletion).FirstOrDefault();
 
+                validateTotalCompletion = null;
                 if (validateTotalCompletion == null)
                 {
                     var currentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
@@ -579,14 +580,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
 
 
                     }
@@ -638,14 +639,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyTermLoansInterestAccrual)
                     {
@@ -697,14 +698,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyInterestOnPastDueInterestAccrual)
                     {
@@ -757,14 +758,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyInterestOnPastDuePrincipalAccrual)
                     {
@@ -814,14 +815,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.UpdateLoanClassification)
                     {
@@ -871,14 +872,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.UpdateLoanApplicationCovenant)
                     {
@@ -929,14 +930,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.DailyWrittenOffFacilityAccrual)
                     {
@@ -986,14 +987,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
 
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyFeeAccrual)
@@ -1052,14 +1053,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
                     }
 
                 }
@@ -1220,14 +1221,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
                             
-                        }
+                        //}
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue)
                     {
@@ -1276,14 +1277,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover)
                     {
@@ -1334,14 +1335,14 @@ namespace FintrakBanking.Repositories.Finance
                             eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                             context.SaveChanges();
                         }
-                        else
-                        {
-                            eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
-                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
-                            context.SaveChanges();
+                        //else
+                        //{
+                        //    eodOperationProcessesUpdate.ERRORINFORMATION = "Some Error";
+                        //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
+                        //    context.SaveChanges();
 
-                        }
+                        //}
                     }
 
                 }
