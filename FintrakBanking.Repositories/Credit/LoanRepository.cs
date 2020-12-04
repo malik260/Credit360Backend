@@ -18611,6 +18611,8 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.loanId = customerRequest.loanId;
                     assignOperations.assignmentType = assignmentType;
                     assignOperations.customerId = customerRequest.customerId;
+                    assignOperations.productClassId = customerRequest.productClassId;
+                    assignOperations.applicationReferenceNumber = customerRequest.applicationReferenceNumber;
                     var loanData = addBulkLoanAssignmentToAgent(assignOperations);
                     bulkLoanTable.Add(loanData);
                 }
@@ -19882,7 +19884,9 @@ namespace FintrakBanking.Repositories.Credit
                 SOURCE = entity.source,
                 LOANREFERENCE = entity.loanReferenceNumber,
                 PRODUCTID = entity.productId,
-                ASSIGNMENTTYPE = entity.assignmentType
+                ASSIGNMENTTYPE = entity.assignmentType,
+                APPLICATIONREFERENCENUMBER = entity.applicationReferenceNumber,
+                PRODUCTCLASSID = entity.productClassId
             };
             return data;
         }
