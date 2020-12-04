@@ -2454,7 +2454,6 @@ namespace FintrakBanking.Repositories.Credit
             if (apiResult.responseCode == "00")
             {
                 facility.ISFACILITYCREATED = true;
-
                 foreach (var record in loanFeeRecord) { record.ISPOSTED = true; }
                 context.SaveChanges();
             }
@@ -16212,11 +16211,11 @@ namespace FintrakBanking.Repositories.Credit
             var backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.TOAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
             if (model.nextOperation == null)
             {
-                model.nextOperation = request.OPERATIONID;
+                model.nextOperation = request?.OPERATIONID;
                 backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.FROMAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
             }
 
-            if (drawdownPostApprovalOperations.Contains((short)model.nextOperation))
+            if (drawdownPostApprovalOperations.Contains((short)model.nextOperation ))
             {
                 if (request != null) { request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending; }
             }
