@@ -9,7 +9,7 @@
     [Table("STG_CONTRACT_DAILY_REPAY")]
     public partial class STG_CONTRACT_DAILY_REPAY
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public long CONTRACTDAILYREPAYID { get; set; }
 
         //[StringLength(255)]

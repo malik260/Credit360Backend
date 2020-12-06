@@ -1163,7 +1163,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
-        public int dpd { get { return (DateTime.Now - this.maturityDate).Days; } }
+        //public int dpd { get { return (DateTime.Now - this.maturityDate).Days; } }
+        public int dpd { get; set; }
         public string dpdRange
         {
             get
@@ -1185,7 +1186,7 @@ namespace FintrakBanking.ViewModels.Credit
                 return newRange;
             }
         }
-        public int maturityBand { get { return (this.maturityDate - DateTime.Now).Days; } }
+        public int? maturityBand { get; set; } //{ get { return (this.maturityDate - DateTime.Now).Days; } }
         public short principalFrequencyTypeId { get; set; }
         public short interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
@@ -1198,7 +1199,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime effectiveDate { get; set; }
         public DateTime maturityDate { get; set; }
         public string loanCategory { get; set; }
-        public DateTime bookingDate { get; set; }
+        public DateTime? bookingDate { get; set; }
         public decimal principalAmount { get; set; }
         public int principalInstallmentLeft { get; set; }
         public int interestInstallmentLeft { get; set; }
@@ -1448,13 +1449,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string agentAssigned { get; set; }
         public string settlementAccount { get; set; }
         public decimal principalOutstandingBalLcy { get; set; }
-        public DateTime valueDate { get; set; }
-        public DateTime referenceDate { get; set; }
+        public DateTime? valueDate { get; set; }
+        public DateTime? referenceDate { get; set; }
         public string accountOfficerCode { get; set; }
         public string mobileNumber { get; set; }
         public string divisionName { get; set; }
         public string accountOfficerName { get; set; }
-        public DateTime processDate { get; set; }
+        public DateTime? processDate { get; set; }
         public DateTime dateAssigned { get; set; }
         public decimal? actualRecovery { get; set; }
         public decimal? commission { get; set; }
