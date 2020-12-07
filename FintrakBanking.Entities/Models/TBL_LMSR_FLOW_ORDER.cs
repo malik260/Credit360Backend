@@ -14,6 +14,7 @@
         public bool REQUIREOFFERLETTER   { get; set; }
         public bool REQUIREDRAWDOWN { get; set; }
         public bool REQUIREAVAILMENT     { get; set; }
+        public bool REQUIREOPERATIONS     { get; set; }
         public int COMPANYID             { get; set; }
         public DateTime DATETIMECREATED  { get; set; }
         public int CREATEDBY             { get; set; }

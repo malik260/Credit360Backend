@@ -177,7 +177,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             lastOpenRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
-            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && this.statusId != (int)ApprovalStatusEnum.Reroute && lastOpenRequest != null) //if it is not initiation
+            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && this.statusId != (int)ApprovalStatusEnum.Reroute && lastOpenRequest != null) //if it is not initiation or referred
             {
                 throw new SecureException("An error occured, Next Level can't be preset unless on refer back or re-routing. Kindly refresh your browser and try again.");
             }
@@ -1238,7 +1238,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void EndProcess(int status)
         {   
-            if(lastOpenRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastOpenRequest.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
+            if(lastOpenRequest?.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastOpenRequest?.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
             if (this.statusId != (int)ApprovalStatusEnum.Disapproved && ContainsPostReviewerAsFromApprovalLevel(this.referredLog))
             {//to prevent duplicate ending of a workflow again when postReviewer refers back
                 return;

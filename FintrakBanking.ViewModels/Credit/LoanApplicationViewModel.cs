@@ -252,6 +252,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isEmployerRelated { get; set; }
         public int? relatedEmployerId { get; set; }
         public string employer { get; set; }
+        public int creditAppraisalOperationId { get; set; }
+        public int creditAppraisalLoanApplicationId { get; set; }
     }
 
     public class InterestIncomeViewModel
@@ -589,6 +591,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatus { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public string currentApprovalLevel { get; set; }
+        public bool isTemplateUploaded { get; set; }
 
         // public int? loanreViewApplicationId { get; set; }
     }

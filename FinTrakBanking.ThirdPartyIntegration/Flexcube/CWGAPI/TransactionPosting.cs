@@ -990,6 +990,7 @@
                         FACILITYMAPPINGID = responseApi.reference_no,
                         BOOKINGCODE = responseApi.bo_code,
                     };
+                   
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
@@ -1003,6 +1004,12 @@
                     };
 
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    var sourceRecord = logContext.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == model.sourceReferenceNumber).FirstOrDefault();
+                    if (sourceRecord != null)
+                    {
+                        sourceRecord.COREBANKINGREF = model.sourceReferenceNumber;
+                    }
 
                     logContext.TBL_THIRDPARTY_LOAN_MAPPING.Add(loanMapping);
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);

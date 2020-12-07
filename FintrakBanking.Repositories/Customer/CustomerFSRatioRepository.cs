@@ -378,13 +378,13 @@ namespace FintrakBanking.Repositories.Customer
                 if (detail != null)
                 {
                     decimal sum = 0, newSum = 0;
-
+                    
                     // Indicative Decisions
-                    if (detail.FSCAPTIONNAME.Contains("Indicative Decision"))
+                    if (detail.FSCAPTIONNAME.ToLower().Contains("indicative decision"))
                     {
-                        if ((double) detail.AMOUNT <= 1.5)
+                        if ((double)detail.AMOUNT <= 1.5)
                         {
-                            return "OK";
+                            return "ACCEPT";
                         }
                         else
                         {

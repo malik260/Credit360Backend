@@ -64,6 +64,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThirdPartyIntegration;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
 namespace FintrakBanking.MonitoringMessageLogger
@@ -218,6 +219,8 @@ namespace FintrakBanking.MonitoringMessageLogger
             Bind<IAuthourisedSignatoryRepository>().To<AuthourisedSignatoryRepository>();
             Bind<IAlertRepository>().To<AlertRepository>();
             Bind<ICashFlowLendingRepository>().To<CashFlowLendingRepository>();
+            Bind<LoanPrepayment>().To<LoanPrepayment>();
+
             //Bind<ILoanArchiveRepository>().To<LoanArchiveRepository>();
 
 

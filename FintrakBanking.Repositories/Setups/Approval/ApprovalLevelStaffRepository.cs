@@ -761,14 +761,16 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int companyId)
         {
             var result = (from a in context.TBL_APPROVAL_TRAIL
-                          join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                          join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID into levelStaff
+                          from b in levelStaff.DefaultIfEmpty()
                           join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
                           join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
                           join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
-
-                          join f in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals f.APPROVALLEVELID
+                          join f in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals f.APPROVALLEVELID into level
+                          from f in level.DefaultIfEmpty()
                           join g in context.TBL_APPROVAL_GROUP on f.GROUPID equals g.GROUPID
-                          join h in context.TBL_APPROVAL_GROUP_MAPPING on g.GROUPID equals h.GROUPID
+                          join h in context.TBL_APPROVAL_GROUP_MAPPING on g.GROUPID equals h.GROUPID into map
+                          from h in map.DefaultIfEmpty()
                           join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
                           join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
                           from j in apprStaff.DefaultIfEmpty()
@@ -791,11 +793,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               operationName = e.OPERATIONNAME,
                               approvalStatus = k.APPROVALSTATUSNAME
                           });
-            var vr = result.Distinct();
-            var vr2 = vr.ToList();
+            //var vr = result.Distinct();
+            //var vr2 = vr.ToList();
             return result;
         }
-
 
         private IQueryable<WorkflowTrackerViewModel> GetApprovalTrailProjectSitereport(int companyId)
         {
@@ -827,7 +828,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var result = GetApprovalTrail(companyId).Where(c=>c.TargetId==targetId && c.operationId==operationId).OrderByDescending(c => c.systemArrivalDate).ToList();
             return result;
         }
-
+        
         public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailBySiteTargetId(int targetId, int companyId)
         {
             var result = GetApprovalTrailProjectSitereport(companyId).Where(c => c.TargetId == targetId && c.operationId == (int)OperationsEnum.ProjectSiteReportApproval).OrderByDescending(c => c.systemArrivalDate).ToList();
@@ -1434,6 +1435,57 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             }
 
+            return data;
+        }
+
+        public WorkflowTrackerViewModel ExportApprovalComments(List<ApprovalTrailViewModel> commentsData, bool requireAll)
+        {
+
+            Byte[] fileBytes = null;
+            WorkflowTrackerViewModel data = new WorkflowTrackerViewModel();
+
+            if (commentsData != null)
+            {
+                using (ExcelPackage pck = new ExcelPackage())
+                {
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Approval Comments");
+
+                    ws.Cells[1, 1].Value = "FROM : STAFF NAME";
+                    ws.Cells[1, 2].Value = "FROM : APPROVAL LEVEL";
+                    ws.Cells[1, 3].Value = "TO : STAFF NAME";
+                    ws.Cells[1, 4].Value = "TO : APPROVAL LEVEL";
+                    ws.Cells[1, 5].Value = "ARRIVAL DATE TIME";
+                    ws.Cells[1, 6].Value = "RESPONSE DATE TIME";
+                    ws.Cells[1, 7].Value = "COMMENT";
+                    ws.Cells[1, 8].Value = "APPROVAL STATUS";
+                    ws.Cells[1, 9].Value = "STATE";
+                    if (requireAll)
+                    {
+                        ws.Cells[1, 10].Value = "STAGE";
+                    }
+
+                    for (int i = 2; i <= commentsData.Count + 1; i++)
+                    {
+                        var record = commentsData[i - 2];
+                        ws.Cells[i, 1].Value = record.fromStaffName;
+                        ws.Cells[i, 2].Value = record.fromApprovalLevelName;
+                        ws.Cells[i, 3].Value = record.toStaffName;
+                        ws.Cells[i, 4].Value = record.toApprovalLevelName;
+                        ws.Cells[i, 5].Value = record.systemArrivalDateTime;
+                        ws.Cells[i, 6].Value = record.systemResponseDateTime;
+                        ws.Cells[i, 7].Value = record.comment;
+                        ws.Cells[i, 8].Value = record.approvalStatus;
+                        ws.Cells[i, 9].Value = record.approvalState;
+                        if (requireAll)
+                        {
+                            ws.Cells[1, 10].Value = record.commentStage;
+                        }
+                    }
+                    fileBytes = pck.GetAsByteArray();
+                    data.reportData = fileBytes;
+                    data.templateTypeName = "Approval Comments";
+                }
+            }
             return data;
         }
 

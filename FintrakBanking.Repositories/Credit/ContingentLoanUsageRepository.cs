@@ -391,45 +391,47 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
             {
                 var lien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == entity.loanReferenceNumber && x.LIENTYPEID == (int)LienTypeEnum.APGBooking);
-                if (lien == null) throw new SecureException("No lien has been placed");
-                string lienReferenceNumber = lien.LIENREFERENCENUMBER;
+                if (lien != null)
+                { //throw new SecureException("No lien has been placed");
+                    string lienReferenceNumber = lien.LIENREFERENCENUMBER;
 
-                decimal oldLien = usage.TBL_LOAN_CONTINGENT.CONTINGENTAMOUNT; 
-                var casaAccountId = usage.TBL_LOAN_CONTINGENT.CASAACCOUNTID;
+                    decimal oldLien = usage.TBL_LOAN_CONTINGENT.CONTINGENTAMOUNT;
+                    var casaAccountId = usage.TBL_LOAN_CONTINGENT.CASAACCOUNTID;
 
-                casaLien.ReleaseLien(new CasaLienViewModel
-                {
-                    sourceReferenceNumber = entity.loanReferenceNumber,
-                    productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
-                    lienReferenceNumber = lienReferenceNumber,
-                    userBranchId = (short)entity.BranchId,
-                    branchId = (short)entity.BranchId,
-                    companyId = entity.companyId,
-                    lienAmount = oldLien,
-                    description = lien.DESCRIPTION,
-                    lienTypeId = (short)LienTypeEnum.APSRequest,
-                    createdBy = entity.createdBy,
-                    userIPAddress = entity.userIPAddress,
-                    applicationUrl = entity.applicationUrl,
-                }, null, false);
+                    casaLien.ReleaseLien(new CasaLienViewModel
+                    {
+                        sourceReferenceNumber = entity.loanReferenceNumber,
+                        productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
+                        lienReferenceNumber = lienReferenceNumber,
+                        userBranchId = (short)entity.BranchId,
+                        branchId = (short)entity.BranchId,
+                        companyId = entity.companyId,
+                        lienAmount = oldLien,
+                        description = lien.DESCRIPTION,
+                        lienTypeId = (short)LienTypeEnum.APSRequest,
+                        createdBy = entity.createdBy,
+                        userIPAddress = entity.userIPAddress,
+                        applicationUrl = entity.applicationUrl,
+                    }, null, false);
 
-                decimal newLienAmount = oldLien - usage.AMOUNTREQUESTED;
+                    decimal newLienAmount = oldLien - usage.AMOUNTREQUESTED;
 
-                casaLien.PlaceLien(new CasaLienViewModel
-                {
-                    sourceReferenceNumber = entity.loanReferenceNumber,
-                    productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
-                    lienReferenceNumber = usage.TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
-                    userBranchId = (short)entity.BranchId,
-                    branchId = (short)entity.BranchId,
-                    companyId = entity.companyId,
-                    lienAmount = newLienAmount,
-                    description = lien.DESCRIPTION,
-                    lienTypeId = (short)LienTypeEnum.APSRequest,
-                    createdBy = entity.createdBy,
-                    userIPAddress = entity.userIPAddress,
-                    applicationUrl = entity.applicationUrl,
-                });
+                    casaLien.PlaceLien(new CasaLienViewModel
+                    {
+                        sourceReferenceNumber = entity.loanReferenceNumber,
+                        productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
+                        lienReferenceNumber = usage.TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
+                        userBranchId = (short)entity.BranchId,
+                        branchId = (short)entity.BranchId,
+                        companyId = entity.companyId,
+                        lienAmount = newLienAmount,
+                        description = lien.DESCRIPTION,
+                        lienTypeId = (short)LienTypeEnum.APSRequest,
+                        createdBy = entity.createdBy,
+                        userIPAddress = entity.userIPAddress,
+                        applicationUrl = entity.applicationUrl,
+                    });
+                }
 
                 usage.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
             }

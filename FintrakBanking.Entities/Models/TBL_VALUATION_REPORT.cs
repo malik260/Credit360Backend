@@ -24,13 +24,11 @@ namespace FintrakBanking.Entities.Models
         //[StringLength(500)]
         public string VALUERCOMMENT { get; set; }
 
-        [Required]
         //[StringLength(20)]
         public string ACCOUNTNUMBER { get; set; }
 
         public decimal? VALUATIONFEE { get; set; }
 
-        [Required]
         ////[StringLength(20)]
         public decimal? WHT { get; set; }
         public decimal? WHTAMOUNT { get; set; }
@@ -45,7 +43,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEUPDATED { get; set; }
 
-        public int? DELETED { get; set; }
+        public bool DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }
 
