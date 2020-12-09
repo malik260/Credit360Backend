@@ -17759,6 +17759,7 @@ namespace FintrakBanking.Repositories.Credit
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                        casaAccountNumber = (from c in context.TBL_CASA where c.CASAACCOUNTID == a.CASAACCOUNTID select c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                        productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       loanTypeName = "Third-Party Facility",
                                        equityContribution = a.EQUITYCONTRIBUTION,
                                        firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
                                        firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
