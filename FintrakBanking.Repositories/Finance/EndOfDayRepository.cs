@@ -1227,7 +1227,7 @@ namespace FintrakBanking.Repositories.Finance
                         //    eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
                         //    eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.PartialCompletion;
                         //    context.SaveChanges();
-
+                            
                         //}
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue)

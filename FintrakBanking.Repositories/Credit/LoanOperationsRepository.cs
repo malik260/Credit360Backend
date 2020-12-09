@@ -6058,7 +6058,9 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            //setup.USE_THIRD_PARTY_INTEGRATION = false; // this is used here because posting api is not required on Access Credit360 
+            bool doNotPostForAccess = false; 
+            if (doNotPostForAccess == true)
             {
                 //foreach (var item in model)
                 //{
@@ -32080,7 +32082,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanId = ln.ID,
                             customerCode = ln.CUSTOMERID,
                             productCode = ln.PRODUCTID,
-                            applicationReferenceNumber = "",
+                            applicationReferenceNumber = ln.REFERENCENUMBER,
                             loanReferenceNumber = ln.REFERENCENUMBER,
                             customerName = ln.CUSTOMERNAME,
                             productName = ln.PRODUCTNAME,
@@ -32609,7 +32611,7 @@ namespace FintrakBanking.Repositories.Credit
                                     loanId = ln.ID,
                                     customerCode = ln.CUSTOMERID,
                                     productCode = ln.PRODUCTID,
-                                    applicationReferenceNumber = "",
+                                    applicationReferenceNumber = ln.REFERENCENUMBER,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     customerName = ln.CUSTOMERNAME,
                                     productName = ln.PRODUCTNAME,
@@ -32870,7 +32872,7 @@ namespace FintrakBanking.Repositories.Credit
                                     loanId = ln.ID,
                                     customerCode = ln.CUSTOMERID,
                                     productCode = ln.PRODUCTID,
-                                    applicationReferenceNumber = "",
+                                    applicationReferenceNumber = ln.REFERENCENUMBER,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     customerName = ln.CUSTOMERNAME,
                                     productName = ln.PRODUCTNAME,
@@ -33131,7 +33133,7 @@ namespace FintrakBanking.Repositories.Credit
                                     loanId = ln.ID,
                                     customerCode = ln.CUSTOMERID,
                                     productCode = ln.PRODUCTID,
-                                    applicationReferenceNumber = "",
+                                    applicationReferenceNumber = ln.REFERENCENUMBER,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     customerName = ln.CUSTOMERNAME,
                                     productName = ln.PRODUCTNAME,
@@ -33398,7 +33400,7 @@ namespace FintrakBanking.Repositories.Credit
                                     loanId = ln.ID,
                                     customerCode = ln.CUSTOMERID,
                                     productCode = ln.PRODUCTID,
-                                    applicationReferenceNumber = "",
+                                    applicationReferenceNumber = ln.REFERENCENUMBER,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     customerName = ln.CUSTOMERNAME,
                                     productName = ln.PRODUCTNAME,
@@ -33665,7 +33667,7 @@ namespace FintrakBanking.Repositories.Credit
                                     loanId = ln.ID,
                                     customerCode = ln.CUSTOMERID,
                                     productCode = ln.PRODUCTID,
-                                    applicationReferenceNumber = "",
+                                    applicationReferenceNumber = ln.REFERENCENUMBER,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     customerName = ln.CUSTOMERNAME,
                                     productName = ln.PRODUCTNAME,
@@ -34550,6 +34552,7 @@ namespace FintrakBanking.Repositories.Credit
                                     branchName = ln.BRANCHNAME,
                                     divisionCode = ln.DIVISIONCODE,
                                     region = ln.REGIONCODE,
+                                    expCompletionDate = lr.EXPCOMPLETIONDATE
                                 }).ToList();
 
             foreach (var xx in exposureData)

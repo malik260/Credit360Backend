@@ -222,8 +222,15 @@ namespace FintrakBanking.MessagingAlertSender
                                 }
                                 
                             }
+
+                            var originalSubject = newMail.MESSAGESUBJECT.Trim();
+                            if (originalSubject.Contains("&"))
+                            {
+                                originalSubject = originalSubject.Replace("&", "AND");
+                            }
+                            
                                 mail.IsBodyHtml = true;
-                                mail.Subject = newMail.MESSAGESUBJECT;
+                                mail.Subject = originalSubject;
                                 mail.Body = newMail.MESSAGEBODY;
                                 mailId = newMail.MESSAGEID;
 
