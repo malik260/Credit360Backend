@@ -47,7 +47,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 
         IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all);
-        IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all, bool isClassified);
+        IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all, bool isClassified, bool isLMSCrossWorkflow = false);
 
         // IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId);
         LoanApplicationDetailsViewModel GetLoanApplicationDetail(int applicationId);

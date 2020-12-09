@@ -6058,7 +6058,9 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            //setup.USE_THIRD_PARTY_INTEGRATION = false; // this is used here because posting api is not required on Access Credit360 
+            bool doNotPostForAccess = false; 
+            if (doNotPostForAccess == true)
             {
                 //foreach (var item in model)
                 //{
