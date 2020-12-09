@@ -222,6 +222,7 @@ namespace FintrakBanking.Repositories.Credit
                            valuationFee = x.VALUATIONFEE,
                            accountNumber = x.ACCOUNTNUMBER,
                            wht = x.WHT,
+                           whtAmount = x.WHTAMOUNT,
                            valuationComment = x.VALUERCOMMENT,
                            valuationReportId = x.VALUATIONREPORTID,
                            operationId = (int) OperationsEnum.CollateralValuationRequest,
@@ -245,6 +246,7 @@ namespace FintrakBanking.Repositories.Credit
                             valuationFee = x.VALUATIONFEE,
                             accountNumber = x.ACCOUNTNUMBER,
                             wht = x.WHT,
+                            whtAmount = x.WHTAMOUNT,
                             valuationComment = x.VALUERCOMMENT,
                             valuationReportId = x.VALUATIONREPORTID,
                             operationId = (int)OperationsEnum.CollateralValuationRequest,
@@ -880,11 +882,16 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (staffRole.STAFFROLECODE == "VAL CR DOC OFF")
                         {
-                            prereqisite.NUMBEROFTIMESAPPROVE = prereqisite.NUMBEROFTIMESAPPROVE + 1;
+                            var update = _context.TBL_COLLATERAL_VALUATION_PRE.Find(prereqisite.VALUATIONPREREQUISITEID);
+                            if(update.NUMBEROFTIMESAPPROVE == null)
+                            {
+                                update.NUMBEROFTIMESAPPROVE = 0;
+                            }
+                            update.NUMBEROFTIMESAPPROVE = (update.NUMBEROFTIMESAPPROVE + 1);
                             _context.SaveChanges();
                         }
 
-                        if (staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR" && (prereqisite.NUMBEROFTIMESAPPROVE <= 1 || prereqisite.NUMBEROFTIMESAPPROVE == null) && (valuerReport.OMV < 1 || valuerReport.OMV == null))
+                        if ((staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR") && (prereqisite.NUMBEROFTIMESAPPROVE <= 1 || prereqisite.NUMBEROFTIMESAPPROVE == null) && (valuerReport.OMV < 1 || valuerReport.OMV == null))
                         {
                             var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
                             var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
@@ -915,14 +922,14 @@ namespace FintrakBanking.Repositories.Credit
                             letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
 
                             letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
-                            letterTitle = letterTitle.Replace("@{{initiator}}", staffFullName.ToUpper());
+                            letterTitle = letterTitle.Replace("@{{valuerName}}", valuerDetail?.FIRMNAME.ToUpper());
 
                             var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                             alert.receiverEmailList.Add(emailList);
                             LogEmailAlert(letterBody, letterTitle, alert.receiverEmailList, "98007", 98007, letter.BINDINGMETHOD);
                         }
 
-                        if (staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR" && prereqisite.NUMBEROFTIMESAPPROVE > 1 && prereqisite.NUMBEROFTIMESAPPROVE != null && valuerReport.OMV > 0 && valuerReport.FSV > 0)
+                        if (staffRole.STAFFROLECODE == "VAL CR DOC OFF" && prereqisite.NUMBEROFTIMESAPPROVE > 1 && valuerReport.OMV > 0 && valuerReport.FSV > 0)
                         {
                             var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
                             var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
@@ -951,7 +958,6 @@ namespace FintrakBanking.Repositories.Credit
                                     <td><b>VALUATION FEE TO BE DEBITED(NGN)</b></td>
                                 </tr>
                              ";
-                            
                             tempResult = tempResult + $@"
                                 <tr>
                                     <td>{collAddress}</td>

@@ -568,10 +568,10 @@ namespace ThirdPartyIntegration
             return true;
         }
 
-        private void GetRepaymentEntriesToStaging()
+        public void GetRepaymentEntriesToStaging()
         {
             GetLoanRepaymentToStaging();
-            GetRepaymentEntriesToStaging();
+            GetOverdraftRepaymentToStaging(); 
         }
     }
 }

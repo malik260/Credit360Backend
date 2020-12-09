@@ -4975,9 +4975,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
             var staffs = from s in context.TBL_STAFF select s;
-
             var allstaff = this.GetAllStaffNames();
-
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationid && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
 
             var data = trail.Select(x => new ApprovalTrailViewModel
@@ -12292,7 +12290,31 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetOutstandingLoans(int accreditedConsultantId, string referenceId)
         {
-                var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+            var exposureData = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                join ln in context.TBL_GLOBAL_EXPOSURE on lr.LOANREFERENCE equals ln.REFERENCENUMBER
+                                where
+                                lr.ISFULLYRECOVERED == false
+                                && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                && lr.REFERENCEID == referenceId
+                                && lr.DELETED == false
+
+                                orderby ln.ID descending
+                                select new GlobalExposureApplicationViewModel
+                                {
+                                    totalAmountRecovery = (decimal)lr.TOTALAMOUNTRECOVERY,
+                                    customerCode = ln.CUSTOMERID,
+                                    loanTypeName = "",
+                                    customerName = ln.CUSTOMERNAME,
+                                    branchName = ln.BRANCHNAME,
+                                    loanReferenceNumber = ln.REFERENCENUMBER
+                                }).ToList();
+            foreach (var xx in exposureData)
+            {
+                var customerid = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == customerid).Select(x => x.ADDRESS).ToList();
+            }
+
+            var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                 join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
                                 join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                 join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -12310,7 +12332,7 @@ namespace FintrakBanking.Repositories.Credit
                                 && lr.REFERENCEID == referenceId
                                 && lr.DELETED == false
 
-                                select new LoanReviewOperationApprovalViewModel
+                                select new GlobalExposureApplicationViewModel
                                 {
                                     totalAmountRecovery = (decimal)lr.TOTALAMOUNTRECOVERY,
                                     customerCode = cu.CUSTOMERCODE,
@@ -12318,9 +12340,10 @@ namespace FintrakBanking.Repositories.Credit
                                     customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
                                     customerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == cu.CUSTOMERID).Select(a => a.ADDRESS).ToList(),
                                     branchName = br.BRANCHNAME,
+                                    loanReferenceNumber = ln.LOANREFERENCENUMBER
                                 }).ToList();
-
-                var dataRevolvingLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+            
+            var dataRevolvingLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                          join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -12338,7 +12361,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && lr.REFERENCEID == referenceId
                                          && lr.DELETED == false
 
-                                         select new LoanReviewOperationApprovalViewModel
+                                         select new GlobalExposureApplicationViewModel
                                          {
                                              totalAmountRecovery = (decimal)lr.TOTALAMOUNTRECOVERY,
                                              customerCode = cu.CUSTOMERCODE,
@@ -12346,10 +12369,11 @@ namespace FintrakBanking.Repositories.Credit
                                              customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
                                              customerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(a=>a.CUSTOMERID == cu.CUSTOMERID).Select(a=>a.ADDRESS).ToList(),
                                              branchName = br.BRANCHNAME,
+                                             loanReferenceNumber = ln.LOANREFERENCENUMBER
                                          }).ToList();
 
 
-                    var data = dataLoan.Union(dataRevolvingLoan);
+                    var data = dataLoan.Union(dataRevolvingLoan).Union(exposureData);
                      foreach(var rec in data)
                     {
                         foreach(var address in rec.customerAddresses)
@@ -12369,6 +12393,7 @@ namespace FintrakBanking.Repositories.Credit
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
+                        <th><b>Reference Number</b></th>
                         <th><b>Name Of Customer</b></th>
                         <th><b>Address/GSM No</b></th>
                         <th><b>Outstanding Exposure</b></th>
@@ -12381,6 +12406,7 @@ namespace FintrakBanking.Repositories.Credit
                 result = result + $@"
                     <tr>
                         <td>{i}</td>
+                        <td>{trail.loanReferenceNumber}</td>
                         <td>{trail.customerName.ToUpper()}</td>
                         <td>{trail.address}</td>
                         <td>{trail.totalAmountRecovery}</td>

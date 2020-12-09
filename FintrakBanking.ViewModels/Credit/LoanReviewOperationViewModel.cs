@@ -213,6 +213,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
+        public int? dpdExposure { get; set; }
         public int mgtOperationId { get; set; }
         public decimal? prepaymentAmount { get; set; }
         public decimal? TotalExposure { get; set; }
@@ -490,6 +491,10 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? contingentOutstandingPrincipal { get; set; }
         public decimal? contigentOutstandingPrincipal { get; set; }
         public decimal? totalPrepayment { get; set; }
+
+        public string exposureType { get; set; }
+        public string expiryBand { get; set; }
+        public string divisionName { get; set; }
     }
 
 
@@ -889,11 +894,17 @@ namespace FintrakBanking.ViewModels.Credit
         public int TenorAgreed { get { return (this.maturityDate.Value - this.effectiveDate).Days; } }
         public int TenorOfPayment { get { return (this.maturityDate.Value - this.effectiveDate).Days; } }
         public string AccountNumber { get; set; }
+        public string accountNumber { get; set; }
         public string AccountName { get; set; }
+        public string accountName { get; set; }
         public string NameOfRecoveryAgent { get; set; }
+        public string nameOfRecoveryAgent { get; set; }
         public string Address { get; set; }
+        public string address { get; set; }
         public string TelephoneNumber { get; set; }
+        public string telephoneNumber { get; set; }
         public DateTime ExpectedRecoveryDate { get; set; }
+        public DateTime expectedRecoveryDate { get; set; }
         public decimal AmountRecovered { get; set; }
         public DateTime DateOfAssignment { get; set; }
         public string Email { get; set; }
@@ -1104,6 +1115,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int? flagStatus { get; set; }
         public List<string> customerAddresses { get; set; }
         public string agentCategory { get; set; }
+        public int? dpdExposure { get; set; }
+        public string category { get; set; }
+        public string divisionCode { get; set; }
+        public string branchCode { get; set; }
     }
 
     public class RecoveryCollectionsViewModel
@@ -1148,7 +1163,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
-        public int dpd { get { return (DateTime.Now - this.maturityDate).Days; } }
+        //public int dpd { get { return (DateTime.Now - this.maturityDate).Days; } }
+        public int dpd { get; set; }
         public string dpdRange
         {
             get
@@ -1170,7 +1186,7 @@ namespace FintrakBanking.ViewModels.Credit
                 return newRange;
             }
         }
-        public int maturityBand { get { return (this.maturityDate - DateTime.Now).Days; } }
+        public int? maturityBand { get; set; } //{ get { return (this.maturityDate - DateTime.Now).Days; } }
         public short principalFrequencyTypeId { get; set; }
         public short interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
@@ -1183,7 +1199,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime effectiveDate { get; set; }
         public DateTime maturityDate { get; set; }
         public string loanCategory { get; set; }
-        public DateTime bookingDate { get; set; }
+        public DateTime? bookingDate { get; set; }
         public decimal principalAmount { get; set; }
         public int principalInstallmentLeft { get; set; }
         public int interestInstallmentLeft { get; set; }
@@ -1433,13 +1449,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string agentAssigned { get; set; }
         public string settlementAccount { get; set; }
         public decimal principalOutstandingBalLcy { get; set; }
-        public DateTime valueDate { get; set; }
-        public DateTime referenceDate { get; set; }
+        public DateTime? valueDate { get; set; }
+        public DateTime? referenceDate { get; set; }
         public string accountOfficerCode { get; set; }
         public string mobileNumber { get; set; }
         public string divisionName { get; set; }
         public string accountOfficerName { get; set; }
-        public DateTime processDate { get; set; }
+        public DateTime? processDate { get; set; }
         public DateTime dateAssigned { get; set; }
         public decimal? actualRecovery { get; set; }
         public decimal? commission { get; set; }
@@ -1726,50 +1742,291 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class GlobalExposureApplicationViewModel : GeneralEntity
     {
-        public int loanId { get; set; }
-        public string customerCode { get; set; }
-        public string productId { get; set; }
-        public string loanReferenceNumber { get; set; }
-        public string customerName { get; set; }
-        public string relationshipManagerName { get; set; }
-        public string expiryBand { get; set; }
-        public string exposureType { get; set; }
-        public string divisionName { get; set; }
-        public decimal? totalAmountRecovery { get; set; }
-        public int? dpd { get; set; }
-        public string loanCategory { get; set; }
-        public string productName { get; set; }
-        public int accreditedConsultant { get; set; }
-        public DateTime? expCompletionDate { get; set; }
-        public string referenceId { get; set; }
-        public int approvalStatusId { get; set; }
-        public int operationId { get; set; }
+            public int? dpdExposure { get; set; }
+            public int mgtOperationId { get; set; }
+            public decimal? prepaymentAmount { get; set; }
+            public decimal? TotalExposure { get; set; }
+            public string source { get; set; }
+            public string assignmentType { get; set; }
+
+            public DateTime? expCompletionDate { get; set; }
+            public int loanAssignId { get; set; }
+            public int loanChargeFeeId { get; set; }
+            public string chargeFeeName { get; set; }
+            public decimal feeAmount { get; set; }
+            public string description { get; set; }
+            public int? takeFeeCasaAccountId { get; set; }
+            public string takeFeeCasaAccountName { get; set; }
+            public string legalContingentCode { get; set; }
+
+            public int? loanReviewApplicationId { get; set; }
+            public int? appraisalOperationId { get; set; }
+            public string currencyCode { get; set; }
+            public bool isBankFormat { get; set; }
+            public int companyId { get; set; }
+            public string createdByName { get; set; }
+            public DateTime dateTimeCreated { get; set; }
+            public decimal maturityAmount { get; set; }
+            public string relatedReferenceNumber { get; set; }
+            public decimal interestAmount { get; set; }
+            public int? currentApprovalLevelId { get; set; }
+            public int loanId { get; set; }
+            public int customerId { get; set; }
+            public int productId { get; set; }
+            public int productClassId { get; set; }
+            public decimal productPriceIndexRate { get; set; }
+            public int casaAccountId { get; set; }
+            public string casaAccount { get; set; }
+
+            public string casaAccountName { get; set; }
+            public int loanApplicationDetailId { get; set; }
+
+            public short branchId { get; set; }
+            public string loanReferenceNumber { get; set; }
+            public string applicationReferenceNumber { get; set; }
+            public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
+            public int dpd { get { return (DateTime.UtcNow - this.maturityDate).Days; } }
+            public short principalFrequencyTypeId { get; set; }
+            public short interestFrequencyTypeId { get; set; }
+            public int principalNumberOfInstallment { get; set; }
+            public int interestNumberOfInstallment { get; set; }
+            public int relationshipOfficerId { get; set; }
+            public int relationshipManagerId { get; set; }
+            public string misCode { get; set; }
+            public string teamMiscode { get; set; }
+            public double interestRate { get; set; }
+            public DateTime effectiveDate { get; set; }
+            public DateTime maturityDate { get; set; }
+            public string loanCategory { get; set; }
+            public DateTime bookingDate { get; set; }
+            public decimal principalAmount { get; set; }
+            public int principalInstallmentLeft { get; set; }
+            public int interestInstallmentLeft { get; set; }
+            public int approvalStatusId { get; set; }
+            public string approvalStatusName { get; set; }
+            public int? approvedBy { get; set; }
+            public string approverComment { get; set; }
+            public DateTime? dateApproved { get; set; }
+            public short loanStatusId { get; set; }
+            public short scheduleTypeId { get; set; }
+            public bool isDisbursed { get; set; }
+            public int? disbursedBy { get; set; }
+            public string disburserComment { get; set; }
+            public DateTime? disburseDate { get; set; }
+            public decimal? approvedAmount { get; set; }
+            public bool creditAppraisalCompleted { get; set; }
+            public int? operationId { get; set; }
+            public string operationName { get; set; }
+            public int? customerGroupId { get; set; }
+            public short loanTypeId { get; set; }
+
+            public decimal equityContribution { get; set; }
+            public short subSectorId { get; set; }
+            public DateTime? firstPrincipalPaymentDate { get; set; }
+            public DateTime? firstInterestPaymentDate { get; set; }
+            public decimal outstandingPrincipal { get; set; }
+            public decimal outstandingInterest { get; set; }
+            public int? principalAdditionCount { get; set; }
+            public int? principalReductionCount { get; set; }
+            public bool fixedPrincipal { get; set; }
+            public bool profileLoan { get; set; }
+            public bool dischargeLetter { get; set; }
+            public bool suspendInterest { get; set; }
+            public bool booked { get; set; }
+            public bool? scheduled { get; set; }
+            public bool? isScheduledPrepayment { get; set; }
+            public decimal? scheduledPrepaymentAmount { get; set; }
+            public DateTime? scheduledPrepaymentDate { get; set; }
+            public short? scheduledPrepaymentFrequencyTypeId { get; set; }
+            public string scheduledPrepaymentFrequencyTypeName { get; set; }
+            public short customerSensitivityLevelId { get; set; }
+            public string firstName { get; set; }
+            public string middleName { get; set; }
+            public string lastName { get; set; }
+            public string customerCode { get; set; }
+            public string productAccountNumber { get; set; }
+            public int currencyId { get; set; }
+            public string currency { get; set; }
+            public short accurialBasis { get; set; }
+            public double integralFeeAmount { get; set; }
+            public short firstDayType { get; set; }
+            public bool isCamsol { get; set; }
+            public int internalPrudentialGuidelineStatusId { get; set; }
+            public int externalPrudentialGuidelineStatusId { get; set; }
+            public DateTime nplDate { get; set; }
+            public short? scheduleDayCountConventionId { get; set; }
+            public string scheduleDayCountConventionIName { get; set; }
+
+            public short? scheduleDayInterestTypeId { get; set; }
+            public int customerRiskRatingId { get; set; }
+
+            // public double productPriceIndexRate { get; set; }
+            public bool allowForceDebitRepayment { get; set; }
+
+            //.............Fee Attribute.....................//
+            public double exchangeRate { get; set; }
+
+            public DateTime paymentDate { get; set; }
+            public decimal totalAmount { get; set; }
+            public int chargeFeeId { get; set; }
+
+            //.............Other Attributes................//
+            public int productTypeId { get; set; }
+
+            public string productTypeName { get; set; }
+            public string creatorName { get; set; }
+            public string productAccountName { get; set; }
+            public string loanTypeName { get; set; }
+            public string branchName { get; set; }
+            public string subSectorName { get; set; }
+            public string sectorName { get; set; }
+            public string relationshipOfficerName { get; set; }
+            public string relationshipManagerName { get; set; }
+            public string productName { get; set; }
+            public string customerSensitivityLevelName { get; set; }
+            public string customerName { get; set; }
+            public string pricipalFrequencyTypeName { get; set; }
+            public string interestFrequencyTypeName { get; set; }
+            public string comment { get; set; }
+
+            //Loan Review Operation
+            public int loanReviewOperationsId { get; set; }
+            public int operationTypeId { get; set; }
+            public string operationTypeName { get; set; }
+            public DateTime newEffectiveDate { get; set; }
+            public string reviewDetails { get; set; }
+            public double? newInterateRate { get; set; }
+            public decimal? prepayment { get; set; }
+            public int? newPrincipalFrequencyTypeId { get; set; }
+            public string newPrincipalFrequencyTypeName { get; set; }
+            public int? newInterestFrequencyTypeId { get; set; }
+            public string newInterestFrequencyTypeName { get; set; }
+            public DateTime? newPrincipalFirstPaymentDate { get; set; }
+            public DateTime? newInterestFirstPaymentDate { get; set; }
+            public int? newTenor { get; set; }
+            public int? cASA_AccountId { get; set; }
+            public string cASA_AccountName { get; set; }
+            public string cASA_Account { get; set; }
+
+            public decimal? overDraftTopup { get; set; }
+            public decimal? fee_Charges { get; set; }
+            public string terminationAndReBook { get; set; }
+            public string completeWriteOff { get; set; }
+            public string cancelUndisbursedLoan { get; set; }
+            public string lmsLoanReferenceNumber { get; set; }
+            public DateTime? newMaturityDate { get; set; }
+            public int? loanSystemTypeId { get; set; }
+            public int? maturityInstructionTypeId { get; set; }
+            public decimal pastDueInterest { get; set; }
+            public decimal pastDuePrincipal { get; set; }
+            public decimal interestOnPastDueInterest { get; set; }
+            public decimal interestOnPastDuePrincipal { get; set; }
+            public decimal accruedInterest { get; set; }
+            public decimal writeOffAmount
+            {
+                get
+                {
+                    return pastDueInterest + pastDuePrincipal
+    + interestOnPastDueInterest + interestOnPastDuePrincipal + outstandingPrincipal + accruedInterest;
+                }
+            }
+            public List<feeDetails> fees { get; set; }
+            public int creditAppraisalLoanApplicationId { get; set; }
+            public int lmsLoanApplicationId { get; set; }
+            public int lmsOperationId { get; set; }
+
+            public int creditAppraisalOperationId { get; set; }
+            public string lmsrApplicationReferenceNumber { get; set; }
+            public decimal amount { get; set; }
+            public string divisionCode { get; set; }
+            public string divisionShortCode { get; set; }
+
+
+            public int collateralLiquidationRecoveryId { get; set; }
+            public int accreditedConsultant { get; set; }
+            public bool isFullyRecovered { get; set; }
+            public bool overwrite { get; set; }
+            public byte?[] fileData { get; set; }
+            public string fileName { get; set; }
+            public string fileExtension { get; set; }
+            public int? fileSize { get; set; }
+            public string fileSizeUnit { get; set; }
+            public DateTime receiptDate { get; set; }
+            public decimal totalRecoveryAmount { get; set; }
+            public decimal recoveredAmount { get; set; }
+            public decimal? outstandingAmount { get; set; }
+            public string collateralCode { get; set; }
+            public string collectionMode { get; set; }
+            public int createdBy { get; set; }
+            public string sourceReferenceNumber { get; set; }
+            public string lienReferenceNumber { get; set; }
+            public decimal lienAmount { get; set; }
+            public DateTime lienDateTimeCreated { get; set; }
+            public DateTime applicationDate { get; set; }
+            public string lmsReferenceNumber { get; set; }
+            public int loanApplicationId { get; set; }
+            public int casaLienAccountId { get; set; }
+            public int lienRemovalId { get; set; }
+            public int lienRemovalOperationId { get; set; }
+            public int unfreezeLienAccountId { get; set; }
+            public string accreditedConsultantName { get; set; }
+            public string accreditedConsultantCompany { get; set; }
+            public string referenceId { get; set; }
+            public DateTime requestDate { get; set; }
+            public int numberOfLoans { get; set; }
+            public string category { get; set; }
+            public int bulkRecoveryApprovalId { get; set; }
+            public int accreditedConsultantId { get; set; }
+            public decimal? agentCommission { get; set; }
+            public decimal? percentageCommission { get; set; }
+            public decimal totalAmountRecovery { get; set; }
+            public string nameOfRecoveryAgent { get; set; }
+            public string address { get; set; }
+            public string telephoneNumber { get; set; }
+            public DateTime expectedRecoveryDate { get; set; }
+
+            public int periodToRecover { get { return (this.expectedRecoveryDate.Date - this.dateOfAssignment.Date).Days; } }
+            public decimal amountRecovered { get; set; }
+            public string accountNumber { get; set; }
+            public string accountName { get; set; }
+            public DateTime? dateOfEngagement { get; set; }
+            public double accountBalance { get; set; }
+            public string email { get; set; }
+            public DateTime dateOfAssignment { get; set; }
+            public int loanRecoveryReportBatchId { get; set; }
+            public decimal? totalAllrecoveryAmount { get; set; }
+            public string recoveryMisCode { get; set; }
+            public string recoveryRegion { get; set; }
+            public int loanRecoveryCommissionBatchId { get; set; }
+            public string region { get; set; }
+            public decimal? creditToAgent { get; set; }
+            public decimal? amountToDebit { get; set; }
+            public decimal? amountToCredit { get; set; }
+            public string listOfAccountsAssigned { get; set; }
+            public DateTime? recoveryDate { get; set; }
+            public int? flagStatus { get; set; }
+            public List<string> customerAddresses { get; set; }
+            public string agentCategory { get; set; }
+            public string agentAccountNumber { get; set; }
+            public int? stateId { get; set; }
+            public string assignedBy { get; set; }
+            public string staffFullName { get; set; }
+            public string accreditedConsultantEmail { get; set; }
+            public decimal? commissionAmountLessWht { get; set; }
+            public decimal? whtAmount { get; set; }
+            public decimal? whtRate { get; set; }
+            public decimal? commissionAmount { get; set; }
+            public string phoneNumber { get; set; }
+            public decimal? contingentOutstandingPrincipal { get; set; }
+            public decimal? contigentOutstandingPrincipal { get; set; }
+            public decimal? totalPrepayment { get; set; }
+
+            public string exposureType { get; set; }
+            public string expiryBand { get; set; }
+            public string divisionName { get; set; }
         public bool operationCompleted { get; set; }
-        public string source { get; set; }
-        public string assignmentType { get; set; }
-        public string customerId { get; set; }
-        public int? stateId { get; set; }
         public string branchCode { get; set; }
-        public string branchName { get; set; }
-        public int loanAssignId { get; set; }
-        public DateTime dateOfAssignment { get; set; }
-        public decimal totalRecoveryAmount { get; set; }
-        public string staffFullName { get; set; }
-        public string misCode { get; set; }
-        public string accreditedConsultantCompany { get; set; }
-        public string accreditedConsultantEmail { get; set; }
-        public string accountNumber { get; set; }
-        public string accountName { get; set; }
-        public string nameOfRecoveryAgent { get; set; }
-        public string address { get; set; }
-        public string telephoneNumber { get; set; }
-        public DateTime expectedRecoveryDate { get; set; }
-        public decimal amountRecovered { get; set; }
-        public DateTime dateOfEngagement { get; set; }
-        public double accountBalance { get; set; }
-        public string casaAccount { get; set; }
-        public string divisionCode { get; set; }
-        public string region { get; set; }
+        public string productCode { get; set; }
     }
 
 }

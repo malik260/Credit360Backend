@@ -18,6 +18,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThirdPartyIntegration;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -28,6 +29,8 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
+        private LoanPrepayment loanPrepayment;
+
         //private ILoanArchiveRepository loanArchive;
         private string maxUsers = ConfigurationManager.AppSettings["muTrace"];
         
@@ -890,6 +893,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
             int users = Convert.ToInt32(maxUsers);
             externalAlertRepository.ValidateProfiledUsers(users);
+
+            TimeSpan startRepay = new TimeSpan(8, 0, 0);
+            TimeSpan endRepay = new TimeSpan(23, 30, 0);
+
+            if ((now >= startRepay) && (now <= endRepay))
+            {
+                loanPrepayment.GetRepaymentEntriesToStaging();
+            }
 
 
             if (CompareDate() == true)
@@ -5107,7 +5118,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             var maturityDate = t.EXPCOMPLETIONDATE?.ToString("dd-MM-yyyy");
                             int numberOfDays = (t.EXPCOMPLETIONDATE.Value - DateTime.Now).Days;
                             var staffFullName = context.TBL_STAFF.Where(s => s.STAFFID == t.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
-                            var customerName = context.TBL_CUSTOMER.Where(s => s.CUSTOMERCODE == t.CUSTOMERID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                            var customerName = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == t.CUSTOMERID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
                             result = result + $@"
                         <tr>
                             <td>{n}</td>

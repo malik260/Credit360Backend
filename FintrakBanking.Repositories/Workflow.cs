@@ -1238,7 +1238,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void EndProcess(int status)
         {   
-            if(lastOpenRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastOpenRequest.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
+            if(lastOpenRequest?.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastOpenRequest?.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
             if (this.statusId != (int)ApprovalStatusEnum.Disapproved && ContainsPostReviewerAsFromApprovalLevel(this.referredLog))
             {//to prevent duplicate ending of a workflow again when postReviewer refers back
                 return;
