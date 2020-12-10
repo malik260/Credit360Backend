@@ -307,6 +307,18 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/currentLevel/{currentLevelId}/all/{all}/isClassified/{isClassified}")]
+        public HttpResponseMessage GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all, bool isClassified)
+        {
+            var data = repo.GetTrailForReferBack(applicationId, operationId, currentLevelId, all, isClassified);
+            if (data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
+        }
+
+        [HttpGet]
         [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/currentLevel/{currentLevelId}/all/{all}/isClassified/{isClassified}/isLMSCrossWorkflow/{isLMSCrossWorkflow}")]
         public HttpResponseMessage GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all, bool isClassified, bool isLMSCrossWorkflow = false)
         {

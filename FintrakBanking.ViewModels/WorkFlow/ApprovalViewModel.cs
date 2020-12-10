@@ -34,6 +34,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public bool isPoliticalyExposed { get; set; }
         public bool externalInitialization { get; set; }
         public bool isLms { get; set; }
+        public bool isLmsOperations { get; set; }
         public bool isForceApproval { get; set; }
         public bool keepPending {
             get { return _keepPending; }

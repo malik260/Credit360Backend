@@ -2394,7 +2394,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId = 0, bool getAll = false, bool isClassified = false, bool isLMSCrossWorkflow = false)
         {
-            if (isLMSCrossWorkflow) return GetClassifiedLMSTrailForReferBack(applicationId, operationId, currentLevelId = 0, getAll = false, isClassified = false);
+            if (isLMSCrossWorkflow)
+            {
+                operationId = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == operationId)?.SYNCHOPERATIONID ?? operationId;
+                return GetClassifiedLMSTrailForReferBack(applicationId, operationId, currentLevelId = 0, getAll = false, isClassified = false);
+            }
 
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
             var staffs = from s in context.TBL_STAFF select s;
