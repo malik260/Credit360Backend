@@ -2533,18 +2533,23 @@ namespace FintrakBanking.Repositories.Credit
             var lmsAppraisalOperations = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication).Select(c=>c.OPERATIONID).ToList();
 
             var lmsAppraisalOperation = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId && lmsAppraisalOperations.Contains(x.OPERATIONID)).Select(b => b.OPERATIONID).ToList();
+            //var lmsApplicationOperation = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId && x.OPERATIONID =).Select(b => b.OPERATIONID).ToList();
 
             var operationTypeId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(b => b.OPERATIONTYPEID).FirstOrDefault();
 
-            lmsOperationIds.Add((short)operationId);
-            if (operationId == (short)OperationsEnum.LoanReviewApprovalAvailment) { lmsOperationIds.AddRange(lmsDrawdownOperationIds); }
+            //lmsOperationIds.Add((short)operationId);
+            if (operationId == (short)OperationsEnum.LoanReviewApprovalAvailment)
+            {
+                lmsOperationIds.AddRange(lmsDrawdownOperationIds);
+                lmsOperationIds.AddRange(lmsDrawdownOperationIds);
+            }
             if(operationTypeId == (short)OperationTypeEnum.LoanReviewApplication) lmsOperationIds.AddRange(lmsAppraisalOperation);
 
-            if (operationTypeId == (short)OperationTypeEnum.LoanManagement || operationTypeId == (short)OperationTypeEnum.LoanManagementOverdraft)
-            {
-                lmsOperationIds.Add((short)OperationsEnum.LoanReviewApprovalAvailment);
-            }
-
+            //if (operationTypeId == (short)OperationTypeEnum.LoanManagement || operationTypeId == (short)OperationTypeEnum.LoanManagementOverdraft)
+            //{
+            //    lmsOperationIds.Add((short)OperationsEnum.LoanReviewApprovalAvailment);
+            //}
+            lmsOperationIds.Add((short)OperationsEnum.LoanReviewApprovalAvailment);
 
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => lmsOperationIds.Contains(x.OPERATIONID) && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
             if (getAll)
@@ -2654,6 +2659,8 @@ namespace FintrakBanking.Repositories.Credit
                 if (lastOccurrence != null)
                 {
                     d.requestStaffId = lastOccurrence.requestStaffId;
+                    d.sourceOperationId = (short)operationId;
+                    d.sourceTargetId = applicationId;
                 }
             }
 
