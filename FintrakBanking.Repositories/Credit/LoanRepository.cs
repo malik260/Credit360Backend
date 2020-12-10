@@ -16179,6 +16179,12 @@ namespace FintrakBanking.Repositories.Credit
 
         private WorkflowResponse invokeClassifiedReferBack(ApprovalViewModel model)
         {
+
+            var operationTypeId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == model.operationId).Select(c => c.OPERATIONTYPEID).FirstOrDefault();
+            if(operationTypeId == (short)OperationTypeEnum.LoanManagement || operationTypeId == (short)OperationTypeEnum.LoanReviewApplication || operationTypeId == (short)OperationTypeEnum.LoanManagementOverdraft)
+            {
+               return invokeLMSClassifiedReferBack(model);
+            }
             int staffId = model.staffId;
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
             var backTrail = new TBL_APPROVAL_TRAIL();
@@ -16283,6 +16289,75 @@ namespace FintrakBanking.Repositories.Credit
 
             
             //workflow.ExternalInitialization = true;
+
+            workflow.LogActivity();
+
+            //Audit Section ---------------------------
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.facilityBookingReferedBack,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.BranchId,
+            //    DETAIL = $"facility booking with booking account number  refered back to modifier.",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
+            //context.TBL_AUDIT.Add(audit);
+            ////end of Audit section -------------------------------
+
+            context.SaveChanges();
+            return workflow.Response;
+        }
+
+        private WorkflowResponse invokeLMSClassifiedReferBack(ApprovalViewModel model)
+        {
+            int staffId = model.staffId;
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+            List<short> drawdownPostApprovalOperations = new List<short>();
+
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = null;
+
+            workflow.StatusId = (int)ApprovalStatusEnum.Closed;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+
+            workflow.LogActivity();
+
+            //NEW WF ACTIVITY BEGINS
+            TBL_LMSR_APPLICATION request = new TBL_LMSR_APPLICATION();
+            request = context.TBL_LMSR_APPLICATION.Find(model.targetId);
+            var backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.TOAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
+            if (model.nextOperation == null)
+            {
+                model.nextOperation = request?.OPERATIONID;
+                backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.FROMAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
+            }
+
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = (short)model.nextOperation;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.approvalLevelId;
+            workflow.IsClassifiedReferBack = true;
+            workflow.ToStaffId = backTrail?.TOSTAFFID;
+            workflow.DestinationOperationId = model.operationId;
+
+            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
 
             workflow.LogActivity();
 

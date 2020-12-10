@@ -58,6 +58,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public bool? documentProvided { get; set; }
         public object[] requestId { get; set; }
         public string currentUserCode { get; set; }
+        public short sourceOperationId { get; set; }
+        public short sourceTargetId { get; set; }
     }
     public class ApprovalResponse
     {
