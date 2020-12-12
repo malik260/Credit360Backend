@@ -2281,7 +2281,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int? operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
         {
-            
+            try { 
                 List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
                 var msg = new RacReturnInfoViewModel();
                 if (rac.form == null || rac.form.Count == 0) return null;
@@ -2424,12 +2424,11 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 context.TBL_RAC_DETAIL.AddRange(details);
-            try
-            {
+           
                 context.SaveChanges();
                 return null;
             }
-           catch (Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -2755,7 +2754,8 @@ namespace FintrakBanking.Repositories.Credit
             if (integerValue != null) // selects
             {
                 var optionItem = context.TBL_RAC_OPTION_ITEM.FirstOrDefault(x => x.RACOPTIONITEMID == definition.CONTROLOPTIONID);
-                if (optionItem != null) { if (integerValue == optionItem.KEY) return true; }
+                if (optionItem != null) {
+                    if (integerValue == optionItem.KEY) return true; }
                 return false;
             }
             else if (decimalValue != null) // amount
