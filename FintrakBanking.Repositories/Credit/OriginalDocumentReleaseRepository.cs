@@ -914,9 +914,11 @@ namespace FintrakBanking.Repositories.Credit
 
                                 if(model.approvalStatusId == (short)ApprovalStatusEnum.Approved)
                                 {
-                                    x.DELETED = true;
-                                    x.DELETEDBY = model.createdBy;
-                                    x.DATETIMEDELETED = _general.GetApplicationDate();
+                                    //x.DELETED = true;
+                                    //x.DELETEDBY = model.createdBy;
+                                    x.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                    x.APPROVALDATE = DateTime.Now;
+                                    //x.DATETIMEDELETED = _general.GetApplicationDate();
                                 }
                                 
                             }
