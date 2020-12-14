@@ -17257,6 +17257,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanViewModel> GetProcessLoanReviewData(int companyId, int staffId, string searchString)
         {
+            var searchVar = searchString.Trim();
             searchString = searchString.Trim().ToLower();
             var dataLoanExternal = (from e in context.TBL_LMSR_APPLICATION
                             join b in context.TBL_LMSR_APPLICATION_DETAIL on e.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -17265,7 +17266,7 @@ namespace FintrakBanking.Repositories.Credit
                             where 
                             b.OPERATIONPERFORMED == false
                             && e.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                            && (e.APPLICATIONREFERENCENUMBER.Trim() == searchString
+                            && (e.APPLICATIONREFERENCENUMBER.Trim() == searchVar
                             || c.FIRSTNAME.Trim().ToLower() == searchString
                             || c.MIDDLENAME.Trim().ToLower() == searchString
                             || c.LASTNAME.Trim().ToLower() == searchString)
@@ -17365,7 +17366,7 @@ namespace FintrakBanking.Repositories.Credit
                             where
                             b.OPERATIONPERFORMED == false
                             && e.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                            && (e.APPLICATIONREFERENCENUMBER.Trim() == searchString
+                            && (e.APPLICATIONREFERENCENUMBER.Trim() == searchVar
                             || c.FIRSTNAME.Trim().ToLower() == searchString
                             || c.MIDDLENAME.Trim().ToLower() == searchString
                             || c.LASTNAME.Trim().ToLower() == searchString)
@@ -17465,7 +17466,7 @@ namespace FintrakBanking.Repositories.Credit
                                  where 
                                  b.OPERATIONPERFORMED == false
                                  && e.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                 && (e.APPLICATIONREFERENCENUMBER.Trim() == searchString
+                                 && (e.APPLICATIONREFERENCENUMBER.Trim() == searchVar
                                  || c.FIRSTNAME.Trim().ToLower() == searchString
                                  || c.MIDDLENAME.Trim().ToLower() == searchString
                                  || c.LASTNAME.Trim().ToLower() == searchString)
@@ -17565,7 +17566,7 @@ namespace FintrakBanking.Repositories.Credit
                                   where 
                                   b.OPERATIONPERFORMED == false
                                   && e.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                  && (e.APPLICATIONREFERENCENUMBER.Trim() == searchString
+                                  && (e.APPLICATIONREFERENCENUMBER.Trim() == searchVar
                                   || c.FIRSTNAME.Trim().ToLower() == searchString
                                   || c.MIDDLENAME.Trim().ToLower() == searchString
                                   || c.LASTNAME.Trim().ToLower() == searchString)
@@ -17661,7 +17662,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = dataLoan.Union(dataRevolving).Union(dataContingent).Union(dataLoanExternal);
 
-            return data.ToList();
+            return data.GroupBy(r => r.applicationReferenceNumber)
+                               .Select(p => p.OrderByDescending(r => r.applicationReferenceNumber).FirstOrDefault()).ToList();
         }
 
         public WorkflowResponse ApproveLMSFacilityModification(ForwardViewModel model)
@@ -17712,50 +17714,49 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
-            public WorkflowResponse AddFacilityModification(FacilityModificationViewModel model)
+        public WorkflowResponse AddFacilityModification(FacilityModificationViewModel model)
         {
-
-            using (var trans = context.Database.BeginTransaction())
-            {
-                model.productClassProcessId2 = context.TBL_PRODUCT_CLASS.Find(model.productClassId).PRODUCT_CLASS_PROCESSID;
-                var entity = new TBL_LMS_FACILITY_MODIFICATION
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
-                    PRODUCTCLASSPROCESSID = model.productClassProcessId2,
-                    APPROVEDPRODUCTID = model.approvedProductId,
-                    APPROVEDINTERESTRATE = model.approvedInterestRate,
-                    APPROVEDTENOR = model.approvedTenor,
-                    TENORMODEID = model.tenorModeId,
-                    SUBSECTORID = model.subSectorId,
-                    PRODUCTCLASSID = model.productClassId,
-                    APPROVEDAMOUNT = model.approvedAmount,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                    CREATEDBY = model.createdBy,
-                    DATETIMECREATED = DateTime.Now,
-                    REVIEWDETAILS = model.reviewDetails
-                };
+                    model.productClassProcessId2 = context.TBL_PRODUCT_CLASS.Find(model.productClassId).PRODUCT_CLASS_PROCESSID;
+                    var entity = new TBL_LMS_FACILITY_MODIFICATION
+                    {
+                        LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                        PRODUCTCLASSPROCESSID = model.productClassProcessId2,
+                        APPROVEDPRODUCTID = model.approvedProductId,
+                        APPROVEDINTERESTRATE = model.approvedInterestRate,
+                        APPROVEDTENOR = model.approvedTenor,
+                        TENORMODEID = model.tenorModeId,
+                        SUBSECTORID = model.subSectorId,
+                        PRODUCTCLASSID = model.productClassId,
+                        APPROVEDAMOUNT = model.approvedAmount,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                        CREATEDBY = model.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                        REVIEWDETAILS = model.reviewDetails
+                    };
 
-                var save = context.TBL_LMS_FACILITY_MODIFICATION.Add(entity);
-                context.SaveChanges();
+                    var save = context.TBL_LMS_FACILITY_MODIFICATION.Add(entity);
+                    context.SaveChanges();
 
-                workflow.OperationId = (int)OperationsEnum.LMSFacilityModificationApproval;
-                workflow.StaffId = model.createdBy;
-                workflow.TargetId = entity.FACILITYMODIFICATIONID;
-                workflow.CompanyId = model.companyId;
-                workflow.Vote = 2;
-                workflow.StatusId = 1;
-                workflow.Comment = "Kindly approve this lms facility modification";
-                workflow.DeferredExecution = true;
-                workflow.LogActivity();
-                var saved = context.SaveChanges() > 0;
-                if (saved)
-                {
-                    trans.Commit();
+                    workflow.OperationId = (int)OperationsEnum.LMSFacilityModificationApproval;
+                    workflow.StaffId = model.createdBy;
+                    workflow.TargetId = entity.FACILITYMODIFICATIONID;
+                    workflow.CompanyId = model.companyId;
+                    workflow.Vote = 2;
+                    workflow.StatusId = 1;
+                    workflow.Comment = "Kindly approve this lms facility modification";
+                    workflow.DeferredExecution = true;
+                    workflow.LogActivity();
+                    var saved = context.SaveChanges() > 0;
+                    if (saved)
+                    {
+                        trans.Commit();
+                        return workflow.Response;
+                    }
+                    trans.Rollback();
                     return workflow.Response;
                 }
-                trans.Rollback();
-                return workflow.Response;
-            }
         }
 
         public FacilityModificationViewModel GetLMSFacilityModification(int facilityModificationId)
