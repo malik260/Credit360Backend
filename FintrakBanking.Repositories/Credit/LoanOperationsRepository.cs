@@ -20607,7 +20607,7 @@ namespace FintrakBanking.Repositories.Credit
                     workFlow.Comment = entity.comment;
                     workFlow.DeferredExecution = true;
 
-                    // workFlow.LogActivity();
+                       // workFlow.LogActivity();
 
                     var lmsrRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
                     if (lmsrRecord != null)
