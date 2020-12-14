@@ -5864,6 +5864,40 @@ namespace FintrakBanking.Repositories.Credit
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
+            var exposureDigitalNonPerforming = (from ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
+                                         join b in context.TBL_BRANCH on ln.BRANCHCODE equals b.BRANCHCODE
+                                         where
+                                         !loansId.Contains(ln.REFERENCENUMBER)
+                                         && ln.NPL != null
+                                         && ln.UNPODAYSOVERDUE >= 30
+                                         && ln.UNPODAYSOVERDUE <= 360
+                                         && ln.CUSTOMERID == customerIds
+
+                                         orderby ln.ID descending
+                                         select new GlobalExposureApplicationViewModel
+                                         {
+                                             loanId = ln.ID,
+                                             customerCode = ln.CUSTOMERID,
+                                             productCode = ln.PRODUCTID,
+                                             loanReferenceNumber = ln.REFERENCENUMBER,
+                                             customerName = ln.CUSTOMERNAME,
+                                             productName = ln.PRODUCTNAME,
+                                             relationshipManagerName = ln.ACCOUNTOFFICERNAME,
+                                             exposureType = ln.EXPOSURETYPE,
+                                             expiryBand = ln.EXPIRINGBAND,
+                                             divisionName = ln.DIVISIONNAME,
+                                             totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             dpdExposure = ln.UNPODAYSOVERDUE,
+                                             loanCategory = ln.CBNCLASSIFICATION
+                                         }).ToList();
+            foreach (var xx in exposureDigitalNonPerforming)
+            {
+                xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
+                xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
+            }
+
             var dataLoanNonPerforming = (from ln in context.TBL_LOAN
                                          join tt in context.TBL_OPERATIONS on ln.OPERATIONID equals tt.OPERATIONID
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -6057,7 +6091,7 @@ namespace FintrakBanking.Repositories.Credit
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
 
             var allData = termLoanDataNon.Union(revolvingLoanDataNon);
-            allData = allData.Union(exposureNonPerforming);
+            allData = allData.Union(exposureNonPerforming).Union(exposureDigitalNonPerforming);
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }
@@ -6096,6 +6130,40 @@ namespace FintrakBanking.Repositories.Credit
                                          }).ToList();
 
             foreach (var xx in exposureNonPerforming)
+            {
+                xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
+                xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
+            }
+
+            var exposureDigitalNonPerforming = (from ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
+                                         join b in context.TBL_BRANCH on ln.BRANCHCODE equals b.BRANCHCODE
+                                         where
+                                         !loansId.Contains(ln.REFERENCENUMBER)
+                                         && ln.NPL != null
+                                         && ln.UNPODAYSOVERDUE > 360
+                                         && ln.CUSTOMERID == custmerIds
+
+                                         orderby ln.ID descending
+                                         select new GlobalExposureApplicationViewModel
+                                         {
+                                             loanId = ln.ID,
+                                             customerCode = ln.CUSTOMERID,
+                                             productCode = ln.PRODUCTID,
+                                             loanReferenceNumber = ln.REFERENCENUMBER,
+                                             customerName = ln.CUSTOMERNAME,
+                                             productName = ln.PRODUCTNAME,
+                                             relationshipManagerName = ln.ACCOUNTOFFICERNAME,
+                                             exposureType = ln.EXPOSURETYPE,
+                                             expiryBand = ln.EXPIRINGBAND,
+                                             divisionName = ln.DIVISIONNAME,
+                                             totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             dpdExposure = ln.UNPODAYSOVERDUE,
+                                             loanCategory = ln.CBNCLASSIFICATION
+                                         }).ToList();
+
+            foreach (var xx in exposureDigitalNonPerforming)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
                 xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
@@ -6294,7 +6362,7 @@ namespace FintrakBanking.Repositories.Credit
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
 
             var allData = termLoanDataNon.Union(revolvingLoanDataNon);
-                allData = allData.Union(exposureNonPerforming);
+                allData = allData.Union(exposureNonPerforming).Union(exposureDigitalNonPerforming);
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }
@@ -6335,6 +6403,41 @@ namespace FintrakBanking.Repositories.Credit
                                          }).ToList();
 
             foreach (var xx in exposureNonPerforming)
+            {
+                xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
+                xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
+            }
+
+            var exposureDigitalNonPerforming = (from ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
+                                         join b in context.TBL_BRANCH on ln.BRANCHCODE equals b.BRANCHCODE
+                                         where
+                                         !loansId.Contains(ln.REFERENCENUMBER)
+                                         && ln.NPL != null
+                                         && ln.UNPODAYSOVERDUE >= 30
+                                         && ln.UNPODAYSOVERDUE <= 360
+                                         && ln.CUSTOMERID == custmerIds
+
+                                         orderby ln.ID descending
+                                         select new GlobalExposureApplicationViewModel
+                                         {
+                                             loanId = ln.ID,
+                                             customerCode = ln.CUSTOMERID,
+                                             productCode = ln.PRODUCTID,
+                                             loanReferenceNumber = ln.REFERENCENUMBER,
+                                             customerName = ln.CUSTOMERNAME,
+                                             productName = ln.PRODUCTNAME,
+                                             relationshipManagerName = ln.ACCOUNTOFFICERNAME,
+                                             exposureType = ln.EXPOSURETYPE,
+                                             expiryBand = ln.EXPIRINGBAND,
+                                             divisionName = ln.DIVISIONNAME,
+                                             totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             dpdExposure = ln.UNPODAYSOVERDUE,
+                                             loanCategory = ln.CBNCLASSIFICATION
+                                         }).ToList();
+
+            foreach (var xx in exposureDigitalNonPerforming)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
                 xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
@@ -6535,7 +6638,7 @@ namespace FintrakBanking.Repositories.Credit
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
 
             var allData = termLoanDataNon.Union(revolvingLoanDataNon);
-            allData = allData.Union(exposureNonPerforming);
+            allData = allData.Union(exposureNonPerforming).Union(exposureDigitalNonPerforming);
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }
@@ -6574,6 +6677,40 @@ namespace FintrakBanking.Repositories.Credit
                                          }).ToList();
 
             foreach (var xx in exposureNonPerforming)
+            {
+                xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
+                xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
+            }
+
+            var exposureDigitalNonPerforming = (from ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
+                                         join b in context.TBL_BRANCH on ln.BRANCHCODE equals b.BRANCHCODE
+                                         where
+                                         !loansId.Contains(ln.REFERENCENUMBER)
+                                         && ln.NPL != null
+                                         && ln.UNPODAYSOVERDUE > 360
+                                         && ln.CUSTOMERID == custmerIds
+
+                                         orderby ln.ID descending
+                                         select new GlobalExposureApplicationViewModel
+                                         {
+                                             loanId = ln.ID,
+                                             customerCode = ln.CUSTOMERID,
+                                             productCode = ln.PRODUCTID,
+                                             loanReferenceNumber = ln.REFERENCENUMBER,
+                                             customerName = ln.CUSTOMERNAME,
+                                             productName = ln.PRODUCTNAME,
+                                             relationshipManagerName = ln.ACCOUNTOFFICERNAME,
+                                             exposureType = ln.EXPOSURETYPE,
+                                             expiryBand = ln.EXPIRINGBAND,
+                                             divisionName = ln.DIVISIONNAME,
+                                             totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             dpdExposure = ln.UNPODAYSOVERDUE,
+                                             loanCategory = ln.CBNCLASSIFICATION
+                                         }).ToList();
+
+            foreach (var xx in exposureDigitalNonPerforming)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
                 xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
@@ -6772,7 +6909,7 @@ namespace FintrakBanking.Repositories.Credit
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
 
             var allData = termLoanDataNon.Union(revolvingLoanDataNon);
-            allData = allData.Union(exposureNonPerforming);
+            allData = allData.Union(exposureNonPerforming).Union(exposureDigitalNonPerforming);
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }
@@ -6993,6 +7130,30 @@ namespace FintrakBanking.Repositories.Credit
                 xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
             }
 
+            var exposureDigitalNonPerforming = (from ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
+                                         join b in context.TBL_BRANCH on ln.BRANCHCODE equals b.BRANCHCODE
+                                         where
+                                         !loansId.Contains(ln.REFERENCENUMBER)
+                                         && ln.NPL != null
+                                         && ln.UNPODAYSOVERDUE >= 30
+
+                                         orderby ln.ID descending
+                                         select new GlobalExposureApplicationViewModel
+                                         {
+                                             stateId = b.STATEID,
+                                             loanId = ln.ID,
+                                             customerCode = ln.CUSTOMERID,
+                                             branchCode = ln.BRANCHCODE,
+                                             branchName = b.BRANCHNAME,
+                                             loanReferenceNumber = ln.REFERENCENUMBER,
+                                         }).ToList();
+
+            foreach (var xx in exposureDigitalNonPerforming)
+            {
+                xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+            }
+
             var dataLoanNonPerforming = (from ln in context.TBL_LOAN
                                          join tt in context.TBL_OPERATIONS on ln.OPERATIONID equals tt.OPERATIONID
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -7048,7 +7209,7 @@ namespace FintrakBanking.Repositories.Credit
             var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
             var allData = termLoanDataNon.Union(revolvingLoanDataNon);
-            allData = allData.Union(exposureNonPerforming);
+            allData = allData.Union(exposureNonPerforming).Union(exposureDigitalNonPerforming);
             var data = allData.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
 
             if (data.Count() > 0)
@@ -7116,6 +7277,30 @@ namespace FintrakBanking.Repositories.Credit
                 xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
             }
 
+            var exposureDigitalNonPerforming = (from ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
+                                         join b in context.TBL_BRANCH on ln.BRANCHCODE equals b.BRANCHCODE
+                                         where
+                                         !loansId.Contains(ln.REFERENCENUMBER)
+                                         && ln.NPL != null
+                                         && ln.UNPODAYSOVERDUE >= 30
+
+                                         orderby ln.ID descending
+                                         select new GlobalExposureApplicationViewModel
+                                         {
+                                             stateId = b.STATEID,
+                                             loanId = ln.ID,
+                                             customerCode = ln.CUSTOMERID,
+                                             branchCode = ln.BRANCHCODE,
+                                             branchName = b.BRANCHNAME,
+                                             loanReferenceNumber = ln.REFERENCENUMBER,
+                                         }).ToList();
+
+            foreach (var xx in exposureDigitalNonPerforming)
+            {
+                xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+            }
+
             var dataLoanNonPerforming = (from ln in context.TBL_LOAN
                                          join tt in context.TBL_OPERATIONS on ln.OPERATIONID equals tt.OPERATIONID
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -7171,7 +7356,7 @@ namespace FintrakBanking.Repositories.Credit
             var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
             var allData = termLoanDataNon.Union(revolvingLoanDataNon);
-            allData = allData.Union(exposureNonPerforming);
+            allData = allData.Union(exposureNonPerforming).Union(exposureDigitalNonPerforming);
             var data = allData.GroupBy(x => x.customerId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
 
             if (data.Count() > 0)
@@ -7240,7 +7425,41 @@ namespace FintrakBanking.Repositories.Credit
                                              referenceId = r.REFERENCEID,
                                          }).ToList();
 
-            var data = dataLoanNonPerforming.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
+            var dataDigitalLoanNonPerforming = (from r in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                         join ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN on r.LOANREFERENCE equals ln.REFERENCENUMBER
+                                         join b in context.TBL_BRANCH on ln.BRANCHCODE equals b.BRANCHCODE
+                                         where
+                                         r.DELETED == false
+                                         && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                         && r.ISFULLYRECOVERED == false
+                                         && r.SOURCE.ToLower() == "remedial"
+                                         && (DbFunctions.DiffDays(DateTime.UtcNow, r.DATEASSIGNED).Value >= 1 && DbFunctions.DiffDays(DateTime.UtcNow, r.DATEASSIGNED).Value <= 10)
+
+                                         orderby ln.ID descending
+                                         select new GlobalExposureApplicationViewModel
+                                         {
+                                             productName = ln.PRODUCTNAME,
+                                             loanAssignId = r.LOANASSIGNID,
+                                             dateOfAssignment = r.DATEASSIGNED,
+                                             expCompletionDate = r.EXPCOMPLETIONDATE,
+                                             totalRecoveryAmount = (decimal)r.TOTALAMOUNTRECOVERY,
+                                             createdBy = r.CREATEDBY,
+                                             staffFullName = ln.ACCOUNTOFFICERNAME,
+                                             misCode = ln.ACCOUNTOFFICERCODE,
+                                             accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(c => c.ACCREDITEDCONSULTANTID == r.ACCREDITEDCONSULTANT).Select(c => c.FIRMNAME).FirstOrDefault(),
+                                             accreditedConsultantEmail = context.TBL_ACCREDITEDCONSULTANT.Where(c => c.ACCREDITEDCONSULTANTID == r.ACCREDITEDCONSULTANT).Select(c => c.EMAILADDRESS).FirstOrDefault(),
+                                             customerName = ln.CUSTOMERNAME,
+                                             stateId = b.STATEID,
+                                             loanId = ln.ID,
+                                             customerId = r.CUSTOMERID,
+                                             branchCode = ln.BRANCHCODE,
+                                             branchName = ln.BRANCHNAME,
+                                             loanReferenceNumber = ln.REFERENCENUMBER,
+                                             referenceId = r.REFERENCEID,
+                                         }).ToList();
+
+            var allData = dataLoanNonPerforming.Union(dataDigitalLoanNonPerforming);
+            var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
             return data;
         }
 
