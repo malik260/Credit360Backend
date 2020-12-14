@@ -16188,9 +16188,49 @@ namespace FintrakBanking.Repositories.Credit
             int staffId = model.staffId;
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
             var backTrail = new TBL_APPROVAL_TRAIL();
-            if (model.isLms && model.isLmsOperations)
-            {
+            //if (model.isLms && model.isLmsOperations)
+            //{
 
+            //    List<short> drawdownPostApprovalOperations = new List<short>();
+            //    drawdownPostApprovalOperations.Add((short)OperationsEnum.CorporateDrawdownRequest);
+            //    drawdownPostApprovalOperations.Add((short)OperationsEnum.IndividualDrawdownRequest);
+            //    drawdownPostApprovalOperations.Add((short)OperationsEnum.CreditCardDrawdownRequest);
+            //    drawdownPostApprovalOperations.Add((short)OperationsEnum.RevolvingTranchDisbursement);
+
+            //    workflow.StaffId = model.createdBy;
+            //    workflow.OperationId = model.operationId;
+            //    workflow.TargetId = model.targetId;
+            //    workflow.CompanyId = model.companyId;
+            //    workflow.ProductClassId = model.productClassId;
+            //    workflow.ProductId = model.productId;
+            //    workflow.NextLevelId = null;
+            //    // workflow.DestinationOperationId = model.operationId;
+
+
+            //    workflow.StatusId = (int)ApprovalStatusEnum.Closed;
+            //    workflow.Comment = model.comment;
+            //    workflow.DeferredExecution = true;
+
+            //    workflow.LogActivity();
+
+            //    //NEW WF ACTIVITY BEGINS
+            //    TBL_LOAN_BOOKING_REQUEST request = new TBL_LOAN_BOOKING_REQUEST();
+            //    request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.targetId);
+
+            //    backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.TOAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
+            //    if (model.nextOperation == null)
+            //    {
+            //        model.nextOperation = request?.OPERATIONID;
+            //        backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.FROMAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
+            //    }
+
+            //    if (drawdownPostApprovalOperations.Contains((short)model.nextOperation))
+            //    {
+            //        if (request != null) { request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending; }
+            //    }
+            //}
+            //else
+            //{//for normal los drawdown
                 List<short> drawdownPostApprovalOperations = new List<short>();
                 drawdownPostApprovalOperations.Add((short)OperationsEnum.CorporateDrawdownRequest);
                 drawdownPostApprovalOperations.Add((short)OperationsEnum.IndividualDrawdownRequest);
@@ -16228,47 +16268,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (request != null) { request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending; }
                 }
-            }
-            else
-            {//for normal los drawdown
-                List<short> drawdownPostApprovalOperations = new List<short>();
-                drawdownPostApprovalOperations.Add((short)OperationsEnum.CorporateDrawdownRequest);
-                drawdownPostApprovalOperations.Add((short)OperationsEnum.IndividualDrawdownRequest);
-                drawdownPostApprovalOperations.Add((short)OperationsEnum.CreditCardDrawdownRequest);
-                drawdownPostApprovalOperations.Add((short)OperationsEnum.RevolvingTranchDisbursement);
-
-                workflow.StaffId = model.createdBy;
-                workflow.OperationId = model.operationId;
-                workflow.TargetId = model.targetId;
-                workflow.CompanyId = model.companyId;
-                workflow.ProductClassId = model.productClassId;
-                workflow.ProductId = model.productId;
-                workflow.NextLevelId = null;
-                // workflow.DestinationOperationId = model.operationId;
-
-
-                workflow.StatusId = (int)ApprovalStatusEnum.Closed;
-                workflow.Comment = model.comment;
-                workflow.DeferredExecution = true;
-
-                workflow.LogActivity();
-
-                //NEW WF ACTIVITY BEGINS
-                TBL_LOAN_BOOKING_REQUEST request = new TBL_LOAN_BOOKING_REQUEST();
-                request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.targetId);
-
-                backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.TOAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
-                if (model.nextOperation == null)
-                {
-                    model.nextOperation = request?.OPERATIONID;
-                    backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.FROMAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
-                }
-
-                if (drawdownPostApprovalOperations.Contains((short)model.nextOperation))
-                {
-                    if (request != null) { request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending; }
-                }
-            }
+            //}
             
 
             
@@ -16318,24 +16318,61 @@ namespace FintrakBanking.Repositories.Credit
 
             List<short> drawdownPostApprovalOperations = new List<short>();
 
+            if (model.isLmsOperations)
+            {
+                var operation = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == model.operationId);
+                var operationId = operation.SYNCHOPERATIONID ?? 0;
+                if (operationId == 0)
+                {
+                    throw new SecureException("Please setup a SYNCOPERATIONID for operation " + operation.OPERATIONNAME);
+                }
+                var trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == model.targetId && t.OPERATIONID == operationId && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended).ToList();
+                if(trails.Count > 0)
+                {
+                    model.operationId = operationId;
+                    workflow.StaffId = model.createdBy;
+                    workflow.OperationId = model.operationId;
+                    workflow.TargetId = model.targetId;
+                    workflow.CompanyId = model.companyId;
+                    workflow.ProductClassId = model.productClassId;
+                    workflow.ProductId = model.productId;
+                    workflow.NextLevelId = null;
 
-            workflow.StaffId = model.createdBy;
-            workflow.OperationId = model.operationId;
-            workflow.TargetId = model.targetId;
-            workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = model.productClassId;
-            workflow.ProductId = model.productId;
-            workflow.NextLevelId = null;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Closed;
+                    workflow.Comment = model.comment;
+                    workflow.DeferredExecution = true;
 
-            workflow.StatusId = (int)ApprovalStatusEnum.Closed;
-            workflow.Comment = model.comment;
-            workflow.DeferredExecution = true;
+                    workflow.LogActivity();
+                }
+            }
+            else
+            {
+                var trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == model.targetId && t.OPERATIONID == model.operationId && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended).ToList();
+                var Unapprovedtrails = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == model.targetId && t.OPERATIONID == model.operationId && t.APPROVALSTATEID != (int)ApprovalState.Ended && (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved));
+                if (trails.Count > 0 && Unapprovedtrails)
+                {
+                    workflow.StaffId = model.createdBy;
+                    workflow.OperationId = model.operationId;
+                    workflow.TargetId = model.targetId;
+                    workflow.CompanyId = model.companyId;
+                    workflow.ProductClassId = model.productClassId;
+                    workflow.ProductId = model.productId;
+                    workflow.NextLevelId = null;
 
-            workflow.LogActivity();
+                    workflow.StatusId = (int)ApprovalStatusEnum.Closed;
+                    workflow.Comment = model.comment;
+                    workflow.DeferredExecution = true;
+
+                    workflow.LogActivity();
+                }
+            }
+            
 
             //NEW WF ACTIVITY BEGINS
             TBL_LMSR_APPLICATION request = new TBL_LMSR_APPLICATION();
             request = context.TBL_LMSR_APPLICATION.Find(model.targetId);
+            request.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+
             var backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.TOAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
             if (model.nextOperation == null)
             {
@@ -16353,7 +16390,14 @@ namespace FintrakBanking.Repositories.Credit
             workflow.NextLevelId = model.approvalLevelId;
             workflow.IsClassifiedReferBack = true;
             workflow.ToStaffId = backTrail?.TOSTAFFID;
-            workflow.DestinationOperationId = model.operationId;
+            if (model.isLmsOperations)
+            {//to be changed when the LMSOPERATIONS is initiated same way as LOSOPERATIONS
+                workflow.DestinationOperationId = null;
+            }
+            else
+            {
+                workflow.DestinationOperationId = model.operationId;
+            }
 
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
