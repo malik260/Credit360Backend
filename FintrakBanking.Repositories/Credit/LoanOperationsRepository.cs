@@ -20916,71 +20916,71 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse GoForAssignLoansToAgentApproval(ApprovalViewModel entity)
         {
-            List<string> receiverEmailList = new List<string>();
-            AlertsViewModel alert = new AlertsViewModel();
-            var dynamicMessage = string.Empty;
+                List<string> receiverEmailList = new List<string>();
+                AlertsViewModel alert = new AlertsViewModel();
+                var dynamicMessage = string.Empty;
 
-            entity.applicationDate = generalSetup.GetApplicationDate();
-            using (var trans = context.Database.BeginTransaction())
-            {
-                var reviewRecord = (from s in context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
-                                    where s.BULKRECOVERYAPPROVALID == entity.targetId && s.OPERATIONID == entity.operationId
-                                    && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                    select s).FirstOrDefault();
-
-                workFlow.StaffId = entity.staffId;
-                workFlow.CompanyId = entity.companyId;
-                workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
-                workFlow.TargetId = entity.targetId;
-                workFlow.Comment = entity.comment;
-                workFlow.OperationId = entity.operationId;
-                workFlow.DeferredExecution = true;
-                workFlow.LogActivity();
-
-                if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                entity.applicationDate = generalSetup.GetApplicationDate();
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    
-                    var loanAssigns = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == reviewRecord.REFERENCEBATCHID).ToList();
-                    foreach (var loanAssign in loanAssigns)
+                    var reviewRecord = (from s in context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
+                                        where s.BULKRECOVERYAPPROVALID == entity.targetId && s.OPERATIONID == entity.operationId
+                                        && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                        select s).FirstOrDefault();
+
+                    workFlow.StaffId = entity.staffId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.OperationId = entity.operationId;
+                    workFlow.DeferredExecution = true;
+                    workFlow.LogActivity();
+
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                     {
-                        var record = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(loanAssign.LOANASSIGNID);
-                        record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                        record.OPERATIONCOMPLETED = false;
-                    }
-                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                   
-                }
 
-                if (workFlow.NewState != (int)ApprovalState.Ended)
-                {
-                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                }
-                else if (workFlow.NewState == (int)ApprovalState.Ended)
-                {
-                    if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
-                    {
-                        var loanAssigns = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x=>x.REFERENCEID == reviewRecord.REFERENCEBATCHID).ToList();
+                        var loanAssigns = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == reviewRecord.REFERENCEBATCHID).ToList();
                         foreach (var loanAssign in loanAssigns)
                         {
                             var record = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(loanAssign.LOANASSIGNID);
-                            record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                            record.OPERATIONCOMPLETED = true;
-                            record.OPERATIONID = entity.operationId;
+                            record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                            record.OPERATIONCOMPLETED = false;
                         }
-                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-
-                        var consultant = context.TBL_ACCREDITEDCONSULTANT.Find(reviewRecord.ACCREDITEDCONSULTANTID);
-                        alert.receiverEmailList.Add(consultant.EMAILADDRESS);
-                        dynamicMessage = "Dear " +consultant.FIRMNAME + "<br/> Kindly be informed that you have been shortlisted as one of the Consulting firms for our Loan(s) recovery process. Contact the bank for further details";
-                        LogEmailAlert(dynamicMessage, "NOTIFICATION FOR LOAN(S) RECOVERY", alert.receiverEmailList, "80760", 80760, "NotifyRecoveryAgentForAssignedLoans");
+                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
 
                     }
-                }
-                context.SaveChanges();
-                trans.Commit();
 
-            }
-            return workFlow.Response;
+                    if (workFlow.NewState != (int)ApprovalState.Ended)
+                    {
+                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    }
+                    else if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
+                        {
+                            var loanAssigns = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == reviewRecord.REFERENCEBATCHID).ToList();
+                            foreach (var loanAssign in loanAssigns)
+                            {
+                                var record = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(loanAssign.LOANASSIGNID);
+                                record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                record.OPERATIONCOMPLETED = true;
+                                record.OPERATIONID = entity.operationId;
+                            }
+                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                            var consultant = context.TBL_ACCREDITEDCONSULTANT.Find(reviewRecord.ACCREDITEDCONSULTANTID);
+                            alert.receiverEmailList.Add(consultant.EMAILADDRESS);
+                            dynamicMessage = "Dear " + consultant.FIRMNAME + "<br/> Kindly be informed that you have been shortlisted as one of the Consulting firms for our Loan(s) recovery process. Contact the bank for further details";
+                            LogEmailAlert(dynamicMessage, "NOTIFICATION FOR LOAN(S) RECOVERY", alert.receiverEmailList, "80760", 80760, "NotifyRecoveryAgentForAssignedLoans");
+
+                        }
+                    }
+                    context.SaveChanges();
+                    trans.Commit();
+
+                }
+                return workFlow.Response;
         }
 
 
@@ -35239,7 +35239,7 @@ namespace FintrakBanking.Repositories.Credit
                                     loanId = ln.ID,
                                     customerCode = ln.CUSTOMERID,
                                     productCode = ln.PRODUCTID,
-                                    applicationReferenceNumber = "",
+                                    applicationReferenceNumber = ln.REFERENCENUMBER,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     customerName = ln.CUSTOMERNAME,
                                     productName = ln.PRODUCTNAME,
