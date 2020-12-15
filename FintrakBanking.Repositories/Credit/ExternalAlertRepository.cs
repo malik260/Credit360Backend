@@ -5824,11 +5824,10 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private IEnumerable<GlobalExposureApplicationViewModel> GetLoanOperationRecoveryAnalysisInternal(int custmerId)
+        private IEnumerable<GlobalExposureApplicationViewModel> GetLoanOperationRecoveryAnalysisInternal(int custmerId, string customerCode)
         {
             var applicationDate = _genSetup.GetApplicationDate();
             var loansId = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.DELETED == false).Select(x => x.LOANREFERENCE).ToList();
-            var customerIds = custmerId.ToString();
 
             var exposureNonPerforming = (from ln in context.TBL_GLOBAL_EXPOSURE
                                          join b in context.TBL_BRANCH on ln.BRANCHCODE equals b.BRANCHCODE
@@ -5837,7 +5836,8 @@ namespace FintrakBanking.Repositories.Credit
                                          && ln.NPL != null
                                          && ln.UNPODAYSOVERDUE >= 30
                                          && ln.UNPODAYSOVERDUE <= 360
-                                         && ln.CUSTOMERID == customerIds
+                                         && ln.CUSTOMERID == customerCode
+                                         && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
                                          orderby ln.ID descending
                                          select new GlobalExposureApplicationViewModel
@@ -5871,9 +5871,10 @@ namespace FintrakBanking.Repositories.Credit
                                          && ln.NPL != null
                                          && ln.UNPODAYSOVERDUE >= 30
                                          && ln.UNPODAYSOVERDUE <= 360
-                                         && ln.CUSTOMERID == customerIds
+                                         && ln.CUSTOMERID == customerCode
+                                         && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
-                                         orderby ln.ID descending
+                                                orderby ln.ID descending
                                          select new GlobalExposureApplicationViewModel
                                          {
                                              loanId = ln.ID,
@@ -6095,13 +6096,10 @@ namespace FintrakBanking.Repositories.Credit
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }
-
-
-        private IEnumerable<GlobalExposureApplicationViewModel> GetLoanOperationRecoveryAnalysisExternal(int custmerId)
+        private IEnumerable<GlobalExposureApplicationViewModel> GetLoanOperationRecoveryAnalysisExternal(int custmerId, string customerCode)
         {
             var applicationDate = _genSetup.GetApplicationDate();
             var loansId = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.DELETED == false).Select(x => x.LOANREFERENCE).ToList();
-            var custmerIds = custmerId.ToString();
 
             var exposureNonPerforming = (from ln in context.TBL_GLOBAL_EXPOSURE
                                          join b in context.TBL_BRANCH on ln.BRANCHCODE equals b.BRANCHCODE
@@ -6109,7 +6107,8 @@ namespace FintrakBanking.Repositories.Credit
                                          !loansId.Contains(ln.REFERENCENUMBER)
                                          && ln.NPL != null
                                          && ln.UNPODAYSOVERDUE > 360
-                                         && ln.CUSTOMERID == custmerIds
+                                         && ln.CUSTOMERID == customerCode
+                                         && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
                                          orderby ln.ID descending
                                          select new GlobalExposureApplicationViewModel
@@ -6143,9 +6142,10 @@ namespace FintrakBanking.Repositories.Credit
                                          !loansId.Contains(ln.REFERENCENUMBER)
                                          && ln.NPL != null
                                          && ln.UNPODAYSOVERDUE > 360
-                                         && ln.CUSTOMERID == custmerIds
+                                         && ln.CUSTOMERID == customerCode
+                                         && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
-                                         orderby ln.ID descending
+                                                orderby ln.ID descending
                                          select new GlobalExposureApplicationViewModel
                                          {
                                              loanId = ln.ID,
@@ -6366,9 +6366,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }
-
-
-        private IEnumerable<GlobalExposureApplicationViewModel> GetQuarterlyLoanOperationRecoveryAnalysisInternal(int customerId)
+        private IEnumerable<GlobalExposureApplicationViewModel> GetQuarterlyLoanOperationRecoveryAnalysisInternal(int customerId, string customerCode)
         {
 
             var applicationDate = _genSetup.GetApplicationDate();
@@ -6382,7 +6380,8 @@ namespace FintrakBanking.Repositories.Credit
                                          && ln.NPL != null
                                          && ln.UNPODAYSOVERDUE >= 30
                                          && ln.UNPODAYSOVERDUE <= 360
-                                         && ln.CUSTOMERID == custmerIds
+                                         && ln.CUSTOMERID == customerCode
+                                         && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
                                          orderby ln.ID descending
                                          select new GlobalExposureApplicationViewModel
@@ -6417,9 +6416,10 @@ namespace FintrakBanking.Repositories.Credit
                                          && ln.NPL != null
                                          && ln.UNPODAYSOVERDUE >= 30
                                          && ln.UNPODAYSOVERDUE <= 360
-                                         && ln.CUSTOMERID == custmerIds
+                                         && ln.CUSTOMERID == customerCode
+                                         && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
-                                         orderby ln.ID descending
+                                                orderby ln.ID descending
                                          select new GlobalExposureApplicationViewModel
                                          {
                                              loanId = ln.ID,
@@ -6642,8 +6642,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }
-
-        private IEnumerable<GlobalExposureApplicationViewModel> GetQuarterlyLoanOperationRecoveryAnalysisExternal(int customerId)
+        private IEnumerable<GlobalExposureApplicationViewModel> GetQuarterlyLoanOperationRecoveryAnalysisExternal(int customerId, string customerCode)
         {
 
             var applicationDate = _genSetup.GetApplicationDate();
@@ -6656,7 +6655,7 @@ namespace FintrakBanking.Repositories.Credit
                                          !loansId.Contains(ln.REFERENCENUMBER)
                                          && ln.NPL != null
                                          && ln.UNPODAYSOVERDUE > 360
-                                         && ln.CUSTOMERID == custmerIds
+                                         && ln.CUSTOMERID == customerCode
 
                                          orderby ln.ID descending
                                          select new GlobalExposureApplicationViewModel
@@ -6690,9 +6689,9 @@ namespace FintrakBanking.Repositories.Credit
                                          !loansId.Contains(ln.REFERENCENUMBER)
                                          && ln.NPL != null
                                          && ln.UNPODAYSOVERDUE > 360
-                                         && ln.CUSTOMERID == custmerIds
+                                         && ln.CUSTOMERID == customerCode
 
-                                         orderby ln.ID descending
+                                                orderby ln.ID descending
                                          select new GlobalExposureApplicationViewModel
                                          {
                                              loanId = ln.ID,
@@ -6992,7 +6991,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 assignOperations.createdBy = 10065;
                 assignOperations.accreditedConsultant = accreditedConsultant;
-                assignOperations.applicationReferenceNumber = customerRequest.applicationReferenceNumber; 
+                assignOperations.applicationReferenceNumber = customerRequest.loanReferenceNumber; 
                 assignOperations.loanReferenceNumber = customerRequest.loanReferenceNumber;
                 assignOperations.expCompletionDate = expCompletionDate;
                 assignOperations.referenceId = referenceNumber;
@@ -7113,6 +7112,7 @@ namespace FintrakBanking.Repositories.Credit
                                              !loansId.Contains(ln.REFERENCENUMBER)
                                              && ln.NPL != null
                                              && ln.UNPODAYSOVERDUE >= 30
+                                             && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
                                              orderby ln.ID descending
                                              select new GlobalExposureApplicationViewModel
@@ -7137,6 +7137,7 @@ namespace FintrakBanking.Repositories.Credit
                                                     !loansId.Contains(ln.REFERENCENUMBER)
                                                     && ln.NPL != null
                                                     && ln.UNPODAYSOVERDUE >= 30
+                                                    && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
                                                     orderby ln.ID descending
                                                     select new GlobalExposureApplicationViewModel
@@ -7220,8 +7221,8 @@ namespace FintrakBanking.Repositories.Credit
                         if (record.stateId != null)
                         {
                                 var recoveryAgents = GetAccreditedRecoveryConsultants((int)record.stateId);
-                                var customerRecordsInternal = GetLoanOperationRecoveryAnalysisInternal(record.customerId).ToList();
-                                var customerRecordsExternal = GetLoanOperationRecoveryAnalysisExternal(record.customerId).ToList();
+                                var customerRecordsInternal = GetLoanOperationRecoveryAnalysisInternal(record.customerId, record.customerCode).ToList();
+                                var customerRecordsExternal = GetLoanOperationRecoveryAnalysisExternal(record.customerId, record.customerCode).ToList();
                                 if (recoveryAgents.Count() > 0 && (customerRecordsInternal.Count() > 0 || customerRecordsExternal.Count() > 0))
                                 {
                                     
@@ -7362,8 +7363,8 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var record in data)
                 {
                     var recoveryAgents = GetAccreditedRecoveryConsultantsByAutoReAssignment((int)record.stateId);
-                    var customerRecordsInternal = GetQuarterlyLoanOperationRecoveryAnalysisInternal(record.customerId).ToList();
-                    var customerRecordsExternal = GetQuarterlyLoanOperationRecoveryAnalysisExternal(record.customerId).ToList();
+                    var customerRecordsInternal = GetQuarterlyLoanOperationRecoveryAnalysisInternal(record.customerId, record.customerCode).ToList();
+                    var customerRecordsExternal = GetQuarterlyLoanOperationRecoveryAnalysisExternal(record.customerId, record.customerCode).ToList();
                     if (recoveryAgents.Count() > 0 && (customerRecordsInternal.Count() > 0 || customerRecordsExternal.Count() > 0))
                     {
                         var consultant = recoveryAgents.ElementAt(0).accreditedConsultantId;

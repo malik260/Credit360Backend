@@ -32075,8 +32075,9 @@ namespace FintrakBanking.Repositories.Credit
                                 !loansId.Contains(ln.REFERENCENUMBER)
                                 && ln.NPL != null
                                 && ln.UNPODAYSOVERDUE >= 30
+                                && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
-                        orderby ln.ID descending
+                                orderby ln.ID descending
                         select new GlobalExposureApplicationViewModel
                         {
                             loanId = ln.ID,
@@ -32112,8 +32113,9 @@ namespace FintrakBanking.Repositories.Credit
                                 !loansId.Contains(ln.REFERENCENUMBER)
                                 && ln.NPL != null
                                 && ln.UNPODAYSOVERDUE >= 30
+                                && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
-                                orderby ln.ID descending
+                                       orderby ln.ID descending
                                 select new GlobalExposureApplicationViewModel
                                 {
                                     loanId = ln.ID,
@@ -32663,7 +32665,21 @@ namespace FintrakBanking.Repositories.Credit
                                     branchName = ln.BRANCHNAME,
                                     divisionCode = ln.DIVISIONCODE,
                                     region = ln.REGIONCODE,
-                                }).ToList();
+                                relationshipOfficerName = ln.ACCOUNTOFFICERNAME,
+                                bulkRecoveryApprovalId = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Where(x => x.REFERENCEBATCHID == lr.REFERENCEID).Select(x => x.BULKRECOVERYAPPROVALID).FirstOrDefault(),
+                                operationId = lr.OPERATIONID,
+                                accreditedConsultant = lr.ACCREDITEDCONSULTANT,
+                                referenceId = lr.REFERENCEID,
+                                assignedBy = context.TBL_STAFF.Where(s => s.STAFFID == lr.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
+                                assignmentType = lr.ASSIGNMENTTYPE,
+                                agentAccountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.ACCOUNTNUMBER).FirstOrDefault(),
+                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
+                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
+                                category = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY.ToUpper()).FirstOrDefault(),
+                                accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
+                                expCompletionDate = lr.EXPCOMPLETIONDATE,
+                                loanAssignId = lr.LOANASSIGNID,
+                            }).ToList();
 
             foreach (var xx in exposureData)
             {
@@ -32702,6 +32718,20 @@ namespace FintrakBanking.Repositories.Credit
                                     branchName = ln.BRANCHNAME,
                                     divisionCode = ln.DIVISIONCODE,
                                     region = ln.REGIONCODE,
+                                    bulkRecoveryApprovalId = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Where(x => x.REFERENCEBATCHID == lr.REFERENCEID).Select(x => x.BULKRECOVERYAPPROVALID).FirstOrDefault(),
+                                    operationId = lr.OPERATIONID,
+                                    accreditedConsultant = lr.ACCREDITEDCONSULTANT,
+                                    referenceId = lr.REFERENCEID,
+                                    assignedBy = context.TBL_STAFF.Where(s => s.STAFFID == lr.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
+                                    assignmentType = lr.ASSIGNMENTTYPE,
+                                    agentAccountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.ACCOUNTNUMBER).FirstOrDefault(),
+                                    accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
+                                    accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
+                                    category = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY.ToUpper()).FirstOrDefault(),
+                                    accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
+                                    expCompletionDate = lr.EXPCOMPLETIONDATE,
+                                    loanAssignId = lr.LOANASSIGNID,
+                                    relationshipOfficerName = ln.ACCOUNTOFFICERNAME,
                                 }).ToList();
 
             foreach (var xx in exposureDigitalData)
