@@ -213,13 +213,13 @@ namespace FintrakBanking.Repositories.Credit
                 bool isContingent = false;
 
                 // checking of company limit at availment
-                var exposure = GetCurrentCompanyExposure();
-                var proposedExposure = exposure.proposedLimit + applicationDet.APPROVEDAMOUNT;
-                var company = context.TBL_COMPANY.Find(application.COMPANYID);
-                if (proposedExposure >= company.SHAREHOLDERSFUND)
-                {
-                    throw new SecureException("Company Limit Exceeded!");
-                }
+                //var exposure = GetCurrentCompanyExposure();
+                //var proposedExposure = exposure.proposedLimit + applicationDet.APPROVEDAMOUNT;
+                //var company = context.TBL_COMPANY.Find(application.COMPANYID);
+                //if (proposedExposure >= company.SHAREHOLDERSFUND)
+                //{
+                //    throw new SecureException("Company Limit Exceeded!");
+                //}
 
                 if (application.ISLINEFACILITY == true && entity.documentProvided != null)
                 {
