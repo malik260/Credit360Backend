@@ -9802,7 +9802,7 @@ namespace FintrakBanking.Repositories.Credit
             var cpldStaffRoleLevelIds = termLoanOperationStaffRoleLevelIds
                                         .Union(cpOperationStaffRoleLevelIds)
                                         .Union(fxRevolvingOperationStaffRoleLevelIds)
-                                        .Union(overdraftOperationStaffRoleLevelIds).Distinct();
+                                        .Union(overdraftOperationStaffRoleLevelIds).Distinct().ToList();
 
             //var activities = admin.GetUserActivitiesByUser(staffId);
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
