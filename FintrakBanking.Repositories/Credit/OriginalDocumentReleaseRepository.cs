@@ -234,14 +234,18 @@ namespace FintrakBanking.Repositories.Credit
                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                          join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
                          where dr.DELETED == false
-                         && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                         && ((atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                             || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
                             || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            && dr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            ||
+                            (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing
+                            && dr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved))
                             && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                             && atrail.LOOPEDSTAFFID == null
-                            && atrail.RESPONSESTAFFID == null && dr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && atrail.RESPONSESTAFFID == null 
                             && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
                          
                          select new OriginalDocumentReleaseViewModel
@@ -916,8 +920,6 @@ namespace FintrakBanking.Repositories.Credit
                                 {
                                     //x.DELETED = true;
                                     //x.DELETEDBY = model.createdBy;
-                                    x.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                                    x.APPROVALDATE = DateTime.Now;
                                     //x.DATETIMEDELETED = _general.GetApplicationDate();
                                 }
                                 
