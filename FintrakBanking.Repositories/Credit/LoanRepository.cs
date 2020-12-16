@@ -19040,6 +19040,7 @@ namespace FintrakBanking.Repositories.Credit
                 assignOperations.CREATEDBY = user.createdBy;
                 assignOperations.ACCREDITEDCONSULTANT = model.accreditedConsultant;
                 assignOperations.LOANREFERENCE = validate.LOANREFERENCE;
+                assignOperations.APPLICATIONREFERENCENUMBER = validate.LOANREFERENCE;
                 assignOperations.EXPCOMPLETIONDATE = model.expCompletionDate;
                 assignOperations.REFERENCEID = referenceNumber;
                 assignOperations.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
@@ -19132,8 +19133,9 @@ namespace FintrakBanking.Repositories.Credit
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                         OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval,
                         REQUESTDATE = DateTime.Now,
-                        SOURCE = model.source
-                    });
+                        SOURCE = model.source,
+                        ASSIGNMENTTYPE = "MANUAL"
+            });
                    context.SaveChanges();
 
                 var flagDelete = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);

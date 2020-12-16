@@ -9190,7 +9190,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                  dataDigitalExposureLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                        join ln in context.TBL_GLOBAL_EXPOSURE on lr.LOANREFERENCE equals ln.REFERENCENUMBER
+                                        join ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN on lr.LOANREFERENCE equals ln.REFERENCENUMBER
                                         where
                                         lr.ACCREDITEDCONSULTANT == accreditedConsultantId
                                         && lr.ISFULLYRECOVERED == false
