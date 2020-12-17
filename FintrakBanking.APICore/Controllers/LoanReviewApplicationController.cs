@@ -76,6 +76,26 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
+        [HttpGet, Route("review-application/id/{lmsApplicationId}")]
+        public HttpResponseMessage GetApplications(int lmsApplicationId)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+
+
+           LoanReviewApplicationViewModel data;
+            data = repo.GetApplicationsById(user, lmsApplicationId);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+
+        }
+
         [HttpGet, Route("review-availment/crms")]
         public HttpResponseMessage GetLoanReviewForCRMS(
          [FromUri] int page,
