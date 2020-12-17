@@ -636,6 +636,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.useOrganogram = level.RouteViaStaffOrganogram;
                 }*/
 
+        private bool RequestIsLoopedStaffReturn()
+        {
+            if(lastOpenRequest.FROMAPPROVALLEVELID == lastOpenRequest.TOAPPROVALLEVELID && lastOpenRequest.LOOPEDSTAFFID > 0 && this.StatusId != (int)ApprovalStatusEnum.Referred)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private int? ResolveReroute(int? toStaffId)
         {
             if (toStaffId == this.toStaffId) throw new SecureException("Already with staff!");
