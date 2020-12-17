@@ -839,7 +839,7 @@ namespace FintrakBanking.APICore.Controllers
                 var alertViewModels = _alertRepo.MonthlyAutoAssignRecoveryAnalysisByCustomer();
                 if (alertViewModels)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, message = "Success" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, message = "Completed Successfully" });
                 }
                 else
                 {

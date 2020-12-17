@@ -1145,6 +1145,30 @@ namespace FintrakBanking.Repositories.CASA
                         }).ToList();
             }
 
+            if (data.Count() <= 0)
+            {
+                data = (from cust in context.TBL_CUSTOMER
+                        join custGroup in context.TBL_CUSTOMER_GROUP_MAPPING on cust.CUSTOMERID equals custGroup.CUSTOMERID into cGroup
+                        from custGroup in cGroup.DefaultIfEmpty()
+                        where cust.CUSTOMERID == customerId
+                        select new CasaCustomerSearchViewModel()
+                        {
+                            customerId = cust.CUSTOMERID,
+                            customerCode = cust.CUSTOMERCODE,
+                            accountHolder = cust.FIRSTNAME + " " + cust.LASTNAME,
+                            companyId = cust.COMPANYID,
+                            branchId = cust.BRANCHID,
+                            branchCode = cust.TBL_BRANCH.BRANCHCODE,
+                            branchName = cust.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerId = cust.RELATIONSHIPOFFICERID ?? 0,
+                            relationshipManagerId = cust.TBL_STAFF.SUPERVISOR_STAFFID ?? 0,
+                            customerTypeId = cust.CUSTOMERTYPEID,
+                            customerGroupId = custGroup.CUSTOMERID,
+                            customerGroupName = custGroup.TBL_CUSTOMER_GROUP.GROUPNAME ?? "None",
+                            taxIdentificationNumber = cust.TAXNUMBER
+                        }).ToList();
+            }
+
             if (data.Count() > 0)
             {
                 return data.FirstOrDefault();
