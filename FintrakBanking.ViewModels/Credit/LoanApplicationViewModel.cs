@@ -1311,6 +1311,9 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime valueDate { get; set; }
         public DateTime postedDate { get; set; }
         public string description { get; set; }
+        public string productCode { get; set; }
+        public string branchCode { get; set; }
+        public short productClassId { get; set; }
     }
 
 }
