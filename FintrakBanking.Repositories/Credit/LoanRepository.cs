@@ -19347,8 +19347,89 @@ namespace FintrakBanking.Repositories.Credit
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                         OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
                         REQUESTDATE = DateTime.Now,
-                        SOURCE = source
+                        SOURCE = source,
+                        ASSIGNMENTTYPE = "MANUAL"
                     });
+                    context.SaveChanges();
+
+                    var flagDelete = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(r.loanAssignId);
+                    flagDelete.DELETED = true;
+                    flagDelete.DELETEDBY = user.createdBy;
+                    flagDelete.DATETIMEDELETED = DateTime.Now;
+
+                    var approval = new ApprovalViewModel
+                    {
+                        staffId = user.createdBy,
+                        companyId = user.companyId,
+                        approvalStatusId = (short)ApprovalStatusEnum.Processing,
+                        comment = "Kindly help approve the recovery assignment",
+                        targetId = removeLienOperation.BULKRECOVERYAPPROVALID,
+                        operationId = removeLienOperation.OPERATIONID,
+                        BranchId = user.BranchId,
+                        deferredExecution = false
+                    };
+
+                    workflow.LogForApproval(approval);
+
+                    auditTrail.AddAuditTrail(new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
+                        STAFFID = user.createdBy,
+                        BRANCHID = (short)user.BranchId,
+                        DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ referenceNumber}' ",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                        URL = user.applicationUrl,
+                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
+                    });
+                }
+
+                context.SaveChanges();
+                trans.Commit();
+            }
+
+            return workflow.Response;
+        }
+
+        public WorkflowResponse saveMultipleRetailLoanReAssignmentToAgent(List<GlobalExposureApplicationViewModel> model, UserInfo user, DateTime expCompletionDate, int accreditedConsultant, string source)
+        {
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+            List<TBL_LOAN_RECOVERY_ASSIGNMENT> bulkLoanTable = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
+            if (model == null)
+            {
+                throw new ConditionNotMetException("Kindly select an accredited consultant.");
+            }
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                foreach (var r in model)
+                {
+                    var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(r.loanAssignId);
+                    validate.CREATEDBY = user.createdBy;
+                    validate.ACCREDITEDCONSULTANT = accreditedConsultant;
+                    validate.EXPCOMPLETIONDATE = expCompletionDate;
+                    validate.REFERENCEID = referenceNumber;
+                    validate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    validate.OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
+                    validate.OPERATIONCOMPLETED = false;
+                    validate.SOURCE = source;
+                    context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(validate);
+
+                    TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL removeLienOperation = new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL();
+                    removeLienOperation = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
+                    {
+                        ACCREDITEDCONSULTANTID = accreditedConsultant,
+                        REFERENCEBATCHID = referenceNumber,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                        OPERATIONID = (int)OperationsEnum.RetailRecoveryAssignmentApproval,
+                        REQUESTDATE = DateTime.Now,
+                        SOURCE = source,
+                        ASSIGNMENTTYPE = "MANUAL"
+                    });
+                    context.SaveChanges();
 
                     var flagDelete = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(r.loanAssignId);
                     flagDelete.DELETED = true;
@@ -20492,11 +20573,11 @@ namespace FintrakBanking.Repositories.Credit
             //{
             //    throw new SecureException("Request already exist and undergoing approval");
             //}
+            
+                using (TransactionScope transactionScope = new TransactionScope())
+                {
 
-            using (TransactionScope transactionScope = new TransactionScope())
-            {
 
-                
                     var data = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == models.referenceId).ToList();
                     foreach (var d in data)
                     {
@@ -20530,12 +20611,13 @@ namespace FintrakBanking.Repositories.Credit
 
                     var response = workflow.LogActivity();
                     context.SaveChanges();
-                
-                transactionScope.Complete();
 
-                transactionScope.Dispose();
+                    transactionScope.Complete();
 
-            }
+                    transactionScope.Dispose();
+
+                }
+            
             return workflow.Response;
         }
 
