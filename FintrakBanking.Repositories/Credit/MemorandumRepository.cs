@@ -8760,7 +8760,6 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 customerId = context.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID).Select(d => d.CUSTOMERID).FirstOrDefault();
-
             }
 
             if (this.isThirdPartyFacility == false)
