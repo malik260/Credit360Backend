@@ -508,6 +508,7 @@ namespace FintrakBanking.Repositories.Credit
             var staff = context.TBL_STAFF.FirstOrDefault(O => O.STAFFID == staffId);
 
             List<int> approvalOperations = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication
+                                                                        && x.OPERATIONID != (short)OperationsEnum.LoanReviewApprovalAvailment
                                                                         && x.OPERATIONID != (short)OperationsEnum.LoanReviewDrawdownForExtension
                                                                         && x.OPERATIONID != (short)OperationsEnum.ContingentReviewDrawdownForExtension
                                                                         && x.OPERATIONID != (short)OperationsEnum.OverdraftReviewDrawdownForExtension)
@@ -557,6 +558,7 @@ namespace FintrakBanking.Repositories.Credit
                  //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                  approvalState = x.trail == null ? "Pending" : x.trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                  approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
+                 currentApprovalLevelId = x.trail == null ? 0 : x.trail.TOAPPROVALLEVELID,
                  currentApprovalLevel = x.trail == null ? "" : x.trail.TBL_APPROVAL_LEVEL1.LEVELNAME, 
                  lastComment = x.trail == null ? "" : x.trail.COMMENT,
                  toStaffId = x.trail == null ? 0 : x.trail.TOSTAFFID,
@@ -1474,13 +1476,11 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var classifiedTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
                  x.OPERATIONID == (int)model.operationId
-                 //&& x.RESPONSESTAFFID == null
                  && x.DESTINATIONOPERATIONID > 0
                  && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
                  && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
-                 //&& x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
                  && x.TARGETID == model.applicationId
-                );
+                );//any pending classified refer back
 
                 var previousTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
                  x.OPERATIONID == (int)model.operationId
@@ -1489,7 +1489,7 @@ namespace FintrakBanking.Repositories.Credit
                  && x.DESTINATIONOPERATIONID == null
                  && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
                  && x.TARGETID == model.applicationId
-                );
+                );//any pending refer back done after classified refer back
 
                 if (classifiedTrail != null && previousTrail == null)
                 {
@@ -1500,11 +1500,11 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Closed;
                         }
-                        else
-                        {
-                            classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                        }
-                        classifiedTrail.APPROVALSTATEID = (short)ApprovalState.Ended;
+                        //else
+                        //{
+                        //    classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        //}
+                        //classifiedTrail.APPROVALSTATEID = (short)ApprovalState.Ended;
                         classifiedTrail.RESPONSESTAFFID = model.staffId;
                         classifiedTrail.RESPONSEDATE = DateTime.Now;
                         classifiedTrail.SYSTEMRESPONSEDATETIME = DateTime.Now;
