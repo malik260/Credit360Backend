@@ -16379,7 +16379,7 @@ namespace FintrakBanking.Repositories.Credit
                 model.nextOperation = request?.OPERATIONID;
                 backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.FROMAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
             }
-
+            request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
 
             workflow.StaffId = model.createdBy;
             workflow.OperationId = (short)model.nextOperation;

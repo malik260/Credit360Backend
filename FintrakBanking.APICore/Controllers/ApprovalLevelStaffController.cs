@@ -304,6 +304,23 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+        [HttpPost]
+        [Route("work-flow-tracker/approval-review-monitoring")]
+        public HttpResponseMessage GetContractReviewMointoring(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+
+            dateRange.companyId = token.GetCompanyId;
+            var data = repo.GetContractReviewMointoring(dateRange);
+
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("work-flow-tracker/target/{targetId}")]
