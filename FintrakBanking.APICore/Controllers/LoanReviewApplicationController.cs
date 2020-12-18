@@ -89,7 +89,7 @@ namespace FintrakBanking.APICore.Controllers
             };
 
 
-           LoanReviewApplicationViewModel data;
+            List<applicationDetails> data;
             data = repo.GetApplicationsById(user, lmsApplicationId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
