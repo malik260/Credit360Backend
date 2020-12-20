@@ -1519,7 +1519,7 @@ namespace FintrakBanking.Repositories.Credit
                          x.OPERATIONID == (int)model.operationId
                          && x.RESPONSESTAFFID == null
                          && x.DESTINATIONOPERATIONID == null
-                         && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+                         && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                          && x.TARGETID == model.applicationId
                         );
 
@@ -1555,7 +1555,7 @@ namespace FintrakBanking.Repositories.Credit
                             workflow.TargetId = appl.LOANAPPLICATIONID;
                             workflow.ProductClassId = null;
                             workflow.StatusId = model.forwardAction;
-                            //workflow.ToStaffId = model.receiverStaffId;
+                            workflow.ToStaffId = classifiedTrail.REQUESTSTAFFID;
                             //workflow.NextLevelId = model.receiverLevelId;
                             workflow.Comment = model.comment;
                             workflow.Vote = model.vote;
