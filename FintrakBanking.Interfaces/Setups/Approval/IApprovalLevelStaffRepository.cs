@@ -43,6 +43,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         IEnumerable<ApprovalLevelStaffViewModel> GetTempApprovalLevelStaff(int staffId);
         List<WorkflowTrackerViewModel> GetApprovalMointoring(DateRange param);
         List<WorkflowTrackerViewModel> GetBookingMointoring(DateRange param);
+        List<WorkflowTrackerViewModel> GetContractReviewMointoring(DateRange param);
         List<WorkflowTrackerViewModel> GetBookingApprovalTrailByTargetId(int targetId, int companyId);
         List<WorkflowTrackerViewModel> GetApprovalTrailByTargetId(int targetId, int companyId);
         WorkflowTrackerViewModel GenerateApprovalMonitoringReport(DateRange param);

@@ -16358,7 +16358,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == model.targetId && t.OPERATIONID == model.operationId && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended).ToList();
-                var Unapprovedtrails = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == model.targetId && t.OPERATIONID == model.operationId && t.APPROVALSTATEID != (int)ApprovalState.Ended && (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved));
+                var Unapprovedtrails = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == model.targetId && t.OPERATIONID == model.operationId && t.APPROVALSTATEID != (int)ApprovalState.Ended && (t.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && t.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved));
                 if (trails.Count > 0 && Unapprovedtrails)
                 {
                     workflow.StaffId = model.createdBy;
@@ -16377,7 +16377,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
             
-
+            
             //NEW WF ACTIVITY BEGINS
             TBL_LMSR_APPLICATION request = new TBL_LMSR_APPLICATION();
             request = context.TBL_LMSR_APPLICATION.Find(model.targetId);
@@ -16389,7 +16389,7 @@ namespace FintrakBanking.Repositories.Credit
                 model.nextOperation = request?.OPERATIONID;
                 backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.FROMAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
             }
-
+            request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
 
             workflow.StaffId = model.createdBy;
             workflow.OperationId = (short)model.nextOperation;
