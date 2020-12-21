@@ -1179,7 +1179,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                          where
                          x.OPERATIONID == operationId 
                          && x.TARGETID == targetId
-                         && x.FROMAPPROVALLEVELID != null
+                         //&& x.FROMAPPROVALLEVELID != null
               select new ApprovalTrailViewModel
               {
                 approvalTrailId = x.APPROVALTRAILID,
@@ -1203,7 +1203,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            }).OrderByDescending(x => x.approvalTrailId).ToList();
+            }).OrderBy(x => x.approvalTrailId).ToList();
+
+            var initiation = data.FirstOrDefault();
+            if (initiation?.fromApprovalLevelId == null)
+            {
+                data.Remove(initiation);
+                data = data.OrderByDescending(d => d.approvalTrailId).ToList();
+            }
 
             var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => x).FirstOrDefault();
             var reviewDetail = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWAPPLICATIONID == applicationDetail.LOANREVIEWAPPLICATIONID).Select(x => x).FirstOrDefault();
@@ -1243,7 +1250,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             var allstaff = this.GetAllStaffNames();
 
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationid && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
+            //var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationid && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationid && x.TARGETID == applicationId).ToList();
 
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
@@ -1270,9 +1278,15 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            })?.OrderByDescending(x => x.systemArrivalDateTime).ToList();
+            })?.OrderBy(x => x.systemArrivalDateTime).ToList();
 
 
+            var initiation = data.FirstOrDefault();
+            if (initiation?.fromApprovalLevelId == null)
+            {
+                data.Remove(initiation);
+                data = data.OrderByDescending(d => d.approvalTrailId).ToList();
+            }
             data.OrderByDescending(d => d.systemArrivalDateTime);
             return data;
         }
