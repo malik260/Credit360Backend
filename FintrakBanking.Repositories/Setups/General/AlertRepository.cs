@@ -891,15 +891,17 @@ namespace FintrakBanking.Repositories.Setups.General
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
 
-            int users = Convert.ToInt32(maxUsers);
-            externalAlertRepository.ValidateProfiledUsers(users);
+           // int users = Convert.ToInt32(maxUsers);
+            //externalAlertRepository.ValidateProfiledUsers(users);
 
-            TimeSpan startRepay = new TimeSpan(8, 0, 0);
+            TimeSpan startRepay = new TimeSpan(7, 0, 0);
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
-
+            
             if ((now >= startRepay) && (now <= endRepay))
             {
-                loanPrepayment.GetRepaymentEntriesToStaging();
+                loanPrepayment = new LoanPrepayment();
+                loanPrepayment.GetLoanRepaymentToStaging();
+                loanPrepayment.GetOverdraftRepaymentToStaging();
             }
 
 
@@ -3569,7 +3571,16 @@ namespace FintrakBanking.Repositories.Setups.General
            
                 foreach (var alert in alerts)
                 {
-                    if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList, "100442", 0,alert.operationMethod);
+                   var title = alert.alertTitle.Trim();
+                   if (title.Contains("&"))
+                   {
+                    title = title.Replace("&", "AND");
+                   }
+                   if (title.Contains("."))
+                   {
+                        title = title.Replace(".", "");
+                   }
+                if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList, "100442", 0,alert.operationMethod);
                 }
             
         }
@@ -3688,8 +3699,17 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             try
             {
+                var title = alertSubject.Trim();
+                if (title.Contains("&"))
+                {
+                    title = title.Replace("&", "AND");
+                }
+                if (title.Contains("."))
+                {
+                    title = title.Replace(".", "");
+                }
                 string recipient = string.Join("", recipients.ToArray());
-                string messageSubject = alertSubject +" ALERT";
+                string messageSubject = title;
                 string messageContent = messageBody;
                 //string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
                 //string mailBody = templateUrl.Replace("{Description}", messageContent);  //EmailHelpers.PopulateBody(messageContent, templateUrl); 
