@@ -508,6 +508,7 @@ namespace FintrakBanking.Repositories.Credit
             var staff = context.TBL_STAFF.FirstOrDefault(O => O.STAFFID == staffId);
 
             List<int> approvalOperations = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication
+                                                                        && x.OPERATIONID != (short)OperationsEnum.LoanReviewApprovalAvailment
                                                                         && x.OPERATIONID != (short)OperationsEnum.LoanReviewDrawdownForExtension
                                                                         && x.OPERATIONID != (short)OperationsEnum.ContingentReviewDrawdownForExtension
                                                                         && x.OPERATIONID != (short)OperationsEnum.OverdraftReviewDrawdownForExtension)
@@ -557,6 +558,7 @@ namespace FintrakBanking.Repositories.Credit
                  //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                  approvalState = x.trail == null ? "Pending" : x.trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                  approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
+                 currentApprovalLevelId = x.trail == null ? 0 : x.trail.TOAPPROVALLEVELID,
                  currentApprovalLevel = x.trail == null ? "" : x.trail.TBL_APPROVAL_LEVEL1.LEVELNAME, 
                  lastComment = x.trail == null ? "" : x.trail.COMMENT,
                  toStaffId = x.trail == null ? 0 : x.trail.TOSTAFFID,
@@ -1472,116 +1474,119 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.forwardAction != (int)ApprovalStatusEnum.Referred)
             {
-                var classifiedTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                 x.OPERATIONID == (int)model.operationId
-                 //&& x.RESPONSESTAFFID == null
-                 && x.DESTINATIONOPERATIONID > 0
-                 && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
-                 && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
-                 //&& x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
-                 && x.TARGETID == model.applicationId
-                );
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    var classifiedTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                    x.OPERATIONID == (int)model.operationId
+                    && x.DESTINATIONOPERATIONID > 0
+                    && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
+                    && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
+                    && x.TARGETID == model.applicationId
+                );//any pending classified refer back
 
                 var previousTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                 x.OPERATIONID == (int)model.operationId
-                 //&& x.RESPONSESTAFFID == null
-                 && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
-                 && x.DESTINATIONOPERATIONID == null
-                 && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
-                 && x.TARGETID == model.applicationId
-                );
+                    x.OPERATIONID == (int)model.operationId
+                    //&& x.RESPONSESTAFFID == null
+                    && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
+                    && x.DESTINATIONOPERATIONID == null
+                    && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
+                    && x.TARGETID == model.applicationId
+                );//any pending refer back done after classified refer back
 
-                if (classifiedTrail != null && previousTrail == null)
-                {
-
-                    if (classifiedTrail.RESPONSESTAFFID == null)
+                    if (classifiedTrail != null && previousTrail == null)
                     {
-                        if (classifiedTrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
+                        //if there is a pending classified refer back and no child pending refer backs
+                        if (classifiedTrail.RESPONSESTAFFID == null)
                         {
-                            classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Closed;
+                            if (classifiedTrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
+                            {
+                                classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Closed;
+                            }
+                            //else
+                            //{
+                            //    classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            //}
+                            classifiedTrail.APPROVALSTATEID = (short)ApprovalState.Ended;
+                            classifiedTrail.RESPONSESTAFFID = model.createdBy;
+                            classifiedTrail.RESPONSEDATE = DateTime.Now;
+                            classifiedTrail.SYSTEMRESPONSEDATETIME = DateTime.Now;
+                        }
+
+                        classifiedTrail.REFEREBACKSTATEID = (short)ApprovalState.Ended;
+                        context.SaveChanges();
+
+                        var previousTrail2 = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                         x.OPERATIONID == (int)model.operationId
+                         && x.RESPONSESTAFFID == null
+                         && x.DESTINATIONOPERATIONID == null
+                         && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                         && x.TARGETID == model.applicationId
+                        );
+
+                        if (previousTrail2 != null)
+                        {
+
+                            if (previousTrail2.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
+                            {
+                                previousTrail2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Closed;
+                            }
+                            else
+                            {
+                                previousTrail2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            }
+                            previousTrail2.APPROVALSTATEID = (short)ApprovalState.Ended;
+                            previousTrail2.RESPONSESTAFFID = model.createdBy;
+                            previousTrail2.RESPONSEDATE = DateTime.Now;
+                            previousTrail2.SYSTEMRESPONSEDATETIME = DateTime.Now;
+                        }
+
+                        if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+                        {
+                            appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                            workflow.Response.responseMessage = "The Request has been Approved and Sent to Credit Inputter";
                         }
                         else
                         {
-                            classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            var lmsrDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                            workflow.BusinessUnitId = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == lmsrDetail.FirstOrDefault().CUSTOMERID).BUSINESSUNTID;
+                            workflow.StaffId = model.lastUpdatedBy;
+                            workflow.CompanyId = appl.COMPANYID;
+                            workflow.OperationId = classifiedTrail.DESTINATIONOPERATIONID ?? 0;
+                            workflow.TargetId = appl.LOANAPPLICATIONID;
+                            workflow.ProductClassId = null;
+                            workflow.StatusId = model.forwardAction;
+                            workflow.ToStaffId = classifiedTrail.REQUESTSTAFFID;
+                            //workflow.NextLevelId = model.receiverLevelId;
+                            workflow.Comment = model.comment;
+                            workflow.Vote = model.vote;
+                            workflow.DeferredExecution = true;
+                            workflow.IsFlowTest = model.isFlowTest;
+                            workflow.IsFromPc = model.isFromPc;
+                            workflow.Tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0;
+                            workflow.IgnorePostApprovalReviewer = true;
+                            workflow.LevelBusinessRule = new LevelBusinessRule
+                            {
+                                Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
+                                                                   //Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                                                                   //PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                                PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
+                                Pep = model.politicallyExposed,
+                                //InsiderRelated = appl.ISRELATEDPARTY ?? false,
+                                ProjectRelated = appl.ISPROJECTRELATED ?? false,
+                                OnLending = appl.ISONLENDING ?? false,
+                                InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
+                                WithInstruction = appl.WITHINSTRUCTION ?? false,
+                                //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
+                                DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
+                                tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0,
+                            };
+                            workflow.LogActivity();
                         }
-                        classifiedTrail.APPROVALSTATEID = (short)ApprovalState.Ended;
-                        classifiedTrail.RESPONSESTAFFID = model.staffId;
-                        classifiedTrail.RESPONSEDATE = DateTime.Now;
-                        classifiedTrail.SYSTEMRESPONSEDATETIME = DateTime.Now;
+                        var saved = context.SaveChanges() > 0;
+                        if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
+
+                        return workflow.Response;
                     }
-
-                    classifiedTrail.REFEREBACKSTATEID = (short)ApprovalState.Ended;
-                    context.SaveChanges();
-
-                    var previousTrail2 = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                     x.OPERATIONID == (int)model.operationId
-                     && x.RESPONSESTAFFID == null
-                     && x.DESTINATIONOPERATIONID == null
-                     && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
-                     && x.TARGETID == model.applicationId
-                    );
-
-                    if (previousTrail2 != null)
-                    {
-
-                        if (previousTrail2.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
-                        {
-                            previousTrail2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Closed;
-                        }
-                        else
-                        {
-                            previousTrail2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                        }
-                        previousTrail2.APPROVALSTATEID = (short)ApprovalState.Ended;
-                        previousTrail2.RESPONSESTAFFID = model.staffId;
-                        previousTrail2.RESPONSEDATE = DateTime.Now;
-                        previousTrail2.SYSTEMRESPONSEDATETIME = DateTime.Now;
-                    }
-
-                    if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
-                    {
-                        appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                    }
-                    else
-                    {
-                        var lmsrDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
-                        workflow.BusinessUnitId = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == lmsrDetail.FirstOrDefault().CUSTOMERID).BUSINESSUNTID;
-                        workflow.StaffId = model.lastUpdatedBy;
-                        workflow.CompanyId = appl.COMPANYID;
-                        workflow.OperationId = model.operationId;
-                        workflow.TargetId = appl.LOANAPPLICATIONID;
-                        workflow.ProductClassId = null;
-                        workflow.StatusId = model.forwardAction;
-                        workflow.ToStaffId = model.receiverStaffId;
-                        workflow.NextLevelId = model.receiverLevelId;
-                        workflow.Comment = model.comment;
-                        workflow.Vote = model.vote;
-                        workflow.DeferredExecution = true;
-                        workflow.IsFlowTest = model.isFlowTest;
-                        workflow.IsFromPc = model.isFromPc;
-                        workflow.Tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0;
-                        workflow.IgnorePostApprovalReviewer = true;
-                        workflow.LevelBusinessRule = new LevelBusinessRule
-                        {
-                            Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
-                                                               //Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                                                               //PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                            PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
-                            Pep = model.politicallyExposed,
-                            //InsiderRelated = appl.ISRELATEDPARTY ?? false,
-                            ProjectRelated = appl.ISPROJECTRELATED ?? false,
-                            OnLending = appl.ISONLENDING ?? false,
-                            InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
-                            WithInstruction = appl.WITHINSTRUCTION ?? false,
-                            //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
-                            DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
-                            tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0,
-                        };
-                    }
-                    context.SaveChanges();
-                    //trans.Commit();
-
-                    return workflow.Response;
                 }
             }
 

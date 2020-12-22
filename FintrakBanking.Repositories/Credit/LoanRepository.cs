@@ -1400,9 +1400,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var approvedAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).FirstOrDefault().APPROVEDAMOUNT;
 
-            var totalPreviouslyBookedAmount = principalAmount;
+            var totalPreviouslyBookedAmount = principalAmount.FirstOrDefault();
 
-            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount.ToList().Sum() + (decimal)entity.loanScheduleInput.principalAmount);
+            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.loanScheduleInput.principalAmount);
 
             decimal lineReleasePrincipalAmount = 0;
 
@@ -16348,7 +16348,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == model.targetId && t.OPERATIONID == model.operationId && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended).ToList();
-                var Unapprovedtrails = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == model.targetId && t.OPERATIONID == model.operationId && t.APPROVALSTATEID != (int)ApprovalState.Ended && (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved));
+                var Unapprovedtrails = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == model.targetId && t.OPERATIONID == model.operationId && t.APPROVALSTATEID != (int)ApprovalState.Ended && (t.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && t.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved));
                 if (trails.Count > 0 && Unapprovedtrails)
                 {
                     workflow.StaffId = model.createdBy;
@@ -16367,7 +16367,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
             
-
+            
             //NEW WF ACTIVITY BEGINS
             TBL_LMSR_APPLICATION request = new TBL_LMSR_APPLICATION();
             request = context.TBL_LMSR_APPLICATION.Find(model.targetId);
