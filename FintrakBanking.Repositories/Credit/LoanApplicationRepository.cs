@@ -8454,14 +8454,18 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_LOAN_APPLICATION.Find(id);
-            entity.ISPROJECTRELATED = model.isProjectRelated;
-            entity.ISONLENDING = model.isOnLending;
-            entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
-            entity.WITHINSTRUCTION = model.withInstruction;
-            entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
+            if (entity != null)
+            {
+                entity.ISPROJECTRELATED = model.isProjectRelated;
+                entity.ISONLENDING = model.isOnLending;
+                entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
+                entity.WITHINSTRUCTION = model.withInstruction;
+                entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
+                entity.ISAGRICRELATED = model.isAgricRelated;
 
-            entity.LASTUPDATEDBY = user.createdBy;
-            entity.DATETIMEUPDATED = DateTime.Now;
+                entity.LASTUPDATEDBY = user.createdBy;
+                entity.DATETIMEUPDATED = DateTime.Now;
+            }
 
             return context.SaveChanges() != 0;
         }
@@ -8477,6 +8481,7 @@ namespace FintrakBanking.Repositories.Credit
                 isInterventionFunds = entity.ISINTERVENTIONFUNDS,
                 withInstruction = entity.WITHINSTRUCTION,
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
+                isAgricRelated = entity.ISAGRICRELATED,
             };
         }
 
@@ -8491,6 +8496,7 @@ namespace FintrakBanking.Repositories.Credit
                 isInterventionFunds = entity.ISINTERVENTIONFUNDS,
                 withInstruction = entity.WITHINSTRUCTION,
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
+                isAgricRelated = entity.ISAGRICRELATED,
 
             };
         }
@@ -8498,14 +8504,19 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsLMSViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_LMSR_APPLICATION.Find(id);
-            entity.ISPROJECTRELATED = model.isProjectRelated;
-            entity.ISONLENDING = model.isOnLending;
-            entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
-            entity.WITHINSTRUCTION = model.withInstruction;
-            entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
+            if (entity != null)
+            {
+                entity.ISPROJECTRELATED = model.isProjectRelated;
+                entity.ISONLENDING = model.isOnLending;
+                entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
+                entity.WITHINSTRUCTION = model.withInstruction;
+                entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
+                entity.ISAGRICRELATED = model.isAgricRelated;
 
-            entity.LASTUPDATEDBY = user.createdBy;
-            entity.DATETIMEUPDATED = DateTime.Now;
+                entity.LASTUPDATEDBY = user.createdBy;
+                entity.DATETIMEUPDATED = DateTime.Now;
+            }
+           
 
             return context.SaveChanges() != 0;
         }

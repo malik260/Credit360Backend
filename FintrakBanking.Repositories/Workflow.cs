@@ -1813,10 +1813,34 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.ESRM && levelBusinessRule.esrm) flagChecked = true;
             //if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = true;
             //if (rule.ISFORREVOLVINGFACILITY && levelBusinessRule.isRevolvingFacility) flagChecked = true;
-            //if (rule.ISFORRENEWAL && levelBusinessRule.isRenewal) flagChecked = true;
+            if (rule.ISFORRENEWAL)
+            {
+                if (levelBusinessRule.isRenewal)
+                {
+                    flagChecked = true;
+                }
+                else if (!levelBusinessRule.isRenewal)
+                {
+                    flagChecked = false;
+                    limitChecked = false;
+                }
+            }
+            
+            if (rule.EXEMPTRENEWAL)
+            {
+                if (!levelBusinessRule.isRenewal)
+                {
+                    flagChecked = true;
+                }
+                else if (levelBusinessRule.isRenewal)
+                {
+                    flagChecked = false;
+                    limitChecked = false;
+                }
+            }
             //if (rule.EXEMPTREVOLVINGFACILITY && !levelBusinessRule.isRevolvingFacility) flagChecked = true;
-            //if (rule.EXEMPTRENEWAL && !levelBusinessRule.isRenewal) flagChecked = true;
-            if(rule.EXCLUDELEVEL && !levelBusinessRule.excludeLevel) flagChecked = true;
+            if (rule.EXCLUDELEVEL && !levelBusinessRule.excludeLevel) flagChecked = true;
+            if (rule.ISAGRICRELATED && levelBusinessRule.isAgricRelated) flagChecked = true;
             if (rule.EXEMPTCONTINGENTFACILITY)
             {
                 if (levelBusinessRule.isContingentFacility)//if contingent, all other rules are overidden

@@ -580,7 +580,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                    {
                                        productId = p.PRODUCTID,
                                        usedByLos = p.USEDBYLOS,
-                                       productName = p.PRODUCTNAME
+                                       productName = p.PRODUCTNAME + " " + p.PRODUCTCODE
                                    }).ToList();
                 
                 return productData;
