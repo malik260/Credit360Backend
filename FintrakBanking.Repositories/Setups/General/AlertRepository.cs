@@ -899,7 +899,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if ((now >= startRepay) && (now <= endRepay))
             {
-                loanPrepayment.GetRepaymentEntriesToStaging();
+                loanPrepayment = new LoanPrepayment();
+                loanPrepayment.GetLoanRepaymentToStaging();
+                loanPrepayment.GetOverdraftRepaymentToStaging();
             }
 
 

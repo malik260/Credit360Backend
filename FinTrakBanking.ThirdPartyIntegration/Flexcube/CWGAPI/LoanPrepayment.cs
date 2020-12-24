@@ -36,6 +36,8 @@ namespace ThirdPartyIntegration
 
         }
 
+        public LoanPrepayment() { }
+
         private void getAPIURLSettings(string typeName = null)
         {
             var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
@@ -452,7 +454,7 @@ namespace ThirdPartyIntegration
 
         }
 
-        private bool GetLoanRepaymentToStaging()
+        public bool GetLoanRepaymentToStaging()
         {
             MainResponseLoanPrepaymentViewModel response = new MainResponseLoanPrepaymentViewModel();
             LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
@@ -515,7 +517,7 @@ namespace ThirdPartyIntegration
             return context.SaveChanges() > 0;
         }
 
-        private bool GetOverdraftRepaymentToStaging()
+        public bool GetOverdraftRepaymentToStaging()
         {
             ResponseLoanPrepaymentViewModel response = new ResponseLoanPrepaymentViewModel();
             LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
