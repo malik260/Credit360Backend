@@ -1811,7 +1811,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.WITHINSTRUCTION && !levelBusinessRule.WithInstruction) flagChecked = true;
             if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
             if (rule.ESRM && levelBusinessRule.esrm) flagChecked = true;
-            //if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = true;
+            if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = true;
             //if (rule.ISFORREVOLVINGFACILITY && levelBusinessRule.isRevolvingFacility) flagChecked = true;
             if (rule.ISFORRENEWAL)
             {
@@ -1820,7 +1820,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     flagChecked = true;
                 }
                 else if (!levelBusinessRule.isRenewal)
-                {
+                {// very necessary only renewals should pass through if isForRenewals is selected
                     flagChecked = false;
                     limitChecked = false;
                 }
@@ -1833,7 +1833,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     flagChecked = true;
                 }
                 else if (levelBusinessRule.isRenewal)
-                {
+                {// very necessary only non-renewals should pass through if exemptRenewals is selected
                     flagChecked = false;
                     limitChecked = false;
                 }
