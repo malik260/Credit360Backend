@@ -1652,9 +1652,11 @@ namespace FintrakBanking.Repositories.Credit
                         OnLending = appl.ISONLENDING ?? false,
                         InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
                         WithInstruction = appl.WITHINSTRUCTION ?? false,
+                        isAgricRelated = appl.ISAGRICRELATED,
                         //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                         DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
                         tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0,
+                        isContingentFacility = product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
                     };
 
                     if (model.receiverLevelId == 0) workflow.NextLevelId = null;
@@ -1820,11 +1822,11 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.IsFromPc = model.isFromPc;
                     workflow.Tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0;
                     workflow.IgnorePostApprovalReviewer = true;
+                    workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
                     workflow.LevelBusinessRule = new LevelBusinessRule
                     {
                         Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
                         //Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                        //PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
                         PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
                         Pep = model.politicallyExposed,
                         //InsiderRelated = appl.ISRELATEDPARTY ?? false,
@@ -1832,9 +1834,11 @@ namespace FintrakBanking.Repositories.Credit
                         OnLending = appl.ISONLENDING ?? false,
                         InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
                         WithInstruction = appl.WITHINSTRUCTION ?? false,
+                        isAgricRelated = appl.ISAGRICRELATED,
                         //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                         DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
                         tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0,
+                        isContingentFacility = product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
                     };
 
                     if (model.receiverLevelId == 0) workflow.NextLevelId = null;

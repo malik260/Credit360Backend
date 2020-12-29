@@ -22,5 +22,6 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public bool esrm { get; set; }
         public int? tenor { get; set; }
         public bool excludeLevel { get; set; }
+        public bool isAgricRelated { get; set; }
     }
 }

@@ -1400,9 +1400,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var approvedAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).FirstOrDefault().APPROVEDAMOUNT;
 
-            var totalPreviouslyBookedAmount = principalAmount;
+            var totalPreviouslyBookedAmount = principalAmount.FirstOrDefault();
 
-            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount.ToList().Sum() + (decimal)entity.loanScheduleInput.principalAmount);
+            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.loanScheduleInput.principalAmount);
 
             decimal lineReleasePrincipalAmount = 0;
 
