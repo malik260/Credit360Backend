@@ -29,7 +29,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
-        private LoanPrepayment loanPrepayment;
+        private ILoanPrepayment loanPrepayment;
 
         //private ILoanArchiveRepository loanArchive;
         private string maxUsers = ConfigurationManager.AppSettings["muTrace"];
@@ -68,6 +68,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
                                 FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository
+                                , ILoanPrepayment prepayment
                                 )
         {
             this.context = _context;
@@ -75,6 +76,7 @@ namespace FintrakBanking.Repositories.Setups.General
             this.audit = _audit;
             this.general = _general;
             this.externalAlertRepository = _externalAlertRepository;
+            this.loanPrepayment = prepayment;
             //this.loanArchive = _loanArchive;
             //ILoanArchiveRepository _loanArchive
         }
@@ -899,7 +901,6 @@ namespace FintrakBanking.Repositories.Setups.General
             
             if ((now >= startRepay) && (now <= endRepay))
             {
-                loanPrepayment = new LoanPrepayment();
                 loanPrepayment.GetLoanRepaymentToStaging();
                 loanPrepayment.GetOverdraftRepaymentToStaging();
             }

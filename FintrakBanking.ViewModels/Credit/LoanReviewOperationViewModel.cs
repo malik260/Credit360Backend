@@ -495,6 +495,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string exposureType { get; set; }
         public string expiryBand { get; set; }
         public string divisionName { get; set; }
+        public DateTime arrivalDate { get; set; }
     }
 
 

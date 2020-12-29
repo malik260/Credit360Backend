@@ -2,10 +2,12 @@
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
+using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -16,31 +18,26 @@ using System.Web.Script.Serialization;
 
 namespace ThirdPartyIntegration
 {
-    public class LoanPrepayment
+    public class LoanPrepayment : ILoanPrepayment
     {
         private FinTrakBankingContext context;
         private FinTrakBankingStagingContext staging;
         string API_KEY, API_URL = string.Empty;
         private IEnumerable<TBL_API_URL> APIUrlConfig;
         private IGeneralSetupRepository genSetup;
-
+        
         public LoanPrepayment(FinTrakBankingContext _context, FinTrakBankingStagingContext _staging, IGeneralSetupRepository _genSetup)
         {
             this.context = _context;
             this.staging = _staging;
             var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
             APIUrlConfig = context.TBL_API_URL;
-            API_KEY = configdata.APIKEY;
+            API_KEY = "FTK05202023"; //configdata.APIKEY;
             API_URL = configdata.APIURL;
             this.genSetup = _genSetup;
 
         }
-
-        public LoanPrepayment()
-        {
-            
-        }
-
+        
         private void getAPIURLSettings(string typeName = null)
         {
             var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
@@ -465,41 +462,16 @@ namespace ThirdPartyIntegration
                 LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
                 model.auth_key = API_KEY;
                 model.channel_code = "FINTRAK";
-                model.review_date = genSetup.GetApplicationDate();
-
-
-                //var loans = (from x in context.TBL_LOAN
-                //            join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
-                //            join cust in context.TBL_CUSTOMER on c.CUSTOMERID equals cust.CUSTOMERID
-                //            where x.LOANSTATUSID != (short)LoanStatusEnum.Inactive && x.LOANSTATUSID != (short)LoanStatusEnum.Cancelled
-                //            && (x.OUTSTANDINGPRINCIPAL > 0 || x.OUTSTANDINGINTEREST > 0)
-
-                //            select new SubResponseLoanPrepaymentViewModel()
-                //            {
-                //                account_number = x.LOANREFERENCENUMBER,
-                //                customer_acct = c.PRODUCTACCOUNTNUMBER,
-                //                user_ref_no = cust.CUSTOMERCODE
-                //            }).ToList();
-
-                //foreach(var item in loans)
-                //{
-                //    model.account_no = item.account_number;
-                //    model.review_date = genSetup.GetApplicationDate();
-                //    model.user_ref_no = item.user_ref_no;
-
-                //    Task.Run(async () => response = await GetTodayRepaymentLoans(model)).GetAwaiter().GetResult();
-
-                //    if(response.response_code == "00")
-                //    {
-
-                //    }
-                //};
+                model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy"); 
 
                 Task.Run(async () => response = await GetTodayRepaymentLoans(model)).GetAwaiter().GetResult();
                 if (response.response_code == "00")
                 {
+                    //var existingRecords = staging.STG_CONTRACT_DAILY_REPAY.Where(x => x.AMOUNTPAID > 0 && DbFunctions.TruncateTime(x.PAYMENTDATE) == DbFunctions.TruncateTime(DateTime.Now)).Select(x => x.CONTRACTREFERENCENUMBER).ToList();
+                    //var repaymentDataReceived = response.getrepaymentdetailsresp.Where(x=> !existingRecords.Contains(x.account_number)).ToList();
                     var repaymentDataReceived = response.getrepaymentdetailsresp.ToList();
 
+                    var stagingdata = new List<STG_CONTRACT_DAILY_REPAY>();
                     foreach (var itemReceived in repaymentDataReceived)
                     {
                         var data = new STG_CONTRACT_DAILY_REPAY
@@ -511,16 +483,24 @@ namespace ThirdPartyIntegration
                             PAYMENTDESCRIPTION = itemReceived.component_name,
                             DUEDATE = itemReceived.due_date,
                             PAYMENTDATE = itemReceived.paid_date,
-                            AMOUNTPAID = itemReceived.amount_paid
+                            AMOUNTPAID = itemReceived.amount_paid,
+                            STATUS = false
                         };
-                        staging.STG_CONTRACT_DAILY_REPAY.Add(data);
+                        stagingdata.Add(data);
+                    }
+                    staging.STG_CONTRACT_DAILY_REPAY.AddRange(stagingdata);
+
+                    var saved = staging.SaveChanges() > 0;
+                    if (saved)
+                    {
+                        return true;
                     }
 
-
                 };
-
-                return context.SaveChanges() > 0;
-            }catch(Exception e)
+                
+                return false;
+            }
+            catch(Exception e)
             {
                 throw e;
             }
@@ -534,7 +514,7 @@ namespace ThirdPartyIntegration
                 LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
                 model.auth_key = API_KEY;
                 model.channel_code = "FINTRAK";
-                model.review_date = genSetup.GetApplicationDate();
+                model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy"); 
 
                 var loans = (from x in context.TBL_LOAN_REVOLVING
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
@@ -573,9 +553,10 @@ namespace ThirdPartyIntegration
                             TRANSACTIONDATE = item.transactionDate,
                             STATUS = false,
                         };
+
                         staging.STG_OVERDRAFT_DAILY_REPAY.Add(data);
                     };
-                    return context.SaveChanges() > 0;
+                    return staging.SaveChanges() > 0;
                 };
 
                 return true;

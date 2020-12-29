@@ -383,41 +383,31 @@ namespace FintrakBanking.Repositories.Risk
             {
                 ProductRacCategory racCategory = new ProductRacCategory();
 
-                //List<ProductRacItem> items = (from x in context.TBL_RAC_DETAIL
-                //                              join d in context.TBL_RAC_DEFINITION on x.RACDEFINITIONID equals d.RACDEFINITIONID
-                //                              where d.RACCATEGORYID == productRacCategory.racCategoryId && x.TARGETID == targetId
-                //                              select new ProductRacItem
-                //                              {
-                //                                  criteria = context.TBL_RAC_ITEM.Where(o => o.RACITEMID == d.RACITEMID).Select(o => o.CRITERIA).FirstOrDefault(),
-                //                                  value = x.ACTUALVALUE,
-                //                                  categoryId = d.RACCATEGORYID
-                //                              }).ToList();
+                List<ProductRacItem> items = (from x in context.TBL_RAC_DETAIL
+                                              join d in context.TBL_RAC_DEFINITION on x.RACDEFINITIONID equals d.RACDEFINITIONID
+                                              where d.RACCATEGORYID == productRacCategory.racCategoryId && x.TARGETID == targetId
+                                              select new ProductRacItem
+                                              {
+                                                  criteria = context.TBL_RAC_ITEM.Where(o => o.RACITEMID == d.RACITEMID).Select(o => o.CRITERIA).FirstOrDefault(),
+                                                  value = x.ACTUALVALUE,
+                                                  categoryId = d.RACCATEGORYID
+                                              }).ToList();
 
-                var items = (from r in context.TBL_RAC_DETAIL
-                                            join rd in context.TBL_RAC_DEFINITION on r.RACDEFINITIONID equals rd.RACDEFINITIONID
-                                            join ri in context.TBL_RAC_ITEM on rd.RACITEMID equals ri.RACITEMID
-                                            where r.TARGETID == targetId
-                                            select new ProductRacItem
-                                            {
-                                                criteria = ri.CRITERIA,
-                                                value = r.ACTUALVALUE,
-                                                categoryId = rd.RACCATEGORYID
-                                            }).ToList();
-
-                
 
                 foreach (var item in items)
                 {
-                    item.value = GetRacValue(item.value);
-
-                    //if (item.value == "1")
-                    //{
-                    //    item.value = "YES";
-                    //}
-                    //else if (item.value == "2")
-                    //{
-                    //    item.value = "NO";
-                    //}
+                    if (item.value == "1")
+                    {
+                        item.value = "YES";
+                    }
+                    else if (item.value == "2")
+                    {
+                        item.value = "NO";
+                    }
+                    else
+                    {
+                        item.value = item.value;
+                    }
                 }
 
                 racCategory.rows = items.Where(x => x.categoryId == productRacCategory.racCategoryId).ToList();

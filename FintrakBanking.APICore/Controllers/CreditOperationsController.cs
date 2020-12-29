@@ -1209,10 +1209,40 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-operation/lms-completed-documentation")]
+        public HttpResponseMessage GetLMSCompletedLoanOperationAwaitingDocumentation()
+        {
+            var data = repo.GetCompletedLoanOperationDocumentation(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-operation/awaiting-documentation-los")]
         public HttpResponseMessage GetLoanOperationAwaitingDocumentationLos()
         {
             var data = repo.GetLoanOperationDocumentationLos(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/completed-documentation-los")]
+        public HttpResponseMessage GetAllCompletedLoanOperationDocumentationLos()
+        {
+            var data = repo.GetAllCompletedLoanOperationDocumentationLos(token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
