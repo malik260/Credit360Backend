@@ -351,7 +351,7 @@ public class LienProcessViewModel //: GeneralEntity
     {
         public string channel_code { get; set; }
         public string auth_key { get; set; }
-        public DateTime review_date { get; set; }
+        public string review_date { get; set; }
         public string user_ref_no { get; set; }
         public string account_no { get; set; }
     }
