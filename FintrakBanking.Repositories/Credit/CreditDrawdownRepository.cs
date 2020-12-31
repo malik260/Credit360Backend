@@ -526,6 +526,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     select new CamProcessedLoanViewModel
                     {
+                        isProjectRelate = m.ISPROJECTRELATED,
                         loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
                         bookingOperationId = req.OPERATIONID,
                         approvalTrailId = atrail.APPROVALTRAILID,
