@@ -31078,7 +31078,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public IEnumerable<LoanReviewOperationApprovalViewModel> GetCompletedLoanOperationDocumentation(int staffId, int companyId)
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetCompletedLoanOperationDocumentation(int staffId, int companyId, DateTime startDate, DateTime endDate)
         {
             var applicationDate = generalSetup.GetApplicationDate();
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
@@ -31099,6 +31099,7 @@ namespace FintrakBanking.Repositories.Credit
             var company = context.TBL_COMPANY.Find(companyId);
 
             var dataLoan = (from ln in context.TBL_LOAN
+                            join cd in context.TBL_DOCUMENTATION_FILLING_APPROVAL on ln.TERMLOANID equals cd.LOANID
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -31116,10 +31117,14 @@ namespace FintrakBanking.Repositories.Credit
                             && ln.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                             && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && op.ISPRINTED == true
+                            && cd.MODULE == "LMS"
+                            && cd.LOANREFERENCE == ln.LOANREFERENCENUMBER
                             && op.OPERATIONCOMPLETED == true
                             && (ln.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
                             && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing && !levelIds.Contains((int)atrail.TOAPPROVALLEVELID)
                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
+                            && (DbFunctions.TruncateTime(cd.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(cd.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                            && cd.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
@@ -31265,6 +31270,7 @@ namespace FintrakBanking.Repositories.Credit
                             }).ToList();
 
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
+                                     join cd in context.TBL_DOCUMENTATION_FILLING_APPROVAL on ln.REVOLVINGLOANID equals cd.LOANID
                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
                                      join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                                      join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
@@ -31281,11 +31287,14 @@ namespace FintrakBanking.Repositories.Credit
                                         && ln.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                         && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                         && op.ISPRINTED == true
+                                        && cd.MODULE == "LMS"
+                                        && cd.LOANREFERENCE == ln.LOANREFERENCENUMBER
                                         && op.OPERATIONCOMPLETED == true
                                         && (ln.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
                                         && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing && !levelIds.Contains((int)atrail.TOAPPROVALLEVELID)
                                         || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
-
+                                        && (DbFunctions.TruncateTime(cd.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(cd.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                        && cd.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
@@ -31403,6 +31412,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var dataContingentLoan = (from ln in context.TBL_LOAN_CONTINGENT
+                                      join cd in context.TBL_DOCUMENTATION_FILLING_APPROVAL on ln.CONTINGENTLOANID equals cd.LOANID
                                       join op in context.TBL_LOAN_REVIEW_OPERATION on ln.CONTINGENTLOANID equals op.LOANID
                                       join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                                       join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
@@ -31420,10 +31430,14 @@ namespace FintrakBanking.Repositories.Credit
                                         && ln.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                         && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                         && op.ISPRINTED == true
+                                        && cd.MODULE == "LMS"
+                                        && cd.LOANREFERENCE == ln.LOANREFERENCENUMBER
                                         && op.OPERATIONCOMPLETED == true
                                         && (ln.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
                                         && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing && !levelIds.Contains((int)atrail.TOAPPROVALLEVELID)
                                         || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
+                                        && (DbFunctions.TruncateTime(cd.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(cd.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                        && cd.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                                       orderby op.DATECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
@@ -31865,7 +31879,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAllCompletedLoanOperationDocumentationLos(int staffId, int companyId)
+        public IEnumerable<CamProcessedLoanViewModel> GetAllCompletedLoanOperationDocumentationLos(int staffId, int companyId, DateTime startDate, DateTime endDate)
         {
             var staff = context.TBL_STAFF.Find(staffId);
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
@@ -31903,6 +31917,7 @@ namespace FintrakBanking.Repositories.Credit
             IEnumerable<CamProcessedLoanViewModel> allLoans = null;
 
             var dataTermLoans = (from a in context.TBL_LOAN
+                                 join cd in context.TBL_DOCUMENTATION_FILLING_APPROVAL on a.TERMLOANID equals cd.LOANID
                                  join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals s.LOAN_BOOKING_REQUESTID
                                  join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                                  join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -31919,6 +31934,11 @@ namespace FintrakBanking.Repositories.Credit
                                  && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
                                   && ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
                                   || (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)))
+                                  && cd.MODULE == "LOS"
+                                && cd.LOANREFERENCE == a.LOANREFERENCENUMBER
+                                && (DbFunctions.TruncateTime(cd.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(cd.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                && cd.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
                                  orderby a.DATEAPPROVED descending
                                  select new CamProcessedLoanViewModel()
                                  {
@@ -31989,6 +32009,7 @@ namespace FintrakBanking.Repositories.Credit
                                  }).GroupBy(l => l.loanId).Select(s => s.OrderByDescending(o => o.approvalTrailId).FirstOrDefault()).ToList();
 
             var dataRevolvingLoans = (from a in context.TBL_LOAN_REVOLVING
+                                      join cd in context.TBL_DOCUMENTATION_FILLING_APPROVAL on a.REVOLVINGLOANID equals cd.LOANID
                                       join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals s.LOAN_BOOKING_REQUESTID
                                       join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                                       join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -32005,7 +32026,10 @@ namespace FintrakBanking.Repositories.Credit
                                       && a.ISDISBURSED == true
                                       && ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
                                       || (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)))
-
+                                      && cd.MODULE == "LOS"
+                                    && cd.LOANREFERENCE == a.LOANREFERENCENUMBER
+                                    && (DbFunctions.TruncateTime(cd.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(cd.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                    && cd.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                                       orderby a.DATEAPPROVED descending
                                       select new CamProcessedLoanViewModel()
@@ -32077,6 +32101,7 @@ namespace FintrakBanking.Repositories.Credit
                                       }).GroupBy(l => l.loanId).Select(s => s.OrderByDescending(o => o.approvalTrailId).FirstOrDefault()).ToList();
 
             var dataContingentLoans = (from a in context.TBL_LOAN_CONTINGENT
+                                       join cd in context.TBL_DOCUMENTATION_FILLING_APPROVAL on a.CONTINGENTLOANID equals cd.LOANID
                                        join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals s.LOAN_BOOKING_REQUESTID
                                        join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                                        join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -32093,6 +32118,10 @@ namespace FintrakBanking.Repositories.Credit
                                        && a.ISDISBURSED == true
                                        && ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
                                        || (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)))
+                                       && cd.MODULE == "LOS"
+                                        && cd.LOANREFERENCE == a.LOANREFERENCENUMBER
+                                        && (DbFunctions.TruncateTime(cd.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(cd.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                        && cd.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                                        orderby a.DATEAPPROVED descending
                                        select new CamProcessedLoanViewModel()
