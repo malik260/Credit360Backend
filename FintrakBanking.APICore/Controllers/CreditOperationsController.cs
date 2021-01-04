@@ -1207,12 +1207,12 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-operation/lms-completed-documentation")]
-        public HttpResponseMessage GetLMSCompletedLoanOperationAwaitingDocumentation()
+        public HttpResponseMessage GetLMSCompletedLoanOperationAwaitingDocumentation([FromBody] CompletedCreditDocumentationModel obj)
         {
-            var data = repo.GetCompletedLoanOperationDocumentation(token.GetStaffId, token.GetCompanyId);
+            var data = repo.GetCompletedLoanOperationDocumentation(token.GetStaffId, token.GetCompanyId, obj.startDate, obj.endDate);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1237,12 +1237,12 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-operation/completed-documentation-los")]
-        public HttpResponseMessage GetAllCompletedLoanOperationDocumentationLos()
+        public HttpResponseMessage GetAllCompletedLoanOperationDocumentationLos([FromBody] CompletedCreditDocumentationModel obj)
         {
-            var data = repo.GetAllCompletedLoanOperationDocumentationLos(token.GetStaffId, token.GetCompanyId);
+            var data = repo.GetAllCompletedLoanOperationDocumentationLos(token.GetStaffId, token.GetCompanyId, obj.startDate, obj.endDate);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
