@@ -281,6 +281,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
             }
 
+            if (this.vote == null)
+            {
+                ValidateVote();
+            }
+
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -911,6 +916,30 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void FurtherValidations()
         {
             ValidateAgainstAlreadyClosedProcess();
+        }
+
+        private void ValidateVote()
+        {
+            if (this.statusId == (int)ApprovalStatusEnum.Referred)
+            {
+                this.vote = (int)ApprovalStatusEnum.Referred;
+            }
+            else if (this.statusId == (int)ApprovalStatusEnum.Disapproved)
+            {
+                this.vote = (int)ApprovalStatusEnum.Disapproved;
+            }
+            if (this.statusId == (int)ApprovalStatusEnum.Reroute)
+            {
+                this.vote = (int)ApprovalStatusEnum.Reroute;
+            }
+            if (this.statusId == (int)ApprovalStatusEnum.Escalated)
+            {
+                this.vote = (int)ApprovalStatusEnum.Escalated;
+            }
+            else
+            {
+                this.vote = (int)ApprovalStatusEnum.Approved;
+            }
         }
 
         private void ValidateAgainstReinitiationOfClosedProcess()//might be redundant soon
