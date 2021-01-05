@@ -7104,7 +7104,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             var applicationDate = _genSetup.GetApplicationDate();
             var loansId = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.DELETED == false).Select(x => x.LOANREFERENCE).ToList();
-
            
                 var exposureNonPerforming = (from ln in context.TBL_GLOBAL_EXPOSURE
                                              join b in context.TBL_BRANCH on ln.BRANCHCODE equals b.BRANCHCODE
