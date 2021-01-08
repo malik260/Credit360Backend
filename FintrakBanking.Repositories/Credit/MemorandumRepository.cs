@@ -14,6 +14,7 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
@@ -12062,7 +12063,7 @@ namespace FintrakBanking.Repositories.Credit
                    
                  ";
             result = result + $"</table>";
-            var condition = GetChecklistAwaitingApproval(staffId,operationId);
+            var condition = GetDeferralMemoChecklistAwaitingApproval(staffId, targetId, operationId);
             var appId = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
             var precedent = GetConditionPrecedentByApplicationDetailId(appId.LOANAPPLICATIONDETAILID);
             result = result + $@"
@@ -12083,8 +12084,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{d.condition}</td>
                          <td>{d.loanInformation}</td>
                         <td>{d.reason}</td>
-                        <td>{d.cummulativeDays}</td>    
-                        <td>{d.deferralDuration}</td>
+                        <td>{d.cummulativeDays2}</td>    
+                        <td>{d.deferralDuration2}</td>
                     </tr> 
                 ";
             }
@@ -12173,6 +12174,99 @@ namespace FintrakBanking.Repositories.Credit
                                checklistStatus = context.TBL_CHECKLIST_STATUS.Where(o => o.CHECKLISTSTATUSID == b.CHECKLISTSTATUSID).Select(o => o.CHECKLISTSTATUSNAME).FirstOrDefault(),
                                dateCreated = b.DATETIMECREATED,
                                relationshipOfficerName = context.TBL_STAFF.Where(o=>o.STAFFID ==a.CREATEDBY).Select(o=>o.FIRSTNAME).FirstOrDefault()+" "+ context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.MIDDLENAME).FirstOrDefault() + " " + context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.LASTNAME).FirstOrDefault(),
+                               relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.FIRSTNAME).FirstOrDefault() + " " + context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.MIDDLENAME).FirstOrDefault() + " " + context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.LASTNAME).FirstOrDefault(),
+                               applicationAmount = 0,//a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
+                               applicationTenor = 0,//a.PROPOSEDTENOR,
+                               applicationDate = a.TBL_LMSR_APPLICATION.APPLICATIONDATE,
+                               isInvestmentGrade = false,//a.TBL_LOAN_APPLICATION.ISINVESTMENTGRADE,
+                               isPoliticallyExposed = false,//a.TBL_LOAN_APPLICATION.ISPOLITICALLYEXPOSED,
+                               isRelatedParty = false,//a.TBL_LOAN_APPLICATION.ISRELATEDPARTY,
+                               approvalStatusId = 0,//a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                               applicationStatusId = 0,//a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
+                               submittedForAppraisal = true,//a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
+                               loanInformation = "",//a.LOANPURPOSE
+                               isLms = c.ISLMS == true
+                           }).ToList();
+
+
+            return dataLOS.Union(dataLMS);
+        }
+
+
+        //fordeferrals memo only 
+
+        private IEnumerable<ChecklistApprovalViewModel> GetDeferralMemoChecklistAwaitingApproval(int staffId, int targetId, int operationId)
+        {
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+
+            var dataLOS = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                           join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
+                           join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
+                           where c.ISLMS == false
+                           && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
+                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                               //&& atrail.RESPONSESTAFFID == null
+                               //&& atrail.LOOPEDSTAFFID == null
+                               && a.LOANAPPLICATIONDETAILID == targetId
+                           orderby a.DATETIMECREATED descending
+                           select new ChecklistApprovalViewModel()
+                           {
+                               customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                               customerId = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID : a.TBL_CUSTOMER.CUSTOMERID,
+                               proposedAmount = a.APPROVEDAMOUNT,
+                               approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               deferredDate = b.DEFEREDDATE,
+                               dateTimeCreated = b.DATETIMECREATED,
+                               condition = b.CONDITION,
+                               conditionId = b.LOANCONDITIONID,
+                               loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                               applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                               dateCreated = b.DATETIMECREATED,
+                               operationId = atrail.OPERATIONID,
+                               //Loan Information
+                               relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
+                               relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
+                               applicationAmount = a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
+                               applicationTenor = a.PROPOSEDTENOR,
+                               applicationDate = a.TBL_LOAN_APPLICATION.APPLICATIONDATE,
+                               isInvestmentGrade = a.TBL_LOAN_APPLICATION.ISINVESTMENTGRADE,
+                               isPoliticallyExposed = a.TBL_LOAN_APPLICATION.ISPOLITICALLYEXPOSED,
+                               isRelatedParty = a.TBL_LOAN_APPLICATION.ISRELATEDPARTY,
+                               approvalStatusId = a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                               applicationStatusId = a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
+                               submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
+                               loanInformation = a.LOANPURPOSE,
+                               isLms = c.ISLMS == true,
+                               reason = c.DEFERRALREASON
+                           }).ToList();
+
+            var dataLMS = (from a in context.TBL_LMSR_APPLICATION_DETAIL
+                           join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
+                           join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
+                           join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
+                           where c.ISLMS == true
+                            && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
+                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                               //&& atrail.RESPONSESTAFFID == null
+                               //&& atrail.LOOPEDSTAFFID == null
+                               && a.LOANREVIEWAPPLICATIONID == targetId
+                           orderby a.DATETIMECREATED descending
+                           select new ChecklistApprovalViewModel()
+                           {
+                               customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                               proposedAmount = a.APPROVEDAMOUNT,
+                               approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == b.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                               deferredDate = b.DEFEREDDATE,
+                               dateTimeCreated = b.DATETIMECREATED,
+                               condition = b.CONDITION,
+                               conditionId = b.LOANCONDITIONID,
+                               loanApplicationId = a.LOANAPPLICATIONID,
+                               applicationReferenceNumber = a.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               checklistStatus = context.TBL_CHECKLIST_STATUS.Where(o => o.CHECKLISTSTATUSID == b.CHECKLISTSTATUSID).Select(o => o.CHECKLISTSTATUSNAME).FirstOrDefault(),
+                               dateCreated = b.DATETIMECREATED,
+                               relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.FIRSTNAME).FirstOrDefault() + " " + context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.MIDDLENAME).FirstOrDefault() + " " + context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.LASTNAME).FirstOrDefault(),
                                relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.FIRSTNAME).FirstOrDefault() + " " + context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.MIDDLENAME).FirstOrDefault() + " " + context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.LASTNAME).FirstOrDefault(),
                                applicationAmount = 0,//a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
                                applicationTenor = 0,//a.PROPOSEDTENOR,
