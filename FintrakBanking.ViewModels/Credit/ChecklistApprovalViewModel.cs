@@ -9,8 +9,8 @@ namespace FintrakBanking.ViewModels.Credit
    public class ChecklistApprovalViewModel
     {
         public int loanApplicationDetailId;
-        public int deferralDuration2 { get { return ((DateTime)this.deferredDate - this.dateTimeCreated).Days; } }
-        public int cummulativeDays2 { get { return ((DateTime)this.deferredDate - this.dateTimeCreated).Days; } }
+        //public int deferralDuration2 { get { return (this.deferredDate - this.dateTimeDefCreated).Value.Days; } }
+        //public int cummulativeDays2 { get { return (this.deferredDate - this.dateTimeDefCreated).Value.Days; } }
         public int operationId { get; set; }
 
         public string applicationReferenceNumber { get; set; }
