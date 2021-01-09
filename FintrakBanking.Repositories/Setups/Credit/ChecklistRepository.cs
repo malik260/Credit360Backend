@@ -2015,6 +2015,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool ForwardChecklistForApproval(List<ConditionPrecedentViewModel> models)
         {
+            bool output = false;
             using (var trans = context.Database.BeginTransaction())
             {
                 foreach (var model in models)
@@ -2030,7 +2031,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.StatusId = (int)ApprovalStatusEnum.Pending;
                         workflow.TargetId = loanConditionId;
                         workflow.NextLevelId = null;
-                        workflow.Comment = "LMS Checklist Approval";
+                        workflow.Comment = "Checklist Approval";
                         workflow.OperationId = model.checkListStatusId == (int)CheckListStatusEnum.Deferred ? (int)OperationsEnum.DefferedChecklistApproval : (int)OperationsEnum.WaivedChecklistApproval;
                         workflow.ExternalInitialization = true;
                         workflow.LogActivity();
@@ -2048,10 +2049,12 @@ namespace FintrakBanking.Repositories.Credit
                         }
                     }
                 }
-                    trans.Commit();
+
+                output = context.SaveChanges() > 0;
+                trans.Commit();
             }
-            var output = context.SaveChanges() != 0;
-                    return output;
+           
+            return output;
         }
 
         public IEnumerable<ChecklistApprovalViewModel> GetDeferralDocumentsAwaitingApproval(int staffId, int companyId)
