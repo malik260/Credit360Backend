@@ -43,7 +43,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         }
 
-        public IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int operationId)
+        public IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int operationId, int loanApplicationDetailId)
         {
             var ids = GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
@@ -54,8 +54,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                            where c.ISLMS == false
                            && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
                                && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                               && atrail.RESPONSESTAFFID == null
-                               && atrail.LOOPEDSTAFFID == null
+                               && a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                            orderby a.DATETIMECREATED descending
                            select new ChecklistApprovalViewModel()
                            {
@@ -64,8 +63,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                proposedAmount = a.APPROVEDAMOUNT,
                                approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                deferredDate = b.DEFEREDDATE,
-                               deferralDuration = 1,
-                               cummulativeDays = 1,
+                               dateTimeCreated = b.DATETIMECREATED,
                                condition = b.CONDITION,
                                conditionId = b.LOANCONDITIONID,
                                loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
@@ -86,9 +84,16 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                applicationStatusId = a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
                                submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                                loanInformation = a.LOANPURPOSE,
-                               isLms = c.ISLMS == true,
+                               isLms = c.ISLMS,
                                reason = c.DEFERRALREASON
                            }).ToList();
+
+            foreach (var x in dataLOS)
+            {
+                x.deferralDuration = x.deferredDate != null ? (x.deferredDate - x.dateTimeCreated).Value.Days : 0;
+                x.cummulativeDays = context.TBL_LOAN_CONDITION_DEFERRAL.Where(xx => xx.LOANCONDITIONID == x.conditionId).Select(xx => xx.LOANCONDITIONID).Count();
+
+            }
 
             var dataLMS = (from a in context.TBL_LMSR_APPLICATION_DETAIL
                            join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
@@ -106,8 +111,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                proposedAmount = a.APPROVEDAMOUNT,
                                approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == b.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                                deferredDate = b.DEFEREDDATE,
-                               deferralDuration = 1,
-                               cummulativeDays = 1,
+                               
+                               dateTimeCreated = b.DATETIMECREATED,
                                condition = b.CONDITION,
                                conditionId = b.LOANCONDITIONID,
                                loanApplicationId = a.LOANAPPLICATIONID,
@@ -126,8 +131,15 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                applicationStatusId = 0,//a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
                                submittedForAppraisal = true,//a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                                loanInformation = "",//a.LOANPURPOSE
-                               isLms = c.ISLMS == true
+                               isLms = c.ISLMS
                            }).ToList();
+
+            foreach (var x in dataLMS)
+            {
+                x.deferralDuration = x.deferredDate != null ? (x.deferredDate - x.dateTimeCreated).Value.Days : 0;
+                x.cummulativeDays = context.TBL_LOAN_CONDITION_DEFERRAL.Where(xx => xx.LOANCONDITIONID == x.conditionId).Select(xx => xx.LOANCONDITIONID).Count();
+
+            }
 
 
             return dataLOS.Union(dataLMS);
