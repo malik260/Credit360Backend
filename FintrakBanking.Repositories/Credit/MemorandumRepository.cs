@@ -12087,16 +12087,42 @@ namespace FintrakBanking.Repositories.Credit
                 ";
             }
             result = result + $"</table>";
+
             result = result + $@"
-                    <br/>
-                 <p><strong><em> RELATIONSHIP OFFICER: &nbsp; &nbsp;</em></strong>{relationshipOfficerName}</p>
-                <br/>";
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
+                        <th><b>Comment</b></th>
+                        <th><b>Date</b></th>
+                    </tr>
+                    ";
             foreach (var pre in precedent)
             {
-                var approvals = GetDeferralnAprroval(operationId, pre.loanConditionId);
-                    result = result + $@"
-                 <p><strong><em>{approvals?.fromApprovalLevelName}&nbsp;&nbsp;</em></strong>{approvals?.fromStaffName}</p><br/>";
+                var trail = GetDeferralnAprroval(operationId, pre.loanConditionId);
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>";
             }
+
+            result = result + $"</table>";
+
+            //result = result + $@"
+            //        <br/>
+            //     <p><strong><em> RELATIONSHIP OFFICER: &nbsp; &nbsp;</em></strong>{relationshipOfficerName}</p>
+            //    <br/>";
+            //foreach (var pre in precedent)
+            //{
+            //    var approvals = GetDeferralnAprroval(operationId, pre.loanConditionId);
+            //        result = result + $@"
+            //     <p><strong><em>{approvals?.fromApprovalLevelName}&nbsp;&nbsp;</em></strong>{approvals?.fromStaffName}</p><br/>";
+            //}
             return result;
         }
         private IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int operationId)
@@ -12340,7 +12366,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var allstaff = this.GetAllStaffNames();
             var staffs = context.TBL_STAFF.ToList();
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == operationId && x.TARGETID == targetId);
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == targetId);
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
                 approvalTrailId = x.APPROVALTRAILID,
