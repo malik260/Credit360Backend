@@ -102,8 +102,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                            where c.ISLMS == true
                             && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
                                && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                               && atrail.RESPONSESTAFFID == null
-                               && atrail.LOOPEDSTAFFID == null
+                               && a.LOANREVIEWAPPLICATIONID == loanApplicationDetailId
                            orderby a.DATETIMECREATED descending
                            select new ChecklistApprovalViewModel()
                            {
