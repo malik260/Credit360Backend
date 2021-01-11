@@ -2470,7 +2470,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public int GoForApproval(ApprovalViewModel entity)
+        public WorkflowResponse GoForApproval(ApprovalViewModel entity)
         {
             entity.externalInitialization = false;
 
@@ -2508,7 +2508,7 @@ namespace FintrakBanking.Repositories.Credit
                                 checklistRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
                                 context.SaveChanges();
                                 trans.Commit();
-                                return 2;
+                                return workflow.Response;
                             }
                         } else {
                             var checklistRecord = (from s in context.TBL_LOAN_CONDITION_PRECEDENT
@@ -2523,7 +2523,7 @@ namespace FintrakBanking.Repositories.Credit
                                 checklistRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
                                 context.SaveChanges();
                                 trans.Commit();
-                                return 2;
+                                return workflow.Response;
                             }
                         }
                     }
@@ -2541,12 +2541,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             trans.Commit();
                         }
-                        return 1;
+                        return workflow.Response;
                     }
                     else
                     {
                         trans.Commit();
-                        return 0;
+                        return workflow.Response;
                     }
 
                 }
