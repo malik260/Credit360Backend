@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         //[Column(TypeName = "date")]
         public DateTime? DEFERREDDATE { get; set; }
+        public DateTime? DATEAPPROVED { get; set; }
+        public DateTime? DEFEREDDATEONFINALAPPROVAL { get; set; }
 
         public int? DEFEREDDAYS { get; set; }
 

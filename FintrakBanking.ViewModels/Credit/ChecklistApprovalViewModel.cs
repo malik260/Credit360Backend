@@ -26,7 +26,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? dateCreated { get; set; }
         public DateTime? systemArrivalDateTime { get; set; }
         public int deferralDuration { get; set; }
-        public int cummulativeDays { get; set; }
+        public int cumulativeDays { get { return (DateTime.Now - this.dateApproved).Value.Days; } }
 
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
@@ -54,5 +54,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime dateTimeCreated { get; set; }
         public string divisionShortCode { get; set; }
         public string divisionCode { get; set; }
+        public DateTime? deferredDateOnFinalApproval { get; set; }
+        public DateTime? dateApproved { get; set; }
+        public int numberOfTimesDeferred { get; set; }
     }
 }

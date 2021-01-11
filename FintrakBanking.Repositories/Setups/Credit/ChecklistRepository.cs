@@ -1934,7 +1934,10 @@ namespace FintrakBanking.Repositories.Credit
                 if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
                 {
                     //data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
-                    //data.DEFEREDDAYS = model.deferedDays;
+                    if (model.deferedDate != null)
+                    {
+                        data.DEFEREDDAYS = (model.deferedDate - DateTime.Now).Value.Days;
+                    }
                     data.DEFEREDDATE = model.deferedDate;
                 }
 
@@ -1951,7 +1954,11 @@ namespace FintrakBanking.Repositories.Credit
                 if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
                 {
                     //data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
-                    data.DEFEREDDAYS = model.deferedDays;
+                    //data.DEFEREDDAYS = model.deferedDays;
+                    if (model.deferedDate != null)
+                    {
+                        data.DEFEREDDAYS = (model.deferedDate - DateTime.Now).Value.Days;
+                    }
                     data.DEFEREDDATE = model.deferedDate;
                 }
 
@@ -1964,7 +1971,7 @@ namespace FintrakBanking.Repositories.Credit
                 var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
                 deferral.LOANCONDITIONID = loanConditionId;
                 deferral.DEFERRALREASON = model.reason;
-                deferral.DEFEREDDAYS = model.deferedDays;
+                deferral.DEFEREDDAYS = model.deferedDate != null ? (model.deferedDate - DateTime.Now).Value.Days : model.deferedDays;
                 deferral.DEFERREDDATE = model.deferedDate;
                 deferral.ISLMS = model.isLMSChecklist;
                 deferral.DATETIMECREATED = DateTime.Now;
@@ -2082,8 +2089,7 @@ namespace FintrakBanking.Repositories.Credit
                                //approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                deferredDate = b.DEFEREDDATE,
-                               deferralDuration = 1,
-                               cummulativeDays = 1,
+                               
                                condition = b.CONDITION,
                                loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                conditionId = b.LOANCONDITIONID,
@@ -2112,7 +2118,15 @@ namespace FintrakBanking.Repositories.Credit
                                excludeLegal = (c.EXCLUDELEGAL == null) ? "No" : c.EXCLUDELEGAL == true ? "Yes" : "No",
                                toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                               deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
+                               dateApproved = c.DATEAPPROVED == null ? c.DATETIMECREATED : c.DATEAPPROVED,
                            }).ToList();
+
+            foreach (var x in dataLOS)
+            {
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
+
+            }
 
             var result = dataLOS.GroupBy(r => r.loanConditionId)
                                .Select(p => p.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
@@ -2142,8 +2156,7 @@ namespace FintrakBanking.Repositories.Credit
                                approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                //approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                deferredDate = b.DEFEREDDATE,
-                               deferralDuration = 1,
-                               cummulativeDays = 1,
+                               
                                condition = b.CONDITION,
                                loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                conditionId = b.LOANCONDITIONID,
@@ -2171,9 +2184,15 @@ namespace FintrakBanking.Repositories.Credit
                                reason = c.DEFERRALREASON,
                                toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
-
+                               deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
+                               dateApproved = c.DATEAPPROVED == null ? c.DATETIMECREATED : c.DATEAPPROVED,
                            }).ToList().GroupBy(O => new { O.applicationReferenceNumber, O.conditionId, O.dateCreated, O.customerId }).Select(O => O.FirstOrDefault());
 
+            foreach (var x in dataLOS)
+            {
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
+
+            }
             return dataLOS;
         }
 
@@ -2359,7 +2378,7 @@ namespace FintrakBanking.Repositories.Credit
                             condition = b.CONDITION,
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             conditionId = b.LOANCONDITIONID,
-                            loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                            loanApplicationId = a.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                             checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                             dateCreated = b.DATETIMECREATED,
@@ -2378,13 +2397,14 @@ namespace FintrakBanking.Repositories.Credit
                             submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                             loanInformation = a.LOANPURPOSE,
                             isLms = c.ISLMS,
-                            reason = c.DEFERRALREASON
+                            reason = c.DEFERRALREASON,
+                            deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
+                            dateApproved = c.DATEAPPROVED == null ? c.DATETIMECREATED : c.DATEAPPROVED,
                         }).ToList();
 
             foreach (var x in dataLOS)
             {
-                x.deferralDuration = x.deferredDate != null ? (x.deferredDate - x.dateTimeCreated).Value.Days : 0;
-                x.cummulativeDays = context.TBL_LOAN_CONDITION_DEFERRAL.Where(xx => xx.LOANCONDITIONID == x.loanConditionId).Select(xx => xx.LOANCONDITIONID).Count();
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
 
             }
 
@@ -2400,6 +2420,8 @@ namespace FintrakBanking.Repositories.Credit
                            orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
+                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                             customerName =  a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             proposedAmount = a.APPROVEDAMOUNT,
                             approvalStatus = context.TBL_APPROVAL_STATUS.Where(o=>o.APPROVALSTATUSID==b.APPROVALSTATUSID).Select(o=>o.APPROVALSTATUSNAME).FirstOrDefault(),
@@ -2427,13 +2449,14 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatusId = 0,//a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
                             submittedForAppraisal = true,//a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                             loanInformation = "",//a.LOANPURPOSE
-                            isLms = c.ISLMS
+                            isLms = c.ISLMS,
+                            deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
+                            dateApproved = c.DATEAPPROVED == null ? c.DATETIMECREATED : c.DATEAPPROVED,
                         }).ToList();
 
             foreach (var x in dataLMS)
             {
-                x.deferralDuration = x.deferredDate != null ? (x.deferredDate - x.dateTimeCreated).Value.Days : 0;
-                x.cummulativeDays = context.TBL_LOAN_CONDITION_DEFERRAL.Where(xx => xx.LOANCONDITIONID == x.loanConditionId).Select(xx => xx.LOANCONDITIONID).Count();
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
 
             }
 
@@ -2483,13 +2506,14 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatusId = ln.APPLICATIONSTATUSID,
                             applicationStatusId = ln.APPROVALSTATUSID,
                             submittedForAppraisal = ln.SUBMITTEDFORAPPRAISAL,
+                            deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
+                            dateApproved = c.DATEAPPROVED == null ? c.DATETIMECREATED : c.DATEAPPROVED,
                             // loanInformation = ln.LOANPURPOSE
                         }).ToList();
 
             foreach (var x in data)
             {
-                x.deferralDuration = x.deferredDate != null ? (x.deferredDate - x.dateTimeCreated).Value.Days : 0;
-                x.cummulativeDays = context.TBL_LOAN_CONDITION_DEFERRAL.Where(xx => xx.LOANCONDITIONID == x.loanConditionId).Select(xx => xx.LOANCONDITIONID).Count();
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
 
             }
             return data;
@@ -2607,9 +2631,31 @@ namespace FintrakBanking.Repositories.Credit
             }
             else if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                checklistRecord.DEFEREDDATE = DateTime.Now.AddDays(checklistRecord.DEFEREDDAYS ?? 0);
+                if (checklistRecord.DATETIMECREATED.Date != DateTime.Now.Date)
+                {
+                    deferredRecord.DATEAPPROVED = DateTime.Now;
+                    deferredRecord.DEFEREDDATEONFINALAPPROVAL = DateTime.Now.AddDays(deferredRecord.DEFEREDDAYS ?? 0);
+
+                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    checklistRecord.DEFEREDDATE = DateTime.Now.AddDays(checklistRecord.DEFEREDDAYS ?? 0);
+                }
+                else
+                {
+                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    deferredRecord.DATEAPPROVED = DateTime.Now;
+                    deferredRecord.DEFEREDDATEONFINALAPPROVAL = DateTime.Now.AddDays(deferredRecord.DEFEREDDAYS ?? 0);
+                    checklistRecord.DEFEREDDATE = DateTime.Now.AddDays(checklistRecord.DEFEREDDAYS ?? 0);
+                }
+
+                
 
                 var deferredCondition = context.TBL_LOAN_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
                 deferredCondition.ISSUBSEQUENT = true;
@@ -2676,9 +2722,30 @@ namespace FintrakBanking.Repositories.Credit
             }
             else if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                if (checklistRecord.DATETIMECREATED.Date != DateTime.Now.Date)
+                {
+                    deferredRecord.DATEAPPROVED = DateTime.Now;
+                    deferredRecord.DEFEREDDATEONFINALAPPROVAL = DateTime.Now.AddDays(deferredRecord.DEFEREDDAYS ?? 0);
 
+                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                    checklistRecord.DEFEREDDATE = DateTime.Now.AddDays(checklistRecord.DEFEREDDAYS ?? 0);
+                }
+                else
+                {
+                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    deferredRecord.DATEAPPROVED = DateTime.Now;
+                    deferredRecord.DEFEREDDATEONFINALAPPROVAL = DateTime.Now.AddDays(deferredRecord.DEFEREDDAYS ?? 0);
+                    checklistRecord.DEFEREDDATE = DateTime.Now.AddDays(checklistRecord.DEFEREDDAYS ?? 0);
+                }
                 var deferredCondition = context.TBL_LMSR_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
                 deferredCondition.ISSUBSEQUENT = true;
                 context.Entry(deferredCondition).State = System.Data.Entity.EntityState.Modified;
@@ -2730,6 +2797,9 @@ namespace FintrakBanking.Repositories.Credit
                         
                         select new DeferredChecklistViewModel()
                         {
+                            deferredDateOnFinalApproval = b.DEFEREDDATEONFINALAPPROVAL,
+                            dateApproved = b.DATEAPPROVED  == null ? b.DATETIMECREATED : b.DATEAPPROVED,
+                            loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             approvalTrailId = atrail.APPROVALTRAILID,
                             excludeLegal = (b.EXCLUDELEGAL == null) ? "No" : b.EXCLUDELEGAL == true ? "Yes" : "No",
                             targetId = atrail.TARGETID,
@@ -2751,6 +2821,11 @@ namespace FintrakBanking.Repositories.Credit
                             toApprovalLevelName = atrail.TOSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.TOSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                             fromApprovalLevelName = atrail.REQUESTSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                         });
+
+            foreach (var x in data)
+            {
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
+            }
             //var records = data.GroupBy(x => x.loanConditionId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.approvalTrailId); ;
             return data;
         }
