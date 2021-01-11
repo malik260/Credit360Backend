@@ -2366,6 +2366,8 @@ namespace FintrakBanking.Repositories.Credit
                         orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
+                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                             customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             customerId = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID : a.TBL_CUSTOMER.CUSTOMERID,
                             proposedAmount = a.APPROVEDAMOUNT,
@@ -2418,6 +2420,8 @@ namespace FintrakBanking.Repositories.Credit
                            orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
+                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                             customerName =  a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             proposedAmount = a.APPROVEDAMOUNT,
                             approvalStatus = context.TBL_APPROVAL_STATUS.Where(o=>o.APPROVALSTATUSID==b.APPROVALSTATUSID).Select(o=>o.APPROVALSTATUSNAME).FirstOrDefault(),
@@ -2515,7 +2519,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public int GoForApproval(ApprovalViewModel entity)
+        public WorkflowResponse GoForApproval(ApprovalViewModel entity)
         {
             entity.externalInitialization = false;
 
@@ -2553,7 +2557,7 @@ namespace FintrakBanking.Repositories.Credit
                                 checklistRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
                                 context.SaveChanges();
                                 trans.Commit();
-                                return 2;
+                                return workflow.Response;
                             }
                         } else {
                             var checklistRecord = (from s in context.TBL_LOAN_CONDITION_PRECEDENT
@@ -2568,7 +2572,7 @@ namespace FintrakBanking.Repositories.Credit
                                 checklistRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
                                 context.SaveChanges();
                                 trans.Commit();
-                                return 2;
+                                return workflow.Response;
                             }
                         }
                     }
@@ -2586,12 +2590,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             trans.Commit();
                         }
-                        return 1;
+                        return workflow.Response;
                     }
                     else
                     {
                         trans.Commit();
-                        return 0;
+                        return workflow.Response;
                     }
 
                 }

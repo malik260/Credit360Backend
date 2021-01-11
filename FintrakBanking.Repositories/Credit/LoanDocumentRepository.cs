@@ -390,7 +390,7 @@ namespace FintrakBanking.Repositories.Credit
                                isLms = c.ISLMS == true,
                                reason = c.DEFERRALREASON,
                                deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
-                               dateApproved = c.DATEAPPROVED,
+                               dateApproved = c.DATEAPPROVED == null ? c.DATETIMECREATED : c.DATEAPPROVED,
                            }).ToList();
 
             foreach (var x in dataLOS)
@@ -425,7 +425,7 @@ namespace FintrakBanking.Repositories.Credit
                                isLms = c.ISLMS == true,
                                reason = c.DEFERRALREASON,
                                deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
-                               dateApproved = c.DATEAPPROVED,
+                               dateApproved = c.DATEAPPROVED == null ? c.DATETIMECREATED : c.DATEAPPROVED,
                            }).ToList();
 
             foreach (var x in dataLMS)

@@ -52,6 +52,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalTrailId { get; set; }
         public int loanConditionId { get; set; }
         public DateTime dateTimeCreated { get; set; }
+        public string divisionShortCode { get; set; }
+        public string divisionCode { get; set; }
         public DateTime? deferredDateOnFinalApproval { get; set; }
         public DateTime? dateApproved { get; set; }
         public int numberOfTimesDeferred { get; set; }
