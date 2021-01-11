@@ -21,8 +21,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime dateCreated { get; set; }
         public string customerName { get; set; }
         public string applicationRefNo { get; set; }
-        //public int deferralDuration { get { return (this.deferredDate - dateCreated).Value.Days; } }
-        public int cumulativeDays { get { return (DateTime.Now - this.dateCreated).Days; } }
+        public int deferralDuration { get; set; }
+        public int cumulativeDays { get { return (DateTime.Now - this.dateApproved).Value.Days; } }
 
         public string toApprovalLevelName { get; set; }
         public string fromApprovalLevelName { get; set; }
@@ -34,5 +34,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string excludeLegal { get; set; }
         public int approvalTrailId { get; set; }
         public int loanConditionId { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public DateTime? deferredDateOnFinalApproval { get; set; }
+        public DateTime? dateApproved { get; set; }
     }
 }

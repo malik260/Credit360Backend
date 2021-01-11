@@ -379,7 +379,6 @@ namespace FintrakBanking.Repositories.Credit
                                approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                deferredDate = b.DEFEREDDATE,
                                deferralDuration = 1,
-                               cummulativeDays = 1,
                                condition = b.CONDITION,
                                conditionId = b.LOANCONDITIONID,
                                loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
@@ -389,8 +388,16 @@ namespace FintrakBanking.Repositories.Credit
                                operationId = atrail.OPERATIONID,
                                approvalStatusId = atrail.APPROVALSTATUSID,
                                isLms = c.ISLMS == true,
-                               reason = c.DEFERRALREASON
+                               reason = c.DEFERRALREASON,
+                               deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
+                               dateApproved = c.DATEAPPROVED,
                            }).ToList();
+
+            foreach (var x in dataLOS)
+            {
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
+
+            }
 
             var dataLMS = (from a in context.TBL_LMSR_APPLICATION_DETAIL
                            join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
@@ -407,8 +414,6 @@ namespace FintrakBanking.Repositories.Credit
                                customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == b.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                                deferredDate = b.DEFEREDDATE,
-                               deferralDuration = 1,
-                               cummulativeDays = 1,
                                condition = b.CONDITION,
                                conditionId = b.LOANCONDITIONID,
                                loanApplicationId = a.LOANAPPLICATIONID,
@@ -418,8 +423,16 @@ namespace FintrakBanking.Repositories.Credit
                                operationId = atrail.OPERATIONID,
                                approvalStatusId = atrail.APPROVALSTATUSID,
                                isLms = c.ISLMS == true,
-                               reason = c.DEFERRALREASON
+                               reason = c.DEFERRALREASON,
+                               deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
+                               dateApproved = c.DATEAPPROVED,
                            }).ToList();
+
+            foreach (var x in dataLMS)
+            {
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
+
+            }
 
 
             return dataLOS.Union(dataLMS);

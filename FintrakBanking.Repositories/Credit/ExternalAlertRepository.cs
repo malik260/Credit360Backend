@@ -2111,8 +2111,6 @@ namespace FintrakBanking.Repositories.Credit
                                proposedAmount = a.APPROVEDAMOUNT,
                                approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                deferredDate = b.DEFEREDDATE,
-                               deferralDuration = 1,
-                               cummulativeDays = 1,
                                condition = b.CONDITION,
                                loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                conditionId = b.LOANCONDITIONID,
@@ -2133,8 +2131,15 @@ namespace FintrakBanking.Repositories.Credit
                                loanInformation = a.LOANPURPOSE,
                                isLms = c.ISLMS == true,
                                reason = c.DEFERRALREASON,
+                               deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
+                               dateApproved = c.DATEAPPROVED == null ? c.DATETIMECREATED : c.DATEAPPROVED,
                            }).ToList();
 
+            foreach (var x in dataLOS)
+            {
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
+
+            }
             return dataLOS;
         }
 

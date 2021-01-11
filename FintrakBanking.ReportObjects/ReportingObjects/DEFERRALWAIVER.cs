@@ -52,7 +52,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                            join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                            join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
                            where c.ISLMS == false
-                           && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
+                           //&& ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
                                && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                && a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                            orderby a.DATETIMECREATED descending
@@ -66,7 +66,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                dateTimeCreated = c.DATETIMECREATED,
                                condition = b.CONDITION,
                                conditionId = b.LOANCONDITIONID,
-                               loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                               loanApplicationId = a.LOANAPPLICATIONID,
                                applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                dateCreated = b.DATETIMECREATED,
@@ -85,14 +85,16 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                                loanInformation = a.LOANPURPOSE,
                                isLms = c.ISLMS,
-                               reason = c.DEFERRALREASON
+                               reason = c.DEFERRALREASON,
+                               approvalTrailId = atrail.APPROVALTRAILID,
+                               deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
+                               dateApproved = c.DATEAPPROVED == null ? c.DATETIMECREATED : c.DATEAPPROVED,
                            }).ToList();
 
             foreach (var x in dataLOS)
             {
-                x.deferralDuration = x.deferredDate != null ? (x.deferredDate - x.dateTimeCreated).Value.Days : 0;
-                x.cummulativeDays = context.TBL_LOAN_CONDITION_DEFERRAL.Where(xx => xx.LOANCONDITIONID == x.conditionId).Select(xx => xx.LOANCONDITIONID).Count();
-
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
+                x.numberOfTimesDeferred = context.TBL_LOAN_CONDITION_DEFERRAL.Where(xx => xx.LOANCONDITIONID == x.loanConditionId).Select(xx => xx.LOANCONDITIONID).Count();
             }
 
             var dataLMS = (from a in context.TBL_LMSR_APPLICATION_DETAIL
@@ -100,12 +102,14 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                            join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                            join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
                            where c.ISLMS == true
-                            && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
+                            //&& ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
                                && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                && a.LOANREVIEWAPPLICATIONID == loanApplicationDetailId
                            orderby a.DATETIMECREATED descending
                            select new ChecklistApprovalViewModel()
                            {
+                               deferredDateOnFinalApproval = c.DEFEREDDATEONFINALAPPROVAL,
+                               dateApproved = c.DATEAPPROVED == null ? c.DATETIMECREATED : c.DATEAPPROVED,
                                customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                proposedAmount = a.APPROVEDAMOUNT,
                                approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == b.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
@@ -129,18 +133,21 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                applicationStatusId = 0,//a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
                                submittedForAppraisal = true,//a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                                loanInformation = "",//a.LOANPURPOSE
-                               isLms = c.ISLMS
+                               isLms = c.ISLMS,
+                               approvalTrailId = atrail.APPROVALTRAILID,
                            }).ToList();
 
             foreach (var x in dataLMS)
             {
-                x.deferralDuration = x.deferredDate != null ? (x.deferredDate - x.dateTimeCreated).Value.Days : 0;
-                x.cummulativeDays = context.TBL_LOAN_CONDITION_DEFERRAL.Where(xx => xx.LOANCONDITIONID == x.conditionId).Select(xx => xx.LOANCONDITIONID).Count();
-
+                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
+                x.numberOfTimesDeferred = context.TBL_LOAN_CONDITION_DEFERRAL.Where(xx => xx.LOANCONDITIONID == x.loanConditionId).Select(xx => xx.LOANCONDITIONID).Count();
             }
 
 
-            return dataLOS.Union(dataLMS);
+            var data = dataLOS.Union(dataLMS);
+            var result = data.GroupBy(r => r.conditionId)
+                               .Select(p => p.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
+            return result;
         }
 
         public IEnumerable<int> GetRelievedStaffApprovalLevelIds(int staffId, int operationId)
@@ -243,7 +250,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
             var allstaff = this.GetAllStaffNames();
             var staffs = context.TBL_STAFF.ToList();
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == operationId && x.TARGETID == targetId);
+            //x.FROMAPPROVALLEVELID != null &&
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == targetId);
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
                 approvalTrailId = x.APPROVALTRAILID,
