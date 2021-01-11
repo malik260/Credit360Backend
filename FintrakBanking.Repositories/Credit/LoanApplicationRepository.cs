@@ -8436,7 +8436,7 @@ namespace FintrakBanking.Repositories.Credit
                     facility.LOANDETAILREVIEWTYPEID = model.loanDetailReviewTypeId;
                     facility.APPROVEDAMOUNT = model.approvedAmount;
                     facility.PROPOSEDAMOUNT = model.approvedAmount;
-                    loan.APPLICATIONAMOUNT = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT);
+                    loan.APPLICATIONAMOUNT = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT * (decimal)d.EXCHANGERATE);
                     loan.TOTALEXPOSUREAMOUNT += difference;
                     loan.DATETIMEUPDATED = DateTime.Now;
                     loan.LASTUPDATEDBY = model.createdBy;
