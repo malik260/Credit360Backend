@@ -1685,9 +1685,18 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             try
             {
-                string recipient = recipients.Trim();
+                var title = alertSubject.Trim();
+                if (title.Contains("&"))
+                {
+                    title = title.Replace("&", "AND");
+                }
+                if (title.Contains("."))
+                {
+                    title = title.Replace(".", "");
+                }
 
-                string messageSubject = alertSubject;
+                string recipient = recipients.Trim();
+                string messageSubject = title;
                 string messageContent = messageBody;
                 string templateUrl = "~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);

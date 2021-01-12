@@ -60,7 +60,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     reportDataSource.Name = "DeferralWaiver";
                     ReportViewer.LocalReport.DataSources.Add(reportDataSource);
 
-                    var conditions = deferralWaiver.GetChecklistAwaitingApproval(Int32.Parse(staffId), Int32.Parse(operationId));
+                    var conditions = deferralWaiver.GetChecklistAwaitingApproval(Int32.Parse(staffId), Int32.Parse(operationId), Int32.Parse(loanApplicationDetailId));
                     ReportDataSource reportDataSourceCon = new ReportDataSource();
                     reportDataSourceCon.Value = conditions;
                     reportDataSourceCon.Name = "conditions";

@@ -20,8 +20,8 @@ namespace FintrakBanking.Entities.StagingModels
         public virtual DbSet<STG_BRANCH> STG_BRANCH { get; set; }
         public virtual DbSet<STG_LOAN_MART> STG_LOAN_MART { get; set; }
         public virtual DbSet<STG_STAFFMIS> STG_STAFFMIS { get; set; }
-        public virtual DbSet<STG_CASA_BALANCE> STG_CASA_BALANCE { get; set; } 
-        public virtual DbSet<STG_CONTRACT_DAILY_REPAY> STG_CONTRACT_DAILY_REPAY { get; set; } 
+        public virtual DbSet<STG_CASA_BALANCE> STG_CASA_BALANCE { get; set; }
+        public virtual DbSet<STG_CONTRACT_DAILY_REPAY> STG_CONTRACT_DAILY_REPAY { get; set; }
         public virtual DbSet<STG_OVERDRAFT_DAILY_REPAY> STG_OVERDRAFT_DAILY_REPAY { get; set; }
         public virtual DbSet<STG_CASA_DAILY_BALANCE> STG_CASA_DAILY_BALANCE { get; set; }
         public virtual DbSet<STG_CUSTOMER> STG_CUSTOMER { get; set; }

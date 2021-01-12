@@ -16,7 +16,7 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         bool AddContractorCriteriaOption(ContractorCriteriaOptionViewModel entity);
         IEnumerable<ContractorCriteriaViewModel> getAllCriteriaList();
         IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId);
-        IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId);
+        IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId);
         IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingByCategories();
         IEnumerable<ContractorTieringViewModel> getContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId);
         IEnumerable<ContractorTieringViewModel> getContractorTieringByApplication(int loanApplicationId, int customerId);

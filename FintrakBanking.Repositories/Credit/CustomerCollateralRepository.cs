@@ -8853,7 +8853,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERID == collateral.CUSTOMERID);
-                alertSubject = "NOTIFICATION COLLATERAL VALUATION REMINDER FROM FINTRAK 360TEST ALERT";
+                alertSubject = "NOTIFICATION COLLATERAL VALUATION REMINDER FROM FINTRAK";
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staffFullName} <br /><br />," +
                                $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer?.LASTNAME + ", " + customer?.FIRSTNAME + " " + customer?.MIDDLENAME}" +
@@ -8909,7 +8909,7 @@ namespace FintrakBanking.Repositories.Credit
                     staffFullName = staff?.FIRSTNAME + " " + staff?.MIDDLENAME + " " + staff?.LASTNAME;
                 }
                 var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERID == collateral.CUSTOMERID);
-                alertSubject = "COLLATERAL STATUS UPDATE FROM FINTRAK 360TEST ALERT";
+                alertSubject = "COLLATERAL STATUS UPDATE FROM FINTRAK360 ALERT";
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staffFullName}, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
@@ -8945,7 +8945,7 @@ namespace FintrakBanking.Repositories.Credit
                 staffFullName = staff?.FIRSTNAME + " " + staff?.MIDDLENAME + " " + staff?.LASTNAME;
             }
             var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERID == collateral.CUSTOMERID);
-            alertSubject = "COLLATERAL VALIDITY UPDATE FROM FINTRAK 360TEST ALERT";
+            alertSubject = "COLLATERAL VALIDITY UPDATE FROM FINTRAK360 ALERT";
             recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
             messageBody = $"Dear {staffFullName}, <br /><br />" +
                            $"This is to inform you that, <br /><br />" +
@@ -8964,9 +8964,18 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                string recipient = recipients.Trim();
+                var title = alertSubject.Trim();
+                if (title.Contains("&"))
+                {
+                    title = title.Replace("&", "AND");
+                }
+                if (title.Contains("."))
+                {
+                    title = title.Replace(".", "");
+                }
 
-                string messageSubject = alertSubject;
+                string recipient = recipients.Trim();
+                string messageSubject = title;
                 string messageContent = messageBody;
                 string templateUrl = messageContent;
                 //string templateUrl = "~/EmailTemplates/Monitoring.html";

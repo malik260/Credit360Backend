@@ -457,6 +457,8 @@ namespace FintrakBanking.Repositories.Credit
                     ProjectRelated = appl.ISPROJECTRELATED,
                     OnLending = appl.ISONLENDING,
                     InterventionFunds = appl.ISINTERVENTIONFUNDS,
+                    isAgricRelated = appl.ISAGRICRELATED,
+                    isRenewal = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.Renewal || d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.RenewalWithDecrease),
                     OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
                     DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
                     //esrm = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual),
@@ -2394,7 +2396,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId = 0, bool getAll = false, bool isClassified = false, bool isLMSCrossWorkflow = false)
         {
-            if (isLMSCrossWorkflow) return GetClassifiedLMSTrailForReferBack(applicationId, operationId, currentLevelId = 0, getAll = false, isClassified = false);
+            if (isLMSCrossWorkflow)
+            {
+                //operationId = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == operationId)?.SYNCHOPERATIONID ?? operationId;
+                return GetClassifiedLMSTrailForReferBack(applicationId, operationId, currentLevelId, getAll = false, isClassified);
+            }
 
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
             var staffs = from s in context.TBL_STAFF select s;
@@ -2410,7 +2416,7 @@ namespace FintrakBanking.Repositories.Credit
             if (isClassified)
             {
                 var operationRecord = context.TBL_OPERATIONS.Find(operationId);
-                var classOperations = context.TBL_OPERATIONS.Where(x => x.CLASS == operationRecord.CLASS).Select(c=>c.OPERATIONID).ToList() ;
+                var classOperations = context.TBL_OPERATIONS.Where(x => x.CLASS == operationRecord.CLASS && operationRecord.CLASS != null).Select(c=>c.OPERATIONID).ToList() ;
                 trail.AddRange(context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == applicationId && classOperations.Contains(x.OPERATIONID)).ToList());
 
             }
@@ -2536,15 +2542,37 @@ namespace FintrakBanking.Repositories.Credit
 
             var operationTypeId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(b => b.OPERATIONTYPEID).FirstOrDefault();
 
-            lmsOperationIds.Add((short)operationId);
-            if (operationId == (short)OperationsEnum.LoanReviewApprovalAvailment) { lmsOperationIds.AddRange(lmsDrawdownOperationIds); }
-            if(operationTypeId == (short)OperationTypeEnum.LoanReviewApplication) lmsOperationIds.AddRange(lmsAppraisalOperation);
-
-            if (operationTypeId == (short)OperationTypeEnum.LoanManagement || operationTypeId == (short)OperationTypeEnum.LoanManagementOverdraft)
+            var applicationWentForDrawDown = context.TBL_APPROVAL_TRAIL.Any(d => d.TARGETID == applicationId && lmsDrawdownOperationIds.Contains(d.OPERATIONID));
+            if (applicationWentForDrawDown)
+            {
+                lmsOperationIds.AddRange(lmsDrawdownOperationIds);
+            }
+            else
+            {
+                lmsOperationIds.AddRange(lmsAppraisalOperation);
+            }
+            if (operationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
                 lmsOperationIds.Add((short)OperationsEnum.LoanReviewApprovalAvailment);
             }
+            //if (operationId == (short)OperationsEnum.LoanReviewApprovalAvailment)
+            //{
+            //    lmsOperationIds.AddRange(lmsDrawdownOperationIds);
+            //}
+            //if (operationTypeId == (short)OperationTypeEnum.LoanReviewApplication)
+            //{
+            //    lmsOperationIds.AddRange(lmsAppraisalOperation);
+            //}
 
+            //if (operationTypeId == (short)OperationTypeEnum.LoanManagement || operationTypeId == (short)OperationTypeEnum.LoanManagementOverdraft)
+            //{
+            //    lmsOperationIds.Add((short)OperationsEnum.LoanReviewApprovalAvailment);
+            //}
+            //if (operationId != (short)OperationsEnum.LoanReviewApprovalAvailment)
+            //{// for lms inputter
+            //    lmsOperationIds.Add((short)OperationsEnum.LoanReviewApprovalAvailment);
+            //}
+            //lmsOperationIds.Add((short)OperationsEnum.LoanReviewApprovalAvailment);
 
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => lmsOperationIds.Contains(x.OPERATIONID) && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
             if (getAll)
@@ -2554,7 +2582,7 @@ namespace FintrakBanking.Repositories.Credit
             if (isClassified)
             {
                 var operationRecord = context.TBL_OPERATIONS.Find(operationId);
-                var classOperations = context.TBL_OPERATIONS.Where(x => x.CLASS == operationRecord.CLASS).Select(c => c.OPERATIONID).ToList();
+                var classOperations = context.TBL_OPERATIONS.Where(x => x.CLASS == operationRecord.CLASS && operationRecord.CLASS != null).Select(c => c.OPERATIONID).ToList();
                 trail.AddRange(context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == applicationId && classOperations.Contains(x.OPERATIONID)).ToList());
 
             }
@@ -2654,6 +2682,8 @@ namespace FintrakBanking.Repositories.Credit
                 if (lastOccurrence != null)
                 {
                     d.requestStaffId = lastOccurrence.requestStaffId;
+                    d.sourceOperationId = (short)operationId;
+                    d.sourceTargetId = applicationId;
                 }
             }
 

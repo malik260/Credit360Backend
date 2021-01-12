@@ -104,6 +104,7 @@
     <Compile Include="Models\TBL_EXCEPTIONAL_RAC_DETAIL.cs" />
     <Compile Include="Models\TBL_FACILITY_MODIFICATION.cs" />
     <Compile Include="Models\TBL_FACILITY_MOD_DETL_FEE.cs" />
+    <Compile Include="Models\TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN.cs" />
     <Compile Include="Models\TBL_GROUP_LIMIT.cs" />
     <Compile Include="Models\TBL_INTEGRATION_CONTROL.cs" />
     <Compile Include="Models\TBL_LC_CASHBUILDUPPLAN.cs" />

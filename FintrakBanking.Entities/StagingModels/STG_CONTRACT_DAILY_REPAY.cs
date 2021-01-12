@@ -29,6 +29,7 @@
 
         public DateTime PAYMENTDATE { get; set; }
         public decimal AMOUNTPAID { get; set; }
+        public bool STATUS { get; set; }
     }
 }
 
