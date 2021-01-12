@@ -575,5 +575,6 @@ namespace ThirdPartyIntegration
             GetLoanRepaymentToStaging();
             GetOverdraftRepaymentToStaging(); 
         }
+
     }
 }
