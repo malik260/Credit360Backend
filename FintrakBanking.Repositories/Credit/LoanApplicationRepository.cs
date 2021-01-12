@@ -7747,9 +7747,18 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                string recipient = recipients.Trim();
+                var title = alertSubject.Trim();
+                if (title.Contains("&"))
+                {
+                    title = title.Replace("&", "AND");
+                }
+                if (title.Contains("."))
+                {
+                    title = title.Replace(".", "");
+                }
 
-                string messageSubject = alertSubject;
+                string recipient = recipients.Trim();
+                string messageSubject = title;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loan covenants which are approaching their due date. <br /><br />";
                 string templateUrl = "~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);

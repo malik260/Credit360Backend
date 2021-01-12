@@ -5017,6 +5017,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId, bool isManual = false)
         {
+
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
             var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
             var dynamicMessage = string.Empty;
@@ -5274,8 +5275,18 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                var title = alertSubject.Trim();
+                if (title.Contains("&"))
+                {
+                    title = title.Replace("&", "AND");
+                }
+                if (title.Contains("."))
+                {
+                    title = title.Replace(".", "");
+                }
+
                 string recipient = string.Join("", recipients.ToArray());
-                string messageSubject = alertSubject + " ALERT";
+                string messageSubject = title;
                 string messageContent = messageBody;
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -9008,7 +9019,8 @@ namespace FintrakBanking.Repositories.Credit
                                        requestedBy = "",
                                        systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                        requestedAmount = s.AMOUNT_REQUESTED,
-                                       requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
+                                       requestOperationId = (short)atrail.OPERATIONID,
+                                       //requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
                                        approvalStatusId = atrail.APPROVALSTATUSID,
                                        approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                        loanApplicationId = m.LOANAPPLICATIONID,
@@ -9050,6 +9062,7 @@ namespace FintrakBanking.Repositories.Credit
                                        approvedTenor = d.APPROVEDTENOR,
                                        toStaffId = atrail.TOSTAFFID,
                                        requestStaffId = atrail.REQUESTSTAFFID,
+                                       currentApprovalLevelId = atrail.TOAPPROVALLEVELID,
                                        isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                        divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                    }).ToList().Take(50);
@@ -9077,7 +9090,8 @@ namespace FintrakBanking.Repositories.Credit
                                      requestedBy = "",
                                      systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                      requestedAmount = s.AMOUNT_REQUESTED,
-                                     requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
+                                     requestOperationId = (short)atrail.OPERATIONID,
+                                     //requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
                                      approvalStatusId = atrail.APPROVALSTATUSID,
                                      approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                      loanApplicationId = m.LOANAPPLICATIONID,
@@ -9117,6 +9131,7 @@ namespace FintrakBanking.Repositories.Credit
                                      approvedTenor = d.APPROVEDTENOR,
                                      toStaffId = atrail.TOSTAFFID,
                                      requestStaffId = atrail.REQUESTSTAFFID,
+                                     currentApprovalLevelId = atrail.TOAPPROVALLEVELID,
                                      isInEditMode = true,
                                      isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                      divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),

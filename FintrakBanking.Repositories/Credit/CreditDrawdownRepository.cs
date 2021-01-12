@@ -526,6 +526,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     select new CamProcessedLoanViewModel
                     {
+                        isProjectRelate = m.ISPROJECTRELATED,
                         loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
                         bookingOperationId = req.OPERATIONID,
                         approvalTrailId = atrail.APPROVALTRAILID,
@@ -1673,17 +1674,17 @@ namespace FintrakBanking.Repositories.Credit
                                   where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                                   select (decimal?)l.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
-                var summedPrincipal = approvedAmount - (from l in context.TBL_LOAN_CONTINGENT
-                                                        where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                                                        && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                                        select (decimal?)l.CONTINGENTAMOUNT).Sum() ?? 0;
+                var summedPrincipalContingent = (from l in context.TBL_LOAN_CONTINGENT
+                                                 where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                                 && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                                 select (decimal?)l.CONTINGENTAMOUNT).Sum() ?? 0;
 
-                summedPrincipal = summedPrincipal + (approvedAmount - (from l in context.TBL_LOAN_REVOLVING
-                                                        where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                                                        && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                                        select (decimal?)l.OVERDRAFTLIMIT).Sum() ?? 0);
+                var summedPrincipalRevolving = (from l in context.TBL_LOAN_REVOLVING
+                                                where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                                && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                                select (decimal?)l.OVERDRAFTLIMIT).Sum() ?? 0;
 
-                disbursableAmount = approvedAmount - (summedPrincipal - releasedAmount);
+                disbursableAmount = approvedAmount - (summedPrincipalRevolving + summedPrincipalContingent + releasedAmount);
             }
             else
             {

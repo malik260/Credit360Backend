@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
                     excludeLevel = x.EXCLUDELEVEL,
                     isAgricRelated = x.ISAGRICRELATED,
-                })
+                }).OrderBy(b => b.description)
                 .ToList();
         }
 

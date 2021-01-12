@@ -74,7 +74,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklistStatus(int loanApplicationId, bool isAvailment, int staffId = 0);
         bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model);
         bool ForwardChecklistForApproval(List<ConditionPrecedentViewModel> model);
-        int GoForApproval(ApprovalViewModel entity);
+        WorkflowResponse GoForApproval(ApprovalViewModel entity);
         bool ExtendChecklistDeferralDate(ConditionPrecedentViewModel model);
         bool UpdateProvidedChecklist(ConditionPrecedentViewModel model);
         bool ValidateDeferralDateExpiration(int conditionId);

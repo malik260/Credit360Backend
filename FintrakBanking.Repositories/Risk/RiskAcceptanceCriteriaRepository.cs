@@ -394,7 +394,6 @@ namespace FintrakBanking.Repositories.Risk
                                               }).ToList();
 
 
-
                 foreach (var item in items)
                 {
                     if (item.value == "1")
@@ -404,6 +403,10 @@ namespace FintrakBanking.Repositories.Risk
                     else if (item.value == "2")
                     {
                         item.value = "NO";
+                    }
+                    else
+                    {
+                        item.value = item.value;
                     }
                 }
 
@@ -417,6 +420,25 @@ namespace FintrakBanking.Repositories.Risk
 
             return rac;
         }
+
+        private string GetRacValue(string rac)
+        {
+            if (rac.Length > 1)
+            {
+                return rac.ToString();
+            }
+            else
+            {
+                if (int.Parse(rac) == 1)
+                {
+                    return "YES";
+                }
+
+                return "NO";
+            }
+
+        }
+
         public List<RacCategoryViewModel> GetRacCategoryTypes(int productId)
         {
             var subCategories = new List<RacCategoryViewModel>();

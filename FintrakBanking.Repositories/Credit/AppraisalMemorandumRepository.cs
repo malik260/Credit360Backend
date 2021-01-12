@@ -2546,11 +2546,14 @@ namespace FintrakBanking.Repositories.Credit
             if (applicationWentForDrawDown)
             {
                 lmsOperationIds.AddRange(lmsDrawdownOperationIds);
-                lmsOperationIds.Add((short)OperationsEnum.LoanReviewApprovalAvailment);
             }
             else
             {
                 lmsOperationIds.AddRange(lmsAppraisalOperation);
+            }
+            if (operationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
+            {
+                lmsOperationIds.Add((short)OperationsEnum.LoanReviewApprovalAvailment);
             }
             //if (operationId == (short)OperationsEnum.LoanReviewApprovalAvailment)
             //{

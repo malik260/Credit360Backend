@@ -281,6 +281,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
             }
 
+            if (this.vote == null)
+            {
+                ValidateVote();
+            }
+
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -911,6 +916,30 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void FurtherValidations()
         {
             ValidateAgainstAlreadyClosedProcess();
+        }
+
+        private void ValidateVote()
+        {
+            if (this.statusId == (int)ApprovalStatusEnum.Referred)
+            {
+                this.vote = (int)ApprovalStatusEnum.Referred;
+            }
+            else if (this.statusId == (int)ApprovalStatusEnum.Disapproved)
+            {
+                this.vote = (int)ApprovalStatusEnum.Disapproved;
+            }
+            if (this.statusId == (int)ApprovalStatusEnum.Reroute)
+            {
+                this.vote = (int)ApprovalStatusEnum.Reroute;
+            }
+            if (this.statusId == (int)ApprovalStatusEnum.Escalated)
+            {
+                this.vote = (int)ApprovalStatusEnum.Escalated;
+            }
+            else
+            {
+                this.vote = (int)ApprovalStatusEnum.Approved;
+            }
         }
 
         private void ValidateAgainstReinitiationOfClosedProcess()//might be redundant soon
@@ -1811,7 +1840,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.WITHINSTRUCTION && !levelBusinessRule.WithInstruction) flagChecked = true;
             if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
             if (rule.ESRM && levelBusinessRule.esrm) flagChecked = true;
-            //if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = true;
+            if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = true;
             //if (rule.ISFORREVOLVINGFACILITY && levelBusinessRule.isRevolvingFacility) flagChecked = true;
             if (rule.ISFORRENEWAL)
             {
@@ -1820,7 +1849,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     flagChecked = true;
                 }
                 else if (!levelBusinessRule.isRenewal)
-                {
+                {// very necessary only renewals should pass through if isForRenewals is selected
                     flagChecked = false;
                     limitChecked = false;
                 }
@@ -1833,7 +1862,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     flagChecked = true;
                 }
                 else if (levelBusinessRule.isRenewal)
-                {
+                {// very necessary only non-renewals should pass through if exemptRenewals is selected
                     flagChecked = false;
                     limitChecked = false;
                 }

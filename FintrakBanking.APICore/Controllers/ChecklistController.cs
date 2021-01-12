@@ -1503,21 +1503,23 @@ namespace FintrakBanking.APICore.Controllers
                 //entity.operationId = (int)OperationsEnum.DefferedChecklistApproval;
                 var data = repo.GoForApproval(entity);
 
-                if (data == 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Record has been approved successfully" });
-                }
-                else if (data == 2)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Record has been disapproved successfully." });
-                }
-                else
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data.responseMessage });
+
+                //if (data == 1)
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK,
+                //        new { success = true, message = "Record has been approved successfully" });
+                //}
+                //else if (data == 2)
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK,
+                //        new { success = true, message = "Record has been disapproved successfully." });
+                //}
+                //else
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK,
+                //    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                //}
             }
             catch (SecureException e)
             {
