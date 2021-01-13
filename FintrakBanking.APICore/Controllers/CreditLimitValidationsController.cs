@@ -1056,10 +1056,10 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("project-risk-rating-computation/{loanApplicationId}/{loanApplicationDetailId}/{loanBookingRequestId}")]
-        public HttpResponseMessage GetProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
+        [Route("project-risk-rating-computation/{loanApplicationId}/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId)
         {
-            var response = repo.getProjectRiskRatingByApplicationAndApplicationDetailId(loanApplicationId, loanApplicationDetailId, loanBookingRequestId);
+            var response = repo.getProjectRiskRatingByApplicationAndApplicationDetailId(loanApplicationId, loanApplicationDetailId);
             if (response != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });

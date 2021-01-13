@@ -1,12 +1,9 @@
-using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
-using FintrakBanking.Interfaces;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
 
@@ -19,9 +16,9 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/setups")]
     public class AlertController : ApiController
     {
-        private readonly IAlertRepository _repo;
-        private readonly IExternalAlertRepository _alertRepo;
-        private readonly TokenDecryptionHelper _token = new TokenDecryptionHelper();
+        IAlertRepository _repo;
+        IExternalAlertRepository _alertRepo;
+        TokenDecryptionHelper _token = new TokenDecryptionHelper();
 
         public AlertController(IAlertRepository repo, IExternalAlertRepository alertRepo)
         {
@@ -29,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
             this._alertRepo = alertRepo;
         }
 
-
+       
         #region title Setup
         [HttpGet]
         [ClaimsAuthorization]
