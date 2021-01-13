@@ -1374,8 +1374,8 @@ namespace FintrakBanking.Repositories.Credit
             loanBookingValidation(entity);
             var principalAmount = from a in context.TBL_LOAN
                                   where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
-                                  let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
-                                  select sumPrincipalAmount;
+                                  //let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
+                                  select a.PRINCIPALAMOUNT;
 
             //var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == applicationDetail.CURRENCYID).FirstOrDefault();
             //var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
@@ -1412,7 +1412,8 @@ namespace FintrakBanking.Repositories.Credit
                 lineReleasePrincipalAmount = lineFacilities.Count() > 0 ? lineFacilities.Sum(x => x.PRINCIPALAMOUNT) : 0;
             }
 
-            if ((totalPrincipalAmount - (decimal)lineReleasePrincipalAmount) > (decimal)approvedAmount)
+            //if ((totalPrincipalAmount - (decimal)lineReleasePrincipalAmount) > (decimal)approvedAmount)
+            if ((totalPrincipalAmount) > (decimal)approvedAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
             if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.BulletPayment)
@@ -3404,7 +3405,6 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             // data = data.Where(x => x.customerAvailableAmount!= null && x.customerAvailableAmount > 0 ).ToList();
-            var test = data.Where(d => d.applicationReferenceNumber.Contains("1282210277431")).ToList();
             IEnumerable<LoanViewModel> bookedDataRecord = GetLoanFacilityBookingAwaitingApproval(staffId, companyId).Where(x => x.loanStatusId == (short)LoanStatusEnum.Inactive).ToList();
             IEnumerable<RevolvingLoanViewModel> revolvingFacilityRecord = GetRevolvingFacilityBookingAwaitingApproval(staffId, companyId).Where(x => x.loanStatusId == (short)LoanStatusEnum.Inactive).ToList();
 
@@ -3574,9 +3574,10 @@ namespace FintrakBanking.Repositories.Credit
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
                             crmsCode = s.CRMSCODE,
 
-                        }).ToList().Take(50);
+                        }).ToList();
 
             //var books = data.Where(d => d.loanBookingRequestId == 1380).ToList();
+            var test = data.Where(d => d.applicationReferenceNumber.Contains("1267369410910")).ToList();
 
 
             foreach (var item in data)
@@ -9323,7 +9324,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                    join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                                    join cust in context.TBL_CUSTOMER on s.CUSTOMERID equals cust.CUSTOMERID
-                                   join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+                                   join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
                                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                    where m.COMPANYID == companyId
                                    where m.COMPANYID == companyId
