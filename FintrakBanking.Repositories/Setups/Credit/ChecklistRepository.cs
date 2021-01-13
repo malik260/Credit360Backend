@@ -2832,12 +2832,21 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationId = c.LOANAPPLICATIONID,
                             toApprovalLevelName = atrail.LOOPEDSTAFFID > 0 ? staff.FirstOrDefault(r => r.STAFFID == atrail.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : atrail.TOSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.TOSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                             fromApprovalLevelName = atrail.REQUESTSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
-                        });
+                        }).ToList();
 
-            foreach (var x in data)
+            foreach (var d in data)
             {
-                x.deferralDuration = x.deferredDateOnFinalApproval != null ? (x.deferredDateOnFinalApproval - x.dateApproved).Value.Days : 0;
+                d.deferralDuration = d.deferredDateOnFinalApproval != null ? (d.deferredDateOnFinalApproval - d.dateApproved).Value.Days : 0;
+                if (d.loopedStaffId > 0)
+                {
+                    d.responsiblePerson = staffs.FirstOrDefault(s => s.staffId == d.loopedStaffId).name;
+                }
+                else if (d.toStaffId > 0)
+                {
+                    d.responsiblePerson = staffs.FirstOrDefault(s => s.staffId == d.toStaffId).name;
+                }
             }
+
             //var records = data.GroupBy(x => x.loanConditionId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.approvalTrailId); ;
             return data.AsQueryable();
         }
