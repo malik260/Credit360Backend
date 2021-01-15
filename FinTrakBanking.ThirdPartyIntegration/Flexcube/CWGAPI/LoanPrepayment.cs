@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.CustomException;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
@@ -577,7 +578,8 @@ namespace ThirdPartyIntegration
         public bool postPaymentEntries()
         {
             var unReconciledPayLog = staging.STG_CONTRACT_DAILY_REPAY.Where(x => x.STATUS == false && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).ToList();
-            foreach(var item in unReconciledPayLog)
+            var BatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            foreach (var item in unReconciledPayLog)
             {
                 var loanAccount = context.TBL_LOAN.Where(x => x.COREBANKINGREF == item.CONTRACTREFERENCENUMBER).FirstOrDefault();
                 var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanAccount.CASAACCOUNTID && x.COMPANYID == loanAccount.COMPANYID);
@@ -620,7 +622,7 @@ namespace ThirdPartyIntegration
                 financePosting.CASAACCOUNTID = newFinancialReturn.creditCasaAccountId;
                 financePosting.OPERATIONID = newFinancialReturn.operationId;
                 financePosting.DESCRIPTION = newFinancialReturn.description;
-                financePosting.BATCHCODE = "";
+                financePosting.BATCHCODE = BatchCode;
                 financePosting.BATCHCODE2 = "";
                 financePosting.COMPANYID = loanAccount.COMPANYID;
                 financePosting.APPROVEDDATETIME = item.PAYMENTDATE;
