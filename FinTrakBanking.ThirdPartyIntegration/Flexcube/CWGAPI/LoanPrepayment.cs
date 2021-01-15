@@ -4,6 +4,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System;
 using System.Collections.Generic;
@@ -573,5 +574,62 @@ namespace ThirdPartyIntegration
             GetOverdraftRepaymentToStaging(); 
         }
 
+        public bool postPaymentEntries()
+        {
+            var unReconciledPayLog = staging.STG_CONTRACT_DAILY_REPAY.Where(x => x.STATUS == false && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).ToList();
+            foreach(var item in unReconciledPayLog)
+            {
+                var loanAccount = context.TBL_LOAN.Where(x => x.COREBANKINGREF == item.CONTRACTREFERENCENUMBER).FirstOrDefault();
+                var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanAccount.CASAACCOUNTID && x.COMPANYID == loanAccount.COMPANYID);
+                var product = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanAccount.PRODUCTID && x.COMPANYID == loanAccount.COMPANYID);
+
+                var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+
+                if (loanAccount == null) continue;
+
+                FinanceTransactionStagingViewModel newFinancialReturn = new FinanceTransactionStagingViewModel()
+                {
+                     creditGlAccountId = repaymentAccountGL,
+                     sourceReferenceNumber = loanAccount.LOANREFERENCENUMBER,
+                     creditCasaAccountId = loanAccount.CASAACCOUNTID2,
+                     debitCasaAccountId = loanAccount.CASAACCOUNTID,
+                     description = item.PAYMENTDESCRIPTION,
+                     amount = item.AMOUNTPAID,
+                     valueDate = item.DUEDATE,
+                     currencyId = loanAccount.CURRENCYID,
+                     destinationBranchId = loanAccount.BRANCHID,
+                     sourceApplicationId = 0,
+                };
+
+                if (item.PAYMENTDESCRIPTION == "MAIN_INT") newFinancialReturn.operationId = (short)OperationsEnum.InterestLoanRepayment;
+                //else if (item.PAYMENTDESCRIPTION == "") newFinancialReturn.operationId = (short)OperationsEnum.PrincipalLoanRepayment;
+
+
+                //PAYMENT DESCRIPTION IS UNKOWN
+                if (newFinancialReturn.operationId <= 0) continue;
+
+                TBL_FINANCE_TRANSACTION financePosting = new TBL_FINANCE_TRANSACTION();
+                financePosting.CURRENCYID = (short)newFinancialReturn.currencyId;
+                financePosting.CURRENCYRATE = loanAccount.EXCHANGERATE;
+                financePosting.DEBITAMOUNT = newFinancialReturn.amount;
+                financePosting.CREDITAMOUNT = newFinancialReturn.amount;
+                financePosting.SOURCEREFERENCENUMBER = newFinancialReturn.sourceReferenceNumber;
+                financePosting.SOURCEBRANCHID = newFinancialReturn.sourceBranchId;
+                financePosting.SOURCEAPPLICATIONID = newFinancialReturn.sourceApplicationId;
+                financePosting.GLACCOUNTID = newFinancialReturn.creditGlAccountId;
+                financePosting.CASAACCOUNTID = newFinancialReturn.creditCasaAccountId;
+                financePosting.OPERATIONID = newFinancialReturn.operationId;
+                financePosting.DESCRIPTION = newFinancialReturn.description;
+                financePosting.BATCHCODE = "";
+                financePosting.BATCHCODE2 = "";
+                financePosting.COMPANYID = loanAccount.COMPANYID;
+                financePosting.APPROVEDDATETIME = item.PAYMENTDATE;
+                // financePosting.APPROVEDBY = item.
+                context.TBL_FINANCE_TRANSACTION.Add(financePosting);
+
+                item.STATUS = true;
+            }
+            return context.SaveChanges() > 0;
+        }
     }
 }
