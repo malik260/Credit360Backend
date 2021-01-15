@@ -598,7 +598,7 @@ namespace ThirdPartyIntegration
                      valueDate = item.DUEDATE,
                      currencyId = loanAccount.CURRENCYID,
                      destinationBranchId = loanAccount.BRANCHID,
-                     sourceApplicationId = 0,
+                    // sourceApplicationId = 0,
                 };
 
                 if (item.PAYMENTDESCRIPTION == "MAIN_INT") newFinancialReturn.operationId = (short)OperationsEnum.InterestLoanRepayment;
@@ -614,7 +614,7 @@ namespace ThirdPartyIntegration
                 financePosting.DEBITAMOUNT = newFinancialReturn.amount;
                 financePosting.CREDITAMOUNT = newFinancialReturn.amount;
                 financePosting.SOURCEREFERENCENUMBER = newFinancialReturn.sourceReferenceNumber;
-                financePosting.SOURCEBRANCHID = newFinancialReturn.sourceBranchId;
+                financePosting.SOURCEBRANCHID = (short)loanAccount.TERMLOANID;
                 financePosting.SOURCEAPPLICATIONID = newFinancialReturn.sourceApplicationId;
                 financePosting.GLACCOUNTID = newFinancialReturn.creditGlAccountId;
                 financePosting.CASAACCOUNTID = newFinancialReturn.creditCasaAccountId;
