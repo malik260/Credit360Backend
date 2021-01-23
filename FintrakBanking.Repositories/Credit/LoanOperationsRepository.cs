@@ -20545,7 +20545,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public int GoForApproval(ApprovalViewModel entity)
         {
-            
+           
                 entity.applicationDate = generalSetup.GetApplicationDate();
 
                 var twoFADetails = new TwoFactorAutheticationViewModel
@@ -20765,7 +20765,6 @@ namespace FintrakBanking.Repositories.Credit
                     return data;
 
                 }
-            
             // return data;
         }
 
