@@ -580,7 +580,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                    {
                                        productId = p.PRODUCTID,
                                        usedByLos = p.USEDBYLOS,
-                                       productName = p.PRODUCTNAME
+                                       productName = p.PRODUCTNAME + " " + p.PRODUCTCODE
                                    }).ToList();
                 
                 return productData;
@@ -2717,8 +2717,18 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             try
             {
+                var title = alertSubject.Trim();
+                if (title.Contains("&"))
+                {
+                    title = title.Replace("&", "AND");
+                }
+                if (title.Contains("."))
+                {
+                    title = title.Replace(".", "");
+                }
+
                 string recipient = string.Join("", recipients.ToArray());
-                string messageSubject = alertSubject + " ALERT";
+                string messageSubject = title;
                 string messageContent = messageBody;
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {

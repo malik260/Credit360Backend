@@ -1030,6 +1030,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isProjectRelated { get; set; }
         public bool isOnLending { get; set; }
         public bool isInterventionFunds { get; set; }
+        public bool isAgricRelated { get; set; }
     }
 
     public class LoanApplicationTagsLMSViewModel : GeneralEntity
@@ -1039,6 +1040,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isProjectRelated { get; set; }
         public bool? isOnLending { get; set; }
         public bool? isInterventionFunds { get; set; }
+        public bool isAgricRelated { get; set; }
     }
 
 
@@ -1311,6 +1313,9 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime valueDate { get; set; }
         public DateTime postedDate { get; set; }
         public string description { get; set; }
+        public string productCode { get; set; }
+        public string branchCode { get; set; }
+        public short productClassId { get; set; }
     }
 
 }

@@ -1839,6 +1839,29 @@ namespace FintrakBanking.APICore.Controllers
                 new { success = false, message = "saving loan recovery re-assignment unsuccessfully" });
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("multiple-retail-loan-recovery-re-assignment/{expCompletionDate}/{accreditedConsultant}/{source}")]
+        public HttpResponseMessage saveMultipleRetailLoanReAssignmentToAgent(DateTime expCompletionDate, int accreditedConsultant, string source, [FromBody] List<GlobalExposureApplicationViewModel> model)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.saveMultipleRetailLoanReAssignmentToAgent(model, user, expCompletionDate, accreditedConsultant, source);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = data.responseMessage });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery re-assignment unsuccessfully" });
+        }
+
 
         [HttpPost]
         [ClaimsAuthorization]

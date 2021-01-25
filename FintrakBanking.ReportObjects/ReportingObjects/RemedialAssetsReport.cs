@@ -94,6 +94,28 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     casaAccount = ln.ACCOUNTNUMBER,
                                 }).ToList();
 
+                var dataDigitalExposure = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                    join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
+                                    join ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN on lr.LOANREFERENCE equals ln.REFERENCENUMBER
+                                    where (DbFunctions.TruncateTime(l.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                    && DbFunctions.TruncateTime(l.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                    && l.DELETED == false
+
+                                    select new RemedialAssetReportViewModel
+                                    {
+                                        accreditedConsultant = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().ACCREDITEDCONSULTANTID,
+                                        AccountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
+                                        AccountName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
+                                        NameOfRecoveryAgent = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().NAME,
+                                        Address = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
+                                        Telephone = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().PHONENUMBER,
+                                        ExpectedRecoveryDate = (DateTime)l.EXPCOMPLETIONDATE,
+                                        AmountRecovered = lr.ISFULLYRECOVERED == true ? lr.TOTALRECOVERYAMOUNT : lr.RECOVEREDAMOUNT,
+                                        DateOfAssignment = l.DATEASSIGNED,
+                                        Email = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().EMAILADDRESS,
+                                        casaAccount = ln.ACCOUNTNUMBER,
+                                    }).ToList();
+
                 var dataLoan = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                 join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
                                 join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
@@ -158,7 +180,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                          }).ToList();
 
 
-                var unionAll = dataLoan.Union(dataRevolvingLoan).Union(dataExposure);
+                var unionAll = dataLoan.Union(dataRevolvingLoan).Union(dataExposure).Union(dataDigitalExposure);
                 var groupRecord = unionAll.GroupBy(x => x.accreditedConsultant).Select(g => g.OrderByDescending(b => b.accreditedConsultant).FirstOrDefault());
                 
                 foreach (var i in groupRecord)
@@ -194,6 +216,25 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     PercentageCommissionPaid = lr.PERCENTAGECOMMISSION,
                                     CommissionPayable = (l.AMOUNTRECOVERED - (l.AMOUNTRECOVERED * (lr.PERCENTAGECOMMISSION / 100))) - (l.AMOUNTRECOVERED * (lr.PERCENTAGECOMMISSION / 100)),
                                 }).ToList();
+
+                var dataDigitalExposure = (from l in context.TBL_LOAN_RECOVERY_COMMISSION_BATCH
+                                    join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCENUMBER equals lr.LOANREFERENCE
+                                    join ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN on lr.LOANREFERENCE equals ln.REFERENCENUMBER
+                                    where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
+                                    && DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+
+                                    select new RemedialAssetReportViewModel
+                                    {
+                                        AccountNumber = ln.ACCOUNTNUMBER,
+                                        AccountName = "CURRENT ACCOUNT",
+                                        RecoveryAgentName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().NAME,
+                                        TotalExposure = ln.TOTALEXPOSURE,
+                                        AccountRecovered = l.AMOUNTRECOVERED,
+                                        DateOfRecovery = lr.RECEIPTDATE,
+                                        AmountRecovered = lr.ISFULLYRECOVERED == true ? lr.TOTALRECOVERYAMOUNT : lr.RECOVEREDAMOUNT,
+                                        PercentageCommissionPaid = lr.PERCENTAGECOMMISSION,
+                                        CommissionPayable = (l.AMOUNTRECOVERED - (l.AMOUNTRECOVERED * (lr.PERCENTAGECOMMISSION / 100))) - (l.AMOUNTRECOVERED * (lr.PERCENTAGECOMMISSION / 100)),
+                                    }).ToList();
 
                 var dataLoan = (from l in context.TBL_LOAN_RECOVERY_COMMISSION_BATCH
                                 join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCENUMBER equals lr.LOANREFERENCE
@@ -253,7 +294,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                          }).ToList();
 
 
-                var groupRecord = dataLoan.Union(dataRevolvingLoan).Union(dataExposure);
+                var groupRecord = dataLoan.Union(dataRevolvingLoan).Union(dataExposure).Union(dataDigitalExposure);
 
                 return groupRecord;
 
@@ -286,6 +327,29 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     AccountBalance = 0,
                                     casaAccount = ln.ACCOUNTNUMBER,
                                 }).ToList();
+
+                var dataDigitalExposure = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                    join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
+                                    join ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN on lr.LOANREFERENCE equals ln.REFERENCENUMBER
+                                    where (DbFunctions.TruncateTime(l.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                    && DbFunctions.TruncateTime(l.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                    && l.DELETED == false
+                                    && l.SOURCE.ToLower() == "remedial"
+
+                                    select new RemedialAssetReportViewModel
+                                    {
+                                        AccountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
+                                        AccountName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
+                                        NameOfRecoveryAgent = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().NAME,
+                                        Address = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
+                                        TelephoneNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().PHONENUMBER,
+                                        DateOfEngagement = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == l.ACCREDITEDCONSULTANT).FirstOrDefault().DATEOFENGAGEMENT,
+                                        ExpectedRecoveryDate = (DateTime)l.EXPCOMPLETIONDATE,
+                                        AmountRecovered = lr.ISFULLYRECOVERED == true ? lr.TOTALRECOVERYAMOUNT : lr.RECOVEREDAMOUNT,
+                                        DateOfAssignment = l.DATEASSIGNED,
+                                        AccountBalance = 0,
+                                        casaAccount = ln.ACCOUNTNUMBER,
+                                    }).ToList();
 
                 var dataLoan = (from l in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                 join lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on l.LOANREFERENCE equals lr.LOANREFERENCE
@@ -353,7 +417,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                          }).ToList();
 
 
-                var groupRecord = dataLoan.Union(dataRevolvingLoan).Union(dataExposure);
+                var groupRecord = dataLoan.Union(dataRevolvingLoan).Union(dataExposure).Union(dataDigitalExposure);
                 return groupRecord;
 
             }
@@ -384,7 +448,30 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     accountBalance = (double)0.0,
                                 }).ToList();
 
-                return dataLoan;
+                var dataDigitalLoan = (from ln in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                join a in context.TBL_GLOBAL_EXPOSURE on ln.LOANREFERENCE equals a.REFERENCENUMBER
+                                join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
+                                join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.LOANREFERENCE equals b.LOANREFERENCE
+                                where
+                                (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                select new GlobalExposureApplicationViewModel
+                                {
+                                    accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
+                                    accountName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
+                                    nameOfRecoveryAgent = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().NAME,
+                                    address = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().FIRMNAME,
+                                    telephoneNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().PHONENUMBER,
+                                    expectedRecoveryDate = (DateTime)ln.EXPCOMPLETIONDATE,
+                                    amountRecovered = b.ISFULLYRECOVERED == true ? b.TOTALRECOVERYAMOUNT : b.RECOVEREDAMOUNT,
+                                    dateOfEngagement = ln.DATEASSIGNED,
+                                    accountBalance = (double)0.0,
+                                }).ToList();
+
+                var allData = dataLoan.Union(dataDigitalLoan);
+
+                return allData;
             }
 
         }
