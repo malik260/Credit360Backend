@@ -2204,77 +2204,78 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return projectRiskrating;
         }
 
-        public IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
+        public IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId)
         {
-            var customerTier1 = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == loanApplicationId).ToList();
-            var projectRiskRating = (from a in context.TBL_PROJECT_RISK_RATING
-                                     join c in context.TBL_PROJECT_RISK_RATING_CATEGORY on a.CATEGORYID equals c.CATEGORYID
-                                     where a.LOANAPPLICATIONID == loanApplicationId && a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                                     select new
-                                     {
-                                         loanApplicationId = a.LOANAPPLICATIONID,
-                                         loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
-                                         loanBookingRequestId = a.LOANBOOKINGREQUESTID,
-                                         categoryName = c.CATEGORYNAME,
-                                         categoryValue = a.CATEGORYVALUE,
-                                         projectLocation = a.PROJECTLOCATION,
-                                         projectDetails = a.PROJECTDETAILS
-                                     }).AsEnumerable().Select(a => new ProjectRiskRatingViewModel
-                                     {
-                                         loanApplicationId = a.loanApplicationId,
-                                         loanApplicationDetailId = a.loanApplicationDetailId,
-                                         loanBookingRequestId = a.loanBookingRequestId,
-                                         categoryName = a.categoryName,
-                                         categoryValue = a.categoryValue,
-                                         projectLocation = a.projectLocation,
-                                         projectDetails = a.projectDetails
-                                     }).ToList();
+                var customerTier1 = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == loanApplicationId).ToList();
+                var projectRiskRating = (from a in context.TBL_PROJECT_RISK_RATING
+                                         join c in context.TBL_PROJECT_RISK_RATING_CATEGORY on a.CATEGORYID equals c.CATEGORYID
+                                         where a.LOANAPPLICATIONID == loanApplicationId && a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                         select new
+                                         {
+                                             loanApplicationId = a.LOANAPPLICATIONID,
+                                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                             loanBookingRequestId = a.LOANBOOKINGREQUESTID,
+                                             categoryName = c.CATEGORYNAME,
+                                             categoryValue = a.CATEGORYVALUE,
+                                             projectLocation = a.PROJECTLOCATION,
+                                             projectDetails = a.PROJECTDETAILS
+                                         }).AsEnumerable().Select(a => new ProjectRiskRatingViewModel
+                                         {
+                                             loanApplicationId = a.loanApplicationId,
+                                             loanApplicationDetailId = a.loanApplicationDetailId,
+                                             loanBookingRequestId = a.loanBookingRequestId,
+                                             categoryName = a.categoryName,
+                                             categoryValue = a.categoryValue,
+                                             projectLocation = a.projectLocation,
+                                             projectDetails = a.projectDetails
+                                         }).ToList();
 
-                                var result = projectRiskRating.Select(a => new ProjectRiskRatingViewModel
-                                {
-                                    loanApplicationId = a.loanApplicationId,
-                                    loanApplicationDetailId = a.loanApplicationDetailId,
-                                    loanBookingRequestId = a.loanBookingRequestId,
-                                    categoryName = a.categoryName,
-                                    categoryValue = a.categoryValue,
-                                    projectLocation = a.projectLocation,
-                                    projectDetails = a.projectDetails,
-                                    computation = context.TBL_PROJECT_RISK_RATING.Where(d => d.LOANAPPLICATIONDETAILID == a.loanApplicationDetailId).Sum(d => d.CATEGORYVALUE),
-                                }).ToList();
+                var result = projectRiskRating.Select(a => new ProjectRiskRatingViewModel
+                {
+                    loanApplicationId = a.loanApplicationId,
+                    loanApplicationDetailId = a.loanApplicationDetailId,
+                    loanBookingRequestId = a.loanBookingRequestId,
+                    categoryName = a.categoryName,
+                    categoryValue = a.categoryValue,
+                    projectLocation = a.projectLocation,
+                    projectDetails = a.projectDetails,
+                    computation = context.TBL_PROJECT_RISK_RATING.Where(d => d.LOANAPPLICATIONDETAILID == a.loanApplicationDetailId).Sum(d => d.CATEGORYVALUE),
+                }).ToList();
 
-            foreach(var i in result)
-            {
-                int rating = 0;
-                i.customerTier = 0;
-                if (customerTier1 != null)
+                foreach (var i in result)
                 {
-                    decimal compute = customerTier1.Where(x => x.LOANAPPLICATIONID == i.loanApplicationId).Sum(x => x.ACTUALVALUE);
-                    if (compute >= 80) { rating = 25; }
-                    if (compute >= 60 && compute <= 79) { rating = 20; }
-                    if (compute <= 59) { rating = 10; }
-                    i.customerTier = compute;
-                }
-               
-                var overRallTotal = i.computation + rating;
-                if(overRallTotal >= 81 && overRallTotal <= 100)
-                {
-                    i.riskCategorisation = "LOW";
-                }
-                if (overRallTotal >= 66 && overRallTotal < 81)
-                {
-                    i.riskCategorisation = "MODERATE";
-                }
-                if (overRallTotal >= 51 && overRallTotal < 66)
-                {
-                    i.riskCategorisation = "ABOVE AVERAGE";
-                }
-                if (overRallTotal < 51)
-                {
-                    i.riskCategorisation = "HIGH";
-                }
-            }
+                    int rating = 0;
+                    i.customerTier = 0;
+                    if (customerTier1 != null)
+                    {
+                        decimal compute = customerTier1.Where(x => x.LOANAPPLICATIONID == i.loanApplicationId).Sum(x => x.ACTUALVALUE);
+                        if (compute >= 80) { rating = 25; }
+                        if (compute >= 60 && compute <= 79) { rating = 20; }
+                        if (compute <= 59) { rating = 10; }
+                        i.customerTier = compute;
+                    }
 
-            return result;
+                    var overRallTotal = i.computation + rating;
+                    if (overRallTotal >= 81 && overRallTotal <= 100)
+                    {
+                        i.riskCategorisation = "LOW";
+                    }
+                    if (overRallTotal >= 66 && overRallTotal < 81)
+                    {
+                        i.riskCategorisation = "MODERATE";
+                    }
+                    if (overRallTotal >= 51 && overRallTotal < 66)
+                    {
+                        i.riskCategorisation = "ABOVE AVERAGE";
+                    }
+                    if (overRallTotal < 51)
+                    {
+                        i.riskCategorisation = "HIGH";
+                    }
+                }
+
+                return result;
+            
         }
     }
 }

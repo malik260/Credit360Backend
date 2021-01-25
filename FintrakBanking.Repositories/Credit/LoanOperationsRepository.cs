@@ -20545,227 +20545,226 @@ namespace FintrakBanking.Repositories.Credit
 
         public int GoForApproval(ApprovalViewModel entity)
         {
+           
+                entity.applicationDate = generalSetup.GetApplicationDate();
 
-            entity.applicationDate = generalSetup.GetApplicationDate();
-
-            var twoFADetails = new TwoFactorAutheticationViewModel
-            {
-                skipAuthentication = true,
-                passcode = entity.passCode,
-                username = entity.userName
-            };
-
-            if (context.TBL_SETUP_GLOBAL.FirstOrDefault().USERSPECIFIC2FA == true)
-            {
-                twoFADetails.username = context.TBL_STAFF.Find(entity.staffId).STAFFCODE;
-            }
-
-            using (var trans = context.Database.BeginTransaction())
-            {
-                var reviewRecord = (from s in context.TBL_LOAN_REVIEW_OPERATION
-                                    where s.LOANREVIEWOPERATIONID == entity.targetId && s.OPERATIONTYPEID == entity.operationId
-                                   && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                    && s.OPERATIONCOMPLETED == false
-                                    select s).FirstOrDefault();
-
-                if (entity.approvalStatusId == (short)ApprovalStatusEnum.Referred)
+                var twoFADetails = new TwoFactorAutheticationViewModel
                 {
+                    skipAuthentication = true,
+                    passcode = entity.passCode,
+                    username = entity.userName
+                };
 
-                    int staffId = entity.staffId;
-
-
-                    var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
-
-                    var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == entity.operationId)
-                         .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                         .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
-                             mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
-                             {
-                                 groupPosition = mg.m.POSITION,
-                                 levelPosition = l.POSITION,
-                                 levelId = l.APPROVALLEVELID,
-                                 levelName = l.LEVELNAME,
-                                 staffRoleId = l.STAFFROLEID,
-                             })
-                             .OrderBy(x => x.groupPosition)
-                             .ThenBy(x => x.levelPosition)
-                             .ToList();
-
-                    var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
-                    var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
-                    var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
-
-                    workFlow.StaffId = entity.createdBy;
-                    workFlow.OperationId = entity.operationId;
-                    workFlow.TargetId = entity.targetId;
-                    workFlow.CompanyId = entity.companyId;
-                    workFlow.ProductClassId = null;
-                    workFlow.ProductId = null;
-                    workFlow.NextLevelId = entity.approvalLevelId;
-                    workFlow.ToStaffId = staffId;
-                    workFlow.StatusId = (int)ApprovalStatusEnum.Referred;
-                    workFlow.Comment = entity.comment;
-                    workFlow.DeferredExecution = true;
-
-                       // workFlow.LogActivity();
-
-                    var lmsrRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
-                    if (lmsrRecord != null)
-                    {
-                        lmsrRecord.OPERATIONPERFORMED = false;
-                    }
-
-                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
-                    reviewRecord.OPERATIONCOMPLETED = false;
-                    context.SaveChanges();
-                    trans.Commit();
-                    return 4;
+                if (context.TBL_SETUP_GLOBAL.FirstOrDefault().USERSPECIFIC2FA == true)
+                {
+                    twoFADetails.username = context.TBL_STAFF.Find(entity.staffId).STAFFCODE;
                 }
 
-                workFlow.StaffId = entity.staffId;
-                workFlow.CompanyId = entity.companyId;
-                workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
-                workFlow.TargetId = entity.targetId;
-                workFlow.Comment = entity.comment;
-                workFlow.OperationId = entity.operationId;
-                workFlow.DeferredExecution = true;
-                workFlow.LogActivity();
-
-
-                bool output = false;
-                bool result = false;
-                int data = 0;
-
-                var dynamicMessage = string.Empty;
-                var staffEmail = context.TBL_STAFF.Find(reviewRecord.CREATEDBY);
-                var lmsApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(reviewRecord.LOANREVIEWAPPLICATIONID);
-                var lmsApplication = context.TBL_LMSR_APPLICATION.Find(lmsApplicationDetail.LOANAPPLICATIONID);
-                var customer = context.TBL_CUSTOMER.Find(lmsApplicationDetail.CUSTOMERID);
-
-                if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                using (var trans = context.Database.BeginTransaction())
                 {
+                    var reviewRecord = (from s in context.TBL_LOAN_REVIEW_OPERATION
+                                        where s.LOANREVIEWOPERATIONID == entity.targetId && s.OPERATIONTYPEID == entity.operationId
+                                       && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                        && s.OPERATIONCOMPLETED == false
+                                        select s).FirstOrDefault();
 
-                    alert.receiverEmailList.Add(staffEmail.EMAIL);
-                    if (entity.operationId == (int)OperationsEnum.OverdraftInterestRate)
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Referred)
                     {
-                        dynamicMessage = "Overdraft Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Disapproved";
-                        LogEmailAlert(dynamicMessage, "OVERDRAFT INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
-                    }
-                    if (entity.operationId == (int)OperationsEnum.ContractualInterestRateChange)
-                    {
-                        dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Disapproved";
-                        LogEmailAlert(dynamicMessage, "CONTRACTUAL INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
-                    }
 
-                    //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
-                    if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
-                    {
-                        var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
-
-                        if (authenticated.authenticated == false)
-                            throw new TwoFactorAuthenticationException(authenticated.message);
-                    }
-                    twoFADetails.skipAuthentication = true;
-                    var fees = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
-
-                    foreach (var a in fees)
-                    {
-                        a.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                    }
-                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                    reviewRecord.OPERATIONCOMPLETED = true;
-                    context.SaveChanges();
-                    trans.Commit();
-                    return 2;
-                }
-
-                if (workFlow.NewState != (int)ApprovalState.Ended)
-                {
-                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                    output = context.SaveChanges() > 0;
-                    trans.Commit();
-                    data = 3;
-                }
-                else if (workFlow.NewState == (int)ApprovalState.Ended)
-                {
-                    //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
-                    if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
-                    {
-                        var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
-
-                        if (authenticated.authenticated == false)
-                            throw new TwoFactorAuthenticationException(authenticated.message);
-
-                        twoFADetails.skipAuthentication = true;
-                    }
+                        int staffId = entity.staffId;
 
 
-                    var validate = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == 0).ToList();
+                        var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
-                    foreach (var item in validate)
-                    {
-                        var feePostings = BuildLoanOperationsManualChargeFeesPosting(item.LOANCHARGEFEEID);
+                        var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == entity.operationId)
+                             .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                             .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                                 mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                                 {
+                                     groupPosition = mg.m.POSITION,
+                                     levelPosition = l.POSITION,
+                                     levelId = l.APPROVALLEVELID,
+                                     levelName = l.LEVELNAME,
+                                     staffRoleId = l.STAFFROLEID,
+                                 })
+                                 .OrderBy(x => x.groupPosition)
+                                 .ThenBy(x => x.levelPosition)
+                                 .ToList();
 
-                        if (feePostings != null && feePostings.Count()>0)
+                        var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+                        var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+                        var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+                        workFlow.StaffId = entity.createdBy;
+                        workFlow.OperationId = entity.operationId;
+                        workFlow.TargetId = entity.targetId;
+                        workFlow.CompanyId = entity.companyId;
+                        workFlow.ProductClassId = null;
+                        workFlow.ProductId = null;
+                        workFlow.NextLevelId = entity.approvalLevelId;
+                        workFlow.ToStaffId = staffId;
+                        workFlow.StatusId = (int)ApprovalStatusEnum.Referred;
+                        workFlow.Comment = entity.comment;
+                        workFlow.DeferredExecution = true;
+
+                        // workFlow.LogActivity();
+
+                        var lmsrRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
+                        if (lmsrRecord != null)
                         {
-                            //financeTransaction.PostTransaction(feePostings, false, twoFADetails);
-                            //financeTransaction.PostTransaction(disbursementTransactions, false, twoFADetails);
+                            lmsrRecord.OPERATIONPERFORMED = false;
                         }
-                        item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+                        reviewRecord.OPERATIONCOMPLETED = false;
+                        context.SaveChanges();
+                        trans.Commit();
+                        return 4;
                     }
 
-                    //if (validate.Count > 0)
-                    //{
-                    //    throw new ConditionNotMetException("Kindly Proceed to Approve Pending Fees Attached to This Operation Before Proceeding");
-                    //}
-                    result = LoanRephasementProcess(twoFADetails, reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId, (LoanSystemTypeEnum)reviewRecord.LOANSYSTEMTYPEID);
-                    if (result == true)
+                    workFlow.StaffId = entity.staffId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.OperationId = entity.operationId;
+                    workFlow.DeferredExecution = true;
+                    workFlow.LogActivity();
+
+
+                    bool output = false;
+                    bool result = false;
+                    int data = 0;
+
+                    var dynamicMessage = string.Empty;
+                    var staffEmail = context.TBL_STAFF.Find(reviewRecord.CREATEDBY);
+                    var lmsApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(reviewRecord.LOANREVIEWAPPLICATIONID);
+                    var lmsApplication = context.TBL_LMSR_APPLICATION.Find(lmsApplicationDetail.LOANAPPLICATIONID);
+                    var customer = context.TBL_CUSTOMER.Find(lmsApplicationDetail.CUSTOMERID);
+
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                     {
+
                         alert.receiverEmailList.Add(staffEmail.EMAIL);
                         if (entity.operationId == (int)OperationsEnum.OverdraftInterestRate)
                         {
-                            dynamicMessage = "Overdraft Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Approved";
+                            dynamicMessage = "Overdraft Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Disapproved";
                             LogEmailAlert(dynamicMessage, "OVERDRAFT INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
                         }
                         if (entity.operationId == (int)OperationsEnum.ContractualInterestRateChange)
                         {
-                            dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Approved";
+                            dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Disapproved";
                             LogEmailAlert(dynamicMessage, "CONTRACTUAL INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
                         }
-                        if (entity.operationId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
-                        {
-                            reviewRecord.REBOOKDATE = DateTime.Now;
-                        }
-                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                        output = context.SaveChanges() > 0;
-                        if (entity.operationId == (int)OperationsEnum.OverdraftTenorExtension || entity.operationId == (int)OperationsEnum.TenorChange || entity.operationId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
-                        {
-                            var staff = context.TBL_STAFF.Find(reviewRecord.CREATEDBY);
-                            var retailEmail = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "ExtensionReport").FirstOrDefault();
-                            var loanDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(p => p.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
-                            var facility = context.TBL_PRODUCT.Find(loanDetail.PRODUCTID);
-                            var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE) + ";" + retailEmail?.DEFAULTEMAIL;
-                            alert.receiverEmailList.Add(emailList);
 
-                            var customer12 = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault()==null ? context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == lmsApplicationDetail.CUSTOMERID).Select(c => c.GROUPNAME).FirstOrDefault() : context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
-                            var alertTemplate = retailEmail?.TEMPLATE;
-                            alertTemplate = alertTemplate.Replace("@{{customerName}}", customer12);
-                            alertTemplate = alertTemplate.Replace("@{{facility}}", facility.PRODUCTNAME);
-                            alertTemplate = alertTemplate.Replace("@{{days}}", loanDetail.APPROVEDTENOR.ToString());
-                            LogEmailAlert(alertTemplate, retailEmail?.TITLE, alert.receiverEmailList, "10070", 10070, "ExtensionReport");
+                        //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
+                        if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+                        {
+                            var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                            if (authenticated.authenticated == false)
+                                throw new TwoFactorAuthenticationException(authenticated.message);
                         }
-                    }
-                    if (output == true && result == true)
-                    {
+                        twoFADetails.skipAuthentication = true;
+                        var fees = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
+
+                        foreach (var a in fees)
+                        {
+                            a.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                        }
+                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                        reviewRecord.OPERATIONCOMPLETED = true;
+                        context.SaveChanges();
                         trans.Commit();
-                        data = 1;
+                        return 2;
                     }
+
+                    if (workFlow.NewState != (int)ApprovalState.Ended)
+                    {
+                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                        output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        data = 3;
+                    }
+                    else if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
+                        if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+                        {
+                            var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                            if (authenticated.authenticated == false)
+                                throw new TwoFactorAuthenticationException(authenticated.message);
+
+                            twoFADetails.skipAuthentication = true;
+                        }
+
+
+                        var validate = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == 0).ToList();
+
+                        foreach (var item in validate)
+                        {
+                            var feePostings = BuildLoanOperationsManualChargeFeesPosting(item.LOANCHARGEFEEID);
+
+                            if (feePostings != null && feePostings.Count() > 0)
+                            {
+                                //financeTransaction.PostTransaction(feePostings, false, twoFADetails);
+                                //financeTransaction.PostTransaction(disbursementTransactions, false, twoFADetails);
+                            }
+                            item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        }
+
+                        //if (validate.Count > 0)
+                        //{
+                        //    throw new ConditionNotMetException("Kindly Proceed to Approve Pending Fees Attached to This Operation Before Proceeding");
+                        //}
+                        result = LoanRephasementProcess(twoFADetails, reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId, (LoanSystemTypeEnum)reviewRecord.LOANSYSTEMTYPEID);
+                        if (result == true)
+                        {
+                            alert.receiverEmailList.Add(staffEmail.EMAIL);
+                            if (entity.operationId == (int)OperationsEnum.OverdraftInterestRate)
+                            {
+                                dynamicMessage = "Overdraft Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Approved";
+                                LogEmailAlert(dynamicMessage, "OVERDRAFT INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
+                            }
+                            if (entity.operationId == (int)OperationsEnum.ContractualInterestRateChange)
+                            {
+                                dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Approved";
+                                LogEmailAlert(dynamicMessage, "CONTRACTUAL INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
+                            }
+                            if (entity.operationId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                            {
+                                reviewRecord.REBOOKDATE = DateTime.Now;
+                            }
+                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            output = context.SaveChanges() > 0;
+                            if (entity.operationId == (int)OperationsEnum.OverdraftTenorExtension || entity.operationId == (int)OperationsEnum.TenorChange || entity.operationId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
+                            {
+                                var staff = context.TBL_STAFF.Find(reviewRecord.CREATEDBY);
+                                var retailEmail = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "ExtensionReport").FirstOrDefault();
+                                var loanDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(p => p.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
+                                var facility = context.TBL_PRODUCT.Find(loanDetail.PRODUCTID);
+                                var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE) + ";" + retailEmail?.DEFAULTEMAIL;
+                                alert.receiverEmailList.Add(emailList);
+
+                                var customer12 = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault() == null ? context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == lmsApplicationDetail.CUSTOMERID).Select(c => c.GROUPNAME).FirstOrDefault() : context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                                var alertTemplate = retailEmail?.TEMPLATE;
+                                alertTemplate = alertTemplate.Replace("@{{customerName}}", customer12);
+                                alertTemplate = alertTemplate.Replace("@{{facility}}", facility.PRODUCTNAME);
+                                alertTemplate = alertTemplate.Replace("@{{days}}", loanDetail.APPROVEDTENOR.ToString());
+                                LogEmailAlert(alertTemplate, retailEmail?.TITLE, alert.receiverEmailList, "10070", 10070, "ExtensionReport");
+                            }
+                        }
+                        if (output == true && result == true)
+                        {
+                            trans.Commit();
+                            data = 1;
+                        }
+
+                    }
+                    return data;
 
                 }
-                return data;
-
-            }
-
             // return data;
         }
 
