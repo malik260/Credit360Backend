@@ -2648,6 +2648,8 @@ namespace FintrakBanking.ReportObjects
                 var reportData = (
                                   from l in context.TBL_LOAN
                                   join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                                  join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
+                                  join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                                   where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
                                   && l.COMPANYID == 1 
                                   //&& loansWithCollateral.Contains(l.TERMLOANID)
@@ -2661,6 +2663,9 @@ namespace FintrakBanking.ReportObjects
                                       startDate = startDate,
                                       endDate = endDate,
                                       loanRefno = l.LOANREFERENCENUMBER,
+                                      collateralCode = cc.COLLATERALCODE,
+                                      colaterallSubType = cc.COLLATERALSUBTYPEID,
+                                      captureDate = cc.DATETIMECREATED,
                                       outstandingInterest = l.OUTSTANDINGINTEREST + l.PASTDUEINTEREST
                                   }).ToList().Select(x =>
                                   {
@@ -2695,6 +2700,8 @@ namespace FintrakBanking.ReportObjects
                                       from l in context.TBL_LOAN
                                       join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                                       join sta in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sta.STAFFID
+                                      join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
+                                      join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                                       where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
                                       && l.COMPANYID == companyid 
                                       //&& loansWithCollateral.Contains(l.TERMLOANID) 
@@ -2710,6 +2717,9 @@ namespace FintrakBanking.ReportObjects
                                           endDate = endDate,
                                           facilityGrantDate = l.EFFECTIVEDATE,
                                           staffCode = sta.STAFFCODE,
+                                          collateralCode = cc.COLLATERALCODE,
+                                          colaterallSubType = cc.COLLATERALSUBTYPEID,
+                                          captureDate = cc.DATETIMECREATED,
                                           total = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL) + (l.OUTSTANDINGINTEREST + l.PASTDUEINTEREST)
 
                                       }).ToList().Select(x =>
@@ -4981,6 +4991,7 @@ namespace FintrakBanking.ReportObjects
                                      join b in context.TBL_BRANCH on l.BRANCHID equals b.BRANCHID
                                      join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
                                      join cim in context.TBL_COLLATERAL_IMMOVE_PROPERTY on cm.COLLATERALCUSTOMERID equals cim.COLLATERALCUSTOMERID
+                                     join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
 
 
 
@@ -5006,7 +5017,10 @@ namespace FintrakBanking.ReportObjects
                                          expiryDate = l.MATURITYDATE,
                                          sanctionLimit = l.PRINCIPALAMOUNT,
                                          remarks = cim.REMARK,
-                                         tenor = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, l.MATURITYDATE)
+                                         collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(x=> x.COLLATERALSUBTYPEID ==  cc.COLLATERALSUBTYPEID).Select(x=>x.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                                         tenor = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, l.MATURITYDATE),
+                                         collateralCode = cc.COLLATERALCODE,
+                                         dateTimeCreated = cc.DATETIMECREATED
 
 
                                      }).Distinct().ToList().Select(x =>
