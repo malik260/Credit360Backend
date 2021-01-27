@@ -3817,6 +3817,16 @@ namespace FintrakBanking.Repositories.Credit
             return response;
         }
 
+        public bool ReassignMultipleRequests(List<int> models, GeneralEntity userEntity)
+        {
+            bool response = false;
+            foreach (var model in models)
+            {
+                if (model > 0) { response = AssignApplication(model, userEntity.createdBy, userEntity); }
+            }
+            return response;
+        }
+
         public bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity model)
         {
             //bool saved = false;
@@ -3834,23 +3844,11 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (trail.FROMAPPROVALLEVELID == trail.TOAPPROVALLEVELID && trail.LOOPEDSTAFFID > 0)
                         {
-                            //trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.LOOPEDSTAFFID).ToList();
-                            //trailsForAudit = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.LOOPEDSTAFFID).ToList();
-                            //foreach(var t in trails)
-                            //{
-                            //    t.REQUESTSTAFFID = staffId;
-                            //}
                             trail.LOOPEDSTAFFID = staffId;
                             //trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                         else
                         {
-                            //trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.TOSTAFFID).ToList();
-                            //trailsForAudit = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.TOSTAFFID).ToList();
-                            //foreach (var t in trails)
-                            //{
-                            //    t.REQUESTSTAFFID = staffId;
-                            //}
                             trail.TOSTAFFID = staffId;
                             //trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
@@ -3905,7 +3903,7 @@ namespace FintrakBanking.Repositories.Credit
                         AUDITTYPEID = (short)AuditTypeEnum.ApplicationReassigned,
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
-                        DETAIL = $"Transaction that was previously assigned to {staff?.FIRSTNAME} {staff?.MIDDLENAME} {staff?.LASTNAME} ({staff.STAFFCODE}) {level.LEVELNAME} approval group was to {level.LEVELNAME}.",
+                        DETAIL = $"Transaction that was previously assigned to {staff?.FIRSTNAME} {staff?.LASTNAME} {staff.STAFFCODE} was returned to general pool {level.LEVELNAME}.",
                         IPADDRESS = CommonHelpers.GetLocalIpAddress(), 
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),
