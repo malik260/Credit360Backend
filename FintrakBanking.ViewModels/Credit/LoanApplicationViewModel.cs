@@ -106,13 +106,15 @@ namespace FintrakBanking.ViewModels.Credit
         public int sectorId { get; set; }
         public string sectorName { get; set; }
         public int? loantermSheetId { get; set; }
+        public string loantermSheetCode { get; set; }
         public string customerName { get; set; }
         public int customerTypeId { get; set; }
         public string branchName { get; set; }
         public string productName { get; set; }
         public string customerGroupName { get; set; }
+        public string termSheetCode { get; set; }
 
-        public string loanTypeName { get; set; }
+    public string loanTypeName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string tenorModeName { get; set; }
@@ -252,6 +254,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isEmployerRelated { get; set; }
         public int? relatedEmployerId { get; set; }
         public string employer { get; set; }
+        public int creditAppraisalOperationId { get; set; }
+        public int creditAppraisalLoanApplicationId { get; set; }
     }
 
     public class InterestIncomeViewModel
@@ -589,6 +593,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatus { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public string currentApprovalLevel { get; set; }
+        public bool isTemplateUploaded { get; set; }
 
         // public int? loanreViewApplicationId { get; set; }
     }
@@ -1027,6 +1032,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isProjectRelated { get; set; }
         public bool isOnLending { get; set; }
         public bool isInterventionFunds { get; set; }
+        public bool isAgricRelated { get; set; }
     }
 
     public class LoanApplicationTagsLMSViewModel : GeneralEntity
@@ -1036,6 +1042,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isProjectRelated { get; set; }
         public bool? isOnLending { get; set; }
         public bool? isInterventionFunds { get; set; }
+        public bool isAgricRelated { get; set; }
     }
 
 
@@ -1308,6 +1315,9 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime valueDate { get; set; }
         public DateTime postedDate { get; set; }
         public string description { get; set; }
+        public string productCode { get; set; }
+        public string branchCode { get; set; }
+        public short productClassId { get; set; }
     }
 
 }

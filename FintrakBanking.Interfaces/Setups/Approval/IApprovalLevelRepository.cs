@@ -13,6 +13,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 {
     public interface IApprovalLevelRepository
     {
+        IEnumerable<ApprovalTrailViewModel> GenericLMSApprovalTrail(int targetId, int operationId);
         IEnumerable<ApprovalLevelViewModel> GetAllApprovalLevel(int companyId);
         IEnumerable<ApprovalLevelViewModel> GetAllApprovalLevelDetails(int companyId);
         IEnumerable<ApprovalLevelViewModel> GetApprovalLevelById(int ApprovalLevelId, int companyId);

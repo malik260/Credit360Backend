@@ -271,6 +271,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                         BOOKINGCODE = responseAPI.bo_code,
                     };
 
+                   
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
                         APIURL = API_URL + apiUrl,

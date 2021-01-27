@@ -100,6 +100,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISONLENDING { get; set; }
         public bool ISINTERVENTIONFUNDS { get; set; }
         public bool ISORRBASEDAPPROVAL { get; set; }
+        public bool ISAGRICRELATED { get; set; }
         public bool WITHINSTRUCTION { get; set; }
         public bool DOMICILIATIONNOTINPLACE { get; set; }
         
@@ -179,6 +180,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
+        public string TERMSHEETCODE { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 

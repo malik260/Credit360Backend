@@ -83,6 +83,7 @@ namespace FintrakBanking.Repositories.Media
                    expiryDate = up.EXPIRYDATE,
                    physicalFilenumber = up.PHYSICALFILENUMBER,
                    physicalLocation = up.PHYSICALLOCATION,
+                   isOriginalCopy = up.ISORIGINALCOPY,
                    documentTypeId = up.DOCUMENTTYPEID,
                    documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
                    documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
@@ -107,6 +108,7 @@ namespace FintrakBanking.Repositories.Media
                     expiryDate = up.expiryDate,
                     physicalFilenumber = up.physicalFilenumber,
                     physicalLocation = up.physicalLocation,
+                    isOriginalCopy = up.isOriginalCopy,
                     documentTypeId = up.documentTypeId,
                     documentTypeName = up.documentTypeName,
                     documentCategoryId = up.documentCategoryId,
@@ -198,6 +200,11 @@ namespace FintrakBanking.Repositories.Media
                 var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
                 foreach (var f in facilities)
                 {
+                    var providedConditionCheckLists = context.TBL_LOAN_CONDITION_PRECEDENT.Where(c => c.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID && c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Provided).ToList();
+                    foreach (var c in providedConditionCheckLists)
+                    {
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.DefferedChecklistApproval, c.LOANCONDITIONID));
+                    }
                     var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID);
                     foreach (var r in request)
                     {
@@ -207,13 +214,13 @@ namespace FintrakBanking.Repositories.Media
                         }
                         else
                         {
-                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.IndividualDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
-                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.CorporateDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
-                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.CreditCardDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.IndividualDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.CorporateDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.CreditCardDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
                         }
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.TermLoanBooking, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.RevolvingLoanBooking, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.ContigentLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.TermLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.RevolvingLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.ContigentLoanBooking, r.LOAN_BOOKING_REQUESTID));
 
                     }
                 }
@@ -322,12 +329,12 @@ namespace FintrakBanking.Repositories.Media
                     foreach (var r in request)
                     {
                         if (r?.OPERATIONID != null) output.AddRange(GetDocumentUploadsByOperation(staffId, (short)r.OPERATIONID, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.IndividualDrawdownRequest, r.LOANAPPLICATIONDETAILID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.CorporateDrawdownRequest, r.LOANAPPLICATIONDETAILID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.CreditCardDrawdownRequest, r.LOANAPPLICATIONDETAILID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.TermLoanBooking, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.RevolvingLoanBooking, r.LOAN_BOOKING_REQUESTID));
-                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.ContigentLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.IndividualDrawdownRequest, r.LOANAPPLICATIONDETAILID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.CorporateDrawdownRequest, r.LOANAPPLICATIONDETAILID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.CreditCardDrawdownRequest, r.LOANAPPLICATIONDETAILID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.TermLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.RevolvingLoanBooking, r.LOAN_BOOKING_REQUESTID));
+                        output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.ContigentLoanBooking, r.LOAN_BOOKING_REQUESTID));
 
                     }
                 }
@@ -355,6 +362,7 @@ namespace FintrakBanking.Repositories.Media
                    expiryDate = up.EXPIRYDATE,
                    physicalFilenumber = up.PHYSICALFILENUMBER,
                    physicalLocation = up.PHYSICALLOCATION,
+                   isOriginalCopy = up.ISORIGINALCOPY,
                    documentTypeId = up.DOCUMENTTYPEID,
                    documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
                    documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
@@ -378,6 +386,7 @@ namespace FintrakBanking.Repositories.Media
                     expiryDate = up.expiryDate,
                     physicalFilenumber = up.physicalFilenumber,
                     physicalLocation = up.physicalLocation,
+                    isOriginalCopy = up.isOriginalCopy,
                     documentTypeId = up.documentTypeId,
                     documentTypeName = up.documentTypeName,
                     documentCategoryId = up.documentCategoryId,
@@ -414,6 +423,7 @@ namespace FintrakBanking.Repositories.Media
                    expiryDate = up.EXPIRYDATE,
                    physicalFilenumber = up.PHYSICALFILENUMBER,
                    physicalLocation = up.PHYSICALLOCATION,
+                   isOriginalCopy = up.ISORIGINALCOPY,
                    documentTypeId = up.DOCUMENTTYPEID,
                    documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
                    documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
@@ -438,6 +448,7 @@ namespace FintrakBanking.Repositories.Media
                 expiryDate = up.expiryDate,
                 physicalFilenumber = up.physicalFilenumber,
                 physicalLocation = up.physicalLocation,
+                isOriginalCopy = up.isOriginalCopy,
                 documentTypeId = up.documentTypeId,
                 documentTypeName = up.documentTypeName,
                 documentCategoryId = up.documentCategoryId,
@@ -585,6 +596,7 @@ namespace FintrakBanking.Repositories.Media
                     documentTypeId = x.up.DOCUMENTTYPEID,
                     physicalFilenumber = x.up.PHYSICALFILENUMBER,
                     physicalLocation = x.up.PHYSICALLOCATION,
+                    isOriginalCopy = x.up.ISORIGINALCOPY,
                     documentTypeName = x.up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
                     documentCategoryName = x.up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
                     owner = x.us.CREATEDBY == staffId,
@@ -613,6 +625,7 @@ namespace FintrakBanking.Repositories.Media
                 companyId = entity.COMPANYID,
                 issueDate = entity.ISSUEDATE,
                 expiryDate = entity.EXPIRYDATE,
+                isOriginalCopy = entity.ISORIGINALCOPY,
                 physicalFilenumber = entity.PHYSICALFILENUMBER,
                 physicalLocation = entity.PHYSICALLOCATION,
                 //uploadedBy = staffs.Where(s => s.STAFFID == entity.CREATEDBY && s.DELETED != true).Select(s => s.FIRSTNAME + s.LASTNAME).FirstOrDefault(),
@@ -642,6 +655,7 @@ namespace FintrakBanking.Repositories.Media
                                   issueDate = x.ISSUEDATE,
                                   expiryDate = x.EXPIRYDATE,
                                   physicalFilenumber = x.PHYSICALFILENUMBER,
+                                  isOriginalCopy = x.ISORIGINALCOPY,
                                   physicalLocation = x.PHYSICALLOCATION,
                                   documentCategoryName = docContext.TBL_DOCUMENT_CATEGORY.Where(a=>a.DOCUMENTCATEGORYID==d.DOCUMENTCATEGORYID).Select(a=>a.DOCUMENTCATEGORYNAME).FirstOrDefault(),
                                   documentTypeName = d.DOCUMENTTYPENAME,
@@ -703,6 +717,7 @@ namespace FintrakBanking.Repositories.Media
                 EXPIRYDATE = model.expiryDate,
                 PHYSICALFILENUMBER = model.physicalFilenumber,
                 PHYSICALLOCATION = model.physicalLocation,
+                ISORIGINALCOPY = model.isOriginalCopy,
                 DOCUMENTTYPEID = model.documentTypeId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -806,6 +821,7 @@ namespace FintrakBanking.Repositories.Media
             entity.COMPANYID = model.companyId;
             entity.ISSUEDATE = model.issueDate;
             entity.EXPIRYDATE = model.expiryDate;
+            entity.ISORIGINALCOPY = model.isOriginalCopy;
             entity.PHYSICALFILENUMBER = model.physicalFilenumber;
             entity.PHYSICALLOCATION = model.physicalLocation;
 
@@ -878,6 +894,18 @@ namespace FintrakBanking.Repositories.Media
                 upload.DELETED = true;
                 upload.DELETEDBY = user.createdBy;
                 upload.DATETIMEDELETED = DateTime.Now;
+            }
+
+            return docContext.SaveChanges() > 0;
+        }
+
+        public bool DeleteRecoveryDocumentUpload(int id)
+        {
+            var usage = docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.Find(id);
+
+            if (usage != null)
+            {
+                docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.Remove(usage);
             }
 
             return docContext.SaveChanges() > 0;

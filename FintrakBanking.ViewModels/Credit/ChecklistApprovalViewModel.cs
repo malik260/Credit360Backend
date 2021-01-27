@@ -9,7 +9,8 @@ namespace FintrakBanking.ViewModels.Credit
    public class ChecklistApprovalViewModel
     {
         public int loanApplicationDetailId;
-
+        //public int deferralDuration2 { get { return (this.deferredDate - this.dateTimeDefCreated).Value.Days; } }
+        //public int cummulativeDays2 { get { return (this.deferredDate - this.dateTimeDefCreated).Value.Days; } }
         public int operationId { get; set; }
 
         public string applicationReferenceNumber { get; set; }
@@ -23,8 +24,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int conditionId { get; set; }
         public DateTime? deferredDate { get; set; }
         public DateTime? dateCreated { get; set; }
+        public DateTime? systemArrivalDateTime { get; set; }
         public int deferralDuration { get; set; }
-        public int cummulativeDays { get; set; }
+        public int cumulativeDays { get { return (DateTime.Now - this.dateApproved).Value.Days; } }
 
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
@@ -46,5 +48,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string toApprovalLevelName { get; set; }
         public string fromApprovalLevelName { get; set; }
         public string comment { get; set; }
+        public string excludeLegal { get; set; }
+        public int approvalTrailId { get; set; }
+        public int loanConditionId { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public string divisionShortCode { get; set; }
+        public string divisionCode { get; set; }
+        public DateTime? deferredDateOnFinalApproval { get; set; }
+        public DateTime? dateApproved { get; set; }
+        public int numberOfTimesDeferred { get; set; }
     }
 }

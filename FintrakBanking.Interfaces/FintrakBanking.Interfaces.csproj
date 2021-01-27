@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -99,6 +100,7 @@
     <Compile Include="Credit\ILcUssanceRepository.cs" />
     <Compile Include="Credit\ILetterGenerationRequestRepository.cs" />
     <Compile Include="Credit\ILoanArchiveRepository.cs" />
+    <Compile Include="Credit\ILoanPrepayment.cs" />
     <Compile Include="Credit\IOriginalDocumentReleaseRepository.cs" />
     <Compile Include="Credit\IProjectSiteReportRepository.cs" />
     <Compile Include="Credit\ITestCollateralRepository.cs" />

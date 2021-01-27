@@ -209,46 +209,72 @@ namespace FintrakBanking.Repositories.Credit
             return res.FirstOrDefault();
         }
 
-        public List<ValuationPrerequisiteViewModel> GetAllCollateralValuerIformation()
+        public List<ValuationPrerequisiteViewModel> GetCollateralValuerIformation(int id)
         {
-            var data = from x in _context.TBL_VALUATION_REPORT
-                       orderby x.VALUATIONREPORTID descending
+            var data = (from x in _context.TBL_VALUATION_REPORT
+                       where x.DELETED == false && x.COLLATERALVALUATIONID == id
+                        orderby x.VALUATIONREPORTID descending
                        select new ValuationPrerequisiteViewModel
                        {
                            valuerId = x.VALUERID,
-                           valuer =  _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.NAME).FirstOrDefault(),
+                           valuer =  _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.FIRMNAME).FirstOrDefault(),
                            collateralValuationId = x.COLLATERALVALUATIONID,
                            valuationFee = x.VALUATIONFEE,
                            accountNumber = x.ACCOUNTNUMBER,
                            wht = x.WHT,
+                           whtAmount = x.WHTAMOUNT,
                            valuationComment = x.VALUERCOMMENT,
                            valuationReportId = x.VALUATIONREPORTID,
                            operationId = (int) OperationsEnum.CollateralValuationRequest,
                            omv = x.OMV,
                            fsv = x.FSV
-                       };
-            return data.ToList();
+                       }).ToList();
+            return data;
         }
 
-        public List<ValuationPrerequisiteViewModel> GetAllCollateralValuerIformation(int id)
+
+        public ValuationPrerequisiteViewModel GetCollateralValuerIformations(int id)
+        {
+            var data = (from x in _context.TBL_VALUATION_REPORT
+                        where x.DELETED == false && x.COLLATERALVALUATIONID == id
+                        orderby x.VALUATIONREPORTID descending
+                        select new ValuationPrerequisiteViewModel
+                        {
+                            valuerId = x.VALUERID,
+                            valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.FIRMNAME).FirstOrDefault(),
+                            collateralValuationId = x.COLLATERALVALUATIONID,
+                            valuationFee = x.VALUATIONFEE,
+                            accountNumber = x.ACCOUNTNUMBER,
+                            wht = x.WHT,
+                            whtAmount = x.WHTAMOUNT,
+                            valuationComment = x.VALUERCOMMENT,
+                            valuationReportId = x.VALUATIONREPORTID,
+                            operationId = (int)OperationsEnum.CollateralValuationRequest,
+                            omv = x.OMV,
+                            fsv = x.FSV
+                        }).FirstOrDefault();
+            return data;
+        }
+
+        public List<ValuationPrerequisiteViewModel> GetAllCollateralValuerIformation()
         {
             var data = from x in _context.TBL_VALUATION_REPORT
-                       where x.COLLATERALVALUATIONID == id
+                       where x.DELETED == false
                        orderby x.VALUATIONREPORTID descending
                        select new ValuationPrerequisiteViewModel
                        {
                            valuerId = x.VALUERID,
-                           valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.NAME).FirstOrDefault(),
+                           valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.FIRMNAME).FirstOrDefault(),
                            collateralValuationId = x.COLLATERALVALUATIONID,
                            valuationFee = x.VALUATIONFEE,
                            accountNumber = x.ACCOUNTNUMBER,
                            wht = x.WHT,
                            valuationComment = x.VALUERCOMMENT,
-                           whtAmount = x.WHTAMOUNT,
                            valuationReportId = x.VALUATIONREPORTID,
+                           operationId = (int)OperationsEnum.CollateralValuationRequest,
                            omv = x.OMV,
-                           fsv = x.FSV
-
+                           fsv = x.FSV,
+                           whtAmount = x.WHTAMOUNT
                        };
             return data.ToList();
         }
@@ -257,11 +283,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = from x in _context.TBL_VALUATION_REPORT
                        where x.VALUATIONREPORTID == id
+                       && x.DELETED == false
                        orderby x.VALUATIONREPORTID descending
                        select new ValuationPrerequisiteViewModel
                        {
                            valuerId = x.VALUERID,
-                           valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.NAME).FirstOrDefault(),
+                           valuer = _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.FIRMNAME).FirstOrDefault(),
                            collateralValuationId = x.COLLATERALVALUATIONID,
                            valuationFee = x.VALUATIONFEE,
                            accountNumber = x.ACCOUNTNUMBER,
@@ -349,6 +376,26 @@ namespace FintrakBanking.Repositories.Credit
                     exist.FSV = model.fsv;
                 }
                 
+                return _context.SaveChanges() > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
+        public bool UpdateCollateralNarration(ValuationPrerequisiteViewModel model)
+        {
+            try
+            {
+                var exist = _context.TBL_COLLATERAL_VALUATION.Find(model.valuationReportId);
+
+                if (exist != null)
+                {
+                    exist.NARRATION = model.narration;
+                }
+
                 return _context.SaveChanges() > 0;
             }
             catch (Exception ex)
@@ -591,6 +638,8 @@ namespace FintrakBanking.Repositories.Credit
                       orderby V.VALUATIONPREREQUISITEID descending
                       select new ValuationPrerequisiteViewModel
                       {
+                          divisionCode = (from p in _context.TBL_PROFILE_BUSINESS_UNIT join c in _context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                          divisionShortCode = (from p in _context.TBL_PROFILE_BUSINESS_UNIT join c in _context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == C.COLLATERALCUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                           valuationComment = V.VALUATIONCOMMENT,
                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == V.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
                           collateralCode = C.COLLATERALCODE,
@@ -603,6 +652,8 @@ namespace FintrakBanking.Repositories.Credit
                           referenceNumber = V.REFERENCENUMBER,
                           approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                           collateralCustomerId = C.COLLATERALCUSTOMERID,
+                          systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
+
                       };
 
             return res.ToList();
@@ -697,31 +748,44 @@ namespace FintrakBanking.Repositories.Credit
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                         && atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest
+                        && atrail.LOOPEDSTAFFID == null
                        orderby valPre.VALUATIONPREREQUISITEID descending
                        select new ValuationPrerequisiteViewModel
                        {
-                           customerName = cus.FIRSTNAME + " " + cus.LASTNAME + " " + cus.MAIDENNAME,
-                           customerId = cus.CUSTOMERID,
-                           customerAccount = _context.TBL_CASA.Where(c=>c.CUSTOMERID == cus.CUSTOMERID).Select(c=>c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-                           collateralCode = C.COLLATERALCODE,
-                           collateralType = _context.TBL_COLLATERAL_TYPE.Where(O => O.COLLATERALTYPEID == C.COLLATERALTYPEID).Select(O => O.COLLATERALTYPENAME).FirstOrDefault(),
-                           collateralValue = C.COLLATERALVALUE,
-                           collateralValuationId = q.COLLATERALVALUATIONID,
-                           collateralCustomerId = C.COLLATERALCUSTOMERID,
-                           valuationComment = valPre.VALUATIONCOMMENT,
-                           valuationName = q.VALUATIONNAME,
-                           valuationReason = q.VALUATIONREASON,
-                           operationId = valPre.OPERATIONID,
-                           valuationPrerequisiteId = valPre.VALUATIONPREREQUISITEID,
-                           referenceNumber = valPre.REFERENCENUMBER,
-                           approvalStatusId = atrail.APPROVALSTATUSID,
-                           approvalTrailId = atrail.APPROVALTRAILID,
-                           valuationRequestTypeId = valPre.VALUATIONREQUESTTYPEID,
-                           //approvalStatusId = valPre.APPROVALSTATUSID,
-                           approvalComment = atrail.COMMENT,
-                           approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
-                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == valPre.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
+                           divisionCode = (from p in _context.TBL_PROFILE_BUSINESS_UNIT join c in _context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                           divisionShortCode = (from p in _context.TBL_PROFILE_BUSINESS_UNIT join c in _context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == C.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                           narration = q.NARRATION,
+                            customerName = cus.FIRSTNAME + " " + cus.LASTNAME + " " + cus.MAIDENNAME,
+                            customerId = cus.CUSTOMERID,
+                            customerAccount = _context.TBL_CASA.Where(c=>c.CUSTOMERID == cus.CUSTOMERID).Select(c=>c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                            collateralCode = C.COLLATERALCODE,
+                            collateralType = _context.TBL_COLLATERAL_TYPE.Where(O => O.COLLATERALTYPEID == C.COLLATERALTYPEID).Select(O => O.COLLATERALTYPENAME).FirstOrDefault(),
+                            collateralValue = C.COLLATERALVALUE,
+                            collateralValuationId = q.COLLATERALVALUATIONID,
+                            collateralCustomerId = C.COLLATERALCUSTOMERID,
+                            currentApprovalLevelId = atrail.TOAPPROVALLEVELID,
+                            valuationComment = valPre.VALUATIONCOMMENT,
+                            valuationName = q.VALUATIONNAME,
+                            valuationReason = q.VALUATIONREASON,
+                            operationId = valPre.OPERATIONID,
+                            valuationPrerequisiteId = valPre.VALUATIONPREREQUISITEID,
+                            referenceNumber = valPre.REFERENCENUMBER,
+                            approvalStatusId = atrail.APPROVALSTATUSID,
+                            approvalTrailId = atrail.APPROVALTRAILID,
+                            valuationRequestTypeId = valPre.VALUATIONREQUESTTYPEID,
+                            //approvalStatusId = valPre.APPROVALSTATUSID,
+                            approvalComment = atrail.COMMENT,
+                            systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
+                            approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                            valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == valPre.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
                        }).ToList();
+
+            foreach(var v in res)
+            {
+                var detailIds = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == v.collateralCustomerId && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID);
+                var facilities = _context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).ToList();
+                v.facilityAmount = facilities.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            }
 
             //return res.GroupBy(O => O.collateralValuationId).Select(O => O.FirstOrDefault()).ToList();
             return res;
@@ -778,6 +842,13 @@ namespace FintrakBanking.Repositories.Credit
             
             List<ValuationPrerequisiteViewModel> vals = new List<ValuationPrerequisiteViewModel>();
             vals.AddRange(valuations);
+
+            foreach (var v in vals)
+            {
+                var detailIds = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(p => p.COLLATERALCUSTOMERID == v.collateralCustomerId && p.DELETED == false).Select(p => p.LOANAPPLICATIONDETAILID);
+                var facilities = _context.TBL_LOAN_APPLICATION_DETAIL.Where(d => detailIds.Contains(d.LOANAPPLICATIONDETAILID)).ToList();
+                v.facilityAmount = facilities.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            }
             return vals;
         }
 
@@ -807,24 +878,107 @@ namespace FintrakBanking.Repositories.Credit
                         var approvingStaff = _context.TBL_STAFF.Find(model.createdBy);
                         var staffRole = _context.TBL_STAFF_ROLE.Where(r => r.STAFFROLEID == approvingStaff.STAFFROLEID).FirstOrDefault();
                         prereqisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.VALUATIONPREREQUISITEID == model.valuationPrerequisiteId && O.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing).Select(O => O).FirstOrDefault();
+                        var valuerReport = _context.TBL_VALUATION_REPORT.Where(o => o.COLLATERALVALUATIONID == prereqisite.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
 
-                        if (staffRole.STAFFROLECODE == "GH Credit Doc")
+                        if (staffRole.STAFFROLECODE == "VAL CR DOC OFF")
                         {
-                            var valuerReport = _context.TBL_VALUATION_REPORT.Where(o => o.COLLATERALVALUATIONID == prereqisite.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
+                            var update = _context.TBL_COLLATERAL_VALUATION_PRE.Find(prereqisite.VALUATIONPREREQUISITEID);
+                            if(update.NUMBEROFTIMESAPPROVE == null)
+                            {
+                                update.NUMBEROFTIMESAPPROVE = 0;
+                            }
+                            update.NUMBEROFTIMESAPPROVE = (update.NUMBEROFTIMESAPPROVE + 1);
+                            _context.SaveChanges();
+                        }
+
+                        if ((staffRole.STAFFROLECODE == "CRDT DOC GH" || staffRole.STAFFROLECODE == "CR DOC MGR") && (prereqisite.NUMBEROFTIMESAPPROVE <= 1 || prereqisite.NUMBEROFTIMESAPPROVE == null) && (valuerReport.OMV < 1 || valuerReport.OMV == null))
+                        {
                             var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
                             var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
-                            
+
                             var valuationOfficer = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
                             var accountOfficer = _context.TBL_STAFF.Find(collateral.CREATEDBY);
                             var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
 
                             var rem = _context.TBL_STAFF.Find(accountOfficer.SUPERVISOR_STAFFID);
+                            var customerCollateral = _context.TBL_COLLATERAL_CUSTOMER.Find(collateral.COLLATERALCUSTOMERID);
+                            var collateralType = _context.TBL_COLLATERAL_TYPE.Find(customerCollateral.COLLATERALTYPEID);
+                            var customer = _context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == customerCollateral.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                            var collAddress = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c.PROPERTYADDRESS).FirstOrDefault();
                             var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME;
-                            var messageBody = "Dear " + staffFullName + "</br> Kindly see the " + collateral?.VALUATIONNAME + " valuation carried out by "+ valuer?.ToUpper() + " with fee note " + valuerReport?.VALUATIONFEE +" and valuation detail: "+ valuerReport?.VALUERCOMMENT;
-                            var alertSubject = "COLLATERAL VALUATION NOTIFICATION";
-                            var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL;
+
+                            var letter = _context.TBL_ALERT_TITLE.Where(x=>x.BINDINGMETHOD == "CollateralValuationNotification").Select(x=>x).FirstOrDefault();
+                            var letterBody = letter?.TEMPLATE;
+                            var letterTitle = letter?.TITLE;
+                            letterBody = letterBody.Replace("@{{month}}", DateTime.Now.Month.ToString());
+                            letterBody = letterBody.Replace("@{{year}}", DateTime.Now.Year.ToString());
+                            letterBody = letterBody.Replace("@{{referenceNumber}}", prereqisite?.REFERENCENUMBER);
+                            letterBody = letterBody.Replace("@{{letterDate}}", DateTime.Now.ToString("dd-MM-yyyy"));
+                            letterBody = letterBody.Replace("@{{nameAndAddress}}", valuerDetail?.FIRMNAME + "</br>" + valuerDetail?.ADDRESS);
+                            letterBody = letterBody.Replace("@{{assetType}}", collateralType?.COLLATERALTYPENAME);
+                            letterBody = letterBody.Replace("@{{customerName}}", customer);
+                            letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
+                            letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
+                            letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
+
+                            letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
+                            letterTitle = letterTitle.Replace("@{{valuerName}}", valuerDetail?.FIRMNAME.ToUpper());
+
+                            var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                             alert.receiverEmailList.Add(emailList);
-                            LogEmailAlert(messageBody, alertSubject, alert.receiverEmailList, "98007", 98007, "CollateralValuationNotification");
+                            LogEmailAlert(letterBody, letterTitle, alert.receiverEmailList, "98007", 98007, letter.BINDINGMETHOD);
+                        }
+
+                        if (staffRole.STAFFROLECODE == "VAL CR DOC OFF" && prereqisite.NUMBEROFTIMESAPPROVE > 1 && valuerReport.OMV > 0 && valuerReport.FSV > 0)
+                        {
+                            var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
+                            var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
+
+                            var valuationOfficer = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
+                            var accountOfficer = _context.TBL_STAFF.Find(collateral.CREATEDBY);
+                            var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
+
+                            var rem = _context.TBL_STAFF.Find(accountOfficer.SUPERVISOR_STAFFID);
+                            var customerCollateral = _context.TBL_COLLATERAL_CUSTOMER.Find(collateral.COLLATERALCUSTOMERID);
+                            var collateralType = _context.TBL_COLLATERAL_TYPE.Find(customerCollateral.COLLATERALTYPEID);
+                            var customer = _context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == customerCollateral.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                            var collAddress = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c.PROPERTYADDRESS).FirstOrDefault();
+                            var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME;
+
+                            var tempResult = string.Empty;
+                            var omv = string.Format("{0:#,##.00}", Convert.ToDecimal(valuerReport?.OMV));
+                            var fsv = string.Format("{0:#,##.00}", Convert.ToDecimal(valuerReport?.FSV));
+                            var fee = string.Format("{0:#,##.00}", Convert.ToDecimal(valuerReport?.VALUATIONFEE));
+                            tempResult = $@"
+                             <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                                <tr>
+                                    <td><b>PROPERTY ADDRESS</b></td>
+                                    <td><b>OMV</b></td>
+                                    <td><b>FSV</b></td>
+                                    <td><b>VALUATION FEE TO BE DEBITED(NGN)</b></td>
+                                </tr>
+                             ";
+                            tempResult = tempResult + $@"
+                                <tr>
+                                    <td>{collAddress}</td>
+                                    <td>{$"{omv}"}</td>
+                                    <td>{$"{fsv}"}</td>
+                                    <td>{$"{fee}"}</td>
+                                </tr>
+                                ";
+                    tempResult = tempResult + $"</table><br/>";
+
+                    var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationSecondNotification").Select(x => x).FirstOrDefault();
+                            var letterBody = letter?.TEMPLATE;
+                            var letterTitle = letter?.TITLE;
+                            letterBody = letterBody.Replace("@{{customerName}}", customer);
+                            letterBody = letterBody.Replace("@{{valuationDetail}}", tempResult);
+                            letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
+                            letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
+
+                            var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
+                            alert.receiverEmailList.Add(emailList);
+                            LogEmailAlert(letterBody, letterTitle, alert.receiverEmailList, "98007", 98007, letter.BINDINGMETHOD);
                         }
                     }
                         
@@ -836,7 +990,7 @@ namespace FintrakBanking.Repositories.Credit
                         //{
                         prereqisite.APPROVALSTATUSID = (int) ApprovalStatusEnum.Approved;
                         var valuerReport = _context.TBL_VALUATION_REPORT.Where(o => o.COLLATERALVALUATIONID == prereqisite.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
-
+                        
                         if (valuerReport != null) 
                             valuerReport.APPROVALSTATUSID = (int) ApprovalStatusEnum.Approved;
                         //}
@@ -849,12 +1003,38 @@ namespace FintrakBanking.Repositories.Credit
                         var valuerDetail = _context.TBL_ACCREDITEDCONSULTANT.Find(valuerReport.VALUERID);
 
                         var rem = _context.TBL_STAFF.Find(accountOfficer.SUPERVISOR_STAFFID);
-                        var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME;
-                        var messageBody = "Dear " + staffFullName + "</br> Kindly see the " + collateral?.VALUATIONNAME + " valuation carried out by " + valuer?.ToUpper() + " with fee note " + valuerReport?.VALUATIONFEE + " and valuation detail: " + valuerReport?.VALUERCOMMENT;
-                        var alertSubject = "COLLATERAL VALUATION NOTIFICATION";
-                        var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL;
+                        var customerCollateral = _context.TBL_COLLATERAL_CUSTOMER.Find(collateral.COLLATERALCUSTOMERID);
+                        var collateralType = _context.TBL_COLLATERAL_TYPE.Find(customerCollateral.COLLATERALTYPEID);
+                        var customer = _context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == customerCollateral.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                        var collAddress = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c.PROPERTYADDRESS).FirstOrDefault();
+
+                        var updateValues = _context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(c => c.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).Select(c => c).FirstOrDefault();
+                        updateValues.FORCEDSALEVALUE = valuerReport.FSV;
+                        updateValues.OPENMARKETVALUE = valuerReport.OMV;
+                        updateValues.VALUATIONAMOUNT = valuerReport.FSV;
+                        customerCollateral.COLLATERALVALUE = (decimal)valuerReport.FSV;
+
+                        var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME +" "+ accountOfficer?.PHONE;
+                        var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationNotification").Select(x => x).FirstOrDefault();
+                        var letterBody = letter?.TEMPLATE;
+                        var letterTitle = letter?.TITLE;
+                        letterBody = letterBody.Replace("@{{month}}", DateTime.Now.Month.ToString());
+                        letterBody = letterBody.Replace("@{{year}}", DateTime.Now.Year.ToString());
+                        letterBody = letterBody.Replace("@{{referenceNumber}}", prereqisite?.REFERENCENUMBER);
+                        letterBody = letterBody.Replace("@{{letterDate}}", DateTime.Now.ToString("dd-MM-yyyy"));
+                        letterBody = letterBody.Replace("@{{nameAndAddress}}", valuerDetail?.FIRMNAME + "</br>" + valuerDetail?.ADDRESS);
+                        letterBody = letterBody.Replace("@{{assetType}}", collateralType?.COLLATERALTYPENAME);
+                        letterBody = letterBody.Replace("@{{customerName}}", customer);
+                        letterBody = letterBody.Replace("@{{collateralAddress}}", collAddress);
+                        letterBody = letterBody.Replace("@{{initiator}}", staffFullName);
+                        letterBody = letterBody.Replace("@{{initiatorPhone}}", accountOfficer?.PHONE);
+
+                        letterTitle = letterTitle.Replace("@{{customerName}}", customer.ToUpper());
+                        letterTitle = letterTitle.Replace("@{{initiator}}", staffFullName.ToUpper());
+
+                        var emailList = accountOfficer?.EMAIL + ";" + rem?.EMAIL + ";" + valuerDetail?.EMAILADDRESS + ";" + valuationOfficer?.EMAIL + ";" + letter?.DEFAULTEMAIL;
                         alert.receiverEmailList.Add(emailList);
-                        LogEmailAlert(messageBody, alertSubject, alert.receiverEmailList, "98007", 98007, "CollateralValuationNotification");
+                        LogEmailAlert(letterBody, letterTitle, alert.receiverEmailList, "98007", 98007, letter.BINDINGMETHOD);
                     }
 
                     response = _context.SaveChanges() > 0;
@@ -913,8 +1093,18 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                var title = alertSubject.Trim();
+                if (title.Contains("&"))
+                {
+                    title = title.Replace("&", "AND");
+                }
+                if (title.Contains("."))
+                {
+                    title = title.Replace(".", "");
+                }
+
                 string recipient = string.Join("", recipients.ToArray());
-                string messageSubject = alertSubject + " ALERT";
+                string messageSubject = title;
                 string messageContent = messageBody;
                 //string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
                 //string mailBody = templateUrl.Replace("{Description}", messageContent);  //EmailHelpers.PopulateBody(messageContent, templateUrl); 

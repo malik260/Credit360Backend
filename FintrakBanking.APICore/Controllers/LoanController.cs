@@ -1679,7 +1679,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("bulk-loan-recovery-assignment/{accreditedConsultant}/{expCompletionDate}/{source}/{assignmentType}")]
-        public HttpResponseMessage saveBulkLoanAssignmentToAgent(int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, [FromBody] List<LoanRecoveryAssignmentViewModel> models)
+        public HttpResponseMessage saveBulkLoanAssignmentToAgent(int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, [FromBody] List<GlobalExposureApplicationViewModel> models)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1703,7 +1703,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("bulk-loan-recovery-assignment-rem/{accreditedConsultant}/{expCompletionDate}/{source}/{assignmentType}")]
-        public HttpResponseMessage saveBulkLoanAssignmentToAgentRem(int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, [FromBody] List<LoanRecoveryAssignmentViewModel> models)
+        public HttpResponseMessage saveBulkLoanAssignmentToAgentRem(int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, [FromBody] List<GlobalExposureApplicationViewModel> models)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1727,7 +1727,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("bulk-loan-recovery-re-assignment")]
-        public HttpResponseMessage saveBulkLoanReAssignmentToAgent([FromBody] LoanRecoveryAssignmentViewModel model)
+        public HttpResponseMessage saveBulkLoanReAssignmentToAgent([FromBody] GlobalExposureApplicationViewModel model)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1781,22 +1781,45 @@ namespace FintrakBanking.APICore.Controllers
             user.companyId = token.GetCompanyId;
             user.createdBy = token.GetStaffId;
 
-            bool data = repo.saveBulkLoanUnAssignmentToAgent(model, user);
+            WorkflowResponse data = repo.saveBulkLoanUnAssignmentToAgent(model, user);
 
-            if (data)
+            if (data != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Un-Assignment successfully" });
+                    new { success = true, message = data.responseMessage });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
-                new { success = false, message = "saving loan recovery re-assignment unsuccessfully" });
+                new { success = false, message = "saving loan recovery unassignment unsuccessfully" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-retail-loan-recovery-un-assignment")]
+        public HttpResponseMessage saveRetailBulkLoanUnAssignmentToAgent([FromBody] LoanRecoveryAssignmentViewModel model)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.saveRetailBulkLoanUnAssignmentToAgent(model, user);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery unassignment unsuccessfully" });
         }
 
         [HttpPost]
         [ClaimsAuthorization]
         [Route("multiple-loan-recovery-re-assignment/{expCompletionDate}/{accreditedConsultant}/{source}")]
-        public HttpResponseMessage saveMultipleLoanReAssignmentToAgent(DateTime expCompletionDate, int accreditedConsultant, string source,  [FromBody] List<LoanRecoveryAssignmentViewModel> model)
+        public HttpResponseMessage saveMultipleLoanReAssignmentToAgent(DateTime expCompletionDate, int accreditedConsultant, string source,  [FromBody] List<GlobalExposureApplicationViewModel> model)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1816,11 +1839,10 @@ namespace FintrakBanking.APICore.Controllers
                 new { success = false, message = "saving loan recovery re-assignment unsuccessfully" });
         }
 
-
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("multiple-loan-recovery-un-assignment")]
-        public HttpResponseMessage saveMultipleLoanUnAssignmentToAgent([FromBody] List<LoanRecoveryAssignmentViewModel> model)
+        [Route("multiple-retail-loan-recovery-re-assignment/{expCompletionDate}/{accreditedConsultant}/{source}")]
+        public HttpResponseMessage saveMultipleRetailLoanReAssignmentToAgent(DateTime expCompletionDate, int accreditedConsultant, string source, [FromBody] List<GlobalExposureApplicationViewModel> model)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -1828,22 +1850,69 @@ namespace FintrakBanking.APICore.Controllers
             user.companyId = token.GetCompanyId;
             user.createdBy = token.GetStaffId;
 
-            bool data = repo.saveMultipleLoanUnAssignmentToAgent(model, user);
+            WorkflowResponse data = repo.saveMultipleRetailLoanReAssignmentToAgent(model, user, expCompletionDate, accreditedConsultant, source);
 
-            if (data)
+            if (data != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Un-Assignment successfully" });
+                    new { success = true, data = data, message = data.responseMessage });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
                 new { success = false, message = "saving loan recovery re-assignment unsuccessfully" });
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("multiple-loan-recovery-un-assignment")]
+        public HttpResponseMessage saveMultipleLoanUnAssignmentToAgent([FromBody] List<GlobalExposureApplicationViewModel> model)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.saveMultipleLoanUnAssignmentToAgent(model, user);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery unassignment unsuccessfully" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("multiple-retail-loan-recovery-un-assignment")]
+        public HttpResponseMessage saveMultipleRetailLoanUnAssignmentToAgent([FromBody] List<GlobalExposureApplicationViewModel> model)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.saveMultipleRetailLoanUnAssignmentToAgent(model, user);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery unassignment unsuccessfully" });
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("bulk-loan-recovery-assignment-initiate-approval")]
-        public HttpResponseMessage bulkLoanAssignmentToAgentGoForApproval([FromBody] LoanRecoveryAssignmentViewModel models)
+        public HttpResponseMessage bulkLoanAssignmentToAgentGoForApproval([FromBody] GlobalExposureApplicationViewModel models)
         {
             UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
@@ -2063,22 +2132,26 @@ namespace FintrakBanking.APICore.Controllers
         [Route("bulk-loan-recovery-reporting-initiate-approval")]
         public HttpResponseMessage bulkLoanRecoveryReportingGoForApproval([FromBody] LoanRecoveryReportApprovalViewModel models)
         {
-            UserInfo user = new UserInfo();
-            user.staffId = token.GetStaffId;
-            user.BranchId = (short)token.GetBranchId;
-            user.companyId = token.GetCompanyId;
-            user.createdBy = token.GetStaffId;
-
-            WorkflowResponse data = repo.bulkLoanRecoveryReportingGoForApproval(models, user);
-
-            if (data != null)
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = data.responseMessage });
-            }
-            return Request.CreateResponse(HttpStatusCode.OK,
+                UserInfo user = new UserInfo();
+                user.staffId = token.GetStaffId;
+                user.BranchId = (short)token.GetBranchId;
+                user.companyId = token.GetCompanyId;
+                user.createdBy = token.GetStaffId;
 
-                new { success = false, message = "Error occur forwarding for approval" });
+                WorkflowResponse data = repo.bulkLoanRecoveryReportingGoForApproval(models, user);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, data = data, message = data.responseMessage });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error occur forwarding for approval" });
+            }catch(Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
         }
 
         [HttpPost]

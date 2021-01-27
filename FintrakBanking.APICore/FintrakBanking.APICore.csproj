@@ -38,6 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <FilesToIncludeForPublish>AllFilesInTheProject</FilesToIncludeForPublish>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,6 +48,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <ExcludeGeneratedDebugSymbol>false</ExcludeGeneratedDebugSymbol>
+    <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -510,6 +513,11 @@
       <DependentUpon>DRAWDOWN.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\FORM3800B.Designer.cs" />
+    <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\MiddleOffice.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1700,8 +1708,6 @@
     <Content Include="Reports\Credit\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
-    <None Include="Properties\PublishProfiles\BackPUB.pubxml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
@@ -1766,6 +1772,17 @@
     </Content>
     <Content Include="Reports\ReportDataset\MiddleOffice.xsc">
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\LoanDataSet.xsc">
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\LoanDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>LoanDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\LoanDataSet.xss">
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\MiddleOffice.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -2078,6 +2095,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
     <Folder Include="CFLAuthentication\App_Data\" />
+    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\Testing\" />
   </ItemGroup>
   <ItemGroup>
@@ -2127,9 +2145,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>39913</DevelopmentServerPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:51336/</IISUrl>
+          <IISUrl>http://localhost:50607/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

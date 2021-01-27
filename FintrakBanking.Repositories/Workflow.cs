@@ -177,7 +177,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             lastOpenRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
-            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && this.statusId != (int)ApprovalStatusEnum.Reroute && lastOpenRequest != null) //if it is not initiation
+            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && this.statusId != (int)ApprovalStatusEnum.Reroute && lastOpenRequest != null) //if it is not initiation or referred
             {
                 throw new SecureException("An error occured, Next Level can't be preset unless on refer back or re-routing. Kindly refresh your browser and try again.");
             }
@@ -279,6 +279,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     this.statusId = (int)ApprovalStatusEnum.Finishing;
                 }
+            }
+
+            if (this.vote == null)
+            {
+                ValidateVote();
             }
 
 
@@ -636,6 +641,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.useOrganogram = level.RouteViaStaffOrganogram;
                 }*/
 
+        private bool RequestIsLoopedStaffReturn()
+        {
+            if(lastOpenRequest.FROMAPPROVALLEVELID == lastOpenRequest.TOAPPROVALLEVELID && lastOpenRequest.LOOPEDSTAFFID > 0 && this.StatusId != (int)ApprovalStatusEnum.Referred)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private int? ResolveReroute(int? toStaffId)
         {
             if (toStaffId == this.toStaffId) throw new SecureException("Already with staff!");
@@ -902,6 +916,30 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void FurtherValidations()
         {
             ValidateAgainstAlreadyClosedProcess();
+        }
+
+        private void ValidateVote()
+        {
+            if (this.statusId == (int)ApprovalStatusEnum.Referred)
+            {
+                this.vote = (int)ApprovalStatusEnum.Referred;
+            }
+            else if (this.statusId == (int)ApprovalStatusEnum.Disapproved)
+            {
+                this.vote = (int)ApprovalStatusEnum.Disapproved;
+            }
+            if (this.statusId == (int)ApprovalStatusEnum.Reroute)
+            {
+                this.vote = (int)ApprovalStatusEnum.Reroute;
+            }
+            if (this.statusId == (int)ApprovalStatusEnum.Escalated)
+            {
+                this.vote = (int)ApprovalStatusEnum.Escalated;
+            }
+            else
+            {
+                this.vote = (int)ApprovalStatusEnum.Approved;
+            }
         }
 
         private void ValidateAgainstReinitiationOfClosedProcess()//might be redundant soon
@@ -1238,7 +1276,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void EndProcess(int status)
         {   
-            if(lastOpenRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastOpenRequest.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
+            if(lastOpenRequest?.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastOpenRequest?.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
             if (this.statusId != (int)ApprovalStatusEnum.Disapproved && ContainsPostReviewerAsFromApprovalLevel(this.referredLog))
             {//to prevent duplicate ending of a workflow again when postReviewer refers back
                 return;
@@ -1802,12 +1840,36 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.WITHINSTRUCTION && !levelBusinessRule.WithInstruction) flagChecked = true;
             if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
             if (rule.ESRM && levelBusinessRule.esrm) flagChecked = true;
-            //if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = true;
+            if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = true;
             //if (rule.ISFORREVOLVINGFACILITY && levelBusinessRule.isRevolvingFacility) flagChecked = true;
-            //if (rule.ISFORRENEWAL && levelBusinessRule.isRenewal) flagChecked = true;
+            if (rule.ISFORRENEWAL)
+            {
+                if (levelBusinessRule.isRenewal)
+                {
+                    flagChecked = true;
+                }
+                else if (!levelBusinessRule.isRenewal)
+                {// very necessary only renewals should pass through if isForRenewals is selected
+                    flagChecked = false;
+                    limitChecked = false;
+                }
+            }
+            
+            if (rule.EXEMPTRENEWAL)
+            {
+                if (!levelBusinessRule.isRenewal)
+                {
+                    flagChecked = true;
+                }
+                else if (levelBusinessRule.isRenewal)
+                {// very necessary only non-renewals should pass through if exemptRenewals is selected
+                    flagChecked = false;
+                    limitChecked = false;
+                }
+            }
             //if (rule.EXEMPTREVOLVINGFACILITY && !levelBusinessRule.isRevolvingFacility) flagChecked = true;
-            //if (rule.EXEMPTRENEWAL && !levelBusinessRule.isRenewal) flagChecked = true;
-            if(rule.EXCLUDELEVEL && !levelBusinessRule.excludeLevel) flagChecked = true;
+            if (rule.EXCLUDELEVEL && !levelBusinessRule.excludeLevel) flagChecked = true;
+            if (rule.ISAGRICRELATED && levelBusinessRule.isAgricRelated) flagChecked = true;
             if (rule.EXEMPTCONTINGENTFACILITY)
             {
                 if (levelBusinessRule.isContingentFacility)//if contingent, all other rules are overidden

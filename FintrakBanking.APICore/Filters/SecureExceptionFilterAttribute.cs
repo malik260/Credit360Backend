@@ -101,7 +101,7 @@ namespace FintrakBanking.APICore.Filters
                 context.TBL_MESSAGE_LOG.Add(message);
 
                 context.SaveChanges();
-            //    trans.Commit();
+            //  trans.Commit();
             //}
         }
 

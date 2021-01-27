@@ -351,13 +351,20 @@ public class LienProcessViewModel //: GeneralEntity
     {
         public string channel_code { get; set; }
         public string auth_key { get; set; }
-        public DateTime review_date { get; set; }
+        public string review_date { get; set; }
         public string user_ref_no { get; set; }
         public string account_no { get; set; }
     }
 
     public class SubResponseLoanPrepaymentViewModel
     {
+        public decimal creditTurnover { get; set; }
+        public decimal debitTurnover { get; set; }
+        public DateTime transactionDate { get; set; }
+
+        public decimal account_balance { get; set; }
+
+        public string user_ref_no { get; set; }
         public string account_number { get; set; }
         public string customer_acct { get; set; }
         public DateTime due_date { get; set; }

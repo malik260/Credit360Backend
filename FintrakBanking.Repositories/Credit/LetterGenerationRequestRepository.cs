@@ -260,6 +260,7 @@ namespace FintrakBanking.Repositories.Credit
                              applicationStatusId = l.APPLICATIONSTATUSID,
                              createdBy = (int)l.CREATEDBY,
                              operationId = operationId,
+                             systemArrivalDateTime = b.SYSTEMARRIVALDATETIME,
                              dateTimeCreated = (DateTime)l.DATEACTEDON,
                              customerCode = l.TBL_CUSTOMER.CUSTOMERCODE,
                              requestRef = l.REQUESTREF,
@@ -343,102 +344,108 @@ namespace FintrakBanking.Repositories.Credit
 
         public LetterGenerationRequestViewModel AddLetterGenerationRequest(LetterGenerationRequestViewModel model)
         {
-            //var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
-            String referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
-            var entity = new TBL_LETTER_GENERATION_REQUEST
+            using (var trans = context.Database.BeginTransaction())
             {
-                CUSTOMERID = model.customerId,
-                REQUESTDATE = model.requestDate,
-                REQUESTTYPE = model.requestType,
-                ASATDATE = model.asAtDate,
-                COMMENTS = model.comment,
-                REQUESTREF = referenceNumber,
-                LOANBALANCE = model.loanBalance,
-                // COMPANYID = model.companyId,
-                CREATEDBY = model.createdBy,
-                DATETIMECREATED = DateTime.Now,
-            };
-
-            context.TBL_LETTER_GENERATION_REQUEST.Add(entity);
-            
-            
-
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            var aud = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LetterGenerationRequestAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"TBL_LETTER_GENERATION_REQUEST '{entity.ToString()}' created by {auditStaff}",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName()
-            };
-            context.TBL_AUDIT.Add(aud);
-            // Audit Section end ------------------------
-
-            context.SaveChanges();
-            var req = context.TBL_LETTER_GENERATION_REQUEST.Where(r => r.REQUESTREF == referenceNumber).FirstOrDefault();
-            model.requestId = req.LETTERGENERATIONREQUESTID;
-            var sig = new List<TBL_OPERATION_SIGNATORY>();
-            var cam = new List<TBL_OPERATION_CAMSOL_LIST>();
-            if (model.letterGenerationsignatories.Count() > 0)
-            {
-                int n = 0;
-                foreach (var s in model.letterGenerationsignatories)
+                //var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+                String referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+                var entity = new TBL_LETTER_GENERATION_REQUEST
                 {
-                    n++;
-                    sig.Add(new TBL_OPERATION_SIGNATORY
-                    {
-                        TARGETID = model.requestId,
-                        SIGNATORYID = s.signatoryId,
-                        OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
-                        POSITION = n,
-                        DATETIMECREATED = general.GetApplicationDate(),
-                        CREATEDBY = model.createdBy,
-                    });
-                }
-                context.TBL_OPERATION_SIGNATORY.AddRange(sig);
-            }
+                    CUSTOMERID = model.customerId,
+                    REQUESTDATE = model.requestDate,
+                    REQUESTTYPE = model.requestType,
+                    ASATDATE = model.asAtDate,
+                    COMMENTS = model.comment,
+                    REQUESTREF = referenceNumber,
+                    LOANBALANCE = model.loanBalance,
+                    // COMPANYID = model.companyId,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                };
 
-            if (model.letterGenerationCamsolList.Count() > 0)
-            {
-                int n = 0;
-                foreach (var c in model.letterGenerationCamsolList)
+                context.TBL_LETTER_GENERATION_REQUEST.Add(entity);
+
+
+
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+                // Audit Section ---------------------------
+                var aud = new TBL_AUDIT
                 {
-                    n++;
-                    cam.Add(new TBL_OPERATION_CAMSOL_LIST
-                    {
-                        TARGETID = model.requestId,
-                        LOAN_CAMSOLID = c.camsolId,
-                        OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
-                        POSITION = n,
-                        DATETIMECREATED = general.GetApplicationDate(),
-                        CREATEDBY = model.createdBy,
-                    });
-                }
-                context.TBL_OPERATION_CAMSOL_LIST.AddRange(cam);
-            }
+                    AUDITTYPEID = (short)AuditTypeEnum.LetterGenerationRequestAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"TBL_LETTER_GENERATION_REQUEST '{entity.ToString()}' created by {auditStaff}",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+                context.TBL_AUDIT.Add(aud);
+                // Audit Section end ------------------------
 
-            referenceNumber = GenerateLetterGenRef(model.createdBy, sig, req);
-            req.REQUESTREF = referenceNumber;
-            model.requestRef = referenceNumber;
-            context.SaveChanges();
-            return model;
+                context.SaveChanges();
+                var req = context.TBL_LETTER_GENERATION_REQUEST.Where(r => r.REQUESTREF == referenceNumber).FirstOrDefault();
+                model.requestId = req.LETTERGENERATIONREQUESTID;
+                var sig = new List<TBL_OPERATION_SIGNATORY>();
+                var cam = new List<TBL_OPERATION_CAMSOL_LIST>();
+                if (model.letterGenerationsignatories.Count() > 0)
+                {
+                    int n = 0;
+                    foreach (var s in model.letterGenerationsignatories)
+                    {
+                        n++;
+                        sig.Add(new TBL_OPERATION_SIGNATORY
+                        {
+                            TARGETID = model.requestId,
+                            SIGNATORYID = s.signatoryId,
+                            OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
+                            POSITION = n,
+                            DATETIMECREATED = general.GetApplicationDate(),
+                            CREATEDBY = model.createdBy,
+                        });
+                    }
+                    context.TBL_OPERATION_SIGNATORY.AddRange(sig);
+                }
+
+                if (model.letterGenerationCamsolList.Count() > 0)
+                {
+                    int n = 0;
+                    foreach (var c in model.letterGenerationCamsolList)
+                    {
+                        n++;
+                        cam.Add(new TBL_OPERATION_CAMSOL_LIST
+                        {
+                            TARGETID = model.requestId,
+                            LOAN_CAMSOLID = c.camsolId,
+                            OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
+                            POSITION = n,
+                            DATETIMECREATED = general.GetApplicationDate(),
+                            CREATEDBY = model.createdBy,
+                        });
+                    }
+                    context.TBL_OPERATION_CAMSOL_LIST.AddRange(cam);
+                }
+
+                referenceNumber = GenerateLetterGenRef(model.createdBy, sig, req);
+                req.REQUESTREF = referenceNumber;
+                model.requestRef = referenceNumber;
+                context.SaveChanges();
+                trans.Commit();
+                return model;
+            }
         }
+            
+            
 
         public string GenerateLetterGenRef(int requestId, List<TBL_OPERATION_SIGNATORY> signatories, TBL_LETTER_GENERATION_REQUEST request)
         {
             var reference = String.Empty;
-            reference = $@"ABP/{context.TBL_STAFF.Find(requestId).TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITINITIALS}";
+            reference = $@"ABP/{context.TBL_STAFF.Find(requestId)?.TBL_PROFILE_BUSINESS_UNIT?.BUSINESSUNITINITIALS}";
             var sigs = signatories.OrderBy(s => s.POSITION);
             foreach(var s in sigs)
             {
-                reference += $@"/{context.TBL_AUTHORISED_SIGNATORY.Find(s.SIGNATORYID).SIGNATORYINITIALS}";
+                reference += $@"/{context.TBL_AUTHORISED_SIGNATORY.Find(s.SIGNATORYID)?.SIGNATORYINITIALS}";
             }
             var date = DateTime.Now;
             //var format = date.ToString("MM/dd/yy");

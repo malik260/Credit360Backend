@@ -76,6 +76,26 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
+        [HttpGet, Route("review-application/id/{lmsApplicationId}")]
+        public HttpResponseMessage GetApplications(int lmsApplicationId)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+
+
+            List<applicationDetails> data;
+            data = repo.GetApplicationsById(user, lmsApplicationId);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+
+        }
+
         [HttpGet, Route("review-availment/crms")]
         public HttpResponseMessage GetLoanReviewForCRMS(
          [FromUri] int page,
@@ -349,14 +369,26 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-review-application/forward-application")]
         public HttpResponseMessage ForwardApplication([FromBody] ForwardReviewViewModel model)
         {
-            model.userBranchId = (short)token.GetBranchId;
-            model.companyId = token.GetCompanyId;
-            model.lastUpdatedBy = token.GetStaffId;
-            model.createdBy = token.GetStaffId;
-            model.applicationUrl = HttpContext.Current.Request.Path;
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.lastUpdatedBy = token.GetStaffId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
 
-            WorkflowResponse response = repo.ForwardApplication(model);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                WorkflowResponse response = repo.ForwardApplication(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+           
+            catch(SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
         }
 
         
@@ -434,6 +466,42 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.Search(model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("exceptional-loan-application-detail-search")]
+        public HttpResponseMessage ExceptionalLoanApplicationSearch([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.ExceptionalSearch(model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-review-contingent-application-detail-search")]
+        public HttpResponseMessage LoanReviewContingentApplicationSearch([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.ContingentSearch(model.searchString);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
             }

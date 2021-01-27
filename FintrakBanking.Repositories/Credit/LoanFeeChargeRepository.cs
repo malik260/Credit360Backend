@@ -164,6 +164,8 @@ namespace FintrakBanking.Repositories.Credit
 
                             select new LoanReviewOperationApprovalViewModel
                             {
+                                divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                                divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cu.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                 chargeFeeName = context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == op.CHARGEFEEID).Select(a => a.CHARGEFEENAME).FirstOrDefault(),
                                 description = op.DESCRIPTION,
                                 chargeFeeId = op.CHARGEFEEID,

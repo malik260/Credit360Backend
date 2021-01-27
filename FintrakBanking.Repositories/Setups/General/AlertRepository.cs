@@ -9,15 +9,22 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Notification;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
+using ThirdPartyIntegration;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -28,6 +35,10 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
+
+        string API_KEY, API_URL = string.Empty;
+        private IEnumerable<TBL_API_URL> APIUrlConfig;
+
         //private ILoanArchiveRepository loanArchive;
         private string maxUsers = ConfigurationManager.AppSettings["muTrace"];
         
@@ -61,10 +72,11 @@ namespace FintrakBanking.Repositories.Setups.General
         private string ninetyToNinetyFive = "AMBER: 90% - 95%";
         private string ninetyFiveAbove = "RED: 95%";
 
-
+        //, ILoanPrepayment prepayment
 
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
                                 FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository
+                                
                                 )
         {
             this.context = _context;
@@ -72,6 +84,10 @@ namespace FintrakBanking.Repositories.Setups.General
             this.audit = _audit;
             this.general = _general;
             this.externalAlertRepository = _externalAlertRepository;
+            var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
+            APIUrlConfig = context.TBL_API_URL;
+            API_KEY = "FTK05202023"; //configdata.APIKEY;
+            API_URL = configdata.APIURL;
             //this.loanArchive = _loanArchive;
             //ILoanArchiveRepository _loanArchive
         }
@@ -888,8 +904,18 @@ namespace FintrakBanking.Repositories.Setups.General
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
 
-            int users = Convert.ToInt32(maxUsers);
-            externalAlertRepository.ValidateProfiledUsers(users);
+             // int users = Convert.ToInt32(maxUsers);
+            //externalAlertRepository.ValidateProfiledUsers(users);
+            
+            TimeSpan startRepay = new TimeSpan(7, 0, 0);
+            TimeSpan endRepay = new TimeSpan(23, 30, 0);
+            
+            if ((now >= startRepay) && (now <= endRepay))
+            {
+                GetLoanRepaymentToStaging();
+                GetOverdraftRepaymentToStaging();
+                postPaymentEntries();
+            }
 
 
             if (CompareDate() == true)
@@ -935,7 +961,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (CompareDigitalLoanDate() == true)
             {
                 TimeSpan start11 = new TimeSpan(11, 0, 0);
-                TimeSpan end13 = new TimeSpan(11, 30, 0);
+                TimeSpan end13 = new TimeSpan(20, 30, 0);
 
                 if ((now >= start11) && (now <= end13))
                 {
@@ -3558,7 +3584,16 @@ namespace FintrakBanking.Repositories.Setups.General
            
                 foreach (var alert in alerts)
                 {
-                    if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList, "100442", 0,alert.operationMethod);
+                   var title = alert.alertTitle.Trim();
+                   if (title.Contains("&"))
+                   {
+                    title = title.Replace("&", "AND");
+                   }
+                   if (title.Contains("."))
+                   {
+                        title = title.Replace(".", "");
+                   }
+                if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList, "100442", 0,alert.operationMethod);
                 }
             
         }
@@ -3677,8 +3712,17 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             try
             {
+                var title = alertSubject.Trim();
+                if (title.Contains("&"))
+                {
+                    title = title.Replace("&", "AND");
+                }
+                if (title.Contains("."))
+                {
+                    title = title.Replace(".", "");
+                }
                 string recipient = string.Join("", recipients.ToArray());
-                string messageSubject = alertSubject +" ALERT";
+                string messageSubject = title;
                 string messageContent = messageBody;
                 //string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
                 //string mailBody = templateUrl.Replace("{Description}", messageContent);  //EmailHelpers.PopulateBody(messageContent, templateUrl); 
@@ -3901,7 +3945,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue) || (exceptionNPL.NPL >= (decimal)twoPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -3960,7 +4005,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue) || (exceptionNPL.NPL <= -(decimal)twoPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4020,7 +4066,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue) 
                        || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4079,7 +4126,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT <= -(decimal)tenPercentValue && exceptionNPL.DISBURSEMENT > -(decimal)fifteenPercentValue)
                        || (exceptionNPL.DISBURSEMENT <= -(decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        // var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4138,7 +4186,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue)
                        || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4197,7 +4246,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.NPL <= -(decimal)tenPercentValue && exceptionNPL.NPL > -(decimal)fifteenPercentValue)
                        || (exceptionNPL.NPL <= -(decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4257,7 +4307,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4316,7 +4367,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4375,7 +4427,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4434,7 +4487,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4493,7 +4547,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
                        || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4552,7 +4607,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
                        || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                       // var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -5144,6 +5200,599 @@ namespace FintrakBanking.Repositories.Setups.General
                     SendAlertNotification(alerts);
                 }
             }
+        }
+
+
+        //prepayment operation
+        private void getAPIURLSettings(string typeName = null)
+        {
+            var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
+            if (apiConfig != null)
+            {
+                API_URL = apiConfig.URL.Trim();
+                API_KEY = apiConfig.APIKEY;
+            }
+            if (apiConfig == null)
+            {
+                apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
+                API_URL = apiConfig.URL.Trim();
+                API_KEY = apiConfig.APIKEY;
+            }
+        }
+
+        public async Task<MainResponseLoanPrepaymentViewModel> GetTodayRepaymentLoans(LoanPrepaymentViewModel model)
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClientInstance;
+
+            HttpClient client = new HttpClient(handler);
+            var inputJson = new JavaScriptSerializer().Serialize(model);
+            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+            HttpResponseMessage response = null;
+
+            MainResponseLoanPrepaymentViewModel responseApi = new MainResponseLoanPrepaymentViewModel();
+            ResponseMessage responseMsg = null;
+            string responseJson = "";
+
+            getAPIURLSettings("LoanPrepayment");
+            string apiUrl = "GetTodayRepaymentLoans";
+
+            try
+            {
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                var dta = context.TBL_SETUP_GLOBAL.ToList();
+                handler.UseDefaultCredentials = true;
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(180);
+                client.DefaultRequestHeaders.Authorization = token;
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync(apiUrl, new StringContent(
+                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                responseDateTime = DateTime.Now;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseApi = await response.Content.ReadAsAsync<MainResponseLoanPrepaymentViewModel>();
+
+                    var res = new ResponseMessageViewModel
+                    {
+                        responseCode = responseApi.response_code,
+                        responseStatus = responseApi.response_message == "Successful" ? true : false,
+                    };
+
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = res,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+                else
+                {
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = null,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+
+                responseJson = await response.Content.ReadAsStringAsync();
+                responseMsg.responseMessage = responseJson;
+                return responseApi;
+            }
+            catch (Exception ex)
+            {
+                var innerExceptionMessage = "";
+                if (ex.InnerException != null)
+                    innerExceptionMessage = ex.InnerException.Message;
+
+                throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+            }
+
+            finally
+            {
+                handler.Dispose();
+                client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = API_URL + apiUrl,
+                    LOGTYPEID = 5,
+                    REFERENCENUMBER = model.user_ref_no,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = inputJson,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseJson,
+                };
+
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                logContext.SaveChanges();
+            }
+
+        }
+
+        public async Task<MainResponseLoanPrepaymentViewModel> GetTodayLoanRepaymentByRefNo(LoanPrepaymentViewModel model)
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClientInstance;
+
+            HttpClient client = new HttpClient(handler);
+            var inputJson = new JavaScriptSerializer().Serialize(model);
+            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+            HttpResponseMessage response = null;
+
+            MainResponseLoanPrepaymentViewModel responseApi = new MainResponseLoanPrepaymentViewModel();
+            ResponseMessage responseMsg = null;
+            string responseJson = "";
+
+            getAPIURLSettings("LoanPrepayment");
+            string apiUrl = "GetTodayLoanRepaymentByRefNo";
+
+            try
+            {
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                var dta = context.TBL_SETUP_GLOBAL.ToList();
+                handler.UseDefaultCredentials = true;
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(180);
+                client.DefaultRequestHeaders.Authorization = token;
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync(apiUrl, new StringContent(
+                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                responseDateTime = DateTime.Now;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseApi = await response.Content.ReadAsAsync<MainResponseLoanPrepaymentViewModel>();
+
+                    var res = new ResponseMessageViewModel
+                    {
+                        responseCode = responseApi.response_code,
+                        responseStatus = responseApi.response_message == "Successful" ? true : false,
+                    };
+
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = res,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+                else
+                {
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = null,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+
+                responseJson = await response.Content.ReadAsStringAsync();
+                responseMsg.responseMessage = responseJson;
+                return responseApi;
+            }
+            catch (Exception ex)
+            {
+                var innerExceptionMessage = "";
+                if (ex.InnerException != null)
+                    innerExceptionMessage = ex.InnerException.Message;
+
+                throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+            }
+
+            finally
+            {
+                handler.Dispose();
+                client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = API_URL + apiUrl,
+                    LOGTYPEID = 5,
+                    REFERENCENUMBER = model.user_ref_no,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = inputJson,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseJson,
+                };
+
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                logContext.SaveChanges();
+            }
+
+        }
+
+        public async Task<MainResponseLoanPrepaymentViewModel> GetTodayLoanSumRepaymentByRefNo(LoanPrepaymentViewModel model)
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClientInstance;
+
+            HttpClient client = new HttpClient(handler);
+            var inputJson = new JavaScriptSerializer().Serialize(model);
+            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+            HttpResponseMessage response = null;
+
+            MainResponseLoanPrepaymentViewModel responseApi = new MainResponseLoanPrepaymentViewModel();
+            ResponseMessage responseMsg = null;
+            string responseJson = "";
+
+            getAPIURLSettings("LoanPrepayment");
+            string apiUrl = "GetTodayLoanSumRepaymentByRefNo";
+
+            try
+            {
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                var dta = context.TBL_SETUP_GLOBAL.ToList();
+                handler.UseDefaultCredentials = true;
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(180);
+                client.DefaultRequestHeaders.Authorization = token;
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync(apiUrl, new StringContent(
+                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                responseDateTime = DateTime.Now;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseApi = await response.Content.ReadAsAsync<MainResponseLoanPrepaymentViewModel>();
+
+                    var res = new ResponseMessageViewModel
+                    {
+                        responseCode = responseApi.response_code,
+                        responseStatus = responseApi.response_message == "Successful" ? true : false,
+                    };
+
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = res,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+                else
+                {
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = null,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+
+                responseJson = await response.Content.ReadAsStringAsync();
+                responseMsg.responseMessage = responseJson;
+                return responseApi;
+            }
+            catch (Exception ex)
+            {
+                var innerExceptionMessage = "";
+                if (ex.InnerException != null)
+                    innerExceptionMessage = ex.InnerException.Message;
+
+                throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+            }
+
+            finally
+            {
+                handler.Dispose();
+                client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = API_URL + apiUrl,
+                    LOGTYPEID = 5,
+                    REFERENCENUMBER = model.user_ref_no,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = inputJson,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseJson,
+                };
+
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                logContext.SaveChanges();
+            }
+
+        }
+
+        public async Task<ResponseLoanPrepaymentViewModel> GetOverdraftRepayment(LoanPrepaymentViewModel model)
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClientInstance;
+
+            HttpClient client = new HttpClient(handler);
+            var inputJson = new JavaScriptSerializer().Serialize(model);
+            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+            HttpResponseMessage response = null;
+
+            ResponseLoanPrepaymentViewModel responseApi = new ResponseLoanPrepaymentViewModel();
+            ResponseMessage responseMsg = null;
+            string responseJson = "";
+
+            getAPIURLSettings("LoanPrepayment");
+            string apiUrl = "GetOverdraftRepayment";
+
+            try
+            {
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                var dta = context.TBL_SETUP_GLOBAL.ToList();
+                handler.UseDefaultCredentials = true;
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(180);
+                client.DefaultRequestHeaders.Authorization = token;
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                requestDatetime = DateTime.Now;
+                response = client.PostAsync(apiUrl, new StringContent(
+                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                responseDateTime = DateTime.Now;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseApi = await response.Content.ReadAsAsync<ResponseLoanPrepaymentViewModel>();
+
+                    var res = new ResponseMessageViewModel
+                    {
+                        responseCode = responseApi.response_code,
+                        responseStatus = responseApi.response_message == "Successful" ? true : false,
+                    };
+
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = res,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+                else
+                {
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = null,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+
+                responseJson = await response.Content.ReadAsStringAsync();
+                responseMsg.responseMessage = responseJson;
+                return responseApi;
+            }
+            catch (Exception ex)
+            {
+                var innerExceptionMessage = "";
+                if (ex.InnerException != null)
+                    innerExceptionMessage = ex.InnerException.Message;
+
+                throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+            }
+
+            finally
+            {
+                handler.Dispose();
+                client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = API_URL + apiUrl,
+                    LOGTYPEID = 5,
+                    REFERENCENUMBER = model.user_ref_no,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = inputJson,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseJson,
+                };
+
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                logContext.SaveChanges();
+            }
+
+        }
+
+
+        public bool GetLoanRepaymentToStaging()
+        {
+            try
+            {
+                MainResponseLoanPrepaymentViewModel response = new MainResponseLoanPrepaymentViewModel();
+                LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
+                model.auth_key = API_KEY;
+                model.channel_code = "FINTRAK";
+               // model.review_date = DateTime.Now.Date.ToString();
+                model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy");
+
+                Task.Run(async () => response = await GetTodayRepaymentLoans(model)).GetAwaiter().GetResult();
+                if (response.response_code == "00")
+                {
+                    var existingRecords = context2.STG_CONTRACT_DAILY_REPAY.Where(x => x.AMOUNTPAID > 0 && DbFunctions.TruncateTime(x.PAYMENTDATE) == DbFunctions.TruncateTime(DateTime.Now)).Select(x => x.CONTRACTREFERENCENUMBER).ToList();
+                    var repaymentDataReceived = response.getrepaymentdetailsresp.Where(x=> !existingRecords.Contains(x.account_number)).ToList();
+                    //var repaymentDataReceived = response.getrepaymentdetailsresp.ToList();
+
+                    var stagingdata = new List<STG_CONTRACT_DAILY_REPAY>();
+                    foreach (var itemReceived in repaymentDataReceived)
+                    {
+                        var data = new STG_CONTRACT_DAILY_REPAY
+                        {
+                            CONTRACTREFERENCENUMBER = itemReceived.account_number,
+                            LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,
+                            CUSTOMERACCOUNTNUMBER = itemReceived.customer_acct,
+                            BRANCHCODE = itemReceived.branch_code,
+                            PAYMENTDESCRIPTION = itemReceived.component_name,
+                            DUEDATE = itemReceived.due_date,
+                            PAYMENTDATE = itemReceived.paid_date,
+                            AMOUNTPAID = itemReceived.amount_paid,
+                            STATUS = false
+                        };
+                        stagingdata.Add(data);
+                    }
+                    context2.STG_CONTRACT_DAILY_REPAY.AddRange(stagingdata);
+
+                    var saved = context2.SaveChanges() > 0;
+                    if (saved)
+                    {
+                        return true;
+                    }
+
+                };
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public bool GetOverdraftRepaymentToStaging()
+        {
+            try
+            {
+                ResponseLoanPrepaymentViewModel response = new ResponseLoanPrepaymentViewModel();
+                LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
+                model.auth_key = API_KEY;
+                model.channel_code = "FINTRAK";
+               /// model.review_date = DateTime.Now.Date.ToString();
+                model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy");
+
+                var loans = (from x in context.TBL_LOAN_REVOLVING
+                             join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                             join cust in context.TBL_CUSTOMER on c.CUSTOMERID equals cust.CUSTOMERID
+                             where x.LOANSTATUSID != (short)LoanStatusEnum.Inactive
+                             && x.LOANSTATUSID != (short)LoanStatusEnum.Cancelled
+                             && x.LOANSTATUSID != (short)LoanStatusEnum.Completed
+                              && x.LOANSTATUSID != (short)LoanStatusEnum.Terminated
+
+                             select new SubResponseLoanPrepaymentViewModel()
+                             {
+                                 account_number = x.LOANREFERENCENUMBER,
+                                 customer_acct = c.PRODUCTACCOUNTNUMBER,
+                                 user_ref_no = cust.CUSTOMERCODE,
+                                 account_balance = 0,
+                                 creditTurnover = 0,
+                                 debitTurnover = 0,
+                                 transactionDate = DateTime.Now,
+                             }).ToList();
+
+                foreach (var item in loans)
+                {
+
+                    Task.Run(async () => response = await GetOverdraftRepayment(model)).GetAwaiter().GetResult();
+                    if (response.response_code == "00")
+                    {
+                        var repaymentDataReceived = response;
+
+                        var data = new STG_OVERDRAFT_DAILY_REPAY
+                        {
+                            LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.OverdraftFacility,
+                            CUSTOMERACCOUNTNUMBER = item.customer_acct,
+                            ACCOUNTBALANCE = item.account_balance,
+                            CREDITTURNOVER = item.creditTurnover,
+                            DEBITTURNOVER = item.debitTurnover,
+                            TRANSACTIONDATE = item.transactionDate,
+                            STATUS = false,
+                        };
+
+                        context2.STG_OVERDRAFT_DAILY_REPAY.Add(data);
+                    };
+                    return context2.SaveChanges() > 0;
+                };
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public bool postPaymentEntries()
+        {
+            var unReconciledPayLog = context2.STG_CONTRACT_DAILY_REPAY.Where(x => x.STATUS == false && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).ToList();
+            var BatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            foreach (var item in unReconciledPayLog)
+            {
+                var loanAccount = context.TBL_LOAN.Where(x => x.COREBANKINGREF == item.CONTRACTREFERENCENUMBER).FirstOrDefault();
+                var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanAccount.CASAACCOUNTID && x.COMPANYID == loanAccount.COMPANYID);
+                var product = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanAccount.PRODUCTID && x.COMPANYID == loanAccount.COMPANYID);
+
+                var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+
+                if (loanAccount == null) continue;
+
+                FinanceTransactionStagingViewModel newFinancialReturn = new FinanceTransactionStagingViewModel()
+                {
+                    creditGlAccountId = repaymentAccountGL,
+                    sourceReferenceNumber = loanAccount.LOANREFERENCENUMBER,
+                    creditCasaAccountId = loanAccount.CASAACCOUNTID2,
+                    debitCasaAccountId = loanAccount.CASAACCOUNTID,
+                    description = item.PAYMENTDESCRIPTION,
+                    amount = item.AMOUNTPAID,
+                    valueDate = item.DUEDATE,
+                    currencyId = loanAccount.CURRENCYID,
+                    destinationBranchId = loanAccount.BRANCHID,
+                    // sourceApplicationId = 0,
+                };
+
+                if (item.PAYMENTDESCRIPTION == "MAIN_INT") newFinancialReturn.operationId = (short)OperationsEnum.InterestLoanRepayment;
+                //else if (item.PAYMENTDESCRIPTION == "") newFinancialReturn.operationId = (short)OperationsEnum.PrincipalLoanRepayment;
+
+
+                //PAYMENT DESCRIPTION IS UNKOWN
+                if (newFinancialReturn.operationId <= 0) continue;
+
+                TBL_FINANCE_TRANSACTION financePosting = new TBL_FINANCE_TRANSACTION();
+                financePosting.CURRENCYID = (short)newFinancialReturn.currencyId;
+                financePosting.CURRENCYRATE = loanAccount.EXCHANGERATE;
+                financePosting.DEBITAMOUNT = newFinancialReturn.amount;
+                financePosting.CREDITAMOUNT = newFinancialReturn.amount;
+                financePosting.SOURCEREFERENCENUMBER = newFinancialReturn.sourceReferenceNumber;
+                financePosting.SOURCEBRANCHID = (short)loanAccount.TERMLOANID;
+                financePosting.SOURCEAPPLICATIONID = newFinancialReturn.sourceApplicationId;
+                financePosting.GLACCOUNTID = newFinancialReturn.creditGlAccountId;
+                financePosting.CASAACCOUNTID = newFinancialReturn.creditCasaAccountId;
+                financePosting.OPERATIONID = newFinancialReturn.operationId;
+                financePosting.DESCRIPTION = newFinancialReturn.description;
+                financePosting.BATCHCODE = BatchCode;
+                financePosting.BATCHCODE2 = "";
+                financePosting.COMPANYID = loanAccount.COMPANYID;
+                financePosting.APPROVEDDATETIME = item.PAYMENTDATE;
+                // financePosting.APPROVEDBY = item.
+                context.TBL_FINANCE_TRANSACTION.Add(financePosting);
+
+                item.STATUS = true;
+            }
+            return context.SaveChanges() > 0;
         }
 
     }

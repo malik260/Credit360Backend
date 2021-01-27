@@ -222,9 +222,25 @@ namespace FintrakBanking.MessagingAlertSender
                                 }
                                 
                             }
+
+                            var originalSubject = newMail.MESSAGESUBJECT.Trim();
+                            if (originalSubject.Contains("&"))
+                            {
+                                originalSubject = originalSubject.Replace("&", "AND");
+                            }
+                            if (originalSubject.Contains("-"))
+                            {
+                                originalSubject = originalSubject.Replace("-", "");
+                            }
+                            if (originalSubject.Contains("/"))
+                            {
+                                originalSubject = originalSubject.Replace("/", "AND");
+                            }
+
+
                                 mail.IsBodyHtml = true;
-                                mail.Subject = newMail.MESSAGESUBJECT;
-                                mail.Body = newMail.MESSAGEBODY;
+                                mail.Subject = originalSubject;
+                                mail.Body = newMail.MESSAGEBODY.Trim();
                                 mailId = newMail.MESSAGEID;
 
                             if (newMail.ATTACHMENTTYPEID != null)
