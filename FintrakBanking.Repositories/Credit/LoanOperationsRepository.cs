@@ -34478,6 +34478,8 @@ namespace FintrakBanking.Repositories.Credit
                                     expCompletionDate = lr.EXPCOMPLETIONDATE,
                                     loanAssignId = lr.LOANASSIGNID,
                                     agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
+                                    telephoneNumber = ln.TELEPHONENUMBER,
+                                    email = ln.EMAIL
                                 }).ToList();
 
             foreach (var xx in exposureData)

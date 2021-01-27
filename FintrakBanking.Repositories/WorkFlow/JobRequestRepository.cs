@@ -2637,7 +2637,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 JOBTYPEID = (short)model.jobTypeId,
                 COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = model.dateTimeCreated,
+                DATETIMECREATED = DateTime.Now,
                 DELETED = false,
                 
             };

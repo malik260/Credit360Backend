@@ -380,7 +380,7 @@ namespace FintrakBanking.Repositories.Credit
                 TBL_CASA casa = new TBL_CASA();
                 var productNumber = "";
                 var productName = "";
-                if (casaAcct != 0 || casaAcct != null)
+                if (casaAcct != null)
                 {
                     casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaAcct).FirstOrDefault();
                     productName = casa.PRODUCTACCOUNTNAME;
