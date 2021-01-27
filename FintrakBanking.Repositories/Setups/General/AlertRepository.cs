@@ -9,6 +9,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Notification;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
@@ -913,6 +914,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 GetLoanRepaymentToStaging();
                 GetOverdraftRepaymentToStaging();
+                postPaymentEntries();
             }
 
 
@@ -959,7 +961,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (CompareDigitalLoanDate() == true)
             {
                 TimeSpan start11 = new TimeSpan(11, 0, 0);
-                TimeSpan end13 = new TimeSpan(11, 30, 0);
+                TimeSpan end13 = new TimeSpan(20, 30, 0);
 
                 if ((now >= start11) && (now <= end13))
                 {
@@ -3943,7 +3945,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue) || (exceptionNPL.NPL >= (decimal)twoPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4002,7 +4005,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue) || (exceptionNPL.NPL <= -(decimal)twoPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4062,7 +4066,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue) 
                        || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4121,7 +4126,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT <= -(decimal)tenPercentValue && exceptionNPL.DISBURSEMENT > -(decimal)fifteenPercentValue)
                        || (exceptionNPL.DISBURSEMENT <= -(decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        // var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4180,7 +4186,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue)
                        || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4239,7 +4246,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.NPL <= -(decimal)tenPercentValue && exceptionNPL.NPL > -(decimal)fifteenPercentValue)
                        || (exceptionNPL.NPL <= -(decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4299,7 +4307,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4358,7 +4367,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4417,7 +4427,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4476,7 +4487,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4535,7 +4547,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
                        || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                        //var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4594,7 +4607,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
                        || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        var email = "kwaghngyise@gmail.com";
+                       // var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -5615,14 +5629,15 @@ namespace FintrakBanking.Repositories.Setups.General
                 LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
                 model.auth_key = API_KEY;
                 model.channel_code = "FINTRAK";
+               // model.review_date = DateTime.Now.Date.ToString();
                 model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy");
 
                 Task.Run(async () => response = await GetTodayRepaymentLoans(model)).GetAwaiter().GetResult();
                 if (response.response_code == "00")
                 {
-                    //var existingRecords = staging.STG_CONTRACT_DAILY_REPAY.Where(x => x.AMOUNTPAID > 0 && DbFunctions.TruncateTime(x.PAYMENTDATE) == DbFunctions.TruncateTime(DateTime.Now)).Select(x => x.CONTRACTREFERENCENUMBER).ToList();
-                    //var repaymentDataReceived = response.getrepaymentdetailsresp.Where(x=> !existingRecords.Contains(x.account_number)).ToList();
-                    var repaymentDataReceived = response.getrepaymentdetailsresp.ToList();
+                    var existingRecords = context2.STG_CONTRACT_DAILY_REPAY.Where(x => x.AMOUNTPAID > 0 && DbFunctions.TruncateTime(x.PAYMENTDATE) == DbFunctions.TruncateTime(DateTime.Now)).Select(x => x.CONTRACTREFERENCENUMBER).ToList();
+                    var repaymentDataReceived = response.getrepaymentdetailsresp.Where(x=> !existingRecords.Contains(x.account_number)).ToList();
+                    //var repaymentDataReceived = response.getrepaymentdetailsresp.ToList();
 
                     var stagingdata = new List<STG_CONTRACT_DAILY_REPAY>();
                     foreach (var itemReceived in repaymentDataReceived)
@@ -5667,6 +5682,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
                 model.auth_key = API_KEY;
                 model.channel_code = "FINTRAK";
+               /// model.review_date = DateTime.Now.Date.ToString();
                 model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy");
 
                 var loans = (from x in context.TBL_LOAN_REVOLVING
@@ -5718,6 +5734,65 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 throw e;
             }
+        }
+
+        public bool postPaymentEntries()
+        {
+            var unReconciledPayLog = context2.STG_CONTRACT_DAILY_REPAY.Where(x => x.STATUS == false && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).ToList();
+            var BatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            foreach (var item in unReconciledPayLog)
+            {
+                var loanAccount = context.TBL_LOAN.Where(x => x.COREBANKINGREF == item.CONTRACTREFERENCENUMBER).FirstOrDefault();
+                var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanAccount.CASAACCOUNTID && x.COMPANYID == loanAccount.COMPANYID);
+                var product = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanAccount.PRODUCTID && x.COMPANYID == loanAccount.COMPANYID);
+
+                var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+
+                if (loanAccount == null) continue;
+
+                FinanceTransactionStagingViewModel newFinancialReturn = new FinanceTransactionStagingViewModel()
+                {
+                    creditGlAccountId = repaymentAccountGL,
+                    sourceReferenceNumber = loanAccount.LOANREFERENCENUMBER,
+                    creditCasaAccountId = loanAccount.CASAACCOUNTID2,
+                    debitCasaAccountId = loanAccount.CASAACCOUNTID,
+                    description = item.PAYMENTDESCRIPTION,
+                    amount = item.AMOUNTPAID,
+                    valueDate = item.DUEDATE,
+                    currencyId = loanAccount.CURRENCYID,
+                    destinationBranchId = loanAccount.BRANCHID,
+                    // sourceApplicationId = 0,
+                };
+
+                if (item.PAYMENTDESCRIPTION == "MAIN_INT") newFinancialReturn.operationId = (short)OperationsEnum.InterestLoanRepayment;
+                //else if (item.PAYMENTDESCRIPTION == "") newFinancialReturn.operationId = (short)OperationsEnum.PrincipalLoanRepayment;
+
+
+                //PAYMENT DESCRIPTION IS UNKOWN
+                if (newFinancialReturn.operationId <= 0) continue;
+
+                TBL_FINANCE_TRANSACTION financePosting = new TBL_FINANCE_TRANSACTION();
+                financePosting.CURRENCYID = (short)newFinancialReturn.currencyId;
+                financePosting.CURRENCYRATE = loanAccount.EXCHANGERATE;
+                financePosting.DEBITAMOUNT = newFinancialReturn.amount;
+                financePosting.CREDITAMOUNT = newFinancialReturn.amount;
+                financePosting.SOURCEREFERENCENUMBER = newFinancialReturn.sourceReferenceNumber;
+                financePosting.SOURCEBRANCHID = (short)loanAccount.TERMLOANID;
+                financePosting.SOURCEAPPLICATIONID = newFinancialReturn.sourceApplicationId;
+                financePosting.GLACCOUNTID = newFinancialReturn.creditGlAccountId;
+                financePosting.CASAACCOUNTID = newFinancialReturn.creditCasaAccountId;
+                financePosting.OPERATIONID = newFinancialReturn.operationId;
+                financePosting.DESCRIPTION = newFinancialReturn.description;
+                financePosting.BATCHCODE = BatchCode;
+                financePosting.BATCHCODE2 = "";
+                financePosting.COMPANYID = loanAccount.COMPANYID;
+                financePosting.APPROVEDDATETIME = item.PAYMENTDATE;
+                // financePosting.APPROVEDBY = item.
+                context.TBL_FINANCE_TRANSACTION.Add(financePosting);
+
+                item.STATUS = true;
+            }
+            return context.SaveChanges() > 0;
         }
 
     }
