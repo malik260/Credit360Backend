@@ -33,7 +33,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("term-sheet")]
         public HttpResponseMessage GetTermSheets()
         {
-            IEnumerable<TermSheetViewModel> response = repo.GetTermSheets();
+            
+            IEnumerable<TermSheetViewModel> response = repo.GetTermSheets(token.GetStaffId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
@@ -43,6 +44,26 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetCustomerIdTermSheet(int customerId)
         {
             var response = repo.GetCustomerTermSheets(customerId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("term-sheets")]
+        public HttpResponseMessage GetCustomerIdTermSheetCorrection()
+        {
+            var response = repo.GetCustomerTermSheetsCorrection();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("term-sheets-by-code/{termSheetCode}")]
+        public HttpResponseMessage GetCustomerIdTermSheetCorrection(string termSheetCode)
+        {
+            var response = repo.GetCustomerTermSheetsByCode(termSheetCode);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
