@@ -18462,6 +18462,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var applicationDate = generalSetup.GetApplicationDate();
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
+            var staffs = generalSetup.GetStaffRlieved(staffId);
 
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
             //var activities = admin.GetUserActivitiesByUser(staffId);
@@ -18499,8 +18500,8 @@ namespace FintrakBanking.Repositories.Credit
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
-                            && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId)
-                            && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)// currency filter
+                            && ((cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId))
+                            && (staffs.Contains(atrail.TOSTAFFID ?? 0))// currency filter
 
                             orderby op.DATECREATED descending
 
@@ -18674,7 +18675,7 @@ namespace FintrakBanking.Repositories.Credit
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                      && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONCOMPLETED == false
-                                     && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)//&& mp.OPERATIONPERFORMED == true
+                                     && (staffs.Contains(atrail.TOSTAFFID ?? 0))//&& mp.OPERATIONPERFORMED == true
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
                                      {
@@ -18816,7 +18817,7 @@ namespace FintrakBanking.Repositories.Credit
                                       && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                       && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                       && op.OPERATIONCOMPLETED == false
-                                      && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null) //&& mp.OPERATIONPERFORMED == true
+                                      && (staffs.Contains(atrail.TOSTAFFID ?? 0)) //&& mp.OPERATIONPERFORMED == true
 
                                       orderby op.DATECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
@@ -18954,8 +18955,8 @@ namespace FintrakBanking.Repositories.Credit
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             //&& op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
-                            && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId)
-                            && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)// currency filter
+                            && ((cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId))
+                            && (staffs.Contains(atrail.TOSTAFFID ?? 0))// currency filter
 
                             orderby op.DATECREATED descending
 
