@@ -76,7 +76,7 @@ namespace FintrakBanking.Repositories.Customer
                     TEXTVALUE = entity.textValue
                 };
 
-                if (entity.textValue != "") {
+                if (entity.textValue != "" && entity.textValue != null) {
                     data.AMOUNT = 0;
                 }
 

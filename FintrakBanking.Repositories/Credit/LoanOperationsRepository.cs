@@ -18500,6 +18500,8 @@ namespace FintrakBanking.Repositories.Credit
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
+                            && op.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
+                            && ln.LOAN_BOOKING_REQUESTID != null
                             && ((cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId))
                             && (staffs.Contains(atrail.TOSTAFFID ?? 0))// currency filter
 
@@ -18675,6 +18677,8 @@ namespace FintrakBanking.Repositories.Credit
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                      && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONCOMPLETED == false
+                                     && op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
+                                     && ln.LOAN_BOOKING_REQUESTID != null
                                      && (staffs.Contains(atrail.TOSTAFFID ?? 0))//&& mp.OPERATIONPERFORMED == true
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
@@ -18817,8 +18821,9 @@ namespace FintrakBanking.Repositories.Credit
                                       && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                       && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                       && op.OPERATIONCOMPLETED == false
+                                      && op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
+                                      && ln.LOAN_BOOKING_REQUESTID != null
                                       && (staffs.Contains(atrail.TOSTAFFID ?? 0)) //&& mp.OPERATIONPERFORMED == true
-
                                       orderby op.DATECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
                                       {
@@ -18954,12 +18959,14 @@ namespace FintrakBanking.Repositories.Credit
                             && atrail.OPERATIONID == op.OPERATIONTYPEID
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
+                            && op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ExternalFacility
+                            && ln.LOAN_BOOKING_REQUESTID == null
+                                  orderby op.DATECREATED descending
                             //&& op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
                             && ((cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId))
                             && (staffs.Contains(atrail.TOSTAFFID ?? 0))// currency filter
-
                             orderby op.DATECREATED descending
-
                             select new LoanReviewOperationApprovalViewModel
                             {
                                 //creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
@@ -34479,6 +34486,8 @@ namespace FintrakBanking.Repositories.Credit
                                     expCompletionDate = lr.EXPCOMPLETIONDATE,
                                     loanAssignId = lr.LOANASSIGNID,
                                     agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
+                                    telephoneNumber = ln.TELEPHONENUMBER,
+                                    email = ln.EMAIL
                                 }).ToList();
 
             foreach (var xx in exposureData)

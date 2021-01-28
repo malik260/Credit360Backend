@@ -3429,6 +3429,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
             loanApplicationId = x.a.LOANAPPLICATIONID,
+            termSheetCode = x.a.TERMSHEETCODE,
             //loanApplicationDetailId = x.a.LOANAPPLICATIONID,
             applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
             relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
@@ -3487,6 +3488,7 @@ namespace FintrakBanking.Repositories.Credit
             customerTypeId = x.a.LOANAPPLICATIONTYPEID,
             isInvestmentGrade = x.a.ISINVESTMENTGRADE,
             loantermSheetId = x.a.LOANTERMSHEETID,
+            loantermSheetCode = x.a.TERMSHEETCODE,
             loansWithOthers = x.a.LOANSWITHOTHERS,
             ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
             requireCollateral = x.a.REQUIRECOLLATERAL,
@@ -3736,6 +3738,7 @@ namespace FintrakBanking.Repositories.Credit
             customerTypeId = x.a.LOANAPPLICATIONTYPEID,
             isInvestmentGrade = x.a.ISINVESTMENTGRADE,
             loantermSheetId = x.a.LOANTERMSHEETID,
+            loantermSheetCode = x.a.TERMSHEETCODE,
             loansWithOthers = x.a.LOANSWITHOTHERS,
             ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
             requireCollateral = x.a.REQUIRECOLLATERAL,
