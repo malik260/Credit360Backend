@@ -553,7 +553,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut, Route("reassign-multiple-requests/{staffId}")]
-        public HttpResponseMessage ReassignMultipleRequests([FromBody] List<int> model)
+        public HttpResponseMessage ReassignMultipleRequests([FromBody] List<int> model, int staffId)
         {
             var entity = new GeneralEntity
             {
@@ -563,7 +563,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path
             };
 
-            var reassigned = repo.ReassignMultipleRequests(model, entity);
+            var reassigned = repo.ReassignMultipleRequests(model, entity, staffId);
             if (reassigned)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request(s) were assigned successfully" });
