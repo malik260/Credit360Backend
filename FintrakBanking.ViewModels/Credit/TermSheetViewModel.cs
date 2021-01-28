@@ -77,6 +77,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string transferability { get; set; }
 
         public string governingLawAndJurisdiction { get; set; }
-
+        public bool owner { get; set; }
     }
 }

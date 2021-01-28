@@ -12379,7 +12379,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var allstaff = this.GetAllStaffNames();
             var staffs = context.TBL_STAFF.ToList();
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == targetId);
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == operationId && x.TARGETID == targetId);
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
                 approvalTrailId = x.APPROVALTRAILID,
@@ -12419,6 +12419,8 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
+
+        
         public string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId)
         {
             

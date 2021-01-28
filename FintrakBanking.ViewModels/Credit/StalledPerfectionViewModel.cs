@@ -19,7 +19,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string reasonsforStalledPerfection { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
-
-
+        public string collateralCode { get; set; }
+        public DateTime captureDate { get; set; }
+        public short colaterallSubType { get; set; }
     }
 }

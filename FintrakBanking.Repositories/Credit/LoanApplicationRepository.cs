@@ -380,7 +380,7 @@ namespace FintrakBanking.Repositories.Credit
                 TBL_CASA casa = new TBL_CASA();
                 var productNumber = "";
                 var productName = "";
-                if (casaAcct != 0 || casaAcct != null)
+                if (casaAcct != null)
                 {
                     casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaAcct).FirstOrDefault();
                     productName = casa.PRODUCTACCOUNTNAME;
@@ -3184,7 +3184,8 @@ namespace FintrakBanking.Repositories.Credit
                     LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
                     PRODUCTID = workflowProductId,
                     ISEMPLOYERRELATED = loan.isEmployerRelated,
-                    RELATEDEMPLOYERID = loan.relatedEmployerId
+                    RELATEDEMPLOYERID = loan.relatedEmployerId,
+                    TERMSHEETCODE = loan.termSheetCode
                 };
                 loanData.TOTALEXPOSUREAMOUNT = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount) + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
 
