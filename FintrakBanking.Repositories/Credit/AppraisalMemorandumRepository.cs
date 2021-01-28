@@ -3820,12 +3820,12 @@ namespace FintrakBanking.Repositories.Credit
             return response;
         }
 
-        public bool ReassignMultipleRequests(List<int> models, GeneralEntity userEntity)
+        public bool ReassignMultipleRequests(List<int> models, GeneralEntity userEntity, int staffId)
         {
             bool response = false;
             foreach (var model in models)
             {
-                if (model > 0) { response = AssignApplication(model, userEntity.createdBy, userEntity); }
+                if (model > 0) { response = AssignApplication(model, staffId, userEntity); }
             }
             return response;
         }
