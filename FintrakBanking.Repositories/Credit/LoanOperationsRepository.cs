@@ -18962,8 +18962,6 @@ namespace FintrakBanking.Repositories.Credit
                             && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
                             && op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ExternalFacility
                             && ln.LOAN_BOOKING_REQUESTID == null
-                                  orderby op.DATECREATED descending
-                            //&& op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
                             && ((cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId))
                             && (staffs.Contains(atrail.TOSTAFFID ?? 0))// currency filter
                             orderby op.DATECREATED descending
