@@ -1351,6 +1351,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 levelIds = context.TBL_APPROVAL_LEVEL.Where(x => x.STAFFROLEID == s.STAFFROLEID).Select(x => (int)x.APPROVALLEVELID).ToList(),
             });
             if (s.SUPERVISOR_STAFFID == null) return;
+            if (staffId == s.SUPERVISOR_STAFFID)
+            {
+                throw new SecureException("This Staff, "+ s.STAFFCODE + " cannot be setup as self supervisor!");
+            }
             GetReportingLine((int)s.SUPERVISOR_STAFFID);
         }
 
