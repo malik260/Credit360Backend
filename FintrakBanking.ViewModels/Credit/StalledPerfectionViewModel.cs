@@ -22,5 +22,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralCode { get; set; }
         public DateTime captureDate { get; set; }
         public short colaterallSubType { get; set; }
+        public string collateralSubType { get; set; }
+        public string collateralType { get; set; }
+        public DateTime perfectionDate { get; set; }
     }
 }
