@@ -3185,7 +3185,7 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTID = workflowProductId,
                     ISEMPLOYERRELATED = loan.isEmployerRelated,
                     RELATEDEMPLOYERID = loan.relatedEmployerId,
-                    TERMSHEETCODE = loan.termSheetCode
+                    TERMSHEETID = loan.loantermSheetId
                 };
                 loanData.TOTALEXPOSUREAMOUNT = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount) + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
 
