@@ -105,9 +105,9 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<TermSheetViewModel> GetCustomerTermSheetsByCode(string termSheetCode)
+        public IEnumerable<TermSheetViewModel> GetCustomerTermSheetsByCode(int termSheetCode)
         {
-            var data = context.TBL_TERM_SHEET.Where(x => x.DELETED == false && x.TERMSHEETCODE == termSheetCode)
+            var data = context.TBL_TERM_SHEET.Where(x => x.DELETED == false && x.TERMSHEETID == termSheetCode)
                 .Select(x => new TermSheetViewModel
                 {
                     termSheetId = x.TERMSHEETID,
