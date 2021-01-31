@@ -339,12 +339,14 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 var dataDigitalExposure = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                     join ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN on lr.LOANREFERENCE equals ln.REFERENCENUMBER
+                                    join p in context.TBL_PRODUCT on ln.PRODUCTCODE equals p.PRODUCTCODE
                                     where
                                     (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                     && lr.ISFULLYRECOVERED == false
                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                     && lr.SOURCE.ToLower() == "retail"
                                     && lr.DELETED == false
+                                    && p.ISPAYDAYPRODUCT == true
 
                                     orderby ln.ID descending
                                     select new RecoveryCollectionsViewModel
