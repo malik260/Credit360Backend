@@ -615,6 +615,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
                                        productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
                                        excludeFromLitigation = data.EXCLUDEFROMLITIGATION,
+                                       isPaydayProduct = data.ISPAYDAYPRODUCT,
 
                                        productCode = data.PRODUCTCODE,
                                        productName = data.PRODUCTNAME + " " + data.PRODUCTCODE,
@@ -1093,6 +1094,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                                       productPriceIndexName = c.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
                                                       productPriceIndexSpread = c.PRODUCTPRICEINDEXSPREAD,
                                                       excludeFromLitigation = c.EXCLUDEFROMLITIGATION,
+                                                      isPaydayProduct = c.ISPAYDAYPRODUCT,
 
                                                       productCode = c.PRODUCTCODE,
                                                       productName = c.PRODUCTNAME,
@@ -1334,6 +1336,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productName = tp.PRODUCTNAME,
                                        productDescription = tp.PRODUCTDESCRIPTION,
                                        excludeFromLitigation = tp.EXCLUDEFROMLITIGATION,
+                                       isPaydayProduct = tp.ISPAYDAYPRODUCT,
 
                                        productGroupId = tp.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
 
@@ -1640,6 +1643,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             existingProduct.OVERDRAWNGL = productModel.OVERDRAWNGL;
                             existingProduct.ISFACILITYLINE = productModel.ISFACILITYLINE;
                             existingProduct.EXCLUDEFROMLITIGATION = productModel.EXCLUDEFROMLITIGATION;
+                            existingProduct.ISPAYDAYPRODUCT = productModel.ISPAYDAYPRODUCT;
 
                             existingProduct.PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID;
                             existingProduct.PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD;
@@ -1781,6 +1785,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID,
                                 PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD,
                                 EXCLUDEFROMLITIGATION = productModel.EXCLUDEFROMLITIGATION,
+                                ISPAYDAYPRODUCT = productModel.ISPAYDAYPRODUCT,
 
                                 DEALTYPEID = productModel.DEALTYPEID,
                                 DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID,
@@ -2007,6 +2012,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     PREMIUMDISCOUNTGL = productModel.premiumDiscountGl,
                     OVERDRAWNGL = productModel.overdrawnGl,
                     EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation,
+                    ISPAYDAYPRODUCT = productModel.isPaydayProduct,
 
                     PRODUCTPRICEINDEXID = productModel.productPriceIndexId,
                     PRODUCTPRICEINDEXSPREAD = productModel.productPriceIndexSpread,
@@ -2267,6 +2273,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     tempProductToUpdate.PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2;
                     tempProductToUpdate.PENALCHARGEGL = productModel.penalChargeGl;
                     tempProductToUpdate.EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation;
+                    tempProductToUpdate.ISPAYDAYPRODUCT = productModel.isPaydayProduct;
 
                     tempProductToUpdate.INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl;
                     tempProductToUpdate.INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl;
@@ -2442,6 +2449,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ALLOWTENOR = productModel.allowTenor,
                         ALLOWOVERDRAWN = productModel.allowOverdrawn,
                         EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation,
+                        ISPAYDAYPRODUCT = productModel.isPaydayProduct,
 
                         CREATEDBY = productModel.createdBy,
                         DATETIMECREATED = DateTime.Now,

@@ -961,7 +961,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                                     join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                                     join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                    where (a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate)
+                                    where (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                     && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook
                                     && b.OPERATIONCOMPLETED == true
                                     orderby a.MATURITYDATE descending
@@ -992,7 +992,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                                 join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                                 join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                where (a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate)
+                                where (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                 && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction
                                 && b.OPERATIONCOMPLETED == true
                                 orderby a.MATURITYDATE descending
@@ -1023,7 +1023,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                                 join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                                 join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                where (a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate)
+                                where (a.DATETIMECREATED >= startDate && a.DATETIMECREATED <= endDate)
                                 && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction
                                 && b.OPERATIONCOMPLETED == true
                                 orderby a.MATURITYDATE descending

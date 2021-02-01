@@ -778,7 +778,9 @@ namespace FintrakBanking.Repositories.Credit
                                 && (lgr.REQUESTREF == searchString
                                 || c.FIRSTNAME.ToLower().Contains(searchString)
                                 || c.LASTNAME.ToLower().Contains(searchString)
-                                || c.MIDDLENAME.ToLower().Contains(searchString))
+                                || c.MIDDLENAME.ToLower().Contains(searchString)
+                                || lgr.REQUESTREF.ToLower().Contains(searchString)
+                                )
                                 select new LetterGenerationRequestViewModel
                                 {
                                     requestRef = lgr.REQUESTREF,
