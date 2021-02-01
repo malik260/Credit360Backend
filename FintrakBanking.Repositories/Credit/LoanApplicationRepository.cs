@@ -3020,7 +3020,7 @@ namespace FintrakBanking.Repositories.Credit
                 CAPREGIONID = loan.regionId,
                 REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId,
                 LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
-                LOANTERMSHEETID = loan.loanTermSheetId,
+                LOANTERMSHEETID = loan.loantermSheetId,
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
                 FLOWCHANGEID = loan.flowchangeId,
@@ -3171,7 +3171,7 @@ namespace FintrakBanking.Repositories.Credit
                     CAPREGIONID = loan.regionId,
                     REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId,
                     LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
-                    LOANTERMSHEETID = loan.loanTermSheetId,
+                    LOANTERMSHEETID = loan.loantermSheetId,
                     CUSTOMERID = loan.customerId,
                     SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
                     FLOWCHANGEID = loan.flowchangeId,
@@ -3185,7 +3185,7 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTID = workflowProductId,
                     ISEMPLOYERRELATED = loan.isEmployerRelated,
                     RELATEDEMPLOYERID = loan.relatedEmployerId,
-                    TERMSHEETCODE = loan.termSheetCode
+                    TERMSHEETID = loan.loantermSheetId
                 };
                 loanData.TOTALEXPOSUREAMOUNT = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount) + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
 
@@ -3421,7 +3421,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.CAPREGIONID = loan.regionId;
             this.loanData.REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId;
             this.loanData.LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId;
-            this.loanData.LOANTERMSHEETID = loan.loanTermSheetId;
+            this.loanData.LOANTERMSHEETID = loan.loantermSheetId;
             this.loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
             this.loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
             this.loanData.LOANSWITHOTHERS = loan.loansWithOthers;
@@ -3910,7 +3910,7 @@ namespace FintrakBanking.Repositories.Credit
                             regionId = a.CAPREGIONID,
                             requireCollateralTypeId = a.REQUIRECOLLATERALTYPEID,
                             loanPreliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
-                            loanTermSheetId = a.LOANTERMSHEETID,
+                            loantermSheetId = a.LOANTERMSHEETID,
                             customerId = a.CUSTOMERID,
                             submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
                             flowchangeId = a.FLOWCHANGEID,
@@ -6621,7 +6621,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanTypeName = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                 createdBy = x.a.OWNEDBY,
                 loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
-                loanTermSheetId = x.a.LOANTERMSHEETID,
+                loantermSheetId = x.a.LOANTERMSHEETID,
                 customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "N/A",
                 operationId = x.a.OPERATIONID,
             })
@@ -6681,7 +6681,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                 loanTypeName = x.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                 loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
-                loanTermSheetId = x.LOANTERMSHEETID,
+                loantermSheetId = x.LOANTERMSHEETID,
                 customerName = x.CUSTOMERID.HasValue ? x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME : "N/A",
 
                 details = x.TBL_LOAN_APPLICATION_DETAIL.Select(o => new ApprovedLoanDetailViewModel
@@ -6843,7 +6843,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                 loanTypeName = x.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                 loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
-                loanTermSheetId = x.LOANTERMSHEETID,
+                loantermSheetId = x.LOANTERMSHEETID,
                 customerName = x.CUSTOMERID.HasValue ? x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME : "N/A",
 
                 details = context.TBL_LOAN_APPLICATION_DETAIL.Where(o=>o.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => new ApprovedLoanDetailViewModel
@@ -7597,7 +7597,7 @@ namespace FintrakBanking.Repositories.Credit
                                     branchName = a.TBL_BRANCH.BRANCHNAME,
                                     createdBy = a.OWNEDBY,
                                     loanPreliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
-                                    loanTermSheetId = a.LOANTERMSHEETID,
+                                    loantermSheetId = a.LOANTERMSHEETID,
                                     operationId = a.OPERATIONID,
                                     tempApplicationCancellationId = t.TEMPAPPLICATIONCANCELLATIONID
                                 });

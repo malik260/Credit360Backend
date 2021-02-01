@@ -280,7 +280,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         staffmisi = (from sl in stagingContext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION }).ToList();
                     }
 
-                var dataExposure = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                /*var dataExposure = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                              join ln in context.TBL_GLOBAL_EXPOSURE on lr.LOANREFERENCE equals ln.REFERENCENUMBER
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
@@ -335,16 +335,18 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x).FirstOrDefault();
                     xx.productClass = context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID == product.PRODUCTCLASSID).Select(p => p.PRODUCTCLASSNAME).FirstOrDefault();
                     xx.facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == product.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault();
-                }
+                }*/
 
                 var dataDigitalExposure = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                     join ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN on lr.LOANREFERENCE equals ln.REFERENCENUMBER
+                                    join p in context.TBL_PRODUCT on ln.PRODUCTCODE equals p.PRODUCTCODE
                                     where
                                     (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                     && lr.ISFULLYRECOVERED == false
                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                     && lr.SOURCE.ToLower() == "retail"
                                     && lr.DELETED == false
+                                    && p.ISPAYDAYPRODUCT == true
 
                                     orderby ln.ID descending
                                     select new RecoveryCollectionsViewModel
@@ -394,7 +396,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     xx.facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == product.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault();
                 }
 
-                var dataLoanNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+               /* var dataLoanNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                                  join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                                  join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                                  join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -549,12 +551,12 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     i.groupName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.businessUnit).FirstOrDefault();
                     i.teamName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.deptName).FirstOrDefault();
                 }
-
+               
                 var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.loanReference).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReference).ToList();
                     var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanReference).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReference).ToList();
-
-                    var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure).Union(dataDigitalExposure);
-                    var allData = unionAll.ToList();
+               */
+                    //var unionAll = dataDigitalExposure;
+                    var allData = dataDigitalExposure.ToList();
 
                     return allData;
                 }
