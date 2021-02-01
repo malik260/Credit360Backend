@@ -452,7 +452,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
                     PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
-                    Pep = model.politicallyExposed,
+                    //Pep = model.politicallyExposed,
+                    Pep = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISPOLITICALLYEXPOSED == true),
                     InsiderRelated = appl.ISRELATEDPARTY,
                     ProjectRelated = appl.ISPROJECTRELATED,
                     OnLending = appl.ISONLENDING,
