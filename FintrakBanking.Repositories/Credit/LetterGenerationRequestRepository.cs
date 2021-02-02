@@ -470,7 +470,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.REQUESTTYPE = model.requestType;
             entity.ASATDATE = model.asAtDate;
             entity.COMMENTS = model.comment;
-
+            entity.LOANBALANCE = model.loanBalance;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 
