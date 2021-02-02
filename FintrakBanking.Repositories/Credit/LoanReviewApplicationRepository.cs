@@ -2668,7 +2668,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // int[] operations = { (int)OperationsEnum.LoanReviewApprovalAppraisal, (int)OperationsEnum.LoanReviewApprovalOfferLetter, (int)OperationsEnum.LoanReviewApprovalAvailment ,
             //(int)OperationsEnum.NPLoanReviewApprovalAppraisal,(int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal};
-
+            var staffs = context.TBL_STAFF.ToList();
             var operations = context.TBL_OPERATIONS.Where(o => o.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication).Select(o => o.OPERATIONID).ToList();
             var operations2 = context.TBL_OPERATIONS.Where(o => o.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement).Select(o => o.OPERATIONID).ToList();
             int staffId = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault();
@@ -2923,16 +2923,17 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (x.approvalStatusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    var operationRec = context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(op => op.LOANID == x.loanApplicationIdForOperation);
+                    var operationRec = context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(op => op.LOANID == x.loanApplicationIdForOperation.Value);
                     if(operationRec != null)
                     {
                         var appRecord2 = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == operationRec.LOANREVIEWOPERATIONID && operations2.Contains(o.OPERATIONID)).OrderByDescending(r => r.APPROVALTRAILID).FirstOrDefault();
                         if (appRecord2 != null)
                         {
                             x.currentApprovalLevel = appRecord2.TOAPPROVALLEVELID != null ? appRecord2.TBL_APPROVAL_LEVEL1.LEVELNAME : "Credit Operations Inputer";
-                            x.responsiblePerson = appRecord2.TOSTAFFID == null ? appRecord2.TOAPPROVALLEVELID != null ? appRecord2.TBL_APPROVAL_LEVEL1.LEVELNAME : "Credit Operations Inputer" : appRecord2.TBL_STAFF1.FIRSTNAME + " " + appRecord2.TBL_STAFF1.MIDDLENAME + " " + appRecord2.TBL_STAFF1.LASTNAME;
+                            x.responsiblePerson = appRecord2.LOOPEDSTAFFID != null ? staffs.FirstOrDefault(s => s.STAFFID == appRecord2.LOOPEDSTAFFID).FIRSTNAME + " " + staffs.FirstOrDefault(s => s.STAFFID == appRecord2.LOOPEDSTAFFID).LASTNAME : appRecord2.TOSTAFFID == null ? appRecord2.TOAPPROVALLEVELID != null ? appRecord2.TBL_APPROVAL_LEVEL1.LEVELNAME : "Credit Operations Inputer" : appRecord2.TBL_STAFF1.FIRSTNAME + " " + appRecord2.TBL_STAFF1.MIDDLENAME + " " + appRecord2.TBL_STAFF1.LASTNAME;
                             x.approvalTrailId = appRecord2.APPROVALTRAILID;
                             x.currentOperationId = appRecord2.OPERATIONID;
+                            x.approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == appRecord2.APPROVALSTATUSID).APPROVALSTATUSNAME;
                         }
                     }
                     else if (x.applicationStatusId == (int)LoanApplicationStatusEnum.ApplicationCompleted)
