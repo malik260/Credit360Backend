@@ -43,6 +43,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => new TermSheetViewModel
                 {
                     termSheetId = x.TERMSHEETID,
+                    termSheetCode = x.TERMSHEETCODE,
                     borrower = x.BORROWER,
                     facilityAmount = x.FACILITYAMOUNT,
                     facilityType = x.FACILITYTYPE,
@@ -111,6 +112,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => new TermSheetViewModel
                 {
                     termSheetId = x.TERMSHEETID,
+                    termSheetCode = x.TERMSHEETCODE,
                     borrower = x.BORROWER,
                     facilityAmount = x.FACILITYAMOUNT,
                     facilityType = x.FACILITYTYPE,
