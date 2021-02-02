@@ -18504,6 +18504,7 @@ namespace FintrakBanking.Repositories.Credit
                             && ln.LOAN_BOOKING_REQUESTID != null
                             && ((cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId))
                             && (staffId == (int)atrail.TOSTAFFID || atrail.TOSTAFFID == null)// currency filter
+                            && (atrail.LOOPEDSTAFFID == null)
 
                             orderby op.DATECREATED descending
 
@@ -18680,6 +18681,7 @@ namespace FintrakBanking.Repositories.Credit
                                      && op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
                                      && ln.LOAN_BOOKING_REQUESTID != null
                                      && (staffId == (int)atrail.TOSTAFFID || atrail.TOSTAFFID == null)//&& mp.OPERATIONPERFORMED == true
+                                     && (atrail.LOOPEDSTAFFID == null)
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
                                      {
@@ -18824,6 +18826,7 @@ namespace FintrakBanking.Repositories.Credit
                                       && op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
                                       && ln.LOAN_BOOKING_REQUESTID != null
                                       && (staffId == (int)atrail.TOSTAFFID || atrail.TOSTAFFID == null) //&& mp.OPERATIONPERFORMED == true
+                                      && (atrail.LOOPEDSTAFFID == null)
                                       orderby op.DATECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
                                       {
@@ -18964,7 +18967,8 @@ namespace FintrakBanking.Repositories.Credit
                             && ln.LOAN_BOOKING_REQUESTID == null
                             && ((cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId))
                             && (staffId == (int)atrail.TOSTAFFID || atrail.TOSTAFFID == null)// currency filter
-                                  orderby op.DATECREATED descending
+                            && (atrail.LOOPEDSTAFFID == null)
+                            orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {
                                 //creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,

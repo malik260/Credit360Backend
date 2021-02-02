@@ -18529,7 +18529,7 @@ namespace FintrakBanking.Repositories.Credit
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                             where a.ISDISBURSED == true
                             && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                            && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                            && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ExternalFacility
                             && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
                             && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                             && atrail.OPERATIONID == op.OPERATIONTYPEID

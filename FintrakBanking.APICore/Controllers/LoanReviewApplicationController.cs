@@ -471,7 +471,11 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = e.Message });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = e.Message });
             }
         }
 
