@@ -1002,7 +1002,7 @@ namespace FintrakBanking.Repositories.Setups.General
             
             if (CompareDate() == true)
             {
-                /*TimeSpan start = new TimeSpan(8, 0, 0);
+                TimeSpan start = new TimeSpan(8, 0, 0);
                 TimeSpan end = new TimeSpan(11, 0, 0);
 
                 if ((now >= start) && (now <= end))
@@ -1012,7 +1012,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetPastDueObligationsReminder();
                     GetPastDueObligationsReminderByGroupHeads();
                     state = true;
-                }*/
+                }
             }
 
             if (CompareRecoveryExpectedDueDate() == true)
