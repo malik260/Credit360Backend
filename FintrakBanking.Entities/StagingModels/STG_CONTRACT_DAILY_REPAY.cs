@@ -9,7 +9,7 @@
     [Table("STG_CONTRACT_DAILY_REPAY")]
     public partial class STG_CONTRACT_DAILY_REPAY
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public long CONTRACTDAILYREPAYID { get; set; }
 
         //[StringLength(255)]
@@ -29,6 +29,7 @@
 
         public DateTime PAYMENTDATE { get; set; }
         public decimal AMOUNTPAID { get; set; }
+        public bool STATUS { get; set; }
     }
 }
 

@@ -6,13 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FintrakBanking.Entities.AlertReportingModels
+namespace FintrakBanking.Entities.Models
 {
-
-    [Table("TBL_GLOBAL_EXPOSURE")]
-    public partial class TBL_GLOBAL_EXPOSURE
+    [Table("TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN")]
+    public partial class TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
     {
-
         [Key]
         public int ID { get; set; }
         public string CUSTOMERID { get; set; }
@@ -90,9 +88,5 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string GROUPCODE { get; set; }
         public string DIVISIONCODE { get; set; }
         public string DIVISIONNAME { get; set; }
-        public string TELEPHONENUMBER { get; set; }
-        public string EMAIL { get; set; }
-
-
     }
 }

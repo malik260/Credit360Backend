@@ -12,9 +12,11 @@ namespace FintrakBanking.Interfaces.Credit
     {
         TermSheetViewModel GetTermSheet(int id);
 
-        IEnumerable<TermSheetViewModel> GetTermSheets();
+        IEnumerable<TermSheetViewModel> GetTermSheets( int staffId);
 
         IEnumerable<LookupViewModel> GetCustomerTermSheets(int customerId);
+        IEnumerable<LookupViewModel> GetCustomerTermSheetsCorrection();
+        IEnumerable<TermSheetViewModel> GetCustomerTermSheetsByCode(int termSheetCode);
 
         bool AddTermSheet(TermSheetViewModel model);
 

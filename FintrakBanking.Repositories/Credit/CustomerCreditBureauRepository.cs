@@ -248,11 +248,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
             };
-            if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
-                throw new SecureException("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
 
-            if (previousSearch.Count() >= 3)
-                throw new SecureException("You have reached that maximum credit bureau search for this customer");
+            //if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
+            //    throw new SecureException("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
+
+            //if (previousSearch.Count() >= 3)
+            //    throw new SecureException("You have reached that maximum credit bureau search for this customer");
 
             if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
 
@@ -290,11 +291,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
             };
-            if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
-                throw new SecureException("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
 
-            if (previousSearch.Count() >= 3)
-                throw new SecureException("You have reached that maximum credit bureau search for this customer");
+            //if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
+            //    throw new SecureException("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
+
+            //if (previousSearch.Count() >= 3)
+            //    throw new SecureException("You have reached that maximum credit bureau search for this customer");
 
             if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
 

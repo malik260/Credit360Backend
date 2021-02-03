@@ -318,6 +318,18 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
         }
 
+        [HttpGet]
+        [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/currentLevel/{currentLevelId}/all/{all}/isClassified/{isClassified}/isLMSCrossWorkflow/{isLMSCrossWorkflow}")]
+        public HttpResponseMessage GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all, bool isClassified, bool isLMSCrossWorkflow = false)
+        {
+            var data = repo.GetTrailForReferBack(applicationId, operationId, currentLevelId, all, isClassified, isLMSCrossWorkflow);
+            if (data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
+        }
+
 
         [HttpGet]
         [Route("appraisal-memorandum/trail/{operationId}")]
@@ -535,6 +547,26 @@ namespace FintrakBanking.APICore.Controllers
             if (reassigned)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request was reassigned successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
+        }
+
+        [HttpPut, Route("reassign-multiple-requests/{staffId}")]
+        public HttpResponseMessage ReassignMultipleRequests([FromBody] List<int> model, int staffId)
+        {
+            var entity = new GeneralEntity
+            {
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path
+            };
+
+            var reassigned = repo.ReassignMultipleRequests(model, entity, staffId);
+            if (reassigned)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request(s) were assigned successfully" });
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });

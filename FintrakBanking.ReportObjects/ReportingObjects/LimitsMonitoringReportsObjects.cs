@@ -669,8 +669,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                         bookingDate = a.BOOKINGDATE,
                                         issueDate = a.DISBURSEDATE,
                                         expiryDate = a.MATURITYDATE,
-                                        sbu = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
-                                        guaranteeType = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                        sbu = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                                        guaranteeType = context.TBL_PRODUCT.Where(x => x.PRODUCTID == a.PRODUCTID).Select(x => x.PRODUCTNAME).FirstOrDefault(),
                                         customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
                                         //customerTier = getContractorTieringByApplicationAndCustomerBandG(a.LOANAPPLICATIONDETAILID, a.CUSTOMERID),
                                         apgAccountNumber = s.PRODUCTACCOUNTNUMBER,
@@ -682,7 +682,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                         guaranteeAmount = a.CONTINGENTAMOUNT,
                                         exposureOnGuarantee = context.TBL_LOAN_REVIEW_OPERATION.Where(x=>x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook).Sum(x=>x.CONTINGENTOUTSTANDINGPRINCIPAL),
                                         accountOfficer = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-                                        relationshipTeam = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                        relationshipTeam = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITNAME).FirstOrDefault() + " " + br.BRANCHNAME,
                                     }).ToList();
                 var data = bondAndGuarantee.GroupBy(r => r.loanApplicationDetailId)
                                .Select(r => r.FirstOrDefault()).ToList();
@@ -817,8 +817,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                         bookingDate = a.BOOKINGDATE,
                                         issueDate = a.DISBURSEDATE,
                                         expiryDate = a.MATURITYDATE,
-                                        sbu = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
-                                        guaranteeType = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                        sbu = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                                        guaranteeType = context.TBL_PRODUCT.Where(x=>x.PRODUCTID == a.PRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
                                         customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
                                        // customerTier = getContractorTieringByApplicationAndCustomerBandG(a.LOANAPPLICATIONDETAILID, a.CUSTOMERID),
                                         apgAccountNumber = s.PRODUCTACCOUNTNUMBER,
@@ -830,7 +830,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                         guaranteeAmount = a.CONTINGENTAMOUNT,
                                         exposureOnGuarantee = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
                                         accountOfficer = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-                                        relationshipTeam = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                        relationshipTeam = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITNAME).FirstOrDefault() +" " + br.BRANCHNAME,
                                     }).ToList();
                 var data = bondAndGuarantee.GroupBy(r => r.loanApplicationDetailId)
                                .Select(r => r.FirstOrDefault()).ToList();
@@ -961,7 +961,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                                     join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                                     join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                    where (a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate)
+                                    where (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                     && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook
                                     && b.OPERATIONCOMPLETED == true
                                     orderby a.MATURITYDATE descending
@@ -992,7 +992,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                                 join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                                 join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                where (a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate)
+                                where (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                 && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction
                                 && b.OPERATIONCOMPLETED == true
                                 orderby a.MATURITYDATE descending
@@ -1023,7 +1023,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                                 join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                                 join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                                where (a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate)
+                                where (a.DATETIMECREATED >= startDate && a.DATETIMECREATED <= endDate)
                                 && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction
                                 && b.OPERATIONCOMPLETED == true
                                 orderby a.MATURITYDATE descending

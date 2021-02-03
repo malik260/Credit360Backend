@@ -9,7 +9,8 @@
     [Table("STG_OVERDRAFT_DAILY_REPAY")]
     public partial class STG_OVERDRAFT_DAILY_REPAY
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public long OVERDARFTDAILYREPAYID { get; set; }
 
         //[StringLength(255)]

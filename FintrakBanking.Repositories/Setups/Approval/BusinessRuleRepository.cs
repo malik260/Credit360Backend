@@ -64,6 +64,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     EXEMPTRENEWAL = model.exemptRenewal,
                     TENOR = model.tenor,
                     EXCLUDELEVEL = model.excludeLevel,
+                    ISAGRICRELATED = model.isAgricRelated,
 
                     COMPANYID = model.companyId,
                     CREATEDBY = model.createdBy,
@@ -164,7 +165,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     withoutInstruction = x.WITHINSTRUCTION,
                     domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
                     excludeLevel = x.EXCLUDELEVEL,
-                })
+                    isAgricRelated = x.ISAGRICRELATED,
+                }).OrderBy(b => b.description)
                 .ToList();
         }
 
@@ -196,6 +198,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 exemptRenewal = rule.EXEMPTRENEWAL,
                 tenor = rule.TENOR,
                 excludeLevel = rule.EXCLUDELEVEL,
+                isAgricRelated = rule.ISAGRICRELATED,
             };
         }
 
@@ -225,6 +228,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 entity.WITHINSTRUCTION = model.withoutInstruction;
                 entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
                 entity.EXCLUDELEVEL = model.excludeLevel;
+                entity.ISAGRICRELATED = model.isAgricRelated;
 
                 entity.LASTUPDATEDBY = user.createdBy;
                 entity.DATETIMEUPDATED = DateTime.Now;

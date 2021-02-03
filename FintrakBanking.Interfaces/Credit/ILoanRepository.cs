@@ -31,6 +31,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool RetailLoanRecoveryCommission(RetailLoanRecoveryCommissionViewModel models, UserInfo user);
         WorkflowResponse saveBulkLoanReAssignmentToAgent(GlobalExposureApplicationViewModel model, UserInfo user);
         WorkflowResponse saveMultipleLoanReAssignmentToAgent(List<GlobalExposureApplicationViewModel> model, UserInfo user, DateTime expCompletionDate, int accreditedConsultant, string source);
+        WorkflowResponse saveMultipleRetailLoanReAssignmentToAgent(List<GlobalExposureApplicationViewModel> model, UserInfo user, DateTime expCompletionDate, int accreditedConsultant, string source);
         IEnumerable<FacilityModificationViewModel> GetLMSFacilityModificationsForApproval(int staffId);
         WorkflowResponse ApproveLMSFacilityModification(ForwardViewModel model);
         FacilityModificationViewModel GetLMSFacilityModification(int facilityModificationId);

@@ -665,7 +665,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                              join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                              join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
                              where ((x.SENDERSTAFFID == staffId) || (x.RECEIVERSTAFFID == staffId) || (x.REASSIGNEDTO == staffId)) 
-                             && x.REQUESTSTATUSID == statusId
+                             && x.REQUESTSTATUSID == (short)statusId
                              || ((unitIds.Contains((int)x.JOBTYPEUNITID)) && !middleOfficeUnit.Any())
                              || adminJobTypeIds.Contains(x.JOBTYPEID)
                              && (startNumber != null && x.JOBREQUESTID > startNumber)
@@ -1685,9 +1685,18 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             try
             {
-                string recipient = recipients.Trim();
+                var title = alertSubject.Trim();
+                if (title.Contains("&"))
+                {
+                    title = title.Replace("&", "AND");
+                }
+                if (title.Contains("."))
+                {
+                    title = title.Replace(".", "");
+                }
 
-                string messageSubject = alertSubject;
+                string recipient = recipients.Trim();
+                string messageSubject = title;
                 string messageContent = messageBody;
                 string templateUrl = "~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
@@ -2628,7 +2637,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 JOBTYPEID = (short)model.jobTypeId,
                 COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = model.dateTimeCreated,
+                DATETIMECREATED = DateTime.Now,
                 DELETED = false,
                 
             };
