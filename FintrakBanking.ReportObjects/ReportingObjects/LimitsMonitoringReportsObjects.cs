@@ -963,19 +963,19 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                     where (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                     && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook
-                                    && b.OPERATIONCOMPLETED == true
+                                    && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                     orderby a.MATURITYDATE descending
 
                                     select new LoanViewModel
                                     {
-                                        relatedloanReferenceNumber = a.LOANREFERENCENUMBER,
+                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                         customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
                                         facilityType = p.PRODUCTNAME +"-"+pt.PRODUCTTYPENAME,
                                         guaranteeAmount = a.CONTINGENTAMOUNT,
                                         rebookedAmount = b.CONTINGENTOUTSTANDINGPRINCIPAL,
                                         dateRebooked = b.REBOOKDATE,
-                                        currentExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && b.REBOOKDATE >= startDate && b.REBOOKDATE <= endDate).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
-                                        previousExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && b.REBOOKDATE < startDate && b.REBOOKDATE > endDate).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                        currentExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && (DbFunctions.TruncateTime(b.REBOOKDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.REBOOKDATE) <= DbFunctions.TruncateTime(endDate))).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                        previousExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && (DbFunctions.TruncateTime(b.REBOOKDATE) < DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.REBOOKDATE) > DbFunctions.TruncateTime(endDate))).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
                                     }).ToList();
                 
                 return bondAndGuarantee;
@@ -994,19 +994,19 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                 where (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                 && b.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction
-                                && b.OPERATIONCOMPLETED == true
+                                && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 orderby a.MATURITYDATE descending
 
                                 select new LoanViewModel
                                 {
-                                    relatedloanReferenceNumber = a.LOANREFERENCENUMBER,
+                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
                                     customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
                                     facilityType = p.PRODUCTNAME + "-" + pt.PRODUCTTYPENAME,
                                     guaranteeAmount = a.CONTINGENTAMOUNT,
                                     amortisedAmount = b.PREPAYMENT,
                                     dateAmortised = b.OPERATIONDATE,
-                                    currentExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction && b.REBOOKDATE >= startDate && b.REBOOKDATE <= endDate).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
-                                    previousExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction && b.REBOOKDATE < startDate && b.REBOOKDATE > endDate).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                    currentExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && (DbFunctions.TruncateTime(b.REBOOKDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.REBOOKDATE) <= DbFunctions.TruncateTime(endDate))).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
+                                    previousExposure = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == a.CONTINGENTLOANID && x.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && (DbFunctions.TruncateTime(b.REBOOKDATE) < DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.REBOOKDATE) > DbFunctions.TruncateTime(endDate))).Sum(x => x.CONTINGENTOUTSTANDINGPRINCIPAL),
                                 }).ToList();
 
             return bondAndGuarantee;
