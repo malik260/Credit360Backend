@@ -17920,20 +17920,22 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    var nextPeriodicPricipalPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == model.loanId && x.PAYMENTDATE > model.proposedEffectiveDate && x.PERIODPRINCIPALAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
+                    try
+                    {
+                        var nextPeriodicPricipalPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == model.loanId && x.PAYMENTDATE > model.proposedEffectiveDate && x.PERIODPRINCIPALAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
 
-                    //model.firstPaymentDate = nextPeriodicPricipalPaymentDate.PAYMENTDATE;
-                    model.principalFirstPaymentDate = nextPeriodicPricipalPaymentDate.PAYMENTDATE;
+                        //model.firstPaymentDate = nextPeriodicPricipalPaymentDate.PAYMENTDATE;
+                        model.principalFirstPaymentDate = nextPeriodicPricipalPaymentDate.PAYMENTDATE;
 
-                    var nextPeriodicInterestPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == model.loanId && x.PAYMENTDATE > model.proposedEffectiveDate && x.PERIODINTERESTAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
-                    model.interestFirstPaymentDate = nextPeriodicInterestPaymentDate.PAYMENTDATE;
+                        var nextPeriodicInterestPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == model.loanId && x.PAYMENTDATE > model.proposedEffectiveDate && x.PERIODINTERESTAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
+                        model.interestFirstPaymentDate = nextPeriodicInterestPaymentDate.PAYMENTDATE;
 
-                    var loanInfo = context.TBL_LOAN.Where(x => x.TERMLOANID == model.loanId).FirstOrDefault();
-                    model.interestFrequencyTypeId = loanInfo.INTERESTFREQUENCYTYPEID;
-                    model.principalFrequencyTypeId = loanInfo.PRINCIPALFREQUENCYTYPEID;
-                    //model.maturityDate = loanInfo.MATURITYDATE;
-                    //model.interestRate = loanInfo.INTERESTRATE;
-
+                        var loanInfo = context.TBL_LOAN.Where(x => x.TERMLOANID == model.loanId).FirstOrDefault();
+                        model.interestFrequencyTypeId = loanInfo.INTERESTFREQUENCYTYPEID;
+                        model.principalFrequencyTypeId = loanInfo.PRINCIPALFREQUENCYTYPEID;
+                        //model.maturityDate = loanInfo.MATURITYDATE;
+                        //model.interestRate = loanInfo.INTERESTRATE;
+                    
                     if (model.prepayment >= loanInfo.OUTSTANDINGPRINCIPAL)
                     {
                         throw new ConditionNotMetException("Prepayment amount should not be equal or greater than the outstanding principal");
@@ -17942,6 +17944,11 @@ namespace FintrakBanking.Repositories.Credit
                     if (DoesOperationExist(model.loanId, model.operationTypeId, (short)LoanSystemTypeEnum.TermDisbursedFacility))
                     {
                         throw new ConditionNotMetException("The requested operation already exist and going through approval");
+                    }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ConditionNotMetException("No matching schedule found for this loan");
                     }
                 }
 
