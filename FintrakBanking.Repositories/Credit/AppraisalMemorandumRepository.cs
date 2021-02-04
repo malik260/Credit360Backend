@@ -2541,16 +2541,20 @@ namespace FintrakBanking.Repositories.Credit
 
             var lmsAppraisalOperation = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId && lmsAppraisalOperations.Contains(x.OPERATIONID)).Select(b => b.OPERATIONID).ToList();
 
+            var isFromOperations = context.TBL_LMSR_APPLICATION.FirstOrDefault(l => l.LOANAPPLICATIONID == applicationId)?.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved;
             var operationTypeId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(b => b.OPERATIONTYPEID).FirstOrDefault();
 
             var applicationWentForDrawDown = context.TBL_APPROVAL_TRAIL.Any(d => d.TARGETID == applicationId && lmsDrawdownOperationIds.Contains(d.OPERATIONID));
-            if (applicationWentForDrawDown)
+            if (!isFromOperations)
             {
-                lmsOperationIds.AddRange(lmsDrawdownOperationIds);
-            }
-            else
-            {
-                lmsOperationIds.AddRange(lmsAppraisalOperation);
+                if (applicationWentForDrawDown)
+                {
+                    lmsOperationIds.AddRange(lmsDrawdownOperationIds);
+                }
+                else
+                {
+                    lmsOperationIds.AddRange(lmsAppraisalOperation);
+                }
             }
             if (operationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
