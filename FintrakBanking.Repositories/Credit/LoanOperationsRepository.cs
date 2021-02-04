@@ -32943,7 +32943,7 @@ namespace FintrakBanking.Repositories.Credit
                             casaAccount = ln.ACCOUNTNUMBER,
                             branchName = ln.BRANCHNAME,
                             divisionCode = ln.DIVISIONCODE,
-                            region = ln.REGIONCODE,
+                            region = ln.REGIONCODE + " " +ln.REGIONNAME,
                         }).ToList();
 
             foreach (var xx in exposureData)
@@ -32981,7 +32981,7 @@ namespace FintrakBanking.Repositories.Credit
                                     casaAccount = ln.ACCOUNTNUMBER,
                                     branchName = ln.BRANCHNAME,
                                     divisionCode = ln.DIVISIONCODE,
-                                    region = ln.REGIONCODE,
+                                    region = ln.REGIONCODE + " " + ln.REGIONNAME,
                                 }).ToList();
 
             foreach (var xx in exposureDigitalData)

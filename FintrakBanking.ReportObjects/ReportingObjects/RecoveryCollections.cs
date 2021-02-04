@@ -1184,6 +1184,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              orderby ln.ID descending
                                              select new RecoveryCollectionsViewModel
                                              {
+                                                 dpd = (int)ln.UNPODAYSOVERDUE,
                                                  accountNumber = ln.ACCOUNTNUMBER,
                                                  dateAssigned = lr.DATEASSIGNED,
                                                  agentAssigned = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.FIRMNAME).FirstOrDefault(),
@@ -1265,6 +1266,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                         groupName = ln.GROUPNAME,
                                         teamName = ln.TEAMCODE,
                                         mobileNumber = "Nil",
+                                        dpd = (int)ln.UNPODAYSOVERDUE,
                                         divisionName = ln.DIVISIONNAME,
                                         productCode = ln.PRODUCTCODE,
                                         productName = ln.PRODUCTNAME,
@@ -1675,7 +1677,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
 
                 var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure).Union(dataDigitalExposure);
-                var allData = unionAll.ToList();
+                var allData = unionAll.ToList().GroupBy(x => x.customerCode).FirstOrDefault();
 
                 foreach(var consultant in allData)
                 {
