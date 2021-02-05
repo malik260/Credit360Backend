@@ -2430,7 +2430,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new SecureException("Error saving rac " +ex);
             }
 
 
