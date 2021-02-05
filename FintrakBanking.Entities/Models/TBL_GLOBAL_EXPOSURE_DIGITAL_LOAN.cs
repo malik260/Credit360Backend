@@ -72,6 +72,7 @@ namespace FintrakBanking.Entities.Models
         //public decimal? TOTAEXPOSURELCYPREVIOUSMONTHS { get; set; }
         //public decimal? TOTAEXPOSURELCYPREVIOUSDAY { get; set; }
         public decimal? TOTALEXPOSURE { get; set; }
+        public decimal? TOTALUNSETTLEDAMOUNT { get; set; }
         public decimal? IMPAIRMENTAMOUNT { get; set; }
         public decimal? TOTALUNPAIDOBLIGATION { get; set; }
         public decimal? UNPOINTERESTAMOUNT { get; set; }
