@@ -2281,7 +2281,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int? operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
         {
-            try { 
+            //try { 
                 List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
                 var msg = new RacReturnInfoViewModel();
                 if (rac.form == null || rac.form.Count == 0) return null;
@@ -2374,37 +2374,39 @@ namespace FintrakBanking.Repositories.Credit
                     if (submission == null) continue;
 
                     bool validation = ValidRacSubmission(definition, submission.value, operationId ?? 0, targetId);
-
+                   
                     if (validation == false && ctr == 0)
                     {
-                        if (racTiers.Count() <= 0)
-                        {
-                            saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
-                            msg.loanApplicationDetailId = targetId;
-                            msg.loanApplicationId = applicationId;
-                            return msg;
-                        }
 
-                        if (racTiers.Count() > 0 && ctr == 0)
-                        {
-                            var lastRacIndexTierItems = defaultTierItems[lastRacIndex + 1];
-                            definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                            && ids.Contains(x.RACDEFINITIONID) && x.RACCATEGORYTYPEID == lastRacIndexTierItems.RACCATEGORYTYPEID && x.RACCATEGORYTYPEID != definition.RACCATEGORYTYPEID
-                            ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
+                    throw new SecureException("Cannot Proceed. RAC not met for " + definition.TBL_RAC_ITEM.CRITERIA);
+                    /* if (racTiers.Count() <= 0)
+                     {
+                         saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
+                         msg.loanApplicationDetailId = targetId;
+                         msg.loanApplicationId = applicationId;
+                         return msg;
+                     }
 
-                        }
+                     if (racTiers.Count() > 0 && ctr == 0)
+                     {
+                         var lastRacIndexTierItems = defaultTierItems[lastRacIndex + 1];
+                         definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                         && ids.Contains(x.RACDEFINITIONID) && x.RACCATEGORYTYPEID == lastRacIndexTierItems.RACCATEGORYTYPEID && x.RACCATEGORYTYPEID != definition.RACCATEGORYTYPEID
+                         ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
 
-                        if (racTiers.Count() > 0 && ctr > 0)
-                        {
-                            saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
-                            msg.loanApplicationDetailId = targetId;
-                            msg.loanApplicationId = applicationId;
-                            return msg;
-                        }
+                     }
 
-                        ctr = ctr + 1;
-                        continue;
-                    }
+                     if (racTiers.Count() > 0 && ctr > 0)
+                     {
+                         saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
+                         msg.loanApplicationDetailId = targetId;
+                         msg.loanApplicationId = applicationId;
+                         return msg;
+                     }
+
+                     ctr = ctr + 1;
+                     continue;*/
+                }
                     else if (validation == true)
                     {
                         details.Add(new TBL_RAC_DETAIL
@@ -2427,11 +2429,11 @@ namespace FintrakBanking.Repositories.Credit
            
                 context.SaveChanges();
                 return null;
-            }
-            catch (Exception ex)
-            {
-                throw new SecureException("Error saving rac " +ex);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new SecureException("Error saving rac " +ex);
+            //}
 
 
            
