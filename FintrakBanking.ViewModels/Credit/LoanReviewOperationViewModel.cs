@@ -2028,6 +2028,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool operationCompleted { get; set; }
         public string branchCode { get; set; }
         public string productCode { get; set; }
+        public string phoneNo { get; set; }
     }
 
     public class CompletedCreditDocumentationModel

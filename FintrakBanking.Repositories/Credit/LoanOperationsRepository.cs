@@ -35111,6 +35111,8 @@ namespace FintrakBanking.Repositories.Credit
                                         orderby ln.ID descending
                                         select new GlobalExposureApplicationViewModel
                                         {
+                                            phoneNo = ln.PHONENO,
+                                            email = ln.EMAIL,
                                             loanId = ln.ID,
                                             customerCode = ln.CUSTOMERID,
                                             productCode = ln.PRODUCTID,
@@ -35165,6 +35167,8 @@ namespace FintrakBanking.Repositories.Credit
                                         orderby ln.ID descending
                                         select new GlobalExposureApplicationViewModel
                                         {
+                                            phoneNo = ln.PHONENO,
+                                            email = ln.EMAIL,
                                             loanId = ln.ID,
                                             customerCode = ln.CUSTOMERID,
                                             productCode = ln.PRODUCTID,
@@ -35242,7 +35246,8 @@ namespace FintrakBanking.Repositories.Credit
                                         branchName = br.BRANCHNAME,
                                         relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
                                         email = cu.EMAILADDRESS,
-                                        phoneNumber = cu.PHONENUMBEROFSIGNATORY
+                                        phoneNumber = cu.PHONENUMBEROFSIGNATORY,
+                                        phoneNo = cu.PHONENUMBEROFSIGNATORY
                                     }).ToList();
 
                     var dataRevolvingLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
@@ -35281,7 +35286,8 @@ namespace FintrakBanking.Repositories.Credit
                                                  branchName = br.BRANCHNAME,
                                                  relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
                                                  email = cu.EMAILADDRESS,
-                                                 phoneNumber = cu.PHONENUMBEROFSIGNATORY
+                                                 phoneNumber = cu.PHONENUMBEROFSIGNATORY,
+                                                 phoneNo = cu.PHONENUMBEROFSIGNATORY
                                              }).ToList();
 
 
@@ -35326,7 +35332,7 @@ namespace FintrakBanking.Repositories.Credit
                                     <td>{$"{amount}"}</td>
                                     <td>{single.relationshipOfficerName}</td>
                                     <td>{expCompletionDate}</td>
-                                    <td>{single.email} {single.phoneNumber}</td>
+                                    <td>{single.email} {single.phoneNo}</td>
                                 </tr>
                                 ";
                             UpdateMailSent(single.loanAssignId);
