@@ -912,8 +912,8 @@ namespace FintrakBanking.Repositories.Setups.General
             
             if ((now >= startRepay) && (now <= endRepay))
             {
-                //GetLoanRepaymentToStaging();
-                //GetOverdraftRepaymentToStaging();
+                GetLoanRepaymentToStaging();
+                GetOverdraftRepaymentToStaging();
                 postPaymentEntries();
             }
 
@@ -5675,7 +5675,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
         public bool GetOverdraftRepaymentToStaging()
-        {
+         {
             try
             {
                 ResponseLoanPrepaymentViewModel response = new ResponseLoanPrepaymentViewModel();
@@ -5684,7 +5684,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 model.auth_key = API_KEY;
                 model.channel_code = "FINTRAK";
-                //model.review_date = "23-May-2020";
+                //model.review_date = "24-May-2020";
                 model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy");
 
                 var loans = (from x in context.TBL_LOAN_REVOLVING
@@ -5708,7 +5708,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var item in loans)
                 {
-
+                    model.account_no = item.customer_acct;
                     Task.Run(async () => response = await GetOverdraftRepayment(model)).GetAwaiter().GetResult();
                     if (response.response_code == "00")
                     {
