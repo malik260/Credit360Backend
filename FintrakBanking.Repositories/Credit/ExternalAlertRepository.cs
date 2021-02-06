@@ -5858,6 +5858,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -5893,6 +5894,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -5959,6 +5961,7 @@ namespace FintrakBanking.Repositories.Credit
                                              effectiveDate = ln.EFFECTIVEDATE,
                                              maturityDate = ln.MATURITYDATE,
                                              bookingDate = ln.BOOKINGDATE,
+                                             totalUnsettledAmount = (ln.OUTSTANDINGPRINCIPAL + ln.PASTDUEINTEREST + ln.PASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL) + (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
                                              totalAmountRecovery = (ln.OUTSTANDINGPRINCIPAL + ln.PASTDUEINTEREST + ln.PASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL) + (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
                                              principalAmount = ln.OUTSTANDINGPRINCIPAL,
                                              principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
@@ -6049,6 +6052,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                                   casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                                   branchId = ln.BRANCHID,
+                                                  totalUnsettledAmount = (ln.PASTDUEPRINCIPAL + ln.PASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.PENALCHARGEAMOUNT),
                                                   totalAmountRecovery = (ln.PASTDUEPRINCIPAL + ln.PASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.PENALCHARGEAMOUNT),
                                                   loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                                   applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
@@ -6129,6 +6133,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6164,6 +6169,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6230,6 +6236,7 @@ namespace FintrakBanking.Repositories.Credit
                                              effectiveDate = ln.EFFECTIVEDATE,
                                              maturityDate = ln.MATURITYDATE,
                                              bookingDate = ln.BOOKINGDATE,
+                                             totalUnsettledAmount = (ln.OUTSTANDINGPRINCIPAL + ln.PASTDUEINTEREST + ln.PASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL) + (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
                                              totalAmountRecovery = (ln.OUTSTANDINGPRINCIPAL + ln.PASTDUEINTEREST + ln.PASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL) + (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
                                              principalAmount = ln.OUTSTANDINGPRINCIPAL,
                                              principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
@@ -6319,6 +6326,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                                   casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                                   branchId = ln.BRANCHID,
+                                                  totalUnsettledAmount = (ln.PASTDUEPRINCIPAL + ln.PASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.PENALCHARGEAMOUNT),
                                                   totalAmountRecovery = (ln.PASTDUEPRINCIPAL + ln.PASTDUEINTEREST + ln.INTERESTONPASTDUEPRINCIPAL + ln.INTERESTONPASTDUEINTEREST + ln.PENALCHARGEAMOUNT),
                                                   loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                                   applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
