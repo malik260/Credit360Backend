@@ -907,7 +907,7 @@ namespace FintrakBanking.Repositories.Setups.General
              // int users = Convert.ToInt32(maxUsers);
             //externalAlertRepository.ValidateProfiledUsers(users);
             
-            TimeSpan startRepay = new TimeSpan(7, 0, 0);
+            TimeSpan startRepay = new TimeSpan(6, 0, 0);
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
             
             if ((now >= startRepay) && (now <= endRepay))
@@ -5629,7 +5629,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
                 model.auth_key = API_KEY;
                 model.channel_code = "FINTRAK";
-               // model.review_date = DateTime.Now.Date.ToString();
+                //model.review_date = "23-May-2020";
                 model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy");
 
                 Task.Run(async () => response = await GetTodayRepaymentLoans(model)).GetAwaiter().GetResult();
@@ -5675,14 +5675,16 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
         public bool GetOverdraftRepaymentToStaging()
-        {
+         {
             try
             {
                 ResponseLoanPrepaymentViewModel response = new ResponseLoanPrepaymentViewModel();
                 LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
+                List<STG_OVERDRAFT_DAILY_REPAY> dataList = new List<STG_OVERDRAFT_DAILY_REPAY>();
+
                 model.auth_key = API_KEY;
                 model.channel_code = "FINTRAK";
-               /// model.review_date = DateTime.Now.Date.ToString();
+                //model.review_date = "24-May-2020";
                 model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy");
 
                 var loans = (from x in context.TBL_LOAN_REVOLVING
@@ -5706,7 +5708,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var item in loans)
                 {
-
+                    model.account_no = item.customer_acct;
                     Task.Run(async () => response = await GetOverdraftRepayment(model)).GetAwaiter().GetResult();
                     if (response.response_code == "00")
                     {
@@ -5723,12 +5725,14 @@ namespace FintrakBanking.Repositories.Setups.General
                             STATUS = false,
                         };
 
-                        context2.STG_OVERDRAFT_DAILY_REPAY.Add(data);
-                    };
-                    return context2.SaveChanges() > 0;
-                };
+                        dataList.Add(data);
+                        
+                    }
+                   
+                }
+                context2.STG_OVERDRAFT_DAILY_REPAY.AddRange(dataList);
 
-                return true;
+                return context2.SaveChanges() > 0;
             }
             catch (Exception e)
             {
@@ -5740,59 +5744,67 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var unReconciledPayLog = context2.STG_CONTRACT_DAILY_REPAY.Where(x => x.STATUS == false && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).ToList();
             var BatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+            List<TBL_FINANCE_TRANSACTION> financePostingList = new List<TBL_FINANCE_TRANSACTION>();
             foreach (var item in unReconciledPayLog)
             {
                 var loanAccount = context.TBL_LOAN.Where(x => x.COREBANKINGREF == item.CONTRACTREFERENCENUMBER).FirstOrDefault();
-                var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanAccount.CASAACCOUNTID && x.COMPANYID == loanAccount.COMPANYID);
-                var product = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanAccount.PRODUCTID && x.COMPANYID == loanAccount.COMPANYID);
 
-                var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
-
-                if (loanAccount == null) continue;
-
-                FinanceTransactionStagingViewModel newFinancialReturn = new FinanceTransactionStagingViewModel()
+                if (loanAccount != null)
                 {
-                    creditGlAccountId = repaymentAccountGL,
-                    sourceReferenceNumber = loanAccount.LOANREFERENCENUMBER,
-                    creditCasaAccountId = loanAccount.CASAACCOUNTID2,
-                    debitCasaAccountId = loanAccount.CASAACCOUNTID,
-                    description = item.PAYMENTDESCRIPTION,
-                    amount = item.AMOUNTPAID,
-                    valueDate = item.DUEDATE,
-                    currencyId = loanAccount.CURRENCYID,
-                    destinationBranchId = loanAccount.BRANCHID,
-                    // sourceApplicationId = 0,
-                };
+                    var casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == loanAccount.CASAACCOUNTID && x.COMPANYID == loanAccount.COMPANYID).FirstOrDefault();
+                    var product = context.TBL_PRODUCT.Where(x => x.PRODUCTID == loanAccount.PRODUCTID && x.COMPANYID == loanAccount.COMPANYID).FirstOrDefault();
+                    var repaymentAccountGL = context.TBL_PRODUCT.Where(x => x.PRODUCTID == casa.PRODUCTID).Select(x => x.PRINCIPALBALANCEGL.Value).FirstOrDefault();
 
-                if (item.PAYMENTDESCRIPTION == "MAIN_INT") newFinancialReturn.operationId = (short)OperationsEnum.InterestLoanRepayment;
-                //else if (item.PAYMENTDESCRIPTION == "") newFinancialReturn.operationId = (short)OperationsEnum.PrincipalLoanRepayment;
+               
+
+                    FinanceTransactionStagingViewModel newFinancialReturn = new FinanceTransactionStagingViewModel()
+                    {
+                        creditGlAccountId = repaymentAccountGL,
+                        sourceReferenceNumber = loanAccount.LOANREFERENCENUMBER,
+                        creditCasaAccountId = loanAccount.CASAACCOUNTID2,
+                        debitCasaAccountId = loanAccount.CASAACCOUNTID,
+                        description = item.PAYMENTDESCRIPTION,
+                        amount = item.AMOUNTPAID,
+                        valueDate = item.DUEDATE,
+                        currencyId = loanAccount.CURRENCYID,
+                        destinationBranchId = loanAccount.BRANCHID,
+                        // sourceApplicationId = 0,
+                    };
+
+                    if (item.PAYMENTDESCRIPTION == "MAIN_INT") newFinancialReturn.operationId = (short)OperationsEnum.InterestLoanRepayment;
+                    //else if (item.PAYMENTDESCRIPTION == "") newFinancialReturn.operationId = (short)OperationsEnum.PrincipalLoanRepayment;
 
 
-                //PAYMENT DESCRIPTION IS UNKOWN
-                if (newFinancialReturn.operationId <= 0) continue;
+                    //PAYMENT DESCRIPTION IS UNKOWN
+                    if (newFinancialReturn.operationId > 0)
+                    {
 
-                TBL_FINANCE_TRANSACTION financePosting = new TBL_FINANCE_TRANSACTION();
-                financePosting.CURRENCYID = (short)newFinancialReturn.currencyId;
-                financePosting.CURRENCYRATE = loanAccount.EXCHANGERATE;
-                financePosting.DEBITAMOUNT = newFinancialReturn.amount;
-                financePosting.CREDITAMOUNT = newFinancialReturn.amount;
-                financePosting.SOURCEREFERENCENUMBER = newFinancialReturn.sourceReferenceNumber;
-                financePosting.SOURCEBRANCHID = (short)loanAccount.TERMLOANID;
-                financePosting.SOURCEAPPLICATIONID = newFinancialReturn.sourceApplicationId;
-                financePosting.GLACCOUNTID = newFinancialReturn.creditGlAccountId;
-                financePosting.CASAACCOUNTID = newFinancialReturn.creditCasaAccountId;
-                financePosting.OPERATIONID = newFinancialReturn.operationId;
-                financePosting.DESCRIPTION = newFinancialReturn.description;
-                financePosting.BATCHCODE = BatchCode;
-                financePosting.BATCHCODE2 = "";
-                financePosting.COMPANYID = loanAccount.COMPANYID;
-                financePosting.APPROVEDDATETIME = item.PAYMENTDATE;
-                // financePosting.APPROVEDBY = item.
-                context.TBL_FINANCE_TRANSACTION.Add(financePosting);
-
-                item.STATUS = true;
+                        TBL_FINANCE_TRANSACTION financePosting = new TBL_FINANCE_TRANSACTION();
+                        financePosting.CURRENCYID = (short)newFinancialReturn.currencyId;
+                        financePosting.CURRENCYRATE = loanAccount.EXCHANGERATE;
+                        financePosting.DEBITAMOUNT = newFinancialReturn.amount;
+                        financePosting.CREDITAMOUNT = newFinancialReturn.amount;
+                        financePosting.SOURCEREFERENCENUMBER = newFinancialReturn.sourceReferenceNumber;
+                        financePosting.SOURCEBRANCHID = (short)loanAccount.TERMLOANID;
+                        financePosting.SOURCEAPPLICATIONID = newFinancialReturn.sourceApplicationId;
+                        financePosting.GLACCOUNTID = newFinancialReturn.creditGlAccountId;
+                        financePosting.CASAACCOUNTID = newFinancialReturn.creditCasaAccountId;
+                        financePosting.OPERATIONID = newFinancialReturn.operationId;
+                        financePosting.DESCRIPTION = newFinancialReturn.description;
+                        financePosting.BATCHCODE = BatchCode;
+                        financePosting.BATCHCODE2 = "";
+                        financePosting.COMPANYID = loanAccount.COMPANYID;
+                        financePosting.APPROVEDDATETIME = item.PAYMENTDATE;
+                        // financePosting.APPROVEDBY = item.
+                        item.STATUS = true;
+                        financePostingList.Add(financePosting);
+                    } 
+                }
             }
+            context.TBL_FINANCE_TRANSACTION.AddRange(financePostingList);
             return context.SaveChanges() > 0;
+            
         }
 
     }

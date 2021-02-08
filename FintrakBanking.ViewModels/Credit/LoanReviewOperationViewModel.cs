@@ -1981,6 +1981,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? agentCommission { get; set; }
         public decimal? percentageCommission { get; set; }
         public decimal totalAmountRecovery { get; set; }
+        public decimal totalUnsettledAmount { get; set; }
+        
         public string nameOfRecoveryAgent { get; set; }
         public string address { get; set; }
         public string telephoneNumber { get; set; }
@@ -2028,6 +2030,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool operationCompleted { get; set; }
         public string branchCode { get; set; }
         public string productCode { get; set; }
+        public string phoneNo { get; set; }
     }
 
     public class CompletedCreditDocumentationModel
