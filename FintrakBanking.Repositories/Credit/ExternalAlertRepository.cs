@@ -5858,7 +5858,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
+                                             totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -5894,7 +5894,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
+                                             totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6133,7 +6133,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
+                                             totalUnsettledAmount = ln.TOTALUNPAIDOBLIGATION,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6169,7 +6169,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
+                                             totalUnsettledAmount = ln.TOTALUNPAIDOBLIGATION,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
