@@ -1743,6 +1743,27 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class GlobalExposureApplicationViewModel : GeneralEntity
     {
+        public string range
+        {
+            get
+            {
+                var newRange = "";
+                if (this.dpd >= 31 && this.dpd <= 60)
+                {
+                    newRange = "31-60 DPD";
+                }
+                if (this.dpd >= 61 && this.dpd <= 90)
+                {
+                    newRange = "61-90 DPD";
+                }
+                if (this.dpd > 90)
+                {
+                    newRange = "90+DPD";
+                }
+
+                return newRange;
+            }
+        }
         public int? dpdExposure { get; set; }
         public int mgtOperationId { get; set; }
         public decimal? prepaymentAmount { get; set; }
@@ -1981,6 +2002,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? agentCommission { get; set; }
         public decimal? percentageCommission { get; set; }
         public decimal totalAmountRecovery { get; set; }
+        public decimal? totalUnsettledAmount { get; set; }
+        
         public string nameOfRecoveryAgent { get; set; }
         public string address { get; set; }
         public string telephoneNumber { get; set; }
@@ -2028,6 +2051,12 @@ namespace FintrakBanking.ViewModels.Credit
         public bool operationCompleted { get; set; }
         public string branchCode { get; set; }
         public string productCode { get; set; }
+        public string phoneNo { get; set; }
+        public DateTime? valueDate { get; set; }
+        public DateTime? maturityRevDate { get; set; }
+        public decimal overduePrincipalAmount { get; set; }
+        public decimal overdueInterestAmount { get; set; }
+        public DateTime alueDate { get; set; }
     }
 
     public class CompletedCreditDocumentationModel
