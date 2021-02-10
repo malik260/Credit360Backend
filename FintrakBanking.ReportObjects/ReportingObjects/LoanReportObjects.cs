@@ -2651,11 +2651,11 @@ namespace FintrakBanking.ReportObjects
                                   join ll in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ll.LOANAPPLICATIONDETAILID
                                   join cm in context.TBL_LOAN_APPLICATION_COLLATERL on ll.LOANAPPLICATIONID equals cm.LOANAPPLICATIONID
                                   join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
-                                  where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                  where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                   && l.COMPANYID == 1 
                                   //&& loansWithCollateral.Contains(l.TERMLOANID)
                                   && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                  orderby l.EFFECTIVEDATE descending
+                                  orderby l.DATETIMECREATED descending
                                   select new StalledPerfectionViewModel
                                   {
                                       loanId = l.TERMLOANID,
@@ -2705,11 +2705,11 @@ namespace FintrakBanking.ReportObjects
                                       join ll in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ll.LOANAPPLICATIONDETAILID
                                       join cm in context.TBL_LOAN_APPLICATION_COLLATERL on ll.LOANAPPLICATIONID equals cm.LOANAPPLICATIONID
                                       join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
-                                      where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                      where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                       && l.COMPANYID == companyid 
                                       //&& loansWithCollateral.Contains(l.TERMLOANID) 
                                       && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                      orderby l.EFFECTIVEDATE descending
+                                      orderby l.DATETIMECREATED descending
                                       select new CollateralPerfectionyettoCommenceViewModel
                                       {
                                           loanId = l.TERMLOANID,
@@ -4999,9 +4999,9 @@ namespace FintrakBanking.ReportObjects
                                      join cim in context.TBL_COLLATERAL_IMMOVE_PROPERTY on cm.COLLATERALCUSTOMERID equals cim.COLLATERALCUSTOMERID
                                      join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
 
-                                     where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                     where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                      && l.COMPANYID == companyid && loansWithCollateral.Contains(l.LOANAPPLICATIONDETAILID) && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                     orderby l.EFFECTIVEDATE descending
+                                     orderby l.DATETIMECREATED descending
                                      select new CollateralPerfectionViewModel
                                      {
                                          loanId = l.TERMLOANID,

@@ -19450,7 +19450,7 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Processing;
                     assignOperations.operationId = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                     assignOperations.operationCompleted = false;
-                    assignOperations.totalAmountRecovery = customerRequest.totalAmountRecovery; 
+                    assignOperations.totalAmountRecovery = customerRequest.totalUnsettledAmount == null ?  customerRequest.totalAmountRecovery : (decimal)customerRequest.totalUnsettledAmount; 
                     assignOperations.source = source;
                     assignOperations.productId = customerRequest.productId;
                     assignOperations.loanId = customerRequest.loanId;

@@ -3835,10 +3835,10 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanReviewOperationViewModel> GetLMSOperation(int loanId, short loansystemTypeId)
         {
             var ops = (from op in context.TBL_LOAN_REVIEW_OPERATION
-                       where op.LOANID == loanId && op.LOANSYSTEMTYPEID == loansystemTypeId
+                       where op.LOANID == loanId && op.LOANSYSTEMTYPEID == loansystemTypeId && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                        select new LoanReviewOperationViewModel
                        {
-                           
+                           loanReferenceNumber = (op.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook) ? context.TBL_LOAN_CONTINGENT.Where(x=>x.CONTINGENTLOANID == op.LOANID).Select(x=>x.LOANREFERENCENUMBER).FirstOrDefault() : "",
                            operationId = op.OPERATIONTYPEID,
                            operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == op.OPERATIONTYPEID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                            reviewDetails = op.REVIEWDETAILS,
@@ -3859,7 +3859,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var staff = context.TBL_LOAN_REVIEW_OPERATION.Where(o => DbFunctions.TruncateTime(o.DATECREATED) != p.dateTimeCreated && o.LOANID == p.loanId && o.OPERATIONTYPEID == p.operationId).Select(o => o.CREATEDBY).FirstOrDefault();
                 p.previousOperator = context.TBL_STAFF.Where(s => s.STAFFID == staff).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
-                p.exposureBeforeRebook = p.bondAmount;
+                p.exposureBeforeRebook = context.TBL_LOAN_REVIEW_OPERATION.Where(o => o.LOANID == p.loanId && o.OPERATIONTYPEID == p.operationId && o.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Select(o => o.LOANID).Count() < 1 ? (decimal)0.01 : (context.TBL_LOAN_REVIEW_OPERATION.Where(o => o.LOANID == p.loanId && o.OPERATIONTYPEID == p.operationId  && o.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook).Sum(o => o.CONTINGENTOUTSTANDINGPRINCIPAL) - context.TBL_LOAN_REVIEW_OPERATION.Where(o => o.LOANID == p.loanId && o.OPERATIONTYPEID == (int)OperationsEnum.ContingentLiabilityAmountReduction && o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Sum(o => o.PREPAYMENT));
                 p.reviewOperationId = (from a in context.TBL_LMSR_APPLICATION_DETAIL join b in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID where a.LOANREVIEWAPPLICATIONID == p.loanReviewApplicationId select b.OPERATIONID).FirstOrDefault();
                 p.loanApplicationId = (from a in context.TBL_LMSR_APPLICATION_DETAIL join b in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID where a.LOANREVIEWAPPLICATIONID == p.loanReviewApplicationId select b.LOANAPPLICATIONID).FirstOrDefault();
 
