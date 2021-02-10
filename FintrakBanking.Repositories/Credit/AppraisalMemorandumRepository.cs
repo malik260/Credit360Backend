@@ -452,7 +452,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
                     PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
-                    Pep = model.politicallyExposed,
+                    //Pep = model.politicallyExposed,
+                    Pep = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISPOLITICALLYEXPOSED == true),
                     InsiderRelated = appl.ISRELATEDPARTY,
                     ProjectRelated = appl.ISPROJECTRELATED,
                     OnLending = appl.ISONLENDING,
@@ -2540,16 +2541,20 @@ namespace FintrakBanking.Repositories.Credit
 
             var lmsAppraisalOperation = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId && lmsAppraisalOperations.Contains(x.OPERATIONID)).Select(b => b.OPERATIONID).ToList();
 
+            var isFromOperations = context.TBL_LMSR_APPLICATION.FirstOrDefault(l => l.LOANAPPLICATIONID == applicationId)?.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved;
             var operationTypeId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(b => b.OPERATIONTYPEID).FirstOrDefault();
 
             var applicationWentForDrawDown = context.TBL_APPROVAL_TRAIL.Any(d => d.TARGETID == applicationId && lmsDrawdownOperationIds.Contains(d.OPERATIONID));
-            if (applicationWentForDrawDown)
+            if (!isFromOperations)
             {
-                lmsOperationIds.AddRange(lmsDrawdownOperationIds);
-            }
-            else
-            {
-                lmsOperationIds.AddRange(lmsAppraisalOperation);
+                if (applicationWentForDrawDown)
+                {
+                    lmsOperationIds.AddRange(lmsDrawdownOperationIds);
+                }
+                else
+                {
+                    lmsOperationIds.AddRange(lmsAppraisalOperation);
+                }
             }
             if (operationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
@@ -3429,7 +3434,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
             loanApplicationId = x.a.LOANAPPLICATIONID,
-            termSheetCode = x.a.TERMSHEETCODE,
+            termSheetCode = x.a.TERMSHEETID,
             //loanApplicationDetailId = x.a.LOANAPPLICATIONID,
             applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
             relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
@@ -3488,7 +3493,7 @@ namespace FintrakBanking.Repositories.Credit
             customerTypeId = x.a.LOANAPPLICATIONTYPEID,
             isInvestmentGrade = x.a.ISINVESTMENTGRADE,
             loantermSheetId = x.a.LOANTERMSHEETID,
-            loantermSheetCode = x.a.TERMSHEETCODE,
+            loantermSheetCode = x.a.TERMSHEETID,
             loansWithOthers = x.a.LOANSWITHOTHERS,
             ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
             requireCollateral = x.a.REQUIRECOLLATERAL,
@@ -3738,7 +3743,7 @@ namespace FintrakBanking.Repositories.Credit
             customerTypeId = x.a.LOANAPPLICATIONTYPEID,
             isInvestmentGrade = x.a.ISINVESTMENTGRADE,
             loantermSheetId = x.a.LOANTERMSHEETID,
-            loantermSheetCode = x.a.TERMSHEETCODE,
+            loantermSheetCode = x.a.TERMSHEETID,
             loansWithOthers = x.a.LOANSWITHOTHERS,
             ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
             requireCollateral = x.a.REQUIRECOLLATERAL,

@@ -86,7 +86,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex)
             {
                 APIResponse response = new APIResponse();
-                response.Message = $"There was an error creating this record, confirm all requested parameters are captured";
+                response.Message = $"There was an error creating this record, confirm all requested parameters are captured "+ex.Message;
                 response.requestId = null;
                 response.StatusCode = "99";
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);

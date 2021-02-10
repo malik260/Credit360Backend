@@ -105,14 +105,14 @@ namespace FintrakBanking.ViewModels.Credit
         public short subSectorId { get; set; }
         public int sectorId { get; set; }
         public string sectorName { get; set; }
-        public int? loantermSheetId { get; set; }
-        public string loantermSheetCode { get; set; }
+        
+        public int? loantermSheetCode { get; set; }
         public string customerName { get; set; }
         public int customerTypeId { get; set; }
         public string branchName { get; set; }
         public string productName { get; set; }
         public string customerGroupName { get; set; }
-        public string termSheetCode { get; set; }
+        public int? termSheetCode { get; set; }
 
     public string loanTypeName { get; set; }
         public string relationshipOfficerName { get; set; }
@@ -124,7 +124,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int lmsApplicationDetailId { get; set; }
 
         public int? loanPreliminaryEvaluationId { get; set; }
-        public int? loanTermSheetId { get; set; }
+        public int? loantermSheetId { get; set; }
         public double exchangeRate { get; set; }
         public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
         public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }

@@ -18503,7 +18503,8 @@ namespace FintrakBanking.Repositories.Credit
                             && op.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
                             && ln.LOAN_BOOKING_REQUESTID != null
                             && ((cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId))
-                            && (staffs.Contains(atrail.TOSTAFFID ?? 0))// currency filter
+                            && (staffId == (int)atrail.TOSTAFFID || atrail.TOSTAFFID == null)// currency filter
+                            && (atrail.LOOPEDSTAFFID == null)
 
                             orderby op.DATECREATED descending
 
@@ -18679,7 +18680,8 @@ namespace FintrakBanking.Repositories.Credit
                                      && op.OPERATIONCOMPLETED == false
                                      && op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
                                      && ln.LOAN_BOOKING_REQUESTID != null
-                                     && (staffs.Contains(atrail.TOSTAFFID ?? 0))//&& mp.OPERATIONPERFORMED == true
+                                     && (staffId == (int)atrail.TOSTAFFID || atrail.TOSTAFFID == null)//&& mp.OPERATIONPERFORMED == true
+                                     && (atrail.LOOPEDSTAFFID == null)
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
                                      {
@@ -18823,7 +18825,8 @@ namespace FintrakBanking.Repositories.Credit
                                       && op.OPERATIONCOMPLETED == false
                                       && op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
                                       && ln.LOAN_BOOKING_REQUESTID != null
-                                      && (staffs.Contains(atrail.TOSTAFFID ?? 0)) //&& mp.OPERATIONPERFORMED == true
+                                      && (staffId == (int)atrail.TOSTAFFID || atrail.TOSTAFFID == null) //&& mp.OPERATIONPERFORMED == true
+                                      && (atrail.LOOPEDSTAFFID == null)
                                       orderby op.DATECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
                                       {
@@ -18963,7 +18966,8 @@ namespace FintrakBanking.Repositories.Credit
                             && op.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ExternalFacility
                             && ln.LOAN_BOOKING_REQUESTID == null
                             && ((cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId))
-                            && (staffs.Contains(atrail.TOSTAFFID ?? 0))// currency filter
+                            && (staffId == (int)atrail.TOSTAFFID || atrail.TOSTAFFID == null)// currency filter
+                            && (atrail.LOOPEDSTAFFID == null)
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {

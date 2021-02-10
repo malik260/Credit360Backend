@@ -521,7 +521,7 @@ namespace FintrakBanking.Repositories.Credit
                     else
                     {
                         response.StatusCode = "99";
-                        response.Message = "Failed!";
+                        response.Message = "CFL Failed!";
                     }
 
                     SaveCashflowRequestToApiLog(model, response);
@@ -551,7 +551,7 @@ namespace FintrakBanking.Repositories.Credit
             if (response.applicationReferenceNumber == null)
             {
                 response.StatusCode = "99";
-                response.Message = "Failed!";
+                response.Message = "CFL Failed!";
             }
 
             SaveCashflowRequestToApiLog(model, response);
@@ -630,8 +630,8 @@ namespace FintrakBanking.Repositories.Credit
                 var document = new TBL_DOCUMENT_UPLOAD()
                 {
                     DOCUMENTTYPEID = Convert.ToInt32( loanFile.documentTypeId), // ?? 236, //Offer Letter
-                    FILENAME = loanFile.caption+"."+(loanFile.fileExtension).Replace(".",""),
-                    FILEEXTENSION = (loanFile.fileExtension).Replace(".",""),
+                    FILENAME = loanFile.caption+"."+loanFile.fileExtension,
+                    FILEEXTENSION = loanFile.fileExtension,
                     FILESIZE = loanFile.fileData.Length,
                     FILEDATA = Convert.FromBase64String(loanFile.fileData),
                     COMPANYID = model.companyId,
@@ -1036,7 +1036,7 @@ namespace FintrakBanking.Repositories.Credit
                 CAPREGIONID = loan.regionId,
                 REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId,
                 LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
-                LOANTERMSHEETID = loan.loanTermSheetId,
+                LOANTERMSHEETID = loan.loantermSheetId,
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
                 // FLOWCHANGEID = loan.flowchangeId,
@@ -1313,7 +1313,7 @@ namespace FintrakBanking.Repositories.Credit
             loanData.CAPREGIONID = loan.regionId;
             loanData.REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId;
             loanData.LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId;
-            loanData.LOANTERMSHEETID = loan.loanTermSheetId;
+            loanData.LOANTERMSHEETID = loan.loantermSheetId;
             loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
             loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
             loanData.LOANSWITHOTHERS = loan.loansWithOthers;
