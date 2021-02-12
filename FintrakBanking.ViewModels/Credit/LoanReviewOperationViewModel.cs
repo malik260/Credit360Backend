@@ -604,6 +604,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public int lmsOperationId { get; set; }
         public int lmsApplicationId { get; set; }
+        public short applicationStatusId { get; set; }
+        public string cancellationReason { get; set; }
+        public int tempApplicationCancellationId { get; set; }
     }
 
     public class applicationDetails
