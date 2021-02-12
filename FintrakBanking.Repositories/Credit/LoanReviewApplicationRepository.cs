@@ -528,7 +528,8 @@ namespace FintrakBanking.Repositories.Credit
             List<int> levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
             var staffs = general.GetStaffRlieved(staffId);
 
-            var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == user.BranchId || ignoreBranch)
+            var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == user.BranchId || ignoreBranch).Where(
+                x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
             // .Join(context.TBL_BRANCH, a => a.BRANCHID, b => b.BRANCHID, (a, b) => new { a, b })
              .Join(context.TBL_CUSTOMER, ab => ab.CUSTOMERID, c => c.CUSTOMERID, (ab, c) => new { ab, c, b = ab })
              .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
@@ -538,6 +539,7 @@ namespace FintrakBanking.Repositories.Credit
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Authorised
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                     && x.RESPONSESTAFFID == null
+                    && x.APPROVALSTATEID != (int)ApprovalState.Ended
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     && ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
                     //&& ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == staffId)
