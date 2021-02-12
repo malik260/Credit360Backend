@@ -604,6 +604,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public int lmsOperationId { get; set; }
         public int lmsApplicationId { get; set; }
+        public short applicationStatusId { get; set; }
+        public string cancellationReason { get; set; }
+        public int tempApplicationCancellationId { get; set; }
+        public string comment { get; set; }
     }
 
     public class applicationDetails
@@ -1471,6 +1475,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? amountRecoveredCreditCard { get; set; }
         public decimal? creditCardMinimumAssigned { get; set; }
         public double amountRecoveredOrl { get; set; }
+        public decimal? paydayLoanMinimumAssigned { get; set; }
+        public decimal? amountRecoveredPaydayLoan { get; set; }
     }
 
 
@@ -1748,15 +1754,15 @@ namespace FintrakBanking.ViewModels.Credit
             get
             {
                 var newRange = "";
-                if (this.dpd >= 31 && this.dpd <= 60)
+                if (this.dpdExposure >= 31 && this.dpdExposure <= 60)
                 {
                     newRange = "31-60 DPD";
                 }
-                if (this.dpd >= 61 && this.dpd <= 90)
+                if (this.dpdExposure >= 61 && this.dpdExposure <= 90)
                 {
                     newRange = "61-90 DPD";
                 }
-                if (this.dpd > 90)
+                if (this.dpdExposure > 90)
                 {
                     newRange = "90+DPD";
                 }
