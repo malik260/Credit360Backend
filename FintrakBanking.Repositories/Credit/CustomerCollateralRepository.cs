@@ -4956,6 +4956,7 @@ namespace FintrakBanking.Repositories.Credit
                     FIRSTNAME = entity.firstName,
                     MIDDLENAME = entity.middleName,
                     LASTNAME = entity.lastName,
+                    TAXNUMBER = entity.taxNumber,
                     BVN = entity.bvn,
                     RCNUMBER = entity.rcNumber,
                     PHONENUMBER1 = entity.phoneNumber1,
@@ -4981,6 +4982,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.FIRSTNAME = entity.firstName;
             collateral.MIDDLENAME = entity.middleName;
             collateral.LASTNAME = entity.lastName;
+            collateral.TAXNUMBER = entity.taxNumber;
             collateral.BVN = entity.bvn;
             collateral.RCNUMBER = entity.rcNumber;
             collateral.PHONENUMBER1 = entity.phoneNumber1;
