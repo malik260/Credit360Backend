@@ -607,6 +607,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short applicationStatusId { get; set; }
         public string cancellationReason { get; set; }
         public int tempApplicationCancellationId { get; set; }
+        public string comment { get; set; }
     }
 
     public class applicationDetails
