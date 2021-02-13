@@ -6997,7 +6997,7 @@ namespace FintrakBanking.Repositories.Credit
             bool result = false;
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             List<TBL_LOAN_RECOVERY_ASSIGNMENT> bulkLoanTable = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
-
+            var userAdminRole = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLENAME.ToUpper().Contains("RELATIONSHIP MANAGER")).FirstOrDefault();
             GlobalExposureApplicationViewModel assignOperations = new GlobalExposureApplicationViewModel();
 
             foreach (var customerRequest in models)
