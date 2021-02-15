@@ -1676,9 +1676,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
                     var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
 
-                    var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure).Union(dataDigitalExposure);
-                    var allData = unionAll.GroupBy(r => r.customerCode)
-                               .Select(p => p.OrderByDescending(r => r.customerCode).FirstOrDefault()).ToList(); //unionAll.GroupBy(x => x.customerCode).ToList();
+                var dataExposure2 = dataExposure.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
+                var dataDigitalExposure2 = dataDigitalExposure.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
+
+
+                var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure2).Union(dataDigitalExposure2);
+                var allData = unionAll.GroupBy(r => r.customerCode).FirstOrDefault();
+                               //.Select(p => p.OrderByDescending(r => r.customerCode).FirstOrDefault()).ToList(); //unionAll.GroupBy(x => x.customerCode).ToList();
 
                     foreach (var consultant in allData)
                     {
