@@ -141,7 +141,11 @@ namespace FintrakBanking.Repositories.credit
                     };
                     fees.Add(fee);
                 }
-                var save2 = context.TBL_FACILITY_MOD_DETL_FEE.AddRange(fees);
+
+                if (fees.Count > 0)
+                {
+                    var save2 = context.TBL_FACILITY_MOD_DETL_FEE.AddRange(fees);
+                }
 
 
                 workflow.OperationId = (int)OperationsEnum.FacilityModificationApproval;
