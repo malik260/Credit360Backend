@@ -237,19 +237,23 @@ namespace FintrakBanking.Repositories.Credit
             var ReleasedToLegalNAme = bankingContext.TBL_COLLATERAL_RELEASE_STATUS.Find((int)CollateralReleaseStatus.ReleasedToLegal).COLLATERALRELEASESTATUSNAME;
 
 
-            var data = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(x => x.COLLATERALCUSTOMERID == collateralId).Select(x => new CollateralDocumentViewModel
+            var data = (from x in context.TBL_DOCUMENT_USAGE 
+                        join b in context.TBL_DOCUMENT_UPLOAD on x.DOCUMENTUPLOADID equals b.DOCUMENTUPLOADID
+                        where x.TARGETID == collateralId
+                        select new CollateralDocumentViewModel
             {
-                collateralId = x.COLLATERALCUSTOMERID,
-                documentId = x.DOCUMENTID,
-                documentTitle = x.DOCUMENTCODE,
-                fileData = x.FILEDATA,
-                fileName = x.FILENAME,
-                fileExtension = x.FILEEXTENSION,
+                collateralId = x.TARGETID,
+                documentId = b.DOCUMENTUPLOADID,
+                documentTitle = x.DOCUMENTTITLE,
+                fileData = b.FILEDATA,
+                fileName = b.FILENAME,
+                fileExtension = b.FILEEXTENSION,
                 targetId = x.TARGETID,
-                collateralReleaseStatusId =x.COLLATERALRELEASESTATUSID,
-              collateralReleaseStatusName = x.COLLATERALRELEASESTATUSID == null ? inVaultNAme : x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault ? inVaultNAme : x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.ReleasedToBM ? releasetoBM : x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.ReleasedToCustomer ? ReleasedToCustomerNAme: x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.ReleasedToLegal ? ReleasedToLegalNAme : inVaultNAme,
-          });
-            return data.ToList();
+                isPrimaryDocumentValue = x.ISPRIMARYDOCUMENT == true ? "Yes":"No",
+                //collateralReleaseStatusId =x.COLLATERALRELEASESTATUSID,
+              //collateralReleaseStatusName = x.COLLATERALRELEASESTATUSID == null ? inVaultNAme : x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault ? inVaultNAme : x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.ReleasedToBM ? releasetoBM : x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.ReleasedToCustomer ? ReleasedToCustomerNAme: x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.ReleasedToLegal ? ReleasedToLegalNAme : inVaultNAme,
+          }).ToList();
+            return data;
         }
 
         public IEnumerable<CollateralDocumentViewModel> GetTempCustomerCollateralDocument(int tempCollateralId)

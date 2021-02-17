@@ -481,7 +481,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.companyLogo = $@"
                 <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr></table>";
                 this.customerRecord = context.TBL_CUSTOMER.Find(this.customerId);
@@ -621,7 +621,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.companyLogo = $@"
                  <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr></table>";
                 this.interestRate = context.TBL_LMSR_APPLICATION_DETAIL.Where(i => i.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID).Select(i => i.APPROVEDINTERESTRATE).FirstOrDefault();
@@ -908,7 +908,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.companyLogo = $@"
                 <table style='font face: arial; size:12px' border=01 width=1100 cellpadding=0 cellspacing=0>
                 <tr>
-                    <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                    <td align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                 </tr></table>";
             string customerName = String.Empty;
@@ -971,7 +971,7 @@ namespace FintrakBanking.Repositories.Credit
             this.companyLogo = $@"
                  <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr></table>";
             string customerName = String.Empty;
@@ -1013,7 +1013,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.companyLogo = $@"
                  <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr></table>";
                 this.interestRate = context.TBL_LMSR_APPLICATION_DETAIL.Where(i => i.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID).Select(i => i.APPROVEDINTERESTRATE).FirstOrDefault();
@@ -1621,7 +1621,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -6684,7 +6684,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -7506,7 +7506,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8892,7 +8892,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8998,7 +8998,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -9105,7 +9105,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -9202,7 +9202,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -9968,7 +9968,7 @@ namespace FintrakBanking.Repositories.Credit
                
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>  
                         <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                    <tr>
@@ -12129,7 +12129,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr></table> ";   
                    
@@ -12543,7 +12543,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3> <br />
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>                   
                     <tr>
@@ -12632,7 +12632,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1 width=750 cellpadding=5 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>                    
                     <tr>
@@ -12880,7 +12880,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
