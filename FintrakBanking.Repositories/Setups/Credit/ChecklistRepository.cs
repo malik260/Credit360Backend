@@ -2100,6 +2100,7 @@ namespace FintrakBanking.Repositories.Credit
                                dateCreated = atrail.SYSTEMARRIVALDATETIME,
                                comment = atrail.COMMENT,
                                operationId = atrail.OPERATIONID,
+                               deferralId = c.CHECKLISTDEFERRALID,
                                //Loan Information
                                relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
                                relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
@@ -2167,6 +2168,7 @@ namespace FintrakBanking.Repositories.Credit
                                dateCreated = atrail.SYSTEMARRIVALDATETIME,
                                comment = atrail.COMMENT,
                                operationId = atrail.OPERATIONID,
+                               deferralId = c.CHECKLISTDEFERRALID,
                                //Loan Information
                                relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
                                relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
