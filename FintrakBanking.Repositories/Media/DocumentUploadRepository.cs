@@ -671,6 +671,7 @@ namespace FintrakBanking.Repositories.Media
 
         public int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer)
         {
+
             var customerCode = String.Empty;
             if (model.customerId > 0)
             {

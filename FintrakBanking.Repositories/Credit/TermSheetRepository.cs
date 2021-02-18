@@ -37,12 +37,13 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = _workflow;
         }
 
-        public IEnumerable<TermSheetViewModel> GetTermSheets()
+        public IEnumerable<TermSheetViewModel> GetTermSheets( int staffId)
         {
             return context.TBL_TERM_SHEET.Where(x => x.DELETED == false)
                 .Select(x => new TermSheetViewModel
                 {
                     termSheetId = x.TERMSHEETID,
+                    termSheetCode = x.TERMSHEETCODE,
                     borrower = x.BORROWER,
                     facilityAmount = x.FACILITYAMOUNT,
                     facilityType = x.FACILITYTYPE,
@@ -75,6 +76,7 @@ namespace FintrakBanking.Repositories.Credit
                     eventsOfDefault = x.EVENTSOFDEFAULT,
                     transferability = x.TRANSFERABILITY,
                     governingLawAndJurisdiction = x.GOVERNINGLAWANDJURISDICTION,
+                    owner = x.CREATEDBY == staffId ? true : false
                 })
                 .ToList();
         }
@@ -88,6 +90,63 @@ namespace FintrakBanking.Repositories.Credit
                            lookupId = (short)t.TERMSHEETID,
                            lookupName = t.TERMSHEETCODE
                        }).ToList();
+            return data;
+        }
+
+
+        public IEnumerable<LookupViewModel> GetCustomerTermSheetsCorrection()
+        {
+            var data = (from t in context.TBL_TERM_SHEET
+                        where t.DELETED == false
+                        select new LookupViewModel()
+                        {
+                            lookupId = (short)t.TERMSHEETID,
+                            lookupName = t.TERMSHEETCODE
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<TermSheetViewModel> GetCustomerTermSheetsByCode(int termSheetCode)
+        {
+            var data = context.TBL_TERM_SHEET.Where(x => x.DELETED == false && x.TERMSHEETID == termSheetCode)
+                .Select(x => new TermSheetViewModel
+                {
+                    termSheetId = x.TERMSHEETID,
+                    termSheetCode = x.TERMSHEETCODE,
+                    borrower = x.BORROWER,
+                    facilityAmount = x.FACILITYAMOUNT,
+                    facilityType = x.FACILITYTYPE,
+                    purpose = x.PURPOSE,
+                    tenor = x.TENOR,
+                    permittedAccount = x.PERMITTEDACCOUNT,
+                    debtServiceReserveAccount = x.DEBTSERVICERESERVEACCOUNT,
+                    cancellation = x.CANCELLATION,
+                    principalRepayment = x.PRINCIPALREPAYMENT,
+                    interestPayment = x.INTERESTPAYMENT,
+                    computationOfInterest = x.COMPUTATIONOFINTEREST,
+                    repaymentSource = x.REPAYMENTSOURCE,
+                    availability = x.AVAILABILITY,
+                    currencyOfDisbursement = x.CURRENCYOFDISBURSEMENT,
+                    documentation = x.DOCUMENTATION,
+                    drawdown = x.DRAWDOWN,
+                    earlyRepaymentOfPrincipal = x.EARLYREPAYMENTOFPRINCIPAL,
+                    interestRate = x.INTERESTRATE,
+                    pricing = x.PRICING,
+                    managementFees = x.MANAGEMENTFEES,
+                    facilityFee = x.FACILITYFEE,
+                    processingFee = x.PROCESSINGFEE,
+                    securityCondition = x.SECURITYCONDITION,
+                    transactionDynamics = x.TRANSACTIONDYNAMICS,
+                    conditionsPrecedentToUtilisation = x.CONDITIONSPRECEDENTTOUTILISATION,
+                    otherCondition = x.OTHERCONDITION,
+                    taxes = x.TAXES,
+                    presentationsAndWarrantees = x.PRESENTATIONSANDWARRANTEES,
+                    covenants = x.COVENANTS,
+                    eventsOfDefault = x.EVENTSOFDEFAULT,
+                    transferability = x.TRANSFERABILITY,
+                    governingLawAndJurisdiction = x.GOVERNINGLAWANDJURISDICTION,
+                }).ToList();
+
             return data;
         }
 

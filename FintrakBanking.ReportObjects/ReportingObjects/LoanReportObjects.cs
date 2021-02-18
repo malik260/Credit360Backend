@@ -2648,11 +2648,14 @@ namespace FintrakBanking.ReportObjects
                 var reportData = (
                                   from l in context.TBL_LOAN
                                   join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                                  where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                  join ll in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ll.LOANAPPLICATIONDETAILID
+                                  join cm in context.TBL_LOAN_APPLICATION_COLLATERL on ll.LOANAPPLICATIONID equals cm.LOANAPPLICATIONID
+                                  join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                                  where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                   && l.COMPANYID == 1 
                                   //&& loansWithCollateral.Contains(l.TERMLOANID)
                                   && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                  orderby l.EFFECTIVEDATE descending
+                                  orderby l.DATETIMECREATED descending
                                   select new StalledPerfectionViewModel
                                   {
                                       loanId = l.TERMLOANID,
@@ -2661,9 +2664,13 @@ namespace FintrakBanking.ReportObjects
                                       startDate = startDate,
                                       endDate = endDate,
                                       loanRefno = l.LOANREFERENCENUMBER,
+                                      collateralCode = cc.COLLATERALCODE,
+                                      collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(x => x.COLLATERALSUBTYPEID == cc.COLLATERALSUBTYPEID).Select(x => x.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                                      perfectionDate = cm.DATETIMECREATED,
                                       outstandingInterest = l.OUTSTANDINGINTEREST + l.PASTDUEINTEREST
                                   }).ToList().Select(x =>
                                   {
+                                      x.collateralType = LoanCollateralType(x.loanId, LoanSystemTypeEnum.TermDisbursedFacility);
                                       x.reasonsforStalledPerfection = LoanCollateralPerfectionReasons(x.loanId, LoanSystemTypeEnum.TermDisbursedFacility);
                                       return x;
                                   }).ToList();
@@ -2695,11 +2702,14 @@ namespace FintrakBanking.ReportObjects
                                       from l in context.TBL_LOAN
                                       join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                                       join sta in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sta.STAFFID
-                                      where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                      join ll in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ll.LOANAPPLICATIONDETAILID
+                                      join cm in context.TBL_LOAN_APPLICATION_COLLATERL on ll.LOANAPPLICATIONID equals cm.LOANAPPLICATIONID
+                                      join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                                      where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                       && l.COMPANYID == companyid 
                                       //&& loansWithCollateral.Contains(l.TERMLOANID) 
                                       && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                      orderby l.EFFECTIVEDATE descending
+                                      orderby l.DATETIMECREATED descending
                                       select new CollateralPerfectionyettoCommenceViewModel
                                       {
                                           loanId = l.TERMLOANID,
@@ -2710,6 +2720,9 @@ namespace FintrakBanking.ReportObjects
                                           endDate = endDate,
                                           facilityGrantDate = l.EFFECTIVEDATE,
                                           staffCode = sta.STAFFCODE,
+                                          collateralCode = cc.COLLATERALCODE,
+                                          collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(x => x.COLLATERALSUBTYPEID == cc.COLLATERALSUBTYPEID).Select(x => x.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                                          captureDate = cm.DATETIMECREATED,
                                           total = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL) + (l.OUTSTANDINGINTEREST + l.PASTDUEINTEREST)
 
                                       }).ToList().Select(x =>
@@ -4958,16 +4971,18 @@ namespace FintrakBanking.ReportObjects
                     if (status != -1)
                     {
                         loansWithCollateral = (from f in context.TBL_COLLATERAL_IMMOVE_PROPERTY
-                                               join lc in context.TBL_LOAN_COLLATERAL_MAPPING on f.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
+                                               join lc in context.TBL_LOAN_APPLICATION_COLLATERL on f.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
+                                               join ll in context.TBL_LOAN_APPLICATION_DETAIL on lc.LOANAPPLICATIONID equals ll.LOANAPPLICATIONID
                                                where f.PERFECTIONSTATUSID == status
-                                               select lc.LOANID);
+                                               select ll.LOANAPPLICATIONDETAILID);
                     }
                     else if (status == -1)
                     {
                         loansWithCollateral = (from f in context.TBL_COLLATERAL_IMMOVE_PROPERTY
-                                               join lc in context.TBL_LOAN_COLLATERAL_MAPPING on f.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
+                                               join lc in context.TBL_LOAN_APPLICATION_COLLATERL on f.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
+                                               join ll in context.TBL_LOAN_APPLICATION_DETAIL on lc.LOANAPPLICATIONID equals ll.LOANAPPLICATIONID
                                                //where f.PERFECTIONSTATUSID == status
-                                               select lc.LOANID);
+                                               select ll.LOANAPPLICATIONDETAILID);
                     }
 
 
@@ -4979,15 +4994,14 @@ namespace FintrakBanking.ReportObjects
                                      join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                                      join sta in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sta.STAFFID
                                      join b in context.TBL_BRANCH on l.BRANCHID equals b.BRANCHID
-                                     join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
+                                     join ll in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ll.LOANAPPLICATIONDETAILID
+                                     join cm in context.TBL_LOAN_APPLICATION_COLLATERL on ll.LOANAPPLICATIONID equals cm.LOANAPPLICATIONID
                                      join cim in context.TBL_COLLATERAL_IMMOVE_PROPERTY on cm.COLLATERALCUSTOMERID equals cim.COLLATERALCUSTOMERID
+                                     join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
 
-
-
-
-                                     where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
-                                     && l.COMPANYID == companyid && loansWithCollateral.Contains(l.TERMLOANID) && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                     orderby l.EFFECTIVEDATE descending
+                                     where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                     && l.COMPANYID == companyid && loansWithCollateral.Contains(l.LOANAPPLICATIONDETAILID) && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                     orderby l.DATETIMECREATED descending
                                      select new CollateralPerfectionViewModel
                                      {
                                          loanId = l.TERMLOANID,
@@ -5006,7 +5020,10 @@ namespace FintrakBanking.ReportObjects
                                          expiryDate = l.MATURITYDATE,
                                          sanctionLimit = l.PRINCIPALAMOUNT,
                                          remarks = cim.REMARK,
-                                         tenor = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, l.MATURITYDATE)
+                                         collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(x=> x.COLLATERALSUBTYPEID ==  cc.COLLATERALSUBTYPEID).Select(x=>x.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                                         tenor = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, l.MATURITYDATE),
+                                         collateralCode = cc.COLLATERALCODE,
+                                         captureDate = cm.DATETIMECREATED
 
 
                                      }).Distinct().ToList().Select(x =>

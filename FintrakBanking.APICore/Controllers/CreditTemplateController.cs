@@ -600,6 +600,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("document-section/operation/{operationId}/target/{targetId}/section/{sectionId}/generic/{customerId}")]
+        public HttpResponseMessage GetDocumentSectionGeneric(int operationId, int targetId, int sectionId, int customerId)
+        {
+            try
+            {
+                LoadedDocumentSectionViewModel response = repo.GetDocumentSection(token.GetStaffId, operationId, targetId, sectionId, customerId, true);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("document-exception-section/operation/{operationId}/target/{targetId}/section/{sectionId}")]
         public HttpResponseMessage GetExceptionDocumentSection(int operationId, int targetId, int sectionId)
         {
@@ -698,6 +714,26 @@ namespace FintrakBanking.APICore.Controllers
                 user.staffId = token.GetStaffId;
                 user.companyId = token.GetCompanyId;
                 List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId, operationId, targetId, user, isThirdPartyFacility);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("documentation/operation/{operationId}/target/{targetId}/generic/{customerId}")]
+        public HttpResponseMessage GetLoadedDocumentationGeneric(int operationId, int targetId, int customerId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentationGeneric(token.GetStaffId, operationId, targetId, user, customerId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)

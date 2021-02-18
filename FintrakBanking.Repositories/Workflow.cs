@@ -1351,6 +1351,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 levelIds = context.TBL_APPROVAL_LEVEL.Where(x => x.STAFFROLEID == s.STAFFROLEID).Select(x => (int)x.APPROVALLEVELID).ToList(),
             });
             if (s.SUPERVISOR_STAFFID == null) return;
+            if (staffId == s.SUPERVISOR_STAFFID)
+            {
+                throw new SecureException("This Staff, "+ s.STAFFCODE + " cannot be setup as self supervisor!");
+            }
             GetReportingLine((int)s.SUPERVISOR_STAFFID);
         }
 
@@ -1497,7 +1501,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
             //if (IsLastApprover(level) && (this.statusId == (int)ApprovalStatusEnum.Processing || this.statusId == (int)ApprovalStatusEnum.Authorised || this.statusId == (int)ApprovalStatusEnum.Finishing))
-            if (IsLastApprover(level) && (this.statusId == (int)ApprovalStatusEnum.Processing || this.statusId == (int)ApprovalStatusEnum.Authorised || this.statusId == (int)ApprovalStatusEnum.Escalated))
+            if (IsLastApprover(level) && (this.statusId == (int)ApprovalStatusEnum.Processing || this.statusId == (int)ApprovalStatusEnum.Pending || this.statusId == (int)ApprovalStatusEnum.Authorised || this.statusId == (int)ApprovalStatusEnum.Escalated))
             {
                 this.statusId = (int)ApprovalStatusEnum.Approved;
             }

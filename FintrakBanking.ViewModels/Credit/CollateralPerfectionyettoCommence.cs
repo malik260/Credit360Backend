@@ -25,8 +25,10 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime endDate { get; set; }
         public string staffCode { get; set; }
         public decimal total { get; set; }
-         
-
+        public string collateralCode { get; set; }
+        public short colaterallSubType { get; set; }
+        public DateTime captureDate { get; set; }
+        public string collateralSubType { get; set; }
     }
 
 
@@ -90,6 +92,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string deskDescription { set; get; }
 
         public string businessUnit { get; set; }
+        public string collateralSubType { get; set; }
+        public string collateralCode { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public DateTime captureDate { get; set; }
     }
 
     public class CollateralRegisterViewModel : CollateralPerfectionViewModel

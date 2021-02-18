@@ -452,7 +452,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
                     PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
-                    Pep = model.politicallyExposed,
+                    //Pep = model.politicallyExposed,
+                    Pep = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISPOLITICALLYEXPOSED == true),
                     InsiderRelated = appl.ISRELATEDPARTY,
                     ProjectRelated = appl.ISPROJECTRELATED,
                     OnLending = appl.ISONLENDING,
@@ -2540,16 +2541,20 @@ namespace FintrakBanking.Repositories.Credit
 
             var lmsAppraisalOperation = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId && lmsAppraisalOperations.Contains(x.OPERATIONID)).Select(b => b.OPERATIONID).ToList();
 
+            var isFromOperations = context.TBL_LMSR_APPLICATION.FirstOrDefault(l => l.LOANAPPLICATIONID == applicationId)?.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved;
             var operationTypeId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(b => b.OPERATIONTYPEID).FirstOrDefault();
 
             var applicationWentForDrawDown = context.TBL_APPROVAL_TRAIL.Any(d => d.TARGETID == applicationId && lmsDrawdownOperationIds.Contains(d.OPERATIONID));
-            if (applicationWentForDrawDown)
+            if (!isFromOperations)
             {
-                lmsOperationIds.AddRange(lmsDrawdownOperationIds);
-            }
-            else
-            {
-                lmsOperationIds.AddRange(lmsAppraisalOperation);
+                if (applicationWentForDrawDown)
+                {
+                    lmsOperationIds.AddRange(lmsDrawdownOperationIds);
+                }
+                else
+                {
+                    lmsOperationIds.AddRange(lmsAppraisalOperation);
+                }
             }
             if (operationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
@@ -3429,6 +3434,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
             loanApplicationId = x.a.LOANAPPLICATIONID,
+            termSheetCode = x.a.TERMSHEETID,
             //loanApplicationDetailId = x.a.LOANAPPLICATIONID,
             applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
             relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
@@ -3487,6 +3493,7 @@ namespace FintrakBanking.Repositories.Credit
             customerTypeId = x.a.LOANAPPLICATIONTYPEID,
             isInvestmentGrade = x.a.ISINVESTMENTGRADE,
             loantermSheetId = x.a.LOANTERMSHEETID,
+            loantermSheetCode = x.a.TERMSHEETID,
             loansWithOthers = x.a.LOANSWITHOTHERS,
             ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
             requireCollateral = x.a.REQUIRECOLLATERAL,
@@ -3736,6 +3743,7 @@ namespace FintrakBanking.Repositories.Credit
             customerTypeId = x.a.LOANAPPLICATIONTYPEID,
             isInvestmentGrade = x.a.ISINVESTMENTGRADE,
             loantermSheetId = x.a.LOANTERMSHEETID,
+            loantermSheetCode = x.a.TERMSHEETID,
             loansWithOthers = x.a.LOANSWITHOTHERS,
             ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
             requireCollateral = x.a.REQUIRECOLLATERAL,
@@ -3817,6 +3825,16 @@ namespace FintrakBanking.Repositories.Credit
             return response;
         }
 
+        public bool ReassignMultipleRequests(List<int> models, GeneralEntity userEntity, int staffId)
+        {
+            bool response = false;
+            foreach (var model in models)
+            {
+                if (model > 0) { response = AssignApplication(model, staffId, userEntity); }
+            }
+            return response;
+        }
+
         public bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity model)
         {
             //bool saved = false;
@@ -3834,23 +3852,11 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (trail.FROMAPPROVALLEVELID == trail.TOAPPROVALLEVELID && trail.LOOPEDSTAFFID > 0)
                         {
-                            //trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.LOOPEDSTAFFID).ToList();
-                            //trailsForAudit = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.LOOPEDSTAFFID).ToList();
-                            //foreach(var t in trails)
-                            //{
-                            //    t.REQUESTSTAFFID = staffId;
-                            //}
                             trail.LOOPEDSTAFFID = staffId;
                             //trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                         else
                         {
-                            //trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.TOSTAFFID).ToList();
-                            //trailsForAudit = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.TOSTAFFID).ToList();
-                            //foreach (var t in trails)
-                            //{
-                            //    t.REQUESTSTAFFID = staffId;
-                            //}
                             trail.TOSTAFFID = staffId;
                             //trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
@@ -3905,7 +3911,7 @@ namespace FintrakBanking.Repositories.Credit
                         AUDITTYPEID = (short)AuditTypeEnum.ApplicationReassigned,
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
-                        DETAIL = $"Transaction that was previously assigned to {staff?.FIRSTNAME} {staff?.MIDDLENAME} {staff?.LASTNAME} ({staff.STAFFCODE}) {level.LEVELNAME} approval group was to {level.LEVELNAME}.",
+                        DETAIL = $"Transaction that was previously assigned to {staff?.FIRSTNAME} {staff?.LASTNAME} {staff.STAFFCODE} was returned to general pool {level.LEVELNAME}.",
                         IPADDRESS = CommonHelpers.GetLocalIpAddress(), 
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),

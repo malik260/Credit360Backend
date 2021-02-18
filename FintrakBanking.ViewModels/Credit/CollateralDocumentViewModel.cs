@@ -26,6 +26,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralReleaseStatusName { get; set; }
         public string doneBy { get; set; }
         public string collateralSummary { get; set; }
+        public string isPrimaryDocumentValue { get; set; }
     }
 
     public class CollateralVisitationDocumentViewModel : GeneralEntity

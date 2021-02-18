@@ -368,5 +368,9 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
         public decimal? SINGLEOBLIGORLIMIT { get; set; }
+        public string FILENAME { get; set; }
+        public string FILEEXTENSION { get; set; }
+        public byte[] FILEDATA { get; set; }
+        public string IMAGEPATH { get; set; }
     }
 }
