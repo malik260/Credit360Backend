@@ -293,7 +293,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var appl = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).FirstOrDefault();
-                loanAppId = appl.LOANAPPLICATIONID;
+                loanAppId = appl?.LOANAPPLICATIONID ?? 0;
             }
             return loanAppId;
         }

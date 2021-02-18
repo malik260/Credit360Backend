@@ -2712,7 +2712,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"'{jobType.JOBTYPENAME}' staff admin has been modified. New admin staff code : '{ staff.STAFFCODE }' ",
+                DETAIL = $"'{jobType?.JOBTYPENAME}' staff admin has been modified. New admin staff code : '{ staff.STAFFCODE }' ",
                 IPADDRESS =CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
