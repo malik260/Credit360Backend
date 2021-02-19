@@ -1567,6 +1567,17 @@ namespace FintrakBanking.APICore.Controllers
            
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-loan-application/cancellation")]
+        public HttpResponseMessage LmsLoanApplicationCancellation()
+        {
+            var response = repo.GetAllLmsRequestsForLoanCancellation(token.GetStaffId);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application/loan-cancellation")]
@@ -1760,6 +1771,18 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             
             
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lms-loan-application-cancellation")]
+        public HttpResponseMessage ViewLmsLaonApplicationCancellationDetails([FromBody] LoanReviewApplicationViewModel data)
+        {
+            var response = repo.ViewLmsLaonApplicationCancellationDetails(data);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
+
         }
 
         [HttpPost]
