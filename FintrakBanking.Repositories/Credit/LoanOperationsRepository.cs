@@ -35154,7 +35154,11 @@ namespace FintrakBanking.Repositories.Credit
         public bool generateRecoveryMailToAgents(string source, int staffId, int companyId)
         {
             
-                var recoveryAgents = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent && a.DELETED == false).ToList();
+                var recoveryAgents = (from c in context.TBL_ACCREDITEDCONSULTANT 
+                                      join d in context.TBL_LOAN_RECOVERY_ASSIGNMENT on c.ACCREDITEDCONSULTANTID equals d.ACCREDITEDCONSULTANT
+                                      where
+                                      c.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent 
+                                      && c.DELETED == false select c).ToList();
 
                 if (recoveryAgents.Count() > 0)
                 {
@@ -35364,7 +35368,11 @@ namespace FintrakBanking.Repositories.Credit
 
                         var n = 0;
                         var alertTemplate = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "RecoveryAssignmentNotification").Select(x => x).FirstOrDefault();
-                        tempResult = $@"
+                    if(alertTemplate == null)
+                    {
+                        throw new SecureException("Alert template not set");
+                    }
+                    tempResult = $@"
                              <h3><b>LIST OF RECOVERIES ASSIGNED TO {recoveryAgent.FIRMNAME.ToUpper()}</b></h3>
                              <table cellpadding='0' cellspacing='0' border='1' width='800px'>
                                 <tr>
@@ -35408,7 +35416,7 @@ namespace FintrakBanking.Repositories.Credit
                             tempResult = tempResult + $"</table><br/>";
                             result = tempResult;
 
-
+                        
                             var template = alertTemplate.TEMPLATE;
                             var title = alertTemplate.TITLE;
                             if (result.Count() > 0 && template.Replace("@{{accountList}}", result).Count() > 0)
@@ -35427,6 +35435,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 SendAlertNotification(alerts);
                             }
+                        
                         }
                     }
                 }
