@@ -1225,13 +1225,13 @@ namespace FintrakBanking.Repositories.Setups.General
             result.Status = LicenseStatus.MissingLicenseFile;
             usePath = System.Web.Hosting.HostingEnvironment.MapPath(System.Configuration.ConfigurationManager.AppSettings["licencePath"]); // "C:\\inetpub\\wwwroot\\FinTrakLicensePath\\FinTrakCredit360License.lic";
             var keyPath = System.Web.Hosting.HostingEnvironment.MapPath(System.Configuration.ConfigurationManager.AppSettings["publicKeyPath"]);
-            if ((usePath == ""))
+            if (usePath == "")
             {
                 //usePath = FileSystem.CombinePath(My.Application.Info.DirectoryPath, DefaultLicenseFile);
             }
 
             string path = usePath;
-            string filename = "FintrakCREDIT360License.lic";
+            string filename = "FintrakCredit360License.lic";
             string keyFile = "FinTrakPublicKey.xml";
 
             DirectoryInfo directory = new DirectoryInfo(path);

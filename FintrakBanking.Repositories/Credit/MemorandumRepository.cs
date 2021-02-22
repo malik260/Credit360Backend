@@ -6675,6 +6675,62 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        public string MemoMarkupGenericHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h3><b>MEMO</b></h3>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
+                        
+                    </tr>
+                    <tr>
+                        <td><b>Date</b></td>
+                        <td>{DateTime.UtcNow}</td>
+                    </tr>
+                    <tr>
+                        <td><b>To:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>From:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Location:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Subject:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>No. Of Pages:</b></td>
+                        <td></td>
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            result = result + $@" 
+                    <p></p>
+                    <p><b>1. BACKGROUND</b></p>
+                    <p></p>
+                    <p><b>2. COLLATERAL</b></p>
+                    <p></p>
+                    <p><b>3. ACCOUNT STATUS/ANALYSIS</b></p>
+                    <p></p>
+                    <p><b>4. ISSUES</b></p>
+                    <p></p>
+                    <p><b>5. CURRENT UPDATES</b></p>
+                    <p></p>
+                    <p><b>6. REQUEST/RECOMMENDATION</b></p>
+                    <p></p>
+                    <p><b>7. JUSTIFICATION</b></p>";
+            return result;
+        }
+
         public string MemoMarkupHtml()
         {
             var result = String.Empty;
