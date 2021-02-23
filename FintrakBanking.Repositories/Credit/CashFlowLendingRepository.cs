@@ -302,67 +302,8 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             //THIS FOREACH LOOP IS NOT YET TESTED. PLEASE COMMENT REMOVE AFTER SIMULATION
-            foreach (var supplier in entity.individualSuppliers)
-            {
-                TBL_CUSTOMER_CLIENT_SUPPLIER clientSupplier;
-
-                clientSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Find(customer.CUSTOMERID);
-                var accountCompleted = context.TBL_CUSTOMER.Find(customer.CUSTOMERID).ACCOUNTCREATIONCOMPLETE;
-
-                clientSupplier.CUSTOMERID = customer.CUSTOMERID;
-                clientSupplier.CUSTOMERTYPEID = (short)CustomerTypeEnum.Individual;
-                clientSupplier.FIRSTNAME = supplier.firstName;
-                clientSupplier.MIDDLENAME = supplier.otherNames;
-                clientSupplier.LASTNAME = supplier.lastName;
-                clientSupplier.TAX_NUMBER = null;
-                clientSupplier.REGISTRATION_NUMBER = null;
-                clientSupplier.HAS_CASA_ACCOUNT = supplier.accountNumber != null;
-                clientSupplier.CASA_ACCOUNTNO = supplier.accountNumber;
-                clientSupplier.BANKNAME = supplier.BankName;
-                clientSupplier.NATURE_OF_BUSINESS = supplier.natureOfBusiness;
-                clientSupplier.CONTACT_PERSON = null;
-                clientSupplier.ADDRESS = supplier.address;
-                clientSupplier.PHONENUMBER = supplier.phoneNumber;
-                clientSupplier.EMAILADDRESS = supplier.email;
-                clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Client;
-                clientSupplier.CREATEDBY = (int)entity.createdBy;
-
-                //short auditTypeId = 0;
-                // var auditDetail = string.Empty;
-                //if (clientSupplier != null && accountCompleted == false)
-                //{
-                //    auditTypeId = (short)AuditTypeEnum.CustomerAdded;
-                //    auditDetail = "Updated TBL_CUSTOMER_CLIENT_SUPPLIER for customer ID: + (" + customer.CUSTOMERCODE +
-                //             ") ";
-                //}
-                //else if (clientSupplier == null && accountCompleted == false)
-                //{
-                //    context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
-                //    auditTypeId = (short)AuditTypeEnum.CustomerUpdated;
-                //    auditDetail = "Added new TBL_CUSTOMER_CLIENT_SUPPLIER for customer ID: + (" + customer.CUSTOMERCODE +
-                //             ") ";
-                //}
-
-                // Audit Section ----------------------------
-                //var audit = new TBL_AUDIT
-                //{
-                //    AUDITTYPEID = auditTypeId,
-                //    STAFFID = (int)model.createdBy,
-                //    BRANCHID = (short)model.branchId,
-                //    DETAIL = auditDetail,
-                //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                //    URL = model.app,
-                //    APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                //    SYSTEMDATETIME = DateTime.Now,
-                //    DEVICENAME = CommonHelpers.GetDeviceName(),
-                //    OSNAME = CommonHelpers.FriendlyName()
-                //};
-                //this.auditTrail.AddAuditTrail(audit);
-
-
-                var response = context.SaveChanges() != 0;
-                return response;
-            }
+            AddCustomerClientSupplier(customer, entity);
+           
 
             context.TBL_CUSTOMER.Add(customer);
             return context.SaveChanges() > 0;
@@ -468,6 +409,29 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             //THIS FOREACH LOOP IS NOT YET TESTED. PLEASE REMOVE COMMENT AFTER SIMULATION
+            AddCustomerClientSupplier(customer, model);
+
+
+
+            context.TBL_CUSTOMER.Add(customer);
+            return context.SaveChanges() > 0;
+        }
+
+        public bool ValidateCustomerCode(string customerCode)
+        {
+            bool itemExist = false;
+            var data = (from a in context.TBL_CUSTOMER where a.CUSTOMERCODE == customerCode select a).ToList();
+            if (data.Count > 0)
+            {
+                itemExist = true;
+            }
+
+            return itemExist;
+        }
+
+        public void AddCustomerClientSupplier(TBL_CUSTOMER customer, IncomingCustomerViewModels model)
+        {
+
             foreach (var supplier in model.corporateSuppliers)
             {
                 TBL_CUSTOMER_CLIENT_SUPPLIER clientSupplier;
@@ -492,274 +456,49 @@ namespace FintrakBanking.Repositories.Credit
                 clientSupplier.EMAILADDRESS = supplier.email;
                 clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Supplier;
                 clientSupplier.CREATEDBY = (int)model.createdBy;
+                clientSupplier.DATECREATED = genSetup.GetApplicationDate();
 
-                //short auditTypeId = 0;
-               // var auditDetail = string.Empty;
-                //if (clientSupplier != null && accountCompleted == false)
-                //{
-                //    auditTypeId = (short)AuditTypeEnum.CustomerAdded;
-                //    auditDetail = "Updated TBL_CUSTOMER_CLIENT_SUPPLIER for customer ID: + (" + customer.CUSTOMERCODE +
-                //             ") ";
-                //}
-                //else if (clientSupplier == null && accountCompleted == false)
-                //{
-                //    context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
-                //    auditTypeId = (short)AuditTypeEnum.CustomerUpdated;
-                //    auditDetail = "Added new TBL_CUSTOMER_CLIENT_SUPPLIER for customer ID: + (" + customer.CUSTOMERCODE +
-                //             ") ";
-                //}
+                context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
 
-                // Audit Section ----------------------------
-                //var audit = new TBL_AUDIT
-                //{
-                //    AUDITTYPEID = auditTypeId,
-                //    STAFFID = (int)model.createdBy,
-                //    BRANCHID = (short)model.branchId,
-                //    DETAIL = auditDetail,
-                //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                //    URL = model.app,
-                //    APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                //    SYSTEMDATETIME = DateTime.Now,
-                //    DEVICENAME = CommonHelpers.GetDeviceName(),
-                //    OSNAME = CommonHelpers.FriendlyName()
-                //};
-                //this.auditTrail.AddAuditTrail(audit);
-
-
-                var response = context.SaveChanges() != 0;
-                return response;
             }
 
-            context.TBL_CUSTOMER.Add(customer);
-            return context.SaveChanges() > 0;
-        }
-
-        public bool ValidateCustomerCode(string customerCode)
-        {
-            bool itemExist = false;
-            var data = (from a in context.TBL_CUSTOMER where a.CUSTOMERCODE == customerCode select a).ToList();
-            if (data.Count > 0)
+            foreach (var supplier in model.individualSuppliers)
             {
-                itemExist = true;
+                TBL_CUSTOMER_CLIENT_SUPPLIER clientSupplier;
+
+                clientSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Find(customer.CUSTOMERID);
+                var accountCompleted = context.TBL_CUSTOMER.Find(customer.CUSTOMERID).ACCOUNTCREATIONCOMPLETE;
+
+                clientSupplier.CUSTOMERID = customer.CUSTOMERID;
+                clientSupplier.CUSTOMERTYPEID = (short)CustomerTypeEnum.Individual;
+                clientSupplier.FIRSTNAME = supplier.firstName;
+                clientSupplier.MIDDLENAME = supplier.otherNames;
+                clientSupplier.LASTNAME = supplier.lastName;
+                clientSupplier.TAX_NUMBER = null;
+                clientSupplier.REGISTRATION_NUMBER = null;
+                clientSupplier.HAS_CASA_ACCOUNT = supplier.accountNumber != null;
+                clientSupplier.CASA_ACCOUNTNO = supplier.accountNumber;
+                clientSupplier.BANKNAME = supplier.BankName;
+                clientSupplier.NATURE_OF_BUSINESS = supplier.natureOfBusiness;
+                clientSupplier.CONTACT_PERSON = null;
+                clientSupplier.ADDRESS = supplier.address;
+                clientSupplier.PHONENUMBER = supplier.phoneNumber;
+                clientSupplier.EMAILADDRESS = supplier.email;
+                clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Client;
+                clientSupplier.CREATEDBY = (int)model.createdBy;
+                clientSupplier.DATECREATED = genSetup.GetApplicationDate();
+
+
+                context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
+
             }
-
-            return itemExist;
         }
-
-        public bool AddCustomerClientSupplier(CustomerClientOrSupplierViewModels entity)
-        {
-            if (entity != null)
-            {
-                try
-                {
-                    TBL_CUSTOMER_CLIENT_SUPPLIER clientSupplier;
-
-                    clientSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Find(entity.client_SupplierId);
-                    var accountCompleted = context.TBL_CUSTOMER.Find(entity.customerId).ACCOUNTCREATIONCOMPLETE;
-                    //If Customer main table ACCOUNTCREATIONCOMPLETE column equal false, record insert directly to the main table 
-                    if (clientSupplier != null && accountCompleted == false)
-                    {
-                        clientSupplier.CUSTOMERID = entity.customerId;
-                        clientSupplier.CUSTOMERTYPEID = entity.customerTypeId;
-                        clientSupplier.FIRSTNAME = entity.firstName;
-                        clientSupplier.MIDDLENAME = entity.middleName;
-                        clientSupplier.LASTNAME = entity.lastName;
-                        clientSupplier.TAX_NUMBER = entity.taxNumber;
-                        clientSupplier.REGISTRATION_NUMBER = entity.rcNumber;
-                        clientSupplier.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
-                        clientSupplier.CASA_ACCOUNTNO = entity.casaAccountNumber;
-                        clientSupplier.BANKNAME = entity.bankName;
-                        clientSupplier.NATURE_OF_BUSINESS = entity.natureOfBusiness;
-                        clientSupplier.CONTACT_PERSON = entity.contactPerson;
-                        clientSupplier.ADDRESS = entity.client_SupplierAddress;
-                        clientSupplier.PHONENUMBER = entity.client_SupplierPhoneNumber;
-                        clientSupplier.EMAILADDRESS = entity.client_SupplierEmail;
-                        clientSupplier.CLIENT_SUPPLIERTYPEID = entity.client_SupplierTypeId;
-                        clientSupplier.CREATEDBY = entity.createdBy;
-                    }
-                    else if (clientSupplier == null && accountCompleted == false)
-                    {
-                        clientSupplier = new TBL_CUSTOMER_CLIENT_SUPPLIER();
-
-                        clientSupplier.CUSTOMERID = entity.customerId;
-                        clientSupplier.CUSTOMERTYPEID = entity.customerTypeId;
-                        clientSupplier.FIRSTNAME = entity.firstName;
-                        clientSupplier.MIDDLENAME = entity.middleName;
-                        clientSupplier.LASTNAME = entity.lastName;
-                        clientSupplier.ADDRESS = entity.client_SupplierAddress;
-                        clientSupplier.PHONENUMBER = entity.client_SupplierPhoneNumber;
-                        clientSupplier.EMAILADDRESS = entity.client_SupplierEmail;
-                        clientSupplier.TAX_NUMBER = entity.taxNumber;
-                        clientSupplier.REGISTRATION_NUMBER = entity.rcNumber;
-                        clientSupplier.BANKNAME = entity.bankName;
-                        clientSupplier.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
-                        clientSupplier.CASA_ACCOUNTNO = entity.casaAccountNumber;
-                        clientSupplier.NATURE_OF_BUSINESS = entity.natureOfBusiness;
-                        clientSupplier.CONTACT_PERSON = entity.contactPerson;
-                        clientSupplier.CLIENT_SUPPLIERTYPEID = entity.client_SupplierTypeId;
-                        clientSupplier.CREATEDBY = entity.createdBy;
-                        clientSupplier.DATECREATED = DateTime.Now;
-                        context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
-                    }
-                    else //If customer main table AccountCreationCompleted equals true then save record in temp table
-                    {
-                        //Check if customer client supplier information has existing record being modified and approved
-                        var existingTempCliSup = context.TBL_TEMP_CUST_CLIENT_SUPPLIER.FirstOrDefault(x =>
-                            x.CLIENT_SUPPLIERID == entity.client_SupplierId && x.ISCURRENT == false &&
-                            x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
-                        short modificationTypeId = 0;
-                        int modifiedTargetId = 0;
-
-                        if (entity.client_SupplierId != 0 || entity.client_SupplierId > 0)
-                        {
-                            if (entity.client_SupplierTypeId == (int)CompanyClientOrSupplierTypeEnum.Client)
-                                modificationTypeId = (int)CustomerInformationTrackerEnum.Client_Modification;
-                            else
-                                modificationTypeId = (int)CustomerInformationTrackerEnum.Suplier_Modification;
-                        }
-                        else
-                        {
-                            if (entity.client_SupplierTypeId == (int)CompanyClientOrSupplierTypeEnum.Client)
-                                modificationTypeId = (int)CustomerInformationTrackerEnum.Client_Addition;
-                            else
-                                modificationTypeId = (int)CustomerInformationTrackerEnum.Supplier_Addition;
-                        }
-
-                        TBL_TEMP_CUST_CLIENT_SUPPLIER temp = null;
-                        if (existingTempCliSup != null && entity.client_SupplierId > 0
-                        ) //if customer phone contact information has existing record being modified and approved, update it with the new change
-                        {
-
-                            temp = existingTempCliSup;
-                            temp.CUSTOMERID = entity.customerId;
-                            temp.CUSTOMERTYPEID = entity.customerTypeId;
-                            temp.FIRSTNAME = entity.firstName;
-                            temp.MIDDLENAME = entity.middleName;
-                            temp.LASTNAME = entity.lastName;
-                            temp.ADDRESS = entity.client_SupplierAddress;
-                            temp.PHONENUMBER = entity.client_SupplierPhoneNumber;
-                            temp.EMAILADDRESS = entity.client_SupplierEmail;
-                            temp.TAX_NUMBER = entity.taxNumber;
-                            temp.REGISTRATION_NUMBER = entity.rcNumber;
-                            temp.BANKNAME = entity.bankName;
-                            temp.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
-                            temp.CASA_ACCOUNTNO = entity.casaAccountNumber;
-                            temp.NATURE_OF_BUSINESS = entity.natureOfBusiness;
-                            temp.CONTACT_PERSON = entity.contactPerson;
-                            temp.CLIENT_SUPPLIERTYPEID = entity.client_SupplierTypeId;
-                            clientSupplier.CREATEDBY = entity.createdBy;
-                            temp.DATECREATED = DateTime.Now;
-                            temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
-                            temp.ISCURRENT = true;
-                            modifiedTargetId = temp.TEMPCLIENT_SUPPLIERID;
-                        }
-                        else //if customer phoneContact information has no existing record being modified and approved, insert new row
-                        {
-                            temp = new TBL_TEMP_CUST_CLIENT_SUPPLIER();
-                            temp.CUSTOMERID = entity.customerId;
-                            temp.CLIENT_SUPPLIERID = entity.client_SupplierId;
-                            temp.CUSTOMERTYPEID = entity.customerTypeId;
-                            temp.FIRSTNAME = entity.firstName;
-                            temp.MIDDLENAME = entity.middleName;
-                            temp.LASTNAME = entity.lastName;
-                            temp.ADDRESS = entity.client_SupplierAddress;
-                            temp.PHONENUMBER = entity.client_SupplierPhoneNumber;
-                            temp.EMAILADDRESS = entity.client_SupplierEmail;
-                            temp.TAX_NUMBER = entity.taxNumber;
-                            temp.REGISTRATION_NUMBER = entity.rcNumber;
-                            temp.BANKNAME = entity.bankName;
-                            temp.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
-                            temp.CASA_ACCOUNTNO = entity.casaAccountNumber;
-                            temp.NATURE_OF_BUSINESS = entity.natureOfBusiness;
-                            temp.CONTACT_PERSON = entity.contactPerson;
-                            temp.CLIENT_SUPPLIERTYPEID = entity.client_SupplierTypeId;
-                            temp.CREATEDBY = entity.createdBy;
-                            temp.DATECREATED = DateTime.Now;
-                            temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
-                            temp.ISCURRENT = true;
-                            context.TBL_TEMP_CUST_CLIENT_SUPPLIER.Add(temp);
-                        }
-
-                        // modifiedTargetId = entity.client_SupplierId;
-                        //Insert new row to TBL_CUSTOMER_MODIFICATION 
-                        var modified = new TBL_CUSTOMER_MODIFICATION
-                        {
-                            CUSTOMERID = entity.customerId,
-                            TARGETID = modifiedTargetId,
-                            MODIFICATIONTYPEID = modificationTypeId,
-                            CREATEDBY = entity.createdBy,
-                            DATETIMECREATED = DateTime.Now
-                        };
-                        //Log to the approval workflow 
-                        using (var trans = context.Database.BeginTransaction())
-                        {
-                            try
-                            {
-                                var res = context.SaveChanges() > 0;
-                                modified.TARGETID = temp.TEMPCLIENT_SUPPLIERID;
-
-                                context.TBL_CUSTOMER_MODIFICATION.Add(modified);
-                                var output = context.SaveChanges() > 0;
-                                var targetId =
-                                    modified
-                                        .CUSTOMERMODIFICATIONID; //User the new inserted row in TBL_CUSTOMER_MODIFICATION as the approval trail targetId
-
-                                workflow.StaffId = entity.staffId;
-                                workflow.CompanyId = entity.companyId;
-                                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                                workflow.TargetId = targetId;
-                                workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
-                                workflow.ExternalInitialization = true;
-
-                                var returnVal = workflow.LogActivity();
-
-                                if (returnVal)
-                                {
-                                    trans.Commit();
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                trans.Rollback();
-                                throw new SecureException(ex.Message);
-                            }
-                        }
-                    }
-
-                    // Audit Section ----------------------------
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
-                        STAFFID = entity.createdBy,
-                        BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added new TBL_CUSTOMER_CLIENT_SUPPLIER for customer ID: + (" + entity.customerId +
-                                 ") ",
-                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                        URL = entity.applicationUrl,
-                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now,
-                        DEVICENAME = CommonHelpers.GetDeviceName(),
-                        OSNAME = CommonHelpers.FriendlyName()
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
-                    var response = context.SaveChanges() != 0;
-                    return response;
-                }
-                catch (Exception ex)
-                {
-                    throw new SecureException(ex.Message);
-                }
-            }
-
-            return false;
-        }
-
 
         #endregion END OF CUSTOMER PROFILE METHODS
 
 
-        #region  LOAN REQUEST METHODS
-        public APIResponse submitRequest(CflLoanApplication model)
+            #region  LOAN REQUEST METHODS
+            public APIResponse submitRequest(CflLoanApplication model)
         {
             APIResponse response = new APIResponse();
 
