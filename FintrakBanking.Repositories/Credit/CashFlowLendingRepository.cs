@@ -484,7 +484,7 @@ namespace FintrakBanking.Repositories.Credit
                 clientSupplier.ADDRESS = supplier.address;
                 clientSupplier.PHONENUMBER = supplier.phoneNumber;
                 clientSupplier.EMAILADDRESS = supplier.email;
-                clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Client;
+                clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Supplier;
                 clientSupplier.CREATEDBY = (int)model.createdBy;
                 clientSupplier.DATECREATED = genSetup.GetApplicationDate();
 
