@@ -108,6 +108,7 @@ namespace FintrakBanking.Repositories.Media
                     where x.DELETED == false 
                     && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
                     && (c.CUSTOMERCODE == searchString
+                    || x.REFERENCENUMBER.ToLower().Contains(searchString)
                     || c.FIRSTNAME.ToLower().Contains(searchString)
                     || c.MIDDLENAME.ToLower().Contains(searchString)
                     || c.LASTNAME.ToLower().Contains(searchString))

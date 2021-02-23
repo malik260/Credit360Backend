@@ -830,6 +830,9 @@ namespace FintrakBanking.Repositories.Credit
                 this.customerFacilities = new List<TBL_LOAN_APPLICATION_DETAIL>();
                 this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected).ToList();
                 this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == this.customerId)?.ADDRESS;
+                this.fussCustomerConditionSubsequentData = GenericConditionSubsequentHtml();
+                this.fussCustomerConditionDynamicsData = GenericConditionDynamicsHtml();
+                this.memoData = GenericMemoMarkupHtml();
                 this.approvals = GetApprovalsMarkup(true);
                 this.currentDate = DateTime.Now.ToShortDateString();
                 if (this.customerIds?.Count > 0)
@@ -6675,7 +6678,7 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        public string MemoMarkupGenericHtml()
+        public string GenericMemoMarkupHtml()
         {
             var result = String.Empty;
             var n = 0;
@@ -8307,6 +8310,43 @@ namespace FintrakBanking.Repositories.Credit
 
                 result = result + $"</table>";
             }
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+        
+        public string GenericConditionSubsequentHtml()
+        {
+            var result = String.Empty;
+            
+            result = result + $@"
+            <br />
+            <h4><b>CONDITIONS</b></h4>
+            <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                    <th><b>S/N</b></th>
+                    <th><b>Product Name</b></th>
+                    <th><b>Condition Precedent</b></th>
+                </tr>";
+
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+        public string GenericConditionDynamicsHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+            <br />
+            <h4><b>TRANSACTION DYNAMICS</b></h4>
+            <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                    <th><b>S/N</b></th>
+                    <th><b>Product Name</b></th>
+                    <th><b>Transaction Dynamics</b></th>
+                </tr>";
+            result = result + $"</table>";
             result = result + $@"
                  <br />";
             return result;
