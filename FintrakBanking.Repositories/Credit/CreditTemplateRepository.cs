@@ -964,7 +964,8 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => new DocumentTemplateViewModel
                 {
                     templateId = x.TEMPLATEID,
-                    templateName = x.TEMPLATENAME
+                    templateName = x.TEMPLATENAME,
+                    canLoadDocument = x.STAFFROLEID == ownerId
                 })
                 .ToList();
         }
