@@ -8375,7 +8375,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var f in ConditionSubsequent)
                 {
                     n++;
-                    result = result + $@"
+                    result = result + $@"0
                         <tr>
                         <td> {n}</td>
                         <td> {f.productName}</td>
