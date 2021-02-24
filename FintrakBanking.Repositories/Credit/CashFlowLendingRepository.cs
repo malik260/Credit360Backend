@@ -301,6 +301,10 @@ namespace FintrakBanking.Repositories.Credit
                 });
             }
 
+            //THIS FOREACH LOOP IS NOT YET TESTED. PLEASE COMMENT REMOVE AFTER SIMULATION
+            AddCustomerClientSupplier(customer, entity);
+           
+
             context.TBL_CUSTOMER.Add(customer);
             return context.SaveChanges() > 0;
         }
@@ -329,8 +333,8 @@ namespace FintrakBanking.Repositories.Credit
                //MISCODE = model.misCode,
                //MISSTAFF = model.misStaff,
                //NATIONALITYID = context.TBL_COUNTRY.Where(X => X.NAME == corporateDetails.countryOfOrigin).FirstOrDefault()?.COUNTRYID,
-               RELATIONSHIPOFFICERID = model.createdBy,
-               ISPOLITICALLYEXPOSED = corporateDetails.politicallyExposed == "1" ? true : false,
+                RELATIONSHIPOFFICERID = model.createdBy,
+                ISPOLITICALLYEXPOSED = corporateDetails.politicallyExposed == "1" ? true : false,
                 //ISINVESTMENTGRADE = model,
 
                 //SUBSECTORID = model.,
@@ -347,7 +351,7 @@ namespace FintrakBanking.Repositories.Credit
                //MONTHLYLOANREPAYMENT = model.loanMonthlyRepaymentFromOtherBanks,
                //DATEOFRELATIONSHIPWITHBANK = model.dateOfRelationshipWithBank,
                //RELATIONSHIPTYPEID = model.relationshipTypeCode,
-               TEAMLDR = corporateDetails.teamLdr,
+                TEAMLDR = corporateDetails.teamLdr,
                 TEAMNPL = corporateDetails.teamNpl,
                 APIREQUESTID = model.request_Id,
                 //CORR = model.corr,
@@ -404,6 +408,11 @@ namespace FintrakBanking.Repositories.Credit
                 });
             }
 
+            //THIS FOREACH LOOP IS NOT YET TESTED. PLEASE REMOVE COMMENT AFTER SIMULATION
+            AddCustomerClientSupplier(customer, model);
+
+
+
             context.TBL_CUSTOMER.Add(customer);
             return context.SaveChanges() > 0;
         }
@@ -420,11 +429,76 @@ namespace FintrakBanking.Repositories.Credit
             return itemExist;
         }
 
+        public void AddCustomerClientSupplier(TBL_CUSTOMER customer, IncomingCustomerViewModels model)
+        {
+
+            foreach (var supplier in model.corporateSuppliers)
+            {
+                TBL_CUSTOMER_CLIENT_SUPPLIER clientSupplier;
+
+                clientSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Find(customer.CUSTOMERID);
+                var accountCompleted = context.TBL_CUSTOMER.Find(customer.CUSTOMERID).ACCOUNTCREATIONCOMPLETE;
+
+                clientSupplier.CUSTOMERID = customer.CUSTOMERID;
+                clientSupplier.CUSTOMERTYPEID = (short)CustomerTypeEnum.Corporate;
+                clientSupplier.FIRSTNAME = supplier.corporateName;
+                clientSupplier.MIDDLENAME = null;
+                clientSupplier.LASTNAME = null;
+                clientSupplier.TAX_NUMBER = null;
+                clientSupplier.REGISTRATION_NUMBER = supplier.rcNumber;
+                clientSupplier.HAS_CASA_ACCOUNT = supplier.accountNumber != null;
+                clientSupplier.CASA_ACCOUNTNO = supplier.accountNumber;
+                clientSupplier.BANKNAME = supplier.BankName;
+                clientSupplier.NATURE_OF_BUSINESS = supplier.natureOfBusiness;
+                clientSupplier.CONTACT_PERSON = supplier.contactPerson;
+                clientSupplier.ADDRESS = supplier.address;
+                clientSupplier.PHONENUMBER = supplier.phoneNumber;
+                clientSupplier.EMAILADDRESS = supplier.email;
+                clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Supplier;
+                clientSupplier.CREATEDBY = (int)model.createdBy;
+                clientSupplier.DATECREATED = genSetup.GetApplicationDate();
+
+                context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
+
+            }
+
+            foreach (var supplier in model.individualSuppliers)
+            {
+                TBL_CUSTOMER_CLIENT_SUPPLIER clientSupplier;
+
+                clientSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Find(customer.CUSTOMERID);
+                var accountCompleted = context.TBL_CUSTOMER.Find(customer.CUSTOMERID).ACCOUNTCREATIONCOMPLETE;
+
+                clientSupplier.CUSTOMERID = customer.CUSTOMERID;
+                clientSupplier.CUSTOMERTYPEID = (short)CustomerTypeEnum.Individual;
+                clientSupplier.FIRSTNAME = supplier.firstName;
+                clientSupplier.MIDDLENAME = supplier.otherNames;
+                clientSupplier.LASTNAME = supplier.lastName;
+                clientSupplier.TAX_NUMBER = null;
+                clientSupplier.REGISTRATION_NUMBER = null;
+                clientSupplier.HAS_CASA_ACCOUNT = supplier.accountNumber != null;
+                clientSupplier.CASA_ACCOUNTNO = supplier.accountNumber;
+                clientSupplier.BANKNAME = supplier.BankName;
+                clientSupplier.NATURE_OF_BUSINESS = supplier.natureOfBusiness;
+                clientSupplier.CONTACT_PERSON = null;
+                clientSupplier.ADDRESS = supplier.address;
+                clientSupplier.PHONENUMBER = supplier.phoneNumber;
+                clientSupplier.EMAILADDRESS = supplier.email;
+                clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Supplier;
+                clientSupplier.CREATEDBY = (int)model.createdBy;
+                clientSupplier.DATECREATED = genSetup.GetApplicationDate();
+
+
+                context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
+
+            }
+        }
+
         #endregion END OF CUSTOMER PROFILE METHODS
 
 
-        #region  LOAN REQUEST METHODS
-        public APIResponse submitRequest(CflLoanApplication model)
+            #region  LOAN REQUEST METHODS
+            public APIResponse submitRequest(CflLoanApplication model)
         {
             APIResponse response = new APIResponse();
 
