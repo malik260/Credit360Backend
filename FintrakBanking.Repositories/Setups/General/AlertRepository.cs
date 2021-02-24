@@ -904,9 +904,9 @@ namespace FintrakBanking.Repositories.Setups.General
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
 
-             // int users = Convert.ToInt32(maxUsers);
+            // int users = Convert.ToInt32(maxUsers);
             //externalAlertRepository.ValidateProfiledUsers(users);
-            
+            GetImminentMaturitiesForCustomers();
             TimeSpan startRepay = new TimeSpan(6, 0, 0);
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
             
@@ -1592,6 +1592,61 @@ namespace FintrakBanking.Repositories.Setups.General
                     SendAlertNotification(alerts);
                 }
             }
+        }
+
+        public void GetImminentMaturitiesForCustomers()
+        {
+            // GetLoanRepaymentReminder method
+            List<string> customerIds = new List<string> { "000025950", "000234558" };
+            var loanRepaymentReminder = context.TBL_GLOBAL_EXPOSURE.Where(d => customerIds.Contains(d.CUSTOMERID) && d.PRINCIPALOUTSTANDINGBALLCY > 0 && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value >= 30).ToList();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentReminder").FirstOrDefault();
+                int numberOfDays = 0;
+                var defaultEmail = "";
+                if (alertTitleInfo.DEFAULTEMAIL != null)
+                {
+                    defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+                }
+
+                if (loanRepaymentReminder != null && loanRepaymentReminder.Count() > 0)
+                {
+
+                    List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                    foreach (var i in loanRepaymentReminder)
+                    {
+
+                        numberOfDays = (i.MATURITYDATE.Value - DateTime.Now).Days;
+                        AlertsViewModel alert = new AlertsViewModel();
+                        var alertTitle = alertTitleInfo.TITLE;
+                        var alertTemplate = alertTitleInfo.TEMPLATE;
+                        if (numberOfDays > 0)
+                        {
+                            string emailList = "";
+                            alertTemplate = alertTemplate.Replace("@{{customerName}}", i.CUSTOMERNAME);
+                            alertTemplate = alertTemplate.Replace("@{{maturityBand}}", numberOfDays.ToString());
+                            emailList = i.EMAIL+",benjamin.gbaaikye@fintraksoftware.com";
+                            ///emailList = defaultEmail;
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                            alerts.Add(alert);
+                        }
+                    }
+                    SendAlertNotification(alerts);
+                }
+            
+
+
+
+
+
+
+
+
+
+
+
         }
         //public bool ProcessLoanArchive()
         //{

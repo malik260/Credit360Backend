@@ -91,7 +91,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string GROUPCODE { get; set; }
         public string DIVISIONCODE { get; set; }
         public string DIVISIONNAME { get; set; }
-        public string TELEPHONENUMBER { get; set; }
+        //public string TELEPHONENUMBER { get; set; }
         public string PHONENO { get; set; }
         public string EMAIL { get; set; }
 
