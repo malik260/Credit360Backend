@@ -780,7 +780,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public bool InitGenericMemo(int operationId, int targetId, int customerId) // feeder
+        public bool InitGenericMemo(int operationId, int targetId, int targetIdForWorkFlow, int customerId) // feeder
         {
             this.targetId = targetId;
             this.operationId = operationId;
@@ -833,7 +833,14 @@ namespace FintrakBanking.Repositories.Credit
                 this.fussCustomerConditionSubsequentData = GenericConditionSubsequentHtml();
                 this.fussCustomerConditionDynamicsData = GenericConditionDynamicsHtml();
                 this.memoData = GenericMemoMarkupHtml();
-                this.approvals = GetApprovalsMarkup(true);
+                if (targetIdForWorkFlow > 0)
+                {
+                    this.approvals = GetGenericApprovalsMarkup(targetIdForWorkFlow, true);
+                }
+                else
+                {
+                    this.approvals = GetGenericApprovalsMarkup(this.targetId, true);
+                }
                 this.currentDate = DateTime.Now.ToShortDateString();
                 if (this.customerIds?.Count > 0)
                 {
@@ -4837,6 +4844,38 @@ namespace FintrakBanking.Repositories.Credit
             {
                 return this.operationId;
             }
+        }
+
+        private string GetGenericApprovalsMarkup(int targetIdForWorkFlow, bool getAll = false)
+        {
+            var appraisals = GetAppraisalMemorandumTrail(targetIdForWorkFlow, GetCurrentOperationId(), getAll).OrderBy(a => a.approvalTrailId).ToList();
+            var result = String.Empty;
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
+                        <th><b>Comment</b></th>
+                        <th><b>Date</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
         }
 
         private string GetApprovalsMarkup(bool getAll = false)

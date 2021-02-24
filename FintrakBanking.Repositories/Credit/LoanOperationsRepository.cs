@@ -34563,7 +34563,7 @@ namespace FintrakBanking.Repositories.Credit
                                     expCompletionDate = lr.EXPCOMPLETIONDATE,
                                     loanAssignId = lr.LOANASSIGNID,
                                     agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
-                                    telephoneNumber = ln.TELEPHONENUMBER,
+                                    telephoneNumber = ln.PHONENO,
                                     email = ln.EMAIL
                                 }).ToList();
 
