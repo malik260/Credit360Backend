@@ -61,6 +61,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_LC_ISSUANCE> TBL_TEMP_LC_ISSUANCE { get; set; }
         public virtual DbSet<TBL_LC_ISSUANCE_ARCHIVE> TBL_LC_ISSUANCE_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_DETAIL_REVIEW_TYPE> TBL_LOAN_DETAIL_REVIEW_TYPE { get; set; }
+        public virtual DbSet<TBL_APPROVED_TRADE_CYCLE> TBL_APPROVED_TRADE_CYCLE { get; set; }
         public virtual DbSet<TBL_ALERT_GROUP_EMAIL> TBL_ALERT_GROUP_EMAIL { get; set; }
         public virtual DbSet<TBL_GLOBAL_EXPOSURE_MANUAL> TBL_GLOBAL_EXPOSURE_MANUAL { get; set; }
         public virtual DbSet<TBL_DOC_TEMPLATE_SAVED> TBL_DOC_TEMPLATE_SAVED { get; set; }

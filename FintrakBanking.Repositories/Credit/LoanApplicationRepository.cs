@@ -9616,7 +9616,17 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
+        public IEnumerable<ApprovedTradeCycleViewModel> GetAllApprovedTradeCycles()
+        {
+            var approvedCycles = (from x in context.TBL_APPROVED_TRADE_CYCLE
+                                  select new ApprovedTradeCycleViewModel
+                               {
+                                   approvedTradeCycleId = x.APPROVEDTRADECYCLEID,
+                                   approvedTradeCycleDays = x.APPROVEDTRADECYCLEDAYS,
+                               }).ToList();
 
+            return approvedCycles;
+        }
 
         public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId, int customer)
         {
