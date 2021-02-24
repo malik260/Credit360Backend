@@ -600,12 +600,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("document-section/operation/{operationId}/target/{targetId}/section/{sectionId}/generic/{customerId}")]
-        public HttpResponseMessage GetDocumentSectionGeneric(int operationId, int targetId, int sectionId, int customerId)
+        [Route("document-section/operation/{operationId}/target/{targetId}/targetIdForWorkFlow/{targetIdForWorkFlow}/section/{sectionId}/generic/{customerId}")]
+        public HttpResponseMessage GetDocumentSectionGeneric(int operationId, int targetId, int targetIdForWorkFlow, int sectionId, int customerId)
         {
             try
             {
-                LoadedDocumentSectionViewModel response = repo.GetDocumentSection(token.GetStaffId, operationId, targetId, sectionId, customerId, true);
+                LoadedDocumentSectionViewModel response = repo.GetDocumentSection(token.GetStaffId, operationId, targetId, sectionId, customerId, targetIdForWorkFlow, true);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
@@ -724,8 +724,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("documentation/operation/{operationId}/target/{targetId}/generic/{customerId}")]
-        public HttpResponseMessage GetLoadedDocumentationGeneric(int operationId, int targetId, int customerId)
+        [Route("documentation/operation/{operationId}/target/{targetId}/targetIdForWorkFlow/{targetIdForWorkFlow}/generic/{customerId}")]
+        public HttpResponseMessage GetLoadedDocumentationGeneric(int operationId, int targetId, int targetIdForWorkFlow, int customerId)
         {
             try
             {
@@ -733,7 +733,7 @@ namespace FintrakBanking.APICore.Controllers
                 user.BranchId = token.GetBranchId;
                 user.staffId = token.GetStaffId;
                 user.companyId = token.GetCompanyId;
-                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentationGeneric(token.GetStaffId, operationId, targetId, user, customerId);
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentationGeneric(token.GetStaffId, operationId, targetId, targetIdForWorkFlow, user, customerId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
