@@ -332,7 +332,7 @@ namespace FintrakBanking.Repositories.Credit
                              collateralId = dr.COLLATERALCUSTOMERID,
                              collateralTypeId = b.COLLATERALTYPEID,
                              collateralSubTypeId = b.COLLATERALSUBTYPEID,
-                             customerId = (int)dr.CUSTOMERID,
+                             customerId = dr.CUSTOMERID,
                              customerCode = b.CUSTOMERCODE,
                              currencyId = b.CURRENCYID,
                              currencyCode = b.TBL_CURRENCY.CURRENCYCODE,
@@ -439,7 +439,7 @@ namespace FintrakBanking.Repositories.Credit
                              collateralId = dr.COLLATERALCUSTOMERID,
                              collateralTypeId = b.COLLATERALTYPEID,
                              collateralSubTypeId = b.COLLATERALSUBTYPEID,
-                             customerId = (int)dr.CUSTOMERID,
+                             customerId = dr.CUSTOMERID,
                              customerCode = b.CUSTOMERCODE,
                              currencyId = b.CURRENCYID,
                              currencyCode = b.TBL_CURRENCY.CURRENCYCODE,
@@ -651,7 +651,7 @@ namespace FintrakBanking.Repositories.Credit
             return _context.SaveChanges() > 0;
         }
 
-        public bool GoForApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity)
+        public WorkflowResponse GoForApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity)
         {
             var record = entity.GroupBy(x => x.originalDocumentApprovalId).Select(x => x.FirstOrDefault()).Where(x => x.approvalStatusId == (short)ApprovalStatusEnum.Pending); 
             var recordReferred = entity.GroupBy(x => x.originalDocumentApprovalId).Select(x => x.FirstOrDefault()).Where(x => x.approvalStatusId == (short)ApprovalStatusEnum.Referred );
@@ -710,7 +710,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            return _context.SaveChanges() != 0;
+            _context.SaveChanges();
+            return _workflow.Response;
         }
 
         public WorkflowResponse GoForGuaranteeApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity)

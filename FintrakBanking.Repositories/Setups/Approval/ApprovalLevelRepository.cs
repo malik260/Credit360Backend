@@ -417,13 +417,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 //data.REQUIREAUTHORISATION = model.requireAuthorisation;
                 //data.CANOVERIDEAUTHORISATION = model.canOverideAuthorisation;
                 data.ROUTEVIASTAFFORGANOGRAM = model.routeViaStaffOrganogram;
-                data.LASTUPDATEDBY = model.lastUpdatedBy;
+                data.LASTUPDATEDBY = model.createdBy;
                 data.DATETIMEUPDATED = DateTime.Now;
                 data.GROUPID = model.groupId;
                 data.STAFFROLEID = model.roleId;
                 data.LEVELTYPEID = model.levelTypeId;
                 data.APPROVALBUSINESSRULEID = model.levelBusinessRuleId;
-                data.LASTUPDATEDBY = model.lastUpdatedBy;
+                //data.LASTUPDATEDBY = model.lastUpdatedBy;
                 data.ROLEIDTOROUTE = model.roleIdToRoute;
 
                 // Audit Section ---------------------------
@@ -441,6 +441,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     DEVICENAME = CommonHelpers.GetDeviceName(),
                     OSNAME = CommonHelpers.FriendlyName()
                 };
+                this.auditTrail.AddAuditTrail(audit);
 
             }
             else

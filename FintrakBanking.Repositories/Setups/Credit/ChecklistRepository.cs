@@ -2100,6 +2100,7 @@ namespace FintrakBanking.Repositories.Credit
                                dateCreated = atrail.SYSTEMARRIVALDATETIME,
                                comment = atrail.COMMENT,
                                operationId = atrail.OPERATIONID,
+                               deferralId = c.CHECKLISTDEFERRALID,
                                //Loan Information
                                relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
                                relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
@@ -2167,6 +2168,7 @@ namespace FintrakBanking.Repositories.Credit
                                dateCreated = atrail.SYSTEMARRIVALDATETIME,
                                comment = atrail.COMMENT,
                                operationId = atrail.OPERATIONID,
+                               deferralId = c.CHECKLISTDEFERRALID,
                                //Loan Information
                                relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
                                relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
@@ -2667,14 +2669,16 @@ namespace FintrakBanking.Repositories.Credit
                 var loan = context.TBL_LOAN_APPLICATION.Find(lmsrApplication.LOANAPPLICATIONID);
                 var staffEmail = context.TBL_STAFF.Find(loan.CREATEDBY);
                 var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetCreditFileChecklistReminder").FirstOrDefault();
-                var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL + ";" + GetAllCreditPortfolioStaffEmails();
-                alert.receiverEmailList.Add(emailList);
-                var alertTemplate = alertDetail.TEMPLATE;
-                var accountOfficer = staffEmail.FIRSTNAME + " " + staffEmail.LASTNAME + " " + staffEmail.MIDDLENAME;
-                alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
-                alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", loan.APPLICATIONREFERENCENUMBER);
-                LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetCreditFileChecklistReminder");
-
+                if (alertDetail != null && staffEmail.MISCODE != "n/a")
+                {
+                    var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL + ";" + GetAllCreditPortfolioStaffEmails();
+                    alert.receiverEmailList.Add(emailList);
+                    var alertTemplate = alertDetail.TEMPLATE;
+                    var accountOfficer = staffEmail.FIRSTNAME + " " + staffEmail.LASTNAME + " " + staffEmail.MIDDLENAME;
+                    alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
+                    alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", loan.APPLICATIONREFERENCENUMBER);
+                    LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetCreditFileChecklistReminder");
+                }
             }
 
             // Audit Section ---------------------------

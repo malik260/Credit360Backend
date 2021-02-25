@@ -604,6 +604,37 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public int lmsOperationId { get; set; }
         public int lmsApplicationId { get; set; }
+        public short applicationStatusId { get; set; }
+        public string cancellationReason { get; set; }
+        public int tempApplicationCancellationId { get; set; }
+        public string comment { get; set; }
+        public int applicationTenor { get; set; }
+        public decimal applicationAmount { get; set; }
+        public int loanApplicationId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public string productName { get; set; }
+        public int? customerGroupId { get; set; }
+        public int relationshipManagerId { get; set; }
+        public int relationshipOfficerId { get; set; }
+        public string creatorName { get; set; }
+        public int? bookingOperationId { get; set; }
+        public int bookingRequestId { get; set; }
+        public string loanInformation { get; set; }
+        public bool isOnLending { get; set; }
+        public bool isInterventionFunds { get; set; }
+        public string applicationStatus { get; set; }
+        public string relationshipOfficerName { get; set; }
+        public string relationshipManagerName { get; set; }
+        public string misCode { get; set; }
+        public bool owner { get; set; }
+        public string employer { get; set; }
+        public string operationName { get; set; }
+        public int currentOperationId { get; set; }
     }
 
     public class applicationDetails
@@ -1471,6 +1502,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? amountRecoveredCreditCard { get; set; }
         public decimal? creditCardMinimumAssigned { get; set; }
         public double amountRecoveredOrl { get; set; }
+        public decimal? paydayLoanMinimumAssigned { get; set; }
+        public decimal? amountRecoveredPaydayLoan { get; set; }
     }
 
 
@@ -1743,6 +1776,27 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class GlobalExposureApplicationViewModel : GeneralEntity
     {
+        public string range
+        {
+            get
+            {
+                var newRange = "";
+                if (this.dpdExposure >= 31 && this.dpdExposure <= 60)
+                {
+                    newRange = "31-60 DPD";
+                }
+                if (this.dpdExposure >= 61 && this.dpdExposure <= 90)
+                {
+                    newRange = "61-90 DPD";
+                }
+                if (this.dpdExposure > 90)
+                {
+                    newRange = "90+DPD";
+                }
+
+                return newRange;
+            }
+        }
         public int? dpdExposure { get; set; }
         public int mgtOperationId { get; set; }
         public decimal? prepaymentAmount { get; set; }
@@ -1981,7 +2035,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? agentCommission { get; set; }
         public decimal? percentageCommission { get; set; }
         public decimal totalAmountRecovery { get; set; }
-        public decimal totalUnsettledAmount { get; set; }
+        public decimal? totalUnsettledAmount { get; set; }
         
         public string nameOfRecoveryAgent { get; set; }
         public string address { get; set; }
@@ -2031,6 +2085,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string branchCode { get; set; }
         public string productCode { get; set; }
         public string phoneNo { get; set; }
+        public DateTime? valueDate { get; set; }
+        public DateTime? maturityRevDate { get; set; }
+        public decimal overduePrincipalAmount { get; set; }
+        public decimal overdueInterestAmount { get; set; }
+        public DateTime alueDate { get; set; }
     }
 
     public class CompletedCreditDocumentationModel

@@ -481,7 +481,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.companyLogo = $@"
                 <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr></table>";
                 this.customerRecord = context.TBL_CUSTOMER.Find(this.customerId);
@@ -621,7 +621,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.companyLogo = $@"
                  <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr></table>";
                 this.interestRate = context.TBL_LMSR_APPLICATION_DETAIL.Where(i => i.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID).Select(i => i.APPROVEDINTERESTRATE).FirstOrDefault();
@@ -780,6 +780,76 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
+        public bool InitGenericMemo(int operationId, int targetId, int targetIdForWorkFlow, int customerId) // feeder
+        {
+            this.targetId = targetId;
+            this.operationId = operationId;
+            var deferralOperations = new List<int>();
+            deferralOperations.Add((int)OperationsEnum.DeferralExtension);
+            deferralOperations.Add((int)OperationsEnum.ProvisionOfDeferredDocument);
+            deferralOperations.Add((int)OperationsEnum.DefferedChecklistApproval);
+            deferralOperations.Add((int)OperationsEnum.WaivedChecklistApproval);
+            //if (operationId == (int)OperationsEnum.CollateralSwap)
+            //{
+            //    this.customerId = context.TBL_COLLATERAL_SWAP_REQUEST.FirstOrDefault(s => s.COLLATERALSWAPID == targetId)?.CUSTOMERID ?? 0;
+            //}
+            //if (operationId == (int)OperationsEnum.OriginalDocumentApproval)
+            //{
+            //    this.customerId = context.TBL_COLLATERAL_SWAP_REQUEST.FirstOrDefault(s => s.COLLATERALSWAPID == targetId)?.CUSTOMERID ?? 0;
+            //}
+            //if (operationId == (int)OperationsEnum.SecurityRelease)
+            //{
+            //    this.customerId = context.TBL_COLLATERAL_SWAP_REQUEST.FirstOrDefault(s => s.COLLATERALSWAPID == targetId)?.CUSTOMERID ?? 0;
+            //}
+            //if (operationId == (int)OperationsEnum.LienRemoval)
+            //{
+            //    this.customerId = context.TBL_COLLATERAL_SWAP_REQUEST.FirstOrDefault(s => s.COLLATERALSWAPID == targetId)?.CUSTOMERID ?? 0;
+            //}
+            //if (operationId == (int)OperationsEnum.lcIssuance)
+            //{
+            //    this.customerId = context.TBL_LC_ISSUANCE.FirstOrDefault(s => s.LCISSUANCEID == targetId)?.CUSTOMERID ?? 0;
+            //}
+            //if (deferralOperations.Contains(operationId))
+            //{
+            //    this.customerId = context.TBL_COLLATERAL_SWAP_REQUEST.FirstOrDefault(s => s.COLLATERALSWAPID == targetId)?.CUSTOMERID ?? 0;
+            //}
+
+            if (customerId == 0)
+            {
+                throw new Exception("Customer Id cannot be null!");
+            }
+
+            this.customerId = customerId;
+
+            if (this.customerId > 0)
+            {
+                this.customerIds = new List<CustomerExposure>();
+                this.customerIds.Add(new CustomerExposure { customerId = this.customerId });
+                var customer = context.TBL_CUSTOMER.Find(this.customerId);
+                this.customerName = customer?.FIRSTNAME + " " + customer?.MIDDLENAME + " " + customer?.LASTNAME;
+                this.customerFacilities = new List<TBL_LOAN_APPLICATION_DETAIL>();
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected).ToList();
+                this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == this.customerId)?.ADDRESS;
+                this.fussCustomerConditionSubsequentData = GenericConditionSubsequentHtml();
+                this.fussCustomerConditionDynamicsData = GenericConditionDynamicsHtml();
+                this.memoData = GenericMemoMarkupHtml();
+                if (targetIdForWorkFlow > 0)
+                {
+                    this.approvals = GetGenericApprovalsMarkup(targetIdForWorkFlow, true);
+                }
+                else
+                {
+                    this.approvals = GetGenericApprovalsMarkup(this.targetId, true);
+                }
+                this.currentDate = DateTime.Now.ToShortDateString();
+                if (this.customerIds?.Count > 0)
+                {
+                    this.accountNumbers = AccountNumbersMarkup(this.customerIds?.Select(x => x.customerId).ToList());
+                }
+            }
+            return true;
+        }
+
         private void initLoanAppForLms()
         {
             var loanId = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().LOANID;
@@ -848,7 +918,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.companyLogo = $@"
                 <table style='font face: arial; size:12px' border=01 width=1100 cellpadding=0 cellspacing=0>
                 <tr>
-                    <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                    <td align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                 </tr></table>";
             string customerName = String.Empty;
@@ -911,7 +981,7 @@ namespace FintrakBanking.Repositories.Credit
             this.companyLogo = $@"
                  <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr></table>";
             string customerName = String.Empty;
@@ -953,7 +1023,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.companyLogo = $@"
                  <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr></table>";
                 this.interestRate = context.TBL_LMSR_APPLICATION_DETAIL.Where(i => i.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID).Select(i => i.APPROVEDINTERESTRATE).FirstOrDefault();
@@ -1404,7 +1474,10 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_STAFF.Select(s => new OperationStaffViewModel
             {
                 id = s.STAFFID,
-                name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME
+                staffId = s.STAFFID,
+                name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
+                role = s.TBL_STAFF_ROLE.STAFFROLENAME
+                
             });
         }
 
@@ -1415,7 +1488,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId && x.OPERATIONID == operationId).ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == applicationId && x.OPERATIONID == operationId).ToList();
             }
 
             var data = trail.Select(x => new ApprovalTrailViewModel
@@ -1431,16 +1504,36 @@ namespace FintrakBanking.Repositories.Credit
                 responseStaffId = x.RESPONSESTAFFID,
                 requestStaffId = x.REQUESTSTAFFID,
                 fromApprovalLevelId = x.FROMAPPROVALLEVELID,
-                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? allstaff.FirstOrDefault(s => s.staffId == x.REQUESTSTAFFID)?.role : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelId = x.TOAPPROVALLEVELID ?? 0,
                 approvalStateId = x.APPROVALSTATEID,
                 approvalStatusId = x.APPROVALSTATUSID,
+                loopedStaffId = x.LOOPEDSTAFFID,
+                toStaffId = x.TOSTAFFID,
                 approvalState = x.APPROVALSTATEID == null ? "N/A" : context.TBL_APPROVAL_STATE.Where(a => a.APPROVALSTATEID == x.APPROVALSTATEID).Select(a => a.APPROVALSTATE).FirstOrDefault(),
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
             })?.ToList();
+
+            foreach (var t in data)
+            {
+                if (t.fromApprovalLevelId == t.toApprovalLevelId)
+                {
+                    if (t.loopedStaffId > 0)
+                    {
+                        t.toStaffName = allstaff.FirstOrDefault(s => s.staffId == t.loopedStaffId)?.name;
+                        t.toApprovalLevelName = allstaff.FirstOrDefault(s => s.staffId == t.loopedStaffId)?.role;
+                    }
+                    else
+                    {
+                        t.fromApprovalLevelName = allstaff.FirstOrDefault(s => s.staffId == t.requestStaffId)?.role;
+                        t.toStaffName = t.toStaffId != null ? allstaff.FirstOrDefault(s => s.staffId == t.toStaffId)?.name : t.toStaffName;
+                    }
+                }
+
+            }
 
             return data.OrderByDescending(d=>d.systemArrivalDateTime);
         }
@@ -1538,7 +1631,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -4740,18 +4833,54 @@ namespace FintrakBanking.Repositories.Credit
         private int GetCurrentOperationId()
         {
             //if (this.loanApplication?.OPERATIONID > 0 && this.loanApplication != null)
-            if (this.lmsrApplication == null)
-            {
-                return this.loanApplication.OPERATIONID;
-            }else
+            if (this.lmsrApplication != null)
             {
                 return this.lmsrApplication.OPERATIONID;
+            }else if(this.loanApplication != null)
+            {
+                return this.loanApplication.OPERATIONID;
+            }
+            else
+            {
+                return this.operationId;
             }
         }
 
-        private string GetApprovalsMarkup()
+        private string GetGenericApprovalsMarkup(int targetIdForWorkFlow, bool getAll = false)
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
+            var appraisals = GetAppraisalMemorandumTrail(targetIdForWorkFlow, GetCurrentOperationId(), getAll).OrderBy(a => a.approvalTrailId).ToList();
+            var result = String.Empty;
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
+                        <th><b>Comment</b></th>
+                        <th><b>Date</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
+
+        private string GetApprovalsMarkup(bool getAll = false)
+        {
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId(), getAll).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
@@ -4881,11 +5010,13 @@ namespace FintrakBanking.Repositories.Credit
                 responseStaffId = x.RESPONSESTAFFID,
                 requestStaffId = x.REQUESTSTAFFID,
                 fromApprovalLevelId = x.FROMAPPROVALLEVELID,
-                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? allstaff.FirstOrDefault(r => r.staffId == x.REQUESTSTAFFID).role : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelId = x.TOAPPROVALLEVELID,
                 approvalStateId = x.APPROVALSTATEID,
                 approvalStatusId = x.APPROVALSTATUSID,
+                loopedStaffId = x.LOOPEDSTAFFID,
+                toStaffId = x.TOSTAFFID,
                 approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 vote = x.VOTE,
@@ -4905,6 +5036,23 @@ namespace FintrakBanking.Repositories.Credit
                 data.AddRange(GetNonAppraisalTrail(loanApplicationId, (short)OperationsEnum.OfferLetterApproval, "Offer Letter"));
                 data.AddRange(GetNonAppraisalTrail(loanApplicationId, (short)OperationsEnum.LoanAvailment, "Availment"));
                 data.AddRange(GetNonAppraisalTrail(loanApplicationId, appraisalOperation, "Credit Appraisal"));
+            }
+            foreach (var t in data)
+            {
+                if (t.fromApprovalLevelId == t.toApprovalLevelId)
+                {
+                    if (t.loopedStaffId > 0)
+                    {
+                        t.toStaffName = allstaff.FirstOrDefault(s => s.staffId == t.loopedStaffId)?.name;
+                        t.toApprovalLevelName = allstaff.FirstOrDefault(s => s.staffId == t.loopedStaffId)?.role;
+                    }
+                    else
+                    {
+                        t.fromApprovalLevelName = allstaff.FirstOrDefault(s => s.staffId == t.requestStaffId)?.role;
+                        t.toStaffName = t.toStaffId != null ? allstaff.FirstOrDefault(s => s.staffId == t.toStaffId)?.name : t.toStaffName;
+                    }
+                }
+
             }
 
             data.OrderByDescending(d => d.systemArrivalDateTime);
@@ -5114,7 +5262,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetDecision(short? vote)
         {
-            if (vote == 1) return "Decline";
+            if (vote == 1) return "Accepted";
             if (vote == 2) return "Accepted";
             if (vote == 3) return "Declined";
             if (vote == 4) return "Accepted";
@@ -6569,6 +6717,62 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        public string GenericMemoMarkupHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h3><b>MEMO</b></h3>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
+                        
+                    </tr>
+                    <tr>
+                        <td><b>Date</b></td>
+                        <td>{DateTime.UtcNow}</td>
+                    </tr>
+                    <tr>
+                        <td><b>To:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>From:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Location:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Subject:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>No. Of Pages:</b></td>
+                        <td></td>
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            result = result + $@" 
+                    <p></p>
+                    <p><b>1. BACKGROUND</b></p>
+                    <p></p>
+                    <p><b>2. COLLATERAL</b></p>
+                    <p></p>
+                    <p><b>3. ACCOUNT STATUS/ANALYSIS</b></p>
+                    <p></p>
+                    <p><b>4. ISSUES</b></p>
+                    <p></p>
+                    <p><b>5. CURRENT UPDATES</b></p>
+                    <p></p>
+                    <p><b>6. REQUEST/RECOMMENDATION</b></p>
+                    <p></p>
+                    <p><b>7. JUSTIFICATION</b></p>";
+            return result;
+        }
+
         public string MemoMarkupHtml()
         {
             var result = String.Empty;
@@ -6578,7 +6782,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -7400,7 +7604,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8149,6 +8353,43 @@ namespace FintrakBanking.Repositories.Credit
                  <br />";
             return result;
         }
+        
+        public string GenericConditionSubsequentHtml()
+        {
+            var result = String.Empty;
+            
+            result = result + $@"
+            <br />
+            <h4><b>CONDITIONS</b></h4>
+            <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                    <th><b>S/N</b></th>
+                    <th><b>Product Name</b></th>
+                    <th><b>Condition Precedent</b></th>
+                </tr>";
+
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+        public string GenericConditionDynamicsHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+            <br />
+            <h4><b>TRANSACTION DYNAMICS</b></h4>
+            <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                    <th><b>S/N</b></th>
+                    <th><b>Product Name</b></th>
+                    <th><b>Transaction Dynamics</b></th>
+                </tr>";
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
         public string FussCustomerConditionDynamicsHtml()
         {
             IEnumerable<TransactionDynamicsViewModel> ConditionSubsequent = new List<TransactionDynamicsViewModel>();
@@ -8173,7 +8414,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var f in ConditionSubsequent)
                 {
                     n++;
-                    result = result + $@"
+                    result = result + $@"0
                         <tr>
                         <td> {n}</td>
                         <td> {f.productName}</td>
@@ -8786,7 +9027,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8892,7 +9133,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8999,7 +9240,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -9096,7 +9337,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -9862,7 +10103,7 @@ namespace FintrakBanking.Repositories.Credit
                
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>  
                         <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                    <tr>
@@ -12023,7 +12264,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr></table> ";   
                    
@@ -12437,7 +12678,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3> <br />
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>                   
                     <tr>
@@ -12480,7 +12721,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetCashBackApprovalsMarkupLOS(int targetId, int operationId)
         {
-            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,true).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,false).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
@@ -12526,7 +12767,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1 width=750 cellpadding=5 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>                    
                     <tr>
@@ -12774,7 +13015,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -12967,7 +13208,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetExceptionalApprovalsMarkup(int targetId, int operationId)
         {
-            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,true).OrderBy(a => a.approvalTrailId).ToList();
+            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,false).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>

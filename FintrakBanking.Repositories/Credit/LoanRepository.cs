@@ -1551,63 +1551,65 @@ namespace FintrakBanking.Repositories.Credit
                 request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                 request.ISUSED = true;
                 application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
+                
+                    var dataCount = context.SaveChanges();
 
-                var dataCount = context.SaveChanges();
-                if (dataCount > 0)
-                {
-                    var approvalModel = new ForwardViewModel
+                    if (dataCount > 0)
                     {
-                        createdBy = entity.createdBy,
-                        companyId = entity.companyId,
-                        applicationId = entity.loanBookingRequestId,
-                        comment = "Please approve this Loan",
-                        amount = entity.principalAmount,
-                        operationId = (short)OperationsEnum.TermLoanBooking,
-                    };
-
-                    if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, false, (int)ApprovalStatusEnum.Processing))
-                    {
-                        if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.IrregularSchedule)
+                        var approvalModel = new ForwardViewModel
                         {
-                            foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
+                            createdBy = entity.createdBy,
+                            companyId = entity.companyId,
+                            applicationId = entity.loanBookingRequestId,
+                            comment = "Please approve this Loan",
+                            amount = entity.principalAmount,
+                            operationId = (short)OperationsEnum.TermLoanBooking,
+                        };
+
+                        if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, false, (int)ApprovalStatusEnum.Processing))
+                        {
+                            if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.IrregularSchedule)
                             {
-                                var irregularRecordData = new TBL_LOAN_SCHEDULE_IREGUL_INPUT
+                                foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
                                 {
-                                    LOANID = loan.TERMLOANID,
-                                    PAYMENTAMOUNT = (decimal)irregular.paymentAmount,
-                                    PAYMENTDATE = irregular.paymentDate,
-                                    CREATEDBY = entity.createdBy,
-                                    DATETIMECREATED = DateTime.Now,
-                                };
-                                context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Add(irregularRecordData);
+                                    var irregularRecordData = new TBL_LOAN_SCHEDULE_IREGUL_INPUT
+                                    {
+                                        LOANID = loan.TERMLOANID,
+                                        PAYMENTAMOUNT = (decimal)irregular.paymentAmount,
+                                        PAYMENTDATE = irregular.paymentDate,
+                                        CREATEDBY = entity.createdBy,
+                                        DATETIMECREATED = DateTime.Now,
+                                    };
+                                    context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Add(irregularRecordData);
+                                }
                             }
+
+                            AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
+                            //AddDeferredFees(entity.loanChargeFee, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
+                            AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                            AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                            entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
+
+                            var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
+                            // CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility, staffCode, staffCode);
+
+                            //if (!entity.feeOverride) PostLoanFees(entity);
+                            context.SaveChanges();
+
+                            trans.Commit();
                         }
 
-                        AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
-                        //AddDeferredFees(entity.loanChargeFee, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
-                        AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
-
-                        var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
-                        // CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility, staffCode, staffCode);
-
-                        //if (!entity.feeOverride) PostLoanFees(entity);
-                        context.SaveChanges();
-
-                        trans.Commit();
+                        return loanReferenceNumber;
                     }
-
-                    return loanReferenceNumber;
-                }
-                else
-                {
-                    return "";
-                }
+                    else
+                    {
+                        return "";
+                    }
+                
             }
         }
 
@@ -19450,7 +19452,7 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.approvalStatusId = (int)ApprovalStatusEnum.Processing;
                     assignOperations.operationId = (int)OperationsEnum.RetailRecoveryAssignmentApproval;
                     assignOperations.operationCompleted = false;
-                    assignOperations.totalAmountRecovery = customerRequest.totalUnsettledAmount == 0 ?  customerRequest.totalAmountRecovery : customerRequest.totalUnsettledAmount; 
+                    assignOperations.totalAmountRecovery = customerRequest.totalUnsettledAmount == null ?  customerRequest.totalAmountRecovery : (decimal)customerRequest.totalUnsettledAmount; 
                     assignOperations.source = source;
                     assignOperations.productId = customerRequest.productId;
                     assignOperations.loanId = customerRequest.loanId;

@@ -41,7 +41,56 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.context.SaveChanges() > 0;
         }
 
-        public bool AddCompany(CompanyViewModel company)
+        public bool AddCompany(CompanyViewModel company,  byte[] buffer)
+        {
+            try
+            {
+                var _company = new TBL_COMPANY()
+                {
+                    NAME = company.companyName,
+                    ADDRESS = company.address,
+                    TELEPHONE = company.telephone,
+                    EMAIL = company.email,
+                    LANGUAGEID = company.languageId,
+                    DATEOFINCORPORATION = company.dateOfIncorporation.Value,
+                    COUNTRYID = company.countryId,
+                    CURRENCYID = company.currencyId,
+                    NATUREOFBUSINESSID = company.natureOfBusinessId,
+                    NAMEOFSCHEME = company.nameOfScheme,
+                    FUNCTIONSREGISTERED = company.functionsRegistered,
+                    AUTHORISEDSHARECAPITAL = company.authorisedShareCapital,
+                    NAMEOFREGISTRAR = company.nameOfRegistrar,
+                    NAMEOFTRUSTEES = company.nameOfTrustees,
+                    FORMERMANAGERSTRUSTEES = company.formerManagersTrustees,
+                    DATEOFRENEWALOFREGISTRATION = company.dateOfRenewalOfRegistration,
+                    DATEOFCOMMENCEMENT = company.dateOfCommencement,
+                    INITIALFLOATATION = company.initialFloatation,
+                    INITIALSUBSCRIPTION = company.initialSubscription,
+                    REGISTEREDBY = company.registeredBy,
+                    PARENTID = company.parentId,
+                    WEBSITE = company.website,
+                    TRUSTEESADDRESS = company.trusteesAddress,
+                    INVESTMENTOBJECTIVE = company.investmentObjective,
+
+                    FILENAME = company.fileName,
+                    FILEEXTENSION = company.fileExtension.ToLower(),
+                    FILEDATA = buffer,
+                    IMAGEPATH = company.imagePath,
+
+                };
+
+                context.TBL_COMPANY.Add(_company);
+
+                return context.SaveChanges() > 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        /*public bool AddCompany(CompanyViewModel company)
         {
             try
             {
@@ -82,7 +131,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 throw ex;
             }
-        }
+        }*/
 
         private IQueryable<CompanyViewModel> GetAllCompanies()
         {
@@ -175,6 +224,11 @@ namespace FintrakBanking.Repositories.Setups.General
                                  dateTimeUpdated = data.DATETIMEUPDATED ?? DateTime.Now,
                                  shareHoldersFund = data.SHAREHOLDERSFUND,
                                  singleObligorLimit = data.SINGLEOBLIGORLIMIT,
+
+                                 fileExtension = data.FILEEXTENSION,
+                                 fileName = data.FILENAME,
+                                 fileData = data.FILEDATA,
+                                 imagePath = data.IMAGEPATH,
                              });
 
             return companies;

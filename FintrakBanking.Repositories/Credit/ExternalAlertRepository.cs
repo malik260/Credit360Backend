@@ -84,7 +84,27 @@ namespace FintrakBanking.Repositories.Credit
             return staffList;
         }
 
-        
+        public IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturitiesCustomers() //done
+        {
+            List<string> customerIds = new List<string> { "000025950", "000234558" };
+            var immenentMaturities = context.TBL_GLOBAL_EXPOSURE.Where(d =>
+            customerIds.Contains(d.CUSTOMERID))
+            .Select(d => d.ACCOUNTOFFICERCODE).ToList();
+
+            var staffList = (from s in context.TBL_STAFF
+                             where immenentMaturities.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).ToList();
+
+            return staffList;
+        }
+
+
         public IEnumerable<StaffInfoViewModel> GetImminentMaturitiesGroupHeads()
         {
             List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
@@ -5858,7 +5878,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
+                                             totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -5894,7 +5914,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
+                                             totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6133,7 +6153,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
+                                             totalUnsettledAmount = ln.TOTALUNPAIDOBLIGATION,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6169,7 +6189,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                             totalUnsettledAmount = (decimal)ln.TOTALUNSETTLEDAMOUNT,
+                                             totalUnsettledAmount = ln.TOTALUNPAIDOBLIGATION,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6997,7 +7017,7 @@ namespace FintrakBanking.Repositories.Credit
             bool result = false;
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             List<TBL_LOAN_RECOVERY_ASSIGNMENT> bulkLoanTable = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
-
+            var userAdminRole = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLENAME.ToUpper().Contains("RELATIONSHIP MANAGER")).FirstOrDefault();
             GlobalExposureApplicationViewModel assignOperations = new GlobalExposureApplicationViewModel();
 
             foreach (var customerRequest in models)

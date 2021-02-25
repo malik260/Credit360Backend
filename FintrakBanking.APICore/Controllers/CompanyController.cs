@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using System.Globalization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -165,7 +166,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         // POST api/values
-        [HttpPost]
+        /*[HttpPost]
         [ClaimsAuthorization]
         [Route("company")]
         public HttpResponseMessage AddCompany([FromBody] CompanyViewModel model)
@@ -186,6 +187,102 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
+        }*/
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("company")]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> AddCompany()
+        {
+
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+
+            var entity = new CompanyViewModel();
+            entity.fileName = provider.FormData["fileName"];
+            entity.fileExtension = provider.FormData["fileExtension"];
+            entity.imagePath = provider.FormData["imagePath"];
+            entity.companyName = provider.FormData["companyName"];
+            entity.address = provider.FormData["address"];
+            entity.telephone = provider.FormData["telephone"];
+            entity.email = provider.FormData["email"];
+            entity.languageId = Convert.ToInt16(provider.FormData["languageId"]);
+
+            var dateOfIncorp = provider.FormData["dateOfIncorporation"];
+            var dateOfIncorp2 = dateOfIncorp.Substring(0, 15);
+            entity.dateOfIncorporation = DateTime.ParseExact(dateOfIncorp2, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
+
+            entity.countryId = Convert.ToInt32(provider.FormData["countryId"]);
+            entity.currencyId = Convert.ToInt16(provider.FormData["currencyId"]);
+            entity.natureOfBusinessId = Convert.ToInt16(provider.FormData["natureOfBusinessId"]);
+            entity.nameOfScheme = provider.FormData["nameOfScheme"];
+            entity.functionsRegistered = provider.FormData["functionsRegistered"];
+
+            var authorisedShareCap = provider.FormData["authorisedShareCapital"] == "" ? "0.0" : provider.FormData["authorisedShareCapital"];
+            entity.authorisedShareCapital = decimal.Parse(authorisedShareCap);
+
+
+            entity.nameOfRegistrar = provider.FormData["nameOfRegistrar"];
+            entity.nameOfTrustees = provider.FormData["nameOfTrustees"];
+            entity.formerManagersTrustees = provider.FormData["formerManagersTrustees"];
+
+            var dateOfRenewalOfReg = provider.FormData["dateOfRenewalOfRegistration"];
+            if (dateOfRenewalOfReg == "")
+            {
+                entity.dateOfRenewalOfRegistration = null;
+
+            }
+            else
+            {
+                var dateOfRenewalOfReg2 = dateOfRenewalOfReg.Substring(0, 15);
+                entity.dateOfRenewalOfRegistration = DateTime.ParseExact(dateOfRenewalOfReg, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
+            }
+
+            var dateOfCommence = provider.FormData["dateOfCommencement"];
+            if (dateOfCommence == "")
+            {
+                entity.dateOfCommencement = null;
+
+            }
+            else
+            {
+                var dateOfCommence2 = dateOfCommence.Substring(0, 15);
+                entity.dateOfCommencement = DateTime.ParseExact(dateOfCommence2, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
+            }
+
+            entity.initialFloatation = Convert.ToInt32(provider.FormData["initialFloatation"]);
+            entity.initialSubscription = Convert.ToInt32(provider.FormData["initialSubscription"]);
+            entity.registeredBy = provider.FormData["registeredBy"];
+            entity.parentId = Convert.ToInt32(provider.FormData["parentId"]);
+            entity.website = provider.FormData["website"];
+            entity.trusteesAddress = provider.FormData["trusteesAddress"];
+            entity.investmentObjective = provider.FormData["investmentObjective"];  
+            
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+
+            var file = provider.Contents.FirstOrDefault();
+            var buffer = await file.ReadAsByteArrayAsync();
+            bool response = repo.AddCompany(entity, buffer);
+
+
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Company has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "company not created" });
+
         }
 
         [HttpPut]
