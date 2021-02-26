@@ -105,91 +105,95 @@ namespace FintrakBanking.Repositories.Credit
         private APIResponse AddIndividualCustomer(IncomingCustomerViewModels model)
         {
             APIResponse response = new APIResponse();
-
-            //if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
-
-            //if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
-
-            //if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
-
-            //List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
-            //if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99",""); }
-
-            if (!DateTime.TryParseExact(model.individualCustomerInformation.dateOfBirth, "dd-MM-yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dateOfBirth)) { return fireResponse("Date of birth not in the right format", "99", ""); }
-
-            List<string> mStatus = new List<string> { "single", "married", "divorced", "widowed" };
-            if (model.individualCustomerInformation.maritalStatus.ToLower() == "single") { model.individualCustomerInformation.maritalStatus = "1"; }
-            if (model.individualCustomerInformation.maritalStatus.ToLower() == "married") { model.individualCustomerInformation.maritalStatus = "2"; }
-            if (model.individualCustomerInformation.maritalStatus.ToLower() == "divorced") { model.individualCustomerInformation.maritalStatus = "3"; }
-            if (model.individualCustomerInformation.maritalStatus.ToLower() == "widowed") { model.individualCustomerInformation.maritalStatus = "4"; }
-            if (model.individualCustomerInformation.maritalStatus == "0") { fireResponse("Zero value is not a recognized marital status.","99", ""); }
-            if (!mStatus.Contains(model.individualCustomerInformation.maritalStatus)) { fireResponse($"Value, '{model.individualCustomerInformation.maritalStatus}' is not a valid marital status.", "99",""); }
-
-            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
-            if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
-            model.createdBy = accountOfficer.STAFFID;
-            model.staffId = accountOfficer.STAFFID;
-            model.companyId = accountOfficer.COMPANYID;
-            model.branchId = accountOfficer.BRANCHID;
-
-            if (model.individualCustomerInformation.subSector == null) return fireResponse("Missing Sub-Sector Code", "99", "");
-
-            var subsector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.individualCustomerInformation.subSector).FirstOrDefault();
-            if (subsector == null) return fireResponse("Sub-Sector does not exist in Fintrak Credit360", "99", "");
-
-            var sector = context.TBL_SECTOR.Where(x => x.SECTORID == subsector.SECTORID ).FirstOrDefault();
-            model.sectorId = sector.SECTORID;
-            model.subsectorId = subsector.SUBSECTORID;
-
-            if (saveIndividualCustomerInformation(model))
+            using (var trans = context.Database.BeginTransaction())
             {
-                customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
-                //SaveLoanDocument();
-                return fireResponse("Success","00", model.request_Id);
-            }
-            else { return fireResponse("Unresolved error: could not save customer information", "99", ""); }
+                //if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
+                //if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
+
+                //if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
+
+                //List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
+                //if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99",""); }
+
+                if (!DateTime.TryParseExact(model.individualCustomerInformation.dateOfBirth, "dd-MM-yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dateOfBirth)) { return fireResponse("Date of birth not in the right format", "99", ""); }
+
+                List<string> mStatus = new List<string> { "single", "married", "divorced", "widowed" };
+                if (model.individualCustomerInformation.maritalStatus.ToLower() == "single") { model.individualCustomerInformation.maritalStatus = "1"; }
+                if (model.individualCustomerInformation.maritalStatus.ToLower() == "married") { model.individualCustomerInformation.maritalStatus = "2"; }
+                if (model.individualCustomerInformation.maritalStatus.ToLower() == "divorced") { model.individualCustomerInformation.maritalStatus = "3"; }
+                if (model.individualCustomerInformation.maritalStatus.ToLower() == "widowed") { model.individualCustomerInformation.maritalStatus = "4"; }
+                if (model.individualCustomerInformation.maritalStatus == "0") { fireResponse("Zero value is not a recognized marital status.", "99", ""); }
+                if (!mStatus.Contains(model.individualCustomerInformation.maritalStatus)) { fireResponse($"Value, '{model.individualCustomerInformation.maritalStatus}' is not a valid marital status.", "99", ""); }
+
+                var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+                if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
+                model.createdBy = accountOfficer.STAFFID;
+                model.staffId = accountOfficer.STAFFID;
+                model.companyId = accountOfficer.COMPANYID;
+                model.branchId = accountOfficer.BRANCHID;
+
+                if (model.individualCustomerInformation.subSector == null) return fireResponse("Missing Sub-Sector Code", "99", "");
+
+                var subsector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.individualCustomerInformation.subSector).FirstOrDefault();
+                if (subsector == null) return fireResponse("Sub-Sector does not exist in Fintrak Credit360", "99", "");
+
+                var sector = context.TBL_SECTOR.Where(x => x.SECTORID == subsector.SECTORID).FirstOrDefault();
+                model.sectorId = sector.SECTORID;
+                model.subsectorId = subsector.SUBSECTORID;
+
+                if (saveIndividualCustomerInformation(model))
+                {
+                    customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
+                    //SaveLoanDocument();
+                    trans.Commit();
+                    return fireResponse("Success", "00", model.request_Id);
+                }
+                else { return fireResponse("Unresolved error: could not save customer information", "99", ""); }
+            }
         }
 
         private APIResponse AddCorporateCustomer(IncomingCustomerViewModels model)
         {
             APIResponse response = new APIResponse();
-
-            //if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
-
-            //if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
-
-            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
-            if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
-            model.createdBy = accountOfficer.STAFFID;
-            model.staffId = accountOfficer.STAFFID;
-            model.companyId = accountOfficer.COMPANYID;
-            model.branchId = accountOfficer.BRANCHID;
-
-            if (model.corporateCustomerInformation.subSector == null) return fireResponse("Missing Sub-Sector Code", "99", "");
-
-            var subsector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.corporateCustomerInformation.subSector).FirstOrDefault();
-            if (subsector == null) return fireResponse("Sub-Sector does not exist in Fintrak Credit360", "99", "");
-
-            var sector = context.TBL_SECTOR.Where(x => x.SECTORID == subsector.SECTORID).FirstOrDefault();
-            model.sectorId = sector.SECTORID;
-            model.subsectorId = subsector.SUBSECTORID;
-
-            if (!DateTime.TryParseExact(model.corporateCustomerInformation.dateOfIncorporation, "dd-MM-yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dateOfIncorporation)) { return fireResponse("Date of Incorporation not in the right format", "99", ""); }
-
-            // List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
-
-            //List<int> crcCreditBureauType = new List<int> { 3 };
-            //if (creditBureautype.Contains(crcCreditBureauType) == false)
-            //{ return fireResponse("Missing CRC credit bureau", "99",""); }
-
-            if (saveCorporateCustomerInformation(model))
+            using (var trans = context.Database.BeginTransaction())
             {
-                customer.UpdateCustomerCollateralId(model.corporateCustomerInformation.customerCode);
-                return fireResponse("Success", "00", model.request_Id);
-            }
-            else { return fireResponse("Unresolved error: could not save customer information", "99", ""); }
+                //if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
+                //if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
+
+                var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+                if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
+                model.createdBy = accountOfficer.STAFFID;
+                model.staffId = accountOfficer.STAFFID;
+                model.companyId = accountOfficer.COMPANYID;
+                model.branchId = accountOfficer.BRANCHID;
+
+                if (model.corporateCustomerInformation.subSector == null) return fireResponse("Missing Sub-Sector Code", "99", "");
+
+                var subsector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.corporateCustomerInformation.subSector).FirstOrDefault();
+                if (subsector == null) return fireResponse("Sub-Sector does not exist in Fintrak Credit360", "99", "");
+
+                var sector = context.TBL_SECTOR.Where(x => x.SECTORID == subsector.SECTORID).FirstOrDefault();
+                model.sectorId = sector.SECTORID;
+                model.subsectorId = subsector.SUBSECTORID;
+
+                if (!DateTime.TryParseExact(model.corporateCustomerInformation.dateOfIncorporation, "dd-MM-yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dateOfIncorporation)) { return fireResponse("Date of Incorporation not in the right format", "99", ""); }
+
+                // List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
+
+                //List<int> crcCreditBureauType = new List<int> { 3 };
+                //if (creditBureautype.Contains(crcCreditBureauType) == false)
+                //{ return fireResponse("Missing CRC credit bureau", "99",""); }
+
+                if (saveCorporateCustomerInformation(model))
+                {
+                    customer.UpdateCustomerCollateralId(model.corporateCustomerInformation.customerCode);
+                    trans.Commit();
+                    return fireResponse("Success", "00", model.request_Id);
+                }
+                else { return fireResponse("Unresolved error: could not save customer information", "99", ""); }
+            }
         }
 
         private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
@@ -251,61 +255,79 @@ namespace FintrakBanking.Repositories.Credit
                 BUSINESSUNTID = model.businessUnitId
             };
 
-            foreach (var address in entity.customerAddresses)
+            var test = context.TBL_CUSTOMER.Add(customer);
+            context.SaveChanges();
+
+            if (entity.customerAddresses != null)
             {
-                var state = context.TBL_STATE.Where(O => O.STATENAME.ToLower() == address.state.ToLower()).FirstOrDefault();
-
-                customer.TBL_CUSTOMER_ADDRESS.Add(new TBL_CUSTOMER_ADDRESS()
+                foreach (var address in entity.customerAddresses)
                 {
-                    ADDRESS = address.address,
-                    STATEID = state != null ? state.STATEID : 1,
-                    CITYID = 1,
-                    ADDRESSTYPEID = 1,
-                    ACTIVE = true,
-                    NEARESTLANDMARK = address.nearestLandmark,
-                    ELECTRICMETERNUMBER = address.utilityBillNumber,
-                });
+                    var state = context.TBL_STATE.Where(O => O.STATENAME.ToLower() == address.state.ToLower()).FirstOrDefault();
+
+                    customer.TBL_CUSTOMER_ADDRESS.Add(new TBL_CUSTOMER_ADDRESS()
+                    {
+                        ADDRESS = address.address,
+                        CUSTOMERID = customer.CUSTOMERID,
+                        STATEID = state != null ? state.STATEID : 1,
+                        CITYID = 1,
+                        ADDRESSTYPEID = 1,
+                        ACTIVE = true,
+                        NEARESTLANDMARK = address.nearestLandmark,
+                        ELECTRICMETERNUMBER = address.utilityBillNumber,
+                    });
+                }
+            }
+            
+
+            if (entity.customerContacts != null)
+            {
+                foreach (var contact in entity.customerContacts)
+                {
+                    customer.TBL_CUSTOMER_PHONECONTACT.Add(new TBL_CUSTOMER_PHONECONTACT()
+                    {
+                        ACTIVE = true,
+                        CUSTOMERID = customer.CUSTOMERID,
+                        PHONE = contact.officeMobileNumber,
+                        PHONENUMBER = contact.officeLandNumber,
+                    });
+                }
             }
 
-            foreach (var contact in entity.customerContacts) {
-                customer.TBL_CUSTOMER_PHONECONTACT.Add(new TBL_CUSTOMER_PHONECONTACT()
+            if (entity.companyDirectors != null)
+            {
+                foreach (var director in entity.companyDirectors)
                 {
-                    ACTIVE = true,
-                    PHONE = contact.officeMobileNumber,
-                    PHONENUMBER = contact.officeLandNumber,
-                });
-            }
+                    customer.TBL_CUSTOMER_COMPANY_DIRECTOR.Add(new TBL_CUSTOMER_COMPANY_DIRECTOR()
+                    {
+                        FIRSTNAME = director.firstName,
+                        CUSTOMERID = customer.CUSTOMERID,
+                        CUSTOMERTYPEID = short.Parse(model.customerType),
+                        COMPANYDIRECTORTYPEID = 1,
+                        SHAREHOLDINGPERCENTAGE = 0,
+                        ISPOLITICALLYEXPOSED = director.politicallyExposed == "1" ? true : false,
+                        CREATEDBY = entity.staffId.Value,
+                        DATECREATED = DateTime.Now,
+                        SURNAME = director.lastName,
+                        MIDDLENAME = director.otherNames,
+                        GENDER = director.gender,
+                        MARITALSTATUSID = director.maritalStatus.ToLower() == "single" ? 1 : director.maritalStatus.ToLower() == "married" ? 2 : 0,
+                        CUSTOMERBVN = director.bvn,
+                        CUSTOMERNIN = director.nin,
+                        ADDRESS = director.address,
+                        EMAILADDRESS = director.email,
+                        PHONENUMBER = director.phoneNumber,
+                        //REGISTRATION_NUMBER = null,
+                        //TAX_NUMBER = null,
+                        DATEOFBIRTH = DateTime.Parse(director.dateOfBirth)
+                    });
+                }
 
-            foreach (var director in entity.companyDirectors) {
-                customer.TBL_CUSTOMER_COMPANY_DIRECTOR.Add(new TBL_CUSTOMER_COMPANY_DIRECTOR()
-                {
-                    FIRSTNAME = director.firstName,
-                    CUSTOMERTYPEID = short.Parse(model.customerType),
-                    COMPANYDIRECTORTYPEID = 1,
-                    SHAREHOLDINGPERCENTAGE = 0,
-                    ISPOLITICALLYEXPOSED = director.politicallyExposed == "1" ? true : false,
-                    CREATEDBY = entity.staffId.Value,
-                    DATECREATED = DateTime.Now,
-                    SURNAME = director.lastName,
-                    MIDDLENAME = director.otherNames,
-                    GENDER = director.gender,
-                    MARITALSTATUSID = director.maritalStatus.ToLower() == "single" ? 1 : director.maritalStatus.ToLower() == "married" ? 2 : 0,
-                    CUSTOMERBVN = director.bvn,
-                    CUSTOMERNIN = director.nin,
-                    ADDRESS = director.address,
-                    EMAILADDRESS = director.email,
-                    PHONENUMBER = director.phoneNumber,
-                    //REGISTRATION_NUMBER = null,
-                    //TAX_NUMBER = null,
-                    DATEOFBIRTH = DateTime.Parse(director.dateOfBirth)
-                });
             }
 
             //THIS FOREACH LOOP IS NOT YET TESTED. PLEASE COMMENT REMOVE AFTER SIMULATION
             AddCustomerClientSupplier(customer, entity);
            
 
-            context.TBL_CUSTOMER.Add(customer);
             return context.SaveChanges() > 0;
         }
 
@@ -359,53 +381,71 @@ namespace FintrakBanking.Repositories.Credit
                 BUSINESSUNTID = corporateDetails.businessUnitId,
             };
 
-            foreach(var address in model.customerAddresses) {
-                var state = context.TBL_STATE.Where(O => O.STATENAME.ToLower() == address.state.ToLower()).FirstOrDefault();
+            var test = context.TBL_CUSTOMER.Add(customer);
+            context.SaveChanges();
 
-                customer.TBL_CUSTOMER_ADDRESS.Add(new TBL_CUSTOMER_ADDRESS()
+            if (model.customerAddresses != null)
+            {
+                foreach (var address in model.customerAddresses)
                 {
-                    ADDRESS = address.address,
-                    STATEID = state != null ? state.STATEID : 1,
-                    CITYID = 1,
-                    ADDRESSTYPEID = 1,
-                    ACTIVE = true,
-                    NEARESTLANDMARK = address.nearestLandmark,
-                    ELECTRICMETERNUMBER = address.utilityBillNumber,
-                });
+                    var state = context.TBL_STATE.Where(O => O.STATENAME.ToLower() == address.state.ToLower()).FirstOrDefault();
+
+                    customer.TBL_CUSTOMER_ADDRESS.Add(new TBL_CUSTOMER_ADDRESS()
+                    {
+                        ADDRESS = address.address,
+                        CUSTOMERID = customer.CUSTOMERID,
+                        STATEID = state != null ? state.STATEID : 1,
+                        CITYID = 1,
+                        ADDRESSTYPEID = 1,
+                        ACTIVE = true,
+                        NEARESTLANDMARK = address.nearestLandmark,
+                        ELECTRICMETERNUMBER = address.utilityBillNumber,
+                    });
+                }
             }
 
-            foreach (var contact in model.customerContacts) {
-                customer.TBL_CUSTOMER_PHONECONTACT.Add(new TBL_CUSTOMER_PHONECONTACT()
+            if (model.customerContacts != null)
+            {
+                foreach (var contact in model.customerContacts)
                 {
-                    ACTIVE = true,
-                    PHONE = contact.officeMobileNumber,
-                    PHONENUMBER = contact.officeLandNumber,
-                });
+                    customer.TBL_CUSTOMER_PHONECONTACT.Add(new TBL_CUSTOMER_PHONECONTACT()
+                    {
+                        ACTIVE = true,
+                        CUSTOMERID = customer.CUSTOMERID,
+                        PHONE = contact.officeMobileNumber,
+                        PHONENUMBER = contact.officeLandNumber,
+                    });
+                }
             }
 
-            foreach (var director in model.companyDirectors) {
-                customer.TBL_CUSTOMER_COMPANY_DIRECTOR.Add(new TBL_CUSTOMER_COMPANY_DIRECTOR()
+            if (model.companyDirectors != null)
+            {
+                foreach (var director in model.companyDirectors)
                 {
-                    FIRSTNAME = director.firstName,
-                    CUSTOMERTYPEID = short.Parse(model.customerType),
-                    COMPANYDIRECTORTYPEID = 1,
-                    SHAREHOLDINGPERCENTAGE = 0,
-                    ISPOLITICALLYEXPOSED = director.politicallyExposed == "1" ? true : false,
-                    CREATEDBY = model.staffId.Value,
-                    DATECREATED = DateTime.Now,
-                    SURNAME = director.lastName,
-                    MIDDLENAME = director.otherNames,
-                    GENDER = director.gender,
-                    MARITALSTATUSID = director.maritalStatus.ToLower() == "single" ? 1 : director.maritalStatus.ToLower() == "married" ? 2 : 0,
-                    CUSTOMERBVN = director.bvn,
-                    CUSTOMERNIN = director.nin,
-                    ADDRESS = director.address,
-                    EMAILADDRESS = director.email,
-                    PHONENUMBER = director.phoneNumber,
-                    //REGISTRATION_NUMBER = null,
-                    //TAX_NUMBER = null,
-                    DATEOFBIRTH = DateTime.Parse(director.dateOfBirth)
-                });
+                    customer.TBL_CUSTOMER_COMPANY_DIRECTOR.Add(new TBL_CUSTOMER_COMPANY_DIRECTOR()
+                    {
+                        FIRSTNAME = director.firstName,
+                        CUSTOMERID = customer.CUSTOMERID,
+                        CUSTOMERTYPEID = short.Parse(model.customerType),
+                        COMPANYDIRECTORTYPEID = 1,
+                        SHAREHOLDINGPERCENTAGE = 0,
+                        ISPOLITICALLYEXPOSED = director.politicallyExposed == "1" ? true : false,
+                        CREATEDBY = model.staffId.Value,
+                        DATECREATED = DateTime.Now,
+                        SURNAME = director.lastName,
+                        MIDDLENAME = director.otherNames,
+                        GENDER = director.gender,
+                        MARITALSTATUSID = director.maritalStatus.ToLower() == "single" ? 1 : director.maritalStatus.ToLower() == "married" ? 2 : 0,
+                        CUSTOMERBVN = director.bvn,
+                        CUSTOMERNIN = director.nin,
+                        ADDRESS = director.address,
+                        EMAILADDRESS = director.email,
+                        PHONENUMBER = director.phoneNumber,
+                        //REGISTRATION_NUMBER = null,
+                        //TAX_NUMBER = null,
+                        DATEOFBIRTH = DateTime.Parse(director.dateOfBirth)
+                    });
+                }
             }
 
             //THIS FOREACH LOOP IS NOT YET TESTED. PLEASE REMOVE COMMENT AFTER SIMULATION
@@ -413,7 +453,6 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-            context.TBL_CUSTOMER.Add(customer);
             return context.SaveChanges() > 0;
         }
 
@@ -431,66 +470,67 @@ namespace FintrakBanking.Repositories.Credit
 
         public void AddCustomerClientSupplier(TBL_CUSTOMER customer, IncomingCustomerViewModels model)
         {
-
-            foreach (var supplier in model.corporateSuppliers)
+            if (model.corporateSuppliers != null)
             {
-                TBL_CUSTOMER_CLIENT_SUPPLIER clientSupplier;
+                foreach (var supplier in model.corporateSuppliers)
+                {
+                    TBL_CUSTOMER_CLIENT_SUPPLIER clientSupplier = new TBL_CUSTOMER_CLIENT_SUPPLIER();
 
-                clientSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Find(customer.CUSTOMERID);
-                var accountCompleted = context.TBL_CUSTOMER.Find(customer.CUSTOMERID).ACCOUNTCREATIONCOMPLETE;
+                    //clientSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Find(customer.CUSTOMERID);
+                    //var accountCompleted = context.TBL_CUSTOMER.Find(customer.CUSTOMERID)?.ACCOUNTCREATIONCOMPLETE;
+                    clientSupplier.CUSTOMERID = customer.CUSTOMERID;
+                    clientSupplier.CUSTOMERTYPEID = (short)CustomerTypeEnum.Corporate;
+                    clientSupplier.FIRSTNAME = supplier.corporateName;
+                    clientSupplier.MIDDLENAME = null;
+                    clientSupplier.LASTNAME = null;
+                    clientSupplier.TAX_NUMBER = null;
+                    clientSupplier.REGISTRATION_NUMBER = supplier.rcNumber;
+                    clientSupplier.HAS_CASA_ACCOUNT = supplier.accountNumber != null;
+                    clientSupplier.CASA_ACCOUNTNO = supplier.accountNumber;
+                    clientSupplier.BANKNAME = supplier.BankName;
+                    clientSupplier.NATURE_OF_BUSINESS = supplier.natureOfBusiness;
+                    clientSupplier.CONTACT_PERSON = supplier.contactPerson;
+                    clientSupplier.ADDRESS = supplier.address;
+                    clientSupplier.PHONENUMBER = supplier.phoneNumber;
+                    clientSupplier.EMAILADDRESS = supplier.email;
+                    clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Supplier;
+                    clientSupplier.CREATEDBY = (int)model.createdBy;
+                    clientSupplier.DATECREATED = genSetup.GetApplicationDate();
 
-                clientSupplier.CUSTOMERID = customer.CUSTOMERID;
-                clientSupplier.CUSTOMERTYPEID = (short)CustomerTypeEnum.Corporate;
-                clientSupplier.FIRSTNAME = supplier.corporateName;
-                clientSupplier.MIDDLENAME = null;
-                clientSupplier.LASTNAME = null;
-                clientSupplier.TAX_NUMBER = null;
-                clientSupplier.REGISTRATION_NUMBER = supplier.rcNumber;
-                clientSupplier.HAS_CASA_ACCOUNT = supplier.accountNumber != null;
-                clientSupplier.CASA_ACCOUNTNO = supplier.accountNumber;
-                clientSupplier.BANKNAME = supplier.BankName;
-                clientSupplier.NATURE_OF_BUSINESS = supplier.natureOfBusiness;
-                clientSupplier.CONTACT_PERSON = supplier.contactPerson;
-                clientSupplier.ADDRESS = supplier.address;
-                clientSupplier.PHONENUMBER = supplier.phoneNumber;
-                clientSupplier.EMAILADDRESS = supplier.email;
-                clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Supplier;
-                clientSupplier.CREATEDBY = (int)model.createdBy;
-                clientSupplier.DATECREATED = genSetup.GetApplicationDate();
-
-                context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
-
+                    context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
+                }
             }
 
-            foreach (var supplier in model.individualSuppliers)
+            if (model.individualSuppliers != null)
             {
-                TBL_CUSTOMER_CLIENT_SUPPLIER clientSupplier;
+                foreach (var supplier in model.individualSuppliers)
+                {
+                    TBL_CUSTOMER_CLIENT_SUPPLIER clientSupplier = new TBL_CUSTOMER_CLIENT_SUPPLIER();
 
-                clientSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Find(customer.CUSTOMERID);
-                var accountCompleted = context.TBL_CUSTOMER.Find(customer.CUSTOMERID).ACCOUNTCREATIONCOMPLETE;
+                    //clientSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Find(customer.CUSTOMERID);
+                    //var accountCompleted = context.TBL_CUSTOMER.Find(customer.CUSTOMERID)?.ACCOUNTCREATIONCOMPLETE;
+                    clientSupplier.CUSTOMERID = customer.CUSTOMERID;
+                    clientSupplier.CUSTOMERTYPEID = (short)CustomerTypeEnum.Individual;
+                    clientSupplier.FIRSTNAME = supplier.firstName;
+                    clientSupplier.MIDDLENAME = supplier.otherNames;
+                    clientSupplier.LASTNAME = supplier.lastName;
+                    clientSupplier.TAX_NUMBER = null;
+                    clientSupplier.REGISTRATION_NUMBER = null;
+                    clientSupplier.HAS_CASA_ACCOUNT = supplier.accountNumber != null;
+                    clientSupplier.CASA_ACCOUNTNO = supplier.accountNumber;
+                    clientSupplier.BANKNAME = supplier.BankName;
+                    clientSupplier.NATURE_OF_BUSINESS = supplier.natureOfBusiness;
+                    clientSupplier.CONTACT_PERSON = null;
+                    clientSupplier.ADDRESS = supplier.address;
+                    clientSupplier.PHONENUMBER = supplier.phoneNumber;
+                    clientSupplier.EMAILADDRESS = supplier.email;
+                    clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Supplier;
+                    clientSupplier.CREATEDBY = (int)model.createdBy;
+                    clientSupplier.DATECREATED = genSetup.GetApplicationDate();
 
-                clientSupplier.CUSTOMERID = customer.CUSTOMERID;
-                clientSupplier.CUSTOMERTYPEID = (short)CustomerTypeEnum.Individual;
-                clientSupplier.FIRSTNAME = supplier.firstName;
-                clientSupplier.MIDDLENAME = supplier.otherNames;
-                clientSupplier.LASTNAME = supplier.lastName;
-                clientSupplier.TAX_NUMBER = null;
-                clientSupplier.REGISTRATION_NUMBER = null;
-                clientSupplier.HAS_CASA_ACCOUNT = supplier.accountNumber != null;
-                clientSupplier.CASA_ACCOUNTNO = supplier.accountNumber;
-                clientSupplier.BANKNAME = supplier.BankName;
-                clientSupplier.NATURE_OF_BUSINESS = supplier.natureOfBusiness;
-                clientSupplier.CONTACT_PERSON = null;
-                clientSupplier.ADDRESS = supplier.address;
-                clientSupplier.PHONENUMBER = supplier.phoneNumber;
-                clientSupplier.EMAILADDRESS = supplier.email;
-                clientSupplier.CLIENT_SUPPLIERTYPEID = (short)CompanyClientOrSupplierTypeEnum.Supplier;
-                clientSupplier.CREATEDBY = (int)model.createdBy;
-                clientSupplier.DATECREATED = genSetup.GetApplicationDate();
 
-
-                context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
-
+                    context.TBL_CUSTOMER_CLIENT_SUPPLIER.Add(clientSupplier);
+                }
             }
         }
 
