@@ -243,11 +243,15 @@ namespace FintrakBanking.Repositories.Customer
         public void UpdateCustomerCollateralId(string customerCode)
         {
             customerCode = customerCode.Trim();
-            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
-            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
-            foreach(var c in collaterals)
+            //var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE == customerCode && c.DELETED == false);
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE == customerCode).ToList();
+            if (collaterals != null)
             {
-                c.CUSTOMERID = customer?.CUSTOMERID;
+                foreach (var c in collaterals)
+                {
+                    c.CUSTOMERID = customer?.CUSTOMERID;
+                }
             }
             var saved = context.SaveChanges() > 0;
         }
