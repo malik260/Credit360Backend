@@ -676,6 +676,13 @@
     <Compile Include="Reports\ReportViews\CreditBureau.aspx.designer.cs">
       <DependentUpon>CreditBureau.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\DisbursedFacilityCollateralReport.aspx.cs">
+      <DependentUpon>DisbursedFacilityCollateralReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DisbursedFacilityCollateralReport.aspx.designer.cs">
+      <DependentUpon>DisbursedFacilityCollateralReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\FixedDepositCollateral.aspx.cs">
       <DependentUpon>FixedDepositCollateral.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1543,6 +1550,7 @@
     <Content Include="Reports\ReportViews\CollateralRegister.aspx" />
     <Content Include="Reports\ReportViews\CorporateLoansReport.aspx" />
     <Content Include="Reports\ReportViews\CreditBureau.aspx" />
+    <Content Include="Reports\ReportViews\DisbursedFacilityCollateralReport.aspx" />
     <Content Include="Reports\ReportViews\FixedDepositCollateral.aspx" />
     <Content Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx" />
     <Content Include="Reports\ReportViews\IdleAssetsSales.aspx" />
@@ -2001,6 +2009,7 @@
     <EmbeddedResource Include="Reports\Report\DeferralWaiver.rdlc" />
     <EmbeddedResource Include="Reports\Report\DelinquentAccounts.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DisbursedFacilityCollateralReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\Discharge.rdlc" />
     <EmbeddedResource Include="Reports\Report\DrawdownMemo.rdlc" />
