@@ -177,6 +177,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetValidCollaterals(DateTime startDate, DateTime endDate);
         string GetJobRequestReport(DateRange dateRange, int companyId, int staffId);
         string GetDisbursedFacilityCollateralReport(DateRange param);
+        string SubmissionOfOriginalDocuments(DateRange param);
     }
 
 

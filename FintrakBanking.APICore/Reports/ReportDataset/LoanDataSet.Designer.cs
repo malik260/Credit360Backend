@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace FintrakBanking.APICore.Reports.ReportDataset {
+namespace ReportDeveloper.ReportDataset {
     
     
     /// <summary>
@@ -69,6 +69,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         private StalledPerfectionDataSetDataTable tableStalledPerfectionDataSet;
         
         private DisbursedFacilityCollateralDataTable tableDisbursedFacilityCollateral;
+        
+        private SubmissionOfOriginalDocumentsDataTable tableSubmissionOfOriginalDocuments;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -166,6 +168,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["DisbursedFacilityCollateral"] != null)) {
                     base.Tables.Add(new DisbursedFacilityCollateralDataTable(ds.Tables["DisbursedFacilityCollateral"]));
+                }
+                if ((ds.Tables["SubmissionOfOriginalDocuments"] != null)) {
+                    base.Tables.Add(new SubmissionOfOriginalDocumentsDataTable(ds.Tables["SubmissionOfOriginalDocuments"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -417,6 +422,16 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public SubmissionOfOriginalDocumentsDataTable SubmissionOfOriginalDocuments {
+            get {
+                return this.tableSubmissionOfOriginalDocuments;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
         [global::System.ComponentModel.BrowsableAttribute(true)]
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Visible)]
         public override global::System.Data.SchemaSerializationMode SchemaSerializationMode {
@@ -550,6 +565,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["DisbursedFacilityCollateral"] != null)) {
                     base.Tables.Add(new DisbursedFacilityCollateralDataTable(ds.Tables["DisbursedFacilityCollateral"]));
+                }
+                if ((ds.Tables["SubmissionOfOriginalDocuments"] != null)) {
+                    base.Tables.Add(new SubmissionOfOriginalDocumentsDataTable(ds.Tables["SubmissionOfOriginalDocuments"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -722,6 +740,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableDisbursedFacilityCollateral.InitVars();
                 }
             }
+            this.tableSubmissionOfOriginalDocuments = ((SubmissionOfOriginalDocumentsDataTable)(base.Tables["SubmissionOfOriginalDocuments"]));
+            if ((initTable == true)) {
+                if ((this.tableSubmissionOfOriginalDocuments != null)) {
+                    this.tableSubmissionOfOriginalDocuments.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -778,6 +802,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableStalledPerfectionDataSet);
             this.tableDisbursedFacilityCollateral = new DisbursedFacilityCollateralDataTable();
             base.Tables.Add(this.tableDisbursedFacilityCollateral);
+            this.tableSubmissionOfOriginalDocuments = new SubmissionOfOriginalDocumentsDataTable();
+            base.Tables.Add(this.tableSubmissionOfOriginalDocuments);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -920,6 +946,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+        private bool ShouldSerializeSubmissionOfOriginalDocuments() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
         private void SchemaChanged(object sender, global::System.ComponentModel.CollectionChangeEventArgs e) {
             if ((e.Action == global::System.ComponentModel.CollectionChangeAction.Remove)) {
                 this.InitVars();
@@ -1041,6 +1073,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
         public delegate void DisbursedFacilityCollateralRowChangeEventHandler(object sender, DisbursedFacilityCollateralRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+        public delegate void SubmissionOfOriginalDocumentsRowChangeEventHandler(object sender, SubmissionOfOriginalDocumentsRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -11269,6 +11304,407 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class SubmissionOfOriginalDocumentsDataTable : global::System.Data.TypedTableBase<SubmissionOfOriginalDocumentsRow> {
+            
+            private global::System.Data.DataColumn columncustomerID;
+            
+            private global::System.Data.DataColumn columnfintrakReferenceId;
+            
+            private global::System.Data.DataColumn columncustomerName;
+            
+            private global::System.Data.DataColumn columnfacilityType;
+            
+            private global::System.Data.DataColumn columnfacilityAmount;
+            
+            private global::System.Data.DataColumn columnbookingDate;
+            
+            private global::System.Data.DataColumn columnsla;
+            
+            private global::System.Data.DataColumn columndaysOverdue;
+            
+            private global::System.Data.DataColumn columnaccountOfficer;
+            
+            private global::System.Data.DataColumn columngroupHead;
+            
+            private global::System.Data.DataColumn columnteam;
+            
+            private global::System.Data.DataColumn columndivision;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public SubmissionOfOriginalDocumentsDataTable() {
+                this.TableName = "SubmissionOfOriginalDocuments";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            internal SubmissionOfOriginalDocumentsDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            protected SubmissionOfOriginalDocumentsDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn customerIDColumn {
+                get {
+                    return this.columncustomerID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn fintrakReferenceIdColumn {
+                get {
+                    return this.columnfintrakReferenceId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn customerNameColumn {
+                get {
+                    return this.columncustomerName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn facilityTypeColumn {
+                get {
+                    return this.columnfacilityType;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn facilityAmountColumn {
+                get {
+                    return this.columnfacilityAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn bookingDateColumn {
+                get {
+                    return this.columnbookingDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn slaColumn {
+                get {
+                    return this.columnsla;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn daysOverdueColumn {
+                get {
+                    return this.columndaysOverdue;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn accountOfficerColumn {
+                get {
+                    return this.columnaccountOfficer;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn groupHeadColumn {
+                get {
+                    return this.columngroupHead;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn teamColumn {
+                get {
+                    return this.columnteam;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn divisionColumn {
+                get {
+                    return this.columndivision;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public SubmissionOfOriginalDocumentsRow this[int index] {
+                get {
+                    return ((SubmissionOfOriginalDocumentsRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public event SubmissionOfOriginalDocumentsRowChangeEventHandler SubmissionOfOriginalDocumentsRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public event SubmissionOfOriginalDocumentsRowChangeEventHandler SubmissionOfOriginalDocumentsRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public event SubmissionOfOriginalDocumentsRowChangeEventHandler SubmissionOfOriginalDocumentsRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public event SubmissionOfOriginalDocumentsRowChangeEventHandler SubmissionOfOriginalDocumentsRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void AddSubmissionOfOriginalDocumentsRow(SubmissionOfOriginalDocumentsRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public SubmissionOfOriginalDocumentsRow AddSubmissionOfOriginalDocumentsRow(string customerID, string fintrakReferenceId, string customerName, string facilityType, string facilityAmount, string bookingDate, string sla, string daysOverdue, string accountOfficer, string groupHead, string team, string division) {
+                SubmissionOfOriginalDocumentsRow rowSubmissionOfOriginalDocumentsRow = ((SubmissionOfOriginalDocumentsRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        customerID,
+                        fintrakReferenceId,
+                        customerName,
+                        facilityType,
+                        facilityAmount,
+                        bookingDate,
+                        sla,
+                        daysOverdue,
+                        accountOfficer,
+                        groupHead,
+                        team,
+                        division};
+                rowSubmissionOfOriginalDocumentsRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowSubmissionOfOriginalDocumentsRow);
+                return rowSubmissionOfOriginalDocumentsRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                SubmissionOfOriginalDocumentsDataTable cln = ((SubmissionOfOriginalDocumentsDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new SubmissionOfOriginalDocumentsDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            internal void InitVars() {
+                this.columncustomerID = base.Columns["customerID"];
+                this.columnfintrakReferenceId = base.Columns["fintrakReferenceId"];
+                this.columncustomerName = base.Columns["customerName"];
+                this.columnfacilityType = base.Columns["facilityType"];
+                this.columnfacilityAmount = base.Columns["facilityAmount"];
+                this.columnbookingDate = base.Columns["bookingDate"];
+                this.columnsla = base.Columns["sla"];
+                this.columndaysOverdue = base.Columns["daysOverdue"];
+                this.columnaccountOfficer = base.Columns["accountOfficer"];
+                this.columngroupHead = base.Columns["groupHead"];
+                this.columnteam = base.Columns["team"];
+                this.columndivision = base.Columns["division"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            private void InitClass() {
+                this.columncustomerID = new global::System.Data.DataColumn("customerID", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerID);
+                this.columnfintrakReferenceId = new global::System.Data.DataColumn("fintrakReferenceId", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfintrakReferenceId);
+                this.columncustomerName = new global::System.Data.DataColumn("customerName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerName);
+                this.columnfacilityType = new global::System.Data.DataColumn("facilityType", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityType);
+                this.columnfacilityAmount = new global::System.Data.DataColumn("facilityAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityAmount);
+                this.columnbookingDate = new global::System.Data.DataColumn("bookingDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbookingDate);
+                this.columnsla = new global::System.Data.DataColumn("sla", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsla);
+                this.columndaysOverdue = new global::System.Data.DataColumn("daysOverdue", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndaysOverdue);
+                this.columnaccountOfficer = new global::System.Data.DataColumn("accountOfficer", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnaccountOfficer);
+                this.columngroupHead = new global::System.Data.DataColumn("groupHead", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columngroupHead);
+                this.columnteam = new global::System.Data.DataColumn("team", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnteam);
+                this.columndivision = new global::System.Data.DataColumn("division", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndivision);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public SubmissionOfOriginalDocumentsRow NewSubmissionOfOriginalDocumentsRow() {
+                return ((SubmissionOfOriginalDocumentsRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new SubmissionOfOriginalDocumentsRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(SubmissionOfOriginalDocumentsRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.SubmissionOfOriginalDocumentsRowChanged != null)) {
+                    this.SubmissionOfOriginalDocumentsRowChanged(this, new SubmissionOfOriginalDocumentsRowChangeEvent(((SubmissionOfOriginalDocumentsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.SubmissionOfOriginalDocumentsRowChanging != null)) {
+                    this.SubmissionOfOriginalDocumentsRowChanging(this, new SubmissionOfOriginalDocumentsRowChangeEvent(((SubmissionOfOriginalDocumentsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.SubmissionOfOriginalDocumentsRowDeleted != null)) {
+                    this.SubmissionOfOriginalDocumentsRowDeleted(this, new SubmissionOfOriginalDocumentsRowChangeEvent(((SubmissionOfOriginalDocumentsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.SubmissionOfOriginalDocumentsRowDeleting != null)) {
+                    this.SubmissionOfOriginalDocumentsRowDeleting(this, new SubmissionOfOriginalDocumentsRowChangeEvent(((SubmissionOfOriginalDocumentsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void RemoveSubmissionOfOriginalDocumentsRow(SubmissionOfOriginalDocumentsRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                LoanDataSet ds = new LoanDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "SubmissionOfOriginalDocumentsDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
         public partial class LoanStatementRow : global::System.Data.DataRow {
@@ -21074,6 +21510,367 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class SubmissionOfOriginalDocumentsRow : global::System.Data.DataRow {
+            
+            private SubmissionOfOriginalDocumentsDataTable tableSubmissionOfOriginalDocuments;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            internal SubmissionOfOriginalDocumentsRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableSubmissionOfOriginalDocuments = ((SubmissionOfOriginalDocumentsDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string customerID {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.customerIDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerID\' in table \'SubmissionOfOriginalDocuments\' is DBN" +
+                                "ull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.customerIDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string fintrakReferenceId {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.fintrakReferenceIdColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'fintrakReferenceId\' in table \'SubmissionOfOriginalDocuments" +
+                                "\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.fintrakReferenceIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string customerName {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.customerNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'SubmissionOfOriginalDocuments\' is D" +
+                                "BNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.customerNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string facilityType {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.facilityTypeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityType\' in table \'SubmissionOfOriginalDocuments\' is D" +
+                                "BNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.facilityTypeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string facilityAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.facilityAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityAmount\' in table \'SubmissionOfOriginalDocuments\' is" +
+                                " DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.facilityAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string bookingDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.bookingDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'bookingDate\' in table \'SubmissionOfOriginalDocuments\' is DB" +
+                                "Null.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.bookingDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string sla {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.slaColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'sla\' in table \'SubmissionOfOriginalDocuments\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.slaColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string daysOverdue {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.daysOverdueColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'daysOverdue\' in table \'SubmissionOfOriginalDocuments\' is DB" +
+                                "Null.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.daysOverdueColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string accountOfficer {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.accountOfficerColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'accountOfficer\' in table \'SubmissionOfOriginalDocuments\' is" +
+                                " DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.accountOfficerColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string groupHead {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.groupHeadColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'groupHead\' in table \'SubmissionOfOriginalDocuments\' is DBNu" +
+                                "ll.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.groupHeadColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string team {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.teamColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'team\' in table \'SubmissionOfOriginalDocuments\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.teamColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string division {
+                get {
+                    try {
+                        return ((string)(this[this.tableSubmissionOfOriginalDocuments.divisionColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'division\' in table \'SubmissionOfOriginalDocuments\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableSubmissionOfOriginalDocuments.divisionColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IscustomerIDNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.customerIDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetcustomerIDNull() {
+                this[this.tableSubmissionOfOriginalDocuments.customerIDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsfintrakReferenceIdNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.fintrakReferenceIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetfintrakReferenceIdNull() {
+                this[this.tableSubmissionOfOriginalDocuments.fintrakReferenceIdColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IscustomerNameNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.customerNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetcustomerNameNull() {
+                this[this.tableSubmissionOfOriginalDocuments.customerNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsfacilityTypeNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.facilityTypeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetfacilityTypeNull() {
+                this[this.tableSubmissionOfOriginalDocuments.facilityTypeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsfacilityAmountNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.facilityAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetfacilityAmountNull() {
+                this[this.tableSubmissionOfOriginalDocuments.facilityAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsbookingDateNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.bookingDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetbookingDateNull() {
+                this[this.tableSubmissionOfOriginalDocuments.bookingDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsslaNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.slaColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetslaNull() {
+                this[this.tableSubmissionOfOriginalDocuments.slaColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsdaysOverdueNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.daysOverdueColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetdaysOverdueNull() {
+                this[this.tableSubmissionOfOriginalDocuments.daysOverdueColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsaccountOfficerNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.accountOfficerColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetaccountOfficerNull() {
+                this[this.tableSubmissionOfOriginalDocuments.accountOfficerColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsgroupHeadNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.groupHeadColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetgroupHeadNull() {
+                this[this.tableSubmissionOfOriginalDocuments.groupHeadColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsteamNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.teamColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetteamNull() {
+                this[this.tableSubmissionOfOriginalDocuments.teamColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsdivisionNull() {
+                return this.IsNull(this.tableSubmissionOfOriginalDocuments.divisionColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetdivisionNull() {
+                this[this.tableSubmissionOfOriginalDocuments.divisionColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
@@ -21841,6 +22638,40 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public DisbursedFacilityCollateralRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+        public class SubmissionOfOriginalDocumentsRowChangeEvent : global::System.EventArgs {
+            
+            private SubmissionOfOriginalDocumentsRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public SubmissionOfOriginalDocumentsRowChangeEvent(SubmissionOfOriginalDocumentsRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public SubmissionOfOriginalDocumentsRow Row {
                 get {
                     return this.eventRow;
                 }

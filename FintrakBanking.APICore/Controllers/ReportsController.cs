@@ -2485,6 +2485,31 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [Route("submission-of-original-documents")]
+        public HttpResponseMessage SubmissionOfOriginalDocuments([FromBody] DateRange param)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.SubmissionOfOriginalDocuments(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         [Route("psr-report")]
         public HttpResponseMessage PSR([FromBody]DateRange param)
         {

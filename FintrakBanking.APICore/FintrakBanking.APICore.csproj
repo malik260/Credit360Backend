@@ -1424,6 +1424,13 @@
     <Compile Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx.designer.cs">
       <DependentUpon>SubmissionOfOriginalDocument.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\SubmissionOfOriginalDocuments.aspx.cs">
+      <DependentUpon>SubmissionOfOriginalDocuments.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SubmissionOfOriginalDocuments.aspx.designer.cs">
+      <DependentUpon>SubmissionOfOriginalDocuments.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\TrialBalance.aspx.cs">
       <DependentUpon>TrialBalance.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1650,6 +1657,7 @@
     <Content Include="Reports\ReportViews\StaffRoleProfileGroupReport.aspx" />
     <Content Include="Reports\ReportViews\StalledPerfection.aspx" />
     <Content Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx" />
+    <Content Include="Reports\ReportViews\SubmissionOfOriginalDocuments.aspx" />
     <Content Include="Reports\ReportViews\TrialBalance.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
     <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
@@ -2084,6 +2092,7 @@
     <EmbeddedResource Include="Reports\Report\StaffRoleProfileGroupReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\StalledPerfection.rdlc" />
+    <EmbeddedResource Include="Reports\Report\SubmissionOfOriginalDocument.rdlc" />
     <EmbeddedResource Include="Reports\Report\TerminatedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\TrialBalance.rdlc" />

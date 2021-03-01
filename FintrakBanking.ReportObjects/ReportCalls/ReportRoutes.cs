@@ -1133,6 +1133,14 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string SubmissionOfOriginalDocuments(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/SubmissionOfOriginalDocuments.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&referenceNumber=" + dateRange.referenceNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
 
         public string PSR(int psrReportTypeId, int projectSiteReportId)
         {

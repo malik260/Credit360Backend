@@ -4818,7 +4818,64 @@ namespace FintrakBanking.ReportObjects
                .ToList();
             return data;
         }
+        public IEnumerable<OriginalDocumentApprovalViewModel> SubmissionOfOriginalDocuments(DateTime startDate, DateTime endDate, string referenceNumber)
+        {
+            var data = new List<OriginalDocumentApprovalViewModel>();
+            FinTrakBankingContext context = new FinTrakBankingContext();
 
+            data = (from l in context.TBL_LOAN
+                    join x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL on l.LOANAPPLICATIONDETAILID equals x.LOANAPPLICATIONID
+                    join ll in context.TBL_LOAN_APPLICATION_COLLATERL on x.COLLATERALCUSTOMERID equals ll.COLLATERALCUSTOMERID
+                    join a in context.TBL_LOAN_APPLICATION_DETAIL on ll.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
+                    join sta in context.TBL_STAFF on l.RELATIONSHIPMANAGERID equals sta.STAFFID
+                    join ss in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals ss.SUPERVISOR_STAFFID
+
+                    where l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED == false
+                    && DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                            DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                    select new OriginalDocumentApprovalViewModel
+                    {   
+                        customerID = c.CUSTOMERID,
+                        fintrakReferenceId = x.REFERENCENUMBER,
+                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        facilityType = p.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                        facilityAmount = l.PRINCIPALAMOUNT,
+                        bookingDate = l.BOOKINGDATE,
+                        sla = "N/A",
+                        daysOverdue = (int)DbFunctions.DiffDays(l.MATURITYDATE, DateTime.Now),
+                        accountOfficer = sta.FIRSTNAME + " " + sta.LASTNAME,
+                        groupHead = ss.FIRSTNAME + " " + ss.LASTNAME,
+                        team = context.TBL_DEPARTMENT.Where(d => d.COMPANYID == l.COMPANYID).Select(d => d.DEPARTMENTNAME).FirstOrDefault(),
+                        division = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == l.CUSTOMERID select p.BUSINESSUNITNAME).FirstOrDefault(),
+
+
+                        /*originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                        loanApplicationId = x.LOANAPPLICATIONID,
+                        description = x.DESCRIPTION,
+                        approvalStatusId = (short)x.APPROVALSTATUSID,
+                        applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                        referenceNumber = x.REFERENCENUMBER,
+                        dateTimeCreated = x.DATETIMECREATED,
+                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        customerCode = c.CUSTOMERCODE,
+                        customerId = c.CUSTOMERID,
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        applicationDate = l.APPLICATIONDATE,
+                        applicationAmount = l.APPLICATIONAMOUNT,
+                        interestRate = l.INTERESTRATE,
+                        approvalDate = x.APPROVALDATE,
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        createdByName = context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),*/
+
+                    })
+               .ToList();
+            return data;
+        }
         public List<TrialBalanceViewModel> TrialBalanceSummary(int glAccountId, int currencyCode, int companyId, int staffId)
         {
 
