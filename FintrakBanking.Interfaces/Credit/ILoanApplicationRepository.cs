@@ -226,6 +226,7 @@ namespace FintrakBanking.Interfaces.Credit
         CurrentCustomerExposure GetTotalBankExposure();
         bool ModifyFacility(FacilityModificationViewModel model, int loanApplicationDetailId);
         IEnumerable<LoanDetailReviewTypeViewModel> GetAllLoanDetailReviewTypes();
+        IEnumerable<ApprovedTradeCycleViewModel> GetAllApprovedTradeCycles();
         List<CurrentCustomerExposure> GetExposures(TBL_LOAN_APPLICATION loanApplication);
         //IEnumerable<LoanApplicationLienViewModel> GetRacDetails();
     }
