@@ -132,6 +132,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string moratorium { get; set; }
         public int? interestRepaymentId { get; set; }
         public string interestRepayment { get; set; }
+        public int? approvedTradeCycleId { get; set; }
+        public string approvedTradeCycleDays { get; set; }
 
         public string proposedTenorString
         {
