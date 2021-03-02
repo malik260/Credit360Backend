@@ -1072,6 +1072,31 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("disbursed-facility-collateral-report")]
+        public HttpResponseMessage GetDisbursedFacilityCollateralReport([FromBody] DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetDisbursedFacilityCollateralReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("Collateral-Register")]
         public HttpResponseMessage GetCollateralRegister([FromBody]DateRange param)
         {
@@ -2443,6 +2468,31 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.SubmissionOfOriginalDocument(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("submission-of-original-documents")]
+        public HttpResponseMessage SubmissionOfOriginalDocuments([FromBody] DateRange param)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.SubmissionOfOriginalDocuments(param);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

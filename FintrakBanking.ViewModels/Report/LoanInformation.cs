@@ -184,6 +184,7 @@ namespace FintrakBanking.ViewModels.Reports
         public int psrReportTypeId { get; set; }
         public int projectSiteReportId { get; set; }
         public string ReportType { get; set; }
+        public string productId { get; set; }
     }
 
     public class ReportSearchEntity
