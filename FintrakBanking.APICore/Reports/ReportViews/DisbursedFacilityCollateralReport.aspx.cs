@@ -27,6 +27,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
 
                     int classification = int.Parse(Request.QueryString["classification"]);
+                    int productId = int.Parse(Request.QueryString["productId"]);
 
                     HashHelper hash = new HashHelper();
 
@@ -53,7 +54,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     }
 
                     LoanReportObjects DisbursedFacilityCollateralReport = new LoanReportObjects();
-                    var data = DisbursedFacilityCollateralReport.DisbursedFacilityCollateralReport(classification);
+                    var data = DisbursedFacilityCollateralReport.DisbursedFacilityCollateralReport(classification, productId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
