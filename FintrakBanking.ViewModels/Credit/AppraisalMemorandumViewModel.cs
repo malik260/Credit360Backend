@@ -133,7 +133,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? interestRepaymentId { get; set; }
         public string interestRepayment { get; set; }
         public int? approvedTradeCycleId { get; set; }
-        public string approvedTradeCycleDays { get; set; }
+        public int approvedTradeCycleDays { get; set; }
 
         public string proposedTenorString
         {
