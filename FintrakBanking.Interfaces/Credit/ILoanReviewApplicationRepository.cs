@@ -15,6 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanApplicationDetailViewModel> ExceptionalSearch(string searchString);
         IEnumerable<LoanReviewOperationViewModel> ContingentSearch(string searchString);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLienRemovalApplications(int staffId, int companyId);
+        
         IEnumerable<LoanReviewOperationApprovalViewModel> SearchLien(string searchString);
         IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? productClassId);
         List<applicationDetails> GetApplicationsById(UserInfo user, int lmsApplicationId);

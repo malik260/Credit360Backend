@@ -20120,6 +20120,268 @@ namespace FintrakBanking.Repositories.Credit
             return unionAll;
         }
 
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetLienSearchData(string searchString)
+        {
+            searchString = searchString.ToLower().Trim();
+
+            var dataLoan = (from ln in context.TBL_LOAN
+                            join ca in context.TBL_CASA_LIEN on ln.LOANREFERENCENUMBER equals ca.SOURCEREFERENCENUMBER into cal
+                            from ca in cal.DefaultIfEmpty()
+                            join lr in context.TBL_LIEN_REMOVAL on ca.LIENID equals lr.CASALIENACCOUNTID
+                            join atrail in context.TBL_APPROVAL_TRAIL on lr.UNFREEZELIENACCOUNTID equals atrail.TARGETID into atraila
+                            from atrail in atraila.DefaultIfEmpty()
+                            join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                            join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                            join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                            join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                            join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                            where
+                            (cu.FIRSTNAME.ToLower().Contains(searchString)
+                            || cu.LASTNAME.ToLower().Contains(searchString)
+                            || cu.MIDDLENAME.ToLower().Contains(searchString)
+                            || ca.SOURCEREFERENCENUMBER == searchString
+                            || ca.PRODUCTACCOUNTNUMBER == searchString
+                            || st.STAFFCODE == searchString)
+                            && (ca.LIENSTATUS == (int)LienStatusEnum.Active || ca.LIENSTATUS == null)
+
+                            select new LoanReviewOperationApprovalViewModel
+                            {
+                                currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                loanId = ln.TERMLOANID,
+                                customerId = ln.CUSTOMERID,
+                                productId = ln.PRODUCTID,
+                                productTypeId = pr.PRODUCTTYPEID,
+                                casaAccountId = ln.CASAACCOUNTID,
+                                casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                branchId = ln.BRANCHID,
+                                loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
+                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                interestFrequencyTypeId = ln.INTERESTFREQUENCYTYPEID != null ? (short)ln.INTERESTFREQUENCYTYPEID : (short)0,
+                                interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                principalNumberOfInstallment = ln.PRINCIPALNUMBEROFINSTALLMENT,
+                                interestNumberOfInstallment = ln.INTERESTNUMBEROFINSTALLMENT,
+                                relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                misCode = ln.MISCODE,
+                                productAccountNumber = ca.PRODUCTACCOUNTNUMBER,
+
+                                sourceReferenceNumber = ca.SOURCEREFERENCENUMBER,
+                                lienReferenceNumber = ca.LIENREFERENCENUMBER,
+                                lienAmount = ca.LIENAMOUNT,
+                                lienDateTimeCreated = ca.DATETIMECREATED,
+                                
+                                casaLienAccountId = ca.LIENID,
+                                lienRemovalId = lr.UNFREEZELIENACCOUNTID,
+                                lienRemovalOperationId = lr.OPERATIONID,
+
+                                teamMiscode = ln.TEAMMISCODE,
+                                interestRate = ln.INTERESTRATE,
+                                effectiveDate = ln.EFFECTIVEDATE,
+                                maturityDate = ln.MATURITYDATE,
+                                bookingDate = ln.BOOKINGDATE,
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL,
+                                principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
+                                interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
+                                approvalStatusId = lr.APPROVALSTATUSID,
+                                approvedBy = (int)ln.APPROVEDBY,
+                                approverComment = ln.APPROVERCOMMENT,
+                                dateApproved = ln.DATEAPPROVED,
+                                loanStatusId = ln.LOANSTATUSID,
+                                scheduleTypeId = ln.SCHEDULETYPEID,
+                                isDisbursed = ln.ISDISBURSED,
+                                disbursedBy = (int)ln.DISBURSEDBY,
+                                disburserComment = ln.DISBURSERCOMMENT,
+                                disburseDate = ln.DISBURSEDATE,
+                                equityContribution = ln.EQUITYCONTRIBUTION,
+                                subSectorId = ln.SUBSECTORID,
+                                subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                firstPrincipalPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                firstInterestPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                                principalAdditionCount = ln.PRINCIPALADDITIONCOUNT,
+                                principalReductionCount = ln.PRINCIPALREDUCTIONCOUNT,
+                                fixedPrincipal = ln.FIXEDPRINCIPAL,
+                                profileLoan = ln.PROFILELOAN,
+                                dischargeLetter = ln.DISCHARGELETTER,
+                                suspendInterest = ln.SUSPENDINTEREST,
+                                scheduled = ln.ISSCHEDULEDPREPAYMENT,
+                                isScheduledPrepayment = ln.ISSCHEDULEDPREPAYMENT,
+                                scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
+                                scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
+                                customerCode = cu.CUSTOMERCODE,
+                                customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                currencyId = ln.CURRENCYID,
+                                branchName = br.BRANCHNAME,
+                                relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                productName = pr.PRODUCTNAME,
+                                comment = "",
+                                pastDueInterest = ln.PASTDUEINTEREST,
+                                pastDuePrincipal = ln.PASTDUEPRINCIPAL,
+                                interestOnPastDueInterest = ln.INTERESTONPASTDUEINTEREST,
+                                interestOnPastDuePrincipal = ln.INTERESTONPASTDUEPRINCIPAL,
+                                outstandingInterest = ln.OUTSTANDINGINTEREST,
+                            }).ToList();
+
+            var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
+                                     join ca in context.TBL_CASA_LIEN on ln.LOANREFERENCENUMBER equals ca.SOURCEREFERENCENUMBER into cal
+                                     from ca in cal.DefaultIfEmpty()
+                                     join lr in context.TBL_LIEN_REMOVAL on ca.LIENID equals lr.CASALIENACCOUNTID
+                                     join atrail in context.TBL_APPROVAL_TRAIL on lr.UNFREEZELIENACCOUNTID equals atrail.TARGETID into atraila
+                                     from atrail in atraila.DefaultIfEmpty()
+                                     join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                     join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                     join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                     join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                     join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                     where
+                                     (cu.FIRSTNAME.ToLower().Contains(searchString)
+                            || cu.LASTNAME.ToLower().Contains(searchString)
+                            || cu.MIDDLENAME.ToLower().Contains(searchString)
+                            || ca.SOURCEREFERENCENUMBER == searchString
+                            || ca.PRODUCTACCOUNTNUMBER == searchString
+                            || st.STAFFCODE == searchString)
+                            && (ca.LIENSTATUS == (int)LienStatusEnum.Active || ca.LIENSTATUS == null)
+
+                                     select new LoanReviewOperationApprovalViewModel
+                                     {
+                                         currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                         loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                         loanId = ln.REVOLVINGLOANID,
+                                         customerId = ln.CUSTOMERID,
+                                         productId = ln.PRODUCTID,
+                                         productTypeId = pr.PRODUCTTYPEID,
+                                         casaAccountId = ln.CASAACCOUNTID,
+                                         casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         branchId = ln.BRANCHID,
+                                         loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                         relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                         relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                         misCode = ln.MISCODE,
+
+                                         sourceReferenceNumber = ca.SOURCEREFERENCENUMBER,
+                                         lienReferenceNumber = ca.LIENREFERENCENUMBER,
+                                         lienAmount = ca.LIENAMOUNT,
+                                         lienDateTimeCreated = ca.DATETIMECREATED,
+                                         productAccountNumber = ca.PRODUCTACCOUNTNUMBER,
+                                         casaLienAccountId = ca.LIENID,
+                                         lienRemovalId = lr.UNFREEZELIENACCOUNTID,
+                                         lienRemovalOperationId = lr.OPERATIONID,
+
+                                         teamMiscode = ln.TEAMMISCODE,
+                                         interestRate = ln.INTERESTRATE,
+                                         effectiveDate = ln.EFFECTIVEDATE,
+                                         maturityDate = ln.MATURITYDATE,
+                                         bookingDate = ln.BOOKINGDATE,
+                                         approvalStatusId = lr.APPROVALSTATUSID,
+                                         approvedBy = (int)ln.APPROVEDBY,
+                                         approverComment = ln.APPROVERCOMMENT,
+                                         dateApproved = ln.DATEAPPROVED,
+                                         loanStatusId = ln.LOANSTATUSID,
+                                         isDisbursed = ln.ISDISBURSED,
+                                         disburserComment = ln.DISBURSERCOMMENT,
+                                         disburseDate = ln.DISBURSEDATE,
+                                         subSectorId = ln.SUBSECTORID,
+                                         subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                         sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                         dischargeLetter = ln.DISCHARGELETTER,
+                                         suspendInterest = ln.SUSPENDINTEREST,
+                                         customerCode = cu.CUSTOMERCODE,
+                                         customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                         currencyId = ln.CURRENCYID,
+                                         branchName = br.BRANCHNAME,
+                                         relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                         relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                         productName = pr.PRODUCTNAME,
+                                         comment = "",
+                                         pastDueInterest = ln.PASTDUEINTEREST,
+                                         pastDuePrincipal = ln.PASTDUEPRINCIPAL,
+                                         interestOnPastDueInterest = ln.INTERESTONPASTDUEINTEREST,
+                                         interestOnPastDuePrincipal = ln.INTERESTONPASTDUEPRINCIPAL,
+                                     }).ToList();
+
+            var dataContingent = (from ln in context.TBL_LOAN_CONTINGENT
+                                  join ca in context.TBL_CASA_LIEN on ln.LOANREFERENCENUMBER equals ca.SOURCEREFERENCENUMBER into cal
+                                  from ca in cal.DefaultIfEmpty()
+                                  join lr in context.TBL_LIEN_REMOVAL on ca.LIENID equals lr.CASALIENACCOUNTID
+                                  join atrail in context.TBL_APPROVAL_TRAIL on lr.UNFREEZELIENACCOUNTID equals atrail.TARGETID into atraila
+                                  from atrail in atraila.DefaultIfEmpty()
+                                  join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                  join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                  join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                  join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                  join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                  where
+                                  (cu.FIRSTNAME.ToLower().Contains(searchString)
+                            || cu.LASTNAME.ToLower().Contains(searchString)
+                            || cu.MIDDLENAME.ToLower().Contains(searchString)
+                            || ca.SOURCEREFERENCENUMBER == searchString
+                            || ca.PRODUCTACCOUNTNUMBER == searchString
+                            || st.STAFFCODE == searchString)
+                            && (ca.LIENSTATUS == (int)LienStatusEnum.Active || ca.LIENSTATUS == null)
+
+                                  select new LoanReviewOperationApprovalViewModel
+                                  {
+                                      currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                      loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                      loanId = ln.CONTINGENTLOANID,
+                                      customerId = ln.CUSTOMERID,
+                                      productId = ln.PRODUCTID,
+                                      productTypeId = pr.PRODUCTTYPEID,
+                                      casaAccountId = ln.CASAACCOUNTID,
+                                      casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                      casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                      branchId = ln.BRANCHID,
+                                      loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                      relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                      relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                      misCode = ln.MISCODE,
+
+                                      sourceReferenceNumber = ca.SOURCEREFERENCENUMBER,
+                                      lienReferenceNumber = ca.LIENREFERENCENUMBER,
+                                      lienAmount = ca.LIENAMOUNT,
+                                      lienDateTimeCreated = ca.DATETIMECREATED,
+                                      productAccountNumber = ca.PRODUCTACCOUNTNUMBER,
+                                      casaLienAccountId = ca.LIENID,
+                                      lienRemovalId = lr.UNFREEZELIENACCOUNTID,
+                                      lienRemovalOperationId = lr.OPERATIONID,
+
+                                      teamMiscode = ln.TEAMMISCODE,
+                                      effectiveDate = ln.EFFECTIVEDATE,
+                                      maturityDate = ln.MATURITYDATE,
+                                      bookingDate = ln.BOOKINGDATE,
+                                      approvalStatusId = lr.APPROVALSTATUSID,
+                                      approvedBy = (int)ln.APPROVEDBY,
+                                      approverComment = ln.APPROVERCOMMENT,
+                                      dateApproved = ln.DATEAPPROVED,
+                                      loanStatusId = ln.LOANSTATUSID,
+                                      isDisbursed = ln.ISDISBURSED,
+                                      disburserComment = ln.DISBURSERCOMMENT,
+                                      disburseDate = ln.DISBURSEDATE,
+                                      subSectorId = ln.SUBSECTORID,
+                                      subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                      sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                      dischargeLetter = ln.DISCHARGELETTER,
+                                      customerCode = cu.CUSTOMERCODE,
+                                      customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                      currencyId = ln.CURRENCYID,
+                                      branchName = br.BRANCHNAME,
+                                      relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                      relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                      productName = pr.PRODUCTNAME,
+                                      comment = "",
+                                  }).ToList();
+
+
+            var unionAll = dataLoan.Union(dataRevolvingLoan).Union(dataContingent);
+            return unionAll;
+        }
+
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApproval(int staffId, int companyId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
@@ -34563,7 +34825,7 @@ namespace FintrakBanking.Repositories.Credit
                                     expCompletionDate = lr.EXPCOMPLETIONDATE,
                                     loanAssignId = lr.LOANASSIGNID,
                                     agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
-                                    telephoneNumber = ln.TELEPHONENUMBER,
+                                    telephoneNumber = ln.PHONENO,
                                     email = ln.EMAIL
                                 }).ToList();
 

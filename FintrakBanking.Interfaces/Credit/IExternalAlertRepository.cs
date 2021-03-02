@@ -32,6 +32,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<StaffInfoViewModel> GetDivisionalOfficersByGroupHeads(string groupHeadCode);
         IEnumerable<StaffInfoViewModel> GetAccountOfficersByGroupHeads(string groupHeadCode);
         IEnumerable<StaffInfoViewModel> GetImminentMaturitiesGroupHeads();
+        IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturitiesCustomers();
         IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturities();
         IEnumerable<StaffInfoViewModel> GetCreditCardDelinquencyMonitoringReport();
         IEnumerable<StaffInfoViewModel> GetOverlineMonitoringReport();

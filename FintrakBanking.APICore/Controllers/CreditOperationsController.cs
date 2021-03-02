@@ -1084,6 +1084,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lien-search/{searchString}")]
+        public HttpResponseMessage GetLienSearchData(string searchString)
+        {
+            var data = repo.GetLienSearchData(searchString);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("bulk-recovery-assignment-to-agent/awaiting-approval-list/{source}")]
         public HttpResponseMessage GetLienRemovalAwaitingApprovalList(string source)
         {

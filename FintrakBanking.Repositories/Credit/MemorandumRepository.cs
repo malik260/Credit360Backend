@@ -780,7 +780,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public bool InitGenericMemo(int operationId, int targetId, int customerId) // feeder
+        public bool InitGenericMemo(int operationId, int targetId, int targetIdForWorkFlow, int customerId) // feeder
         {
             this.targetId = targetId;
             this.operationId = operationId;
@@ -830,7 +830,17 @@ namespace FintrakBanking.Repositories.Credit
                 this.customerFacilities = new List<TBL_LOAN_APPLICATION_DETAIL>();
                 this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected).ToList();
                 this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == this.customerId)?.ADDRESS;
-                this.approvals = GetApprovalsMarkup(true);
+                this.fussCustomerConditionSubsequentData = GenericConditionSubsequentHtml();
+                this.fussCustomerConditionDynamicsData = GenericConditionDynamicsHtml();
+                this.memoData = GenericMemoMarkupHtml();
+                if (targetIdForWorkFlow > 0)
+                {
+                    this.approvals = GetGenericApprovalsMarkup(targetIdForWorkFlow, true);
+                }
+                else
+                {
+                    this.approvals = GetGenericApprovalsMarkup(this.targetId, true);
+                }
                 this.currentDate = DateTime.Now.ToShortDateString();
                 if (this.customerIds?.Count > 0)
                 {
@@ -4836,6 +4846,38 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        private string GetGenericApprovalsMarkup(int targetIdForWorkFlow, bool getAll = false)
+        {
+            var appraisals = GetAppraisalMemorandumTrail(targetIdForWorkFlow, GetCurrentOperationId(), getAll).OrderBy(a => a.approvalTrailId).ToList();
+            var result = String.Empty;
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
+                        <th><b>Comment</b></th>
+                        <th><b>Date</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
+
         private string GetApprovalsMarkup(bool getAll = false)
         {
             var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId(), getAll).OrderBy(a => a.approvalTrailId).ToList();
@@ -6675,6 +6717,62 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        public string GenericMemoMarkupHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h3><b>MEMO</b></h3>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
+                        
+                    </tr>
+                    <tr>
+                        <td><b>Date</b></td>
+                        <td>{DateTime.UtcNow}</td>
+                    </tr>
+                    <tr>
+                        <td><b>To:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>From:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Location:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Subject:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>No. Of Pages:</b></td>
+                        <td></td>
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            result = result + $@" 
+                    <p></p>
+                    <p><b>1. BACKGROUND</b></p>
+                    <p></p>
+                    <p><b>2. COLLATERAL</b></p>
+                    <p></p>
+                    <p><b>3. ACCOUNT STATUS/ANALYSIS</b></p>
+                    <p></p>
+                    <p><b>4. ISSUES</b></p>
+                    <p></p>
+                    <p><b>5. CURRENT UPDATES</b></p>
+                    <p></p>
+                    <p><b>6. REQUEST/RECOMMENDATION</b></p>
+                    <p></p>
+                    <p><b>7. JUSTIFICATION</b></p>";
+            return result;
+        }
+
         public string MemoMarkupHtml()
         {
             var result = String.Empty;
@@ -8255,6 +8353,43 @@ namespace FintrakBanking.Repositories.Credit
                  <br />";
             return result;
         }
+        
+        public string GenericConditionSubsequentHtml()
+        {
+            var result = String.Empty;
+            
+            result = result + $@"
+            <br />
+            <h4><b>CONDITIONS</b></h4>
+            <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                    <th><b>S/N</b></th>
+                    <th><b>Product Name</b></th>
+                    <th><b>Condition Precedent</b></th>
+                </tr>";
+
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+        public string GenericConditionDynamicsHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+            <br />
+            <h4><b>TRANSACTION DYNAMICS</b></h4>
+            <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                    <th><b>S/N</b></th>
+                    <th><b>Product Name</b></th>
+                    <th><b>Transaction Dynamics</b></th>
+                </tr>";
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
         public string FussCustomerConditionDynamicsHtml()
         {
             IEnumerable<TransactionDynamicsViewModel> ConditionSubsequent = new List<TransactionDynamicsViewModel>();
@@ -8279,7 +8414,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var f in ConditionSubsequent)
                 {
                     n++;
-                    result = result + $@"
+                    result = result + $@"0
                         <tr>
                         <td> {n}</td>
                         <td> {f.productName}</td>

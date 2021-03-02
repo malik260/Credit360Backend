@@ -84,7 +84,27 @@ namespace FintrakBanking.Repositories.Credit
             return staffList;
         }
 
-        
+        public IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturitiesCustomers() //done
+        {
+            List<string> customerIds = new List<string> { "000025950", "000234558" };
+            var immenentMaturities = context.TBL_GLOBAL_EXPOSURE.Where(d =>
+            customerIds.Contains(d.CUSTOMERID))
+            .Select(d => d.ACCOUNTOFFICERCODE).ToList();
+
+            var staffList = (from s in context.TBL_STAFF
+                             where immenentMaturities.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).ToList();
+
+            return staffList;
+        }
+
+
         public IEnumerable<StaffInfoViewModel> GetImminentMaturitiesGroupHeads()
         {
             List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };

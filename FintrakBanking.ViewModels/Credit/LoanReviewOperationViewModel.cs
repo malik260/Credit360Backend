@@ -608,6 +608,33 @@ namespace FintrakBanking.ViewModels.Credit
         public string cancellationReason { get; set; }
         public int tempApplicationCancellationId { get; set; }
         public string comment { get; set; }
+        public int applicationTenor { get; set; }
+        public decimal applicationAmount { get; set; }
+        public int loanApplicationId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public string productName { get; set; }
+        public int? customerGroupId { get; set; }
+        public int relationshipManagerId { get; set; }
+        public int relationshipOfficerId { get; set; }
+        public string creatorName { get; set; }
+        public int? bookingOperationId { get; set; }
+        public int bookingRequestId { get; set; }
+        public string loanInformation { get; set; }
+        public bool isOnLending { get; set; }
+        public bool isInterventionFunds { get; set; }
+        public string applicationStatus { get; set; }
+        public string relationshipOfficerName { get; set; }
+        public string relationshipManagerName { get; set; }
+        public string misCode { get; set; }
+        public bool owner { get; set; }
+        public string employer { get; set; }
+        public string operationName { get; set; }
+        public int currentOperationId { get; set; }
     }
 
     public class applicationDetails

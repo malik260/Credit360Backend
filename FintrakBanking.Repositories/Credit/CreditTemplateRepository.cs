@@ -459,7 +459,7 @@ namespace FintrakBanking.Repositories.Credit
             return replacedSections;
         }
 
-        public List<LoadedDocumentSectionViewModel> GetLoadedDocumentationGeneric(int staffId, int operationId, int targetId, UserInfo user, int customerId)
+        public List<LoadedDocumentSectionViewModel> GetLoadedDocumentationGeneric(int staffId, int operationId, int targetId, int targetIdForWorkFlow, UserInfo user, int customerId)
         {
             // int staffId, is REDUNDANT!
             var printedDoc = "";
@@ -480,7 +480,7 @@ namespace FintrakBanking.Repositories.Credit
                 .ToList();
 
             List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
-            memo.InitGenericMemo(operationId, targetId, customerId); //content = memo.Replace(content);
+            memo.InitGenericMemo(operationId, targetId, targetIdForWorkFlow, customerId); //content = memo.Replace(content);
             foreach (var raw in rawSections)
             {
                 var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
@@ -817,7 +817,7 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        public LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId, int customerId, bool isGeneric = false)
+        public LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId, int customerId, int targetIdForWorkFlow, bool isGeneric = false)
         {
             var staff = context.TBL_STAFF.Find(staffId);
             List<int> sectionIds = new List<int>();
@@ -837,7 +837,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (isGeneric)
             {
-                memo.InitGenericMemo(operationId, targetId, customerId); //content = memo.Replace(content);
+                memo.InitGenericMemo(operationId, targetId, targetIdForWorkFlow, customerId); //content = memo.Replace(content);
             }
             else
             {
@@ -964,7 +964,8 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => new DocumentTemplateViewModel
                 {
                     templateId = x.TEMPLATEID,
-                    templateName = x.TEMPLATENAME
+                    templateName = x.TEMPLATENAME,
+                    canLoadDocument = x.STAFFROLEID == ownerId
                 })
                 .ToList();
         }

@@ -93,6 +93,7 @@
     <Compile Include="Credit\AppraisalMemorandumLoanDetailViewModel2.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
+    <Compile Include="Credit\ApprovedTradeCycleViewModel.cs" />
     <Compile Include="Credit\AtcLodgmentDetailViewModel.cs" />
     <Compile Include="Credit\AtcLodgmentViewModel.cs" />
     <Compile Include="Credit\AtcTypeViewModel.cs" />
