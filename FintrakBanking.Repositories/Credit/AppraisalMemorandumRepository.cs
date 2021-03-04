@@ -442,7 +442,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = model.isFromPc;
                 workflow.IsFlowTest = model.isFlowTest;
-                workflow.SkipLimitsCheck = appl.ISRELATEDPARTY;
+                workflow.SkipLimitsCheck = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISREALATEDPARTY == true);
                 var details = appl.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.DELETED == false
                                              && d.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.CAMBased
                                              && d.TBL_LOAN_APPLICATION.FLOWCHANGEID != (int)FlowChangeEnum.CASHCOLLATERIZED
@@ -454,7 +454,7 @@ namespace FintrakBanking.Repositories.Credit
                     PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
                     //Pep = model.politicallyExposed,
                     Pep = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISPOLITICALLYEXPOSED == true),
-                    InsiderRelated = appl.ISRELATEDPARTY,
+                    InsiderRelated = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISREALATEDPARTY == true),
                     ProjectRelated = appl.ISPROJECTRELATED,
                     OnLending = appl.ISONLENDING,
                     InterventionFunds = appl.ISINTERVENTIONFUNDS,
