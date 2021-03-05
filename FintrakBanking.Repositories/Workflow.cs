@@ -84,6 +84,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool? isFromPc = false;
         private bool? terminateOnApproval = false;
         private string flow_log = String.Empty;
+        private bool skipLimitsCheck = false;
         //private WorkflowResponse response = null;
 
         private float? interestRateConcession = null;
@@ -152,7 +153,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         private List<TBL_APPROVAL_TRAIL> trailLog; 
         private List<TBL_APPROVAL_TRAIL> referredLog;
         private TBL_APPROVAL_TRAIL lastOpenRequest;
-        private bool skipLimitsCheck = false;
         private IEnumerable<WorkflowSetup> approvalGrid;
         private int slaInterval = 780; // 1month
         List<ReportingLine> line = new List<ReportingLine>();
@@ -841,7 +841,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             // CAREFUL NOT TO OVERRIDE SUPPLIED values!!!!!!!!
             // set those before calling in
-            this.skipLimitsCheck = false;
+            //this.skipLimitsCheck = false;
             this.fromLevelId = null;
             this.newStateId = (int)ApprovalState.Processing;
             if (this.statusId == (int)ApprovalStatusEnum.Pending) this.statusId = (int)ApprovalStatusEnum.Processing;
@@ -1275,7 +1275,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         private void EndProcess(int status)
-        {   
+        {
             if(lastOpenRequest?.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastOpenRequest?.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
             if (this.statusId != (int)ApprovalStatusEnum.Disapproved && ContainsPostReviewerAsFromApprovalLevel(this.referredLog))
             {//to prevent duplicate ending of a workflow again when postReviewer refers back
@@ -1397,7 +1397,17 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return;
             }
 
-            if (this.skipLimitsCheck == true || IsPresetFinalLevel()) { return; }
+            if (IsPresetFinalLevel()) { return; }
+
+            if (this.skipLimitsCheck == true)
+            {
+                if (this.statusId == (short)ApprovalStatusEnum.Approved)
+                {
+                    this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
+                    return;
+                }
+            }
+            //throw new Exception("");
 
             if (this.statusId == (int)ApprovalStatusEnum.Escalated)
             {
@@ -1514,6 +1524,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //if (IsLastLevel(approvalLevels, level) && (level.CANAPPROVE))
                 //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
             {
+                this.skipLimitsCheck = false;// to remove it from preventing ending of workflow if is last level
                 return true;
             }
                 return false;
@@ -1596,6 +1607,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (ActionIsApprovalDecision()) // if its still approval decision end process
             {
+                //if (this.skipLimitsCheck)
+                //{ //skiplimits will only be approved by the last level
+                //    return statusId;
+                //}
                 this.EndProcess(this.statusId);
                 return statusId;
             }
