@@ -1226,7 +1226,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-            else
+            else if (this.lmsrApplication != null)
             {
                 var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID && x.DELETED == false).ToList();
                 var conditions = new List<ConditionPrecedentViewModel>();

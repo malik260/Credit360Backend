@@ -8618,34 +8618,34 @@ namespace FintrakBanking.Repositories.Credit
                 if (mainCollateral != null)
                 {
                     throw new ConditionNotMetException("Collateral Reg/Ref Number Already Exists, Kindly enter a unique code or leave the field blank for Auto-Generation");
-                    //if (mainCollateral.VALIDTILL != model.validTill)
-                    //{
-                    //    NotifyForCollateralValidity(mainCollateral, model.validTill);
-                    //}
+                    if (mainCollateral.VALIDTILL != model.validTill)
+                    {
+                        NotifyForCollateralValidity(mainCollateral, model.validTill);
+                    }
 
+                    mainCollateral.COLLATERALCODE = model.collateralCode;
+                    //mainCollateral.COLLATERALTYPEID = model.collateralTypeId;
+                    //mainCollateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
                     //mainCollateral.COLLATERALCODE = model.collateralCode;
-                    ////mainCollateral.COLLATERALTYPEID = model.collateralTypeId;
-                    ////mainCollateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
-                    ////mainCollateral.COLLATERALCODE = model.collateralCode;
 
-                    //mainCollateral.COLLATERALVALUE = (decimal)model.collateralValue;
-                    ////mainCollateral.COMPANYID = model.companyId;
-                    //mainCollateral.ALLOWSHARING = model.allowSharing;
-                    //mainCollateral.ISLOCATIONBASED = model.isLocationBased;
-                    //mainCollateral.VALUATIONCYCLE = model.valuationCycle;
-                    //mainCollateral.HAIRCUT = model.haircut;
-                    //mainCollateral.CURRENCYID = model.currencyId;
-                    //mainCollateral.VALIDTILL = model.validTill;
-                    //mainCollateral.EXCHANGERATE = repo.GetExchangeRate(DateTime.Now, model.currencyId, model.companyId).sellingRate;
+                    mainCollateral.COLLATERALVALUE = (decimal)model.collateralValue;
+                    //mainCollateral.COMPANYID = model.companyId;
+                    mainCollateral.ALLOWSHARING = model.allowSharing;
+                    mainCollateral.ISLOCATIONBASED = model.isLocationBased;
+                    mainCollateral.VALUATIONCYCLE = model.valuationCycle;
+                    mainCollateral.HAIRCUT = model.haircut;
+                    mainCollateral.CURRENCYID = model.currencyId;
+                    mainCollateral.VALIDTILL = model.validTill;
+                    mainCollateral.EXCHANGERATE = repo.GetExchangeRate(DateTime.Now, model.currencyId, model.companyId).sellingRate;
                    
-                    //mainCollateral.CAMREFNUMBER = model.camRefNumber;
-                    //mainCollateral.LASTUPDATEDBY = model.createdBy;
-                    //mainCollateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
-                    //mainCollateral.ACTEDONBY = model.createdBy;
-                    //mainCollateral.RELATEDCOLLATERALCODE = model.relatedCollateralCode;
-                    //mainCollateral.COLLATERALSUMMARY = model.collateralSummary;
-                    //context.SaveChanges();
-                    //return mainCollateral.COLLATERALCUSTOMERID;
+                    mainCollateral.CAMREFNUMBER = model.camRefNumber;
+                    mainCollateral.LASTUPDATEDBY = model.createdBy;
+                    mainCollateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
+                    mainCollateral.ACTEDONBY = model.createdBy;
+                    mainCollateral.RELATEDCOLLATERALCODE = model.relatedCollateralCode;
+                    mainCollateral.COLLATERALSUMMARY = model.collateralSummary;
+                    context.SaveChanges();
+                    return mainCollateral.COLLATERALCUSTOMERID;
                 }
                 else
                 {
@@ -8760,6 +8760,67 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex) { throw ex; }
             }
 
+
+            return 0;
+        }
+
+
+
+        public int AddCollateralInsuranceTrackingForm(int accountOfficer, CollateralInsuranceTrackingViewModel model)
+        {
+            if (String.IsNullOrWhiteSpace(model.referenceNumber) || String.IsNullOrEmpty(model.referenceNumber))
+            {
+                var refNo = CommonHelpers.GenerateRandomDigitCode(7);
+                model.referenceNumber = refNo;
+            }
+
+             var insurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == model.referenceNumber.Trim()).Select(x => x).FirstOrDefault();
+
+                if (insurancePolicy != null)
+                {
+                    throw new ConditionNotMetException("Insurance Reg/Ref Number Already Exists, Kindly enter a unique code or leave the field blank for Auto-Generation");
+                    
+                }
+                else
+                {
+                   
+                    var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
+                    {
+                           INSURANCETYPEID  = model.insuranceTypeId,
+                           INSURANCECOMPANYNAME = model.insuranceCompany,
+                           ISURANCECOMPANYADDRESS = model.companyAddress,
+                           POLICYNUMBER = model.referenceNumber,
+                           INSURANCESTARTDATE = model.startDate,
+                           INSURANCEENDDATE = model.expiryDate,
+                           SUMINSURED = model.sumInsured,
+                           PREMIUMPAID = model.inSurPremiumAmount,
+                           INSURANCESTATUSID = model.insuranceStatus,
+                           COLLATERALCUSTOMERID  = model.collateralCustomerId,
+                           LOANAPPLICATIONDETAILID  = model.loanApplicationDetailId,
+                           VALUATIONSTARTDATE  = model.valuationStartDate,
+                           VALUATIONENDDATE = model.valuationEndDate,
+                           OMV = model.openMarketValue,
+                           FSV = model.forcedSaleValue,
+                           VALUER = model.valuer,
+                           COLLATERALDETAILS  = model.collateralDetails,
+                           INSURANCEPOLICYTYPEID = model.insurancePolicyTypeId
+                    });
+
+                    try
+                    {
+                        if (context.SaveChanges() > 0)
+                        {
+                            return insuranceTracking.COLLATERALINSURANCETRACKINGID;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+
+                }
+
+            
 
             return 0;
         }
@@ -11634,18 +11695,57 @@ namespace FintrakBanking.Repositories.Credit
 
             return new InsuranceTypeViewModel
             {
-                InsuranceType = entity.INSURANCETYPE,
-                InsuranceTypeId = entity.INSURANCETYPEID,
+                insuranceType = entity.INSURANCETYPE,
+                insuranceTypeId = entity.INSURANCETYPEID,
             };
         }
 
         public IEnumerable<InsuranceTypeViewModel> GetInsuranceTypes()
         {
-            return context.TBL_INSURANCE_TYPE.Where(x => x.DELETED == false)
+            var data =  context.TBL_INSURANCE_TYPE.Where(x => x.DELETED == false)
                  .Select(x => new InsuranceTypeViewModel
                  {
-                     InsuranceTypeId = x.INSURANCETYPEID,
-                     InsuranceType = x.INSURANCETYPE,
+                     insuranceTypeId = x.INSURANCETYPEID,
+                     insuranceType = x.INSURANCETYPE,
+                 })
+                 .ToList();
+            return data;
+        }
+
+
+        public IEnumerable<InsuranceTypeViewModel> GetInsuranceStatus()
+        {
+            var data = context.TBL_COLLATERAL_INSURANCE_STATUS.Where(x => x.DELETED == false)
+                 .Select(x => new InsuranceTypeViewModel
+                 {
+                     insuranceStatusId = x.INSURANCESTATUSID,
+                     insuranceStatus = x.INSURANCESTATUS,
+                     deleted = x.DELETED
+                 })
+                 .ToList();
+            return data;
+        }
+
+        public IEnumerable<InsuranceTypeViewModel> GetInsuranceTypesViewAll()
+        {
+            var data = context.TBL_INSURANCE_TYPE.Where(x => x.DELETED == false)
+                 .Select(x => new InsuranceTypeViewModel
+                 {
+                     insuranceTypeId = x.INSURANCETYPEID,
+                     insuranceType = x.INSURANCETYPE,
+                 })
+                 .ToList();
+            return data;
+        }
+
+        public IEnumerable<InsurancePolicyTypeViewModel> GetInsurancePolicyTypes()
+        {
+            return context.TBL_INSURANCE_POLICY_TYPE.Where(x => x.DELETED == false)
+                 .Select(x => new InsurancePolicyTypeViewModel
+                 {
+                     policyTypeId = x.POLICYTYPEID,
+                     description = x.DESCRIPTION,
+                     valuationRequired = x.VALUATIONREQUIRED == true? true : false,
                  })
                  .ToList();
         }
@@ -11654,12 +11754,32 @@ namespace FintrakBanking.Repositories.Credit
         {
             var entity = new TBL_INSURANCE_TYPE
             {
-                INSURANCETYPE = model.InsuranceType,
+                INSURANCETYPE = model.insuranceType,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
             };
 
             context.TBL_INSURANCE_TYPE.Add(entity);
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddInsurancePolicyType(InsurancePolicyTypeViewModel model)
+        {
+            if (model.valuation == "0")
+            {
+                model.valuationRequired = false;
+            }
+            else { model.valuationRequired = true; }
+            var entity = new TBL_INSURANCE_POLICY_TYPE
+            {
+                DESCRIPTION = model.description,
+                VALUATIONREQUIRED = model.valuationRequired,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = model.createdBy,
+                DELETED = false,
+            };
+
+            context.TBL_INSURANCE_POLICY_TYPE.Add(entity);
             return context.SaveChanges() != 0;
         }
 
@@ -11672,10 +11792,35 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
+        public bool DeleteInsurancePolicyType(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_INSURANCE_POLICY_TYPE.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = genSetup.GetApplicationDate();
+            return context.SaveChanges() != 0;
+        }
+
         public bool UpdateInsuranceType(InsuranceTypeViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_INSURANCE_TYPE.Find(id);
-            entity.INSURANCETYPE = model.InsuranceType;
+            entity.INSURANCETYPE = model.insuranceType;
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateInsurancePolicyType(InsurancePolicyTypeViewModel model, int id, UserInfo user)
+        {
+            if (model.valuation == "0")
+            {
+                model.valuationRequired = false;
+            }
+            else { model.valuationRequired = true; }
+
+            var entity = this.context.TBL_INSURANCE_POLICY_TYPE.Find(id);
+            entity.DESCRIPTION = model.description;
+            entity.VALUATIONREQUIRED = model.valuationRequired;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
             return context.SaveChanges() != 0;

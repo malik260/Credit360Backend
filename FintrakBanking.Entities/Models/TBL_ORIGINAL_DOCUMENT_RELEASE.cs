@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
         public short APPROVALSTATUSID { get; set; }
         public int COMPANYID { get; set; }
         public int CREATEDBY { get; set; }
-        public DateTime? DATETIMECREATED { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
         public int LASTUPDATEDBY { get; set; }
         public DateTime? DATETIMEUPDATED { get; set; }
         public bool DELETED { get; set; }

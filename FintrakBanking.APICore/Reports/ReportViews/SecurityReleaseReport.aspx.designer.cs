@@ -11,7 +11,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 {
 
 
-    public partial class SecurityRelease
+    public partial class SecurityReleaseReport
     {
 
         /// <summary>
