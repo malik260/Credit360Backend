@@ -952,9 +952,14 @@ namespace FintrakBanking.Repositories.Credit
             this.approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
             if (bookingRequestId > 0)
             {
+                var currentRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOAN_BOOKING_REQUESTID == bookingRequestId).FirstOrDefault();
                 var allRequests = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).ToList();
                 amountUtilised = allRequests.Where(r => r.LOAN_BOOKING_REQUESTID != bookingRequestId && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)?.Sum(r => r.AMOUNT_REQUESTED).ToString("#,##.00") ?? "0.00";
-                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOAN_BOOKING_REQUESTID == bookingRequestId).FirstOrDefault()?.AMOUNT_REQUESTED.ToString("#,##.00") ?? "0.00";
+                newRequest = currentRequest?.AMOUNT_REQUESTED.ToString("#,##.00") ?? "0.00";
+                if (currentRequest?.PRODUCTID != null)
+                {
+                    this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == (currentRequest.PRODUCTID)).Select(O => O.PRODUCTNAME).FirstOrDefault();
+                }
 
             }
             else
@@ -8414,7 +8419,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var f in ConditionSubsequent)
                 {
                     n++;
-                    result = result + $@"0
+                    result = result + $@"
                         <tr>
                         <td> {n}</td>
                         <td> {f.productName}</td>
