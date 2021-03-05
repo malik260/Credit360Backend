@@ -4287,7 +4287,8 @@ namespace FintrakBanking.Repositories.Credit
                 isMoratorium = d.ISMORATORIUM,
                 moratorium = d.MORATORIUM,
                 productClassId = product.PRODUCTCLASSID,
-                productTypeId = product.PRODUCTTYPEID
+                productTypeId = product.PRODUCTTYPEID,
+                approvedTradeCycleId = d.APPROVEDTRADECYCLEID
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);

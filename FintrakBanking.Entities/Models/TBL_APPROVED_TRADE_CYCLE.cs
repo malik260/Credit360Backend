@@ -13,6 +13,6 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int APPROVEDTRADECYCLEID { get; set; }
-        public string APPROVEDTRADECYCLEDAYS { get; set; }
+        public int APPROVEDTRADECYCLEDAYS { get; set; }
     }
 }

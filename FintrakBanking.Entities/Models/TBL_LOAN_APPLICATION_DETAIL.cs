@@ -169,6 +169,7 @@ namespace FintrakBanking.Entities.Models
         public bool? ISMORATORIUM { get; set; }
         public decimal? APPROVEDLINELIMIT { get; set; }
         public int? APPROVEDTRADECYCLEID { get; set; }
+        
 
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
