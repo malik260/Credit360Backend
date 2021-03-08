@@ -3415,7 +3415,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.ISRELATEDPARTY = loan.isRelatedParty;
             this.loanData.ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed;
             this.loanData.LASTUPDATEDBY = (int)loan.createdBy;
-            //this.loanData.DATETIMECREATED = genSetup.GetApplicationDate();
+            this.loanData.DATETIMEUPDATED = DateTime.Now;
             this.loanData.SYSTEMDATETIME = DateTime.Now;
             this.loanData.CASAACCOUNTID = loan.casaAccountId;
             this.loanData.APPLICATIONAMOUNT = totalApplicationAmount;
@@ -4287,7 +4287,8 @@ namespace FintrakBanking.Repositories.Credit
                 isMoratorium = d.ISMORATORIUM,
                 moratorium = d.MORATORIUM,
                 productClassId = product.PRODUCTCLASSID,
-                productTypeId = product.PRODUCTTYPEID
+                productTypeId = product.PRODUCTTYPEID,
+                approvedTradeCycleId = d.APPROVEDTRADECYCLEID
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);

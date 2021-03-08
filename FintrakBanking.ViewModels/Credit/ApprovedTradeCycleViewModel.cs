@@ -9,6 +9,6 @@ namespace FintrakBanking.ViewModels.Credit
    public class ApprovedTradeCycleViewModel : GeneralEntity
     {
         public int approvedTradeCycleId { get; set; }
-        public string approvedTradeCycleDays { get; set; }
+        public int approvedTradeCycleDays { get; set; }
     }
 }
