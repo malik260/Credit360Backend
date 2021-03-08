@@ -10731,17 +10731,17 @@ namespace FintrakBanking.Repositories.Credit
         }
         public List<InsurancePolicy> GetCollateralInsurancePolicy(int collateralId)
         {
-            var insurance = (context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == collateralId)
+            var insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == collateralId)
                 .Select(x => new InsurancePolicy
                 {
 
-                    referenceNumber = x.POLICYREFERENCENUMBER,
-                    insuranceCompanyId = x.INSURANCECOMPANYID,
+                    referenceNumber = x.POLICYNUMBER,
+                    insuranceCompany = x.INSURANCECOMPANYNAME,
                     sumInsured = x.SUMINSURED,
-                    startDate = x.STARTDATE,
-                    expiryDate = x.ENDDATE,
-                    insuranceTypeId = x.INSURANCETYPEID,
-                    inSurPremiumAmount = x.PREMIUMAMOUNT
+                    startDate = x.INSURANCESTARTDATE,
+                    expiryDate = x.INSURANCEENDDATE,
+                    insurancePolicyType = context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == x.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault(),
+                    inSurPremiumAmount = x.PREMIUMPAID
 
                 })).ToList();
 
@@ -11713,10 +11713,10 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public IEnumerable<InsuranceTypeViewModel> GetInsuranceStatus()
+        public IEnumerable<InsuranceStatusViewModel> GetInsuranceStatus()
         {
             var data = context.TBL_COLLATERAL_INSURANCE_STATUS.Where(x => x.DELETED == false)
-                 .Select(x => new InsuranceTypeViewModel
+                 .Select(x => new InsuranceStatusViewModel
                  {
                      insuranceStatusId = x.INSURANCESTATUSID,
                      insuranceStatus = x.INSURANCESTATUS,

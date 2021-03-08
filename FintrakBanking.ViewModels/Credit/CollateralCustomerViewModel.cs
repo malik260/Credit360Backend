@@ -525,6 +525,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int targetId { get; set; }
         public DateTime arrivalTime { get; set; }
         public string accountOfficer { get; set; }
+        public int insurancePolicyTypeId { get; set; }
+        public string insurancePolicyType { get; set; }
     }
 
     public class NewCollateralViewModel

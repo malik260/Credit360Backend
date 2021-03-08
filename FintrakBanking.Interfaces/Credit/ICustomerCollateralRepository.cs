@@ -175,8 +175,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddInsurancePolicyType(InsurancePolicyTypeViewModel model);
         InsuranceTypeViewModel GetInsuranceType(int id);
         IEnumerable<InsuranceTypeViewModel> GetInsuranceTypes();
-        IEnumerable<InsuranceTypeViewModel> GetInsuranceStatus();
+        IEnumerable<InsuranceStatusViewModel> GetInsuranceStatus();
         IEnumerable<InsurancePolicyTypeViewModel> GetInsurancePolicyTypes();
+        
         bool AddInsuranceType(InsuranceTypeViewModel model);
         bool DeleteInsuranceType(int id, UserInfo user);
         bool UpdateInsuranceType(InsuranceTypeViewModel model, int id, UserInfo user);

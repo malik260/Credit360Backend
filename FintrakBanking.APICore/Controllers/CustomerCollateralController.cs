@@ -2596,7 +2596,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("insurance-status-all")]
         public HttpResponseMessage GetInsuranceStatus()
         {
-            IEnumerable<InsuranceTypeViewModel> response = repo.GetInsuranceStatus();
+            IEnumerable<InsuranceStatusViewModel> response = repo.GetInsuranceStatus();
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
