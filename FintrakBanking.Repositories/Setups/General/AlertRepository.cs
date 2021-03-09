@@ -920,9 +920,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if ((now >= startRepay) && (now <= endRepay))
             {
-                GetLoanRepaymentToStaging();
+                /*GetLoanRepaymentToStaging();
                 GetOverdraftRepaymentToStaging();
-                postPaymentEntries();
+                postPaymentEntries();*/
             }
 
 
@@ -934,7 +934,7 @@ namespace FintrakBanking.Repositories.Setups.General
                  if ((now >= start) && (now <= end))
                  {
                      //GetStaffLoanPortfolioReport();
-                     GetValuationReminder();
+                     /*GetValuationReminder();
                      GetSiteVisitationAccountReminder();
                      GetExpiredValuationReport();
                      GetFacilityRestructuredNotification();
@@ -943,7 +943,7 @@ namespace FintrakBanking.Repositories.Setups.General
                      GetExpiredInsurancePolicies();
                      GetLoanRepaymentReminder();
                      GetGroupCreditFileChecklistReminder();
-                     state = true;
+                     state = true;*/
                  }
             }
 
@@ -954,12 +954,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start2) && (now <= end2))
                 {
-                    GetSectorLimitExceedeBBDReminder();
+                   /* GetSectorLimitExceedeBBDReminder();
                     GetSectorLimitExceedeCBDReminder();
                     GetSectorLimitExceedeCIBDReminder();
                     GetSectorLimitExceedeRBDReminder();
                     GetSectorLimitExceededBankReminder();
-                    state = true;
+                    state = true;*/
                 }
 
 
@@ -973,22 +973,22 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start11) && (now <= end13))
                 {
-                    /*GetDigitalLoanExceptionNPLIncrease();
+                    /*/////GetDigitalLoanExceptionNPLIncrease();
                     GetDigitalLoanExceptionNPLDecrease();
                     GetDigitalLoanDisbursementIncrease();
                     GetDigitalLoanDisbursementDecrease();
                     GetDigitalLoanDPDIncrease();
                     GetDigitalLoanDPDDecrease();
-                    GetDigitalLoanLiquidationIncrease();*/
+                    GetDigitalLoanLiquidationIncrease();//////*/
 
-                    GetDigitalLoanLiquidationModuleIncrease();
+                    /*GetDigitalLoanLiquidationModuleIncrease();
                     GetDigitalLoanExceptionNPLModuleIncrease();
                     GetDigitalLoanExceptionNPLModuleDecrease();
                     GetDigitalLoanDPDModuleIncrease();
                     GetDigitalLoanDPDModuleDecrease();
                     GetDigitalLoanDisbursementModuleIncrease();
                     GetDigitalLoanDisbursementModuleDecrease();
-                    state = true;
+                    state = true;*/
                 }
 
 
@@ -1001,9 +1001,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start11) && (now <= end13))
                 {
-                    GetRepaymentDefaultersAlert();
+                    /*GetRepaymentDefaultersAlert();
                     GetRepaymentPayDownAlert();
-                    state = true;
+                    state = true;*/
                 }
             }
 
