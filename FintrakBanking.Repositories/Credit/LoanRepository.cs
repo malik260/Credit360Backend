@@ -2925,7 +2925,7 @@ namespace FintrakBanking.Repositories.Credit
                              where ((DbFunctions.TruncateTime(a.BOOKINGDATE) >= DbFunctions.TruncateTime(param.startDate)
                                      && DbFunctions.TruncateTime(a.BOOKINGDATE) <= DbFunctions.TruncateTime(param.endDate)))
                                      && l.ISEMPLOYERRELATED == true
-                                     && (r.APPROVEDLINESTATUSID == null || r.APPROVEDLINESTATUSID == 0)
+                                     && (r.APPROVEDLINESTATUSID == null || r.APPROVEDLINESTATUSID == 0)//to exempt the line maintenance tranche
                              select new CamProcessedLoanViewModel
                              {
                                  loanBookingRequestId = r.LOAN_BOOKING_REQUESTID,
@@ -3021,11 +3021,11 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = loans.Union(contingents).Union(revolving).ToList();
             //var groups = data.GroupBy(g => g.loanApplicationDetailId);
-            foreach(var g in data.GroupBy(g => g.loanApplicationDetailId))
+            foreach(var g in data.GroupBy(l => l.loanApplicationDetailId))
             {
                 foreach(var h in g)
                 {
-                    h.totalUtilized += h.requestedAmount;
+                    h.totalUtilized += g.Sum(a => a.requestedAmount);
                 }
             }
             return data;
