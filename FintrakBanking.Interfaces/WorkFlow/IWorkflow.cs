@@ -24,6 +24,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         int Tenor { set; }
         string Comment { set; }
         decimal Amount { set; }
+        decimal FacilityAmount { set; }
         int StatusId { get; set; }
         int GroupStatusId { get; }
         int NewState { get; }
