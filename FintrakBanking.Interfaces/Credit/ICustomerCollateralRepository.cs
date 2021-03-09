@@ -135,7 +135,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         CasaLienViewModel GetAccountLienDetail(string AccountNumber);
         //CasaLienViewModel GetAccountLienDetailForFD(string AccountNumber);//not implemented
-
+        int AddCollateralInsuranceTrackingForm(int accountOfficer, CollateralInsuranceTrackingViewModel model);
         IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId);
 
         IEnumerable<CollateralViewModel> GetCollateralStampToCoverValues(int customerId);
@@ -171,14 +171,17 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddInsuranceCompany(InsuranceCompanyViewModel model);
         bool DeleteInsuranceCompany(int id, UserInfo user);
         bool UpdateInsuranceCompany(InsuranceCompanyViewModel model, int id, UserInfo user);
-
-
+        bool DeleteInsurancePolicyType(int id, UserInfo user);
+        bool AddInsurancePolicyType(InsurancePolicyTypeViewModel model);
         InsuranceTypeViewModel GetInsuranceType(int id);
         IEnumerable<InsuranceTypeViewModel> GetInsuranceTypes();
+        IEnumerable<InsuranceStatusViewModel> GetInsuranceStatus();
+        IEnumerable<InsurancePolicyTypeViewModel> GetInsurancePolicyTypes();
+        
         bool AddInsuranceType(InsuranceTypeViewModel model);
         bool DeleteInsuranceType(int id, UserInfo user);
         bool UpdateInsuranceType(InsuranceTypeViewModel model, int id, UserInfo user);
-
+        bool UpdateInsurancePolicyType(InsurancePolicyTypeViewModel model, int id, UserInfo user);
 
         bool AddInsurancePolicyFile(InsurancePolicy model);
         bool DeleteInsurancePolicy(int id, UserInfo user);
