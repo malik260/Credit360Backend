@@ -243,11 +243,15 @@ namespace FintrakBanking.Repositories.Customer
         public void UpdateCustomerCollateralId(string customerCode)
         {
             customerCode = customerCode.Trim();
-            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
-            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
-            foreach(var c in collaterals)
+            //var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE == customerCode && c.DELETED == false);
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE == customerCode).ToList();
+            if (collaterals != null)
             {
-                c.CUSTOMERID = customer?.CUSTOMERID;
+                foreach (var c in collaterals)
+                {
+                    c.CUSTOMERID = customer?.CUSTOMERID;
+                }
             }
             var saved = context.SaveChanges() > 0;
         }
@@ -5794,11 +5798,12 @@ namespace FintrakBanking.Repositories.Customer
         public bool DeleteRelatedParty(int relatedPartyId, UserInfo user)
         {
             var child = context.TBL_CUSTOMER_RELATED_PARTY.Find(relatedPartyId);
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == child.CUSTOMERID);
 
             if (child != null)
             {
                 context.TBL_CUSTOMER_RELATED_PARTY.Remove(child);
-
+                context.SaveChanges();
                 // Audit Section ---------------------------
 
                 var audit = new TBL_AUDIT
@@ -5806,7 +5811,7 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerRelatedPartyDeleted,
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
-                    DETAIL = "Deleted Customer Related Party with Related Party ID: " + child.RELATEDPARTYID,
+                    DETAIL = "Deleted Customer Related Party with Related Party ID: " + child.RELATEDPARTYID + " and companydirectorId " + child.COMPANYDIRECTORID + " and relationship " + child.RELATIONSHIPTYPE + " createdBy " + child.CREATEDBY,
                     IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -5814,12 +5819,21 @@ namespace FintrakBanking.Repositories.Customer
                     DEVICENAME = CommonHelpers.GetDeviceName(),
                     OSNAME = CommonHelpers.FriendlyName()
                 };
-
                 auditTrail.AddAuditTrail(audit);
-                return context.SaveChanges() > 0;
-            }
 
-            return false;
+
+                var relParty = context.TBL_CUSTOMER_RELATED_PARTY.Any(c => c.CUSTOMERID == customer.CUSTOMERID);
+
+                if (relParty)
+                {
+                    customer.ISREALATEDPARTY = true;
+                }
+                else
+                {
+                    customer.ISREALATEDPARTY = false;
+                }
+            }
+            return context.SaveChanges() > 0;
         }
 
 

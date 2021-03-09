@@ -64,6 +64,7 @@ namespace FintrakBanking.Interfaces.Credit
         int GoForLienRemovalApproval(ApprovalViewModel entity);
         IEnumerable<RemoveLienViewModel> GetLienRemovalDocuments(int lienRemovalId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLienRemovalAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetLienSearchData(string searchString);
         int AddRequestUnLienODAccount(RemoveLienViewModel model, byte[] buffer);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansOperationWriteOffAnalysis(int staffId, int companyId);
 

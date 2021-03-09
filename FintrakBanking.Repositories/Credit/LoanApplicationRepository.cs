@@ -3283,6 +3283,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.APPROVEDLINELIMIT = update.approvedLineLimit;
             detail.DATETIMEUPDATED = DateTime.Now;
             detail.LASTUPDATEDBY = loan.createdBy;
+            detail.APPROVEDTRADECYCLEID = update.approvedTradeCycleId;
 
             var currentProduct = context.TBL_PRODUCT.Find(detail.APPROVEDPRODUCTID);
 
@@ -3414,7 +3415,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.ISRELATEDPARTY = loan.isRelatedParty;
             this.loanData.ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed;
             this.loanData.LASTUPDATEDBY = (int)loan.createdBy;
-            //this.loanData.DATETIMECREATED = genSetup.GetApplicationDate();
+            this.loanData.DATETIMEUPDATED = DateTime.Now;
             this.loanData.SYSTEMDATETIME = DateTime.Now;
             this.loanData.CASAACCOUNTID = loan.casaAccountId;
             this.loanData.APPLICATIONAMOUNT = totalApplicationAmount;
@@ -3672,7 +3673,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISTAKEOVERAPPLICATION = a.isTakeOverApplication,
                 ISLINEFACILITY = a.isLineFacility,
                 LOANDETAILREVIEWTYPEID = a.loanDetailReviewTypeId,
-
+                
                 ISMORATORIUM = a.isMoratorium,
                 INTERESTREPAYMENT = a.interestRepayment,
                 INTERESTREPAYMENTID = a.interestRepaymentId,
@@ -3808,7 +3809,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISTAKEOVERAPPLICATION = a.isTakeOverApplication,
                 ISLINEFACILITY = a.isLineFacility,
                 LOANDETAILREVIEWTYPEID = a.loanDetailReviewTypeId,
-
+                APPROVEDTRADECYCLEID = a.approvedTradeCycleId,
                 ISMORATORIUM = a.isMoratorium,
                 INTERESTREPAYMENT = a.interestRepayment,
                 INTERESTREPAYMENTID = a.interestRepaymentId,
@@ -3969,6 +3970,7 @@ namespace FintrakBanking.Repositories.Credit
                                                         productPriceIndexRate = d.PRODUCTPRICEINDEXRATE,
                                                         operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
                                                         loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
+
                                                         tenorModeId = d.TENORFREQUENCYTYPEID,
                                                         flowChangeId = d.TBL_EXCEPTIONAL_LOAN_APPLICATION.FLOWCHANGEID,
                                                         isLineFacility = d.ISLINEFACILITY,
@@ -4095,8 +4097,8 @@ namespace FintrakBanking.Repositories.Credit
                                                   crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,
                                                   productPriceIndexId = d.PRODUCTPRICEINDEXID,
                                                   productPriceIndexRate = d.PRODUCTPRICEINDEXRATE,
-                                                  operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
-                                                  loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
+                                                        loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
+                                            operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
                                                   tenorModeId = d.TENORFREQUENCYTYPEID,
                                                   flowChangeId = d.TBL_EXCEPTIONAL_LOAN_APPLICATION.FLOWCHANGEID,
                                                   isLineFacility = d.ISLINEFACILITY,
@@ -4285,7 +4287,8 @@ namespace FintrakBanking.Repositories.Credit
                 isMoratorium = d.ISMORATORIUM,
                 moratorium = d.MORATORIUM,
                 productClassId = product.PRODUCTCLASSID,
-                productTypeId = product.PRODUCTTYPEID
+                productTypeId = product.PRODUCTTYPEID,
+                approvedTradeCycleId = d.APPROVEDTRADECYCLEID
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
@@ -9616,7 +9619,17 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
+        public IEnumerable<ApprovedTradeCycleViewModel> GetAllApprovedTradeCycles()
+        {
+            var approvedCycles = (from x in context.TBL_APPROVED_TRADE_CYCLE
+                                  select new ApprovedTradeCycleViewModel
+                               {
+                                   approvedTradeCycleId = x.APPROVEDTRADECYCLEID,
+                                   approvedTradeCycleDays = x.APPROVEDTRADECYCLEDAYS,
+                               }).ToList();
 
+            return approvedCycles;
+        }
 
         public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId, int customer)
         {

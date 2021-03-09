@@ -10,7 +10,7 @@ namespace FintrakBanking.Entities.Models
     public class SqlDatabaseConfiguration : DbConfiguration
     {
         public SqlDatabaseConfiguration()
-        {
+        { 
             this.SetDefaultConnectionFactory(new System.Data.Entity.Infrastructure.SqlConnectionFactory());
         }
     }

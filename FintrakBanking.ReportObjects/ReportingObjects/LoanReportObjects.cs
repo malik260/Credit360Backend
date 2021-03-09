@@ -21,7 +21,7 @@ namespace FintrakBanking.ReportObjects
     public class LoanReportObjects
     {
         private IGeneralSetupRepository generalSetup  ;
-
+        FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext();
         private IQueryable<LoanInformation> Loans(int companyId, DateTime startDate, DateTime endDate)
         {
             IQueryable<LoanInformation> loan;
@@ -4818,7 +4818,64 @@ namespace FintrakBanking.ReportObjects
                .ToList();
             return data;
         }
+        public IEnumerable<OriginalDocumentApprovalViewModel> SubmissionOfOriginalDocuments(DateTime startDate, DateTime endDate, string referenceNumber)
+        {
+            var data = new List<OriginalDocumentApprovalViewModel>();
+            FinTrakBankingContext context = new FinTrakBankingContext();
 
+            data = (from l in context.TBL_LOAN
+                    join x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL on l.LOANAPPLICATIONDETAILID equals x.LOANAPPLICATIONID
+                    join ll in context.TBL_LOAN_APPLICATION_COLLATERL on x.COLLATERALCUSTOMERID equals ll.COLLATERALCUSTOMERID
+                    join a in context.TBL_LOAN_APPLICATION_DETAIL on ll.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
+                    join sta in context.TBL_STAFF on l.RELATIONSHIPMANAGERID equals sta.STAFFID
+                    join ss in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals ss.SUPERVISOR_STAFFID
+
+                    where l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED == false
+                    && DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                            DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                    select new OriginalDocumentApprovalViewModel
+                    {   
+                        customerID = c.CUSTOMERID,
+                        fintrakReferenceId = x.REFERENCENUMBER,
+                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        facilityType = p.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                        facilityAmount = l.PRINCIPALAMOUNT,
+                        bookingDate = l.BOOKINGDATE,
+                        sla = "N/A",
+                        daysOverdue = (int)DbFunctions.DiffDays(l.MATURITYDATE, DateTime.Now),
+                        accountOfficer = sta.FIRSTNAME + " " + sta.LASTNAME,
+                        groupHead = ss.FIRSTNAME + " " + ss.LASTNAME,
+                        team = context.TBL_DEPARTMENT.Where(d => d.COMPANYID == l.COMPANYID).Select(d => d.DEPARTMENTNAME).FirstOrDefault(),
+                        division = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == l.CUSTOMERID select p.BUSINESSUNITNAME).FirstOrDefault(),
+
+
+                        /*originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                        loanApplicationId = x.LOANAPPLICATIONID,
+                        description = x.DESCRIPTION,
+                        approvalStatusId = (short)x.APPROVALSTATUSID,
+                        applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                        referenceNumber = x.REFERENCENUMBER,
+                        dateTimeCreated = x.DATETIMECREATED,
+                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        customerCode = c.CUSTOMERCODE,
+                        customerId = c.CUSTOMERID,
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        applicationDate = l.APPLICATIONDATE,
+                        applicationAmount = l.APPLICATIONAMOUNT,
+                        interestRate = l.INTERESTRATE,
+                        approvalDate = x.APPROVALDATE,
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        createdByName = context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),*/
+
+                    })
+               .ToList();
+            return data;
+        }
         public List<TrialBalanceViewModel> TrialBalanceSummary(int glAccountId, int currencyCode, int companyId, int staffId)
         {
 
@@ -5134,6 +5191,131 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
+        public List<DisbursedFacilityCollateralViewModel> DisbursedFacilityCollateralReport(int classification, int productId)
+        {
+    
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+
+
+                if (classification == (int)CollateralTypeEnum.Gaurantee)
+                {
+                    var reportData = (
+                                                         from l in context.TBL_LOAN
+                                                         join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                                                         join sta in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sta.STAFFID
+                                                         join b in context.TBL_BRANCH on l.BRANCHID equals b.BRANCHID
+                                                         join ll in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ll.LOANAPPLICATIONDETAILID
+                                                         join cm in context.TBL_LOAN_APPLICATION_COLLATERL on ll.LOANAPPLICATIONID equals cm.LOANAPPLICATIONID
+                                                         join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                                                         join cg in context.TBL_COLLATERAL_GAURANTEE on cc.COLLATERALCUSTOMERID equals cg.COLLATERALCUSTOMERID
+                                                         join ct in context.TBL_COLLATERAL_TYPE on cc.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                                                         where
+                                                         cc.COLLATERALTYPEID == classification 
+                                                         && l.PRODUCTID == productId
+                                                         select new DisbursedFacilityCollateralViewModel
+                                                         {
+                                                             customerID = c.CUSTOMERCODE,
+                                                             customerName = c.FIRSTNAME + " " + c.MIDDLENAME,
+                                                             settlementAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == l.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                                             refNo = l.LOANREFERENCENUMBER,
+                                                             productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == l.PRODUCTID).Select(x => x.PRODUCTNAME).FirstOrDefault(),
+                                                             adjFacilityType = (from a in context.TBL_PRODUCT join b in context.TBL_PRODUCT_TYPE on a.PRODUCTTYPEID equals b.PRODUCTTYPEID where a.PRODUCTID == l.PRODUCTID select b.PRODUCTTYPENAME).FirstOrDefault(),
+                                                             currencyType = (from a in context.TBL_LOAN join b in context.TBL_CURRENCY on a.CURRENCYID equals b.CURRENCYID where a.PRODUCTID == l.PRODUCTID select b.CURRENCYNAME).FirstOrDefault(),
+                                                             loanAmountLCY = l.PRINCIPALAMOUNT,
+                                                             totalExposureLCY = l.PASTDUEPRINCIPAL + l.PASTDUEINTEREST + l.INTERESTONPASTDUEINTEREST + l.INTERESTONPASTDUEPRINCIPAL + l.OUTSTANDINGINTEREST + l.OUTSTANDINGPRINCIPAL,
+                                                             bookingDate = l.BOOKINGDATE,
+                                                             valueDate = l.DISBURSEDATE,
+                                                             maturityDate = l.MATURITYDATE,
+                                                             rate = l.INTERESTRATE,
+                                                             tenor = (int)DbFunctions.DiffDays(l.MATURITYDATE, l.EFFECTIVEDATE),
+                                                             collateralType = ct.COLLATERALTYPENAME,
+                                                             collateralDetails = ct.DETAILS,
+                                                             guarantorName = cg.FIRSTNAME + " " + " " + cg.MIDDLENAME + " " + cg.LASTNAME,
+                                                             guarantorPhoneNo = cg.PHONENUMBER1,
+                                                             guarantorEmailAddress = cg.EMAILADDRESS,
+                                                             guarantorBVN = cg.BVN,
+                                                             guarantorHomeAddress = cg.GUARANTORADDRESS,
+                                                             guarantorOfficeAddress = cg.GUARANTORADDRESS,
+                                                             accountOfficerName = sta.FIRSTNAME + " " + sta.LASTNAME,
+                                                             misCode = sta.MISCODE
+                                                         }).Distinct().ToList().Select(x =>
+                                                         {
+                                                             x.collateralType = LoanCollateralType(x.loanId, LoanSystemTypeEnum.TermDisbursedFacility);
+                                                             return x;
+                                                         }).ToList();
+                    foreach (var data in reportData)
+                    {
+                        data.teamName = stagecontext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == data.misCode).Select(x => x.TEAMNAME).FirstOrDefault();
+                        data.regionName = stagecontext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == data.misCode).Select(x => x.REGIONNAME).FirstOrDefault();
+                        data.groupName = stagecontext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == data.misCode).Select(x => x.UNITNAME).FirstOrDefault();
+                        data.divisionName = stagecontext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == data.misCode).Select(x => x.DIVISIONNAME).FirstOrDefault();
+                    }
+
+                    return reportData;
+                }
+                else
+                {
+
+                    var reportData = (
+                                    from l in context.TBL_LOAN
+                                    join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                                    join sta in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sta.STAFFID
+                                    join b in context.TBL_BRANCH on l.BRANCHID equals b.BRANCHID
+                                    join ll in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ll.LOANAPPLICATIONDETAILID
+                                    join cm in context.TBL_LOAN_APPLICATION_COLLATERL on ll.LOANAPPLICATIONID equals cm.LOANAPPLICATIONID
+                                    join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                                    join ct in context.TBL_COLLATERAL_TYPE on cc.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                                    where
+                                    cc.COLLATERALTYPEID == classification
+                                    && l.PRODUCTID == productId
+
+                                    select new DisbursedFacilityCollateralViewModel
+                                    {
+                                        customerID = c.CUSTOMERCODE,
+                                        customerName = c.FIRSTNAME + " " + c.MIDDLENAME,
+                                        settlementAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == l.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                        refNo = l.LOANREFERENCENUMBER,
+                                        productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == l.PRODUCTID).Select(x => x.PRODUCTNAME).FirstOrDefault(),
+                                        adjFacilityType = (from a in context.TBL_PRODUCT join b in context.TBL_PRODUCT_TYPE on a.PRODUCTTYPEID equals b.PRODUCTTYPEID where a.PRODUCTID == l.PRODUCTID select b.PRODUCTTYPENAME).FirstOrDefault(),
+                                        currencyType = (from a in context.TBL_LOAN join b in context.TBL_CURRENCY on a.CURRENCYID equals b.CURRENCYID where a.PRODUCTID == l.PRODUCTID select b.CURRENCYNAME).FirstOrDefault(),
+                                        loanAmountLCY = l.PRINCIPALAMOUNT,
+                                        totalExposureLCY = l.PASTDUEPRINCIPAL + l.PASTDUEINTEREST + l.INTERESTONPASTDUEINTEREST + l.INTERESTONPASTDUEPRINCIPAL + l.OUTSTANDINGINTEREST + l.OUTSTANDINGPRINCIPAL,
+                                        bookingDate = l.BOOKINGDATE,
+                                        valueDate = l.DISBURSEDATE,
+                                        maturityDate = l.MATURITYDATE,
+                                        rate = l.INTERESTRATE,
+                                        tenor = (int)DbFunctions.DiffDays(l.MATURITYDATE, l.EFFECTIVEDATE),
+                                        collateralType = ct.COLLATERALTYPENAME,
+                                        collateralDetails = ct.DETAILS,
+                                         guarantorName ="",
+                                         guarantorPhoneNo = "",
+                                         guarantorEmailAddress = "",
+                                         guarantorBVN = "",
+                                         guarantorHomeAddress = "",
+                                         guarantorOfficeAddress = "",
+                                         accountOfficerName = sta.FIRSTNAME + " " + sta.LASTNAME,
+                                        misCode = sta.MISCODE
+                                    }).Distinct().ToList().Select(x =>
+                                    {
+                                        x.collateralType = LoanCollateralType(x.loanId, LoanSystemTypeEnum.TermDisbursedFacility);
+                                        return x;
+                                    }).ToList();
+                    foreach (var data in reportData)
+                    {
+                        data.teamName = stagecontext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == data.misCode).Select(x => x.TEAMNAME).FirstOrDefault();
+                        data.regionName = stagecontext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == data.misCode).Select(x => x.REGIONNAME).FirstOrDefault();
+                        data.groupName = stagecontext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == data.misCode).Select(x => x.UNITNAME).FirstOrDefault();
+                        data.divisionName = stagecontext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == data.misCode).Select(x => x.DIVISIONNAME).FirstOrDefault();
+                    }
+
+
+                    return reportData;
+
+                }
+            }
+
+        }
         public List<CollateralRegisterViewModel> CollateralRegister(DateTime startDate, DateTime endDate, int companyid, short? branchId)
         {
             //List<STG_MIS_INFO> misInfo = new List<STG_MIS_INFO>();
@@ -5290,7 +5472,47 @@ namespace FintrakBanking.ReportObjects
                 }
             }
         }
+        public IEnumerable<OriginalDocumentReleaseViewModel> SecurityReleaseReport(DateTime startDate, DateTime endDate)
+        {
+            var data = new List<OriginalDocumentReleaseViewModel>();
 
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            data = (from x in context.TBL_ORIGINAL_DOCUMENT_RELEASE
+                    join l in context.TBL_LOAN_APPLICATION on x.COLLATERALCUSTOMERID equals l.LOANAPPLICATIONID
+                    join a in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    where x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                    && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                            DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+
+                    select new OriginalDocumentReleaseViewModel
+                    {
+                        originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                        loanApplicationId = l.LOANAPPLICATIONID,
+                        description = a.LOANPURPOSE,
+                        approvalStatusId = (short)x.APPROVALSTATUSID,
+                        applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
+                        referenceNumber = l.COLLATERALDETAIL,
+                        dateTimeCreated = x.DATETIMECREATED,
+                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        customerCode = c.CUSTOMERCODE,
+                        customerId = c.CUSTOMERID,
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        applicationDate = l.APPLICATIONDATE,
+                        applicationAmount = l.APPLICATIONAMOUNT,
+                        interestRate = l.INTERESTRATE,
+                        approvalDate = x.APPROVALDATE,
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        createdByName = context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+
+                    })
+               .ToList();
+            return data;
+        }
     }
 }
 

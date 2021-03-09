@@ -780,7 +780,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public bool InitGenericMemo(int operationId, int targetId, int customerId) // feeder
+        public bool InitGenericMemo(int operationId, int targetId, int targetIdForWorkFlow, int customerId) // feeder
         {
             this.targetId = targetId;
             this.operationId = operationId;
@@ -833,7 +833,14 @@ namespace FintrakBanking.Repositories.Credit
                 this.fussCustomerConditionSubsequentData = GenericConditionSubsequentHtml();
                 this.fussCustomerConditionDynamicsData = GenericConditionDynamicsHtml();
                 this.memoData = GenericMemoMarkupHtml();
-                this.approvals = GetApprovalsMarkup(true);
+                if (targetIdForWorkFlow > 0)
+                {
+                    this.approvals = GetGenericApprovalsMarkup(targetIdForWorkFlow, true);
+                }
+                else
+                {
+                    this.approvals = GetGenericApprovalsMarkup(this.targetId, true);
+                }
                 this.currentDate = DateTime.Now.ToShortDateString();
                 if (this.customerIds?.Count > 0)
                 {
@@ -945,9 +952,14 @@ namespace FintrakBanking.Repositories.Credit
             this.approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
             if (bookingRequestId > 0)
             {
+                var currentRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOAN_BOOKING_REQUESTID == bookingRequestId).FirstOrDefault();
                 var allRequests = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).ToList();
                 amountUtilised = allRequests.Where(r => r.LOAN_BOOKING_REQUESTID != bookingRequestId && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)?.Sum(r => r.AMOUNT_REQUESTED).ToString("#,##.00") ?? "0.00";
-                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOAN_BOOKING_REQUESTID == bookingRequestId).FirstOrDefault()?.AMOUNT_REQUESTED.ToString("#,##.00") ?? "0.00";
+                newRequest = currentRequest?.AMOUNT_REQUESTED.ToString("#,##.00") ?? "0.00";
+                if (currentRequest?.PRODUCTID != null)
+                {
+                    this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == (currentRequest.PRODUCTID)).Select(O => O.PRODUCTNAME).FirstOrDefault();
+                }
 
             }
             else
@@ -1219,7 +1231,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-            else
+            else if (this.lmsrApplication != null)
             {
                 var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID && x.DELETED == false).ToList();
                 var conditions = new List<ConditionPrecedentViewModel>();
@@ -4839,6 +4851,38 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        private string GetGenericApprovalsMarkup(int targetIdForWorkFlow, bool getAll = false)
+        {
+            var appraisals = GetAppraisalMemorandumTrail(targetIdForWorkFlow, GetCurrentOperationId(), getAll).OrderBy(a => a.approvalTrailId).ToList();
+            var result = String.Empty;
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
+                        <th><b>Comment</b></th>
+                        <th><b>Date</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
+
         private string GetApprovalsMarkup(bool getAll = false)
         {
             var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId(), getAll).OrderBy(a => a.approvalTrailId).ToList();
@@ -8375,7 +8419,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var f in ConditionSubsequent)
                 {
                     n++;
-                    result = result + $@"0
+                    result = result + $@"
                         <tr>
                         <td> {n}</td>
                         <td> {f.productName}</td>

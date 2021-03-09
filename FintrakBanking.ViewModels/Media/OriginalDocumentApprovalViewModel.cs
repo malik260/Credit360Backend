@@ -23,6 +23,7 @@ namespace FintrakBanking.ViewModels.Media
         public string customerName { get; set; }
         public string customerCode { get; set; }
         public int customerId { get; set; }
+        public int customerID { get; set; }
         public int? businessUnit { get; set; }
         public string branchName { get; set; }
         public DateTime applicationDate { get; set; }
@@ -48,6 +49,16 @@ namespace FintrakBanking.ViewModels.Media
         public int approvalTrailId { get; set; }
         public string currentApprovalLevel { get; set; }
         public int? loopedStaffId { get; set; }
+        public string fintrakReferenceId { get; set; }
+        public string facilityType { get; set; }
+        public decimal facilityAmount { get; set; }
+        public DateTime bookingDate { get; set; }
+        public int daysOverdue { get; set; }
+        public string accountOfficer { get; set; }
+        public string division { get; set; }
+        public string groupHead { get; set; }
+        public string team { get; set; }
+        public string sla { get; set; }
         public string businessUnitId { get; set; }
     }
 }

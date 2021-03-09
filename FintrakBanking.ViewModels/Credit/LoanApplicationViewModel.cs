@@ -409,6 +409,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerType { get; set; }
         public short? customerTypeId { get; set; }
         public int loanDetailReviewTypeId { get; set; }
+        public int? approvedTradeCycleId { get; set; }
         public string customerAccountNumber { get; set; }
 
         public bool requireCollateral { get; set; }
@@ -493,6 +494,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? crmsPaymentSourceId { get; set; }
 
         public int? exclusiveOperationId { get; set; }
+        public int operationId { get; set; }
 
         public string crmsFundingSourceCategory { get; set; }
 
