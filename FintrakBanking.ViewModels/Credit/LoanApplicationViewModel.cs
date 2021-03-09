@@ -494,6 +494,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? crmsPaymentSourceId { get; set; }
 
         public int? exclusiveOperationId { get; set; }
+        public int operationId { get; set; }
 
         public string crmsFundingSourceCategory { get; set; }
 

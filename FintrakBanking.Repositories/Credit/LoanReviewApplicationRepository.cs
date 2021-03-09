@@ -3151,6 +3151,7 @@ namespace FintrakBanking.Repositories.Credit
                                                    proposedTenor = d.PROPOSEDTENOR,
                                                    breachedLimitName = d.BREACHEDLIMITNAME,
                                                    loanApplicationDetailId = d.EXCEPTIONALLOANAPPLDETAILID,
+                                                   operationId = t.OPERATIONID,
                                                    approvalStatusId = t.APPROVALSTATUSID,
                                                    approvalTrailId = t.APPROVALTRAILID,
                                                    currentApprovalLevelId = t.TOAPPROVALLEVELID,
