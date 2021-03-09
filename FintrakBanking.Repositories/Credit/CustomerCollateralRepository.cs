@@ -10835,7 +10835,13 @@ namespace FintrakBanking.Repositories.Credit
                     startDate = x.INSURANCESTARTDATE,
                     expiryDate = x.INSURANCEENDDATE,
                     insurancePolicyType = context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == x.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault(),
-                    inSurPremiumAmount = x.PREMIUMPAID
+                    insuranceType = context.TBL_INSURANCE_TYPE.Where(o => o.INSURANCETYPEID == x.INSURANCETYPEID).Select(o => o.INSURANCETYPE).FirstOrDefault(),
+                    insuranceStatus = context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == x.INSURANCESTATUSID).Select(o => o.INSURANCESTATUS).FirstOrDefault(),
+                    inSurPremiumAmount = x.PREMIUMPAID,
+                    companyAddress = x.ISURANCECOMPANYADDRESS,
+                    collateralDetails = x.COLLATERALDETAILS
+                    
+                    
 
                 })).ToList();
 
