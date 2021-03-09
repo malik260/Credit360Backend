@@ -486,6 +486,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? startDate { get; set; }
         public DateTime? expiryDate { get; set; }
         public string insuranceType { get; set; }
+        
         public bool hasExpired { get; set; }
         public int collateraalId { get; set; }
         public string collateralCode { get; set; }
@@ -527,6 +528,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountOfficer { get; set; }
         public int insurancePolicyTypeId { get; set; }
         public string insurancePolicyType { get; set; }
+        public string insuranceStatus { get; set; }
+        public string collateralDetails { get; set; }
     }
 
     public class NewCollateralViewModel
