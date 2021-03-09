@@ -477,6 +477,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("customer-facility/customer/{id}")]
+        public HttpResponseMessage GetCustomerFacility(int id)
+        {
+            try
+            {
+                var response = repo.GetCustomerFacility(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
         [HttpGet, Route("customer-cash-collateral/customer/{id}/application/{applicationId}")]
         public HttpResponseMessage GetCustomerCashCollateral(int id, int? applicationId)
         {

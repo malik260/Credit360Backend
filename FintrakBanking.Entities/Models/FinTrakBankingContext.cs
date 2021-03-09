@@ -22,6 +22,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_INSURANCE_STATUS> TBL_COLLATERAL_INSURANCE_STATUS { get; set; }
         public virtual DbSet<TBL_COLLATERAL_INSURANCE_TRACKING> TBL_COLLATERAL_INSURANCE_TRACKING { get; set; }
         public virtual DbSet<TBL_INSURANCE_POLICY_TYPE> TBL_INSURANCE_POLICY_TYPE { get; set; }
+        //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; } 
+        public virtual DbSet<TBL_CUSTOMER_EMAIL> TBL_CUSTOMER_EMAIL { get; set; }
         public virtual DbSet<TBL_TEMP_LMSR_APPLTN_CANCELTN> TBL_TEMP_LMSR_APPLTN_CANCELTN { get; set; }
         public virtual DbSet<TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN> TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN { get; set; }
         public virtual DbSet<TBL_CASH_SECURITY_RELEASE_APPROVAL> TBL_CASH_SECURITY_RELEASE_APPROVAL { get; set; }
