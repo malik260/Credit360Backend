@@ -1997,8 +1997,102 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals.OrderByDescending(x => x.collateralId);
         }
 
+        public IEnumerable<OriginalDocumentSubmissionByFacilityViewModel> GetCustomerFacility(int customerId)
+        {
 
-        public IEnumerable<CollateralViewModel> GetCustomerCashCollateral(int customerId, int? applicationId, int companyId, bool isLMS = false)
+            var application = (from c in context.TBL_LOAN_APPLICATION_DETAIL
+                               join a in context.TBL_LOAN_APPLICATION on c.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                               where a.CUSTOMERID == customerId
+                               && a.DELETED == false
+                               && c.DELETED == false
+                               && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                               select new OriginalDocumentSubmissionByFacilityViewModel
+                               {
+                                   divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                                   divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                                   productClassId = a.PRODUCTCLASSID,
+                                   productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                                   facility = context.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + context.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LOAN_APPLICATION_DETAIL
+                                        .Where(s => s.LOANAPPLICATIONID == c.LOANAPPLICATIONID && s.DELETED == false)
+                                        .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+                                        .FirstOrDefault(),
+                                   systemDateTime = c.DATETIMECREATED,
+                                   requireCollateral = a.REQUIRECOLLATERAL,
+                                   approvalStatusId = (short)a.APPROVALSTATUSID,
+                                   applicationStatusId = a.APPLICATIONSTATUSID,
+                                   loanApplicationId = a.LOANAPPLICATIONID,
+                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                   customerId = a.CUSTOMERID ?? 0,
+                                   customerName = a.CUSTOMERID.HasValue ? a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME : "",
+                                   loanInformation = a.LOANINFORMATION,
+                                   companyId = a.COMPANYID,
+                                   branchId = (short)a.BRANCHID,
+                                   branchName = a.TBL_BRANCH.BRANCHNAME,
+                                   relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                   relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                                   relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                   relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                                   misCode = a.MISCODE,
+                                   teamMisCode = a.TEAMMISCODE,
+                                   interestRate = a.INTERESTRATE,
+                                   isRelatedParty = a.ISRELATEDPARTY,
+                                   isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                                   submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
+                                   customerGroupId = a.CUSTOMERGROUPID ?? 0,
+                                   customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                                   loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
+                                   loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                   createdBy = a.OWNEDBY,
+                                   applicationDate = a.APPLICATIONDATE,
+                                   applicationTenor = a.APPLICATIONTENOR,
+                                   applicationAmount = a.APPLICATIONAMOUNT,
+                                   dateTimeCreated = a.DATETIMECREATED,
+                                   collateralDetail = a.COLLATERALDETAIL,
+                                   isEmployerRelated = a.ISEMPLOYERRELATED,
+                                   employer = context.TBL_CUSTOMER_EMPLOYER.FirstOrDefault(e => e.EMPLOYERID == a.RELATEDEMPLOYERID).EMPLOYER_NAME,
+                                   equityAmount = c.EQUITYAMOUNT,
+                                   equityCasaAccountId = c.EQUITYCASAACCOUNTID,
+                                   approvedAmount = c.APPROVEDAMOUNT,
+                                   approvedInterestRate = c.APPROVEDINTERESTRATE,
+                                   approvedProductId = c.APPROVEDPRODUCTID,
+                                   approvedTenor = c.APPROVEDTENOR,
+                                   currencyId = c.CURRENCYID,
+                                   currencyName = c.TBL_CURRENCY.CURRENCYNAME,
+                                   loanPurpose = c.LOANPURPOSE,
+                                   exchangeRate = c.EXCHANGERATE,
+                                   loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                                   subSectorId = c.SUBSECTORID,
+                                   proposedAmount = c.PROPOSEDAMOUNT,
+                                   proposedInterestRate = c.PROPOSEDINTERESTRATE,
+                                   proposedProductId = c.PROPOSEDPRODUCTID,
+                                   proposedProductName = c.TBL_PRODUCT.PRODUCTNAME,
+                                   statusId = c.STATUSID,
+                                   priceIndexId = c.PRODUCTPRICEINDEXID,
+                                   priceIndexName = c.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                                   fieldOne = c.FIELD1,
+                                   fieldTwo = c.FIELD2,
+                                   fieldThree = c.FIELD3,
+                                   conditionPrecedent = c.CONDITIONPRECIDENT,
+                                   conditionSubsequent = c.CONDITIONSUBSEQUENT,
+                                   approvedProductName = c.TBL_PRODUCT.PRODUCTNAME,
+                                   approvedRate = c.APPROVEDINTERESTRATE,
+                                   //schedule = c.sc
+                                   applicationId = a.LOANAPPLICATIONID,
+                                   obligorName = c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_CUSTOMER.LASTNAME,
+                                   currencyCode = c.TBL_CURRENCY.CURRENCYCODE,
+                                   proposedTenor = c.PROPOSEDTENOR,
+                                   proposedRate = c.PROPOSEDINTERESTRATE,
+                                   moratorium = c.MORATORIUM
+                               }).ToList();
+                               
+
+        
+            return application;
+        }
+
+
+
+    public IEnumerable<CollateralViewModel> GetCustomerCashCollateral(int customerId, int? applicationId, int companyId, bool isLMS = false)
         {
             var typeIds = new List<int>();
             var company = context.TBL_COMPANY.Find(companyId);
