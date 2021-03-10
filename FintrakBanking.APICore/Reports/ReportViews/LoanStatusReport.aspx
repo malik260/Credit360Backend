@@ -13,7 +13,7 @@
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-        <rsweb:ReportViewer ID="ReportViewer" runat="server" Font-Names="Fruitger LT 45"   KeepSessionAlive="false" AsyncRendering="false" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1100px">
+        <rsweb:ReportViewer KeepSessionAlive="false" ID="ReportViewer" runat="server" Font-Names="Fruitger LT 45"   KeepSessionAlive="false" AsyncRendering="false" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1100px">
       
         </rsweb:ReportViewer>
     

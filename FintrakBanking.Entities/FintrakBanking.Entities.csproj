@@ -86,6 +86,8 @@
     <Compile Include="Models\TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL.cs" />
     <Compile Include="Models\TBL_CASHBUILDUPREFERENCETYPE.cs" />
     <Compile Include="Models\TBL_CASH_SECURITY_RELEASE_APPROVAL.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_INSURANCE_STATUS.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_INSURANCE_TRACKING.cs" />
     <Compile Include="Models\TBL_COLLATERAL_LIQUIDATION_RECOVERY.cs" />
     <Compile Include="Models\TBL_COLLECTION_RETAIL_CRON_SETUP.cs" />
     <Compile Include="Models\TBL_CONSUMER_PROTECTION.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="Models\TBL_CONTRACTOR_TIERING.cs" />
     <Compile Include="Models\TBL_CURRENCY_LIMIT.cs" />
     <Compile Include="Models\TBL_CUSTOMER_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_EMAIL.cs" />
     <Compile Include="Models\TBL_DOCUMENTATION_FILLING_APPROVAL.cs" />
     <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPLICATION.cs" />
     <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPLICATION_DETAIL.cs" />
@@ -107,6 +110,7 @@
     <Compile Include="Models\TBL_FACILITY_MOD_DETL_FEE.cs" />
     <Compile Include="Models\TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN.cs" />
     <Compile Include="Models\TBL_GROUP_LIMIT.cs" />
+    <Compile Include="Models\TBL_INSURANCE_POLICY_TYPE.cs" />
     <Compile Include="Models\TBL_INTEGRATION_CONTROL.cs" />
     <Compile Include="Models\TBL_LC_CASHBUILDUPPLAN.cs" />
     <Compile Include="Models\TBL_LC_ISSUANCE_ARCHIVE.cs" />

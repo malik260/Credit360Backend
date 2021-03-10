@@ -486,6 +486,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? startDate { get; set; }
         public DateTime? expiryDate { get; set; }
         public string insuranceType { get; set; }
+        
         public bool hasExpired { get; set; }
         public int collateraalId { get; set; }
         public string collateralCode { get; set; }
@@ -525,6 +526,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int targetId { get; set; }
         public DateTime arrivalTime { get; set; }
         public string accountOfficer { get; set; }
+        public int insurancePolicyTypeId { get; set; }
+        public string insurancePolicyType { get; set; }
+        public string insuranceStatus { get; set; }
+        public string collateralDetails { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -1153,9 +1158,28 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class InsuranceTypeViewModel: GeneralEntity
     {
-        public string InsuranceType { get; set; }
-        public int InsuranceTypeId { get; set; }
+        public string insuranceType { get; set; }
+        public int insuranceTypeId { get; set; }
+        public int insuranceStatusId { get; set; }
+        public string insuranceStatus { get; set; }
     }
+
+    public class InsuranceStatusViewModel 
+    {
+        public string insuranceStatus { get; set; }
+        public int insuranceStatusId { get; set; }
+        public bool deleted { get; set; }
+    }
+
+
+    public class InsurancePolicyTypeViewModel : GeneralEntity
+    {
+        public string description { get; set; }
+        public bool valuationRequired { get; set; }
+        public string valuation { get; set; }
+        public int policyTypeId { get; set; }
+    }
+
 
     public class SectorLimitAlertViewModel
     {
@@ -1213,4 +1237,32 @@ namespace FintrakBanking.ViewModels.Credit
         public double haircut { get; set; }
         public string responsiblePerson { get; set; }
     }
-}
+
+
+
+    public class CollateralInsuranceTrackingViewModel : GeneralEntity
+    {
+
+    
+        public int collateralId { get; set; }
+        public string referenceNumber { get; set; }
+        public decimal sumInsured { get; set; }
+        public string insuranceCompany { get; set; }
+        public int insuranceTypeId { get; set; }
+        public string companyAddress { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime expiryDate { get; set; }
+        public int insurancePolicyTypeId { get; set; }
+        public int collateralCustomerId { get; set; }
+        public string collateralDetails { get; set; }
+        public decimal forcedSaleValue { get; set; }
+        public decimal openMarketValue { get; set; }
+        public DateTime valuationEndDate { get; set; }
+        public string valuer { get; set; }
+        public DateTime valuationStartDate { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public int insuranceStatus { get; set; }
+        public decimal inSurPremiumAmount { get; set; }
+    }
+
+ }

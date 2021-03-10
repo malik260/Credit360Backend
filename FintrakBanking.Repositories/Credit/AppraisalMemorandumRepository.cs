@@ -408,6 +408,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.IsFlowTest = model.isFlowTest;
                         workflow.StatusId = (short)ApprovalStatusEnum.Pending;
                         workflow.Amount = appl.TOTALEXPOSUREAMOUNT;   //model.legalLendingLimit;
+                        workflow.FacilityAmount = appl.APPLICATIONAMOUNT;
                         workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                         workflow.LogActivity();
                         
@@ -432,6 +433,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
                 workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
+                workflow.FacilityAmount = appl.APPLICATIONAMOUNT;
                 workflow.InvestmentGrade = model.investmentGrade;
                 workflow.PoliticallyExposed = model.politicallyExposed;
                 workflow.Untenored = model.untenored;
@@ -442,8 +444,8 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = model.isFromPc;
                 workflow.IsFlowTest = model.isFlowTest;
-                workflow.SkipLimitsCheck = appl.ISRELATEDPARTY;
-                var details = appl.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.DELETED == false
+                workflow.SkipLimitsCheck = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISREALATEDPARTY == true);
+                var isForEsrm = appl.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.DELETED == false
                                              && d.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.CAMBased
                                              && d.TBL_LOAN_APPLICATION.FLOWCHANGEID != (int)FlowChangeEnum.CASHCOLLATERIZED
                                              && d.TBL_LOAN_APPLICATION.ISADHOCAPPLICATION == false
@@ -454,7 +456,7 @@ namespace FintrakBanking.Repositories.Credit
                     PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
                     //Pep = model.politicallyExposed,
                     Pep = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISPOLITICALLYEXPOSED == true),
-                    InsiderRelated = appl.ISRELATEDPARTY,
+                    InsiderRelated = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISREALATEDPARTY == true),
                     ProjectRelated = appl.ISPROJECTRELATED,
                     OnLending = appl.ISONLENDING,
                     InterventionFunds = appl.ISINTERVENTIONFUNDS,
@@ -462,8 +464,7 @@ namespace FintrakBanking.Repositories.Credit
                     isRenewal = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.Renewal || d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.RenewalWithDecrease),
                     OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
                     DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
-                    //esrm = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual),
-                    esrm = details.Any(),
+                    esrm = isForEsrm.Any(),
                     isContingentFacility = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                 };
 
@@ -3004,8 +3005,8 @@ namespace FintrakBanking.Repositories.Credit
                         interestRepayment = x.d.INTERESTREPAYMENTID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.INTERESTREPAYMENTID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
                         interestRepaymentId = x.d.INTERESTREPAYMENTID,
                         moratorium = x.d.MORATORIUM,
-                        approvedTradeCycleDays= x.d.APPROVEDTRADECYCLEID != null ? context.TBL_APPROVED_TRADE_CYCLE.Where(T => T.APPROVEDTRADECYCLEID == x.d.APPROVEDTRADECYCLEID).FirstOrDefault().APPROVEDTRADECYCLEDAYS : null,
-                        approvedTradeCycleId = x.d.APPROVEDTRADECYCLEID
+                        //approvedTradeCycleDays = context.TBL_APPROVED_TRADE_CYCLE.Where(T => T.APPROVEDTRADECYCLEID == x.d.APPROVEDTRADECYCLEID).FirstOrDefault().APPROVEDTRADECYCLEDAYS : null,
+                        //approvedTradeCycleId = x.d.APPROVEDTRADECYCLEID
                     })
                     .ToList();
 
@@ -3276,7 +3277,8 @@ namespace FintrakBanking.Repositories.Credit
                 misCode = a.MISCODE,
                 teamMisCode = a.TEAMMISCODE,
                 interestRate = a.INTERESTRATE,
-                isRelatedParty = a.ISRELATEDPARTY,
+                //isRelatedParty = a.ISRELATEDPARTY,
+                isRelatedParty = a.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.TBL_CUSTOMER.ISREALATEDPARTY == true),
                 isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                 submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
                 customerGroupId = a.CUSTOMERGROUPID ?? 0,
