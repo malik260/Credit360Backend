@@ -1188,6 +1188,9 @@ namespace FintrakBanking.Repositories.Customer
                             company.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                             company.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                             company.COMPANYSTRUCTURE = entity.companyStructure;
+                            company.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                            company.ISSTARTUP = entity.isStartUp;
+                            company.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
                         }
                         else //If customer main table AccountCreationCompleted equals true then save record in temp table
                         {
@@ -1216,6 +1219,9 @@ namespace FintrakBanking.Repositories.Customer
                                 temp.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                                 temp.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                                 temp.COMPANYSTRUCTURE = entity.companyStructure;
+                                temp.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                                temp.ISSTARTUP = entity.isStartUp;
+                                temp.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
                             }
                             else //if customer company information has no existing record being modified and approved, insert new row
                             {
@@ -1238,6 +1244,9 @@ namespace FintrakBanking.Repositories.Customer
                                 temp.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                                 temp.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                                 temp.COMPANYSTRUCTURE = entity.companyStructure;
+                                temp.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                                temp.ISSTARTUP = entity.isStartUp;
+                                temp.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
 
                                 context.TBL_TEMP_CUSTOMER_COMPANYINFO.Add(temp);
                             }
@@ -1301,6 +1310,9 @@ namespace FintrakBanking.Repositories.Customer
                         company.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                         company.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                         company.COMPANYSTRUCTURE = entity.companyStructure;
+                        company.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                        company.ISSTARTUP = entity.isStartUp;
+                        company.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
                         context.TBL_CUSTOMER_COMPANYINFOMATION.Add(company);
 
                     }
@@ -1353,6 +1365,9 @@ namespace FintrakBanking.Repositories.Customer
                 info.NUMBEROFEMPLOYEES = ent.numberOfEmployees;
                 info.COUNTRYOFPARENTCOMPANYID = ent.countryOfParentCompanyId;
                 info.COMPANYSTRUCTURE = ent.companyStructure;
+                info.NOOFFEMALEEMPLOYEES = ent.noOfFemaleEmployees;
+                info.ISSTARTUP = ent.isStartUp;
+                info.ISFIRSTTIMECREDIT = ent.isFirstTimeCredit;
                 context.TBL_CUSTOMER_COMPANYINFOMATION.Add(info);
 
                 // Audit Section ---------------------------
@@ -1399,6 +1414,9 @@ namespace FintrakBanking.Repositories.Customer
                     info.NUMBEROFEMPLOYEES = ent.numberOfEmployees;
                     info.COUNTRYOFPARENTCOMPANYID = ent.countryOfParentCompanyId;
                     info.COMPANYSTRUCTURE = ent.companyStructure;
+                    info.NOOFFEMALEEMPLOYEES = ent.noOfFemaleEmployees;
+                    info.ISSTARTUP = ent.isStartUp;
+                    info.ISFIRSTTIMECREDIT = ent.isFirstTimeCredit;
                 }
             }
 
@@ -3749,7 +3767,11 @@ namespace FintrakBanking.Repositories.Customer
                               registrationNumber = d.REGISTRATIONNUMBER,
                               paidUpCapital = d.PAIDUPCAPITAL,
                               authorizedCapital = d.AUTHORISEDCAPITAL,
-                              shareholderFund = d.SHAREHOLDER_FUND
+                              shareholderFund = d.SHAREHOLDER_FUND,
+                              numberOfEmployees = d.NUMBEROFEMPLOYEES,
+                              noOfFemaleEmployees = d.NOOFFEMALEEMPLOYEES,
+                              isStartUp = d.ISSTARTUP,
+                              isFirstTimeCredit = d.ISFIRSTTIMECREDIT
                           }).FirstOrDefault();
             return comany;
         }
@@ -3775,7 +3797,10 @@ namespace FintrakBanking.Repositories.Customer
                               numberOfEmployees = d.NUMBEROFEMPLOYEES,
                               countryOfParentCompanyId =d.COUNTRYOFPARENTCOMPANYID,
                               companyStructure = d.COMPANYSTRUCTURE,
-        }).FirstOrDefault();
+                              noOfFemaleEmployees = d.NOOFFEMALEEMPLOYEES,
+                              isStartUp = d.ISSTARTUP,
+                              isFirstTimeCredit = d.ISFIRSTTIMECREDIT
+                          }).FirstOrDefault();
             return comany;
         }
 
@@ -4909,6 +4934,10 @@ namespace FintrakBanking.Repositories.Customer
                 entity.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
                 entity.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
                 entity.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+                entity.NOOFFEMALEEMPLOYEES = temp.NOOFFEMALEEMPLOYEES;
+                entity.ISSTARTUP = temp.ISSTARTUP;
+                entity.ISFIRSTTIMECREDIT = temp.ISFIRSTTIMECREDIT;
+                entity.NUMBEROFEMPLOYEES = temp.NUMBEROFEMPLOYEES;
             }
             else
             {
@@ -4925,6 +4954,10 @@ namespace FintrakBanking.Repositories.Customer
                 corporateInfo.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
                 corporateInfo.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
                 corporateInfo.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+                corporateInfo.NOOFFEMALEEMPLOYEES = entity.NOOFFEMALEEMPLOYEES;
+                corporateInfo.ISSTARTUP = entity.ISSTARTUP;
+                corporateInfo.ISFIRSTTIMECREDIT = entity.ISFIRSTTIMECREDIT;
+                corporateInfo.NUMBEROFEMPLOYEES = entity.NUMBEROFEMPLOYEES;
                 context.TBL_CUSTOMER_COMPANYINFOMATION.Add(corporateInfo);
             }
 
