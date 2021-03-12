@@ -1828,6 +1828,7 @@ namespace FintrakBanking.Repositories.Credit
                 using (var trans = context.Database.BeginTransaction())
                 {
                     var lmsrDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                    workflow.FacilityAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT);
                     workflow.BusinessUnitId = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == lmsrDetail.FirstOrDefault().CUSTOMERID).BUSINESSUNTID;
                     workflow.StaffId = model.lastUpdatedBy;
                     workflow.CompanyId = appl.COMPANYID;

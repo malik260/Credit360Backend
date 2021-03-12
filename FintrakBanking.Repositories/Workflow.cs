@@ -849,9 +849,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.newStateId = (int)ApprovalState.Processing;
             if (this.statusId == (int)ApprovalStatusEnum.Pending) this.statusId = (int)ApprovalStatusEnum.Processing;
             this.operation = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == this.operationId);
-            if (this.operation.USEFACILITYAMOUNTONLY && this.facilityAmount > 0)
+            if ((this.operation?.USEFACILITYAMOUNTONLY ?? false) && this.facilityAmount > 0)
             {
                 this.Amount = this.facilityAmount;
+                this.levelBusinessRule.Amount = this.facilityAmount;
+                this.levelBusinessRule.PepAmount = this.facilityAmount;
             }
             // if (IsSpecialReferedBackResponse()) this.statusId = (int)ApprovalStatusEnum.Processing;
             
