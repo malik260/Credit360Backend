@@ -3400,7 +3400,11 @@ namespace FintrakBanking.Repositories.Credit
         public List<InsurancePolicy> GetCollateralInsurancePolicies(int collateralId)
         {
             var insurance = context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == collateralId
-                                                                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED == false)
+                                                                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
+                                                                        || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                                                        || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                                                                        || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing
+                                                                        && x.DELETED == false)
                 .Select(i => new InsurancePolicy
                 {
                     referenceNumber = i.POLICYREFERENCENUMBER,
@@ -3417,7 +3421,7 @@ namespace FintrakBanking.Repositories.Credit
                     premiumPercent = i.PREMIUMPERCENT,
                     differInsurancePolicy = i.DIFFERPOLICY,
                     companyAddress = i.COMPANYADDRESS,
-                    //insuranceType = context.TBL_INSURANCE_TYPE.Where(ins => ins.INSURANCETYPEID == i.INSURANCETYPEID).Select(ins => ins.INSURANCETYPE).FirstOrDefault()
+                    insuranceType = context.TBL_INSURANCE_TYPE.Where(ins => ins.INSURANCETYPEID == i.INSURANCETYPEID).Select(ins => ins.INSURANCETYPE).FirstOrDefault()
 
                 }).ToList();
 
@@ -3428,7 +3432,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var insurance = context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == collateralId
                                                                         && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                                                                        || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                                                                        || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                                                                        || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing
+                                                                        || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                 .Select(i => new InsurancePolicy
                 {
                     referenceNumber = i.POLICYREFERENCENUMBER,
