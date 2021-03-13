@@ -679,6 +679,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut, Route("customer-collateral-insurance-tracking-update/{id}")]
+        public HttpResponseMessage GetCustomerCollateralInsuranceTrackingUpdate( int id, [FromBody] CollateralInsuranceTrackingViewModel model)
+        {
+            try
+            {
+                int response = repo.UpdateCollateralInsuranceTrackingForm(token.GetStaffId, id, model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+
 
 
         [HttpGet, Route("temp-item-policy")]
