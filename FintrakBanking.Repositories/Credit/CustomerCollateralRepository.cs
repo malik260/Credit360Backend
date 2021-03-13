@@ -8186,100 +8186,158 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddTempImmovablePropertyCollateral(int collateralId, CollateralViewModel entity)
         {
-            var comment = string.Empty;
+            
+                var comment = string.Empty;
 
-            if (entity.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
-            {
-                var property = (from x in context.TBL_COLLATERAL_IMMOVE_PROPERTY
-                                where x.COLLATERALCUSTOMERID == collateralId
-                                select (x)).FirstOrDefault();
-
-                if (property != null)
+                if (entity.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
                 {
-                    if (property.PERFECTIONSTATUSID != entity.perfectionStatusId)
-                    {
-                        var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
-                        NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
-                    }
-                    if (property.LASTVALUATIONDATE != entity.lastValuationDate)
-                    {
-                        var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
-                        NotifyForCollateralRevaluation(collateral, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
-                        NotifyForCollateralVisitation(collateral);
-                    }
-                    property.CITYID = entity.cityId;
-                    property.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
-                    property.CONSTRUCTIONDATE = entity.constructionDate;
-                    property.COUNTRYID = entity.countryId;
-                    property.DATEOFACQUISITION = entity.dateOfAcquisition;
-                    property.FORCEDSALEVALUE = entity.forcedSaleValue;
-                    property.LASTVALUATIONDATE = entity.lastValuationDate;
-                    //property.NEXTVALUATIONDATE = entity.nextValuationDate;
-                    property.LATITUDE = entity.latitude;
-                    property.LONGITUDE = entity.longitude;
-                    property.NEARESTBUSSTOP = entity.nearestBusStop;
-                    property.NEARESTLANDMARK = entity.nearestLandMark;
-                    property.OPENMARKETVALUE = entity.openMarketValue;
-                    property.PERFECTIONSTATUSID = (byte)entity.perfectionStatusId;
-                    property.PERFECTIONSTATUSREASON = entity.perfectionStatusReason;
-                    property.PROPERTYADDRESS = entity.propertyAddress;
-                    property.PROPERTYNAME = entity.propertyName;
-                    property.PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId;
-                    property.REMARK = entity.remark;
-                    property.SECURITYVALUE = entity.securityValue;
-                    property.STAMPTOCOVER = entity.stampToCover;
-                    property.VALUATIONAMOUNT = entity.valuationAmount;
-                    property.VALUERID = entity.valuerId;
-                    property.VALUERREFERENCENUMBER = entity.valuerReferenceNumber;
-                    property.ISOWNEROCCUPIED = entity.isOwnerOccupied;
-                    property.ISRESIDENTIAL = entity.isResidential;
-                    property.ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty;
-                    property.THRIDPARTYNAME = entity.thirdPartyName;
-                    property.ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee;
-                    property.TRUSTEENAME = entity.trusteeName;
-                    property.STATEID = entity.stateId;
-                    property.LOCALGOVERNMENTID = entity.localGovernmentId;
-                    property.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
-                    property.ESTIMATEDVALUE = entity.estimatedValue;
-                    comment = $"Prperty collateral type has been updated through loan application by {entity.createdBy} staffid";
+                    var property = (from x in context.TBL_COLLATERAL_IMMOVE_PROPERTY
+                                    where x.COLLATERALCUSTOMERID == collateralId
+                                    select (x)).FirstOrDefault();
 
-                    property.VALUERNAME = entity.valuerName;
-                    property.VALUERACCOUNTNUMBER = entity.valuerAccountNumber;
-                    //if (entity.valuerId == 72) {
-                    //}
+                    if (property != null)
+                    {
+                        if (property.PERFECTIONSTATUSID != entity.perfectionStatusId)
+                        {
+                            var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
+                            NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
+                        }
+                        if (property.LASTVALUATIONDATE != entity.lastValuationDate)
+                        {
+                            var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
+                            NotifyForCollateralRevaluation(collateral, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
+                            NotifyForCollateralVisitation(collateral);
+                        }
+                        property.CITYID = entity.cityId;
+                        property.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
+                        property.CONSTRUCTIONDATE = entity.constructionDate;
+                        property.COUNTRYID = entity.countryId;
+                        property.DATEOFACQUISITION = entity.dateOfAcquisition;
+                        property.FORCEDSALEVALUE = entity.forcedSaleValue;
+                        property.LASTVALUATIONDATE = entity.lastValuationDate;
+                        //property.NEXTVALUATIONDATE = entity.nextValuationDate;
+                        property.LATITUDE = entity.latitude;
+                        property.LONGITUDE = entity.longitude;
+                        property.NEARESTBUSSTOP = entity.nearestBusStop;
+                        property.NEARESTLANDMARK = entity.nearestLandMark;
+                        property.OPENMARKETVALUE = entity.openMarketValue;
+                        property.PERFECTIONSTATUSID = (byte)entity.perfectionStatusId;
+                        property.PERFECTIONSTATUSREASON = entity.perfectionStatusReason;
+                        property.PROPERTYADDRESS = entity.propertyAddress;
+                        property.PROPERTYNAME = entity.propertyName;
+                        property.PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId;
+                        property.REMARK = entity.remark;
+                        property.SECURITYVALUE = entity.securityValue;
+                        property.STAMPTOCOVER = entity.stampToCover;
+                        property.VALUATIONAMOUNT = entity.valuationAmount;
+                        property.VALUERID = entity.valuerId;
+                        property.VALUERREFERENCENUMBER = entity.valuerReferenceNumber;
+                        property.ISOWNEROCCUPIED = entity.isOwnerOccupied;
+                        property.ISRESIDENTIAL = entity.isResidential;
+                        property.ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty;
+                        property.THRIDPARTYNAME = entity.thirdPartyName;
+                        property.ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee;
+                        property.TRUSTEENAME = entity.trusteeName;
+                        property.STATEID = entity.stateId;
+                        property.LOCALGOVERNMENTID = entity.localGovernmentId;
+                        property.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
+                        property.ESTIMATEDVALUE = entity.estimatedValue;
+                        comment = $"Prperty collateral type has been updated through loan application by {entity.createdBy} staffid";
 
-                    return;
+                        property.VALUERNAME = entity.valuerName;
+                        property.VALUERACCOUNTNUMBER = entity.valuerAccountNumber;
+                        //if (entity.valuerId == 72) {
+                        //}
+
+                        return;
+                    }
+                    else
+                    {
+                        var prop = new TBL_COLLATERAL_IMMOVE_PROPERTY
+                        {
+
+                            CITYID = entity.cityId,
+                            COLLATERALCUSTOMERID = collateralId,
+                            COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
+                            CONSTRUCTIONDATE = entity.constructionDate,
+                            COUNTRYID = entity.countryId,
+                            DATEOFACQUISITION = entity.dateOfAcquisition,
+                            FORCEDSALEVALUE = entity.forcedSaleValue,
+                            LASTVALUATIONDATE = entity.lastValuationDate,
+                            //NEXTVALUATIONDATE = entity.nextValuationDate,
+                            LATITUDE = entity.latitude,
+                            LONGITUDE = entity.longitude,
+                            NEARESTBUSSTOP = entity.nearestBusStop,
+                            NEARESTLANDMARK = entity.nearestLandMark,
+                            OPENMARKETVALUE = entity.openMarketValue,
+                            PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
+                            PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
+                            PROPERTYADDRESS = entity.propertyAddress,
+                            PROPERTYNAME = entity.propertyName,
+                            PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId,
+                            REMARK = entity.remark,
+                            SECURITYVALUE = entity.securityValue,
+                            STAMPTOCOVER = entity.stampToCover,
+                            VALUATIONAMOUNT = entity.valuationAmount,
+                            VALUERID = entity.valuerId,
+                            VALUERREFERENCENUMBER = entity.valuerReferenceNumber,
+                            ISOWNEROCCUPIED = entity.isOwnerOccupied,
+                            ISRESIDENTIAL = entity.isResidential,
+                            ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty,
+                            THRIDPARTYNAME = entity.thirdPartyName,
+                            ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee,
+                            TRUSTEENAME = entity.trusteeName,
+                            STATEID = entity.stateId,
+                            LOCALGOVERNMENTID = entity.localGovernmentId,
+                            BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral,
+                            ESTIMATEDVALUE = entity.estimatedValue,
+
+                            VALUERNAME = entity.valuerName,
+                            VALUERACCOUNTNUMBER = entity.valuerAccountNumber,
+
+                        };
+                        context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(prop);
+                        comment = $"New property collateral type has been created through loan application by {entity.createdBy} staffid";
+                        if (context.SaveChanges() != 0)
+                        {
+                            var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
+                            NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
+                            NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
+                            NotifyForCollateralRevaluation(collateral, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
+                            NotifyForCollateralVisitation(collateral);
+                        }
+
+                    }
                 }
                 else
                 {
-                    var prop = new TBL_COLLATERAL_IMMOVE_PROPERTY
+                    context.TBL_TEMP_COLLATERAL_IMMOV_PROP.Add(new TBL_TEMP_COLLATERAL_IMMOV_PROP
                     {
-
-                        CITYID = entity.cityId,
-                        COLLATERALCUSTOMERID = collateralId,
-                        COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
-                        CONSTRUCTIONDATE = entity.constructionDate,
+                        TEMPCOLLATERALCUSTOMERID = collateralId,
+                        PROPERTYNAME = entity.propertyName,
+                        CITYID = (int)entity.cityId,
                         COUNTRYID = entity.countryId,
+                        CONSTRUCTIONDATE = entity.constructionDate,
+                        PROPERTYADDRESS = entity.propertyAddress,
                         DATEOFACQUISITION = entity.dateOfAcquisition,
-                        FORCEDSALEVALUE = entity.forcedSaleValue,
                         LASTVALUATIONDATE = entity.lastValuationDate,
                         //NEXTVALUATIONDATE = entity.nextValuationDate,
-                        LATITUDE = entity.latitude,
-                        LONGITUDE = entity.longitude,
-                        NEARESTBUSSTOP = entity.nearestBusStop,
-                        NEARESTLANDMARK = entity.nearestLandMark,
-                        OPENMARKETVALUE = entity.openMarketValue,
-                        PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
-                        PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
-                        PROPERTYADDRESS = entity.propertyAddress,
-                        PROPERTYNAME = entity.propertyName,
-                        PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId,
-                        REMARK = entity.remark,
-                        SECURITYVALUE = entity.securityValue,
-                        STAMPTOCOVER = entity.stampToCover,
-                        VALUATIONAMOUNT = entity.valuationAmount,
                         VALUERID = entity.valuerId,
                         VALUERREFERENCENUMBER = entity.valuerReferenceNumber,
+                        PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId,
+                        OPENMARKETVALUE = entity.openMarketValue,
+                        FORCEDSALEVALUE = entity.forcedSaleValue,
+                        STAMPTOCOVER = entity.stampToCover,
+                        SECURITYVALUE = entity.securityValue,
+                        COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
+                        REMARK = entity.remark,
+                        NEARESTLANDMARK = entity.nearestLandMark,
+                        NEARESTBUSSTOP = entity.nearestBusStop,
+                        LONGITUDE = entity.longitude,
+                        LATITUDE = entity.latitude,
+                        PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
+                        PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
+                        VALUATIONAMOUNT = entity.valuationAmount,
                         ISOWNEROCCUPIED = entity.isOwnerOccupied,
                         ISRESIDENTIAL = entity.isResidential,
                         ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty,
@@ -8294,78 +8352,21 @@ namespace FintrakBanking.Repositories.Credit
                         VALUERNAME = entity.valuerName,
                         VALUERACCOUNTNUMBER = entity.valuerAccountNumber,
 
-                    };
-                    context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(prop);
-                    comment = $"New property collateral type has been created through loan application by {entity.createdBy} staffid";
-                    if (context.SaveChanges() != 0)
-                    {
-                        var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
-                        NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
-                        NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
-                        NotifyForCollateralRevaluation(collateral, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
-                        NotifyForCollateralVisitation(collateral);
-                    }
-                   
+
+                    });
+                    comment = $"New temp property collateral type has been cretated by {entity.createdBy} staffid";
+                    workflow.StaffId = entity.createdBy;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = collateralId;
+                    workflow.Comment = comment;
+                    workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
                 }
-            }
-            else
-            {
-                context.TBL_TEMP_COLLATERAL_IMMOV_PROP.Add(new TBL_TEMP_COLLATERAL_IMMOV_PROP
-                {
-                    TEMPCOLLATERALCUSTOMERID = collateralId,
-                    PROPERTYNAME = entity.propertyName,
-                    CITYID = (int)entity.cityId,
-                    COUNTRYID = entity.countryId,
-                    CONSTRUCTIONDATE = entity.constructionDate,
-                    PROPERTYADDRESS = entity.propertyAddress,
-                    DATEOFACQUISITION = entity.dateOfAcquisition,
-                    LASTVALUATIONDATE = entity.lastValuationDate,
-                    //NEXTVALUATIONDATE = entity.nextValuationDate,
-                    VALUERID = entity.valuerId,
-                    VALUERREFERENCENUMBER = entity.valuerReferenceNumber,
-                    PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId,
-                    OPENMARKETVALUE = entity.openMarketValue,
-                    FORCEDSALEVALUE = entity.forcedSaleValue,
-                    STAMPTOCOVER = entity.stampToCover,
-                    SECURITYVALUE = entity.securityValue,
-                    COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
-                    REMARK = entity.remark,
-                    NEARESTLANDMARK = entity.nearestLandMark,
-                    NEARESTBUSSTOP = entity.nearestBusStop,
-                    LONGITUDE = entity.longitude,
-                    LATITUDE = entity.latitude,
-                    PERFECTIONSTATUSID = (byte)entity.perfectionStatusId,
-                    PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
-                    VALUATIONAMOUNT = entity.valuationAmount,
-                    ISOWNEROCCUPIED = entity.isOwnerOccupied,
-                    ISRESIDENTIAL = entity.isResidential,
-                    ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty,
-                    THRIDPARTYNAME = entity.thirdPartyName,
-                    ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee,
-                    TRUSTEENAME = entity.trusteeName,
-                    STATEID = entity.stateId,
-                    LOCALGOVERNMENTID = entity.localGovernmentId,
-                    BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral,
-                    ESTIMATEDVALUE = entity.estimatedValue,
 
-                    VALUERNAME = entity.valuerName,
-                    VALUERACCOUNTNUMBER = entity.valuerAccountNumber,
-
-
-                });
-                comment = $"New temp property collateral type has been cretated by {entity.createdBy} staffid";
-                workflow.StaffId = entity.createdBy;
-                workflow.CompanyId = entity.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = collateralId;
-                workflow.Comment = comment;
-                workflow.OperationId = (int)OperationsEnum.CollateralApproval;
-                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                workflow.ExternalInitialization = true;
-                workflow.LogActivity();
-            }
-
-
+            
         }
 
         private void AddTempCasaCollateral(int collateralId, CollateralViewModel entity)

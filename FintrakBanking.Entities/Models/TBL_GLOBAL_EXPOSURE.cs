@@ -94,6 +94,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         //public string TELEPHONENUMBER { get; set; }
         public string PHONENO { get; set; }
         public string EMAIL { get; set; }
+        public DateTime? NEXTREPAYMENTINTDATE { get; set; }
 
 
     }
