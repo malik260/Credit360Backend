@@ -8880,7 +8880,7 @@ namespace FintrakBanking.Repositories.Credit
                    
                     var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
                     {
-                           INSURANCETYPEID  = model.insuranceTypeId,
+                           
                            INSURANCECOMPANYNAME = model.insuranceCompany,
                            ISURANCECOMPANYADDRESS = model.companyAddress,
                            POLICYNUMBER = model.referenceNumber,
@@ -8915,6 +8915,59 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
             
+
+            return 0;
+        }
+
+        public int UpdateCollateralInsuranceTrackingForm(int accountOfficer, int id, CollateralInsuranceTrackingViewModel model)
+        {
+
+
+            if (id == 0)
+            {
+                throw new ConditionNotMetException("Tracking Reference ID is Null");
+
+            }
+            else
+            {
+                
+                var cit = context.TBL_COLLATERAL_INSURANCE_TRACKING.Find(id);
+                if (cit == null) { return 0; }
+
+                cit.INSURANCECOMPANYNAME = model.insuranceCompany;
+                    cit.ISURANCECOMPANYADDRESS = model.companyAddress;
+                    cit.POLICYNUMBER = model.referenceNumber;
+                    cit.INSURANCESTARTDATE = model.startDate;
+                    cit.INSURANCEENDDATE = model.expiryDate;
+                    cit.SUMINSURED = model.sumInsured;
+                    cit.PREMIUMPAID = model.inSurPremiumAmount;
+                    cit.INSURANCESTATUSID = model.insuranceStatus;
+                    cit.COLLATERALCUSTOMERID = model.collateralCustomerId;
+                    cit.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+                    cit.VALUATIONSTARTDATE = model.valuationStartDate;
+                    cit.VALUATIONENDDATE = model.valuationEndDate;
+                    cit.OMV = model.openMarketValue;
+                    cit.FSV = model.forcedSaleValue;
+                    cit.VALUER = model.valuer;
+                    cit.COLLATERALDETAILS = model.collateralDetails;
+                    cit.INSURANCEPOLICYTYPEID = model.insurancePolicyTypeId;
+                
+
+                try
+                {
+                    if (context.SaveChanges() > 0)
+                    {
+                        return cit.COLLATERALINSURANCETRACKINGID;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
+
+
 
             return 0;
         }
@@ -10828,17 +10881,23 @@ namespace FintrakBanking.Repositories.Credit
             var insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == collateralId)
                 .Select(x => new InsurancePolicy
                 {
-
+                    collateralInsuranceTrackingId = x.COLLATERALINSURANCETRACKINGID,
                     referenceNumber = x.POLICYNUMBER,
                     insuranceCompany = x.INSURANCECOMPANYNAME,
                     sumInsured = x.SUMINSURED,
                     startDate = x.INSURANCESTARTDATE,
                     expiryDate = x.INSURANCEENDDATE,
                     insurancePolicyType = context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == x.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault(),
-                    insuranceType = context.TBL_INSURANCE_TYPE.Where(o => o.INSURANCETYPEID == x.INSURANCETYPEID).Select(o => o.INSURANCETYPE).FirstOrDefault(),
+                    insurancePolicyTypeId = x.INSURANCEPOLICYTYPEID,
                     insuranceStatus = context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == x.INSURANCESTATUSID).Select(o => o.INSURANCESTATUS).FirstOrDefault(),
                     inSurPremiumAmount = x.PREMIUMPAID,
+                    insuranceStatusId = x.INSURANCESTATUSID,
                     companyAddress = x.ISURANCECOMPANYADDRESS,
+                    valuationStartDate = x.VALUATIONSTARTDATE,
+                    valuationEndDate = x.VALUATIONENDDATE,
+                    omv = x.OMV,
+                    fsv = x.FSV,
+                    valuer = x.VALUER,
                     collateralDetails = x.COLLATERALDETAILS
                     
                     

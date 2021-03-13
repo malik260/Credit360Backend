@@ -530,6 +530,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string insurancePolicyType { get; set; }
         public string insuranceStatus { get; set; }
         public string collateralDetails { get; set; }
+        public DateTime valuationStartDate { get; set; }
+        public DateTime valuationEndDate { get; set; }
+        public decimal omv { get; set; }
+        public decimal fsv { get; set; }
+        public string valuer { get; set; }
+        public int insuranceStatusId { get; set; }
+        public int collateralInsuranceTrackingId { get; set; }
     }
 
     public class NewCollateralViewModel

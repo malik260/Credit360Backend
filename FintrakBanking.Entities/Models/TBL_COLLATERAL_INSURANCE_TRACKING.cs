@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
         public string INSURANCECOMPANYNAME { get; set; }
         public string ISURANCECOMPANYADDRESS { get; set; }
         public string POLICYNUMBER { get; set; }
-        public int INSURANCETYPEID { get; set; }
+       
         public DateTime VALUATIONSTARTDATE { get; set; }
         public DateTime VALUATIONENDDATE { get; set; }
         public decimal OMV { get; set; }
