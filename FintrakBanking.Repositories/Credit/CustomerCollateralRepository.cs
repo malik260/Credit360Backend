@@ -5251,6 +5251,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 collateralId = x.COLLATERALCUSTOMERID,
                 collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.COLLATERALCUSTOMERID == collateralId).FirstOrDefault().COLLATERALSUBTYPEID,
+                revaluationDuration = (from a in context.TBL_COLLATERAL_CUSTOMER join b in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals b.COLLATERALSUBTYPEID where a.COLLATERALCUSTOMERID == collateralId select b.REVALUATIONDURATION).FirstOrDefault(), .Where(c => c.COLLATERALCUSTOMERID == collateralId).FirstOrDefault().COLLATERALSUBTYPEID,
                 collateralPropertyId = x.COLLATERALPROPERTYID,
                 collateralCustomerId = x.COLLATERALCUSTOMERID,
                 propertyName = x.PROPERTYNAME,

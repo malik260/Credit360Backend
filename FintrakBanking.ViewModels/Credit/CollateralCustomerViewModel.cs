@@ -414,6 +414,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationId2 { get; set; }
         public decimal facilityAmount { get; set; }
         public string customerAccount { get; set; }
+        public int revaluationDuration { get; set; }
     }
 
     public class crossGarantee
