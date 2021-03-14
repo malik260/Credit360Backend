@@ -910,12 +910,16 @@ namespace FintrakBanking.Repositories.Setups.General
             TimeSpan startRepay = new TimeSpan(6, 0, 0);
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
 
-            TimeSpan startCustomerrepay = new TimeSpan(13, 0, 0);
-            TimeSpan endCustomerrepay = new TimeSpan(13, 5, 0);
 
-            if ((now >= startCustomerrepay) && (now <= endCustomerrepay))
+
+            if (CompareCustomerNotificationDate() == true)
             {
-                GetImminentMaturitiesForCustomers();
+                TimeSpan startCustomerrepay = new TimeSpan(13, 10, 0);
+                TimeSpan endCustomerrepay = new TimeSpan(13, 20, 0);
+                if ((now >= startCustomerrepay) && (now <= endCustomerrepay))
+                {
+                    GetImminentMaturitiesForCustomers();
+                }
             }
 
             if ((now >= startRepay) && (now <= endRepay))
@@ -1111,6 +1115,21 @@ namespace FintrakBanking.Repositories.Setups.General
                 return true;
             }else
             return false;
+        }
+
+        private bool CompareCustomerNotificationDate()
+        {
+            DateTime currentDate = DateTime.Now;
+            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                         && (m.OPERATIONMETHOD.Trim() == "GetLoanRepaymentReminder"
+                         )).FirstOrDefault();
+
+            if (DBdate == null)
+            {
+                return true;
+            }
+            else
+                return false;
         }
 
         private bool CompareRecoveryExpectedDueDate()
@@ -1624,11 +1643,13 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
 
                     List<AlertsViewModel> alerts = new List<AlertsViewModel>();
-                    foreach (var i in loanRepaymentReminder)
+                    foreach (var i in loanRepaymentReminder) 
                     {
                         numberOfDays = (i.SCHEDULEDUEDATE.Value - DateTime.Now).Days;
-                       var dueDate = i.SCHEDULEDUEDATE?.ToString("dd-MM-yyyy");
-                       var amountDue = i.ALPHACODE+""+ string.Format("{0:#,##.00}", Convert.ToDecimal(i.AMOUNTDUE.Value));
+                        var dueDate = i.SCHEDULEDUEDATE?.ToString("dd-MM-yyyy");
+                        var interestDueDate = i.NEXTREPAYMENTINTDATE?.ToString("dd-MM-yyyy");
+                        var amountDue = i.ALPHACODE+""+ string.Format("{0:#,##.00}", Convert.ToDecimal(i.AMOUNTDUE.Value));
+                        var interestAmountDue = i.ALPHACODE + "" + string.Format("{0:#,##.00}", Convert.ToDecimal(i.UNPOINTERESTAMOUNT.Value));
                         AlertsViewModel alert = new AlertsViewModel();
                         var alertTitle = alertTitleInfo.TITLE;
                         var alertTemplate = alertTitleInfo.TEMPLATE;
@@ -1639,6 +1660,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             alertTemplate = alertTemplate.Replace("@{{maturityBand}}", numberOfDays.ToString());
                             alertTemplate = alertTemplate.Replace("@{{amountDue}}", amountDue);
                             alertTemplate = alertTemplate.Replace("@{{dueDate}}", dueDate);
+                            alertTemplate = alertTemplate.Replace("@{{interestAmountDue}}", interestAmountDue);
+                            alertTemplate = alertTemplate.Replace("@{{interestDueDate}}", interestDueDate);
                             emailList = i.EMAIL + ";benjamin.gbaaikye@fintraksoftware.com";
                             //emailList = emailList+";"+defaultEmail;
                             alert.receiverEmailList.Add(emailList);
