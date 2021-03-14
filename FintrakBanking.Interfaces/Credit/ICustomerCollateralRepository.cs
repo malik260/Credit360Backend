@@ -65,6 +65,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool ApproveCollateralRelease(ApprovalViewModel entity, int staffId, GeneralEntity model);
         IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease(int staffId);
         List<InsurancePolicy> GetCollateralInsurancePolicy(int collateralId);
+        string GetInsurancePolicyCollateralReport(int trackingId);
         IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId);
         //bool AssignCollateral(ActiveCustomerCollateralViewModel entity);
 

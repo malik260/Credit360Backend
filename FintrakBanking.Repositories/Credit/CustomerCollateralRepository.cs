@@ -28,12 +28,14 @@ using System.ServiceModel;
 using FintrakBanking.Common;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Configuration;
+using FintrakBanking.Entities.StagingModels;
 
 namespace FintrakBanking.Repositories.Credit
 {
     public class CustomerCollateralRepository : ICustomerCollateralRepository
     {
         private FinTrakBankingContext context;
+        private FinTrakBankingStagingContext stageContext;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
         private IProductRepository product;
@@ -64,11 +66,13 @@ namespace FintrakBanking.Repositories.Credit
             ICasaLienRepository _lien,
             ICasaRepository _casa,
             IIntegrationWithFinacle _finacle,
-            ICreditDrawdownRepository _drawdownRepo
+            ICreditDrawdownRepository _drawdownRepo,
+            FinTrakBankingStagingContext _stageContext
             //IAlertRepository _alert
             )
         {
             this.context = _context;
+            this.stageContext = _stageContext;
             this.genSetup = _genSetup;
             this.auditTrail = _auditTrail;
             this.product = _product;
@@ -10945,12 +10949,131 @@ namespace FintrakBanking.Repositories.Credit
                     valuer = x.VALUER,
                     collateralDetails = x.COLLATERALDETAILS,
                     isInformationConfirmed = x.ISINFORMATIONCONFIRMED == true ? "TRUE" : "FALSE"
-
-
-
                 })).ToList();
 
             return insurance;
+        }
+
+
+        public string GetInsurancePolicyCollateralReport(int trackingId)
+        {
+            if (trackingId == 0)
+            {
+                return null;
+            }
+
+              var insurance = context.TBL_COLLATERAL_INSURANCE_TRACKING.Find(trackingId);
+              var  loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(insurance.LOANAPPLICATIONDETAILID);
+              var loanApplication = context.TBL_LOAN_APPLICATION.Find(loanApplicationDetail.LOANAPPLICATIONID);
+              var customerAccount = context.TBL_CASA.Where(x => x.CUSTOMERID == loanApplicationDetail.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+              var staff = context.TBL_STAFF.Find(loanApplicationDetail.CREATEDBY);
+              var rm = context.TBL_STAFF.Find(staff.SUPERVISOR_STAFFID);
+              var gh = context.TBL_STAFF.Find(rm.SUPERVISOR_STAFFID);
+              var customer = context.TBL_CUSTOMER.Find(loanApplicationDetail.CUSTOMERID);
+              var teamName = stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.TEAMNAME).FirstOrDefault();
+              var divisionName = stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.DIVISIONNAME).FirstOrDefault();
+              var insurancePolicyType = context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == insurance.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
+              var loanTypeName = (from y in context.TBL_LOAN_APPLICATION_TYPE join p in context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONTYPEID equals p.LOANAPPLICATIONTYPEID where p.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID select y.LOANAPPLICATIONTYPENAME).FirstOrDefault();
+              var insuranceStatus = context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == insurance.INSURANCESTATUSID).Select(o => o.INSURANCESTATUS).FirstOrDefault();
+                                        
+
+            var result = String.Empty;
+              result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
+                        
+                    </tr>
+                    <tr>
+                        <td><b>INSURANCE POLICY REPORT</b></td>
+                        <td>{insurance?.POLICYNUMBER}</td>
+                    </tr>";
+            result = result + $"</table>";
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>ACCOUNT OFFICER NAME:</b></th>
+                        <th>{staff?.FIRSTNAME} {staff?.MIDDLENAME} {staff?.LASTNAME}</th>
+                        <th><b>ACCOUNT OFFICER EMAIL:</b></th>
+                        <th>{staff?.EMAIL}</th>
+                    </tr>
+                     <tr>
+                        <th><b>TEAM:</b></th>
+                        <th>{teamName}</th>
+                        <th><b>GROUP HEAD:</b></th>
+                        <th>{gh?.FIRSTNAME} {gh?.MIDDLENAME} {gh?.LASTNAME}</th>
+                    </tr>
+                      
+                    <tr>
+                        <td>DIVISION:</td>
+                        <td>{divisionName}</td>
+                        <td>CUSTOMER NAME:</td>
+                        <td>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
+                    </tr>
+                    <tr>
+                        <td>ACCOUNT NUMBER:</td>
+                        <td>{customerAccount}</td>
+                        <td>CUSTOMER ID:</td>
+                        <td>{customer?.CUSTOMERCODE}</td>
+                    </tr>
+                    <tr>
+                        <td>COLLATERAL DETAILS:</td>
+                        <td>{insurance?.COLLATERALDETAILS}</td>
+                        <td>SUM INSURED</td>
+                        <td>{string.Format("{0:#,##.00}", Convert.ToDecimal(insurance.SUMINSURED))}</td>
+                    </tr>
+                    <tr>
+                        <td>PREMIUM PAID:</td>
+                        <td>{string.Format("{0:#,##.00}", Convert.ToDecimal(insurance.PREMIUMPAID))}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>INSURANCE START DATE:</td>
+                        <td>{insurance?.INSURANCESTARTDATE.ToString("dd-MM-yyyy")}</td>
+                        <td>INSURANCE END DATE:</td>
+                        <td>{insurance?.INSURANCEENDDATE.ToString("dd-MM-yyyy")}</td>
+                    </tr>
+                    <tr>
+                        <td>INSURANCE POLICY TYPE:</td>
+                        <td>{insurancePolicyType}</td>
+                        <td>VALUATION START DATE:</td>
+                        <td>{insurance?.VALUATIONSTARTDATE.ToString("dd-MM-yyyy")}</td>
+                        </tr>
+                    <tr>
+                        <td>VALUATION END DATE:</td>
+                        <td>{insurance?.VALUATIONENDDATE.ToString("dd-MM-yyyy")}</td>
+                        <td>VALUATION OPEN MARKET VALUE:</td>
+                        <td>{insurance?.OMV}</td>
+                    </tr>
+                    <tr>
+                        <td>VALUATION OPEN MARKET VALUE:</td>
+                        <td>{insurance?.FSV}</td>
+                        <td>VALUER NAME:</td>
+                        <td>{insurance?.VALUER}</td>
+                    </tr>
+                    <tr>
+                        <td>LOAN AMOUNT:</td>
+                        <td>{loanApplicationDetail?.APPROVEDAMOUNT}</td>
+                        <td>LOAN TYPE:</td>
+                        <td>{loanTypeName}</td>
+                    </tr>
+                    <tr>
+                        <td>INSURANCE STATUS:</td>
+                        <td>{insuranceStatus}</td>
+                        <td>POLICY NUMBER:</td>
+                        <td>{insurance?.POLICYNUMBER}</td>
+                    </tr>
+                    <tr>
+                        <td>INSURANCE COMPANY:</td>
+                        <td>{insurance?.INSURANCECOMPANYNAME}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            
+            return result;
 
         }
 
