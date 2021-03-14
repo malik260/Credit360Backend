@@ -215,6 +215,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateInsurancePolicyRequest(CollateralInsuranceRequestViewModel model, int id);
         string GetLastComment(int targetId, int operationId);
         int UpdateCollateralInsuranceTrackingForm(int getStaffId, int id, CollateralInsuranceTrackingViewModel model);
+        int GetCustomerCollateralInsuranceDetailsConfirmation(int getStaffId, int id);
         #endregion
     }
 }

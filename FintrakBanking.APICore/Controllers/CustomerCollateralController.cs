@@ -693,6 +693,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("customer-collateral-insurance-details-confirmation/{id}")]
+        public HttpResponseMessage GetCustomerCollateralInsuranceDetailsConfirmation(int id)
+        {
+            try
+            {
+                int response = repo.GetCustomerCollateralInsuranceDetailsConfirmation(token.GetStaffId, id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
 
 
 

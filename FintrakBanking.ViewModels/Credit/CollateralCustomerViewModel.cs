@@ -538,6 +538,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string valuer { get; set; }
         public int insuranceStatusId { get; set; }
         public int collateralInsuranceTrackingId { get; set; }
+        public string isInformationConfirmed { get; set; }
     }
 
     public class NewCollateralViewModel

@@ -31,6 +31,7 @@ namespace FintrakBanking.Entities.Models
         public decimal FSV { get; set; }
         public string VALUER { get; set; }
         public string COLLATERALDETAILS { get; set; }
+        public bool ISINFORMATIONCONFIRMED { get; set; }
         
     }
 }

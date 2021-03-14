@@ -5251,7 +5251,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 collateralId = x.COLLATERALCUSTOMERID,
                 collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.COLLATERALCUSTOMERID == collateralId).FirstOrDefault().COLLATERALSUBTYPEID,
-                revaluationDuration = (from a in context.TBL_COLLATERAL_CUSTOMER join b in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals b.COLLATERALSUBTYPEID where a.COLLATERALCUSTOMERID == collateralId select b.REVALUATIONDURATION).FirstOrDefault(), .Where(c => c.COLLATERALCUSTOMERID == collateralId).FirstOrDefault().COLLATERALSUBTYPEID,
+                revaluationDuration = (from a in context.TBL_COLLATERAL_CUSTOMER join b in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals b.COLLATERALSUBTYPEID where a.COLLATERALCUSTOMERID == collateralId select b.REVALUATIONDURATION).FirstOrDefault(),
                 collateralPropertyId = x.COLLATERALPROPERTYID,
                 collateralCustomerId = x.COLLATERALCUSTOMERID,
                 propertyName = x.PROPERTYNAME,
@@ -8980,6 +8980,43 @@ namespace FintrakBanking.Repositories.Credit
             return 0;
         }
 
+        public int GetCustomerCollateralInsuranceDetailsConfirmation(int getStaffId, int id)
+        {
+
+
+            if (id == 0)
+            {
+                throw new ConditionNotMetException("Tracking Reference ID is Null");
+
+            }
+            else
+            {
+
+                var cit = context.TBL_COLLATERAL_INSURANCE_TRACKING.Find(id);
+                if (cit == null) { return 0; }
+
+                cit.ISINFORMATIONCONFIRMED = true;
+
+
+                try
+                {
+                    if (context.SaveChanges() > 0)
+                    {
+                        return cit.COLLATERALINSURANCETRACKINGID;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
+
+
+
+            return 0;
+        }
+
         public void NotifyForCollateralVisitation(TBL_COLLATERAL_CUSTOMER collateral, bool saveInternally = false)
         {
             string messageBody;
@@ -10906,9 +10943,10 @@ namespace FintrakBanking.Repositories.Credit
                     omv = x.OMV,
                     fsv = x.FSV,
                     valuer = x.VALUER,
-                    collateralDetails = x.COLLATERALDETAILS
-                    
-                    
+                    collateralDetails = x.COLLATERALDETAILS,
+                    isInformationConfirmed = x.ISINFORMATIONCONFIRMED == true ? "TRUE" : "FALSE"
+
+
 
                 })).ToList();
 
