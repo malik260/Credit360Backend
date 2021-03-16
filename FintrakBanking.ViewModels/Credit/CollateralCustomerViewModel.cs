@@ -1246,6 +1246,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public double haircut { get; set; }
         public string responsiblePerson { get; set; }
+        public string currentlyLevel { get; set; }
     }
 
 
