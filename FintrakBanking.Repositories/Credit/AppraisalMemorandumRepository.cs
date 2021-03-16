@@ -3004,8 +3004,8 @@ namespace FintrakBanking.Repositories.Credit
                         interestRepayment = x.d.INTERESTREPAYMENTID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.INTERESTREPAYMENTID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
                         interestRepaymentId = x.d.INTERESTREPAYMENTID,
                         moratorium = x.d.MORATORIUM,
-                        approvedTradeCycleDays= x.d.APPROVEDTRADECYCLEID != null ? context.TBL_APPROVED_TRADE_CYCLE.Where(T => T.APPROVEDTRADECYCLEID == x.d.APPROVEDTRADECYCLEID).FirstOrDefault().APPROVEDTRADECYCLEDAYS : null,
-                        approvedTradeCycleId = x.d.APPROVEDTRADECYCLEID
+                        //approvedTradeCycleDays = context.TBL_APPROVED_TRADE_CYCLE.Where(T => T.APPROVEDTRADECYCLEID == x.d.APPROVEDTRADECYCLEID).FirstOrDefault().APPROVEDTRADECYCLEDAYS : null,
+                        //approvedTradeCycleId = x.d.APPROVEDTRADECYCLEID
                     })
                     .ToList();
 

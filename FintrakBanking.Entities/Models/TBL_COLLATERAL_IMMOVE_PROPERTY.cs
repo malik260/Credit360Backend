@@ -76,7 +76,7 @@ namespace FintrakBanking.Entities.Models
 
         public byte PERFECTIONSTATUSID { get; set; }
 
-       // //[StringLength(200)]
+        // //[StringLength(200)]
         public string PERFECTIONSTATUSREASON { get; set; }
 
         public bool? ISOWNEROCCUPIED { get; set; }
