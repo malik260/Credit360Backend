@@ -8909,7 +8909,14 @@ namespace FintrakBanking.Repositories.Credit
                            FSV = model.forcedSaleValue,
                            VALUER = model.valuer,
                            COLLATERALDETAILS  = model.collateralDetails,
-                           INSURANCEPOLICYTYPEID = model.insurancePolicyTypeId
+                           INSURANCEPOLICYTYPEID = model.insurancePolicyTypeId,
+                           OTHERVALUER = model.otherValuer,
+                           OTHERINSURANCECOMPANY = model.otherInsuranceCompany,
+                           OTHERINSURANCEPOLICYTYPE = model.otherInsurancePolicyType,
+                           COLLATERALTYPE = model.collateralTypeId,
+                           COLLATERALSUBTYPE = model.collateralSubTypeId,
+                           GPSCOORDINATES = model.gpsCoordinates,
+
                     });
 
                     try
@@ -8963,8 +8970,12 @@ namespace FintrakBanking.Repositories.Credit
                     cit.VALUER = model.valuer;
                     cit.COLLATERALDETAILS = model.collateralDetails;
                     cit.INSURANCEPOLICYTYPEID = model.insurancePolicyTypeId;
-                
-
+                    cit.OTHERVALUER = model.otherValuer;
+                    cit.OTHERINSURANCECOMPANY = model.otherInsuranceCompany;
+                    cit.OTHERINSURANCEPOLICYTYPE = model.otherInsurancePolicyType;
+                    cit.COLLATERALTYPE = model.collateralTypeId;
+                    cit.COLLATERALSUBTYPE = model.collateralSubTypeId;
+                    cit.GPSCOORDINATES = model.gpsCoordinates;
                 try
                 {
                     if (context.SaveChanges() > 0)
@@ -10936,6 +10947,8 @@ namespace FintrakBanking.Repositories.Credit
                     sumInsured = x.SUMINSURED,
                     startDate = x.INSURANCESTARTDATE,
                     expiryDate = x.INSURANCEENDDATE,
+                    customerGroupId = (from a in context.TBL_CUSTOMER join b in context.TBL_LOAN_APPLICATION_DETAIL on a.CUSTOMERID equals b.CUSTOMERID join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID where b.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select c.CUSTOMERGROUPID).FirstOrDefault(),
+                    customerId = (from a in context.TBL_CUSTOMER join b in context.TBL_LOAN_APPLICATION_DETAIL on a.CUSTOMERID equals b.CUSTOMERID where b.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.CUSTOMERID).FirstOrDefault(),
                     insurancePolicyType = context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == x.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault(),
                     insurancePolicyTypeId = x.INSURANCEPOLICYTYPEID,
                     insuranceStatus = context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == x.INSURANCESTATUSID).Select(o => o.INSURANCESTATUS).FirstOrDefault(),
@@ -11925,12 +11938,12 @@ namespace FintrakBanking.Repositories.Credit
 
             return new InsuranceCompanyViewModel
             {
-                InsuranceCompanyId = entity.INSURANCECOMPANYID,
-                CompanyId = entity.COMPANYID,
-                CompanyName = entity.COMPANYNAME,
-                Address = entity.ADDRESS,
-                ContactEmail = entity.CONTACTEMAIL,
-                PhoneNumber = entity.PHONENUMBER
+                insuranceCompanyId = entity.INSURANCECOMPANYID,
+                iompanyId = entity.COMPANYID,
+                companyName = entity.COMPANYNAME,
+                address = entity.ADDRESS,
+                contactEmail = entity.CONTACTEMAIL,
+                phoneNumber = entity.PHONENUMBER
             };
         }
 
@@ -11939,12 +11952,12 @@ namespace FintrakBanking.Repositories.Credit
             return context.TBL_INSURANCE_COMPANY.Where(x => x.DELETED == false)
                  .Select(x => new InsuranceCompanyViewModel
                  {
-                     InsuranceCompanyId = x.INSURANCECOMPANYID,
-                     CompanyId = x.COMPANYID,
-                     CompanyName = x.COMPANYNAME,
-                     Address = x.ADDRESS,
-                     ContactEmail = x.CONTACTEMAIL,
-                     PhoneNumber = x.PHONENUMBER
+                     insuranceCompanyId = x.INSURANCECOMPANYID,
+                     iompanyId = x.COMPANYID,
+                     companyName = x.COMPANYNAME,
+                     address = x.ADDRESS,
+                     contactEmail = x.CONTACTEMAIL,
+                     phoneNumber = x.PHONENUMBER
                  })
                  .ToList();
         }
@@ -11953,11 +11966,11 @@ namespace FintrakBanking.Repositories.Credit
         {
             var entity = new TBL_INSURANCE_COMPANY
             {
-                COMPANYNAME = model.CompanyName,
-                ADDRESS = model.Address,
-                CONTACTEMAIL = model.ContactEmail,
+                COMPANYNAME = model.companyName,
+                ADDRESS = model.address,
+                CONTACTEMAIL = model.contactEmail,
                 CREATEDBY = model.createdBy,
-                PHONENUMBER = model.PhoneNumber,
+                PHONENUMBER = model.phoneNumber,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
             };
 
@@ -11978,10 +11991,10 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateInsuranceCompany(InsuranceCompanyViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_INSURANCE_COMPANY.Find(id);
-            entity.COMPANYNAME = model.CompanyName;
-            entity.CONTACTEMAIL = model.ContactEmail;
-            entity.ADDRESS = model.Address;
-            entity.PHONENUMBER = model.PhoneNumber;
+            entity.COMPANYNAME = model.companyName;
+            entity.CONTACTEMAIL = model.contactEmail;
+            entity.ADDRESS = model.address;
+            entity.PHONENUMBER = model.phoneNumber;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
@@ -12035,6 +12048,32 @@ namespace FintrakBanking.Repositories.Credit
                  {
                      insuranceTypeId = x.INSURANCETYPEID,
                      insuranceType = x.INSURANCETYPE,
+                 })
+                 .ToList();
+            return data;
+        }
+
+        public IEnumerable<CollateralTypeViewModel> GetCollateralTypes()
+        {
+            var data = context.TBL_COLLATERAL_TYPE.Where(x => x.DELETED == false)
+                 .Select(x => new CollateralTypeViewModel
+                 {
+                     collateralTypeId = x.COLLATERALTYPEID,
+                     collateralTypeName = x.COLLATERALTYPENAME,
+                 })
+                 .ToList();
+            return data;
+        }
+
+        public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes()
+        {
+            var data = context.TBL_COLLATERAL_TYPE_SUB.Where(x => x.DELETED == false)
+                 .Select(x => new CollateralSubTypeViewModel
+                 {
+                     collateralTypeId = x.COLLATERALTYPEID,
+                     collateralSubTypeId = x.COLLATERALSUBTYPEID,
+                     collateralSubTypeName = x.COLLATERALSUBTYPENAME,
+                     isGpsCoordinatesCollateralType = x.ISGPSCOORDINATESCOLLATERALTYPE,
                  })
                  .ToList();
             return data;
