@@ -888,29 +888,29 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void ValidateAgainstAlreadyClosedProcess()
         {
             if (this.statusId == (int)ApprovalStatusEnum.Referred || this.referredLog.Count > 0)
-            {
+            {//to take care of refer backs
                 return;
             }
             var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
 
             if (this.newStateId == (int)ApprovalState.Ended && this.statusId == (int)ApprovalStatusEnum.Closed)
-            {
+            {// to prevent closing an already closed process
                 if(allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Closed))
                 {
                     new SecureException("The process is closed already!");
                 }
             }
 
-            if (this.newStateId != (int)ApprovalState.Ended || this.statusId != (int)ApprovalStatusEnum.Approved)
-            {
-                return;
-            }
-                
-            if (allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved))
-            {
-                new SecureException("The process is closed already!");
+            if (allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && (r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Closed || r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)))
+            {// to prevent general working on an already approved/closed process
+                new SecureException("The process is ended already!");
             }
 
+            //if (this.newStateId != (int)ApprovalState.Ended || this.statusId != (int)ApprovalStatusEnum.Approved)
+            //{// this should be redundant by now!!
+            //    return;
+            //}
+                
         }
 
         private void FurtherValidations()

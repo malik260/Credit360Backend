@@ -45,12 +45,12 @@ namespace FintrakBanking.Repositories.Media
         {
             var staffs = general.GetStaffRlieved(staffId);
 
-            var data = new List<OriginalDocumentApprovalViewModel>();
+            //var data = new List<OriginalDocumentApprovalViewModel>();
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OriginalDocumentApproval).ToList();
 
             var initiator = context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
 
-            data = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+            var dataCollateral = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                     join o in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals o.COLLATERALCUSTOMERID
                     join c in context.TBL_CUSTOMER on o.CUSTOMERID equals c.CUSTOMERID
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
@@ -92,16 +92,61 @@ namespace FintrakBanking.Repositories.Media
                         //customerId = x.COLLATERALCUSTOMERID,
                         //operationId = (int)OperationsEnum.OriginalDocumentApproval,
 
-                    }).OrderBy(o=>o.originalDocumentApprovalId)
-               .ToList();
-            return data;
+                    }).ToList();
+
+            var dataFacility = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                                join o in context.TBL_LOAN_APPLICATION_DETAIL on x.COLLATERALCUSTOMERID equals o.LOANAPPLICATIONDETAILID
+                                join c in context.TBL_CUSTOMER on o.CUSTOMERID equals c.CUSTOMERID
+                                join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+                                where x.DELETED == false
+                                && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Finishing)
+                                && atrail.RESPONSESTAFFID == null
+                                && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
+                                && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
+                                && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
+
+                                select new OriginalDocumentApprovalViewModel
+                                {
+                                  businessUnitId = "n/a",
+                                  interestRate = o.PROPOSEDINTERESTRATE,
+                                  applicationAmount = o.PROPOSEDAMOUNT,
+                                  productName = context.TBL_PRODUCT.Where(p => p.PRODUCTID == o.PROPOSEDPRODUCTID).Select(p => p.PRODUCTNAME).FirstOrDefault(),
+                                  originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                                  loanApplicationId = x.LOANAPPLICATIONID,
+                                  description = x.DESCRIPTION,
+                                  collateralCode = "",
+                                  collateralType = "",
+                                  collateralTypeId = 0,
+                                  approvalStatusId = (short)x.APPROVALSTATUSID,
+                                  applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                                  referenceNumber = x.REFERENCENUMBER,
+                                  dateTimeCreated = x.DATETIMECREATED,
+                                  systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
+                                  approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                                  customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                  customerCode = c.CUSTOMERCODE,
+                                  customerId = c.CUSTOMERID,
+                                  branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                                  operationId = atrail.OPERATIONID,
+                                  approvalDate = x.APPROVALDATE,
+                                  relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == c.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                  atInitiator = staffId == context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID == x.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
+                                  createdBy = x.CREATEDBY,
+                                  collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                  isOriginalTitleDocument = x.ISORIGINALTITLEDOCUMENT,
+                                  isOriginalTitleDocumentString = x.ISORIGINALTITLEDOCUMENT ? "Yes" : "No",
+                              }).ToList();
+
+             var data = dataCollateral.Union(dataFacility);
+
+            return data.OrderBy(o => o.originalDocumentApprovalId).ToList();
         }
 
         public IEnumerable<OriginalDocumentApprovalViewModel> GetOriginalDocumentSearch(string searchString)
         {
             searchString = searchString.ToLower().Trim();
             
-           var data = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+           var dataCollateral = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                     join o in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals o.COLLATERALCUSTOMERID
                     join c in context.TBL_CUSTOMER on o.CUSTOMERID equals c.CUSTOMERID
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
@@ -140,8 +185,50 @@ namespace FintrakBanking.Repositories.Media
                         collateralCustomerId = x.COLLATERALCUSTOMERID,
                         currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? ((atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && atrail.LOOPEDSTAFFID != null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == atrail.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME) : "N/A",
                         responsiblePerson = atrail.TOSTAFFID == null ? "N/A" : atrail.TBL_STAFF1.STAFFCODE + " - " + atrail.TBL_STAFF1.FIRSTNAME + " " + atrail.TBL_STAFF1.MIDDLENAME + " " + atrail.TBL_STAFF1.LASTNAME,
-                    });
+                    }).ToList();
 
+            var dataFacility = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                        join o in context.TBL_LOAN_APPLICATION_DETAIL on x.COLLATERALCUSTOMERID equals o.LOANAPPLICATIONDETAILID
+                        join c in context.TBL_CUSTOMER on o.CUSTOMERID equals c.CUSTOMERID
+                        join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+                        where x.DELETED == false
+                        && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
+                        && (c.CUSTOMERCODE == searchString
+                        || x.REFERENCENUMBER.ToLower().Contains(searchString)
+                        || c.FIRSTNAME.ToLower().Contains(searchString)
+                        || c.MIDDLENAME.ToLower().Contains(searchString)
+                        || c.LASTNAME.ToLower().Contains(searchString))
+
+                        select new OriginalDocumentApprovalViewModel
+                        {
+                            approvalTrailId = atrail.APPROVALTRAILID,
+                            originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                            loanApplicationId = x.LOANAPPLICATIONID,
+                            description = x.DESCRIPTION,
+                            collateralCode = "",
+                            collateralType = "",
+                            collateralTypeId = 0,
+                            approvalStatusId = (short)x.APPROVALSTATUSID,
+                            applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                            referenceNumber = x.REFERENCENUMBER,
+                            dateTimeCreated = x.DATETIMECREATED,
+                            approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault().ToUpper(),
+                            customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                            customerCode = c.CUSTOMERCODE,
+                            customerId = c.CUSTOMERID,
+                            branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                            operationId = atrail.OPERATIONID,
+                            approvalDate = x.APPROVALDATE,
+                            isOriginalTitleDocumentString = x.ISORIGINALTITLEDOCUMENT == true ? "Yes" : "No",
+                            relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == c.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                            createdBy = x.CREATEDBY,
+                            createdByName = context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                            collateralCustomerId = x.COLLATERALCUSTOMERID,
+                            currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? ((atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && atrail.LOOPEDSTAFFID != null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == atrail.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME) : "N/A",
+                            responsiblePerson = atrail.TOSTAFFID == null ? "N/A" : atrail.TBL_STAFF1.STAFFCODE + " - " + atrail.TBL_STAFF1.FIRSTNAME + " " + atrail.TBL_STAFF1.MIDDLENAME + " " + atrail.TBL_STAFF1.LASTNAME,
+                        }).ToList();
+
+            var data = dataCollateral.Union(dataFacility);
             var result = data.GroupBy(r => r.originalDocumentApprovalId)
                                .Select(p => p.OrderByDescending(r => r.approvalTrailId).FirstOrDefault()).ToList();
 
@@ -229,9 +316,11 @@ namespace FintrakBanking.Repositories.Media
             var collateralcustomerIds = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                                          join cc in context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                                          where cc.CUSTOMERID == id
-                                         select new OriginalDocumentApprovalViewModel { collateralCustomerId = cc.COLLATERALCUSTOMERID,
-                                                                                        originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID }
+                                         select new OriginalDocumentApprovalViewModel {
+                                             collateralCustomerId = cc.COLLATERALCUSTOMERID,
+                                             originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID }
                                        ).ToList();
+           
 
             if (collateralcustomerIds != null)
             {
@@ -265,6 +354,60 @@ namespace FintrakBanking.Repositories.Media
 
                     var entity = entities.FirstOrDefault();
                     
+                    if (entity != null)
+                    {
+                        data.Add(entity);
+                    }
+                }
+            }
+
+            return data.OrderByDescending(d => d.approvalTrailId).ToList();
+        }
+
+
+
+        public List<OriginalDocumentApprovalViewModel> GetReleaseDocumentByCustomerFacilityId(int id)
+        {
+            List<OriginalDocumentApprovalViewModel> data = new List<OriginalDocumentApprovalViewModel>();
+
+            var collateralcustomerIds = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                                         join ad in context.TBL_LOAN_APPLICATION_DETAIL on oda.COLLATERALCUSTOMERID equals ad.LOANAPPLICATIONDETAILID
+                                         where ad.CUSTOMERID == id && oda.DELETED == false
+                                         select new OriginalDocumentApprovalViewModel
+                                         {
+                                             collateralCustomerId = oda.COLLATERALCUSTOMERID,
+                                             originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID
+                                         }
+                                       ).ToList();
+
+
+            if (collateralcustomerIds != null)
+            {
+                foreach (var ccId in collateralcustomerIds)
+                {
+                    var entities = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                                    join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+                                    where oda.COLLATERALCUSTOMERID == ccId.collateralCustomerId && oda.ORIGINALDOCUMENTAPPROVALID == ccId.originalDocumentApprovalId
+                                    && oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
+                                    select new OriginalDocumentApprovalViewModel
+                                    {
+                                        originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
+                                        loanApplicationId = oda.LOANAPPLICATIONID,
+                                        description = oda.DESCRIPTION,
+                                        approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(o => o.APPROVALSTATUSID == oda.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                        applicationReferenceNumber = oda.APPLICATIONREFERNECENUMBER,
+                                        referenceNumber = oda.REFERENCENUMBER,
+                                        arrivalDate = atrail.ARRIVALDATE,
+                                        approvalDate = oda.APPROVALDATE,
+                                        approvalStatusId = (short)oda.APPROVALSTATUSID,
+                                        collateralCustomerId = oda.COLLATERALCUSTOMERID,
+                                        approvalTrailId = atrail.APPROVALTRAILID,
+                                        currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME : "n/a",
+                                        operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                    }).OrderByDescending(e => e.approvalTrailId).ToList();
+
+                    var entity = entities.FirstOrDefault();
+
                     if (entity != null)
                     {
                         data.Add(entity);
@@ -428,6 +571,7 @@ namespace FintrakBanking.Repositories.Media
                     DATETIMECREATED = general.GetApplicationDate(),
                     APPLICATIONREFERNECENUMBER = model.applicationReferenceNumber,
                     REFERENCENUMBER = referenceNumber,
+                    LOANAPPLICATIONID = model.loanApplicationId,
                     DELETED = false,
                     CREATEDBY = model.createdBy,
 

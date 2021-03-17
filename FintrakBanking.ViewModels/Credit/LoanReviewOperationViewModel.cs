@@ -496,6 +496,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string expiryBand { get; set; }
         public string divisionName { get; set; }
         public DateTime arrivalDate { get; set; }
+        public int currApprovalStatusId { get; set; }
     }
 
 

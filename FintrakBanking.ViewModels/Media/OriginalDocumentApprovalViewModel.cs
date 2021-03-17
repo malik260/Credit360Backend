@@ -59,5 +59,6 @@ namespace FintrakBanking.ViewModels.Media
         public string groupHead { get; set; }
         public string team { get; set; }
         public string sla { get; set; }
+        public string businessUnitId { get; set; }
     }
 }

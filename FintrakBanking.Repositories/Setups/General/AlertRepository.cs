@@ -906,15 +906,27 @@ namespace FintrakBanking.Repositories.Setups.General
 
             // int users = Convert.ToInt32(maxUsers);
             //externalAlertRepository.ValidateProfiledUsers(users);
-            GetImminentMaturitiesForCustomers();
+            
             TimeSpan startRepay = new TimeSpan(6, 0, 0);
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
-            
+
+
+
+            if (CompareCustomerNotificationDate() == true)
+            {
+                TimeSpan startCustomerrepay = new TimeSpan(13, 10, 0);
+                TimeSpan endCustomerrepay = new TimeSpan(13, 20, 0);
+                if ((now >= startCustomerrepay) && (now <= endCustomerrepay))
+                {
+                    GetImminentMaturitiesForCustomers();
+                }
+            }
+
             if ((now >= startRepay) && (now <= endRepay))
             {
-                GetLoanRepaymentToStaging();
+                /*GetLoanRepaymentToStaging();
                 GetOverdraftRepaymentToStaging();
-                postPaymentEntries();
+                postPaymentEntries();*/
             }
 
 
@@ -926,7 +938,7 @@ namespace FintrakBanking.Repositories.Setups.General
                  if ((now >= start) && (now <= end))
                  {
                      //GetStaffLoanPortfolioReport();
-                     GetValuationReminder();
+                     /*GetValuationReminder();
                      GetSiteVisitationAccountReminder();
                      GetExpiredValuationReport();
                      GetFacilityRestructuredNotification();
@@ -935,7 +947,7 @@ namespace FintrakBanking.Repositories.Setups.General
                      GetExpiredInsurancePolicies();
                      GetLoanRepaymentReminder();
                      GetGroupCreditFileChecklistReminder();
-                     state = true;
+                     state = true;*/
                  }
             }
 
@@ -946,12 +958,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start2) && (now <= end2))
                 {
-                    GetSectorLimitExceedeBBDReminder();
+                   /* GetSectorLimitExceedeBBDReminder();
                     GetSectorLimitExceedeCBDReminder();
                     GetSectorLimitExceedeCIBDReminder();
                     GetSectorLimitExceedeRBDReminder();
                     GetSectorLimitExceededBankReminder();
-                    state = true;
+                    state = true;*/
                 }
 
 
@@ -965,22 +977,22 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start11) && (now <= end13))
                 {
-                    /*GetDigitalLoanExceptionNPLIncrease();
+                    /*/////GetDigitalLoanExceptionNPLIncrease();
                     GetDigitalLoanExceptionNPLDecrease();
                     GetDigitalLoanDisbursementIncrease();
                     GetDigitalLoanDisbursementDecrease();
                     GetDigitalLoanDPDIncrease();
                     GetDigitalLoanDPDDecrease();
-                    GetDigitalLoanLiquidationIncrease();*/
+                    GetDigitalLoanLiquidationIncrease();//////*/
 
-                    GetDigitalLoanLiquidationModuleIncrease();
+                    /*GetDigitalLoanLiquidationModuleIncrease();
                     GetDigitalLoanExceptionNPLModuleIncrease();
                     GetDigitalLoanExceptionNPLModuleDecrease();
                     GetDigitalLoanDPDModuleIncrease();
                     GetDigitalLoanDPDModuleDecrease();
                     GetDigitalLoanDisbursementModuleIncrease();
                     GetDigitalLoanDisbursementModuleDecrease();
-                    state = true;
+                    state = true;*/
                 }
 
 
@@ -993,9 +1005,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start11) && (now <= end13))
                 {
-                    GetRepaymentDefaultersAlert();
+                    /*GetRepaymentDefaultersAlert();
                     GetRepaymentPayDownAlert();
-                    state = true;
+                    state = true;*/
                 }
             }
 
@@ -1007,10 +1019,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start) && (now <= end))
                 {
-                    GroupImminentMaturitiesByGroupHeads();
+                    /*GroupImminentMaturitiesByGroupHeads();
                     GetImminentMaturities();
                     GetPastDueObligationsReminder();
-                    GetPastDueObligationsReminderByGroupHeads();
+                    GetPastDueObligationsReminderByGroupHeads();*/
                     state = true;
                 }
             }
@@ -1103,6 +1115,21 @@ namespace FintrakBanking.Repositories.Setups.General
                 return true;
             }else
             return false;
+        }
+
+        private bool CompareCustomerNotificationDate()
+        {
+            DateTime currentDate = DateTime.Now;
+            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                         && (m.OPERATIONMETHOD.Trim() == "GetLoanRepaymentReminder"
+                         )).FirstOrDefault();
+
+            if (DBdate == null)
+            {
+                return true;
+            }
+            else
+                return false;
         }
 
         private bool CompareRecoveryExpectedDueDate()
@@ -1597,8 +1624,13 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetImminentMaturitiesForCustomers()
         {
             // GetLoanRepaymentReminder method
-            List<string> customerIds = new List<string> { "000025950", "000234558" };
-            var loanRepaymentReminder = context.TBL_GLOBAL_EXPOSURE.Where(d => customerIds.Contains(d.CUSTOMERID) && d.PRINCIPALOUTSTANDINGBALLCY > 0 && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value >= 30).ToList();
+            List<string> customerIds = new List<string> { "028695314","002477270","013413889","005300605","013435497",
+                                                           "002943518","000025950","005967408","007586022","007991855",
+                                                           "025924820","028368441","000030125","000478639","006418876","006389720","000463737","013424619","000234558","026310965",
+                                                           "008221745","002057068"};
+            //List<int> days = new List<int> { 30, 21, 14, 7, 5, 2, 1 };
+            //&& days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value)
+            var loanRepaymentReminder = context.TBL_GLOBAL_EXPOSURE.Where(d => customerIds.Contains(d.CUSTOMERID) && d.AMOUNTDUE.Value > 0).ToList();
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentReminder").FirstOrDefault();
                 int numberOfDays = 0;
                 var defaultEmail = "";
@@ -1611,20 +1643,27 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
 
                     List<AlertsViewModel> alerts = new List<AlertsViewModel>();
-                    foreach (var i in loanRepaymentReminder)
+                    foreach (var i in loanRepaymentReminder) 
                     {
-
-                        numberOfDays = (i.MATURITYDATE.Value - DateTime.Now).Days;
+                        numberOfDays = (i.SCHEDULEDUEDATE.Value - DateTime.Now).Days;
+                        var dueDate = i.SCHEDULEDUEDATE?.ToString("dd-MM-yyyy");
+                        var interestDueDate = i.NEXTREPAYMENTINTDATE?.ToString("dd-MM-yyyy");
+                        var amountDue = i.ALPHACODE+""+ string.Format("{0:#,##.00}", Convert.ToDecimal(i.AMOUNTDUE.Value));
+                        var interestAmountDue = i.ALPHACODE + "" + string.Format("{0:#,##.00}", Convert.ToDecimal(i.UNPOINTERESTAMOUNT.Value));
                         AlertsViewModel alert = new AlertsViewModel();
                         var alertTitle = alertTitleInfo.TITLE;
                         var alertTemplate = alertTitleInfo.TEMPLATE;
-                        if (numberOfDays > 0)
+                        if (numberOfDays > 0 || numberOfDays < 0)
                         {
                             string emailList = "";
                             alertTemplate = alertTemplate.Replace("@{{customerName}}", i.CUSTOMERNAME);
                             alertTemplate = alertTemplate.Replace("@{{maturityBand}}", numberOfDays.ToString());
-                            emailList = i.EMAIL+",benjamin.gbaaikye@fintraksoftware.com";
-                            ///emailList = defaultEmail;
+                            alertTemplate = alertTemplate.Replace("@{{amountDue}}", amountDue);
+                            alertTemplate = alertTemplate.Replace("@{{dueDate}}", dueDate);
+                            alertTemplate = alertTemplate.Replace("@{{interestAmountDue}}", interestAmountDue);
+                            alertTemplate = alertTemplate.Replace("@{{interestDueDate}}", interestDueDate);
+                            emailList = i.EMAIL + ";benjamin.gbaaikye@fintraksoftware.com";
+                            //emailList = emailList+";"+defaultEmail;
                             alert.receiverEmailList.Add(emailList);
                             alert.template = alertTemplate;
                             alert.alertTitle = alertTitle;

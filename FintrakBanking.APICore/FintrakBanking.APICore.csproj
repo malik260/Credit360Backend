@@ -1242,6 +1242,13 @@
     <Compile Include="Reports\ReportViews\SanctionLimitReport.aspx.designer.cs">
       <DependentUpon>SanctionLimitReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\SecurityReleaseReport.aspx.cs">
+      <DependentUpon>SecurityReleaseReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SecurityReleaseReport.aspx.designer.cs">
+      <DependentUpon>SecurityReleaseReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\SeftLiquidatingLoans.aspx.cs">
       <DependentUpon>SeftLiquidatingLoans.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2141,6 +2148,7 @@
     <Content Include="Reports\ReportViews\RunningLoanReport.aspx" />
     <Content Include="Reports\ReportViews\RunningFacilitiesReport.aspx" />
     <Content Include="Reports\ReportViews\SanctionLimitReport.aspx" />
+    <Content Include="Reports\ReportViews\SecurityReleaseReport.aspx" />
     <Content Include="Reports\ReportViews\SeftLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\SLAReport.aspx" />
     <Content Include="Reports\ReportViews\StaffPriviledgeChangeReport.aspx" />
@@ -2675,6 +2683,7 @@
     <EmbeddedResource Include="Reports\Report\SanctionLimitReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\SecurityReleaseReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\SLAMonitoringReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\StaffPrivilegeChangeReport.rdlc" />
