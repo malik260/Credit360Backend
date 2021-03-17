@@ -32,6 +32,11 @@ namespace FintrakBanking.Entities.Models
         public string VALUER { get; set; }
         public string COLLATERALDETAILS { get; set; }
         public bool ISINFORMATIONCONFIRMED { get; set; }
-        
+        public string OTHERVALUER { get; set; }
+        public string OTHERINSURANCECOMPANY { get; set; }
+        public string OTHERINSURANCEPOLICYTYPE { get; set; }
+        public string GPSCOORDINATES { get; set; }
+        public int? COLLATERALTYPE { get; set; }
+        public int? COLLATERALSUBTYPE { get; set; }
     }
 }

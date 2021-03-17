@@ -540,6 +540,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralInsuranceTrackingId { get; set; }
         public string isInformationConfirmed { get; set; }
         public int loanApplicationDetailId { get; set; }
+        public int? customerGroupId { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -929,6 +930,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool allowSharing { get; set; }
         public string collateralType { get; set; }
         public int? visitationCycle { get; set; }
+        public bool isGpsCoordinatesCollateralType { get; set; }
     }
 
     public class CustomerCollateralSearch
@@ -1158,12 +1160,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class InsuranceCompanyViewModel:GeneralEntity
     {
-        public int InsuranceCompanyId { get; set; }
-        public int CompanyId { get; set; }
-        public string  CompanyName { get; set; }
-        public string Address { get; set; }
-        public string ContactEmail { get; set; }
-        public string PhoneNumber { get; set; }
+        public int insuranceCompanyId { get; set; }
+        public int iompanyId { get; set; }
+        public string  companyName { get; set; }
+        public string address { get; set; }
+        public string contactEmail { get; set; }
+        public string phoneNumber { get; set; }
     }
 
     public class InsuranceTypeViewModel: GeneralEntity
@@ -1274,6 +1276,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationDetailId { get; set; }
         public int insuranceStatus { get; set; }
         public decimal inSurPremiumAmount { get; set; }
+        public string otherInsurancePolicyType { get; set; }
+        public string otherInsuranceCompany { get; set; }
+        public string otherValuer { get; set; }
+
+        public int? collateralTypeId { get; set; }
+        public int? collateralSubTypeId { get; set; }
+        public string gpsCoordinates { get; set; }
     }
 
  }
