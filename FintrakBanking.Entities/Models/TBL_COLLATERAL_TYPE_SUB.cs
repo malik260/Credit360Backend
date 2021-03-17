@@ -41,6 +41,7 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+        public bool ISGPSCOORDINATESCOLLATERALTYPE { get; set; }
 
         public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE { get; set; }
     }

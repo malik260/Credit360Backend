@@ -929,6 +929,9 @@ namespace FintrakBanking.ViewModels.Credit
         public bool allowSharing { get; set; }
         public string collateralType { get; set; }
         public int? visitationCycle { get; set; }
+        public bool isGPScollateralType { get; set; }
+        public string GPScollateralType { get; set; }
+       
     }
 
     public class CustomerCollateralSearch
@@ -1190,6 +1193,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int policyTypeId { get; set; }
     }
 
+
+    public class GPSCoordinatesCollateralTypeViewModel : GeneralEntity
+    {
+        public string collateralType { get; set; }
+        public bool required { get; set; }
+        public string valuation { get; set; }
+        public int collateralTypeId { get; set; }
+    }
 
     public class SectorLimitAlertViewModel
     {
