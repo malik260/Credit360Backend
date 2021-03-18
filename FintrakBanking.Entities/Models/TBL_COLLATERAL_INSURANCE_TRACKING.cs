@@ -13,23 +13,23 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
        public int COLLATERALINSURANCETRACKINGID { get; set; }
-        public int LOANAPPLICATIONDETAILID { get; set; }
-        public int COLLATERALCUSTOMERID { get; set; }
-        public decimal SUMINSURED { get; set; }
-        public decimal PREMIUMPAID { get; set; }
-        public DateTime INSURANCESTARTDATE { get; set; }
-        public DateTime INSURANCEENDDATE { get; set; }
-        public int INSURANCEPOLICYTYPEID { get; set; }
-        public int INSURANCESTATUSID { get; set; }
-        public string INSURANCECOMPANYNAME { get; set; }
+        public int? LOANAPPLICATIONDETAILID { get; set; }
+        public int? COLLATERALCUSTOMERID { get; set; }
+        public decimal? SUMINSURED { get; set; }
+        public decimal? PREMIUMPAID { get; set; }
+        public DateTime? INSURANCESTARTDATE { get; set; }
+        public DateTime? INSURANCEENDDATE { get; set; }
+        public int? INSURANCEPOLICYTYPEID { get; set; }
+        public int? INSURANCESTATUSID { get; set; }
+        public int? INSURANCECOMPANYID { get; set; }
         public string ISURANCECOMPANYADDRESS { get; set; }
         public string POLICYNUMBER { get; set; }
        
-        public DateTime VALUATIONSTARTDATE { get; set; }
-        public DateTime VALUATIONENDDATE { get; set; }
-        public decimal OMV { get; set; }
-        public decimal FSV { get; set; }
-        public string VALUER { get; set; }
+        public DateTime? VALUATIONSTARTDATE { get; set; }
+        public DateTime? VALUATIONENDDATE { get; set; }
+        public decimal? OMV { get; set; }
+        public decimal? FSV { get; set; }
+        public int? VALUERID { get; set; }
         public string COLLATERALDETAILS { get; set; }
         public bool ISINFORMATIONCONFIRMED { get; set; }
         public string OTHERVALUER { get; set; }

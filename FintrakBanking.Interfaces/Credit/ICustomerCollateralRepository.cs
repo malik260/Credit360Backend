@@ -178,7 +178,7 @@ namespace FintrakBanking.Interfaces.Credit
         InsuranceTypeViewModel GetInsuranceType(int id);
         IEnumerable<InsuranceTypeViewModel> GetInsuranceTypes();
         IEnumerable<CollateralTypeViewModel> GetCollateralTypes();
-        IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes();
+        IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes(int collateralTypeId);
         IEnumerable<InsuranceStatusViewModel> GetInsuranceStatus();
         IEnumerable<InsurancePolicyTypeViewModel> GetInsurancePolicyTypes();
         

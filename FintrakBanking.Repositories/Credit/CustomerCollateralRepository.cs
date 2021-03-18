@@ -1409,13 +1409,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             var policy = context.TBL_TEMP_COLLATERAL_ITEM_POLI.Add(new TBL_TEMP_COLLATERAL_ITEM_POLI
             {
-                COLLATERALCUSTOMERID = entity.collateraalId,
+                COLLATERALCUSTOMERID = (int)entity.collateraalId,
                 POLICYREFERENCENUMBER = entity.referenceNumber,
-                INSURANCECOMPANYID = entity.insuranceCompanyId,
-                SUMINSURED = entity.sumInsured,
+                INSURANCECOMPANYID = (int)entity.insuranceCompanyId,
+                SUMINSURED = (decimal)entity.sumInsured,
                 STARTDATE = (DateTime)entity.startDate,
                 ENDDATE = (DateTime)entity.expiryDate,
-                INSURANCETYPEID = entity.insuranceTypeId,
+                INSURANCETYPEID = (int)entity.insuranceTypeId,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 ISPOLICYAPPROVAL = true,
@@ -8893,7 +8893,7 @@ namespace FintrakBanking.Repositories.Credit
                     var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
                     {
                            
-                           INSURANCECOMPANYNAME = model.insuranceCompany,
+                           INSURANCECOMPANYID = model.insuranceCompanyId,
                            ISURANCECOMPANYADDRESS = model.companyAddress,
                            POLICYNUMBER = model.referenceNumber,
                            INSURANCESTARTDATE = model.startDate,
@@ -8953,7 +8953,7 @@ namespace FintrakBanking.Repositories.Credit
                 var cit = context.TBL_COLLATERAL_INSURANCE_TRACKING.Find(id);
                 if (cit == null) { return 0; }
 
-                cit.INSURANCECOMPANYNAME = model.insuranceCompany;
+                    cit.INSURANCECOMPANYID = model.insuranceCompanyId;
                     cit.ISURANCECOMPANYADDRESS = model.companyAddress;
                     cit.POLICYNUMBER = model.referenceNumber;
                     cit.INSURANCESTARTDATE = model.startDate;
@@ -10943,13 +10943,14 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     collateralInsuranceTrackingId = x.COLLATERALINSURANCETRACKINGID,
                     referenceNumber = x.POLICYNUMBER,
-                    insuranceCompany = x.INSURANCECOMPANYNAME,
+                    insuranceCompanyId = x.INSURANCECOMPANYID,
+                    insuranceCompanyName = x.INSURANCECOMPANYID == 0 ? x.OTHERINSURANCECOMPANY : context.TBL_INSURANCE_COMPANY.Where(o => o.INSURANCECOMPANYID == x.INSURANCECOMPANYID).Select(o => o.COMPANYNAME).FirstOrDefault(),
                     sumInsured = x.SUMINSURED,
                     startDate = x.INSURANCESTARTDATE,
                     expiryDate = x.INSURANCEENDDATE,
                     customerGroupId = (from a in context.TBL_CUSTOMER join b in context.TBL_LOAN_APPLICATION_DETAIL on a.CUSTOMERID equals b.CUSTOMERID join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID where b.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select c.CUSTOMERGROUPID).FirstOrDefault(),
                     customerId = (from a in context.TBL_CUSTOMER join b in context.TBL_LOAN_APPLICATION_DETAIL on a.CUSTOMERID equals b.CUSTOMERID where b.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.CUSTOMERID).FirstOrDefault(),
-                    insurancePolicyType = context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == x.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault(),
+                    insurancePolicyType = x.INSURANCEPOLICYTYPEID == 0 ? x.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == x.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault(),
                     insurancePolicyTypeId = x.INSURANCEPOLICYTYPEID,
                     insuranceStatus = context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == x.INSURANCESTATUSID).Select(o => o.INSURANCESTATUS).FirstOrDefault(),
                     inSurPremiumAmount = x.PREMIUMPAID,
@@ -10959,7 +10960,8 @@ namespace FintrakBanking.Repositories.Credit
                     valuationEndDate = x.VALUATIONENDDATE,
                     omv = x.OMV,
                     fsv = x.FSV,
-                    valuer = x.VALUER,
+                    valuerId = x.VALUERID,
+                    valuer = x.VALUERID == 0 ? x.OTHERVALUER:context.TBL_ACCREDITEDCONSULTANT.Where(b=>b.ACCREDITEDCONSULTANTID == x.VALUERID).Select(b=>b.FIRMNAME).FirstOrDefault(),
                     collateralDetails = x.COLLATERALDETAILS,
                     isInformationConfirmed = x.ISINFORMATIONCONFIRMED == true ? "TRUE" : "FALSE"
                 })).ToList();
@@ -10976,6 +10978,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
               var insurance = context.TBL_COLLATERAL_INSURANCE_TRACKING.Find(trackingId);
+              var insuranceCompany = context.TBL_INSURANCE_COMPANY.Find(insurance.INSURANCECOMPANYID);
               var  loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(insurance.LOANAPPLICATIONDETAILID);
               var loanApplication = context.TBL_LOAN_APPLICATION.Find(loanApplicationDetail.LOANAPPLICATIONID);
               var customerAccount = context.TBL_CASA.Where(x => x.CUSTOMERID == loanApplicationDetail.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
@@ -10988,7 +10991,8 @@ namespace FintrakBanking.Repositories.Credit
               var insurancePolicyType = context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == insurance.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
               var loanTypeName = (from y in context.TBL_LOAN_APPLICATION_TYPE join p in context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONTYPEID equals p.LOANAPPLICATIONTYPEID where p.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID select y.LOANAPPLICATIONTYPENAME).FirstOrDefault();
               var insuranceStatus = context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == insurance.INSURANCESTATUSID).Select(o => o.INSURANCESTATUS).FirstOrDefault();
-                                        
+              var valuer = insurance.VALUERID == 0 ? insurance.OTHERVALUER : context.TBL_ACCREDITEDCONSULTANT.Where(b => b.ACCREDITEDCONSULTANTID == insurance.VALUERID).Select(b => b.FIRMNAME).FirstOrDefault();
+                                     
 
             var result = String.Empty;
               result = result + $@"
@@ -11043,19 +11047,19 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     <tr>
                         <td>INSURANCE START DATE:</td>
-                        <td>{insurance?.INSURANCESTARTDATE.ToString("dd-MM-yyyy")}</td>
+                        <td>{insurance?.INSURANCESTARTDATE.Value.ToString("dd-MM-yyyy")}</td>
                         <td>INSURANCE END DATE:</td>
-                        <td>{insurance?.INSURANCEENDDATE.ToString("dd-MM-yyyy")}</td>
+                        <td>{insurance?.INSURANCEENDDATE.Value.ToString("dd-MM-yyyy")}</td>
                     </tr>
                     <tr>
                         <td>INSURANCE POLICY TYPE:</td>
                         <td>{insurancePolicyType}</td>
                         <td>VALUATION START DATE:</td>
-                        <td>{insurance?.VALUATIONSTARTDATE.ToString("dd-MM-yyyy")}</td>
+                        <td>{insurance?.VALUATIONSTARTDATE.Value.ToString("dd-MM-yyyy")}</td>
                         </tr>
                     <tr>
                         <td>VALUATION END DATE:</td>
-                        <td>{insurance?.VALUATIONENDDATE.ToString("dd-MM-yyyy")}</td>
+                        <td>{insurance?.VALUATIONENDDATE.Value.ToString("dd-MM-yyyy")}</td>
                         <td>VALUATION OPEN MARKET VALUE:</td>
                         <td>{insurance?.OMV}</td>
                     </tr>
@@ -11063,7 +11067,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>VALUATION OPEN MARKET VALUE:</td>
                         <td>{insurance?.FSV}</td>
                         <td>VALUER NAME:</td>
-                        <td>{insurance?.VALUER}</td>
+                        <td>{valuer}</td>
                     </tr>
                     <tr>
                         <td>LOAN AMOUNT:</td>
@@ -11079,7 +11083,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     <tr>
                         <td>INSURANCE COMPANY:</td>
-                        <td>{insurance?.INSURANCECOMPANYNAME}</td>
+                        <td>{insuranceCompany?.COMPANYNAME}</td>
                         <td></td>
                         <td></td>
                     </tr>
@@ -12065,9 +12069,9 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes()
+        public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes(int collateralTypeId)
         {
-            var data = context.TBL_COLLATERAL_TYPE_SUB.Where(x => x.DELETED == false)
+            var data = context.TBL_COLLATERAL_TYPE_SUB.Where(x => x.DELETED == false && x.COLLATERALTYPEID == collateralTypeId)
                  .Select(x => new CollateralSubTypeViewModel
                  {
                      collateralTypeId = x.COLLATERALTYPEID,
@@ -12200,8 +12204,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 POLICYREFERENCENUMBER = model.referenceNumber,
                 //INSURANCETYPE = model.insuranceType,
-                INSURANCETYPEID = model.insuranceTypeId,
-                SUMINSURED = model.sumInsured,
+                INSURANCETYPEID = (int)model.insuranceTypeId,
+                SUMINSURED = (decimal)model.sumInsured,
                 DATETIMECREATED = model.dateTimeCreated,
                 HASEXPIRED = model.hasExpired,
                 CREATEDBY = model.createdBy,
