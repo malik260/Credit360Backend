@@ -2660,10 +2660,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("collateral-sub-type-all")]
-        public HttpResponseMessage GetCollateralSubType()
+        [Route("collateral-sub-type-all/{collateralTypeId}")]
+        public HttpResponseMessage GetCollateralSubType(int collateralTypeId)
         {
-            IEnumerable<CollateralSubTypeViewModel> response = repo.GetCollateralSubTypes();
+            IEnumerable<CollateralSubTypeViewModel> response = repo.GetCollateralSubTypes(collateralTypeId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
