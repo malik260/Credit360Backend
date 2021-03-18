@@ -427,7 +427,7 @@ namespace FintrakBanking.Repositories.Credit
                              approvalStatusId = atrail.APPROVALSTATUSID,
                              approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault().ToUpper(),
                              customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
-                             loanApplicationDetailId = (int)dr.LOANAPPLICATIONDETAILID,
+                             loanApplicationDetailId = dr.LOANAPPLICATIONDETAILID,
                              loanTypeName = (from y in _context.TBL_LOAN_APPLICATION_TYPE join p in _context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONTYPEID equals p.LOANAPPLICATIONTYPEID where dr.LOANAPPLICATIONID == p.LOANAPPLICATIONID select y.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
                              applicationReferenceNumber = _context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                              loanAmount = _context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(x => x.APPROVEDAMOUNT).FirstOrDefault(),
@@ -447,7 +447,8 @@ namespace FintrakBanking.Repositories.Credit
                              dateRecieved = atrail.SYSTEMARRIVALDATETIME,
                              DateTimeCreated = dr.DATETIMECREATED,
                              operationId = atrail.OPERATIONID,
-                             currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                             currentApprovalLevelId = atrail.TOAPPROVALLEVELID ?? 0,
+                             currentlyLevel = atrail.TBL_APPROVAL_LEVEL1.LEVELNAME,
                              createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                          }).ToList();
 
