@@ -38,5 +38,6 @@ namespace FintrakBanking.Entities.Models
         public string GPSCOORDINATES { get; set; }
         public int? COLLATERALTYPE { get; set; }
         public int? COLLATERALSUBTYPE { get; set; }
+        public string FIRSTLOSSPAYEE { get; set; }
     }
 }

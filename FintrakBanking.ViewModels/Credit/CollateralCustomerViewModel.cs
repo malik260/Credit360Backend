@@ -487,7 +487,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? startDate { get; set; }
         public DateTime? expiryDate { get; set; }
         public string insuranceType { get; set; }
-        
+
         public bool hasExpired { get; set; }
         public int? collateraalId { get; set; }
         public string collateralCode { get; set; }
@@ -543,6 +543,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerGroupId { get; set; }
         public string insuranceCompanyName { get; set; }
         public int? valuerId { get; set; }
+        public string gpsCoordinates { get; set; }
+        public decimal loanAmount { get; set; }
+        public string loanStatus { get; set; }
+        public string loanTypeName { get; set; }
+        public string securityReleaseStatus { get; set; }
+        public string taxNumber { get; set; }
+        public string rcNumber { get; set; }
+        public string firstLossPayee { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -932,6 +940,9 @@ namespace FintrakBanking.ViewModels.Credit
         public bool allowSharing { get; set; }
         public string collateralType { get; set; }
         public int? visitationCycle { get; set; }
+        public bool isGPScollateralType { get; set; }
+        public string GPScollateralType { get; set; }
+       
         public bool isGpsCoordinatesCollateralType { get; set; }
     }
 
@@ -1195,6 +1206,14 @@ namespace FintrakBanking.ViewModels.Credit
     }
 
 
+    public class GPSCoordinatesCollateralTypeViewModel : GeneralEntity
+    {
+        public string collateralType { get; set; }
+        public bool required { get; set; }
+        public string valuation { get; set; }
+        public int collateralTypeId { get; set; }
+    }
+
     public class SectorLimitAlertViewModel
     {
         public int id { get; set; }
@@ -1287,6 +1306,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string gpsCoordinates { get; set; }
         public int? insuranceCompanyId { get; set; }
         public int? valuerId { get; set; }
+        public string firstLossPayee { get; set; }
     }
 
  }
