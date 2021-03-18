@@ -541,6 +541,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string isInformationConfirmed { get; set; }
         public int? loanApplicationDetailId { get; set; }
         public int? customerGroupId { get; set; }
+        public string insuranceCompanyName { get; set; }
+        public int? valuerId { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -1284,6 +1286,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? collateralSubTypeId { get; set; }
         public string gpsCoordinates { get; set; }
         public int? insuranceCompanyId { get; set; }
+        public int? valuerId { get; set; }
     }
 
  }

@@ -8907,7 +8907,7 @@ namespace FintrakBanking.Repositories.Credit
                            VALUATIONENDDATE = model.valuationEndDate,
                            OMV = model.openMarketValue,
                            FSV = model.forcedSaleValue,
-                           VALUER = model.valuer,
+                           VALUERID = model.valuerId,
                            COLLATERALDETAILS  = model.collateralDetails,
                            INSURANCEPOLICYTYPEID = model.insurancePolicyTypeId,
                            OTHERVALUER = model.otherValuer,
@@ -8967,7 +8967,7 @@ namespace FintrakBanking.Repositories.Credit
                     cit.VALUATIONENDDATE = model.valuationEndDate;
                     cit.OMV = model.openMarketValue;
                     cit.FSV = model.forcedSaleValue;
-                    cit.VALUER = model.valuer;
+                    cit.VALUERID = model.valuerId;
                     cit.COLLATERALDETAILS = model.collateralDetails;
                     cit.INSURANCEPOLICYTYPEID = model.insurancePolicyTypeId;
                     cit.OTHERVALUER = model.otherValuer;
@@ -10944,7 +10944,7 @@ namespace FintrakBanking.Repositories.Credit
                     collateralInsuranceTrackingId = x.COLLATERALINSURANCETRACKINGID,
                     referenceNumber = x.POLICYNUMBER,
                     insuranceCompanyId = x.INSURANCECOMPANYID,
-                    insuranceCompanyName = x.INSURANCECOMPANYID == 0 ? x.OTHERINSURANCECOMPANY : context.TBL_INSURANCE_COMPANY.Where(o => o.INSURANCECOMPANYID == x.INSURANCECOMPANYID).Select(o => o.COMPANYNAME).FirstOrDefault(),
+                    insuranceCompany = x.INSURANCECOMPANYID == 0 ? x.OTHERINSURANCECOMPANY : context.TBL_INSURANCE_COMPANY.Where(o => o.INSURANCECOMPANYID == x.INSURANCECOMPANYID).Select(o => o.COMPANYNAME).FirstOrDefault(),
                     sumInsured = x.SUMINSURED,
                     startDate = x.INSURANCESTARTDATE,
                     expiryDate = x.INSURANCEENDDATE,
