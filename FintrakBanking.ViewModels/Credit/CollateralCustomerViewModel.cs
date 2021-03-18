@@ -496,7 +496,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public int policyId { get; set; }
         public int collateralTypeId { get; set; }
+        public int? CollateralTypeId { get; set; }
         public short collateralSubTypeId { get; set; }
+        public int? CollateralSubTypeId { get; set; }
         public string customerName { get; set; }
         public decimal? premiumAmount { get; set; }
         public decimal? inSurPremiumAmount { get; set; }
@@ -541,6 +543,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string isInformationConfirmed { get; set; }
         public int loanApplicationDetailId { get; set; }
         public int? customerGroupId { get; set; }
+        public string gpsCoordinates { get; set; }
     }
 
     public class NewCollateralViewModel
