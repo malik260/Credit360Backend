@@ -52,6 +52,7 @@ namespace FintrakBanking.Repositories.Credit
         //private IAlertRepository alert;
 
         public string collateralReleaseStatusName { get; private set; }
+  
 
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
@@ -10962,6 +10963,11 @@ namespace FintrakBanking.Repositories.Credit
                     valuer = x.VALUER,
                     collateralDetails = x.COLLATERALDETAILS,
                     isInformationConfirmed = x.ISINFORMATIONCONFIRMED == true ? "TRUE" : "FALSE"
+                   // gpsCoordinates = x.GPSCOORDINATES,
+                    //CollateralTypeId = x.COLLATERALTYPE,
+                   // collateralType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == x.COLLATERALTYPE).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
+                   // CollateralSubTypeId = x.COLLATERALSUBTYPE,
+                   // collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(o => o.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPE).Select(o => o.COLLATERALSUBTYPENAME).FirstOrDefault()
                 })).ToList();
 
             return insurance;
