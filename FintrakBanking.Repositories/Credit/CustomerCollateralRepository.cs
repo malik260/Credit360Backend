@@ -2017,10 +2017,7 @@ namespace FintrakBanking.Repositories.Credit
                                    divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                    productClassId = a.PRODUCTCLASSID,
                                    productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-                                   facility = context.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + context.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LOAN_APPLICATION_DETAIL
-                                        .Where(s => s.LOANAPPLICATIONID == c.LOANAPPLICATIONID && s.DELETED == false)
-                                        .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
-                                        .FirstOrDefault(),
+                                   facility = context.TBL_PRODUCT.Where(p=>p.PRODUCTID == c.PROPOSEDPRODUCTID).Select(p=>p.PRODUCTNAME).FirstOrDefault(),
                                    systemDateTime = c.DATETIMECREATED,
                                    requireCollateral = a.REQUIRECOLLATERAL,
                                    approvalStatusId = (short)a.APPROVALSTATUSID,
