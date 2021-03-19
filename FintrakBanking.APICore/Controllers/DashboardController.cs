@@ -114,6 +114,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        
         [HttpPost]
         [Route("collateral-exposure")]
         public HttpResponseMessage GetCollateralExposure(DateRange val)
