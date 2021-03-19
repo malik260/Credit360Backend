@@ -201,7 +201,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         })
                    .FirstOrDefault();
 
-            if (user == null) throw new SecureException("The user is not registered in the application. Contact the system administrator.");
+            //if (user == null) throw new SecureException("The user is not registered in the application. Contact the system administrator.");
+            if (user == null) throw new SecureException("Invalid Username or Password");
 
             result.grantMessage = "valid";
             result.companyId = user.companyId;
