@@ -1567,6 +1567,17 @@ namespace FintrakBanking.APICore.Controllers
            
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-loan-application/cancellation")]
+        public HttpResponseMessage LmsLoanApplicationCancellation()
+        {
+            var response = repo.GetAllLmsRequestsForLoanCancellation(token.GetStaffId);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application/loan-cancellation")]
@@ -1606,6 +1617,30 @@ namespace FintrakBanking.APICore.Controllers
             //{
             //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             //}
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-application/lms-loan-cancellation")]
+        public HttpResponseMessage LmsLoanApplicationCancellationRequest([FromBody] LoanReviewApplicationViewModel data)
+        {
+            data.createdBy = token.GetStaffId;
+            data.companyId = token.GetCompanyId;
+            data.userBranchId = (short)token.GetBranchId;
+            var response = repo.SaveLMSCancelledApplcation(data);
+            if (response == 1)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Application Has been Cancelled Successfully" });
+            }
+            else if (response == 2)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Application Has been Cancelled Successfully" });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, result = response, message = "An error Occured while cancelling this loan Application" });
+            }
+
         }
 
         [HttpGet]
@@ -1740,6 +1775,18 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("lms-loan-application-cancellation")]
+        public HttpResponseMessage ViewLmsLaonApplicationCancellationDetails([FromBody] LoanReviewApplicationViewModel data)
+        {
+            var response = repo.ViewLmsLaonApplicationCancellationDetails(data);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("loan-application-cancellation-approval")]
         public HttpResponseMessage GoForLoanApplicationCancellationApproval([FromBody] LoanApplicationViewModel data)
         {
@@ -1751,6 +1798,22 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             
             
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lms-loan-application-cancellation-approval")]
+        public HttpResponseMessage GoForLmsLoanApplicationCancellationApproval([FromBody] LoanReviewApplicationViewModel data)
+        {
+            data.userBranchId = (short)token.GetBranchId;
+            data.companyId = token.GetCompanyId;
+            data.createdBy = token.GetStaffId;
+            var response = repo.GoForLmsLoanApplicationCancellationApproval(data);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
+
         }
 
         [HttpGet]
@@ -2303,6 +2366,16 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetAllLoanDetailReviewTypes()
         {
             IEnumerable<LoanDetailReviewTypeViewModel> response = repo.GetAllLoanDetailReviewTypes();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approved-trade-cycle")]
+        public HttpResponseMessage GetAllApprovedTradeCycles()
+        {
+            IEnumerable<ApprovedTradeCycleViewModel> response = repo.GetAllApprovedTradeCycles();
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }

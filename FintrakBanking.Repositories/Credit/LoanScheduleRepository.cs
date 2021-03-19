@@ -631,9 +631,13 @@ namespace FintrakBanking.Repositories.Credit
             IntRule = FinancialTypes.InterestRuleType.US;
 
             //result = wct.AMORTSCHED(PV, LoanDate, rate, FirstPayDate, NumPmts, Pmtpyr, DaysInYr, FV, IntRule);
-
-             result = wct.AMORTSCHED(loanInput.principalAmount, loanInput.effectiveDate, (loanInput.interestRate / 100.0), loanInput.interestFirstpaymentDate, numberOfPayments, numberOfPaymentsInAYear, daysInAYear, FV, IntRule);
-
+            try
+            {
+                result = wct.AMORTSCHED(loanInput.principalAmount, loanInput.effectiveDate, (loanInput.interestRate / 100.0), loanInput.interestFirstpaymentDate, numberOfPayments, numberOfPaymentsInAYear, daysInAYear, FV, IntRule);
+            }catch(Exception ex)
+            {
+                throw new ConditionNotMetException("Sorry your schedule generation library solution licence has expired");
+            }
 
             int counter = 0;
             foreach (DataRow row in result.Rows)

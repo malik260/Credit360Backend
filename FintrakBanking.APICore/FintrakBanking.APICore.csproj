@@ -513,6 +513,11 @@
       <DependentUpon>DRAWDOWN.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\FORM3800B.Designer.cs" />
+    <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\MiddleOffice.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -670,6 +675,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\CreditBureau.aspx.designer.cs">
       <DependentUpon>CreditBureau.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DisbursedFacilityCollateralReport.aspx.cs">
+      <DependentUpon>DisbursedFacilityCollateralReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DisbursedFacilityCollateralReport.aspx.designer.cs">
+      <DependentUpon>DisbursedFacilityCollateralReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\FixedDepositCollateral.aspx.cs">
       <DependentUpon>FixedDepositCollateral.aspx</DependentUpon>
@@ -1224,6 +1236,13 @@
     <Compile Include="Reports\ReportViews\SanctionLimitReport.aspx.designer.cs">
       <DependentUpon>SanctionLimitReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\SecurityReleaseReport.aspx.cs">
+      <DependentUpon>SecurityReleaseReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SecurityReleaseReport.aspx.designer.cs">
+      <DependentUpon>SecurityReleaseReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\SeftLiquidatingLoans.aspx.cs">
       <DependentUpon>SeftLiquidatingLoans.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1412,6 +1431,13 @@
     <Compile Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx.designer.cs">
       <DependentUpon>SubmissionOfOriginalDocument.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\SubmissionOfOriginalDocuments.aspx.cs">
+      <DependentUpon>SubmissionOfOriginalDocuments.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SubmissionOfOriginalDocuments.aspx.designer.cs">
+      <DependentUpon>SubmissionOfOriginalDocuments.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\TrialBalance.aspx.cs">
       <DependentUpon>TrialBalance.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1538,6 +1564,7 @@
     <Content Include="Reports\ReportViews\CollateralRegister.aspx" />
     <Content Include="Reports\ReportViews\CorporateLoansReport.aspx" />
     <Content Include="Reports\ReportViews\CreditBureau.aspx" />
+    <Content Include="Reports\ReportViews\DisbursedFacilityCollateralReport.aspx" />
     <Content Include="Reports\ReportViews\FixedDepositCollateral.aspx" />
     <Content Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx" />
     <Content Include="Reports\ReportViews\IdleAssetsSales.aspx" />
@@ -1630,6 +1657,7 @@
     <Content Include="Reports\ReportViews\RunningLoanReport.aspx" />
     <Content Include="Reports\ReportViews\RunningFacilitiesReport.aspx" />
     <Content Include="Reports\ReportViews\SanctionLimitReport.aspx" />
+    <Content Include="Reports\ReportViews\SecurityReleaseReport.aspx" />
     <Content Include="Reports\ReportViews\SeftLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\SLAReport.aspx" />
     <Content Include="Reports\ReportViews\StaffPriviledgeChangeReport.aspx" />
@@ -1637,6 +1665,7 @@
     <Content Include="Reports\ReportViews\StaffRoleProfileGroupReport.aspx" />
     <Content Include="Reports\ReportViews\StalledPerfection.aspx" />
     <Content Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx" />
+    <Content Include="Reports\ReportViews\SubmissionOfOriginalDocuments.aspx" />
     <Content Include="Reports\ReportViews\TrialBalance.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
     <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
@@ -1703,6 +1732,7 @@
     <Content Include="Reports\Credit\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\PUBLISH.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
@@ -1767,6 +1797,17 @@
     </Content>
     <Content Include="Reports\ReportDataset\MiddleOffice.xsc">
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\LoanDataSet.xsc">
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\LoanDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>LoanDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\LoanDataSet.xss">
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\MiddleOffice.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1984,6 +2025,7 @@
     <EmbeddedResource Include="Reports\Report\DeferralWaiver.rdlc" />
     <EmbeddedResource Include="Reports\Report\DelinquentAccounts.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DisbursedFacilityCollateralReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\Discharge.rdlc" />
     <EmbeddedResource Include="Reports\Report\DrawdownMemo.rdlc" />
@@ -2051,6 +2093,7 @@
     <EmbeddedResource Include="Reports\Report\SanctionLimitReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\SecurityReleaseReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\SLAMonitoringReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\StaffPrivilegeChangeReport.rdlc" />
@@ -2058,6 +2101,7 @@
     <EmbeddedResource Include="Reports\Report\StaffRoleProfileGroupReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\StalledPerfection.rdlc" />
+    <EmbeddedResource Include="Reports\Report\SubmissionOfOriginalDocument.rdlc" />
     <EmbeddedResource Include="Reports\Report\TerminatedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\TrialBalance.rdlc" />
@@ -2079,7 +2123,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
     <Folder Include="CFLAuthentication\App_Data\" />
-    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\Testing\" />
   </ItemGroup>
   <ItemGroup>

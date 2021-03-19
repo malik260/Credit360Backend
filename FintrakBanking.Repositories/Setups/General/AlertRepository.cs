@@ -9,6 +9,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Notification;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
@@ -903,16 +904,29 @@ namespace FintrakBanking.Repositories.Setups.General
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
 
-             // int users = Convert.ToInt32(maxUsers);
+            // int users = Convert.ToInt32(maxUsers);
             //externalAlertRepository.ValidateProfiledUsers(users);
             
-            TimeSpan startRepay = new TimeSpan(7, 0, 0);
+            TimeSpan startRepay = new TimeSpan(6, 0, 0);
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
-            
+
+
+
+            if (CompareCustomerNotificationDate() == true)
+            {
+                TimeSpan startCustomerrepay = new TimeSpan(13, 0, 0);
+                TimeSpan endCustomerrepay = new TimeSpan(13, 30, 0);
+                if ((now >= startCustomerrepay) && (now <= endCustomerrepay))
+                {
+                    GetImminentMaturitiesForCustomers();
+                }
+            }
+
             if ((now >= startRepay) && (now <= endRepay))
             {
-                GetLoanRepaymentToStaging();
+                /*GetLoanRepaymentToStaging();
                 GetOverdraftRepaymentToStaging();
+                postPaymentEntries();*/
             }
 
 
@@ -924,7 +938,7 @@ namespace FintrakBanking.Repositories.Setups.General
                  if ((now >= start) && (now <= end))
                  {
                      //GetStaffLoanPortfolioReport();
-                     GetValuationReminder();
+                     /*GetValuationReminder();
                      GetSiteVisitationAccountReminder();
                      GetExpiredValuationReport();
                      GetFacilityRestructuredNotification();
@@ -933,7 +947,7 @@ namespace FintrakBanking.Repositories.Setups.General
                      GetExpiredInsurancePolicies();
                      GetLoanRepaymentReminder();
                      GetGroupCreditFileChecklistReminder();
-                     state = true;
+                     state = true;*/
                  }
             }
 
@@ -944,12 +958,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start2) && (now <= end2))
                 {
-                    GetSectorLimitExceedeBBDReminder();
+                   /* GetSectorLimitExceedeBBDReminder();
                     GetSectorLimitExceedeCBDReminder();
                     GetSectorLimitExceedeCIBDReminder();
                     GetSectorLimitExceedeRBDReminder();
                     GetSectorLimitExceededBankReminder();
-                    state = true;
+                    state = true;*/
                 }
 
 
@@ -963,22 +977,22 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start11) && (now <= end13))
                 {
-                    /*GetDigitalLoanExceptionNPLIncrease();
+                    /*/////GetDigitalLoanExceptionNPLIncrease();
                     GetDigitalLoanExceptionNPLDecrease();
                     GetDigitalLoanDisbursementIncrease();
                     GetDigitalLoanDisbursementDecrease();
                     GetDigitalLoanDPDIncrease();
                     GetDigitalLoanDPDDecrease();
-                    GetDigitalLoanLiquidationIncrease();*/
+                    GetDigitalLoanLiquidationIncrease();//////*/
 
-                    GetDigitalLoanLiquidationModuleIncrease();
+                    /*GetDigitalLoanLiquidationModuleIncrease();
                     GetDigitalLoanExceptionNPLModuleIncrease();
                     GetDigitalLoanExceptionNPLModuleDecrease();
                     GetDigitalLoanDPDModuleIncrease();
                     GetDigitalLoanDPDModuleDecrease();
                     GetDigitalLoanDisbursementModuleIncrease();
                     GetDigitalLoanDisbursementModuleDecrease();
-                    state = true;
+                    state = true;*/
                 }
 
 
@@ -991,26 +1005,26 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start11) && (now <= end13))
                 {
-                    GetRepaymentDefaultersAlert();
+                    /*GetRepaymentDefaultersAlert();
                     GetRepaymentPayDownAlert();
-                    state = true;
+                    state = true;*/
                 }
             }
 
             
             if (CompareDate() == true)
             {
-                /*TimeSpan start = new TimeSpan(8, 0, 0);
+                TimeSpan start = new TimeSpan(8, 0, 0);
                 TimeSpan end = new TimeSpan(11, 0, 0);
 
                 if ((now >= start) && (now <= end))
                 {
-                    GroupImminentMaturitiesByGroupHeads();
+                    /*GroupImminentMaturitiesByGroupHeads();
                     GetImminentMaturities();
                     GetPastDueObligationsReminder();
-                    GetPastDueObligationsReminderByGroupHeads();
+                    GetPastDueObligationsReminderByGroupHeads();*/
                     state = true;
-                }*/
+                }
             }
 
             if (CompareRecoveryExpectedDueDate() == true)
@@ -1101,6 +1115,21 @@ namespace FintrakBanking.Repositories.Setups.General
                 return true;
             }else
             return false;
+        }
+
+        private bool CompareCustomerNotificationDate()
+        {
+            DateTime currentDate = DateTime.Now;
+            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                         && (m.OPERATIONMETHOD.Trim() == "GetLoanRepaymentReminder"
+                         )).FirstOrDefault();
+
+            if (DBdate == null)
+            {
+                return true;
+            }
+            else
+                return false;
         }
 
         private bool CompareRecoveryExpectedDueDate()
@@ -1590,6 +1619,117 @@ namespace FintrakBanking.Repositories.Setups.General
                     SendAlertNotification(alerts);
                 }
             }
+        }
+
+        public void GetImminentMaturitiesForCustomers()
+        {
+            // GetLoanRepaymentReminder method
+            List<string> customerIds = new List<string> { "028695314","002477270","013413889","005300605","013435497", "002943518","000025950","005967408","007586022","007991855","025924820","028368441","000030125","000478639","006418876","006389720","000463737","013424619","000234558","026310965","008221745","002057068","003811016","013339671","010041368","026937744","027815013","009402426","013424641","000853895","009640729","007161751","006984813","009561050","014322016","007600630","000477304","007479462","009714262","001110113","007019446","028721608","028694714","009601451","008186658","028189986","027525121","008221714","008221750","013326602","010686358","004480553","009170029",
+"017172281","008042342","008332182","000615578","008038039","006375342","008033921","014234322","009714294","007049013","028711032","028695314","014091197","001459705","025952707","000333536","006657393","009060840","007183650","002735513","009586603","008041739","005967408","003569184","005129227","009396113","008122039","026767026","007007108","013343764","014091090","013350360","013373169","008052834","026836625","014106229","009122949","025880689","028640455","009714249","013374014","009927577",
+"007125511","028695251","008033945","008296600","007575705","013435516","028393093","001202281","026041383","025777690","009337828","005545475","025960384","026902687","005322038","014330870","014234286","026029584","007627577","026263794","009415790","004796201","009037490","013813944","009714261","009372696","010530066","009714221","024505265","000347983","006988575","009095955","001226667","009611092","020986158","013424683","026012665","014322002","013413889","000324332","002603777","006941293","026041380",
+"009714286","025878706","008047654","027684741","013334643","009399077","008904278","009602483","001173080","007622872","014234282","028721635","009714242","013424789","004085600","013412292","009714260","009709803","009714277","005420996","025938218","007987292","013435489","026050460","010444639","004933004","025806973","000758013","009154160","013334517","003890974","020400540","007038865","013435520","006787262","028712790","008049002","013424748","008904268","006046535","028310629","009714056","009600104","008310735","010041369","005312023","009714251","008038084",
+"010161204","005876223","027370341","025963018","001402572","013337902","001346398","009174932","013921942","010701549","013435518","008102376","005056646","028720038","009540723","009163856","005861122","008221718","014322011","000673913","005860608","013347656","000630479","008044400","001275717","010324221","004232518","008246695","008100343","009714227","028685161","005353273","005746741","007649214","013424600","009727436","006689824","008118920","028719228","007479302",
+"008941300","013982327","001331560","007695107","006155367","007649221","014104495","028719222","007622853","008460663","009607453","006982126","008895296","008033922","013551775","025924820","004995053","028310279","028392978","008045390","013424533","026836620","026293238","014094219","026891764","008034135","008188672","025939971","009714306","000449180","009061441","009614876","008117344","013424584","009611971","005721654","026057386","008221712","002163676","008056774","006623995","010160383","014110027","008295694",
+"000655253","013707676","028681401","001333870","005193603","009737709","001033194","010644596","014508437","005091224","028694764","009060803","009397837","027263578","026010774","005285043","006949853","008045203","005980618","026958547","013424554","014101254","007649216","009597575","009611113","009360425","013370346","007585964","008045201","005027094","009714264","014095914","013354786","014109452","003971876","014091199","000419919","003957683","008332174","009714285","027288893","006981947","000140092","009573950",
+"007695298","009594021","001457024","009631978","000863409","009616358","027243699","025697978","013424568","009612636","005919841","009714282","005302784","016660970","007585946","009591191","016148911","001427482","008991831","008555197","010705117","009561175","007262164","013435530","008028504","007585953","013324270","009582229","013424548","013381404","025820893","028692350","000208653","007695144","028639639","007665757","000717732","028720250","009714297","028720708","006767452","025938210","007689407","007185286",
+"028683435","006160531","028695295","009636201","025820898","008256675","009714299","007634507","003682556","026767027","008045287","009097775","008276475","026866456","025780695","013348178","028683510","009714266","006658656","009714216","028392491","014095149","009714054","009096874","009612656","025738111","006237011","008066807","000018465","009439091","006913538","007211339","014091117","013435522","006703251","009714210","008042537","028719192","006883886","006245430","000625649","009136411","027675262","024854432",
+"007656420","010247517","009714245","028720449","008096614","008420510","010589216","028720822","005091214","007510073","009324689","010463526","014085837","009714219","007585963","009714267","013424793","005293762","026372458","003792217","028695719","007479442","010195588","027626992","009096758","026107908","013435506","014106245","000494239","028719978","013435524","008904259","007160506","013435490","009615520","009714313","006997962","008042630","013424775","008102389","028368441","008221764","027126611","013424721","013413890","007203759","013352430","014091068","000621670","007987117","008221601",
+"006871521","009081107","008221724","028392580","008316909","006832138","007661111","010326563","009187662","014234310","000283734","009087870","009714272","028681312","009914627","009140646","004946396","013424744","006732553","024877050","025419170","025940904","013343193","000625166","010705972","003126374","014234284","007649215","027160611","028721671","028720168","013424601","014330882","001456677","013424770","006386878","002354143","028695799","025692931","028721710","028720860","007119751","000616383","009204718",
+"028241614","005753062","009133355","009714254","013435526","026886440","006986881","006767714","028222384","013334622","007479496","028351567","001039334","028545580","014234220","028695233","005670885","025955292","006876165","028692183","028695733","028721774","026329045","026541817","025976036","028695411","025926577","009521554","009520650","008332160","006143005","006883562","009064360","014321999","009714311","028213691","006732249","009547853","006016086","010703840","009714309","006619461","001162869","008221748","009064396","009064366","009611962","009035460","009714256","028695297",
+"013435505","008221767","005742380","006807424","000202769","005439892","025777706","014110218","007575725","009097361","013435491","006575785","025988035","013424720","001532267","028695727","007623616","010701564","012413819","007636552","000419978","014234226","007635837","005392653","006809696","000279393","013345497","009577369","009594572","013368584","009714066","009088387","013424552","006589309","008981847","013435529","010510759","009326558","009714217","004830186","006624014","000718333","008904257","013435512","009098182","006760735","009714278","009327988","007586014","013400248","008332180","009590773","006751056","007987443","009617738","009617153","013424698","007633632","006389720","014234328","009587815","007288121","007146626","013350476","006940926","010097286","009174283","009714062","004063221","013424772","013370640","000592436","009064367","025979722",
+"000614401","013445133","013383675","028214612","007894014","000463737","009714302","005908572","005816736","008360327","009109303","008116271","007128495","014091133","002994328","000720116","008457322","008034134","006850864","009714258","028721621","026692802","004245752","013424792","014023166","013350521","007263341","006740651","000268800","006755839","008221751","025994624","009714244","006826592","008221755","009410298","027278772","004094115","006028263","004629146","007596466","013348821","007249681","003749865","009714240",
+"006400323","028393013","008206148","013424514","009134619","014100121","009115356","009714223","013435507","018556286","000325754","007649211","009169479","009936689","002795393","008046720","006840987","006024691","004137431","013420411","014095444","007649219","005467845","006051319","007192561","009163072","004206535","014110731","008114238","028720039","009316468","014234264","000700691","000550935","009098644","028600431",
+"009714270","004945832","009140211","000379465","009714239","006925704","010172728","009714279","009783942","013352403","009150739","002346587","028720357","014234280","009714064","009714304","007584602","000629219","028372041","015533068","006793701","005243368","010692238","007649212","025705145","014590225","026925385","014234277","005591488","008221715","000159763","009714222","013851492","007674933","013424643","013424499","013424515","009340207","009107538","009709540","008221759","009714207","014234320","010701600","009607660","005113445","005095870","006955856","008008580","026310965","008048028","009371030","006628310",
+"001349775","009714058","000463735","004370074","008036785","009714273","009714247","007987517","008326801","002057068","014110675","009600323","000293911","003262353","006790966","008119753","009098788","027164692","027594995","004533145","013369199","009588546","001316139","008221763","028694880","008221591","028720825","013424537","028201208","028695312","026040496","009583412","009044227","009517208","007695233","007203717","014112190","001254747","005412380","001330586","007629936","008060200","009146658","009618328","005491537",
+"004134824","009596929","009714061","010575798","009322901","000806194","006840491","007684923","009064358","009141117","008550325","014091422","000403680","000082950","014034622","041044288","000235233","023596925","003318239","000545442","006129755","000515063","000044638","015585435","004420836","006594381",
+"027333596","000073547","019612563","007243060","016517242","009281201","001409145","000433035","007931677","024016715","000573836","022485377","007883498","004532077","023532080","028567939","007284962","000194042",
+"007575672","013977228","014106211","009413847","000400682","007636989","028682862","000842718","006414975","004422580","006432371","003085518","007915785","014234274","003541683","000284103","008221733","000025950","005509140","000219138","007695143","008338903","009186571","000720257",
+"006575869","013765815","007586022","002733248","002477270","003733163","000155138","000004699","008281620","004531933","005769565","000489720","039928196","007991855","009714220","009714059","009619868","000817326","000469263","008705959","005454180","010702094",
+"009714246","003710935","013424519","007695281","007695282","001292602","006720652","009714225","003891388","009714213","002435644","006684013","009714243","004876343","001360365","004809722","009714318","000069607","006521338","008221760","009151097","000165866",
+"013435502","001462951","005054588","008221754","003488904","000560071","008904267","009109560","007237561","002990516","000640413","005069787","006695164","009628452","000154575","009611876","009130587","013339382","005300605","009714218","009309342","009063962",
+"007649231","014234308","013349845","013343337","013372893","009623234","005732367","014101115","013355406","013435533","028720936","014105339","007479868","005939072","007585973","008221719","014234269","001300799","013339679","013435496","009714310","009593900",
+"000333528","009599865","006443834","008349226","009138167","003827140","009527788","007916395","000411634","007623002","007479406","009351427",
+"009636867","001283058","008332158","007510147","013349752","013948149","009389031","009596776","042727512","000587348","013435497","000065765","008221716","008045431","013349920","004318774","005146770","008874301","008282154","006641785","003485856","000586604",
+"007254862","006343056","004454332","009714307","000482053","000466668","005158264","007649232","000001088","001454831","003980683","007575689","013355405","000275049","005094597","003388928","003924076","009353272","000488930","009160537",
+"007649235","000671334","007183863","008221744","013435517","014321994","006684517","007649228","009064354","008221753","008221762","009318779","000588676","008251743","001258320","009104263","000449037","009714292","000896872","009405252",
+"007205231","000419988","014322003","027722419","000082162","010705106","007276144","013424535","006893808","003544856","005333688","008347369","000664471","000030125","000634183","013435525","014083584","000478639","008837840","001232436",
+"009714263","000834507","008047770","004526011","008308019","005446864","005632352","001426933","006223468","005517820","001408911","013435492","000489731","009714269","008031705","001331587","005730116","000390410","009714281","000230034",
+"006573610","008038942","000017424","007695266","009714301","000194033","013352510","008904272","009352088","009604558","000097214","000210195","006418876","009317711","007695106","013435511","014508438","004151871","000818000","009416256",
+"013424567","009027189","000637511","009184306","009714312","009714215","013424718","000685648","009134560","000293134","014321995","000636133","006079525","008933610","008253492","007631496","005022723","009714268","008221757","009714230",
+"006366779","005299665","013326605","009597494","003237274","006561562","006633331","009714298","006792787","007695358","013424550","013424619","009620939","006586336","009714063","014234218","000195715","008221896","008904299","006912332",
+"005852043","014091929","007585974","005647062","013348192","005967406","009714305","000234558","005248248","009714229","008904249","013427104","009546815","008221730","000698813","006638951","008705364","006777487","004966749","006684422","007628248",
+"010705099","002613587","012414846","009186554","007575637","009183686","000269367","001228108","027018975","008221731","007991841","000275291",
+"009605606","000539810","009714280","009433457","008263983","009620604","009521489","027164696","013424794","009315840","000089989","009714283","007186611",
+"009714276","005487999","009619908","009504575","007649222","000555921","009408770","009081261","008221745","009638717","099000806","004595330","000555948","007635219","014917842","008192575","002943518","005504494","008036216","009150751","000197038","000059060","005848102",
+"007695249","005953767","000063647","009714295","014079234","007031866","000858844","014234333","006001886"};
+            List<int> days = new List<int> { 30, 21, 14, 7, 5, 2, 1 };
+            //&& days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value)
+            var loanRepaymentReminder = context.TBL_GLOBAL_EXPOSURE.Where(d => customerIds.Contains(d.CUSTOMERID) && d.AMOUNTDUE.Value > 0 && days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value)).ToList();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentReminder").FirstOrDefault();
+                int numberOfDays = 0;
+                int daysToUse = 0;
+                int numberOfInterestDays = 0;
+            var defaultEmail = "";
+                if (alertTitleInfo.DEFAULTEMAIL != null)
+                {
+                    defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+                }
+
+                if (loanRepaymentReminder != null && loanRepaymentReminder.Count() > 0)
+                {
+
+                    
+                    List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                    foreach (var i in loanRepaymentReminder) 
+                    {
+                        numberOfDays = (i.SCHEDULEDUEDATE.Value - DateTime.Now).Days;
+                        numberOfInterestDays = (i.NEXTREPAYMENTINTDATE.Value - DateTime.Now).Days;
+                        if (numberOfDays > numberOfInterestDays)
+                        {
+                            daysToUse = numberOfInterestDays;
+                        }
+                        else { daysToUse = numberOfDays; }
+
+                        var dueDate = i.SCHEDULEDUEDATE?.ToString("dd-MM-yyyy");
+                        var interestDueDate = i.NEXTREPAYMENTINTDATE?.ToString("dd-MM-yyyy");
+                        var amountDue = i.ALPHACODE+""+ string.Format("{0:#,##.00}", Convert.ToDecimal(i.AMOUNTDUE.Value));
+                        var interestAmountDue = i.ALPHACODE + "" + string.Format("{0:#,##.00}", Convert.ToDecimal(i.UNPOINTERESTAMOUNT.Value));
+                        AlertsViewModel alert = new AlertsViewModel();
+                        var alertTitle = alertTitleInfo.TITLE;
+                        var alertTemplate = alertTitleInfo.TEMPLATE;
+                        if (numberOfDays > 0)
+                        {
+                            string emailList = "";
+                            alertTemplate = alertTemplate.Replace("@{{customerName}}", i.CUSTOMERNAME);
+                            alertTemplate = alertTemplate.Replace("@{{maturityBand}}", daysToUse.ToString());
+                            alertTemplate = alertTemplate.Replace("@{{amountDue}}", amountDue);
+                            alertTemplate = alertTemplate.Replace("@{{dueDate}}", dueDate);
+                            alertTemplate = alertTemplate.Replace("@{{interestAmountDue}}", interestAmountDue);
+                            alertTemplate = alertTemplate.Replace("@{{interestDueDate}}", interestDueDate);
+                            emailList = i.EMAIL;
+                            //emailList = emailList+";"+defaultEmail;
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                            alerts.Add(alert);
+                        }
+                    }
+                    SendAlertNotification(alerts);
+                }
+            
+
+
+
+
+
+
+
+
+
+
+
         }
         //public bool ProcessLoanArchive()
         //{
@@ -3943,7 +4083,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue) || (exceptionNPL.NPL >= (decimal)twoPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4002,7 +4143,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     if ((exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
                        || (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue) || (exceptionNPL.NPL <= -(decimal)twoPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4062,7 +4204,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue) 
                        || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                       // var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4121,7 +4264,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT <= -(decimal)tenPercentValue && exceptionNPL.DISBURSEMENT > -(decimal)fifteenPercentValue)
                        || (exceptionNPL.DISBURSEMENT <= -(decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4180,7 +4324,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue)
                        || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4239,7 +4384,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.NPL <= -(decimal)tenPercentValue && exceptionNPL.NPL > -(decimal)fifteenPercentValue)
                        || (exceptionNPL.NPL <= -(decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4299,7 +4445,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4358,7 +4505,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4417,7 +4565,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4476,7 +4625,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
                        || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4535,7 +4685,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
                        || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -4594,7 +4745,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
                        || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
                     {
-                        var email = "Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
+                        //var email = "kwaghngyise@gmail.com";
+                        var email = "kwaghngyise@gmail.com;Chibuike.Mbanefo@ACCESSBANKPLC.com;PAUL.ASIEMO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com";
                         alert.receiverEmailList.Add(email);
                         alert.template = template;
                         alert.alertTitle = alertTemplate.TITLE;
@@ -5615,14 +5767,15 @@ namespace FintrakBanking.Repositories.Setups.General
                 LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
                 model.auth_key = API_KEY;
                 model.channel_code = "FINTRAK";
+                //model.review_date = "23-May-2020";
                 model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy");
 
                 Task.Run(async () => response = await GetTodayRepaymentLoans(model)).GetAwaiter().GetResult();
                 if (response.response_code == "00")
                 {
-                    //var existingRecords = staging.STG_CONTRACT_DAILY_REPAY.Where(x => x.AMOUNTPAID > 0 && DbFunctions.TruncateTime(x.PAYMENTDATE) == DbFunctions.TruncateTime(DateTime.Now)).Select(x => x.CONTRACTREFERENCENUMBER).ToList();
-                    //var repaymentDataReceived = response.getrepaymentdetailsresp.Where(x=> !existingRecords.Contains(x.account_number)).ToList();
-                    var repaymentDataReceived = response.getrepaymentdetailsresp.ToList();
+                    var existingRecords = context2.STG_CONTRACT_DAILY_REPAY.Where(x => x.AMOUNTPAID > 0 && DbFunctions.TruncateTime(x.PAYMENTDATE) == DbFunctions.TruncateTime(DateTime.Now)).Select(x => x.CONTRACTREFERENCENUMBER).ToList();
+                    var repaymentDataReceived = response.getrepaymentdetailsresp.Where(x=> !existingRecords.Contains(x.account_number)).ToList();
+                    //var repaymentDataReceived = response.getrepaymentdetailsresp.ToList();
 
                     var stagingdata = new List<STG_CONTRACT_DAILY_REPAY>();
                     foreach (var itemReceived in repaymentDataReceived)
@@ -5660,13 +5813,16 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
         public bool GetOverdraftRepaymentToStaging()
-        {
+         {
             try
             {
                 ResponseLoanPrepaymentViewModel response = new ResponseLoanPrepaymentViewModel();
                 LoanPrepaymentViewModel model = new LoanPrepaymentViewModel();
+                List<STG_OVERDRAFT_DAILY_REPAY> dataList = new List<STG_OVERDRAFT_DAILY_REPAY>();
+
                 model.auth_key = API_KEY;
                 model.channel_code = "FINTRAK";
+                //model.review_date = "24-May-2020";
                 model.review_date = DateTime.Now.Date.ToString("dd-MMM-yyyy");
 
                 var loans = (from x in context.TBL_LOAN_REVOLVING
@@ -5690,7 +5846,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var item in loans)
                 {
-
+                    model.account_no = item.customer_acct;
                     Task.Run(async () => response = await GetOverdraftRepayment(model)).GetAwaiter().GetResult();
                     if (response.response_code == "00")
                     {
@@ -5707,17 +5863,86 @@ namespace FintrakBanking.Repositories.Setups.General
                             STATUS = false,
                         };
 
-                        context2.STG_OVERDRAFT_DAILY_REPAY.Add(data);
-                    };
-                    return context2.SaveChanges() > 0;
-                };
+                        dataList.Add(data);
+                        
+                    }
+                   
+                }
+                context2.STG_OVERDRAFT_DAILY_REPAY.AddRange(dataList);
 
-                return true;
+                return context2.SaveChanges() > 0;
             }
             catch (Exception e)
             {
                 throw e;
             }
+        }
+
+        public bool postPaymentEntries()
+        {
+            var unReconciledPayLog = context2.STG_CONTRACT_DAILY_REPAY.Where(x => x.STATUS == false && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).ToList();
+            var BatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+            List<TBL_FINANCE_TRANSACTION> financePostingList = new List<TBL_FINANCE_TRANSACTION>();
+            foreach (var item in unReconciledPayLog)
+            {
+                var loanAccount = context.TBL_LOAN.Where(x => x.COREBANKINGREF == item.CONTRACTREFERENCENUMBER).FirstOrDefault();
+
+                if (loanAccount != null)
+                {
+                    var casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == loanAccount.CASAACCOUNTID && x.COMPANYID == loanAccount.COMPANYID).FirstOrDefault();
+                    var product = context.TBL_PRODUCT.Where(x => x.PRODUCTID == loanAccount.PRODUCTID && x.COMPANYID == loanAccount.COMPANYID).FirstOrDefault();
+                    var repaymentAccountGL = context.TBL_PRODUCT.Where(x => x.PRODUCTID == casa.PRODUCTID).Select(x => x.PRINCIPALBALANCEGL.Value).FirstOrDefault();
+
+               
+
+                    FinanceTransactionStagingViewModel newFinancialReturn = new FinanceTransactionStagingViewModel()
+                    {
+                        creditGlAccountId = repaymentAccountGL,
+                        sourceReferenceNumber = loanAccount.LOANREFERENCENUMBER,
+                        creditCasaAccountId = loanAccount.CASAACCOUNTID2,
+                        debitCasaAccountId = loanAccount.CASAACCOUNTID,
+                        description = item.PAYMENTDESCRIPTION,
+                        amount = item.AMOUNTPAID,
+                        valueDate = item.DUEDATE,
+                        currencyId = loanAccount.CURRENCYID,
+                        destinationBranchId = loanAccount.BRANCHID,
+                        // sourceApplicationId = 0,
+                    };
+
+                    if (item.PAYMENTDESCRIPTION == "MAIN_INT") newFinancialReturn.operationId = (short)OperationsEnum.InterestLoanRepayment;
+                    //else if (item.PAYMENTDESCRIPTION == "") newFinancialReturn.operationId = (short)OperationsEnum.PrincipalLoanRepayment;
+
+
+                    //PAYMENT DESCRIPTION IS UNKOWN
+                    if (newFinancialReturn.operationId > 0)
+                    {
+
+                        TBL_FINANCE_TRANSACTION financePosting = new TBL_FINANCE_TRANSACTION();
+                        financePosting.CURRENCYID = (short)newFinancialReturn.currencyId;
+                        financePosting.CURRENCYRATE = loanAccount.EXCHANGERATE;
+                        financePosting.DEBITAMOUNT = newFinancialReturn.amount;
+                        financePosting.CREDITAMOUNT = newFinancialReturn.amount;
+                        financePosting.SOURCEREFERENCENUMBER = newFinancialReturn.sourceReferenceNumber;
+                        financePosting.SOURCEBRANCHID = (short)loanAccount.TERMLOANID;
+                        financePosting.SOURCEAPPLICATIONID = newFinancialReturn.sourceApplicationId;
+                        financePosting.GLACCOUNTID = newFinancialReturn.creditGlAccountId;
+                        financePosting.CASAACCOUNTID = newFinancialReturn.creditCasaAccountId;
+                        financePosting.OPERATIONID = newFinancialReturn.operationId;
+                        financePosting.DESCRIPTION = newFinancialReturn.description;
+                        financePosting.BATCHCODE = BatchCode;
+                        financePosting.BATCHCODE2 = "";
+                        financePosting.COMPANYID = loanAccount.COMPANYID;
+                        financePosting.APPROVEDDATETIME = item.PAYMENTDATE;
+                        // financePosting.APPROVEDBY = item.
+                        item.STATUS = true;
+                        financePostingList.Add(financePosting);
+                    } 
+                }
+            }
+            context.TBL_FINANCE_TRANSACTION.AddRange(financePostingList);
+            return context.SaveChanges() > 0;
+            
         }
 
     }

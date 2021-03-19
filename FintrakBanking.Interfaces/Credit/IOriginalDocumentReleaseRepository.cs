@@ -27,7 +27,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<OriginalDocumentReleaseViewModel> GetLeaseDocumentForApproval(int staffId);
 
-        bool GoForApproval(IEnumerable<OriginalDocumentReleaseViewModel> model);
+        WorkflowResponse GoForApproval(IEnumerable<OriginalDocumentReleaseViewModel> model);
 
         WorkflowResponse SubmitApproval(OriginalDocumentReleaseViewModel model);
 

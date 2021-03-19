@@ -117,6 +117,5 @@
         public bool? DOMICILIATIONNOTINPLACE { get; set; }
         public decimal TOTALEXPOSUREAMOUNT { get; set; }
         public bool ISAGRICRELATED { get; set; }
-
     }
 }

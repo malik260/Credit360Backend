@@ -45,6 +45,13 @@ namespace FintrakBanking.ViewModels.Setups.General
         public decimal? shareHoldersFund { get; set; }
         public decimal? companyLimit { get; set; }
         public decimal? singleObligorLimit { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public string imagePath { get; set; }
+        public short userBranchId { get; set; }
+        public string userIPAddress { get; set; }
+        public string applicationUrl { get; set; }
+        public byte[] fileData { get; set; }
     }
     public class CompanyDirectorsViewModel : GeneralEntity
     {

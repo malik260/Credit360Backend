@@ -255,7 +255,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         revaluationDuration = m.REVALUATIONDURATION,
                         isLocationBased = m.ISLOCATIONBASED,
                         allowSharing = m.ALLOWSHARING,
-                        visitationCycle = m.VISITATIONCYCLE
+                        visitationCycle = m.VISITATIONCYCLE,
+                        isGPScollateralType = m.ISGPSCOORDINATESCOLLATERALTYPE
 
                     }).FirstOrDefault();
         }
@@ -276,6 +277,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         allowSharing = m.ALLOWSHARING,
                         collateralTypeName = t.COLLATERALTYPENAME,
                         visitationCycle = m.VISITATIONCYCLE,
+                        isGPScollateralType = m.ISGPSCOORDINATESCOLLATERALTYPE
                     }).ToList();
         }
         
@@ -287,6 +289,11 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
         public bool UpdateCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity)
         {
+            if (entity.GPScollateralType == "0")
+            {
+                entity.isGPScollateralType = false;
+            }
+            else { entity.isGPScollateralType = true; }
             var subType = context.TBL_COLLATERAL_TYPE_SUB.Find(subTypeId);
 
             subType.COLLATERALTYPEID = entity.collateralTypeId;
@@ -298,7 +305,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             subType.ISLOCATIONBASED = entity.isLocationBased;
             subType.ALLOWSHARING = entity.allowSharing;
             subType.VISITATIONCYCLE = entity.visitationCycle;
-            
+            subType.ISGPSCOORDINATESCOLLATERALTYPE = entity.isGPScollateralType;
+
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -352,6 +360,11 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
         public async Task<bool> AddCollateralSubTypes(CollateralSubTypeViewModel entity)
         {
+            if (entity.GPScollateralType == "0")
+            {
+                entity.isGPScollateralType = false;
+            }
+            else { entity.isGPScollateralType = true; }
             var type = new TBL_COLLATERAL_TYPE_SUB
             {
                 COLLATERALSUBTYPENAME = entity.collateralSubTypeName,
@@ -361,7 +374,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 ISLOCATIONBASED = entity.isLocationBased,
-                ALLOWSHARING = entity.allowSharing
+                ALLOWSHARING = entity.allowSharing,
+                ISGPSCOORDINATESCOLLATERALTYPE = entity.isGPScollateralType
             };
             context.TBL_COLLATERAL_TYPE_SUB.Add(type);
 

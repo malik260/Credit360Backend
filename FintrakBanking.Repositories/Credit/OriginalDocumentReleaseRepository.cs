@@ -332,7 +332,7 @@ namespace FintrakBanking.Repositories.Credit
                              collateralId = dr.COLLATERALCUSTOMERID,
                              collateralTypeId = b.COLLATERALTYPEID,
                              collateralSubTypeId = b.COLLATERALSUBTYPEID,
-                             customerId = (int)dr.CUSTOMERID,
+                             customerId = dr.CUSTOMERID,
                              customerCode = b.CUSTOMERCODE,
                              currencyId = b.CURRENCYID,
                              currencyCode = b.TBL_CURRENCY.CURRENCYCODE,
@@ -427,7 +427,7 @@ namespace FintrakBanking.Repositories.Credit
                              approvalStatusId = atrail.APPROVALSTATUSID,
                              approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault().ToUpper(),
                              customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
-                             loanApplicationDetailId = (int)dr.LOANAPPLICATIONDETAILID,
+                             loanApplicationDetailId = dr.LOANAPPLICATIONDETAILID,
                              loanTypeName = (from y in _context.TBL_LOAN_APPLICATION_TYPE join p in _context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONTYPEID equals p.LOANAPPLICATIONTYPEID where dr.LOANAPPLICATIONID == p.LOANAPPLICATIONID select y.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
                              applicationReferenceNumber = _context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                              loanAmount = _context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(x => x.APPROVEDAMOUNT).FirstOrDefault(),
@@ -439,7 +439,7 @@ namespace FintrakBanking.Repositories.Credit
                              collateralId = dr.COLLATERALCUSTOMERID,
                              collateralTypeId = b.COLLATERALTYPEID,
                              collateralSubTypeId = b.COLLATERALSUBTYPEID,
-                             customerId = (int)dr.CUSTOMERID,
+                             customerId = dr.CUSTOMERID,
                              customerCode = b.CUSTOMERCODE,
                              currencyId = b.CURRENCYID,
                              currencyCode = b.TBL_CURRENCY.CURRENCYCODE,
@@ -447,7 +447,8 @@ namespace FintrakBanking.Repositories.Credit
                              dateRecieved = atrail.SYSTEMARRIVALDATETIME,
                              DateTimeCreated = dr.DATETIMECREATED,
                              operationId = atrail.OPERATIONID,
-                             currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                             currentApprovalLevelId = atrail.TOAPPROVALLEVELID ?? 0,
+                             currentlyLevel = atrail.TBL_APPROVAL_LEVEL1.LEVELNAME,
                              createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                          }).ToList();
 
@@ -651,7 +652,7 @@ namespace FintrakBanking.Repositories.Credit
             return _context.SaveChanges() > 0;
         }
 
-        public bool GoForApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity)
+        public WorkflowResponse GoForApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity)
         {
             var record = entity.GroupBy(x => x.originalDocumentApprovalId).Select(x => x.FirstOrDefault()).Where(x => x.approvalStatusId == (short)ApprovalStatusEnum.Pending); 
             var recordReferred = entity.GroupBy(x => x.originalDocumentApprovalId).Select(x => x.FirstOrDefault()).Where(x => x.approvalStatusId == (short)ApprovalStatusEnum.Referred );
@@ -710,7 +711,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            return _context.SaveChanges() != 0;
+            _context.SaveChanges();
+            return _workflow.Response;
         }
 
         public WorkflowResponse GoForGuaranteeApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity)

@@ -470,7 +470,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.REQUESTTYPE = model.requestType;
             entity.ASATDATE = model.asAtDate;
             entity.COMMENTS = model.comment;
-
+            entity.LOANBALANCE = model.loanBalance;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 
@@ -778,7 +778,9 @@ namespace FintrakBanking.Repositories.Credit
                                 && (lgr.REQUESTREF == searchString
                                 || c.FIRSTNAME.ToLower().Contains(searchString)
                                 || c.LASTNAME.ToLower().Contains(searchString)
-                                || c.MIDDLENAME.ToLower().Contains(searchString))
+                                || c.MIDDLENAME.ToLower().Contains(searchString)
+                                || lgr.REQUESTREF.ToLower().Contains(searchString)
+                                )
                                 select new LetterGenerationRequestViewModel
                                 {
                                     requestRef = lgr.REQUESTREF,

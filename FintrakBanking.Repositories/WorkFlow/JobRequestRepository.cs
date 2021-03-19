@@ -665,7 +665,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                              join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                              join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
                              where ((x.SENDERSTAFFID == staffId) || (x.RECEIVERSTAFFID == staffId) || (x.REASSIGNEDTO == staffId)) 
-                             && x.REQUESTSTATUSID == statusId
+                             && x.REQUESTSTATUSID == (short)statusId
                              || ((unitIds.Contains((int)x.JOBTYPEUNITID)) && !middleOfficeUnit.Any())
                              || adminJobTypeIds.Contains(x.JOBTYPEID)
                              && (startNumber != null && x.JOBREQUESTID > startNumber)
@@ -2637,7 +2637,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 JOBTYPEID = (short)model.jobTypeId,
                 COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = model.dateTimeCreated,
+                DATETIMECREATED = DateTime.Now,
                 DELETED = false,
                 
             };
@@ -2712,7 +2712,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"'{jobType.JOBTYPENAME}' staff admin has been modified. New admin staff code : '{ staff.STAFFCODE }' ",
+                DETAIL = $"'{jobType?.JOBTYPENAME}' staff admin has been modified. New admin staff code : '{ staff.STAFFCODE }' ",
                 IPADDRESS =CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),

@@ -70,7 +70,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool ChangeApplicationOwner(int loanApplicationId, int staffId, GeneralEntity entity);
 
         bool SelfAssignMultpleApplication(List<ForwardViewModel> models, GeneralEntity userEntity);
-        bool ReassignMultipleRequests(List<int> models, GeneralEntity userEntity);
+        bool ReassignMultipleRequests(List<int> models, GeneralEntity userEntity, int staffId);
 
         bool ReturnAssignApplicationToPool(int approvalTrailId, GeneralEntity model);
 

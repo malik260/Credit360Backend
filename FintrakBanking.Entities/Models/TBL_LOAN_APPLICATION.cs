@@ -180,6 +180,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
+        public int? TERMSHEETID { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 

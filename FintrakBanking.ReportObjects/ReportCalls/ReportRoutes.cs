@@ -293,7 +293,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var appl = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).FirstOrDefault();
-                loanAppId = appl.LOANAPPLICATIONID;
+                loanAppId = appl?.LOANAPPLICATIONID ?? 0;
             }
             return loanAppId;
         }
@@ -1133,6 +1133,23 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string SubmissionOfOriginalDocuments(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/SubmissionOfOriginalDocuments.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&referenceNumber=" + dateRange.referenceNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+
+        public string SecurityReleaseReport(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/SecurityReleaseReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&referenceNumber=" + dateRange.referenceNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
 
         public string PSR(int psrReportTypeId, int projectSiteReportId)
         {
@@ -1562,6 +1579,24 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/CollateralPerfection.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&status=" + dateRange.approvalStatus + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
+
+        public string GetDisbursedFacilityCollateralReport(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/DisbursedFacilityCollateralReport.aspx?classification=" + dateRange.classification + "&productId=" + dateRange.productId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            //path = reportPath + "ReportViews/DisbursedFacilityCollateralReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&status=" + dateRange.approvalStatus + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+       /* public string GetLoanClassificationReport(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanClassification.aspx?classification=" + dateRange.classification + "&companyId=" + dateRange.companyId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }*/
         public string GetCollateralRegister(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);

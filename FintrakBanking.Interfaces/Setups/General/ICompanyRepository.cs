@@ -12,7 +12,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         CompanyViewModel GetCompanyViewModel(int companyId);
 
-        bool AddCompany(CompanyViewModel company);
+        //bool AddCompany(CompanyViewModel company);
+        bool AddCompany(CompanyViewModel company, byte[] buffer);
 
         bool UpdateCompany(int companyId, CompanyViewModel company);
 

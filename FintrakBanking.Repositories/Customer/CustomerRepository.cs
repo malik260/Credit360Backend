@@ -243,11 +243,15 @@ namespace FintrakBanking.Repositories.Customer
         public void UpdateCustomerCollateralId(string customerCode)
         {
             customerCode = customerCode.Trim();
-            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
-            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
-            foreach(var c in collaterals)
+            //var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE == customerCode && c.DELETED == false);
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE == customerCode).ToList();
+            if (collaterals != null)
             {
-                c.CUSTOMERID = customer?.CUSTOMERID;
+                foreach (var c in collaterals)
+                {
+                    c.CUSTOMERID = customer?.CUSTOMERID;
+                }
             }
             var saved = context.SaveChanges() > 0;
         }
@@ -1184,6 +1188,9 @@ namespace FintrakBanking.Repositories.Customer
                             company.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                             company.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                             company.COMPANYSTRUCTURE = entity.companyStructure;
+                            company.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                            company.ISSTARTUP = entity.isStartUp;
+                            company.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
                         }
                         else //If customer main table AccountCreationCompleted equals true then save record in temp table
                         {
@@ -1212,6 +1219,9 @@ namespace FintrakBanking.Repositories.Customer
                                 temp.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                                 temp.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                                 temp.COMPANYSTRUCTURE = entity.companyStructure;
+                                temp.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                                temp.ISSTARTUP = entity.isStartUp;
+                                temp.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
                             }
                             else //if customer company information has no existing record being modified and approved, insert new row
                             {
@@ -1234,6 +1244,9 @@ namespace FintrakBanking.Repositories.Customer
                                 temp.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                                 temp.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                                 temp.COMPANYSTRUCTURE = entity.companyStructure;
+                                temp.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                                temp.ISSTARTUP = entity.isStartUp;
+                                temp.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
 
                                 context.TBL_TEMP_CUSTOMER_COMPANYINFO.Add(temp);
                             }
@@ -1297,6 +1310,9 @@ namespace FintrakBanking.Repositories.Customer
                         company.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                         company.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                         company.COMPANYSTRUCTURE = entity.companyStructure;
+                        company.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                        company.ISSTARTUP = entity.isStartUp;
+                        company.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
                         context.TBL_CUSTOMER_COMPANYINFOMATION.Add(company);
 
                     }
@@ -1349,6 +1365,9 @@ namespace FintrakBanking.Repositories.Customer
                 info.NUMBEROFEMPLOYEES = ent.numberOfEmployees;
                 info.COUNTRYOFPARENTCOMPANYID = ent.countryOfParentCompanyId;
                 info.COMPANYSTRUCTURE = ent.companyStructure;
+                info.NOOFFEMALEEMPLOYEES = ent.noOfFemaleEmployees;
+                info.ISSTARTUP = ent.isStartUp;
+                info.ISFIRSTTIMECREDIT = ent.isFirstTimeCredit;
                 context.TBL_CUSTOMER_COMPANYINFOMATION.Add(info);
 
                 // Audit Section ---------------------------
@@ -1395,6 +1414,9 @@ namespace FintrakBanking.Repositories.Customer
                     info.NUMBEROFEMPLOYEES = ent.numberOfEmployees;
                     info.COUNTRYOFPARENTCOMPANYID = ent.countryOfParentCompanyId;
                     info.COMPANYSTRUCTURE = ent.companyStructure;
+                    info.NOOFFEMALEEMPLOYEES = ent.noOfFemaleEmployees;
+                    info.ISSTARTUP = ent.isStartUp;
+                    info.ISFIRSTTIMECREDIT = ent.isFirstTimeCredit;
                 }
             }
 
@@ -3745,7 +3767,11 @@ namespace FintrakBanking.Repositories.Customer
                               registrationNumber = d.REGISTRATIONNUMBER,
                               paidUpCapital = d.PAIDUPCAPITAL,
                               authorizedCapital = d.AUTHORISEDCAPITAL,
-                              shareholderFund = d.SHAREHOLDER_FUND
+                              shareholderFund = d.SHAREHOLDER_FUND,
+                              numberOfEmployees = d.NUMBEROFEMPLOYEES,
+                              noOfFemaleEmployees = d.NOOFFEMALEEMPLOYEES,
+                              isStartUp = d.ISSTARTUP,
+                              isFirstTimeCredit = d.ISFIRSTTIMECREDIT
                           }).FirstOrDefault();
             return comany;
         }
@@ -3771,7 +3797,10 @@ namespace FintrakBanking.Repositories.Customer
                               numberOfEmployees = d.NUMBEROFEMPLOYEES,
                               countryOfParentCompanyId =d.COUNTRYOFPARENTCOMPANYID,
                               companyStructure = d.COMPANYSTRUCTURE,
-        }).FirstOrDefault();
+                              noOfFemaleEmployees = d.NOOFFEMALEEMPLOYEES,
+                              isStartUp = d.ISSTARTUP,
+                              isFirstTimeCredit = d.ISFIRSTTIMECREDIT
+                          }).FirstOrDefault();
             return comany;
         }
 
@@ -4905,6 +4934,10 @@ namespace FintrakBanking.Repositories.Customer
                 entity.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
                 entity.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
                 entity.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+                entity.NOOFFEMALEEMPLOYEES = temp.NOOFFEMALEEMPLOYEES;
+                entity.ISSTARTUP = temp.ISSTARTUP;
+                entity.ISFIRSTTIMECREDIT = temp.ISFIRSTTIMECREDIT;
+                entity.NUMBEROFEMPLOYEES = temp.NUMBEROFEMPLOYEES;
             }
             else
             {
@@ -4921,6 +4954,10 @@ namespace FintrakBanking.Repositories.Customer
                 corporateInfo.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
                 corporateInfo.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
                 corporateInfo.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+                corporateInfo.NOOFFEMALEEMPLOYEES = entity.NOOFFEMALEEMPLOYEES;
+                corporateInfo.ISSTARTUP = entity.ISSTARTUP;
+                corporateInfo.ISFIRSTTIMECREDIT = entity.ISFIRSTTIMECREDIT;
+                corporateInfo.NUMBEROFEMPLOYEES = entity.NUMBEROFEMPLOYEES;
                 context.TBL_CUSTOMER_COMPANYINFOMATION.Add(corporateInfo);
             }
 
@@ -5794,11 +5831,12 @@ namespace FintrakBanking.Repositories.Customer
         public bool DeleteRelatedParty(int relatedPartyId, UserInfo user)
         {
             var child = context.TBL_CUSTOMER_RELATED_PARTY.Find(relatedPartyId);
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == child.CUSTOMERID);
 
             if (child != null)
             {
                 context.TBL_CUSTOMER_RELATED_PARTY.Remove(child);
-
+                context.SaveChanges();
                 // Audit Section ---------------------------
 
                 var audit = new TBL_AUDIT
@@ -5806,7 +5844,7 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerRelatedPartyDeleted,
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
-                    DETAIL = "Deleted Customer Related Party with Related Party ID: " + child.RELATEDPARTYID,
+                    DETAIL = "Deleted Customer Related Party with Related Party ID: " + child.RELATEDPARTYID + " and companydirectorId " + child.COMPANYDIRECTORID + " and relationship " + child.RELATIONSHIPTYPE + " createdBy " + child.CREATEDBY,
                     IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -5814,12 +5852,21 @@ namespace FintrakBanking.Repositories.Customer
                     DEVICENAME = CommonHelpers.GetDeviceName(),
                     OSNAME = CommonHelpers.FriendlyName()
                 };
-
                 auditTrail.AddAuditTrail(audit);
-                return context.SaveChanges() > 0;
-            }
 
-            return false;
+
+                var relParty = context.TBL_CUSTOMER_RELATED_PARTY.Any(c => c.CUSTOMERID == customer.CUSTOMERID);
+
+                if (relParty)
+                {
+                    customer.ISREALATEDPARTY = true;
+                }
+                else
+                {
+                    customer.ISREALATEDPARTY = false;
+                }
+            }
+            return context.SaveChanges() > 0;
         }
 
 

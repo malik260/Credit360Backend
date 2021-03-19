@@ -380,15 +380,15 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                     var operationId = 0;
-                    if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
+                    if (drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
                         operationId = (short)OperationsEnum.CommercialLoanBooking;
                     if (drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                         operationId = (short)OperationsEnum.ContigentLoanBooking;
-                    if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                    if (drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                         operationId = (short)OperationsEnum.TermLoanBooking;
-                    if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
+                    if (drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
                         operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
-                    if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
+                    if (drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
                         operationId = (short)OperationsEnum.RevolvingLoanBooking;
 
                     var approvalModel = new ForwardViewModel
@@ -1771,7 +1771,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (individualGlobalLimit > 0 && request.amount_Requested > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded.");  }
                 }
 
-                if (individualGlobalLimit > 0 && (valueTaken + request.amount_Requested) > currentFacility.APPROVEDAMOUNT) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer."); }
+                if (individualGlobalLimit > 0 && ((valueTaken + request.amount_Requested) > currentFacility.APPROVEDAMOUNT)) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer."); }
             }
         }
 

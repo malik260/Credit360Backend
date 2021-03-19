@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
 <License>
   <Product>CREDIT360</Product>
-  <LicenseDate>8/1/2020</LicenseDate>
-  <ExpireDate>12/31/2020</ExpireDate>
-  <CoveredVersion>1.0.0.1</CoveredVersion>
-  <Licensee>First Bank Nigeria</Licensee>
-  <ServerMotherBoard>B4:89:HN:94:09</ServerMotherBoard>
-  <ServerMAC>HF:90:HT:HT:59</ServerMAC>
+  <LicenseDate>2-17-2021</LicenseDate>
+  <ExpireDate>2-17-2021</ExpireDate>
+  <CoveredVersion>1.0.0.0</CoveredVersion>
+  <Licensee>WEMA BANK</Licensee>
   <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
     <SignedInfo>
       <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
@@ -16,9 +14,9 @@
           <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
         </Transforms>
         <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <DigestValue>T5/Bw3DAUcum91hnaLIiUlkXGGo=</DigestValue>
+        <DigestValue>LU7OsNu2hdNeS5AZwKARV8b0xnk=</DigestValue>
       </Reference>
     </SignedInfo>
-    <SignatureValue>Z7kYcvsmGbmpfzfytlkcPsYfhWzlf7b3kS4bTDKQ1Rv4JiFBNO4indKe1OUQ7Tgqm1AJ+JJeBGMnCT+CRdmTC1jH0SX1tjdp1lxtjvIFRl7YkGpSPga3O366Fy02uop+StnF68tpF1imoEF0KAQEuQLbrJgBjtIWwW1kKIJlAG0=</SignatureValue>
+    <SignatureValue>s7mpLDLhCfZvp1Hlsn8Trp7u3d0Ja2315EGEXPrxHiE2SrKRtvidXYGkNaSKrr8cCGHKec02y7Jq/IuM/EF5hYfTz7hJbqJSXk1rqYqS/Avu8gWDkQSLOkswrzd0msl21oTY3COJ/Nysn2AA4isFOGL5qQPUBnWltFqXub2wZr0=</SignatureValue>
   </Signature>
 </License>
