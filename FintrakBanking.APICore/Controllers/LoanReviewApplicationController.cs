@@ -32,6 +32,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("review-application")]
+        [ClaimsAuthorization]
+
         public HttpResponseMessage GetApplications(
             [FromUri] int page,
             [FromUri] int itemsPerPage,
@@ -77,6 +79,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("review-application/id/{lmsApplicationId}")]
+        [ClaimsAuthorization]
+
         public HttpResponseMessage GetApplications(int lmsApplicationId)
         {
             UserInfo user = new UserInfo()
@@ -97,6 +101,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("review-availment/crms")]
+        [ClaimsAuthorization]
+
         public HttpResponseMessage GetLoanReviewForCRMS(
          [FromUri] int page,
          [FromUri] int itemsPerPage,
@@ -141,6 +147,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("review-availment")]
+        [ClaimsAuthorization]
+
         public HttpResponseMessage GetLoanReviewAvailmentAwaitingApproval(
          [FromUri] int page,
          [FromUri] int itemsPerPage,
@@ -185,6 +193,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("review-drawdown")]
+        [ClaimsAuthorization]
+
         public HttpResponseMessage GetLoanReviewDrawdownAwaitingApproval(
         [FromUri] int page,
         [FromUri] int itemsPerPage,
@@ -229,6 +239,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet, Route("loan-review-application/select-list")]
+        [ClaimsAuthorization]
+
         public HttpResponseMessage GetAllSelectList()
         {
             
@@ -244,6 +256,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet, Route("loan-review-application-approval/select-list")]
+        [ClaimsAuthorization]
+
         public HttpResponseMessage GetAllLMSApprovalOperationList()
         {
            
@@ -258,6 +272,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("loan-review-application-approval/select-list/productTypeId/{productTypeId}")]
+        [ClaimsAuthorization]
+
         public HttpResponseMessage GetAllLMSApprovalOperationListByProductTypeId(int productTypeId)
         {
 
@@ -272,6 +288,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("loan-review-application/chargefeeid/{id}")]
+        [ClaimsAuthorization]
+
         public HttpResponseMessage GetChargeFeeById(int id)
         {
            
