@@ -123,28 +123,34 @@
               <Width>1.76042in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.40625in</Width>
+              <Width>1.02083in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.42708in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1in</Width>
+              <Width>0.6875in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.70833in</Width>
+              <Width>1.5625in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.72917in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.88542in</Width>
+              <Width>1.61459in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.76042in</Width>
+              <Width>1.66667in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.25in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.33333in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.625in</Width>
@@ -153,28 +159,28 @@
               <Width>1.90625in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2in</Width>
+              <Width>1.75in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.30208in</Width>
+              <Width>0.70833in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2in</Width>
+              <Width>1.73958in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.71875in</Width>
+              <Width>1.125in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.78125in</Width>
+              <Width>1.66667in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.625in</Width>
+              <Width>1.05208in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.48958in</Width>
+              <Width>0.8125in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1in</Width>
+              <Width>0.70833in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.26042in</Width>
@@ -759,6 +765,68 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox58</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>Orange</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>interest Repay Freq</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>Orange</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox4">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>principal Repay Freq</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox4</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1691,6 +1759,66 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
+                    <Textbox Name="interestRepayFreq">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!interestRepayFreq.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>interestRepayFreq</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="principalRepayFreq">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!principalRepayFreq.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>principalRepayFreq</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
                     <Textbox Name="sector">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -2055,6 +2183,8 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
+            <TablixMember />
+            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -2071,7 +2201,7 @@
         <Top>1.31125in</Top>
         <Left>0.7175in</Left>
         <Height>0.5in</Height>
-        <Width>49.5715in</Width>
+        <Width>47.59234in</Width>
         <ZIndex>2</ZIndex>
         <Style>
           <Border>
@@ -2083,7 +2213,7 @@
     <Height>4.875in</Height>
     <Style />
   </Body>
-  <Width>50.44525in</Width>
+  <Width>53.49734in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
