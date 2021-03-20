@@ -65,6 +65,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool ApproveCollateralRelease(ApprovalViewModel entity, int staffId, GeneralEntity model);
         IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease(int staffId);
         List<InsurancePolicy> GetCollateralInsurancePolicy(int collateralId);
+        string GetInsurancePolicyCollateralReport(int trackingId);
         IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId);
         //bool AssignCollateral(ActiveCustomerCollateralViewModel entity);
 
@@ -176,6 +177,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddInsurancePolicyType(InsurancePolicyTypeViewModel model);
         InsuranceTypeViewModel GetInsuranceType(int id);
         IEnumerable<InsuranceTypeViewModel> GetInsuranceTypes();
+        IEnumerable<CollateralTypeViewModel> GetCollateralTypes();
+        IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes(int collateralTypeId);
         IEnumerable<InsuranceStatusViewModel> GetInsuranceStatus();
         IEnumerable<InsurancePolicyTypeViewModel> GetInsurancePolicyTypes();
         
@@ -214,6 +217,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool checkInsurancePolicy(InsurancePolicy model);
         bool UpdateInsurancePolicyRequest(CollateralInsuranceRequestViewModel model, int id);
         string GetLastComment(int targetId, int operationId);
+        int UpdateCollateralInsuranceTrackingForm(int getStaffId, int id, CollateralInsuranceTrackingViewModel model);
+        int GetCustomerCollateralInsuranceDetailsConfirmation(int getStaffId, int id);
         #endregion
     }
 }

@@ -679,6 +679,35 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut, Route("customer-collateral-insurance-tracking-update/{id}")]
+        public HttpResponseMessage GetCustomerCollateralInsuranceTrackingUpdate( int id, [FromBody] CollateralInsuranceTrackingViewModel model)
+        {
+            try
+            {
+                int response = repo.UpdateCollateralInsuranceTrackingForm(token.GetStaffId, id, model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("customer-collateral-insurance-details-confirmation/{id}")]
+        public HttpResponseMessage GetCustomerCollateralInsuranceDetailsConfirmation(int id)
+        {
+            try
+            {
+                int response = repo.GetCustomerCollateralInsuranceDetailsConfirmation(token.GetStaffId, id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+
 
 
         [HttpGet, Route("temp-item-policy")]
@@ -722,12 +751,27 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
         [HttpGet, Route("item-policy/{collateralId}")]
         public HttpResponseMessage GetPolicyCollateralList(int collateralId)
         {
             try
             {
                 var response = repo.GetCollateralInsurancePolicy(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("insurance-policy-report/{trackingId}")]
+        public HttpResponseMessage GetInsurancePolicyCollateralReport(int trackingId)
+        {
+            try
+            {
+                var response = repo.GetInsurancePolicyCollateralReport(trackingId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -2602,6 +2646,24 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetInsuranceTypes()
         {
             IEnumerable<InsuranceTypeViewModel> response = repo.GetInsuranceTypes();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-type-all")]
+        public HttpResponseMessage GetCollateralTypes()
+        {
+            IEnumerable<CollateralTypeViewModel> response = repo.GetCollateralTypes();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-sub-type-all/{collateralTypeId}")]
+        public HttpResponseMessage GetCollateralSubType(int collateralTypeId)
+        {
+            IEnumerable<CollateralSubTypeViewModel> response = repo.GetCollateralSubTypes(collateralTypeId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 

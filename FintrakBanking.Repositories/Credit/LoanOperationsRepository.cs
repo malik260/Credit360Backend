@@ -18531,6 +18531,8 @@ namespace FintrakBanking.Repositories.Credit
                                 divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cu.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                                 divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == ld.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                                currApprovalStatusId = (int)ld.STATUSID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
                                 loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -18692,6 +18694,8 @@ namespace FintrakBanking.Repositories.Credit
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
                                      {
+                                         loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                                         currApprovalStatusId = (int)ld.STATUSID,
                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
@@ -18837,6 +18841,8 @@ namespace FintrakBanking.Repositories.Credit
                                       orderby op.DATECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
                                       {
+                                          loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                                          currApprovalStatusId = (int)ld.STATUSID,
                                           creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
                                           creditAppraisalOperationId = lp.OPERATIONID,
                                           lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :

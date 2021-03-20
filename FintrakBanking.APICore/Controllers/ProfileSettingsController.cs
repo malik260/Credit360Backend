@@ -30,7 +30,9 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-         [HttpGet] 
+         [HttpGet]
+        [ClaimsAuthorization]
+
         public int? GetMinRequiredPasswordLength()
         {
                 var data = repo.GetProfileSettings();
@@ -46,6 +48,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
+
         public int? GetMinRequiredNonAlphaNumericChar()
         {
             var data = repo.GetProfileSettings();
@@ -60,6 +64,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpGet]
+        [ClaimsAuthorization]
+
         public bool? GetEnablePassWordRetrieval()
         {
             var data = repo.GetProfileSettings();
@@ -74,6 +80,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpGet]
+        [ClaimsAuthorization]
+
         public bool? GetEnablePasswordReset()
         {
             var data = repo.GetProfileSettings();
@@ -88,6 +96,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpGet]
+        [ClaimsAuthorization]
+
         public bool? GetRequiresQuestionAndAnswer()
         {
             var data = repo.GetProfileSettings();
@@ -103,6 +113,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
+
         public bool? GetRequiresUniqueEmail()
         {
             var data = repo.GetProfileSettings();
@@ -117,7 +129,9 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         
-       [HttpGet] 
+       [HttpGet]
+        [ClaimsAuthorization]
+
         public int? GetMaxInvalidPasswordAttempts()
         {
             var data = repo.GetProfileSettings();
@@ -131,7 +145,9 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet] 
+        [HttpGet]
+        [ClaimsAuthorization]
+
         public int? GetAllowPasswordReuseAfter()
         {
             var data = repo.GetProfileSettings();
@@ -145,7 +161,9 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet] 
+        [HttpGet]
+        [ClaimsAuthorization]
+
         public int? GetExpirePasswordAfter()
         {
             var data = repo.GetProfileSettings();
@@ -159,7 +177,9 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet] 
+        [HttpGet]
+        [ClaimsAuthorization]
+
         public int? GetMaxPeriodOfUserInactivity()
         {
             var data = repo.GetProfileSettings();
@@ -173,7 +193,9 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet] 
+        [HttpGet]
+        [ClaimsAuthorization]
+
         public int? GetSessionTimeout()
         {
             var data = repo.GetProfileSettings();
