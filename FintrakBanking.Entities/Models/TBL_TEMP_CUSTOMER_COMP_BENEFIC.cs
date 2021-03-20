@@ -64,7 +64,8 @@
         public bool ISCURRENT { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
-       
+
+
     }
 }
 

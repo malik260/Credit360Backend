@@ -1474,7 +1474,8 @@ namespace FintrakBanking.Repositories.Customer
                                         EMAILADDRESS = item.email,
                                         CREATEDBY = entity.createdBy,
                                         DATECREATED = DateTime.Now,
-                                        DELETED = false,
+                                        DELETED = false
+                                        //ISTHEPROMOTER = entity.isThePromoter
                                         
                                     };
                                     beneficialList.Add(beneficial);
@@ -1502,6 +1503,7 @@ namespace FintrakBanking.Repositories.Customer
                                         DELETED = false,
                                         ISCURRENT = true,
                                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
+                                        //ISTHEPROMOTER = item.isThePromoter
                                     };
                                     tempBeneficialList.Add(tempBeneficial);
                                 }
@@ -1532,6 +1534,7 @@ namespace FintrakBanking.Repositories.Customer
                         directors.GENDER = entity.gender;
                         directors.MARITALSTATUSID = entity.maritalStatusId;
                         directors.DATEOFBIRTH = entity.dateOfBirth;
+                        directors.ISTHEPROMOTER = entity.isThePromoter;
                         if (entity.isPoliticallyExposed == true)
                         {
                             if (CustomerRec.ISPOLITICALLYEXPOSED == false)
@@ -1565,6 +1568,7 @@ namespace FintrakBanking.Repositories.Customer
                         directors.GENDER = entity.gender;
                         directors.MARITALSTATUSID = entity.maritalStatusId;
                         directors.DATEOFBIRTH = entity.dateOfBirth;
+                        directors.ISTHEPROMOTER = entity.isThePromoter;
 
                         if (entity.isPoliticallyExposed == true)
                         {
@@ -1580,6 +1584,7 @@ namespace FintrakBanking.Repositories.Customer
                         directors.DATECREATED = DateTime.Now;
                         directors.TBL_CUSTOMER_COMPANY_BENEFICIA = beneficialList;
                         context.TBL_CUSTOMER_COMPANY_DIRECTOR.Add(directors);
+                        directors.ISTHEPROMOTER = entity.isThePromoter;
                     }
                     else //If customer main table AccountCreationCompleted equals true then save record in temp table
                     {
@@ -1638,6 +1643,7 @@ namespace FintrakBanking.Repositories.Customer
 
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+                            temp.ISTHEPROMOTER = entity.isThePromoter;
                         }
                         else //if customer phoneContact information has no existing record being modified and approved, insert new row
                         {
@@ -1663,6 +1669,7 @@ namespace FintrakBanking.Repositories.Customer
                             temp.DATECREATED = DateTime.Now;
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+                            temp.ISTHEPROMOTER = entity.isThePromoter;
                             //temp.GENDER = entity.gender;
                             //temp.MARITALSTATUSID = entity.maritalStatusId;
                             //temp.DATEOFBIRTH = entity.dateOfBirth;
@@ -4011,6 +4018,7 @@ namespace FintrakBanking.Repositories.Customer
                                         customerNIN = s.CUSTOMERNIN,
                                         numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                                        isThePromoter = s.ISTHEPROMOTER,
                                         bankVerificationNumber = s.CUSTOMERBVN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
@@ -4059,6 +4067,7 @@ namespace FintrakBanking.Repositories.Customer
                                         customerNIN = s.CUSTOMERNIN,
                                         numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                                        isThePromoter = s.ISTHEPROMOTER,
                                         bankVerificationNumber = s.CUSTOMERBVN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
@@ -5579,9 +5588,10 @@ namespace FintrakBanking.Repositories.Customer
                     entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                     entity.SHAREHOLDINGPERCENTAGE = temp.SHAREHOLDINGPERCENTAGE;
                     entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
-                    //entity.MARITALSTATUSID = temp.MARITALSTATUSID;
-                    //entity.GENDER = temp.GENDER;
-                    //entity.DATEOFBIRTH = temp.DATEOFBIRTH;
+                    entity.ISTHEPROMOTER = temp.ISTHEPROMOTER;
+                    entity.MARITALSTATUSID = temp.MARITALSTATUSID;
+                    entity.GENDER = temp.GENDER;
+                    entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                     if (temp.ISPOLITICALLYEXPOSED == true)
                     {
                         if (CustomerRec.ISPOLITICALLYEXPOSED == false)
@@ -5620,9 +5630,10 @@ namespace FintrakBanking.Repositories.Customer
                     entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                     entity.SHAREHOLDINGPERCENTAGE = temp.SHAREHOLDINGPERCENTAGE;
                     entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
-                    //entity.MARITALSTATUSID = temp.MARITALSTATUSID;
-                    //entity.GENDER = temp.GENDER;
-                    //entity.DATEOFBIRTH = temp.DATEOFBIRTH;
+                    entity.MARITALSTATUSID = temp.MARITALSTATUSID;
+                    entity.GENDER = temp.GENDER;
+                    entity.DATEOFBIRTH = temp.DATEOFBIRTH;
+                    entity.ISTHEPROMOTER = temp.ISTHEPROMOTER;
                     if (temp.ISPOLITICALLYEXPOSED == true)
                     {
                         if (CustomerRec.ISPOLITICALLYEXPOSED == false)

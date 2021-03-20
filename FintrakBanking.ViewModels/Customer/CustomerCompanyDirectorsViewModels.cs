@@ -39,6 +39,7 @@ namespace FintrakBanking.ViewModels.Customer
         public DateTime? dateOfBirth { get; set; }
         public int? maritalStatusId { get; set; }
         public string gender { get; set; }
+        public bool isThePromoter { get; set; }
     }
 
     public class CustomerCompanyBeneficiaryViewModels
@@ -55,5 +56,6 @@ namespace FintrakBanking.ViewModels.Customer
         public string address { get; set; }
         public string phoneNumber { get; set; }
         public string email { get; set; }
+        public bool isThePromoter { get; set; }
     }
 }

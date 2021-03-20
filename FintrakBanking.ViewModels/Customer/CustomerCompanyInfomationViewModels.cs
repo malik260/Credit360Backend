@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using FintrakBanking.Entities.Models;
+using System;
+using System.Collections.Generic;
 
 namespace FintrakBanking.ViewModels.Customer
 {
@@ -26,6 +28,36 @@ namespace FintrakBanking.ViewModels.Customer
         public int noOfFemaleEmployees { get; set; }
         public bool isStartUp { get; set; }
         public bool isFirstTimeCredit { get; set; }
+        public string fullName { get; set; }
+        public DateTime? birthDate { get; set; }
+        public object gender { get; set; }
+        public object address { get; set; }
+        public string state { get; set; }
+        public string phoneNo { get; set; }
+        public string email { get; set; }
+        public DateTime? interestRepayStartDate { get; set; }
+        public DateTime? principalRepayStartDate { get; set; }
+        public string interestRepayFreq { get; set; }
+        public int tenor { get; set; }
+        public string startUp { get; set; }
+        public string msmeAnnualTurnover { get; set; }
+        public object moratorium { get; set; }
+        public decimal approvedAmount { get; set; }
+        public decimal amountGranted { get; set; }
+        public int tenorType { get; set; }
+        public double rate { get; set; }
+        public string scheduleType { get; set; }
+        public string sector { get; set; }
+        public string natureOfBusiness { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public string principalRepayFreq { get; set; }
+        public string firstTimeAccessToCredit { get; set; }
+        public string facilityType { get; set; }
+        public int? noOfEmployees { get; set; }
+        public string wpower { get; set; }
+        public string esRating { get; set; }
+        public string bvn { get; set; }
+        public DateTime? baseYear { get; set; }
     }
 
   

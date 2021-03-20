@@ -662,6 +662,13 @@
     <Compile Include="Reports\ReportViews\CollateralRegister.aspx.designer.cs">
       <DependentUpon>CollateralRegister.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CorporateCustomerCreation.aspx.cs">
+      <DependentUpon>CorporateCustomerCreation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CorporateCustomerCreation.aspx.designer.cs">
+      <DependentUpon>CorporateCustomerCreation.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CorporateLoansReport.aspx.cs">
       <DependentUpon>CorporateLoansReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1562,6 +1569,7 @@
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\CollateralRegister.aspx" />
+    <Content Include="Reports\ReportViews\CorporateCustomerCreation.aspx" />
     <Content Include="Reports\ReportViews\CorporateLoansReport.aspx" />
     <Content Include="Reports\ReportViews\CreditBureau.aspx" />
     <Content Include="Reports\ReportViews\DisbursedFacilityCollateralReport.aspx" />
@@ -2016,6 +2024,7 @@
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
     <EmbeddedResource Include="Reports\Report\ComputationForExternalAgents.rdlc" />
     <EmbeddedResource Include="Reports\Report\ContigentLiabilityInformation.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CorporateCustomerCreation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CorporateLoansReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Report\CreditBureau.rdlc" />

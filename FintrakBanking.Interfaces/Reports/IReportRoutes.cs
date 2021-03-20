@@ -179,6 +179,8 @@ namespace FintrakBanking.Interfaces.Reports
         string GetDisbursedFacilityCollateralReport(DateRange param);
         string SubmissionOfOriginalDocuments(DateRange param);
         string SecurityReleaseReport(DateRange param);
+        string CorporateCustomerCreation(DateRange param);
+
     }
 
 

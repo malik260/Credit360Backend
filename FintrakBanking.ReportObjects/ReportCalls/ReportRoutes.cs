@@ -1142,6 +1142,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string CorporateCustomerCreation(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/CorporateCustomerCreation.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+
         public string SecurityReleaseReport(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
