@@ -915,7 +915,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (CompareCustomerNotificationDate() == true)
             {
                 TimeSpan startCustomerrepay = new TimeSpan(13, 0, 0);
-                TimeSpan endCustomerrepay = new TimeSpan(13, 30, 0);
+                TimeSpan endCustomerrepay = new TimeSpan(23, 30, 0);
                 if ((now >= startCustomerrepay) && (now <= endCustomerrepay))
                 {
                     GetImminentMaturitiesForCustomers();
@@ -1661,10 +1661,10 @@ namespace FintrakBanking.Repositories.Setups.General
 "010705099","002613587","012414846","009186554","007575637","009183686","000269367","001228108","027018975","008221731","007991841","000275291",
 "009605606","000539810","009714280","009433457","008263983","009620604","009521489","027164696","013424794","009315840","000089989","009714283","007186611",
 "009714276","005487999","009619908","009504575","007649222","000555921","009408770","009081261","008221745","009638717","099000806","004595330","000555948","007635219","014917842","008192575","002943518","005504494","008036216","009150751","000197038","000059060","005848102",
-"007695249","005953767","000063647","009714295","014079234","007031866","000858844","014234333","006001886"};
+"007695249","005953767","000063647","009714295","014079234","007031866","000858844","014234333","006001886","000048900","000089328"};
             List<int> days = new List<int> { 30, 21, 14, 7, 5, 2, 1 };
             //&& days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value)
-            var loanRepaymentReminder = context.TBL_GLOBAL_EXPOSURE.Where(d => customerIds.Contains(d.CUSTOMERID) && d.AMOUNTDUE.Value > 0 && days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value)).ToList();
+            var loanRepaymentReminder = context.TBL_GLOBAL_EXPOSURE.Where(d => customerIds.Contains(d.CUSTOMERID) && d.AMOUNTDUE.Value > 0).ToList();
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentReminder").FirstOrDefault();
                 int numberOfDays = 0;
                 int daysToUse = 0;
@@ -1682,8 +1682,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     List<AlertsViewModel> alerts = new List<AlertsViewModel>();
                     foreach (var i in loanRepaymentReminder) 
                     {
-                        numberOfDays = (i.SCHEDULEDUEDATE.Value - DateTime.Now).Days;
-                        numberOfInterestDays = (i.NEXTREPAYMENTINTDATE.Value - DateTime.Now).Days;
+                        numberOfDays = (i.SCHEDULEDUEDATE.Value - DateTime.Now).Days + 1;
+                        numberOfInterestDays = (i.NEXTREPAYMENTINTDATE.Value - DateTime.Now).Days + 1;
                         if (numberOfDays > numberOfInterestDays)
                         {
                             daysToUse = numberOfInterestDays;
