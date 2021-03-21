@@ -11194,7 +11194,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<InsurancePolicy> GetCollateralInsurancePolicyReport(DateTime? startDate, DateTime? endDate, string searchString)
         {
             List<InsurancePolicy> insurance = null;
-            if (searchString.Trim().ToLower() == "all")
+            if (searchString.Trim().ToLower() == "all" || searchString == null)
             {
                  insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value)
                     .Select(x => new InsurancePolicy
@@ -11230,6 +11230,7 @@ namespace FintrakBanking.Repositories.Credit
                         firstLossPayee = x.FIRSTLOSSPAYEE,
                         insurableValue = x.INSURABLEVALUE,
                         requestComment = x.COMMENT,
+                        premiumAmount = x.PREMIUMPAID,
                     })).OrderBy(x=>x.insurancePolicyType).ToList();
 
                 foreach (var i in insurance)

@@ -780,7 +780,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet, Route("collateral-insurance-policy-list")]
+        [HttpPost, Route("collateral-insurance-policy-list")]
         public HttpResponseMessage GetCollateralInsurancePolicyList([FromBody] InsurancePolicy model)
         {
             try
