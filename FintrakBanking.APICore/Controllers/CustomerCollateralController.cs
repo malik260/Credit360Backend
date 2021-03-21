@@ -707,6 +707,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("delete-customer-collateral-insurance-details/{id}")]
+        public HttpResponseMessage DeleteCustomerCollateralInsuranceDetails(int id)
+        {
+            try
+            {
+                int response = repo.DeleteCustomerCollateralInsuranceDetails(token.GetStaffId, id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
 
 
 
@@ -758,6 +772,20 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.GetCollateralInsurancePolicy(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("collateral-insurance-policy-list")]
+        public HttpResponseMessage GetCollateralInsurancePolicyList([FromBody] InsurancePolicy model)
+        {
+            try
+            {
+                var response = repo.GetCollateralInsurancePolicyReport(model.startDate, model.expiryDate, model.valueCode);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)

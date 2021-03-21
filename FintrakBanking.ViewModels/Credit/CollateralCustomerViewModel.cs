@@ -551,6 +551,18 @@ namespace FintrakBanking.ViewModels.Credit
         public string taxNumber { get; set; }
         public string rcNumber { get; set; }
         public string firstLossPayee { get; set; }
+        public decimal? insurableValue { get; set; }
+        public string customerCode { get; set; }
+        public string customerAccount { get; set; }
+        public string customerAddress { get; set; }
+        public string teamName { get; set; }
+        public string divisionName { get; set; }
+        public string groupHead { get; set; }
+        public string customerEmail { get; set; }
+        public string accountOfficerName { get; set; }
+        public string accountOfficerEmail { get; set; }
+        public string valueCode { get; set; }
+        public string customerPhone { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -1307,6 +1319,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? insuranceCompanyId { get; set; }
         public int? valuerId { get; set; }
         public string firstLossPayee { get; set; }
+        public decimal? insurableValue { get; set; }
+        public string comment { get; set; }
     }
 
  }
