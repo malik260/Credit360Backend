@@ -1,4 +1,5 @@
-﻿using FintrakBanking.APICore.JWTAuth;
+﻿using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.CRMS;
 using FintrakBanking.ViewModels.Credit;
@@ -13,7 +14,7 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/crms")]
-    public class CRMSController : ApiController
+    public class CRMSController : ApiControllerBase
     {
         private ICRMSRegulatories repo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
