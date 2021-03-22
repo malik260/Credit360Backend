@@ -15,10 +15,13 @@ using System.Web.Http;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.OAuth;
 using Microsoft.Owin.Security.Cookies;
 using System.Web;
 using FintrakBanking.Common.CustomException;
 using System.Text;
+using Microsoft.AspNet.Identity;
+using System.Web.Http.Controllers;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -339,8 +342,10 @@ namespace FintrakBanking.APICore.Controllers
                 return this.Ok(new { success = false, message = "User Not Found" });
             }
 
-
-            Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+            var authTypes = new string[] { DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.ExternalBearer, DefaultAuthenticationTypes.TwoFactorCookie, CookieAuthenticationDefaults.AuthenticationType, "Bearer" };
+            Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+            //(new HttpActionContext()).RequestContext.Principal.Identity.IsAuthenticated = false;
+            //Authentication.SignOut(OAuthGrantResourceOwnerCredentialsContext.Options.AuthenticationType);
 
 
             var audit = new TBL_AUDIT()

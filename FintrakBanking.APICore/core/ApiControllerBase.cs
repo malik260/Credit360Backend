@@ -15,6 +15,7 @@ namespace FintrakBanking.APICore.core
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     //[SimpleRefreshTokenProvider]
     [AdministratorLockoutFilter]
+    [ClaimsAuthorization]
     public class ApiControllerBase : ApiController
     {
         protected void ValidateAuthorizedUser(string userRequested)
