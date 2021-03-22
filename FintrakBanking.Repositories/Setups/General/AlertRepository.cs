@@ -1689,7 +1689,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 int numberOfDays = 0;
                 int daysToUse = 0;
                 int numberOfInterestDays = 0;
-            var defaultEmail = "";
+                var defaultEmail = "";
                 if (alertTitleInfo.DEFAULTEMAIL != null)
                 {
                     defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
@@ -1697,7 +1697,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if (loanRepaymentReminder != null && loanRepaymentReminder.Count() > 0)
                 {
-
                     
                     List<AlertsViewModel> alerts = new List<AlertsViewModel>();
                     foreach (var i in loanRepaymentReminder) 
@@ -1738,19 +1737,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     SendAlertNotification(alerts);
                 }
-            
-
-
-
-
-
-
-
-
-
-
-
         }
+
+
+
+
         //public bool ProcessLoanArchive()
         //{
         //    return loanArchive.ProcessLoanArchieving();
