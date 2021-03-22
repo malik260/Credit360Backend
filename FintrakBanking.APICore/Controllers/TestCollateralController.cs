@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.CustomException;
+﻿using FintrakBanking.APICore.core;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Credit;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace FintrakBanking.APICore.Controllers
 {
     [Authorize]
     [RoutePrefix("api/test")]
-    public class TestCollateralController : ApiController
+    public class TestCollateralController : ApiControllerBase
     {
         private ITestCollateralRepository _testCollateralRepo;
 
