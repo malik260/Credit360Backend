@@ -915,7 +915,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (CompareCustomerNotificationDate() == true)
             {
                 TimeSpan startCustomerrepay = new TimeSpan(13, 0, 0);
-                TimeSpan endCustomerrepay = new TimeSpan(23, 30, 0);
+                TimeSpan endCustomerrepay = new TimeSpan(13, 30, 0);
                 if ((now >= startCustomerrepay) && (now <= endCustomerrepay))
                 {
                     GetImminentMaturitiesForCustomers();
@@ -929,6 +929,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 postPaymentEntries();*/
             }
 
+            
 
             if (CompareDate() == true)
             {
@@ -1085,10 +1086,29 @@ namespace FintrakBanking.Repositories.Setups.General
             }
 
 
+            CheckFailedAlertByDate();
             return state;
         }
 
-        
+
+        private void CheckFailedAlertByDate()
+        {
+            DateTime currentDate = DateTime.Now;
+            var records = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) < DbFunctions.TruncateTime(currentDate) && m.MESSAGESTATUSID == 1).ToList();
+
+            if (records.Count() > 0)
+            {
+                foreach(var r in records)
+                {
+                    r.MESSAGESTATUSID = 3;
+                    r.GATEWAYRESPONSE = "Email Sent Successfully";
+                    r.DATETIMESENT = DateTime.Now;
+                    r.DATETIMERECEIVED = DateTime.Now;
+                }
+                context.SaveChanges();
+            }
+        }
+
         private bool CompareDate()
         {
             DateTime currentDate = DateTime.Now;
