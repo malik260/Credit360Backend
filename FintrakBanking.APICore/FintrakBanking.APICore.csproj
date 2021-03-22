@@ -1520,7 +1520,6 @@
   <ItemGroup>
     <Content Include="bin\Antlr3.Runtime.dll" />
     <Content Include="bin\DotNetZip.dll" />
-    <Content Include="bin\Elmah.dll" />
     <Content Include="bin\EntityFramework.dll" />
     <Content Include="bin\EntityFramework.SqlServer.dll" />
     <Content Include="bin\EntityFramework.SqlServerCompact.dll" />
@@ -1563,7 +1562,6 @@
     <Content Include="bin\Ninject.Web.Common.dll" />
     <Content Include="bin\Ninject.Web.Common.WebHost.dll" />
     <Content Include="bin\Ninject.Web.Mvc.dll" />
-    <Content Include="bin\NodaTime.Serialization.ServiceStackText.dll" />
     <Content Include="bin\Oracle.ManagedDataAccess.dll" />
     <Content Include="bin\Oracle.ManagedDataAccess.EntityFramework.dll" />
     <Content Include="bin\Owin.dll" />
@@ -1573,9 +1571,7 @@
     <Content Include="bin\Serilog.Sinks.PeriodicBatching.dll" />
     <Content Include="bin\SerilogWeb.Classic.dll" />
     <Content Include="bin\SerilogWeb.Classic.WebApi.dll" />
-    <Content Include="bin\ServiceStack.Text.dll" />
     <Content Include="bin\Swashbuckle.Core.dll" />
-    <Content Include="bin\System.ComponentModel.Annotations.dll" />
     <Content Include="bin\System.Data.SqlServerCe.dll" />
     <Content Include="bin\System.IO.FileSystem.Primitives.dll" />
     <Content Include="bin\System.IO.Packaging.dll" />
