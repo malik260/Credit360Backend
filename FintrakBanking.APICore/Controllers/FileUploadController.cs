@@ -20,7 +20,7 @@ using FintrakBanking.Common.CustomException;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/media")]
-    public class FileUploadController : ApiController
+    public class FileUploadController : ApiControllerBase
     {
         IMediaRepository _uploadService;
         public FileUploadController(IMediaRepository uploadService)

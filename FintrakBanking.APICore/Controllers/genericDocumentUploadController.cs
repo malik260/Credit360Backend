@@ -9,11 +9,12 @@ using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using System.Threading.Tasks;
+using FintrakBanking.APICore.core;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/upload")]
-    public class GenericDocumentUploadController : ApiController
+    public class GenericDocumentUploadController : ApiControllerBase
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         private ILoanDocumentRepository repo;

@@ -9,11 +9,12 @@ using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.APICore.core;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/facilitydetailsummary")]
-    public class FacilityDetailSummaryController : ApiController
+    public class FacilityDetailSummaryController : ApiControllerBase
     {
         private IFacilityDetailSummary repo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();

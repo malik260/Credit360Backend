@@ -10,11 +10,12 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.APICore.core;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/setups")]
-    public class AlertController : ApiController
+    public class AlertController : ApiControllerBase
     {
         IAlertRepository _repo;
         IExternalAlertRepository _alertRepo;

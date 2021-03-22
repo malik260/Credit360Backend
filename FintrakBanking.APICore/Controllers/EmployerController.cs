@@ -10,11 +10,12 @@ using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.APICore.core;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/setup")]
-    public class EmployerController : ApiController
+    public class EmployerController : ApiControllerBase
     {
        
         private IEmployerRepository repo;
