@@ -10,11 +10,12 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.APICore.core;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/setup")]
-    public class LimitAndMonitoringController : ApiController
+    public class LimitAndMonitoringController : ApiControllerBase
     {
         private readonly ILimitAndMonitoringRepository repo;
         private readonly TokenDecryptionHelper token = new TokenDecryptionHelper();

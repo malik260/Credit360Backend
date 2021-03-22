@@ -454,6 +454,14 @@ namespace FintrakBanking.APICore.Providers
 
                 //if (isUserAccountValid)
                 //{
+                if (user.logincode == null)
+                {//ify, to eliminate multiple sources of truth for the logincode
+                    var profile = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME == user.username);
+                    var loginCode = Guid.NewGuid().ToString() + "@" + ipAddress;
+                    profile.LOGINCODE = loginCode;
+                    user.logincode = loginCode;
+                    _bankingContext.SaveChanges();
+                }
                 var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
 
                 currIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));

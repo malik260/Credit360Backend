@@ -1,4 +1,5 @@
-﻿using FintrakBanking.APICore.JWTAuth;
+﻿using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
@@ -15,7 +16,7 @@ namespace FintrakBanking.APICore.Controllers
 {
     [Authorize]
     [RoutePrefix("api/admin")]
-    public class APILogController : ApiController
+    public class APILogController : ApiControllerBase
     {
         private IAPIErrorLog _api;
         TokenDecryptionHelper token = new TokenDecryptionHelper();

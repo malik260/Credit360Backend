@@ -1,4 +1,5 @@
-﻿using FintrakBanking.APICore.JWTAuth;
+﻿using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels;
@@ -14,7 +15,7 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/credit")]
-    public class CashBackController : ApiController
+    public class CashBackController : ApiControllerBase
     {
         private readonly ICashBackRepository _repo;
         private readonly TokenDecryptionHelper _token = new TokenDecryptionHelper();

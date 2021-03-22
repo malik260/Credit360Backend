@@ -23,12 +23,13 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using Newtonsoft.Json.Linq;
+using FintrakBanking.APICore.core;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [Authorize]
     [RoutePrefix("api/Account")]
-    public class AccountController : ApiController
+    public class AccountController : ApiControllerBase
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
