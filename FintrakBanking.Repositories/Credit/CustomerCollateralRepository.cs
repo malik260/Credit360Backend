@@ -10976,7 +10976,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public List<InsurancePolicy> GetCollateralInsurancePolicy(int collateralId)
         {
-            var insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == collateralId)
+            var insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)
                 .Select(x => new InsurancePolicy
                 {
                     collateralInsuranceTrackingId = x.COLLATERALINSURANCETRACKINGID,
@@ -11196,7 +11196,7 @@ namespace FintrakBanking.Repositories.Credit
             List<InsurancePolicy> insurance = null;
             if (searchString.Trim().ToLower() == "all" || searchString == null)
             {
-                 insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value)
+                 insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && x.DELETED == false)
                     .Select(x => new InsurancePolicy
                     {
                         loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
@@ -11256,7 +11256,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (searchString.Trim().ToLower() == "active")
             {
-                insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value > DbFunctions.TruncateTime(DateTime.Now))
+                insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value > DbFunctions.TruncateTime(DateTime.Now) && x.DELETED == false)
                    .Select(x => new InsurancePolicy
                    {
                        loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
@@ -11314,7 +11314,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (searchString.Trim().ToLower() == "expired")
             {
-                insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value < DbFunctions.TruncateTime(DateTime.Now))
+                insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value < DbFunctions.TruncateTime(DateTime.Now) && x.DELETED == false)
                    .Select(x => new InsurancePolicy
                    {
                        loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
