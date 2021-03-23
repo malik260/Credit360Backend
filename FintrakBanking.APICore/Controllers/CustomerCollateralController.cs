@@ -680,7 +680,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut, Route("customer-collateral-insurance-tracking-update/{id}")]
-        public HttpResponseMessage GetCustomerCollateralInsuranceTrackingUpdate( int id, [FromBody] CollateralInsuranceTrackingViewModel model)
+        public HttpResponseMessage GetCustomerCollateralInsuranceTrackingUpdate(int id, [FromBody] CollateralInsuranceTrackingViewModel model)
         {
             try
             {
@@ -699,6 +699,20 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 int response = repo.GetCustomerCollateralInsuranceDetailsConfirmation(token.GetStaffId, id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("delete-customer-collateral-insurance-details/{id}")]
+        public HttpResponseMessage DeleteCustomerCollateralInsuranceDetails(int id)
+        {
+            try
+            {
+                int response = repo.DeleteCustomerCollateralInsuranceDetails(token.GetStaffId, id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -758,6 +772,20 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.GetCollateralInsurancePolicy(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpPost, Route("collateral-insurance-policy-list")]
+        public HttpResponseMessage GetCollateralInsurancePolicyList([FromBody] InsurancePolicy model)
+        {
+            try
+            {
+                var response = repo.GetCollateralInsurancePolicyReport(model.startDate, model.expiryDate, model.valueCode);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -2024,12 +2052,13 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetCollateralHistory(short collateralId)
         {
             var response = repo.getCollateralHistory(collateralId);
-            if(response == null)
+            if (response == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Records not found" });
-            }else
+            }
+            else
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            
+
         }
 
         [HttpGet]
@@ -2519,7 +2548,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             model.createdBy = token.GetStaffId;
             model.deletedBy = token.GetStaffId;
-            
+
             var response = repo.DeleteDuplicatedCollateral(model);
             if (response)
             {
@@ -2960,7 +2989,8 @@ namespace FintrakBanking.APICore.Controllers
             };
             bool response = repo.UpdateCollateralSwap(model, id, user);
 
-            if (!response) {
+            if (!response)
+            {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, message = "An error occurred while updating the record", count = 0 });
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, message = "The record has been updated successfully", count = 1 });

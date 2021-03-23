@@ -66,6 +66,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease(int staffId);
         List<InsurancePolicy> GetCollateralInsurancePolicy(int collateralId);
         string GetInsurancePolicyCollateralReport(int trackingId);
+        int DeleteCustomerCollateralInsuranceDetails(int getStaffId, int id);
+        List<InsurancePolicy> GetCollateralInsurancePolicyReport(DateTime? startDate, DateTime? endDate, string searchString);
         IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId);
         //bool AssignCollateral(ActiveCustomerCollateralViewModel entity);
 
