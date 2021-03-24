@@ -37,16 +37,16 @@ namespace FintrakBanking.APICore
                 return Task.FromResult<object>(null);
             }
 
-            var _context = new FinTrakBankingContext();
-            ////if (!(principal.HasClaim(x => x.Type == "logincode" && x.Value == user.LOGINCODE)))
-            ///ify
-            var user = _context.TBL_PROFILE_USER.Where(p => p.USERNAME == Username).FirstOrDefault();
-            var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "logincode").Value;
-            if (!(claim == user.LOGINCODE))
-            {
-                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
-                return Task.FromResult<object>(null);
-            }
+            //var _context = new FinTrakBankingContext();
+            //////if (!(principal.HasClaim(x => x.Type == "logincode" && x.Value == user.LOGINCODE)))
+            /////ify
+            //var user = _context.TBL_PROFILE_USER.Where(p => p.USERNAME == Username).FirstOrDefault();
+            //var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "logincode").Value;
+            //if (!(claim == user.LOGINCODE))
+            //{
+            //    actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
+            //    return Task.FromResult<object>(null);
+            //}
 
             //User is Authorized, complete execution
             return Task.FromResult<object>(null);
