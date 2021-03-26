@@ -85,7 +85,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateLoanClassification(DateTime applicationDate, int companyId);
         bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId);
         bool DoesOperationExist(int loanId, int operationTypeId, int loanSystemTypeId);
-        int GoForApproval(ApprovalViewModel entity);
+        WorkflowResponse GoForApproval(ApprovalViewModel entity);
         bool AddCollateralSearchLien(CasaLienViewModel model);
         string GetCollateralLoanNewRefernceNumber(ApprovalViewModel model);
 

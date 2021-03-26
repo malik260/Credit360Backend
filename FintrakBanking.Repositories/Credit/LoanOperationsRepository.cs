@@ -14971,7 +14971,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 var otherOperationAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.PrincipalOffBalansheetCompleteWriteOffAccount).FirstOrDefault();
 
+                if(_otherOperationAccount == null) { throw new ConditionNotMetException(" No operation account for the write-off loan facility"); }
 
+                if (otherOperationAccount == null) { throw new ConditionNotMetException(" No operation account for Principal Off Balansheet Complete WriteOff Account"); }
                 //if (_otherOperationEnum == null)
 
 
@@ -20828,7 +20830,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public int GoForApproval(ApprovalViewModel entity)
+        public WorkflowResponse GoForApproval(ApprovalViewModel entity)
         {
            
                 entity.applicationDate = generalSetup.GetApplicationDate();
@@ -20904,7 +20906,7 @@ namespace FintrakBanking.Repositories.Credit
                         reviewRecord.OPERATIONCOMPLETED = false;
                         context.SaveChanges();
                         trans.Commit();
-                        return 4;
+                        //return 4;
                     }
 
                     workFlow.StaffId = entity.staffId;
@@ -20961,7 +20963,7 @@ namespace FintrakBanking.Repositories.Credit
                         reviewRecord.OPERATIONCOMPLETED = true;
                         context.SaveChanges();
                         trans.Commit();
-                        return 2;
+                        //return 2;
                     }
 
                     if (workFlow.NewState != (int)ApprovalState.Ended)
@@ -21047,7 +21049,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
 
                     }
-                    return data;
+                    return workFlow.Response;
 
                 }
             // return data;
