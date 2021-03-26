@@ -1634,7 +1634,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             else if (response == 2)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Application Has been Cancelled Successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Application Has been saved Successfully and sent for approval" });
             }
             else
             {

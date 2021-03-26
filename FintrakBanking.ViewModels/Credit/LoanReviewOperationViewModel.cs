@@ -626,8 +626,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? bookingOperationId { get; set; }
         public int bookingRequestId { get; set; }
         public string loanInformation { get; set; }
-        public bool isOnLending { get; set; }
-        public bool isInterventionFunds { get; set; }
+        public bool? isOnLending { get; set; }
+        public bool? isInterventionFunds { get; set; }
         public string applicationStatus { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
