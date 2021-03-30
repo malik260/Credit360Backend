@@ -76,6 +76,9 @@ namespace FintrakBanking.Entities.Models
         public int? UPDATEDBY { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
+        public bool ISTHEPROMOTER { get; set; }
+
+
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER_COMPANY_BENEFICIA> TBL_CUSTOMER_COMPANY_BENEFICIA { get; set; }

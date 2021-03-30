@@ -1686,12 +1686,20 @@ namespace FintrakBanking.APICore.Controllers
             entity.applicationUrl = HttpContext.Current.Request.Path;
             entity.userIPAddress = Request.RequestUri.Host;
             entity.createdBy = token.GetStaffId;
-            
-            var data = repo.GoForApproval(entity);
 
-            if (data == 1)
+            WorkflowResponse data = repo.GoForApproval(entity);
+
+            if (data.stateId == (int)ApprovalState.Ended)
             {
-                if (entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && entity.operationId != (int)OperationsEnum.CompleteWriteOff)
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation has been approved successfully. Sent to Credit Documentation for filling" });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+               /*if (entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && entity.operationId != (int)OperationsEnum.CompleteWriteOff)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation has been approved successfully. Sent to Credit Documentation for filling" });
@@ -1741,7 +1749,7 @@ namespace FintrakBanking.APICore.Controllers
             else
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
-            }
+            }*/
         }
 
         [HttpPost]

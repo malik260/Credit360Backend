@@ -8,11 +8,12 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.APICore.core;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/setup")]
-    public class PrudentialGuidelineController : ApiController
+    public class PrudentialGuidelineController : ApiControllerBase
     {
 
 

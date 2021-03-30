@@ -414,6 +414,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationId2 { get; set; }
         public decimal facilityAmount { get; set; }
         public string customerAccount { get; set; }
+        public int revaluationDuration { get; set; }
     }
 
     public class crossGarantee
@@ -481,32 +482,32 @@ namespace FintrakBanking.ViewModels.Credit
     public class InsurancePolicy : GeneralEntity
     {
         public string referenceNumber { get; set; }
-        public decimal sumInsured { get; set; }
+        public decimal? sumInsured { get; set; }
         public string insuranceCompany { get; set; }
         public DateTime? startDate { get; set; }
         public DateTime? expiryDate { get; set; }
         public string insuranceType { get; set; }
-        
+
         public bool hasExpired { get; set; }
-        public int collateraalId { get; set; }
+        public int? collateraalId { get; set; }
         public string collateralCode { get; set; }
         public string collateralType { get; set; }
         public string collateralSubType { get; set; }
-        public decimal collateralValue { get; set; }
-        public int policyId { get; set; }
-        public int collateralTypeId { get; set; }
-        public short collateralSubTypeId { get; set; }
+        public decimal? collateralValue { get; set; }
+        public int? policyId { get; set; }
+        public int? collateralTypeId { get; set; }
+        public int? collateralSubTypeId { get; set; }
         public string customerName { get; set; }
         public decimal? premiumAmount { get; set; }
         public decimal? inSurPremiumAmount { get; set; }
         public string description { get; set; }
         public int? premiumPercent { get; set; }
-        public int insuranceTypeId { get; set; }
-        public int insuranceCompanyId { get; set; }
+        public int? insuranceTypeId { get; set; }
+        public int? insuranceCompanyId { get; set; }
         public string address { get; set; }
         public string phoneNumber { get; set; }
         public string email { get; set; }
-        public int operationId { get; set; }
+        public int? operationId { get; set; }
         public int requestNumber { get; set; }
         public int insuranceRequestId { get; set; }
         public double haircut { get; set; }
@@ -526,10 +527,42 @@ namespace FintrakBanking.ViewModels.Credit
         public int targetId { get; set; }
         public DateTime arrivalTime { get; set; }
         public string accountOfficer { get; set; }
-        public int insurancePolicyTypeId { get; set; }
+        public int? insurancePolicyTypeId { get; set; }
         public string insurancePolicyType { get; set; }
         public string insuranceStatus { get; set; }
         public string collateralDetails { get; set; }
+        public DateTime? valuationStartDate { get; set; }
+        public DateTime? valuationEndDate { get; set; }
+        public decimal? omv { get; set; }
+        public decimal? fsv { get; set; }
+        public string valuer { get; set; }
+        public int? insuranceStatusId { get; set; }
+        public int collateralInsuranceTrackingId { get; set; }
+        public string isInformationConfirmed { get; set; }
+        public int? loanApplicationDetailId { get; set; }
+        public int? customerGroupId { get; set; }
+        public string insuranceCompanyName { get; set; }
+        public int? valuerId { get; set; }
+        public string gpsCoordinates { get; set; }
+        public decimal loanAmount { get; set; }
+        public string loanStatus { get; set; }
+        public string loanTypeName { get; set; }
+        public string securityReleaseStatus { get; set; }
+        public string taxNumber { get; set; }
+        public string rcNumber { get; set; }
+        public string firstLossPayee { get; set; }
+        public decimal? insurableValue { get; set; }
+        public string customerCode { get; set; }
+        public string customerAccount { get; set; }
+        public string customerPhone { get; set; }
+        public string customerAddress { get; set; }
+        public string teamName { get; set; }
+        public string divisionName { get; set; }
+        public string groupHead { get; set; }
+        public string customerEmail { get; set; }
+        public string accountOfficerName { get; set; }
+        public string accountOfficerEmail { get; set; }
+        public string valueCode { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -919,6 +952,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool allowSharing { get; set; }
         public string collateralType { get; set; }
         public int? visitationCycle { get; set; }
+        public bool isGPScollateralType { get; set; }
+        public string GPScollateralType { get; set; }
+       
+        public bool isGpsCoordinatesCollateralType { get; set; }
     }
 
     public class CustomerCollateralSearch
@@ -1148,12 +1185,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class InsuranceCompanyViewModel:GeneralEntity
     {
-        public int InsuranceCompanyId { get; set; }
-        public int CompanyId { get; set; }
-        public string  CompanyName { get; set; }
-        public string Address { get; set; }
-        public string ContactEmail { get; set; }
-        public string PhoneNumber { get; set; }
+        public int insuranceCompanyId { get; set; }
+        public int iompanyId { get; set; }
+        public string  companyName { get; set; }
+        public string address { get; set; }
+        public string contactEmail { get; set; }
+        public string phoneNumber { get; set; }
     }
 
     public class InsuranceTypeViewModel: GeneralEntity
@@ -1180,6 +1217,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int policyTypeId { get; set; }
     }
 
+
+    public class GPSCoordinatesCollateralTypeViewModel : GeneralEntity
+    {
+        public string collateralType { get; set; }
+        public bool required { get; set; }
+        public string valuation { get; set; }
+        public int collateralTypeId { get; set; }
+    }
 
     public class SectorLimitAlertViewModel
     {
@@ -1236,6 +1281,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public double haircut { get; set; }
         public string responsiblePerson { get; set; }
+        public string currentlyLevel { get; set; }
     }
 
 
@@ -1263,6 +1309,18 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationDetailId { get; set; }
         public int insuranceStatus { get; set; }
         public decimal inSurPremiumAmount { get; set; }
+        public string otherInsurancePolicyType { get; set; }
+        public string otherInsuranceCompany { get; set; }
+        public string otherValuer { get; set; }
+
+        public int? collateralTypeId { get; set; }
+        public int? collateralSubTypeId { get; set; }
+        public string gpsCoordinates { get; set; }
+        public int? insuranceCompanyId { get; set; }
+        public int? valuerId { get; set; }
+        public string firstLossPayee { get; set; }
+        public decimal? insurableValue { get; set; }
+        public string comment { get; set; }
     }
 
  }

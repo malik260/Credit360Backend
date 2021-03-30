@@ -5,6 +5,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ReportObjects.ReportHelper;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Media;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
@@ -4849,28 +4850,61 @@ namespace FintrakBanking.ReportObjects
                         groupHead = ss.FIRSTNAME + " " + ss.LASTNAME,
                         team = context.TBL_DEPARTMENT.Where(d => d.COMPANYID == l.COMPANYID).Select(d => d.DEPARTMENTNAME).FirstOrDefault(),
                         division = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == l.CUSTOMERID select p.BUSINESSUNITNAME).FirstOrDefault(),
+                    })
+               .ToList();
+            return data;
+        }
 
+        public IEnumerable<CustomerCompanyInfomationViewModels> CorporateCustomerCreation(DateTime startDate, DateTime endDate)
+        {
+            var data = new List<CustomerCompanyInfomationViewModels>();
+            FinTrakBankingContext context = new FinTrakBankingContext();
 
-                        /*originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
-                        loanApplicationId = x.LOANAPPLICATIONID,
-                        description = x.DESCRIPTION,
-                        approvalStatusId = (short)x.APPROVALSTATUSID,
-                        applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
-                        referenceNumber = x.REFERENCENUMBER,
-                        dateTimeCreated = x.DATETIMECREATED,
-                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
-                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
-                        customerCode = c.CUSTOMERCODE,
-                        customerId = c.CUSTOMERID,
-                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                        applicationDate = l.APPLICATIONDATE,
-                        applicationAmount = l.APPLICATIONAMOUNT,
-                        interestRate = l.INTERESTRATE,
-                        approvalDate = x.APPROVALDATE,
-                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
-                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        createdByName = context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),*/
+            data = (from ln in context.TBL_LOAN
+                    join r in context.TBL_LOAN_BOOKING_REQUEST on ln.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
+                    join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                    join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                    join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
+                    join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
+                    join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
+                    join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
+
+                    where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                    DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                    select new CustomerCompanyInfomationViewModels
+                    {
+                        companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                        fullName = cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME,
+                        birthDate = cd.DATEOFBIRTH,
+                        gender =  cd.GENDER,
+                        address = context.TBL_CUSTOMER_ADDRESS.Where(x=> x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ADDRESS).FirstOrDefault(),
+                        state = (from a in context.TBL_CUSTOMER_ADDRESS join b in context.TBL_STATE on a.STATEID equals b.STATEID where a.CUSTOMERID == ln.CUSTOMERID select b.STATENAME).FirstOrDefault(),
+                        phoneNo = cd.PHONENUMBER,
+                        email = ci.COMPANYEMAIL,
+                        approvedAmount = l.APPROVEDAMOUNT,
+                        amountGranted = r.AMOUNT_REQUESTED,
+                        effectiveDate = ln.EFFECTIVEDATE,
+                        tenor = (int)DbFunctions.DiffDays(ln.EFFECTIVEDATE, ln.MATURITYDATE),
+                        tenorType = d.APPROVEDTENOR,
+                        rate = ln.INTERESTRATE,
+                        baseYear = ln.DATEAPPROVED,
+                        bvn = cd.CUSTOMERBVN,
+                        scheduleType = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == ln.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                        interestRepayStartDate = ln.FIRSTINTERESTPAYMENTDATE,
+                        principalRepayStartDate = ln.FIRSTPRINCIPALPAYMENTDATE,
+                        interestRepayFreq = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == ln.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                        principalRepayFreq = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == ln.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                        sector = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                        natureOfBusiness = ln.TBL_SUB_SECTOR.NAME,
+                        firstTimeAccessToCredit = ci.ISFIRSTTIMECREDIT ? "Yes" : "No",
+                        startUp = ci.ISSTARTUP ? "Yes" : "No",
+                        msmeAnnualTurnover = ci.ANNUALTURNOVER,
+                        noOfEmployees = ci.NUMBEROFEMPLOYEES,
+                        noOfFemaleEmployees = ci.NOOFFEMALEEMPLOYEES,
+                        moratorium = d.MORATORIUM,
+                        esRating = context.TBL_CUSTOMER_RISK_RATING.Where(x => x.RISKRATINGID == c.RISKRATINGID).Select(x => x.DESCRIPTION).FirstOrDefault(),
+                        wpower = p.PRODUCTID == 14 ? "Yes" : "No",
+                        facilityType = p.PRODUCTNAME
 
                     })
                .ToList();
@@ -5316,8 +5350,11 @@ namespace FintrakBanking.ReportObjects
             }
 
         }
+
+
         public List<CollateralRegisterViewModel> CollateralRegister(DateTime startDate, DateTime endDate, int companyid, short? branchId)
         {
+
             //List<STG_MIS_INFO> misInfo = new List<STG_MIS_INFO>();
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
@@ -5327,34 +5364,33 @@ namespace FintrakBanking.ReportObjects
                 {
 
                     var loansWithCollateral = (from f in context.TBL_COLLATERAL_IMMOVE_PROPERTY
-                                               join lc in context.TBL_LOAN_COLLATERAL_MAPPING on f.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
-                                               // where f.PERFECTIONSTATUSID == status
-                                               select lc.LOANID);
+                                               join lc in context.TBL_LOAN_APPLICATION_COLLATERL on f.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
+                                               join ll in context.TBL_LOAN_APPLICATION_DETAIL on lc.LOANAPPLICATIONID equals ll.LOANAPPLICATIONID
+                                               select ll.LOANAPPLICATIONDETAILID);
 
 
-                    var collateralRegisterReportData = (//from cm in context.TBL_LOAN_COLLATERAL_MAPPING
-                                                        //join l in context.TBL_LOAN on cm.LOANID equals l.TERMLOANID
+                    var collateralRegisterReportData = (
                                                         from l in context.TBL_LOAN
-                                                        join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
-
-                                                        join ccu in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals ccu.COLLATERALCUSTOMERID
                                                         join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                                                        // join sta in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sta.STAFFID
-                                                        // join b in context.TBL_BRANCH on l.BRANCHID equals b.BRANCHID
+                                                        join sta in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sta.STAFFID
+                                                        join b in context.TBL_BRANCH on l.BRANCHID equals b.BRANCHID
                                                         join lapd in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals lapd.LOANAPPLICATIONDETAILID
+                                                        join cm in context.TBL_LOAN_APPLICATION_COLLATERL on lapd.LOANAPPLICATIONID equals cm.LOANAPPLICATIONID
+                                                        join ccu in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals ccu.COLLATERALCUSTOMERID
 
                                                         join cim in context.TBL_COLLATERAL_IMMOVE_PROPERTY on cm.COLLATERALCUSTOMERID equals cim.COLLATERALCUSTOMERID
                                                         // join cc in context.TBL_COLLATERAL_CASA on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                                                         join ca in context.TBL_CASA on l.CASAACCOUNTID equals ca.CASAACCOUNTID
                                                         // join v in context.TBL_COLLATERAL_VISITATION on cim.COLLATERALCUSTOMERID equals v.COLLATERALCUSTOMERID
 
-                                                        join p in context.TBL_COLLATERAL_ITEM_POLICY on ccu.COLLATERALCUSTOMERID equals p.COLLATERALCUSTOMERID
-
+                                                        //join p in context.TBL_COLLATERAL_ITEM_POLICY on ccu.COLLATERALCUSTOMERID equals p.COLLATERALCUSTOMERID
                                                         join rm in context.TBL_STAFF on l.RELATIONSHIPMANAGERID equals rm.STAFFID
-                                                        join pr in context.TBL_PRODUCT on l.PRODUCTID equals pr.PRODUCTID
-                                                        join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
-                                                        //where (DbFunctions.TruncateTime(cm.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
-                                                        //DbFunctions.TruncateTime(cm.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+
+
+                                                        //join pr in context.TBL_PRODUCT on l.PRODUCTID equals pr.PRODUCTID
+                                                        //join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
+                                                        where (DbFunctions.TruncateTime(cm.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                                        DbFunctions.TruncateTime(cm.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
 
                                                         let glInfo = (from gl in context.TBL_CHART_OF_ACCOUNT
                                                                       join cst in context.TBL_CUSTOM_CHART_OF_ACCOUNT on gl.ACCOUNTCODE equals cst.PLACEHOLDERID
@@ -5363,12 +5399,12 @@ namespace FintrakBanking.ReportObjects
                                                                       //&& cst.CURRENCYCODE == cur.CURRENCYCODE
                                                                       select cst.ACCOUNTID).FirstOrDefault()
 
-                                                        //where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
-                                                         //&& l.COMPANYID == companyid
-                                                         //&& loansWithCollateral.Contains(l.TERMLOANID) 
-                                                         //&& l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                                         //&& (b.BRANCHID == branchId || branchId == null || branchId == 0)
-                                                         //orderby cm.DATETIMECREATED descending
+                                                        where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                                        && l.COMPANYID == companyid
+                                                        // && loansWithCollateral.Contains(l.TERMLOANID) 
+                                                        && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                                        && (b.BRANCHID == branchId || branchId == null || branchId == 0)
+                                                        orderby cm.DATETIMECREATED descending
 
                                                         select new CollateralRegisterViewModel
                                                         {
@@ -5379,10 +5415,10 @@ namespace FintrakBanking.ReportObjects
                                                             collateralType = ccu.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                                             perfectionStatus = cim.TBL_COLLATERAL_PERFECTN_STAT.PERFECTIONSTATUSNAME,
                                                             ////  collateralDescription = cc.TBL
-                                                            //    grossBalance = 0,
+                                                            grossBalance = 0,
                                                             collateralValueOmv = (Decimal)cim.OPENMARKETVALUE,
                                                             collateralValueEfsv = (Decimal)cim.FORCEDSALEVALUE,
-                                                            collateralCoverage = ((Decimal)lapd.APPROVEDAMOUNT/ (Decimal)cim.SECURITYVALUE) * 100,
+                                                            collateralCoverage = ((Decimal)lapd.APPROVEDAMOUNT / (Decimal)cim.SECURITYVALUE) * 100,
                                                             approvedAmount = lapd.APPROVEDAMOUNT,
                                                             securityValue = cim.SECURITYVALUE,
                                                             collateralLocation = cim.PROPERTYADDRESS,
@@ -5393,8 +5429,8 @@ namespace FintrakBanking.ReportObjects
                                                             //   dateOfCollateralInspection = v.VISITATIONDATE,
                                                             collateralCustomerID = cim.COLLATERALCUSTOMERID,
 
-                                                            dateOfInsurance = p.STARTDATE,
-                                                            expiryDate = p.ENDDATE,//(DateTime)l.TBL_LOAN_APPLICATION_DETAIL.EXPIRYDATE,   
+                                                            //dateOfInsurance = p.STARTDATE,
+                                                            //expiryDate = p.ENDDATE,//(DateTime)l.TBL_LOAN_APPLICATION_DETAIL.EXPIRYDATE,   
 
                                                             //insuranceCompany = p.INSURANCECOMPANYNAME,
 
@@ -5410,7 +5446,7 @@ namespace FintrakBanking.ReportObjects
 
                                                         {
 
-                                                            //var cc = context.TBL_LOAN_APPLICATION_DETAIL.Where(z=> z.LOANAPPLICATIONDETAILID == x.loanApplicationId).Select(o=>o)
+                                                            var cc = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONDETAILID == x.loanApplicationId).Select(o => o);
                                                             //var collateralCov = (x.approvedAmount / x.securityValue) * 100;
 
                                                             //if (collateralCov != null)
@@ -5421,26 +5457,26 @@ namespace FintrakBanking.ReportObjects
                                                             //{
                                                             //    x.collateralCoverage = 0.0M;
                                                             //}
-                                                            //var visitation = context.TBL_COLLATERAL_VISITATION.Where(z => z.COLLATERALCUSTOMERID == x.collateralCustomerID).Select(o => o.VISITATIONDATE).FirstOrDefault();
+                                                            var visitation = context.TBL_COLLATERAL_VISITATION.Where(z => z.COLLATERALCUSTOMERID == x.collateralCustomerID).Select(o => o.VISITATIONDATE).FirstOrDefault();
 
-                                                            //if (visitation != null)
-                                                            //{
-                                                            //    x.dateOfCollateralInspection = visitation;
-                                                            //}
-                                                            //else
-                                                            //{
-                                                            //    x.dateOfCollateralInspection = null;
-                                                            //}
-                                                            //var nov = context.TBL_COLLATERAL_VALUER.Where(z => z.COLLATERALVALUERID == x.valuerId).Select(o => o.NAME).FirstOrDefault();
+                                                            if (visitation != null)
+                                                            {
+                                                                x.dateOfCollateralInspection = visitation;
+                                                            }
+                                                            else
+                                                            {
+                                                                x.dateOfCollateralInspection = null;
+                                                            }
+                                                            var nov = context.TBL_COLLATERAL_VALUER.Where(z => z.COLLATERALVALUERID == x.valuerId).Select(o => o.NAME).FirstOrDefault();
 
-                                                            //if (nov != null)
-                                                            //{
-                                                            //    x.nameOfValuer = nov;
-                                                            //}
-                                                            //else if (nov == null)
-                                                            //{
-                                                            //    x.nameOfValuer = "N/A";
-                                                            //}
+                                                            if (nov != null)
+                                                            {
+                                                                x.nameOfValuer = nov;
+                                                            }
+                                                            else if (nov == null)
+                                                            {
+                                                                x.nameOfValuer = "N/A";
+                                                            }
 
                                                             //var businessUnitName = misInfo.Where(z => z.FIELD1 == x.misCode).Select(z => z.FIELD8).FirstOrDefault();
 
@@ -5471,8 +5507,171 @@ namespace FintrakBanking.ReportObjects
                     return collateralRegisterReportData;
                 }
             }
+
         }
-        public IEnumerable<OriginalDocumentReleaseViewModel> SecurityReleaseReport(DateTime startDate, DateTime endDate)
+
+
+            //public List<CollateralRegisterViewModel> CollateralRegister(DateTime startDate, DateTime endDate, int companyid, short? branchId)
+            //{
+            //    //List<STG_MIS_INFO> misInfo = new List<STG_MIS_INFO>();
+            //    using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
+            //    {
+            //        //misInfo = (from mis in stagecontext.STG_MIS_INFO select mis).ToList();
+
+            //        using (FinTrakBankingContext context = new FinTrakBankingContext())
+            //        {
+
+            //            var loansWithCollateral = (from f in context.TBL_COLLATERAL_IMMOVE_PROPERTY
+            //                                       join lc in context.TBL_LOAN_COLLATERAL_MAPPING on f.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
+            //                                       // where f.PERFECTIONSTATUSID == status
+            //                                       select lc.LOANID);
+
+
+            //            var collateralRegisterReportData = (//from cm in context.TBL_LOAN_COLLATERAL_MAPPING
+            //                                                //join l in context.TBL_LOAN on cm.LOANID equals l.TERMLOANID
+            //                                                from l in context.TBL_LOAN
+            //                                                join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
+
+            //                                                join ccu in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals ccu.COLLATERALCUSTOMERID
+            //                                                join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+            //                                                // join sta in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sta.STAFFID
+            //                                                // join b in context.TBL_BRANCH on l.BRANCHID equals b.BRANCHID
+            //                                                join lapd in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals lapd.LOANAPPLICATIONDETAILID
+
+            //                                                join cim in context.TBL_COLLATERAL_IMMOVE_PROPERTY on cm.COLLATERALCUSTOMERID equals cim.COLLATERALCUSTOMERID
+            //                                                // join cc in context.TBL_COLLATERAL_CASA on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+            //                                                join ca in context.TBL_CASA on l.CASAACCOUNTID equals ca.CASAACCOUNTID
+            //                                                // join v in context.TBL_COLLATERAL_VISITATION on cim.COLLATERALCUSTOMERID equals v.COLLATERALCUSTOMERID
+
+            //                                                join p in context.TBL_COLLATERAL_ITEM_POLICY on ccu.COLLATERALCUSTOMERID equals p.COLLATERALCUSTOMERID
+
+            //                                                join rm in context.TBL_STAFF on l.RELATIONSHIPMANAGERID equals rm.STAFFID
+            //                                                join pr in context.TBL_PRODUCT on l.PRODUCTID equals pr.PRODUCTID
+            //                                                join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
+            //                                                //where (DbFunctions.TruncateTime(cm.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+            //                                                //DbFunctions.TruncateTime(cm.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+
+            //                                                let glInfo = (from gl in context.TBL_CHART_OF_ACCOUNT
+            //                                                              join cst in context.TBL_CUSTOM_CHART_OF_ACCOUNT on gl.ACCOUNTCODE equals cst.PLACEHOLDERID
+            //                                                              join pr in context.TBL_PRODUCT on gl.GLACCOUNTID equals pr.PRINCIPALBALANCEGL
+            //                                                              //where pr.PRODUCTID == pr.PRODUCTID
+            //                                                              //&& cst.CURRENCYCODE == cur.CURRENCYCODE
+            //                                                              select cst.ACCOUNTID).FirstOrDefault()
+
+            //                                                //where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+            //                                                 //&& l.COMPANYID == companyid
+            //                                                 //&& loansWithCollateral.Contains(l.TERMLOANID) 
+            //                                                 //&& l.LOANSTATUSID == (short)LoanStatusEnum.Active
+            //                                                 //&& (b.BRANCHID == branchId || branchId == null || branchId == 0)
+            //                                                 //orderby cm.DATETIMECREATED descending
+
+            //                                                select new CollateralRegisterViewModel
+            //                                                {
+            //                                                    customerID = c.CUSTOMERID,
+            //                                                    accountNumber = ca.PRODUCTACCOUNTNUMBER,
+            //                                                    customername = c.FIRSTNAME + " " + c.LASTNAME,
+            //                                                    glSubheadCode = glInfo,
+            //                                                    collateralType = ccu.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+            //                                                    perfectionStatus = cim.TBL_COLLATERAL_PERFECTN_STAT.PERFECTIONSTATUSNAME,
+            //                                                    ////  collateralDescription = cc.TBL
+            //                                                    //    grossBalance = 0,
+            //                                                    collateralValueOmv = (Decimal)cim.OPENMARKETVALUE,
+            //                                                    collateralValueEfsv = (Decimal)cim.FORCEDSALEVALUE,
+            //                                                    collateralCoverage = ((Decimal)lapd.APPROVEDAMOUNT/ (Decimal)cim.SECURITYVALUE) * 100,
+            //                                                    approvedAmount = lapd.APPROVEDAMOUNT,
+            //                                                    securityValue = cim.SECURITYVALUE,
+            //                                                    collateralLocation = cim.PROPERTYADDRESS,
+            //                                                    dateOfValuation = cim.LASTVALUATIONDATE,
+            //                                                    nameOfValuer = context.TBL_COLLATERAL_VALUER.Where(x => x.COLLATERALVALUERID == cim.VALUERID).Select(o => o.NAME).FirstOrDefault(),
+            //                                                    valuerId = cim.VALUERID,
+
+            //                                                    //   dateOfCollateralInspection = v.VISITATIONDATE,
+            //                                                    collateralCustomerID = cim.COLLATERALCUSTOMERID,
+
+            //                                                    dateOfInsurance = p.STARTDATE,
+            //                                                    expiryDate = p.ENDDATE,//(DateTime)l.TBL_LOAN_APPLICATION_DETAIL.EXPIRYDATE,   
+
+            //                                                    //insuranceCompany = p.INSURANCECOMPANYNAME,
+
+            //                                                    rmCode = rm.STAFFCODE,
+            //                                                    rmName = rm.FIRSTNAME + " " + " " + rm.MIDDLENAME + " " + " " + rm.LASTNAME,
+            //                                                    dateOfExpiration = l.TBL_LOAN_APPLICATION_DETAIL.EXPIRYDATE,
+            //                                                    days = 0,
+            //                                                    stc = cim.STAMPTOCOVER,
+            //                                                    loanApplicationId = l.LOANAPPLICATIONDETAILID,
+            //                                                    misCode = l.MISCODE
+
+            //                                                }).ToList().Select(x =>
+
+            //                                                {
+
+            //                                                    //var cc = context.TBL_LOAN_APPLICATION_DETAIL.Where(z=> z.LOANAPPLICATIONDETAILID == x.loanApplicationId).Select(o=>o)
+            //                                                    //var collateralCov = (x.approvedAmount / x.securityValue) * 100;
+
+            //                                                    //if (collateralCov != null)
+            //                                                    //{
+            //                                                    //    x.collateralCoverage = collateralCov;
+            //                                                    //}
+            //                                                    //else if (collateralCov == null)
+            //                                                    //{
+            //                                                    //    x.collateralCoverage = 0.0M;
+            //                                                    //}
+            //                                                    //var visitation = context.TBL_COLLATERAL_VISITATION.Where(z => z.COLLATERALCUSTOMERID == x.collateralCustomerID).Select(o => o.VISITATIONDATE).FirstOrDefault();
+
+            //                                                    //if (visitation != null)
+            //                                                    //{
+            //                                                    //    x.dateOfCollateralInspection = visitation;
+            //                                                    //}
+            //                                                    //else
+            //                                                    //{
+            //                                                    //    x.dateOfCollateralInspection = null;
+            //                                                    //}
+            //                                                    //var nov = context.TBL_COLLATERAL_VALUER.Where(z => z.COLLATERALVALUERID == x.valuerId).Select(o => o.NAME).FirstOrDefault();
+
+            //                                                    //if (nov != null)
+            //                                                    //{
+            //                                                    //    x.nameOfValuer = nov;
+            //                                                    //}
+            //                                                    //else if (nov == null)
+            //                                                    //{
+            //                                                    //    x.nameOfValuer = "N/A";
+            //                                                    //}
+
+            //                                                    //var businessUnitName = misInfo.Where(z => z.FIELD1 == x.misCode).Select(z => z.FIELD8).FirstOrDefault();
+
+            //                                                    //if (businessUnitName != null)
+            //                                                    //{
+            //                                                    //    x.businessUnit = businessUnitName;
+            //                                                    //}
+            //                                                    //else if (businessUnitName == null)
+            //                                                    //{
+            //                                                    //    x.businessUnit = "N/A";
+            //                                                    //}
+
+
+            //                                                    //var groupName = misInfo.Where(z => z.FIELD1 == x.misCode).Select(z => z.FIELD7).FirstOrDefault();
+            //                                                    //if (groupName != null)
+            //                                                    //{
+            //                                                    //    x.groupDescription = groupName;
+            //                                                    //}
+            //                                                    //else if (groupName == null)
+            //                                                    //{
+            //                                                    //    x.groupDescription = "N/A";
+            //                                                    //}
+
+            //                                                    return x;
+
+            //                                                }).ToList();
+
+            //            return collateralRegisterReportData;
+            //        }
+            //    }
+            //}
+
+
+
+
+            public IEnumerable<OriginalDocumentReleaseViewModel> SecurityReleaseReport(DateTime startDate, DateTime endDate)
         {
             var data = new List<OriginalDocumentReleaseViewModel>();
 

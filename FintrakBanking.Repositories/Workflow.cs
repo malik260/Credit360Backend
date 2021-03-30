@@ -158,6 +158,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         List<ReportingLine> line = new List<ReportingLine>();
         private List<int> creditOperationIds;
         private TBL_OPERATIONS operation;
+
         //private WorkflowSetup currentLevel;
 
         public bool LogActivity()
@@ -379,7 +380,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if(this.toStaffId != null) { return; }
 
-                if(this.lastOpenRequest!= null && this.lastOpenRequest?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
+                if(this.lastOpenRequest?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
                 {
                     var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                    x.COMPANYID == this.companyId
@@ -437,7 +438,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.toStaffId != null) { return; }
 
-            if (this.lastOpenRequest != null && this.lastOpenRequest?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
+            if (this.lastOpenRequest?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
             {
                 var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                   x.COMPANYID == this.companyId
@@ -847,9 +848,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.newStateId = (int)ApprovalState.Processing;
             if (this.statusId == (int)ApprovalStatusEnum.Pending) this.statusId = (int)ApprovalStatusEnum.Processing;
             this.operation = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == this.operationId);
-            if (this.operation.USEFACILITYAMOUNTONLY && this.facilityAmount > 0)
+            if ((this.operation?.USEFACILITYAMOUNTONLY ?? false) && this.facilityAmount > 0)
             {
                 this.Amount = this.facilityAmount;
+                this.levelBusinessRule.Amount = this.facilityAmount;
+                this.levelBusinessRule.PepAmount = this.facilityAmount;
             }
             // if (IsSpecialReferedBackResponse()) this.statusId = (int)ApprovalStatusEnum.Processing;
             
@@ -894,29 +897,29 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void ValidateAgainstAlreadyClosedProcess()
         {
             if (this.statusId == (int)ApprovalStatusEnum.Referred || this.referredLog.Count > 0)
-            {
+            {//to take care of refer backs
                 return;
             }
             var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
 
             if (this.newStateId == (int)ApprovalState.Ended && this.statusId == (int)ApprovalStatusEnum.Closed)
-            {
+            {// to prevent closing an already closed process
                 if(allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Closed))
                 {
                     new SecureException("The process is closed already!");
                 }
             }
 
-            if (this.newStateId != (int)ApprovalState.Ended || this.statusId != (int)ApprovalStatusEnum.Approved)
-            {
-                return;
-            }
-                
-            if (allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved))
-            {
-                new SecureException("The process is closed already!");
+            if (allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && (r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Closed || r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)))
+            {// to prevent general working on an already approved/closed process
+                new SecureException("The process is ended already!");
             }
 
+            //if (this.newStateId != (int)ApprovalState.Ended || this.statusId != (int)ApprovalStatusEnum.Approved)
+            //{// this should be redundant by now!!
+            //    return;
+            //}
+                
         }
 
         private void FurtherValidations()

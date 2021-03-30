@@ -23,6 +23,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         //[StringLength(50)]
         public string PRODUCTCATEGORYNAME { get; set; }
+        public bool INUSE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT { get; set; }
