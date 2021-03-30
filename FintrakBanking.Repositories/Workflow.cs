@@ -56,7 +56,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int newStateId = (int)ApprovalState.Processing;
         private int? tenor = null;
         private decimal amount = 0;
-        private decimal facilityAmount = 0;
         private bool investmentGrade = false;
         private bool untenored = false;
         private bool disputed = false;
@@ -98,7 +97,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int OperationId { set { operationId = value; } }
 
         public decimal Amount { set { amount = value; } }
-        public decimal FacilityAmount { set { facilityAmount = value; } }
         public string Comment { set { comment = value; } }
         public int Tenor { set { tenor = value; } }
         public bool InvestmentGrade { set { investmentGrade = value; } }
@@ -159,7 +157,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int slaInterval = 780; // 1month
         List<ReportingLine> line = new List<ReportingLine>();
         private List<int> creditOperationIds;
-        private TBL_OPERATIONS operation;
         //private WorkflowSetup currentLevel;
 
         public bool LogActivity()
@@ -381,7 +378,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if(this.toStaffId != null) { return; }
 
-                if(this.lastOpenRequest!= null && this.lastOpenRequest?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
+                if(this.lastOpenRequest?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
                 {
                     var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                    x.COMPANYID == this.companyId
@@ -898,29 +895,29 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void ValidateAgainstAlreadyClosedProcess()
         {
             if (this.statusId == (int)ApprovalStatusEnum.Referred || this.referredLog.Count > 0)
-            {
+            {//to take care of refer backs
                 return;
             }
             var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
 
             if (this.newStateId == (int)ApprovalState.Ended && this.statusId == (int)ApprovalStatusEnum.Closed)
-            {
+            {// to prevent closing an already closed process
                 if(allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Closed))
                 {
                     new SecureException("The process is closed already!");
                 }
             }
 
-            if (this.newStateId != (int)ApprovalState.Ended || this.statusId != (int)ApprovalStatusEnum.Approved)
-            {
-                return;
-            }
-                
-            if (allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved))
-            {
-                new SecureException("The process is closed already!");
+            if (allRelatingRequestsDescending.Exists(r => r.APPROVALSTATEID == (int)ApprovalState.Ended && (r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Closed || r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)))
+            {// to prevent general working on an already approved/closed process
+                new SecureException("The process is ended already!");
             }
 
+            //if (this.newStateId != (int)ApprovalState.Ended || this.statusId != (int)ApprovalStatusEnum.Approved)
+            //{// this should be redundant by now!!
+            //    return;
+            //}
+                
         }
 
         private void FurtherValidations()

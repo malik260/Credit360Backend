@@ -19,6 +19,7 @@ using Microsoft.Owin.Security.Cookies;
 using System.Web;
 using FintrakBanking.Common.CustomException;
 using System.Text;
+using Microsoft.AspNet.Identity;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -340,8 +341,9 @@ namespace FintrakBanking.APICore.Controllers
             }
 
 
-            Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
-
+            //Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+            var authTypes = new string[] { DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.ExternalBearer, DefaultAuthenticationTypes.TwoFactorCookie, CookieAuthenticationDefaults.AuthenticationType, "Bearer" };
+            Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
 
             var audit = new TBL_AUDIT()
             {

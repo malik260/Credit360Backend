@@ -1,4 +1,5 @@
-﻿using FintrakBanking.APICore.JWTAuth;
+﻿using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Reports;
@@ -12,7 +13,7 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/dashboard")]
-    public class DashboardController : ApiController
+    public class DashboardController : ApiControllerBase
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         private IDashboardRepository dashboard;
@@ -114,6 +115,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        
         [HttpPost]
         [Route("collateral-exposure")]
         public HttpResponseMessage GetCollateralExposure(DateRange val)

@@ -90,6 +90,17 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("original-facility-document-status-by-id/{id}")]
+        public HttpResponseMessage GetReleaseDocumentByCustomerFacilityId(int id)
+        {
+            var response = repo.GetReleaseDocumentByCustomerFacilityId(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+
 
         [HttpGet]
         [ClaimsAuthorization]

@@ -1188,6 +1188,9 @@ namespace FintrakBanking.Repositories.Customer
                             company.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                             company.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                             company.COMPANYSTRUCTURE = entity.companyStructure;
+                            company.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                            company.ISSTARTUP = entity.isStartUp;
+                            company.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
                         }
                         else //If customer main table AccountCreationCompleted equals true then save record in temp table
                         {
@@ -1216,6 +1219,9 @@ namespace FintrakBanking.Repositories.Customer
                                 temp.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                                 temp.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                                 temp.COMPANYSTRUCTURE = entity.companyStructure;
+                                temp.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                                temp.ISSTARTUP = entity.isStartUp;
+                                temp.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
                             }
                             else //if customer company information has no existing record being modified and approved, insert new row
                             {
@@ -1238,6 +1244,9 @@ namespace FintrakBanking.Repositories.Customer
                                 temp.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                                 temp.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                                 temp.COMPANYSTRUCTURE = entity.companyStructure;
+                                temp.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                                temp.ISSTARTUP = entity.isStartUp;
+                                temp.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
 
                                 context.TBL_TEMP_CUSTOMER_COMPANYINFO.Add(temp);
                             }
@@ -1301,6 +1310,9 @@ namespace FintrakBanking.Repositories.Customer
                         company.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
                         company.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
                         company.COMPANYSTRUCTURE = entity.companyStructure;
+                        company.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
+                        company.ISSTARTUP = entity.isStartUp;
+                        company.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
                         context.TBL_CUSTOMER_COMPANYINFOMATION.Add(company);
 
                     }
@@ -1353,6 +1365,9 @@ namespace FintrakBanking.Repositories.Customer
                 info.NUMBEROFEMPLOYEES = ent.numberOfEmployees;
                 info.COUNTRYOFPARENTCOMPANYID = ent.countryOfParentCompanyId;
                 info.COMPANYSTRUCTURE = ent.companyStructure;
+                info.NOOFFEMALEEMPLOYEES = ent.noOfFemaleEmployees;
+                info.ISSTARTUP = ent.isStartUp;
+                info.ISFIRSTTIMECREDIT = ent.isFirstTimeCredit;
                 context.TBL_CUSTOMER_COMPANYINFOMATION.Add(info);
 
                 // Audit Section ---------------------------
@@ -1399,6 +1414,9 @@ namespace FintrakBanking.Repositories.Customer
                     info.NUMBEROFEMPLOYEES = ent.numberOfEmployees;
                     info.COUNTRYOFPARENTCOMPANYID = ent.countryOfParentCompanyId;
                     info.COMPANYSTRUCTURE = ent.companyStructure;
+                    info.NOOFFEMALEEMPLOYEES = ent.noOfFemaleEmployees;
+                    info.ISSTARTUP = ent.isStartUp;
+                    info.ISFIRSTTIMECREDIT = ent.isFirstTimeCredit;
                 }
             }
 
@@ -1456,7 +1474,8 @@ namespace FintrakBanking.Repositories.Customer
                                         EMAILADDRESS = item.email,
                                         CREATEDBY = entity.createdBy,
                                         DATECREATED = DateTime.Now,
-                                        DELETED = false,
+                                        DELETED = false
+                                        //ISTHEPROMOTER = entity.isThePromoter
                                         
                                     };
                                     beneficialList.Add(beneficial);
@@ -1484,6 +1503,7 @@ namespace FintrakBanking.Repositories.Customer
                                         DELETED = false,
                                         ISCURRENT = true,
                                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
+                                        //ISTHEPROMOTER = item.isThePromoter
                                     };
                                     tempBeneficialList.Add(tempBeneficial);
                                 }
@@ -1514,6 +1534,7 @@ namespace FintrakBanking.Repositories.Customer
                         directors.GENDER = entity.gender;
                         directors.MARITALSTATUSID = entity.maritalStatusId;
                         directors.DATEOFBIRTH = entity.dateOfBirth;
+                        directors.ISTHEPROMOTER = entity.isThePromoter;
                         if (entity.isPoliticallyExposed == true)
                         {
                             if (CustomerRec.ISPOLITICALLYEXPOSED == false)
@@ -1547,6 +1568,7 @@ namespace FintrakBanking.Repositories.Customer
                         directors.GENDER = entity.gender;
                         directors.MARITALSTATUSID = entity.maritalStatusId;
                         directors.DATEOFBIRTH = entity.dateOfBirth;
+                        directors.ISTHEPROMOTER = entity.isThePromoter;
 
                         if (entity.isPoliticallyExposed == true)
                         {
@@ -1562,6 +1584,7 @@ namespace FintrakBanking.Repositories.Customer
                         directors.DATECREATED = DateTime.Now;
                         directors.TBL_CUSTOMER_COMPANY_BENEFICIA = beneficialList;
                         context.TBL_CUSTOMER_COMPANY_DIRECTOR.Add(directors);
+                        directors.ISTHEPROMOTER = entity.isThePromoter;
                     }
                     else //If customer main table AccountCreationCompleted equals true then save record in temp table
                     {
@@ -1620,6 +1643,7 @@ namespace FintrakBanking.Repositories.Customer
 
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+                            temp.ISTHEPROMOTER = entity.isThePromoter;
                         }
                         else //if customer phoneContact information has no existing record being modified and approved, insert new row
                         {
@@ -1645,6 +1669,7 @@ namespace FintrakBanking.Repositories.Customer
                             temp.DATECREATED = DateTime.Now;
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+                            temp.ISTHEPROMOTER = entity.isThePromoter;
                             //temp.GENDER = entity.gender;
                             //temp.MARITALSTATUSID = entity.maritalStatusId;
                             //temp.DATEOFBIRTH = entity.dateOfBirth;
@@ -3749,7 +3774,11 @@ namespace FintrakBanking.Repositories.Customer
                               registrationNumber = d.REGISTRATIONNUMBER,
                               paidUpCapital = d.PAIDUPCAPITAL,
                               authorizedCapital = d.AUTHORISEDCAPITAL,
-                              shareholderFund = d.SHAREHOLDER_FUND
+                              shareholderFund = d.SHAREHOLDER_FUND,
+                              numberOfEmployees = d.NUMBEROFEMPLOYEES,
+                              noOfFemaleEmployees = d.NOOFFEMALEEMPLOYEES,
+                              isStartUp = d.ISSTARTUP,
+                              isFirstTimeCredit = d.ISFIRSTTIMECREDIT
                           }).FirstOrDefault();
             return comany;
         }
@@ -3775,7 +3804,10 @@ namespace FintrakBanking.Repositories.Customer
                               numberOfEmployees = d.NUMBEROFEMPLOYEES,
                               countryOfParentCompanyId =d.COUNTRYOFPARENTCOMPANYID,
                               companyStructure = d.COMPANYSTRUCTURE,
-        }).FirstOrDefault();
+                              noOfFemaleEmployees = d.NOOFFEMALEEMPLOYEES,
+                              isStartUp = d.ISSTARTUP,
+                              isFirstTimeCredit = d.ISFIRSTTIMECREDIT
+                          }).FirstOrDefault();
             return comany;
         }
 
@@ -3986,6 +4018,7 @@ namespace FintrakBanking.Repositories.Customer
                                         customerNIN = s.CUSTOMERNIN,
                                         numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                                        isThePromoter = s.ISTHEPROMOTER,
                                         bankVerificationNumber = s.CUSTOMERBVN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
@@ -4034,6 +4067,7 @@ namespace FintrakBanking.Repositories.Customer
                                         customerNIN = s.CUSTOMERNIN,
                                         numberOfShares = s.SHAREHOLDINGPERCENTAGE,
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                                        isThePromoter = s.ISTHEPROMOTER,
                                         bankVerificationNumber = s.CUSTOMERBVN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
@@ -4909,6 +4943,10 @@ namespace FintrakBanking.Repositories.Customer
                 entity.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
                 entity.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
                 entity.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+                entity.NOOFFEMALEEMPLOYEES = temp.NOOFFEMALEEMPLOYEES;
+                entity.ISSTARTUP = temp.ISSTARTUP;
+                entity.ISFIRSTTIMECREDIT = temp.ISFIRSTTIMECREDIT;
+                entity.NUMBEROFEMPLOYEES = temp.NUMBEROFEMPLOYEES;
             }
             else
             {
@@ -4925,6 +4963,10 @@ namespace FintrakBanking.Repositories.Customer
                 corporateInfo.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
                 corporateInfo.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
                 corporateInfo.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+                corporateInfo.NOOFFEMALEEMPLOYEES = entity.NOOFFEMALEEMPLOYEES;
+                corporateInfo.ISSTARTUP = entity.ISSTARTUP;
+                corporateInfo.ISFIRSTTIMECREDIT = entity.ISFIRSTTIMECREDIT;
+                corporateInfo.NUMBEROFEMPLOYEES = entity.NUMBEROFEMPLOYEES;
                 context.TBL_CUSTOMER_COMPANYINFOMATION.Add(corporateInfo);
             }
 
@@ -5546,9 +5588,10 @@ namespace FintrakBanking.Repositories.Customer
                     entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                     entity.SHAREHOLDINGPERCENTAGE = temp.SHAREHOLDINGPERCENTAGE;
                     entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
-                    //entity.MARITALSTATUSID = temp.MARITALSTATUSID;
-                    //entity.GENDER = temp.GENDER;
-                    //entity.DATEOFBIRTH = temp.DATEOFBIRTH;
+                    entity.ISTHEPROMOTER = temp.ISTHEPROMOTER;
+                    entity.MARITALSTATUSID = temp.MARITALSTATUSID;
+                    entity.GENDER = temp.GENDER;
+                    entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                     if (temp.ISPOLITICALLYEXPOSED == true)
                     {
                         if (CustomerRec.ISPOLITICALLYEXPOSED == false)
@@ -5587,9 +5630,10 @@ namespace FintrakBanking.Repositories.Customer
                     entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                     entity.SHAREHOLDINGPERCENTAGE = temp.SHAREHOLDINGPERCENTAGE;
                     entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
-                    //entity.MARITALSTATUSID = temp.MARITALSTATUSID;
-                    //entity.GENDER = temp.GENDER;
-                    //entity.DATEOFBIRTH = temp.DATEOFBIRTH;
+                    entity.MARITALSTATUSID = temp.MARITALSTATUSID;
+                    entity.GENDER = temp.GENDER;
+                    entity.DATEOFBIRTH = temp.DATEOFBIRTH;
+                    entity.ISTHEPROMOTER = temp.ISTHEPROMOTER;
                     if (temp.ISPOLITICALLYEXPOSED == true)
                     {
                         if (CustomerRec.ISPOLITICALLYEXPOSED == false)

@@ -1771,7 +1771,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (individualGlobalLimit > 0 && request.amount_Requested > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded.");  }
                 }
 
-                if (individualGlobalLimit > 0 && (valueTaken + request.amount_Requested) > currentFacility.APPROVEDAMOUNT) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer."); }
+                if (individualGlobalLimit > 0 && ((valueTaken + request.amount_Requested) > currentFacility.APPROVEDAMOUNT)) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer."); }
             }
         }
 

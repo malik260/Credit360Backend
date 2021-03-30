@@ -1322,5 +1322,252 @@ namespace FintrakBanking.ViewModels.Credit
         public short productClassId { get; set; }
     }
 
+
+
+
+    //original document submission by facility
+    public class OriginalDocumentSubmissionByFacilityViewModel : GeneralEntity
+    {
+        public OriginalDocumentSubmissionByFacilityViewModel()
+        {
+            invoiceDetails = new List<InvoiceDetailViewModel>();
+            productFees = new List<ProductFeesViewModel>();
+            syndicatedLoan = new List<SyndicatedLoanDetailViewModel>();
+        }
+
+        public string approvedProductName { get; set; }
+        public bool? isLineFacility { get; set; }
+
+        public int applicationStatusPosition { get; set; }
+
+        public string currencyCode { get; set; }
+        public DateTime applicationDate { get; set; }
+        public short applicationStatusId { get; set; }
+        public int approvalStatusId { get; set; }
+        public DateTime systemArrivalDate { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string branchName { get; set; }
+        public string customerGroupName { get; set; }
+        public bool? isTakeOverApplication { get; set; }
+
+        public string customerType { get; set; }
+        public short? customerTypeId { get; set; }
+        public int loanDetailReviewTypeId { get; set; }
+        public string customerAccountNumber { get; set; }
+
+        public bool requireCollateral { get; set; }
+
+        public int loanApplicationDetailId { get; set; }
+
+        public int loanApplicationId { get; set; }
+
+        public string applicationReferenceNumber { get; set; }
+
+        public int customerId { get; set; }
+        public int? customerGroupId { get; set; }
+
+        public string customerName { get; set; }
+
+        public decimal? equityAmount { get; set; }
+
+        public int? equityCasaAccountId { get; set; }
+
+        public short proposedProductId { get; set; }
+
+        public string proposedProductName { get; set; }
+
+        public int proposedTenor { get; set; }
+
+        public double? proposedInterestRate { get; set; }
+
+        public decimal proposedAmount { get; set; }
+
+        public int? flowChangeId { get; set; }
+
+        public short approvedProductId { get; set; }
+
+        public string productName { get; set; }
+
+        public int approvedTenor { get; set; }
+
+        public int? tenorModeId { get; set; }
+
+        public int? tenorFrequencyTypeId
+        {
+            get
+            {
+                return tenorModeId == null ? (int?)TenorMode.Daily : tenorModeId; // default to days
+            }
+        }
+
+        public double approvedInterestRate { get; set; }
+
+        public decimal approvedAmount { get; set; }
+
+        public short currencyId { get; set; }
+
+        public string currencyName { get; set; }
+
+        public double exchangeRate { get; set; }
+
+        public decimal exchangeAmount { get { return (decimal)exchangeRate * proposedAmount; } }
+
+        public short subSectorId { get; set; }
+
+        public short statusId { get; set; }
+
+        public int? casaAccountId { get; set; }
+        public int? operatingCasaAccountId { get; set; }
+
+        public short sectorId { get; set; }
+
+        public short? productClassId { get; set; }
+        public short? productTypeId { get; set; }
+
+        public short? productClassProcessId { get; set; }
+
+        public string loanPurpose { get; set; }
+
+        public string repaymentTerm { get; set; }
+
+        public int? repaymentScheduleId { get; set; }
+
+        public int? crmsFundingSourceId { get; set; }
+
+        public int? crmsPaymentSourceId { get; set; }
+
+        public int? exclusiveOperationId { get; set; }
+
+        public string crmsFundingSourceCategory { get; set; }
+
+        public string crms_ECCI_Number { get; set; }
+
+        public string conditionPrecedent { get; set; }
+
+        public string cflRrequestId { get; set; }
+
+        public string conditionSubsequent { get; set; }
+
+        public string transactionDynamics { get; set; }
+
+        public string fieldOne { get; set; }
+
+        public string fieldTwo { get; set; }
+
+        public decimal? fieldThree { get; set; }
+
+        public bool isSpecialised { get; set; }
+
+        public short? productPriceIndexId { get; set; }
+
+        public double? productPriceIndexRate { get; set; }
+
+        public int loanTypeId { get; set; }
+
+        public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
+
+        public EducationLoanViewModel educationLoan { get; set; }
+
+        public TraderLoanViewModel traderLoan { get; set; }
+        public List<ProductFeesViewModel> productFees { get; set; }
+        public BondsAndGuranty bondDetails { get; set; }
+        public List<SyndicatedLoanDetailViewModel> syndicatedLoan { get; set; }
+        public IEnumerable<LoanCreditBureauViewModel> LoanCreditBereauReport { get; set; }
+        public string sectorName { get; set; }
+        public string productClass { get; set; }
+
+        public string interestRepayment { get; set; }
+        public int? interestRepaymentId { get; set; }
+        public string moratorium { get; set; }
+        public bool? isMoratorium { get; set; }
+        public decimal? approvedLineLimit { get; set; }
+
+
+
+        public string priceIndexName { get; set; }
+        public int? priceIndexId { get; set; }
+        public double priceIndexRate { get; set; }
+        public string liborInfo { get { return priceIndexId == null ? "" : "(" + priceIndexName + ")"; } }
+
+        public string proposedTenorString
+        {
+            get
+            {
+                var units = proposedTenor == 1 ? " day" : " days";
+                if (proposedTenor < 15) return proposedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = approvedTenor == 1 ? " day" : " days";
+                if (approvedTenor < 15) return approvedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+
+        public int proposedTenorConverted
+        {
+            get
+            {
+                int tenor = 0;
+                switch (tenorModeId)
+                {
+                    case (int)TenorMode.Daily: tenor = proposedTenor; break;
+                    case (int)TenorMode.Monthly: tenor = proposedTenor / 30; break;
+                    case (int)TenorMode.Yearly: tenor = proposedTenor / 365; break;
+                    default: tenor = proposedTenor; break;
+                }
+                return tenor;
+            }
+        }
+
+        public string email { get; set; }
+        public short? requireCollateralTypeId { get; set; }
+        public int relationshipOfficerId { get; set; }
+        public string breachedLimitName { get; set; }
+        public int approvalTrailId { get; set; }
+        public string approvalStatus { get; set; }
+        public int? currentApprovalLevelId { get; set; }
+        public string currentApprovalLevel { get; set; }
+        public bool isTemplateUploaded { get; set; }
+        public string loanInformation { get; set; }
+        public short branchId { get; set; }
+        public string relationshipOfficerName { get; set; }
+        public int relationshipManagerId { get; set; }
+        public string relationshipManagerName { get; set; }
+        public string misCode { get; set; }
+        public string teamMisCode { get; set; }
+        public double interestRate { get; set; }
+        public bool isRelatedParty { get; set; }
+        public bool isPoliticallyExposed { get; set; }
+        public bool submittedForAppraisal { get; set; }
+        public string loanTypeName { get; set; }
+        public int applicationTenor { get; set; }
+        public decimal applicationAmount { get; set; }
+        public string collateralDetail { get; set; }
+        public bool isEmployerRelated { get; set; }
+        public string employer { get; set; }
+        public DateTime systemDateTime { get; set; }
+        public string facility { get; set; }
+        public string productClassName { get; set; }
+        public string divisionCode { get; set; }
+        public string divisionShortCode { get; set; }
+        public int applicationId { get; set; }
+        public string obligorName { get; set; }
+        public double proposedRate { get; set; }
+        public double approvedRate { get; set; }
+    }
+
 }
 

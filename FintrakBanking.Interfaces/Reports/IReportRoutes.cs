@@ -178,6 +178,9 @@ namespace FintrakBanking.Interfaces.Reports
         string GetJobRequestReport(DateRange dateRange, int companyId, int staffId);
         string GetDisbursedFacilityCollateralReport(DateRange param);
         string SubmissionOfOriginalDocuments(DateRange param);
+        string SecurityReleaseReport(DateRange param);
+        string CorporateCustomerCreation(DateRange param);
+
     }
 
 

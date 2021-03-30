@@ -58,5 +58,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
         public string PREVIOUSINSURANCE { get; set; }
+        public string COLLATERALDETAILS { get; set; }
     }
 }
