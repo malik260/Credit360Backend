@@ -56,6 +56,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int newStateId = (int)ApprovalState.Processing;
         private int? tenor = null;
         private decimal amount = 0;
+        private decimal facilityAmount = 0;
         private bool investmentGrade = false;
         private bool untenored = false;
         private bool disputed = false;
@@ -97,6 +98,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int OperationId { set { operationId = value; } }
 
         public decimal Amount { set { amount = value; } }
+        public decimal FacilityAmount { set { facilityAmount = value; } }
         public string Comment { set { comment = value; } }
         public int Tenor { set { tenor = value; } }
         public bool InvestmentGrade { set { investmentGrade = value; } }
@@ -157,6 +159,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int slaInterval = 780; // 1month
         List<ReportingLine> line = new List<ReportingLine>();
         private List<int> creditOperationIds;
+        private TBL_OPERATIONS operation;
+
         //private WorkflowSetup currentLevel;
 
         public bool LogActivity()
