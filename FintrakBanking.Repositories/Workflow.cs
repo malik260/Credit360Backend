@@ -145,10 +145,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool SkipLimitsCheck { set { skipLimitsCheck = value; } }
         public string Flow_log { set { flow_log = value; } }
         public bool IsClassifiedReferBack { get { return isClassifiedReferBack; } set { isClassifiedReferBack = value; } }
+        public List<WorkflowSetup> WorkflowSetup { get; private set; }
 
-
-
-        private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
         private WorkflowSetup currentlevel;
         private WorkflowSetup next;
@@ -1835,7 +1833,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 });
             }
 
-            this.workflowSetup = grid;
+            this.WorkflowSetup = grid;
             //throw new SecureException("");
             return grid;
         }
@@ -2230,42 +2228,48 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return flowLog;
         }
 
+        public IEnumerable<dynamic> GetWorkFlowSetupLevelIds()
+        {
+            var levels = WorkflowSetup.Select(l => new { levelId = l.ApprovalLevelId, roleId = l.DefaultRoleId }).ToList();
+            return levels;
+        }
+
 
     }
 
 
-    public class WorkflowSetup
-    {
-        public int Sn { get; set; }
-        public int SlaInterval { get; set; }
-        public int GroupPosition { get; set; }
-        public int LevelPosition { get; set; }
-        public int ApprovalLevelId { get; set; }
-        public int NumberOfUsers { get; set; }
-        public int NumberOfApprovals { get; set; }
-        public bool CanRouteBack { get; set; }
-        public bool IsPoliticallyExposed { get; set; }
-        //public bool IsInsiderRelated { get; set; }
-        public bool IsActive { get; set; }
-        public bool CanEdit { get; set; }
-        public bool CanRecieveEmail { get; set; }
-        public bool CanRecieveSMS { get; set; }
-        public bool RouteViaStaffOrganogram { get; set; }
-        public int? Tenor { get; set; }
-        public decimal MaximumAmount { get; set; }
-        public decimal? InvestmentGradeAmount { get; set; }
-        public int? DefaultRoleId { get; set; }
-        public int? LevelTypeId { get; set; }
-        public int? LevelBusinessRuleId { get; set; }
-        public TBL_APPROVAL_LEVEL Level { get; set; }
-        public TBL_APPROVAL_GROUP Group { get; set; }
-        public TBL_APPROVAL_GROUP_MAPPING Mapping { get; set; }
-        public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
-        public TBL_APPROVAL_BUSINESS_RULE LevelBusinessRule { get; set; }
-        public bool AllowMultipleInitiator { get; set; }
-        public int? ROLEIDTOROUTE { get; set; }
-        public bool ISPOSTAPPROVALREVIEWER { get; set; }
-    }
+    //public class WorkflowSetup
+    //{
+    //    public int Sn { get; set; }
+    //    public int SlaInterval { get; set; }
+    //    public int GroupPosition { get; set; }
+    //    public int LevelPosition { get; set; }
+    //    public int ApprovalLevelId { get; set; }
+    //    public int NumberOfUsers { get; set; }
+    //    public int NumberOfApprovals { get; set; }
+    //    public bool CanRouteBack { get; set; }
+    //    public bool IsPoliticallyExposed { get; set; }
+    //    //public bool IsInsiderRelated { get; set; }
+    //    public bool IsActive { get; set; }
+    //    public bool CanEdit { get; set; }
+    //    public bool CanRecieveEmail { get; set; }
+    //    public bool CanRecieveSMS { get; set; }
+    //    public bool RouteViaStaffOrganogram { get; set; }
+    //    public int? Tenor { get; set; }
+    //    public decimal MaximumAmount { get; set; }
+    //    public decimal? InvestmentGradeAmount { get; set; }
+    //    public int? DefaultRoleId { get; set; }
+    //    public int? LevelTypeId { get; set; }
+    //    public int? LevelBusinessRuleId { get; set; }
+    //    public TBL_APPROVAL_LEVEL Level { get; set; }
+    //    public TBL_APPROVAL_GROUP Group { get; set; }
+    //    public TBL_APPROVAL_GROUP_MAPPING Mapping { get; set; }
+    //    public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
+    //    public TBL_APPROVAL_BUSINESS_RULE LevelBusinessRule { get; set; }
+    //    public bool AllowMultipleInitiator { get; set; }
+    //    public int? ROLEIDTOROUTE { get; set; }
+    //    public bool ISPOSTAPPROVALREVIEWER { get; set; }
+    //}
 
     public class ReportingLine
     {
