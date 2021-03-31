@@ -1225,7 +1225,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. Error - {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. + {ex.Message}" });
             }
         }
 
