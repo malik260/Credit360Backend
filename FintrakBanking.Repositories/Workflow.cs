@@ -419,14 +419,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                             staffAllocation.staffId = item;
                             staffAllocation.counted = true;
 
-                            var isOnRelief = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == item && x.ENDDATE < DateTime.Now).Any();
+                            var isOnRelief = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == item && x.ENDDATE > DateTime.Now && x.ISACTIVE).Any();
                             staffAllocation.isOnRelief = isOnRelief;
                             staffAllocations.Add(staffAllocation);
                         }
                     }
 
                     var orderedAllocation = staffAllocations.Where(x => x.isOnRelief == false && staffInrole.Select(c=>c.STAFFID).Contains(x.staffId)).OrderBy(x=>x.pendingJobCount).FirstOrDefault();
-                    if(this.toStaffId == null) { this.toStaffId = orderedAllocation.staffId; }
+                    if(this.toStaffId == null) { this.toStaffId = orderedAllocation?.staffId; }
                 }
             }
           
