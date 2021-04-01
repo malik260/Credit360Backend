@@ -1708,7 +1708,8 @@ namespace FintrakBanking.Repositories.Setups.General
 "010705099","002613587","012414846","009186554","007575637","009183686","000269367","001228108","027018975","008221731","007991841","000275291",
 "009605606","000539810","009714280","009433457","008263983","009620604","009521489","027164696","013424794","009315840","000089989","009714283","007186611",
 "009714276","005487999","009619908","009504575","007649222","000555921","009408770","009081261","008221745","009638717","099000806","004595330","000555948","007635219","014917842","008192575","002943518","005504494","008036216","009150751","000197038","000059060","005848102",
-"007695249","005953767","000063647","009714295","014079234","007031866","000858844","014234333","006001886","000048900","000089328"};
+"007695249","005953767","000063647","009714295","014079234","007031866","000858844","014234333","006001886","000048900","000089328", "000048650","000342501","024264458","000598202","040952574","022247994","027237542","006081359","000054710","000050811","016823545","001520004","006561532",
+"004831255","006725547","000059549","007766147","021671885","023897661","008088509","023968894","006426067","022918324","000530885",};
             List<int> days = new List<int> { 30, 21, 14, 7, 5, 2, 1 };
             //&& days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value)
             //var loanRepaymentReminder = context.TBL_GLOBAL_EXPOSURE.Where(d => customerIds.Contains(d.CUSTOMERID) && d.AMOUNTDUE.Value > 0).ToList();
@@ -1782,6 +1783,56 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
+
+
+        public void GetInsurancePolicyExpirationNotification()
+        {
+            // GetInsurancePolicyExpirationNotification method
+            List<int> days = new List<int> { 30, 21, 14, 7, 5, 2, 1 };
+            var insurancePolicyNotification = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.INSURANCEENDDATE).Value)).ToList();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpirationNotification").FirstOrDefault();
+            int numberOfDays = 0;
+            var defaultEmail = "";
+            
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (insurancePolicyNotification.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var i in insurancePolicyNotification)
+                {
+                        numberOfDays = (i.INSURANCEENDDATE.Value - DateTime.Now).Days;
+                        var dueDate = i.INSURANCEENDDATE?.ToString("dd-MM-yyyy");
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    if (numberOfDays > 0)
+                    {
+                        string emailList = "";
+                        /*alertTemplate = alertTemplate.Replace("@{{customerName}}", i.CUSTOMERNAME);
+                        alertTemplate = alertTemplate.Replace("@{{maturityBand}}", daysToUse.ToString());
+                        alertTemplate = alertTemplate.Replace("@{{amountDue}}", amountDue);
+                        alertTemplate = alertTemplate.Replace("@{{dueDate}}", dueDate);
+                        alertTemplate = alertTemplate.Replace("@{{interestAmountDue}}", interestAmountDue);
+                        alertTemplate = alertTemplate.Replace("@{{interestDueDate}}", interestDueDate);*/
+                        
+                        emailList = emailList+";"+defaultEmail;
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                        alerts.Add(alert);
+                    }
+                }
+                SendAlertNotification(alerts);
+            }
+        }
+        
 
 
 
