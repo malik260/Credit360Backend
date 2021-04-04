@@ -392,7 +392,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     if(this.businessUnitId != null)
                     {
                         var staffBusinessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(this.businessUnitId);
-                        if (staffBusinessUnit == null && approvalSetup.ISRETAILONLYROUNDROBIN == true)
+                        if (staffBusinessUnit != null && approvalSetup.ISRETAILONLYROUNDROBIN == true)
                         {
                             if (staffBusinessUnit.BUSINESSCOMMONNAME?.ToLower() != "retail") return;
                         }
@@ -1405,8 +1405,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return;
             }
+            
 
-            if (IsPresetFinalLevel()) { return; }
+            //if (IsPresetFinalLevel()) { return; }
+
+            if (ThereIsPresetFinalLevel()) { return; }
 
             if (this.skipLimitsCheck == true)
             {
@@ -1443,6 +1446,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
             }
             
+        }
+
+        private bool ThereIsPresetFinalLevel()
+        {
+            return this.finalLevel > 0;
         }
 
         private bool IsPresetFinalLevel()
