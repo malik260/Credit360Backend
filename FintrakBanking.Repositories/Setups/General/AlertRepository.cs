@@ -904,7 +904,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
-
+            
             // int users = Convert.ToInt32(maxUsers);
             //externalAlertRepository.ValidateProfiledUsers(users);
 
@@ -918,6 +918,16 @@ namespace FintrakBanking.Repositories.Setups.General
                 if ((now >= startCustomerrepay) && (now <= endCustomerrepay))
                 {
                     GetImminentMaturitiesForCustomers();
+                }
+            }
+
+            if (CompareInsuranceNotificationDate() == true)
+            {
+                TimeSpan startInsurance = new TimeSpan(10, 0, 0);
+                TimeSpan endInsurance = new TimeSpan(10, 30, 0);
+                if ((now >= startInsurance) && (now <= endInsurance))
+                {
+                    GetInsurancePolicyExpirationNotification();
                 }
             }
 
@@ -1097,7 +1107,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private void CheckFailedAlertByDate()
         {
             DateTime currentDate = DateTime.Now;
-            var records = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) < DbFunctions.TruncateTime(currentDate) && m.MESSAGESTATUSID == 1 && (m.OPERATIONMETHOD.Trim() != "GetLoanRepaymentReminder" || m.OPERATIONMETHOD.Trim() != "GetImminentMaturities")).ToList(); 
+            var records = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) < DbFunctions.TruncateTime(currentDate) && m.MESSAGESTATUSID == 1 && (m.OPERATIONMETHOD.Trim() != "GetLoanRepaymentReminder" || m.OPERATIONMETHOD.Trim() != "GetImminentMaturities" || m.OPERATIONMETHOD.Trim() != "GetInsurancePolicyExpirationNotification")).ToList(); 
 
             if (records.Count() > 0)
             {
@@ -1115,7 +1125,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private void CheckFailedAlertByTime()
         {
             DateTime currentDate = DateTime.Now;
-            var records = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) < DbFunctions.TruncateTime(currentDate) && m.MESSAGESTATUSID == 1 && (m.OPERATIONMETHOD.Trim() != "GetLoanRepaymentReminder" || m.OPERATIONMETHOD.Trim() != "GetImminentMaturities")).ToList();
+            var records = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) < DbFunctions.TruncateTime(currentDate) && m.MESSAGESTATUSID == 1 && (m.OPERATIONMETHOD.Trim() != "GetLoanRepaymentReminder" || m.OPERATIONMETHOD.Trim() != "GetImminentMaturities" || m.OPERATIONMETHOD.Trim() != "GetInsurancePolicyExpirationNotification")).ToList();
 
             if (records.Count() > 0)
             {
@@ -1168,6 +1178,21 @@ namespace FintrakBanking.Repositories.Setups.General
             DateTime currentDate = DateTime.Now;
             var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
                          && (m.OPERATIONMETHOD.Trim() == "GetLoanRepaymentReminder"
+                         )).FirstOrDefault();
+
+            if (DBdate == null)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private bool CompareInsuranceNotificationDate()
+        {
+            DateTime currentDate = DateTime.Now;
+            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                         && (m.OPERATIONMETHOD.Trim() == "GetInsurancePolicyExpirationNotification"
                          )).FirstOrDefault();
 
             if (DBdate == null)
@@ -1708,7 +1733,8 @@ namespace FintrakBanking.Repositories.Setups.General
 "010705099","002613587","012414846","009186554","007575637","009183686","000269367","001228108","027018975","008221731","007991841","000275291",
 "009605606","000539810","009714280","009433457","008263983","009620604","009521489","027164696","013424794","009315840","000089989","009714283","007186611",
 "009714276","005487999","009619908","009504575","007649222","000555921","009408770","009081261","008221745","009638717","099000806","004595330","000555948","007635219","014917842","008192575","002943518","005504494","008036216","009150751","000197038","000059060","005848102",
-"007695249","005953767","000063647","009714295","014079234","007031866","000858844","014234333","006001886","000048900","000089328"};
+"007695249","005953767","000063647","009714295","014079234","007031866","000858844","014234333","006001886","000048900","000089328", "000048650","000342501","024264458","000598202","040952574","022247994","027237542","006081359","000054710","000050811","016823545","001520004","006561532",
+"004831255","006725547","000059549","007766147","021671885","023897661","008088509","023968894","006426067","022918324","000530885",};
             List<int> days = new List<int> { 30, 21, 14, 7, 5, 2, 1 };
             //&& days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value)
             //var loanRepaymentReminder = context.TBL_GLOBAL_EXPOSURE.Where(d => customerIds.Contains(d.CUSTOMERID) && d.AMOUNTDUE.Value > 0).ToList();
@@ -1782,6 +1808,90 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
+
+
+        public void GetInsurancePolicyExpirationNotification()
+        {
+            // GetInsurancePolicyExpirationNotification method
+            List<int> days = new List<int> { 60, 30, 21, 14, 7, 5, 2, 1 };
+            var insurancePolicyNotification = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.INSURANCEENDDATE).Value)).ToList();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpirationNotification").FirstOrDefault();
+            var defaultEmail = "";
+            var emailList = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (insurancePolicyNotification.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var i in insurancePolicyNotification)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+
+                    var appDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(i.LOANAPPLICATIONDETAILID);
+                    var staff = context.TBL_STAFF.Find(appDetails.CREATEDBY);
+                    var customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == appDetails.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                    var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == appDetails.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                    var accountOfficerEmail = context.TBL_STAFF.Where(x => x.STAFFID == appDetails.CREATEDBY).Select(x => x.EMAIL).FirstOrDefault();
+                    var rmEmail = context.TBL_STAFF.Where(x => x.STATEID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL).FirstOrDefault();
+                    //var previousInsurancePolicyDetails = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => d.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID && DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)).OrderBy(d=>d.INSURANCEENDDATE).ToList();
+
+                    var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
+
+                    var omv = string.Format("{0:#,##.00}", Convert.ToDecimal(i.OMV));
+                    var sumInsured = string.Format("{0:#,##.00}", Convert.ToDecimal(i.SUMINSURED));
+                    var premium = string.Format("{0:#,##.00}", Convert.ToDecimal(i.PREMIUMPAID));
+                    var expiryDate = i.INSURANCEENDDATE?.ToString("dd-MM-yyyy");
+                    int numberOfDays = (i.INSURANCEENDDATE.Value - DateTime.Now).Days;
+
+
+
+                    var result = $@"
+                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>Collateral Detail</b></td>
+                            <td><b>Open Market Value</b></td>
+                            <td><b>Sum Insured</b></td>
+                            <td><b>Premium</b></td>
+                            <td><b>Insurance Expiry Date</b></td>
+                            <td><b>Insurance Policy Type</b></td>
+                        </tr>";
+
+                        result = result + $@"
+                        <tr>
+                            <td>{i.COLLATERALDETAILS}</td>
+                            <td>{$"{omv}"}</td>
+                            <td>{$"{sumInsured}"}</td>
+                            <td>{$"{premium}"}</td>
+                            <td>{expiryDate}</td>
+                            <td>{insurancePolicyType}</td>
+                        </tr>";
+
+                        result = result + $"</table>";
+
+                            alertTitle = alertTitle.Replace("@{{customerName}}", customerName);
+                            alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", accountOfficerName);
+                            alertTemplate = alertTemplate.Replace("@{{customerName}}", customerName);
+                            alertTemplate = alertTemplate.Replace("@{{daysToExpire}}", numberOfDays.ToString());
+                            alertTemplate = alertTemplate.Replace("@{{detail}}", result);
+                            emailList = rmEmail + ";" + accountOfficerEmail;
+                            emailList = emailList + defaultEmail;
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                            alerts.Add(alert);
+                }
+                SendAlertNotification(alerts);
+            }
+        }
+        
 
 
 

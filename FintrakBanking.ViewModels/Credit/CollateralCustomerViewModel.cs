@@ -563,6 +563,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountOfficerName { get; set; }
         public string accountOfficerEmail { get; set; }
         public string valueCode { get; set; }
+        public bool isPolicyInformationConfirmed { get; set; }
     }
 
     public class NewCollateralViewModel

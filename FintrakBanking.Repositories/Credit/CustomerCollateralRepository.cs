@@ -8663,7 +8663,7 @@ namespace FintrakBanking.Repositories.Credit
                                    requireInsurancePolicy = c.REQUIREINSURANCEPOLICY,
                                    dateTimeCreated = x.DATETIMECREATED,
                                    requireVisitation = c.REQUIREVISITATION,
-                                   customerName = a.FIRSTNAME + " " + a.LASTNAME + " " + a.MAIDENNAME
+                                   customerName = a.FIRSTNAME + " " + a.LASTNAME + " " + a.MAIDENNAME,
 
                                }).ToList();
 
@@ -8702,7 +8702,6 @@ namespace FintrakBanking.Repositories.Credit
                                    customerName = a.FIRSTNAME + " " + a.LASTNAME + " " + a.MAIDENNAME,
                                    customerCode = a.CUSTOMERCODE == null ? x.CUSTOMERCODE : a.CUSTOMERCODE,
                                    customerAccount = context.TBL_CASA.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-
                                }).ToList();
 
             return collaterals;
@@ -8782,7 +8781,7 @@ namespace FintrakBanking.Repositories.Credit
                         LOANAPPLICATIONID = model.loanApplicationId,
                         COLLATERALSUMMARY = model.collateralSummary,
                         COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose,
-                        VALIDTILL = model.validTill
+                        VALIDTILL = model.validTill,
                     });
 
 

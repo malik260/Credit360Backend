@@ -101,6 +101,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
         public string COLLATERALSUMMARY { get; set; }
+        
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_COLLATERAL_CASA> TBL_COLLATERAL_CASA { get; set; }
