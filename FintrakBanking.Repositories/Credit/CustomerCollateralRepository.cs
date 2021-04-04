@@ -8664,10 +8664,6 @@ namespace FintrakBanking.Repositories.Credit
                                    dateTimeCreated = x.DATETIMECREATED,
                                    requireVisitation = c.REQUIREVISITATION,
                                    customerName = a.FIRSTNAME + " " + a.LASTNAME + " " + a.MAIDENNAME,
-                                   city = x.CITY,
-                                   state = x.STATE,
-                                   collateralLocation = x.COLLATERALLOCATION,
-                                   lga = x.LGA
 
                                }).ToList();
 
