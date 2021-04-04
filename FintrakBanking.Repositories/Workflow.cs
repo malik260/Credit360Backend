@@ -56,6 +56,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int newStateId = (int)ApprovalState.Processing;
         private int? tenor = null;
         private decimal amount = 0;
+        private decimal facilityAmount = 0;
         private bool investmentGrade = false;
         private bool untenored = false;
         private bool disputed = false;
@@ -97,6 +98,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int OperationId { set { operationId = value; } }
 
         public decimal Amount { set { amount = value; } }
+        public decimal FacilityAmount { set { facilityAmount = value; } }
         public string Comment { set { comment = value; } }
         public int Tenor { set { tenor = value; } }
         public bool InvestmentGrade { set { investmentGrade = value; } }
@@ -143,10 +145,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool SkipLimitsCheck { set { skipLimitsCheck = value; } }
         public string Flow_log { set { flow_log = value; } }
         public bool IsClassifiedReferBack { get { return isClassifiedReferBack; } set { isClassifiedReferBack = value; } }
+        public List<WorkflowSetup> WorkflowSetup { get; private set; }
 
-
-
-        private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
         private WorkflowSetup currentlevel;
         private WorkflowSetup next;
@@ -157,6 +157,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int slaInterval = 780; // 1month
         List<ReportingLine> line = new List<ReportingLine>();
         private List<int> creditOperationIds;
+        private TBL_OPERATIONS operation;
+
         //private WorkflowSetup currentLevel;
 
         public bool LogActivity()
@@ -378,7 +380,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if(this.toStaffId != null) { return; }
 
-                if(this.lastOpenRequest!= null && this.lastOpenRequest?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
+                if(this.lastOpenRequest?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
                 {
                     var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                    x.COMPANYID == this.companyId
@@ -417,14 +419,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                             staffAllocation.staffId = item;
                             staffAllocation.counted = true;
 
-                            var isOnRelief = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == item && x.ENDDATE < DateTime.Now).Any();
+                            var isOnRelief = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == item && x.ENDDATE > DateTime.Now && x.ISACTIVE).Any();
                             staffAllocation.isOnRelief = isOnRelief;
                             staffAllocations.Add(staffAllocation);
                         }
                     }
 
                     var orderedAllocation = staffAllocations.Where(x => x.isOnRelief == false && staffInrole.Select(c=>c.STAFFID).Contains(x.staffId)).OrderBy(x=>x.pendingJobCount).FirstOrDefault();
-                    if(this.toStaffId == null) { this.toStaffId = orderedAllocation.staffId; }
+                    if(this.toStaffId == null) { this.toStaffId = orderedAllocation?.staffId; }
                 }
             }
           
@@ -436,7 +438,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.toStaffId != null) { return; }
 
-            if (this.lastOpenRequest != null && this.lastOpenRequest?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
+            if (this.lastOpenRequest?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
             {
                 var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                   x.COMPANYID == this.companyId
@@ -845,6 +847,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.fromLevelId = null;
             this.newStateId = (int)ApprovalState.Processing;
             if (this.statusId == (int)ApprovalStatusEnum.Pending) this.statusId = (int)ApprovalStatusEnum.Processing;
+            this.operation = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == this.operationId);
+            if ((this.operation?.USEFACILITYAMOUNTONLY ?? false) && this.facilityAmount > 0)
+            {
+                this.Amount = this.facilityAmount;
+                this.levelBusinessRule.Amount = this.facilityAmount;
+                this.levelBusinessRule.PepAmount = this.facilityAmount;
+            }
             // if (IsSpecialReferedBackResponse()) this.statusId = (int)ApprovalStatusEnum.Processing;
             
         }
@@ -1824,7 +1833,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 });
             }
 
-            this.workflowSetup = grid;
+            this.WorkflowSetup = grid;
             //throw new SecureException("");
             return grid;
         }
@@ -2219,42 +2228,48 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return flowLog;
         }
 
+        public IEnumerable<dynamic> GetWorkFlowSetupLevelIds()
+        {
+            var levels = WorkflowSetup.Select(l => new { levelId = l.ApprovalLevelId, roleId = l.DefaultRoleId }).ToList();
+            return levels;
+        }
+
 
     }
 
 
-    public class WorkflowSetup
-    {
-        public int Sn { get; set; }
-        public int SlaInterval { get; set; }
-        public int GroupPosition { get; set; }
-        public int LevelPosition { get; set; }
-        public int ApprovalLevelId { get; set; }
-        public int NumberOfUsers { get; set; }
-        public int NumberOfApprovals { get; set; }
-        public bool CanRouteBack { get; set; }
-        public bool IsPoliticallyExposed { get; set; }
-        //public bool IsInsiderRelated { get; set; }
-        public bool IsActive { get; set; }
-        public bool CanEdit { get; set; }
-        public bool CanRecieveEmail { get; set; }
-        public bool CanRecieveSMS { get; set; }
-        public bool RouteViaStaffOrganogram { get; set; }
-        public int? Tenor { get; set; }
-        public decimal MaximumAmount { get; set; }
-        public decimal? InvestmentGradeAmount { get; set; }
-        public int? DefaultRoleId { get; set; }
-        public int? LevelTypeId { get; set; }
-        public int? LevelBusinessRuleId { get; set; }
-        public TBL_APPROVAL_LEVEL Level { get; set; }
-        public TBL_APPROVAL_GROUP Group { get; set; }
-        public TBL_APPROVAL_GROUP_MAPPING Mapping { get; set; }
-        public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
-        public TBL_APPROVAL_BUSINESS_RULE LevelBusinessRule { get; set; }
-        public bool AllowMultipleInitiator { get; set; }
-        public int? ROLEIDTOROUTE { get; set; }
-        public bool ISPOSTAPPROVALREVIEWER { get; set; }
-    }
+    //public class WorkflowSetup
+    //{
+    //    public int Sn { get; set; }
+    //    public int SlaInterval { get; set; }
+    //    public int GroupPosition { get; set; }
+    //    public int LevelPosition { get; set; }
+    //    public int ApprovalLevelId { get; set; }
+    //    public int NumberOfUsers { get; set; }
+    //    public int NumberOfApprovals { get; set; }
+    //    public bool CanRouteBack { get; set; }
+    //    public bool IsPoliticallyExposed { get; set; }
+    //    //public bool IsInsiderRelated { get; set; }
+    //    public bool IsActive { get; set; }
+    //    public bool CanEdit { get; set; }
+    //    public bool CanRecieveEmail { get; set; }
+    //    public bool CanRecieveSMS { get; set; }
+    //    public bool RouteViaStaffOrganogram { get; set; }
+    //    public int? Tenor { get; set; }
+    //    public decimal MaximumAmount { get; set; }
+    //    public decimal? InvestmentGradeAmount { get; set; }
+    //    public int? DefaultRoleId { get; set; }
+    //    public int? LevelTypeId { get; set; }
+    //    public int? LevelBusinessRuleId { get; set; }
+    //    public TBL_APPROVAL_LEVEL Level { get; set; }
+    //    public TBL_APPROVAL_GROUP Group { get; set; }
+    //    public TBL_APPROVAL_GROUP_MAPPING Mapping { get; set; }
+    //    public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
+    //    public TBL_APPROVAL_BUSINESS_RULE LevelBusinessRule { get; set; }
+    //    public bool AllowMultipleInitiator { get; set; }
+    //    public int? ROLEIDTOROUTE { get; set; }
+    //    public bool ISPOSTAPPROVALREVIEWER { get; set; }
+    //}
 
     public class ReportingLine
     {

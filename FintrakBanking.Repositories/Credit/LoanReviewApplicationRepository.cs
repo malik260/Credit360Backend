@@ -1024,6 +1024,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Only one operation request is allowed for APS release related applications!");
             }
+            List<int> tenorExtensionOperations = new List<int> { (int)OperationsEnum.TenorExtensionApproval, (int)OperationsEnum.OverdraftTenorExtensionApproval,
+                (int)OperationsEnum.ContingentLiabilityTenorExtensionApproval };
+            var operationIsTenorExtension = tenorExtensionOperations.Contains(model.operationId ?? 0);
 
             /*if (model.applicationDetails.Count() > 0 &&
                 model.applicationDetails.Any(x => apsOperationIds.Contains(x.operationId)) ||model.operationId == (int)OperationsEnum.APSReleaseApproval)
@@ -1032,7 +1035,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (lien == null) throw new SecureException("No lien has been placed");
             }*/
 
-            
+
             //var synOperationId = context.TBL_OPERATIONS.Find(model.operationId).SYNCHOPERATIONID;
 
             var doesOperationExist = (from a in context.TBL_LOAN_REVIEW_OPERATION
@@ -1185,6 +1188,16 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
             }
 
+            if (model.loanSystemTypeId != (short)LoanSystemTypeEnum.ExternalFacility && operationIsTenorExtension)
+            {
+                var loanApp = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+                if (loanApp != null)
+                {
+                    application.FINALAPPROVAL_LEVELID = GetSimilarLevelId(loanApp.FINALAPPROVAL_LEVELID ?? 0, workflow.GetWorkFlowSetupLevelIds());
+                    //loanId = loanApp.EXTERNALLOANID;
+                }
+            }
+
             if (context.SaveChanges() > 0)
             {
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -1195,6 +1208,19 @@ namespace FintrakBanking.Repositories.Credit
 
             throw new SecureException("An error occured while saving the data!");
         }
+
+        public int GetSimilarLevelId(int levelId, IEnumerable<dynamic> levelIds)
+        {
+            if (levelId <= 0)
+            {
+                return 0;
+            }
+            var roleId = context.TBL_APPROVAL_LEVEL.FirstOrDefault(l => l.APPROVALLEVELID == levelId).STAFFROLEID;
+            //levelIds = levelIds.Select(l => new { l.roleId, })
+            var result = levelIds.FirstOrDefault(l => l.roleId == roleId)?.levelId;
+            return result ?? 0;
+        }
+
 
         public bool ValidateSubAllocationOperation(int loanApplicationDetailId, int customerId)
         {
@@ -1828,6 +1854,7 @@ namespace FintrakBanking.Repositories.Credit
                 using (var trans = context.Database.BeginTransaction())
                 {
                     var lmsrDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                    workflow.FacilityAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT);
                     workflow.BusinessUnitId = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == lmsrDetail.FirstOrDefault().CUSTOMERID).BUSINESSUNTID;
                     workflow.StaffId = model.lastUpdatedBy;
                     workflow.CompanyId = appl.COMPANYID;
