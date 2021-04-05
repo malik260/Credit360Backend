@@ -904,7 +904,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
-            
+
             // int users = Convert.ToInt32(maxUsers);
             //externalAlertRepository.ValidateProfiledUsers(users);
 
@@ -930,6 +930,14 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetInsurancePolicyExpirationNotification();
                 }
             }
+
+            TimeSpan insuranceMonitorStart = new TimeSpan(4, 0, 0);
+            TimeSpan insuranceMonitorEnd = new TimeSpan(4, 30, 0);
+            if ((now >= insuranceMonitorStart) && (now <= insuranceMonitorEnd))
+            {
+                UpdateInsurancePolicyStatus();
+            }
+
 
             if ((now >= startRepay) && (now <= endRepay))
             {
@@ -1814,7 +1822,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetInsurancePolicyExpirationNotification method
             List<int> days = new List<int> { 60, 30, 21, 14, 7, 5, 2, 1 };
-            var insurancePolicyNotification = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.INSURANCEENDDATE).Value)).ToList();
+            var insurancePolicyNotification = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.INSURANCEENDDATE).Value) && d.DELETED == false && d.INSURANCESTATUSID != (int)InsuranceStatusEnum.Expired).ToList();
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpirationNotification").FirstOrDefault();
             var defaultEmail = "";
             var emailList = "";
@@ -1891,16 +1899,27 @@ namespace FintrakBanking.Repositories.Setups.General
                 SendAlertNotification(alerts);
             }
         }
-        
 
 
+        public void UpdateInsurancePolicyStatus()
+        {
+            var insurancePolicyStatus = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow) && d.DELETED == false && d.INSURANCESTATUSID != (int)InsuranceStatusEnum.Expired).ToList();
+            if (insurancePolicyStatus.Count() > 0)
+            {
+                foreach(var i in insurancePolicyStatus)
+                {
+                    i.INSURANCESTATUSID = (int)InsuranceStatusEnum.Expired;
+                }
+                context.SaveChanges();
+            }
+        }
 
-        //public bool ProcessLoanArchive()
-        //{
-        //    return loanArchive.ProcessLoanArchieving();
+            //public bool ProcessLoanArchive()
+            //{
+            //    return loanArchive.ProcessLoanArchieving();
 
-        //}
-        public void GetCreditCardMaturingObligations()
+            //}
+            public void GetCreditCardMaturingObligations()
         {
             // GetCreditCardMaturingObligations method
             var staffCreditCardMaturingObligations = externalAlertRepository.GetCreditCardMaturingObligations();
