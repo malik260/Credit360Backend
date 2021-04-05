@@ -97,6 +97,7 @@
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\AdjustedFacilityTypeEnum.cs" />
     <Compile Include="Enum\ApprovalLevelType.cs" />
+    <Compile Include="Enum\InsuranceStatusEnum.cs" />
     <Compile Include="Enum\AttachmentTypeEnum.cs" />
     <Compile Include="Enum\CamsolTypeEnum.cs" />
     <Compile Include="Enum\ChargeTypeEnum.cs" />

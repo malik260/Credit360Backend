@@ -787,6 +787,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
+
         public LoadedDocumentSectionViewModel GetDocumentSectionBulkLiquidation(int staffId, int operationId, int targetId, int sectionId)
         {
             var staff = context.TBL_STAFF.Find(staffId);
