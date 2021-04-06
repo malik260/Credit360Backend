@@ -376,5 +376,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("get-customer-account-balances")]
+        //public HttpResponseMessage GetCustomerAccountBalanceFor()
+        //{
+
+        //    var data = repo.GetCustomerAccountBalance("1431919138");
+        //    if (data != null)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //    }
+        //    else
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        //    }
+        //}
+
     }
 }

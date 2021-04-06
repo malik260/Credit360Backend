@@ -171,12 +171,12 @@ namespace FintrakBanking.MessagingAlertSender
 
                     }
 
-                    var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending).ToList();
+                    var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending && o.TOADDRESS != "").ToList();
 
                     //var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending
                     //|| o.MESSAGESTATUSID == (short)MessageStatusEnum.Attempted).ToList();
 
-                    if (listOfMails !=null)
+                    if (listOfMails.Count() > 0)
                     {
                         foreach (var newMail in listOfMails)
                         {
@@ -223,6 +223,7 @@ namespace FintrakBanking.MessagingAlertSender
                                 
                             }
 
+                            
                             var originalSubject = newMail.MESSAGESUBJECT.Trim();
                             if (originalSubject.Contains("&"))
                             {
@@ -236,10 +237,9 @@ namespace FintrakBanking.MessagingAlertSender
                             {
                                 originalSubject = originalSubject.Replace("/", "AND");
                             }
-
-
+                            
                                 mail.IsBodyHtml = true;
-                                mail.Subject = originalSubject;
+                                mail.Subject = originalSubject; 
                                 mail.Body = newMail.MESSAGEBODY.Trim();
                                 mailId = newMail.MESSAGEID;
 

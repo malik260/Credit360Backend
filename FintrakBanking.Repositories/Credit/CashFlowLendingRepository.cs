@@ -325,7 +325,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             //THIS FOREACH LOOP IS NOT YET TESTED. PLEASE COMMENT REMOVE AFTER SIMULATION
-            AddCustomerClientSupplier(customer, entity);
+            //AddCustomerClientSupplier(customer, entity);
            
 
             return context.SaveChanges() > 0;
@@ -449,7 +449,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             //THIS FOREACH LOOP IS NOT YET TESTED. PLEASE REMOVE COMMENT AFTER SIMULATION
-            AddCustomerClientSupplier(customer, model);
+            //AddCustomerClientSupplier(customer, model);
 
 
 

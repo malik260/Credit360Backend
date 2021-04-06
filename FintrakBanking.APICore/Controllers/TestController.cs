@@ -14,7 +14,7 @@ using FintrakBanking.APICore.Filters;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/test")]
-    public class TestController : ApiController
+    public class TestController : ApiControllerBase
     {
         private ICompanyRepository repo;
 

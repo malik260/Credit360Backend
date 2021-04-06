@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.Setups.General
 {

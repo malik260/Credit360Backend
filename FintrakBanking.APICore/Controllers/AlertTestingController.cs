@@ -1,4 +1,5 @@
-﻿using FintrakBanking.APICore.JWTAuth;
+﻿using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Credit;
 using System;
@@ -11,7 +12,7 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/alert/test")]
-    public class AlertTestingController : ApiController
+    public class AlertTestingController : ApiControllerBase
     {
         private readonly IExternalAlertRepository _repo;
         private readonly TokenDecryptionHelper _token = new TokenDecryptionHelper();
