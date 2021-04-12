@@ -1426,7 +1426,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return;
             }
             //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
-            if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision() || CanApproveAndNextIsPostReviewer())
+            if (this.nextLevelId != null && this.amount > 0 && ActionIsApprovalDecision() || (ActionIsApprovalDecision()) || CanApproveAndNextIsPostReviewer())
             {
                 
                 if (WithinAllLimits() == true)

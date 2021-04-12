@@ -11226,7 +11226,6 @@ namespace FintrakBanking.Repositories.Credit
                        collateralType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == x.COLLATERALTYPE).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
                        collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(o => o.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPE).Select(o => o.COLLATERALSUBTYPENAME).FirstOrDefault(),
                        loanAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(l => l.PROPOSEDAMOUNT).FirstOrDefault(),
-                       loanStatus = (from a in context.TBL_LOAN_STATUS join s in context.TBL_LOAN on a.LOANSTATUSID equals s.LOANSTATUSID where s.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.ACCOUNTSTATUS).FirstOrDefault(),
                        loanTypeName = (from y in context.TBL_PRODUCT join s in context.TBL_LOAN_APPLICATION_DETAIL on y.PRODUCTID equals s.PROPOSEDPRODUCTID where s.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select y.PRODUCTNAME).FirstOrDefault(),
                        securityReleaseStatus = (from y in context.TBL_COLLATERAL_RELEASE join p in context.TBL_COLLATERAL_RELEASE_TYPE on y.COLLATERALRELEASETYPEID equals p.COLLATERALRELEASETYPEID where y.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID select p.COLLATERALRELEASETYPENAME).FirstOrDefault(),
                        taxNumber = (from a in context.TBL_CUSTOMER join b in context.TBL_LOAN_APPLICATION_DETAIL on a.CUSTOMERID equals b.CUSTOMERID where b.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.TAXNUMBER).FirstOrDefault(),
@@ -11244,16 +11243,35 @@ namespace FintrakBanking.Repositories.Credit
                     i.customerAccount = context.TBL_CASA.Where(x => x.CUSTOMERID == loanApplicationDetail.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
                     var staff = context.TBL_STAFF.Find(loanApplicationDetail.CREATEDBY);
                     var rm = context.TBL_STAFF.Find(staff.SUPERVISOR_STAFFID);
-                    var gh = context.TBL_STAFF.Find(rm.SUPERVISOR_STAFFID);
+                    var zh = context.TBL_STAFF.Find(rm.SUPERVISOR_STAFFID);
+                    var gh = context.TBL_STAFF.Find(zh.SUPERVISOR_STAFFID);
                     var customer = context.TBL_CUSTOMER.Find(loanApplicationDetail.CUSTOMERID);
+                    var div = context.TBL_PROFILE_BUSINESS_UNIT.Find(customer.BUSINESSUNTID);
+                    i.applicationreferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER;
                     i.customerPhone = customer.PHONENUMBEROFSIGNATORY;
                     i.customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(c => c.CUSTOMERID == loanApplicationDetail.CUSTOMERID).Select(c => c.ADDRESS).FirstOrDefault();
-                    i.teamName = stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.TEAMNAME).FirstOrDefault();
-                    i.divisionName = stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.DIVISIONNAME).FirstOrDefault();
+                    i.teamName = staff.MISCODE; //stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.TEAMNAME).FirstOrDefault();
+                    i.divisionName = div.BUSINESSUNITSHORTCODE;
                     i.groupHead = gh.FIRSTNAME + " " + gh.MIDDLENAME + " " + gh.LASTNAME;
                     i.customerEmail = customer.EMAILADDRESS;
                     i.accountOfficerName = staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME;
                     i.accountOfficerEmail = staff.EMAIL;
+
+                    var loan = context.TBL_LOAN.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID && l.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility).FirstOrDefault();
+                    if (loan != null)
+                    {
+                        i.loanStatus = context.TBL_LOAN_STATUS.Find(loan.LOANSTATUSID).ACCOUNTSTATUS;
+                    }
+                    var contingent = context.TBL_LOAN_CONTINGENT.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID && l.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability).FirstOrDefault();
+                    if (contingent != null)
+                    {
+                        i.loanStatus = context.TBL_LOAN_STATUS.Find(contingent.LOANSTATUSID).ACCOUNTSTATUS;
+                    }
+                    var resolving = context.TBL_LOAN_REVOLVING.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID && l.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility).FirstOrDefault();
+                    if (resolving != null)
+                    {
+                        i.loanStatus = context.TBL_LOAN_STATUS.Find(resolving.LOANSTATUSID).ACCOUNTSTATUS;
+                    }
                 }
 
             }
@@ -11286,7 +11304,7 @@ namespace FintrakBanking.Repositories.Credit
                        collateralType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == x.COLLATERALTYPE).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
                        collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(o => o.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPE).Select(o => o.COLLATERALSUBTYPENAME).FirstOrDefault(),
                        loanAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(l => l.PROPOSEDAMOUNT).FirstOrDefault(),
-                       loanStatus = (from a in context.TBL_LOAN_STATUS join s in context.TBL_LOAN on a.LOANSTATUSID equals s.LOANSTATUSID where s.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.ACCOUNTSTATUS).FirstOrDefault(),
+                       //loanStatus = (from a in context.TBL_LOAN_STATUS join s in context.TBL_LOAN on a.LOANSTATUSID equals s.LOANSTATUSID where s.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.ACCOUNTSTATUS).FirstOrDefault(),
                        loanTypeName = (from y in context.TBL_PRODUCT join s in context.TBL_LOAN_APPLICATION_DETAIL on y.PRODUCTID equals s.PROPOSEDPRODUCTID where s.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select y.PRODUCTNAME).FirstOrDefault(),
                        securityReleaseStatus = (from y in context.TBL_COLLATERAL_RELEASE join p in context.TBL_COLLATERAL_RELEASE_TYPE on y.COLLATERALRELEASETYPEID equals p.COLLATERALRELEASETYPEID where y.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID select p.COLLATERALRELEASETYPENAME).FirstOrDefault(),
                        taxNumber = (from a in context.TBL_CUSTOMER join b in context.TBL_LOAN_APPLICATION_DETAIL on a.CUSTOMERID equals b.CUSTOMERID where b.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.TAXNUMBER).FirstOrDefault(),
@@ -11306,12 +11324,28 @@ namespace FintrakBanking.Repositories.Credit
                     var gh = context.TBL_STAFF.Find(rm.SUPERVISOR_STAFFID);
                     var customer = context.TBL_CUSTOMER.Find(loanApplicationDetail.CUSTOMERID);
                     i.customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(c => c.CUSTOMERID == loanApplicationDetail.CUSTOMERID).Select(c => c.ADDRESS).FirstOrDefault();
-                    i.teamName = stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.TEAMNAME).FirstOrDefault();
+                    i.teamName = staff.MISCODE; //stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.TEAMNAME).FirstOrDefault();
                     i.divisionName = stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.DIVISIONNAME).FirstOrDefault();
                     i.groupHead = gh.FIRSTNAME + " " + gh.MIDDLENAME + " " + gh.LASTNAME;
                     i.customerEmail = customer.EMAILADDRESS;
                     i.accountOfficerName = staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME;
                     i.accountOfficerEmail = staff.EMAIL;
+
+                    var loan = context.TBL_LOAN.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID && l.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility).FirstOrDefault();
+                    if (loan != null)
+                    {
+                        i.loanStatus = context.TBL_LOAN_STATUS.Find(loan.LOANSTATUSID).ACCOUNTSTATUS;
+                    }
+                    var contingent = context.TBL_LOAN_CONTINGENT.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID && l.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability).FirstOrDefault();
+                    if (contingent != null)
+                    {
+                        i.loanStatus = context.TBL_LOAN_STATUS.Find(contingent.LOANSTATUSID).ACCOUNTSTATUS;
+                    }
+                    var resolving = context.TBL_LOAN_REVOLVING.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID && l.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility).FirstOrDefault();
+                    if (resolving != null)
+                    {
+                        i.loanStatus = context.TBL_LOAN_STATUS.Find(resolving.LOANSTATUSID).ACCOUNTSTATUS;
+                    }
                 }
 
             }
@@ -11344,7 +11378,7 @@ namespace FintrakBanking.Repositories.Credit
                        collateralType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == x.COLLATERALTYPE).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
                        collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(o => o.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPE).Select(o => o.COLLATERALSUBTYPENAME).FirstOrDefault(),
                        loanAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(l => l.PROPOSEDAMOUNT).FirstOrDefault(),
-                       loanStatus = (from a in context.TBL_LOAN_STATUS join s in context.TBL_LOAN on a.LOANSTATUSID equals s.LOANSTATUSID where s.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.ACCOUNTSTATUS).FirstOrDefault(),
+                       //loanStatus = (from a in context.TBL_LOAN_STATUS join s in context.TBL_LOAN on a.LOANSTATUSID equals s.LOANSTATUSID where s.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.ACCOUNTSTATUS).FirstOrDefault(),
                        loanTypeName = (from y in context.TBL_PRODUCT join s in context.TBL_LOAN_APPLICATION_DETAIL on y.PRODUCTID equals s.PROPOSEDPRODUCTID where s.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select y.PRODUCTNAME).FirstOrDefault(),
                        securityReleaseStatus = (from y in context.TBL_COLLATERAL_RELEASE join p in context.TBL_COLLATERAL_RELEASE_TYPE on y.COLLATERALRELEASETYPEID equals p.COLLATERALRELEASETYPEID where y.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID select p.COLLATERALRELEASETYPENAME).FirstOrDefault(),
                        taxNumber = (from a in context.TBL_CUSTOMER join b in context.TBL_LOAN_APPLICATION_DETAIL on a.CUSTOMERID equals b.CUSTOMERID where b.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.TAXNUMBER).FirstOrDefault(),
@@ -11364,12 +11398,27 @@ namespace FintrakBanking.Repositories.Credit
                     var gh = context.TBL_STAFF.Find(rm.SUPERVISOR_STAFFID);
                     var customer = context.TBL_CUSTOMER.Find(loanApplicationDetail.CUSTOMERID);
                     i.customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(c => c.CUSTOMERID == loanApplicationDetail.CUSTOMERID).Select(c => c.ADDRESS).FirstOrDefault();
-                    i.teamName = stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.TEAMNAME).FirstOrDefault();
+                    i.teamName = staff.MISCODE; //stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.TEAMNAME).FirstOrDefault();
                     i.divisionName = stageContext.STG_TEAM.Where(x => x.ACCOUNTOFFICERCODE == staff.MISCODE).Select(x => x.DIVISIONNAME).FirstOrDefault();
                     i.groupHead = gh.FIRSTNAME + " " + gh.MIDDLENAME + " " + gh.LASTNAME;
                     i.customerEmail = customer.EMAILADDRESS;
                     i.accountOfficerName = staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME;
                     i.accountOfficerEmail = staff.EMAIL;
+                    var loan = context.TBL_LOAN.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID && l.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility).FirstOrDefault();
+                    if (loan != null)
+                    {
+                        i.loanStatus = context.TBL_LOAN_STATUS.Find(loan.LOANSTATUSID).ACCOUNTSTATUS;
+                    }
+                    var contingent = context.TBL_LOAN_CONTINGENT.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID && l.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability).FirstOrDefault();
+                    if (contingent != null)
+                    {
+                        i.loanStatus = context.TBL_LOAN_STATUS.Find(contingent.LOANSTATUSID).ACCOUNTSTATUS;
+                    }
+                    var resolving = context.TBL_LOAN_REVOLVING.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID && l.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility).FirstOrDefault();
+                    if (resolving != null)
+                    {
+                        i.loanStatus = context.TBL_LOAN_STATUS.Find(resolving.LOANSTATUSID).ACCOUNTSTATUS;
+                    }
                 }
 
             }
