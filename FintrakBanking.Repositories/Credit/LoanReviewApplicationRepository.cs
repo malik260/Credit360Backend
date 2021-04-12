@@ -1190,7 +1190,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.loanSystemTypeId != (short)LoanSystemTypeEnum.ExternalFacility && operationIsTenorExtension)
             {
-                var loanApp = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+                var loanApp = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.loanReferenceNumber);
                 if (loanApp != null)
                 {
                     application.FINALAPPROVAL_LEVELID = GetSimilarLevelId(loanApp.FINALAPPROVAL_LEVELID ?? 0, workflow.GetWorkFlowSetupLevelIds());
