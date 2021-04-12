@@ -3234,7 +3234,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (isLMS)
             {
-                obligorGFSProposedAmount = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT);
+                obligorGFSProposedAmount = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT) > 0 ? this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT) : (this.lmsrApplication.APPROVEDAMOUNT ?? 0);
             }
             else
             {
