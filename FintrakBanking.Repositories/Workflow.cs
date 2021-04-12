@@ -1409,7 +1409,21 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             //if (IsPresetFinalLevel()) { return; }
 
-            if (ThereIsPresetFinalLevel()) { return; }
+            if (ThereIsPresetFinalLevel())
+            {//to take care of final approv
+                if (ActionIsApprovalDecision())
+                {
+                    if (this.statusId != (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
+                    }
+                    else
+                    {
+                        this.EndProcess(this.statusId);
+                    }
+                    return;
+                }
+            }
 
             if (this.skipLimitsCheck == true)
             {
