@@ -95,35 +95,37 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool LogApproval(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId)
         {
-            if (externalInitialization)
-            {
-                workflow.StaffId = model.createdBy;
-                workflow.OperationId = operationId;
-                workflow.TargetId = model.applicationId;
-                workflow.CompanyId = model.companyId;
-                workflow.Comment = model.comment;
-                workflow.ExternalInitialization = externalInitialization;
-                workflow.StatusId = ApprovalStatusId;
-                workflow.Amount = model.amount;
-                if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
-            }
+            
+                if (externalInitialization)
+                {
+                    workflow.StaffId = model.createdBy;
+                    workflow.OperationId = operationId;
+                    workflow.TargetId = model.applicationId;
+                    workflow.CompanyId = model.companyId;
+                    workflow.Comment = model.comment;
+                    workflow.ExternalInitialization = externalInitialization;
+                    workflow.StatusId = ApprovalStatusId;
+                    workflow.Amount = model.amount;
+                    if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
+                }
 
-            if (!externalInitialization)
-            {
-                workflow.StaffId = model.createdBy;
-                workflow.CompanyId = model.companyId;
-                workflow.StatusId = ApprovalStatusId;
-                workflow.TargetId = model.applicationId;
-                workflow.Comment = model.comment;
-                workflow.OperationId = operationId;
-                workflow.DeferredExecution = true;
-                workflow.ExternalInitialization = false;
-                if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
-            }
+                if (!externalInitialization)
+                {
+                    workflow.StaffId = model.createdBy;
+                    workflow.CompanyId = model.companyId;
+                    workflow.StatusId = ApprovalStatusId;
+                    workflow.TargetId = model.applicationId;
+                    workflow.Comment = model.comment;
+                    workflow.OperationId = operationId;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = false;
+                    if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
+                }
 
-            workflow.LogActivity();
+                workflow.LogActivity();
 
-            return context.SaveChanges() > 0;
+                return context.SaveChanges() > 0;
+            
         }
 
         public CurrentCustomerExposure GetCurrentCompanyExposure()

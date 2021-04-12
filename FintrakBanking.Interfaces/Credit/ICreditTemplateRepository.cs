@@ -58,5 +58,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentBulkLiquidation(int staffId, int operationId, int targetId, UserInfo user);
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentationBulkLiquidation(int staffId, int operationId, int targetId, UserInfo user);
         InsurancePolicy GetInsurancePolicyConfirmationStatus(int staffId, int appDetailId);
+        InsurancePolicy GetInsurancePolicyConfirmationStatusByAppDetailId(int staffId, int appDetailId);
     }
 }
