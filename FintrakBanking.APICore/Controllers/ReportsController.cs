@@ -2535,6 +2535,30 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [Route("insurance-spool-report")]
+        public HttpResponseMessage InsuranceSpoolReport([FromBody] DateRange param)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.InsuranceSpoolReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [AllowAnonymous]
         [Route("security-release-report")]
         public HttpResponseMessage SecurityReleaseReport([FromBody] DateRange param)
         {

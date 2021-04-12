@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Setups.General;
@@ -23,6 +24,7 @@ namespace FintrakBanking.ReportObjects
     {
         private IGeneralSetupRepository generalSetup  ;
         FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext();
+        FinTrakBankingDocumentsContext documentsContext = new FinTrakBankingDocumentsContext();
         private IQueryable<LoanInformation> Loans(int companyId, DateTime startDate, DateTime endDate)
         {
             IQueryable<LoanInformation> loan;
@@ -5829,6 +5831,53 @@ namespace FintrakBanking.ReportObjects
                .ToList();
             return data;
         }
+        public IEnumerable<OriginalDocumentReleaseViewModel> InsuranceSpoolReport(DateTime startDate, DateTime endDate, int documentTypeId)
+        {
+            var data = new List<OriginalDocumentReleaseViewModel>();
+
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            data = (from us in documentsContext.TBL_DOCUMENT_USAGE
+                    join up in documentsContext.TBL_DOCUMENT_UPLOAD on us.DOCUMENTUPLOADID equals up.DOCUMENTUPLOADID
+                    join t in documentsContext.TBL_DOCUMENT_TYPE on up.DOCUMENTTYPEID equals t.DOCUMENTTYPEID                  
+                    where us.DELETED == false && t.DOCUMENTTYPEID == (int)DocumentTypeEnum.InsurancePolicy
+                    && DbFunctions.TruncateTime(us.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                          DbFunctions.TruncateTime(us.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+
+                    select new OriginalDocumentReleaseViewModel
+                    {
+                        applicationReferenceNumber = us.TARGETREFERENCENUMBER,
+                        documentTypeName = t.DOCUMENTTYPENAME,
+                        fileName = up.FILENAME,
+                    })
+               .ToList();
+            foreach (var d in data)
+            {
+                var loanApplication = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == d.applicationReferenceNumber).FirstOrDefault();
+                var loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+                var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == loanApplicationDetail.CUSTOMERID).FirstOrDefault();
+                var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == loanApplicationDetail.CURRENCYID).FirstOrDefault();
+                var bookingRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                if (bookingRequest != null)
+                {
+                    d.customerName = customer.LASTNAME + " " + customer.FIRSTNAME + " " + customer.MIDDLENAME;
+                    d.facilityAmount = bookingRequest.AMOUNT_REQUESTED;
+                    d.currency = currency.CURRENCYCODE;
+                    d.drawdownInitiationDate = bookingRequest.DATETIMECREATED;
+                }
+                else
+                {
+                    d.customerName = customer.LASTNAME + " " + customer.FIRSTNAME + " " + customer.MIDDLENAME;
+                    d.facilityAmount = (decimal)0.00;
+                    d.currency = currency.CURRENCYCODE;
+                    d.drawdownInitiationDate = loanApplicationDetail.DATETIMECREATED;
+                }
+                
+            }
+            
+            return data;
+        }
+
     }
 }
 
