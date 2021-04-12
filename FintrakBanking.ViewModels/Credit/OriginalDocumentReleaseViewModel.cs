@@ -63,5 +63,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal applicationAmount { get; set; }
         public double interestRate { get; set; }
         public DateTime applicationDate { get; set; }
+        public string currency { get; set; }
+        public string fileName { get; set; }
+        public DateTime drawdownInitiationDate { get; set; }
     }
 }
