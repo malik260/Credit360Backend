@@ -2191,7 +2191,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
-    <Folder Include="CFLAuthentication\App_Data\" />
     <Folder Include="Views\Testing\" />
   </ItemGroup>
   <ItemGroup>
