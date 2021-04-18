@@ -1292,6 +1292,95 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return data;
         }
 
+        public IQueryable<WorkflowNotificationViewModel> GetWorkflowMappingNotifications(int MappingId)
+        {
+            var notifications = context.TBL_WORKFLOW_NOTIFICATION.Where(x => x.GROUPOPERATIONMAPPINGID == MappingId).Select(x => new WorkflowNotificationViewModel
+            {
+                workflowNotificationId = x.WORKFLOWNOTIFICATIONID,
+                groupOperationMappingId = x.GROUPOPERATIONMAPPINGID,
+                approvalLevelId = x.APPROVALLEVELID,
+                proceedingActionsAlertTitleId = x.PROCEEDINGACTIONSALERTTITLEID,
+                poolAlertTitleId = x.POOLALERTTITLEID,
+                ownerAlertTitleId = x.OWNERALERTTITLEID,
+                includePoolInNotification = x.INCLUDEPOOLINNOTIFICATION,
+                notifyOfProceedingWorkflowActions = x.NOTIFYOFPROCEEDINGWORKFLOWACTIONS,
+                notifyOnwer = x.NOTIFYONWER,
+            });
 
+            return notifications;
+        }
+
+        public async Task<bool> AddWorkflowMappingNotification(WorkflowNotificationViewModel model)
+        {
+            var data = new TBL_WORKFLOW_NOTIFICATION()
+            {
+                GROUPOPERATIONMAPPINGID = model.groupOperationMappingId,
+                APPROVALLEVELID = model.approvalLevelId,
+                PROCEEDINGACTIONSALERTTITLEID = model.proceedingActionsAlertTitleId,
+                POOLALERTTITLEID = model.poolAlertTitleId,
+                OWNERALERTTITLEID = model.ownerAlertTitleId,
+                INCLUDEPOOLINNOTIFICATION = model.includePoolInNotification,
+                NOTIFYOFPROCEEDINGWORKFLOWACTIONS = model.notifyOfProceedingWorkflowActions,
+                NOTIFYONWER = model.notifyOnwer,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                CREATEDBY = model.createdBy
+            };
+
+            context.TBL_WORKFLOW_NOTIFICATION.Add(data);
+            var saved = await context.SaveChangesAsync() > 0;
+            return saved;
+        }
+
+        public async Task<bool> UpdateWorkflowMappingNotification(WorkflowNotificationViewModel model, int workflowNotificationId)
+        {
+            var notification = context.TBL_WORKFLOW_NOTIFICATION.FirstOrDefault(x => x.WORKFLOWNOTIFICATIONID == workflowNotificationId);
+            if (notification != null)
+            {
+                notification.PROCEEDINGACTIONSALERTTITLEID = model.proceedingActionsAlertTitleId;
+                notification.POOLALERTTITLEID = model.poolAlertTitleId;
+                notification.OWNERALERTTITLEID = model.ownerAlertTitleId;
+                notification.INCLUDEPOOLINNOTIFICATION = model.includePoolInNotification;
+                notification.NOTIFYOFPROCEEDINGWORKFLOWACTIONS = model.notifyOfProceedingWorkflowActions;
+                notification.NOTIFYONWER = model.notifyOnwer;
+                notification.DATETIMEUPDATED = genSetup.GetApplicationDate();
+                notification.LASTUPDATEDBY = model.createdBy;
+            }
+
+            var saved = await context.SaveChangesAsync() > 0;
+            return saved;
+        }
+
+        public async Task<bool> DeleteWorkflowMappingNotification(int MappingId, UserInfo user)
+        {
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var notifications = context.TBL_WORKFLOW_NOTIFICATION.Where(x => x.GROUPOPERATIONMAPPINGID == MappingId);
+                context.TBL_WORKFLOW_NOTIFICATION.RemoveRange(notifications);
+
+                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.WorkflowMappingNotificationsDeleted,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Workflow mapping notification for mappingId '{MappingId}' was deleted by {audit_staff}",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = MappingId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+
+                var saved = await context.SaveChangesAsync() > 0;
+                trans.Commit();
+                return saved;
+            }
+            
+        }
     }
 }

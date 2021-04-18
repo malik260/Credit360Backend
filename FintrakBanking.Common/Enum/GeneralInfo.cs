@@ -479,6 +479,7 @@ namespace FintrakBanking.Common.Enum
         LcCashBuildUpPlanDeleted = 572,
         LcUsanceExtensionAdded = 573,
         LcUsanceExtensionUpdated = 574,
+        WorkflowMappingNotificationsDeleted = 577,
 
     };
     public enum RegulatoryTypeEnum
