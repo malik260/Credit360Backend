@@ -109,8 +109,10 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public int? proceedingActionsAlertTitleId { get; set; }
         public int? poolAlertTitleId { get; set; }
         public int? ownerAlertTitleId { get; set; }
+        public int? pendingApprovalAlertTitleId { get; set; }
         public bool includePoolInNotification { get; set; }
         public bool notifyOfProceedingWorkflowActions { get; set; }
+        public bool notifyOfPendingApprovals { get; set; }
         public bool notifyOnwer { get; set; }
     }
 }

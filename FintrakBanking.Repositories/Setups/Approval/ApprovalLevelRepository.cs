@@ -1305,6 +1305,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 includePoolInNotification = x.INCLUDEPOOLINNOTIFICATION,
                 notifyOfProceedingWorkflowActions = x.NOTIFYOFPROCEEDINGWORKFLOWACTIONS,
                 notifyOnwer = x.NOTIFYONWER,
+                notifyOfPendingApprovals = x.NOTIFYOFPENDINGAPPROVALS,
+                pendingApprovalAlertTitleId = x.PENDINGAPPROVALALERTTITLEID
             });
 
             return notifications;
@@ -1322,6 +1324,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 INCLUDEPOOLINNOTIFICATION = model.includePoolInNotification,
                 NOTIFYOFPROCEEDINGWORKFLOWACTIONS = model.notifyOfProceedingWorkflowActions,
                 NOTIFYONWER = model.notifyOnwer,
+                NOTIFYOFPENDINGAPPROVALS = model.notifyOfPendingApprovals,
+                PENDINGAPPROVALALERTTITLEID = model.pendingApprovalAlertTitleId,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 CREATEDBY = model.createdBy
             };
@@ -1342,6 +1346,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 notification.INCLUDEPOOLINNOTIFICATION = model.includePoolInNotification;
                 notification.NOTIFYOFPROCEEDINGWORKFLOWACTIONS = model.notifyOfProceedingWorkflowActions;
                 notification.NOTIFYONWER = model.notifyOnwer;
+                notification.NOTIFYOFPENDINGAPPROVALS = model.notifyOfPendingApprovals;
+                notification.PENDINGAPPROVALALERTTITLEID = model.pendingApprovalAlertTitleId;
                 notification.DATETIMEUPDATED = genSetup.GetApplicationDate();
                 notification.LASTUPDATEDBY = model.createdBy;
             }

@@ -14,9 +14,11 @@ namespace FintrakBanking.Entities.Models
         public int? PROCEEDINGACTIONSALERTTITLEID { get; set; }
         public int? POOLALERTTITLEID { get; set; }
         public int? OWNERALERTTITLEID { get; set; }
+        public int? PENDINGAPPROVALALERTTITLEID { get; set; }
         public bool INCLUDEPOOLINNOTIFICATION { get; set; }
         public bool NOTIFYOFPROCEEDINGWORKFLOWACTIONS { get; set; }
         public bool NOTIFYONWER { get; set; }
+        public bool NOTIFYOFPENDINGAPPROVALS { get; set; }
         public int CREATEDBY { get; set; }
         public int? LASTUPDATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
