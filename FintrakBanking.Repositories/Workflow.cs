@@ -2166,18 +2166,29 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
             var staffs = from s in context.TBL_STAFF select s;
-            var creditOperationIds = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(f => f.OPERATIONID).ToList();
             var allstaff = this.GetAllStaffNames();
 
 
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
             
             trail = trail.Where(t => !(t.FROMAPPROVALLEVELID == t.TOAPPROVALLEVELID && t.LOOPEDSTAFFID > 0)).ToList();//to eliminate unnecessary referback data and avoid data duplicates
 
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
+                approvalTrailId = x.APPROVALTRAILID,
+                targetId = x.TARGETID,
+                systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                responseDate = x.RESPONSEDATE,
+                systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
                 responseStaffId = x.RESPONSESTAFFID,
+                requestStaffId = x.REQUESTSTAFFID,
+                operationId = x.OPERATIONID,
+                fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelId = x.TOAPPROVALLEVELID,
+                approvalStateId = x.APPROVALSTATEID,
+                approvalStatusId = x.APPROVALSTATUSID,
             })?.OrderBy(x => x.systemArrivalDateTime).ToList();
 
             if (currentLevelId == 0)
@@ -2205,8 +2216,20 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 data = trail.Where(x => x.FROMAPPROVALLEVELID > 0).Select(x => new ApprovalTrailViewModel
                 {
+                    approvalTrailId = x.APPROVALTRAILID,
+                    targetId = x.TARGETID,
+                    systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                    responseDate = x.RESPONSEDATE,
+                    systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
                     responseStaffId = x.RESPONSESTAFFID,
+                    requestStaffId = x.REQUESTSTAFFID,
+                    operationId = x.OPERATIONID,
+                    fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                    fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                    toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                     toApprovalLevelId = x.TOAPPROVALLEVELID,
+                    approvalStateId = x.APPROVALSTATEID,
+                    approvalStatusId = x.APPROVALSTATUSID,
                 })?.OrderBy(x => x.systemArrivalDateTime).ToList();
 
                 data3 = data.OrderByDescending(d => d.systemArrivalDateTime);
