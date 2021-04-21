@@ -2259,6 +2259,13 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             data = data2;
             data.OrderByDescending(d => d.systemArrivalDateTime).ToList();
+
+            var redundantRecordSet = data.GroupBy(d => d.requestStaffId).Where(d => d.Count() > 1).ToList();
+            foreach (var r in redundantRecordSet)
+            {
+                var redundantRecord = r.OrderBy(d => d.approvalTrailId).FirstOrDefault();
+                data.Remove(redundantRecord);
+            }
             return data;
         }//Ify
 
@@ -2300,7 +2307,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if (this.fromLevelId != null)
                 {
-                    fromLevelName = " by " + context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId)?.LEVELNAME;
+                    fromLevelName =  context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId)?.LEVELNAME;
                 }
                 if (this.nextLevelId != null && this.toStaffId == null)
                 {
@@ -2346,10 +2353,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 .Select(x => x.TBL_STAFF.EMAIL)
                                 .Distinct().ToList();
 
-                                var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.DefaultRoleId && s.STAFFID != reciever.STAFFID).Select(x => x.EMAIL);//exempt the tostaff already sent
+                                var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.DefaultRoleId && s.STAFFID != reciever.STAFFID).Select(x => x.EMAIL).ToList();//exempt the tostaff already sent
                                 emails = levelStaffEmails.Union(nextLevelStaffEmails).ToList();
 
-                                if (this.reliefStaffId != null)
+                                if (this.reliefStaffId > 0)
                                 {
                                     var reliefRecord = context.TBL_STAFF.Find(this.reliefStaffId);
                                     if (!(String.IsNullOrEmpty(reliefRecord.EMAIL)) && !(String.IsNullOrWhiteSpace(reliefRecord.EMAIL)))
@@ -2368,7 +2375,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var trailLevels = GetTrailForReferBack(this.targetId, this.operationId, this.fromLevelId ?? 0);
                 foreach (var level in trailLevels)
                 {
-                    var nextLevel = WorkflowSetup.FirstOrDefault(s => s.ApprovalLevelId == level.toApprovalLevelId);
+                    var nextLevel = WorkflowSetup.FirstOrDefault(s => s.ApprovalLevelId == level.fromApprovalLevelId);
                     if (nextLevel == null)
                     {
                         continue;
@@ -2385,9 +2392,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                         {
                             continue;
                         }
-                        if (level.responseStaffId != null)
+                        if (level.requestStaffId > 0)
                         {
-                            reciever = context.TBL_STAFF.Find(level.responseStaffId);
+                            reciever = context.TBL_STAFF.Find(level.requestStaffId);
                             recipientName = reciever?.FIRSTNAME;
                             this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
                         }
