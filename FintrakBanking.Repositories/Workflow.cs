@@ -1938,166 +1938,166 @@ namespace FintrakBanking.Repositories.WorkFlow
             return validity;
         }
 
-        private void SendNotifications()
-        {
-            if (statusOnly) return;
-            if (emailNotification || smsNotification)
-            {
-                int tat = next != null ? next.SlaInterval : 0;
-                var setup = context.TBL_SETUP_GLOBAL.Find(1);
-                var operation = context.TBL_OPERATIONS.Find(this.operationId);
-                var applicationUrl = setup.APPLICATION_URL.Length == 0 ? "#" : setup.APPLICATION_URL;
-                var applicationUrls = "https://credit360.accessbankplc.com";
-                var links = "<p>Click <a href=\"" + applicationUrls + "\">here to continue...</a></p>";
+        //private void SendNotifications()
+        //{
+        //    if (statusOnly) return;
+        //    if (emailNotification || smsNotification)
+        //    {
+        //        int tat = next != null ? next.SlaInterval : 0;
+        //        var setup = context.TBL_SETUP_GLOBAL.Find(1);
+        //        var operation = context.TBL_OPERATIONS.Find(this.operationId);
+        //        var applicationUrl = setup.APPLICATION_URL.Length == 0 ? "#" : setup.APPLICATION_URL;
+        //        var applicationUrls = "https://credit360.accessbankplc.com";
+        //        var links = "<p>Click <a href=\"" + applicationUrls + "\">here to continue...</a></p>";
 
-                TBL_STAFF owner;
-                if (trailLog.Count() == 0)
-                {
-                    owner = context.TBL_STAFF.Find(this.staffId);
-                }
-                else
-                {
-                    var trails = trailLog.OrderBy(x => x.APPROVALTRAILID);
-                    owner = context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
-                }
+        //        TBL_STAFF owner;
+        //        if (trailLog.Count() == 0)
+        //        {
+        //            owner = context.TBL_STAFF.Find(this.staffId);
+        //        }
+        //        else
+        //        {
+        //            var trails = trailLog.OrderBy(x => x.APPROVALTRAILID);
+        //            owner = context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
+        //        }
 
-                int targetId = this.targetId;
-                int operationId = this.operationId;
-                var message = new TBL_MESSAGE_LOG();
-                var reciever = new TBL_STAFF();
-                string recipientName = "All";
-                string operationName = operation == null ? "N/A" : operation.OPERATIONNAME;
-                string messageSubject = "PENDING APPROVAL FOR " + operationName.ToUpper();
-                string status = GetApprovalStatusName(this.statusId);
-                string ownerMessageSubject = "YOUR INITIATED " + operationName.ToUpper() + " PROCESS HAVE BEEN " + status.ToUpper();
-                var level = string.Empty;
-                List<string> emails = new List<string>();
+        //        int targetId = this.targetId;
+        //        int operationId = this.operationId;
+        //        var message = new TBL_MESSAGE_LOG();
+        //        var reciever = new TBL_STAFF();
+        //        string recipientName = "All";
+        //        string operationName = operation == null ? "N/A" : operation.OPERATIONNAME;
+        //        string messageSubject = "PENDING APPROVAL FOR " + operationName.ToUpper();
+        //        string status = GetApprovalStatusName(this.statusId);
+        //        string ownerMessageSubject = "YOUR INITIATED " + operationName.ToUpper() + " PROCESS HAVE BEEN " + status.ToUpper();
+        //        var level = string.Empty;
+        //        List<string> emails = new List<string>();
 
-                if (this.fromLevelId != null) level = " by " + context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId)?.LEVELNAME;
-                if (this.nextLevelId != null && this.toStaffId == null) recipientName = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId)?.LEVELNAME;
+        //        if (this.fromLevelId != null) level = " by " + context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId)?.LEVELNAME;
+        //        if (this.nextLevelId != null && this.toStaffId == null) recipientName = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId)?.LEVELNAME;
 
-                if (this.toStaffId != null)
-                {
-                    reciever = context.TBL_STAFF.Find(this.toStaffId);
-                    recipientName = reciever?.FIRSTNAME;
-                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x=>x.RELIEFSTAFFID).FirstOrDefault();
-                }
-                else if (this.loopedStaffId != null)
-                {
-                    reciever = context.TBL_STAFF.Find(this.loopedStaffId);
-                    recipientName = reciever.FIRSTNAME;
-                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
-                }
-                else
-                {
-                    if (this.nextLevelId != null)
-                    {
-                        var nextLevel = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
+        //        if (this.toStaffId != null)
+        //        {
+        //            reciever = context.TBL_STAFF.Find(this.toStaffId);
+        //            recipientName = reciever?.FIRSTNAME;
+        //            this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x=>x.RELIEFSTAFFID).FirstOrDefault();
+        //        }
+        //        else if (this.loopedStaffId != null)
+        //        {
+        //            reciever = context.TBL_STAFF.Find(this.loopedStaffId);
+        //            recipientName = reciever.FIRSTNAME;
+        //            this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
+        //        }
+        //        else
+        //        {
+        //            if (this.nextLevelId != null)
+        //            {
+        //                var nextLevel = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
 
-                        var actorIds = context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == operationId && t.TARGETID == targetId)
-                            .Join(context.TBL_STAFF, t => t.REQUESTSTAFFID, s => s.STAFFID, (t, s) => new { t, s })
-                            .Select(x => x.s.EMAIL).ToList();
+        //                var actorIds = context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == operationId && t.TARGETID == targetId)
+        //                    .Join(context.TBL_STAFF, t => t.REQUESTSTAFFID, s => s.STAFFID, (t, s) => new { t, s })
+        //                    .Select(x => x.s.EMAIL).ToList();
 
-                        var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
-                            .Select(x => x.TBL_STAFF.EMAIL)
-                            .Distinct().ToList();
+        //                var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
+        //                    .Select(x => x.TBL_STAFF.EMAIL)
+        //                    .Distinct().ToList();
 
-                        var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(r => r.STAFFROLEID).ToList();
-                        var nextLvlRoleIsABusinessRole = businessRoleIds.Contains(nextLevel.STAFFROLEID ?? 0);
-                        if (nextLvlRoleIsABusinessRole)
-                        {
-                            emails = actorIds.Union(levelStaffEmails).ToList();
-                        }
-                        else
-                        {
-                            var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.STAFFROLEID).Select(x => x.EMAIL);
-                            emails = actorIds.Union(levelStaffEmails).Union(nextLevelStaffEmails).ToList();
-                        }
+        //                var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(r => r.STAFFROLEID).ToList();
+        //                var nextLvlRoleIsABusinessRole = businessRoleIds.Contains(nextLevel.STAFFROLEID ?? 0);
+        //                if (nextLvlRoleIsABusinessRole)
+        //                {
+        //                    emails = actorIds.Union(levelStaffEmails).ToList();
+        //                }
+        //                else
+        //                {
+        //                    var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.STAFFROLEID).Select(x => x.EMAIL);
+        //                    emails = actorIds.Union(levelStaffEmails).Union(nextLevelStaffEmails).ToList();
+        //                }
 
-                        if (this.reliefStaffId != null)
-                        {
-                            var reliefRecord = context.TBL_STAFF.Find(this.reliefStaffId);
-                            if (!(String.IsNullOrEmpty(reliefRecord.EMAIL)) && !(String.IsNullOrWhiteSpace(reliefRecord.EMAIL)))
-                            {
-                                emails.Add(reliefRecord.EMAIL);
-                            }
-                        }
-                    }
-                }
+        //                if (this.reliefStaffId != null)
+        //                {
+        //                    var reliefRecord = context.TBL_STAFF.Find(this.reliefStaffId);
+        //                    if (!(String.IsNullOrEmpty(reliefRecord.EMAIL)) && !(String.IsNullOrWhiteSpace(reliefRecord.EMAIL)))
+        //                    {
+        //                        emails.Add(reliefRecord.EMAIL);
+        //                    }
+        //                }
+        //            }
+        //        }
 
-                var time = String.Format("{0:F}", DateTime.Now);
-                //throw new Exception("");
+        //        var time = String.Format("{0:F}", DateTime.Now);
+        //        //throw new Exception("");
 
-                if (placeholders == null) placeholders = new AlertPlaceholders();
+        //        if (placeholders == null) placeholders = new AlertPlaceholders();
 
-                var ownerMessageBody = $"Dear {owner.FIRSTNAME}, <br /><br />" +
-                            $"The {operationName} approval process you initiated have been {status}{level}. <br /><br />" +
-                            $"{placeholders.customerName}" +
-                            $"{placeholders.referenceNumber}" +
-                            $"{placeholders.facilityType}" +
-                            $"{placeholders.operationName}" +
-                            $"{placeholders.branchName}" +
-                            $"{placeholders.locationName}" +
-                            $"<p>Time: { time }</p>"
-                            ;
+        //        var ownerMessageBody = $"Dear {owner.FIRSTNAME}, <br /><br />" +
+        //                    $"The {operationName} approval process you initiated have been {status}{level}. <br /><br />" +
+        //                    $"{placeholders.customerName}" +
+        //                    $"{placeholders.referenceNumber}" +
+        //                    $"{placeholders.facilityType}" +
+        //                    $"{placeholders.operationName}" +
+        //                    $"{placeholders.branchName}" +
+        //                    $"{placeholders.locationName}" +
+        //                    $"<p>Time: { time }</p>"
+        //                    ;
 
-                var messageBody = $"Dear {recipientName}, <br /><br />" +
-                            $"You have a new pending {operationName} approval request. <br /><br />" +
-                            $"{placeholders.customerName}" +
-                            $"{placeholders.referenceNumber}" +
-                            $"{placeholders.facilityType}" +
-                            $"{placeholders.operationName}" +
-                            $"{placeholders.branchName}" +
-                            $"{placeholders.locationName}" +
-                            $"<p>Time: { time }</p>"
-                            ;
+        //        var messageBody = $"Dear {recipientName}, <br /><br />" +
+        //                    $"You have a new pending {operationName} approval request. <br /><br />" +
+        //                    $"{placeholders.customerName}" +
+        //                    $"{placeholders.referenceNumber}" +
+        //                    $"{placeholders.facilityType}" +
+        //                    $"{placeholders.operationName}" +
+        //                    $"{placeholders.branchName}" +
+        //                    $"{placeholders.locationName}" +
+        //                    $"<p>Time: { time }</p>"
+        //                    ;
 
-                if (tat > 0)
-                {
-                    messageBody = messageBody + $"<p>TAT: { tat } hour(s)</p>";
-                    ownerMessageBody = ownerMessageBody + $"<p>TAT: { tat } hour(s)</p>";
-                }
+        //        if (tat > 0)
+        //        {
+        //            messageBody = messageBody + $"<p>TAT: { tat } hour(s)</p>";
+        //            ownerMessageBody = ownerMessageBody + $"<p>TAT: { tat } hour(s)</p>";
+        //        }
 
-                //var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+        //        //var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
 
-                if (emailNotification)
-                {
-                    message = new TBL_MESSAGE_LOG // INITIATOR
-                    {
-                        TOADDRESS = owner.EMAIL,
-                        MESSAGESUBJECT = ownerMessageSubject,
-                        MESSAGEBODY = ownerMessageBody + links,
-                        MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-                        MESSAGETYPEID = (short)MessageTypeEnum.Email,
-                        FROMADDRESS = this.support,
-                        DATETIMERECEIVED = DateTime.Now,
-                        SENDONDATETIME = DateTime.Now,
-                        TARGETID = targetId,
-                        OPERATIONID = operationId
-                    };
-                    context.TBL_MESSAGE_LOG.Add(message);
+        //        if (emailNotification)
+        //        {
+        //            message = new TBL_MESSAGE_LOG // INITIATOR
+        //            {
+        //                TOADDRESS = owner.EMAIL,
+        //                MESSAGESUBJECT = ownerMessageSubject,
+        //                MESSAGEBODY = ownerMessageBody + links,
+        //                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+        //                MESSAGETYPEID = (short)MessageTypeEnum.Email,
+        //                FROMADDRESS = this.support,
+        //                DATETIMERECEIVED = DateTime.Now,
+        //                SENDONDATETIME = DateTime.Now,
+        //                TARGETID = targetId,
+        //                OPERATIONID = operationId
+        //            };
+        //            context.TBL_MESSAGE_LOG.Add(message);
 
-                    if (this.toStaffId != null || emails.Any())
-                    {
-                        message = new TBL_MESSAGE_LOG // RECIEVERS
-                        {
-                            TOADDRESS = this.toStaffId != null ? (reciever?.EMAIL == null ? "N/A" : reciever?.EMAIL) : string.Join(";", emails.Distinct()),
-                            MESSAGESUBJECT = messageSubject,
-                            MESSAGEBODY = messageBody + links,
-                            MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-                            MESSAGETYPEID = (short)MessageTypeEnum.Email,
-                            FROMADDRESS = this.support,
-                            DATETIMERECEIVED = DateTime.Now,
-                            SENDONDATETIME = DateTime.Now,
-                            TARGETID = targetId,
-                            OPERATIONID = operationId
-                        };
-                        context.TBL_MESSAGE_LOG.Add(message);
-                    }
+        //            if (this.toStaffId != null || emails.Any())
+        //            {
+        //                message = new TBL_MESSAGE_LOG // RECIEVERS
+        //                {
+        //                    TOADDRESS = this.toStaffId != null ? (reciever?.EMAIL == null ? "N/A" : reciever?.EMAIL) : string.Join(";", emails.Distinct()),
+        //                    MESSAGESUBJECT = messageSubject,
+        //                    MESSAGEBODY = messageBody + links,
+        //                    MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+        //                    MESSAGETYPEID = (short)MessageTypeEnum.Email,
+        //                    FROMADDRESS = this.support,
+        //                    DATETIMERECEIVED = DateTime.Now,
+        //                    SENDONDATETIME = DateTime.Now,
+        //                    TARGETID = targetId,
+        //                    OPERATIONID = operationId
+        //                };
+        //                context.TBL_MESSAGE_LOG.Add(message);
+        //            }
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
 
         public string ReplaceNotificationPlaceholders(string messageBody, string ownerFirstName, string recipientName, string fromLevelName, string operationName, string status, string time, string tat)
         {
@@ -2107,15 +2107,15 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             string ownerFirstNameHolder = "@{{OwnerFirstName}}";
             string recipientNameHolder = "@{{RecipientName}}";
-            string levelHolder = "@{{Level}}";
+            string levelHolder = "@{{CurrentLevel}}";
             string operationNameHolder = "@{{OperationName}}";
             string statusHolder = "@{{Status}}";
             string timeHolder = "@{{Time}}";
             string tatHolder = "@{{TAT}}";
             string referenceNumberHolder = "@{{ReferenceNumber}}";
             string facilityTypeHolder = "@{{FacilityType}}";
-            string customerNameHolder = "@{{CustomerName}}";
-            string branchNameHolder = "@{{Branch}}";
+            string customerNameHolder = "@{{customerName}}";
+            string branchNameHolder = "@{{branchName}}";
             string locationNameHolder = "@{{Location}}";
 
             messageBody = messageBody.Replace(ownerFirstNameHolder, ownerFirstName);
@@ -2239,7 +2239,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             return data;
         }//Ify
 
-        private void SendNotificationsNew()
+        private void SendNotifications()
         {
             if (statusOnly) return;
             if (emailNotification || smsNotification)
