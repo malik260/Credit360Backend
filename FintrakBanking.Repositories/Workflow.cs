@@ -90,6 +90,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private float? interestRateConcession = null;
         private float? feeRateConcession = null;
+        private int? ownerId = null;
 
         public int StaffId { set { staffId = value; } }
         public int? ToStaffId { set { toStaffId = value; } }
@@ -146,6 +147,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public string Flow_log { set { flow_log = value; } }
         public bool IsClassifiedReferBack { get { return isClassifiedReferBack; } set { isClassifiedReferBack = value; } }
         public List<WorkflowSetup> WorkflowSetup { get; private set; }
+        public int? OwnerId { set { ownerId = value; } }
+        
 
         private WorkflowSetup level;
         private WorkflowSetup currentlevel;
