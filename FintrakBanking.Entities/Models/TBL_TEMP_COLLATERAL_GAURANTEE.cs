@@ -63,6 +63,7 @@ namespace FintrakBanking.Entities.Models
 
         //[StringLength(50)]
         public string RELATIONSHIPDURATION { get; set; }
+        public int? AGE { get; set; }
 
         public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
     }
