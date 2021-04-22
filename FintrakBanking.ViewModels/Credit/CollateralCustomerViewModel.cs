@@ -123,6 +123,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipDuration { get; set; }
         public DateTime cStartDate { get; set; }
         public string taxNumber { get; set; }
+        public int? age { get; set; }
 
         // casa
         public int collateralCasaId { get; set; }
