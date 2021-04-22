@@ -90,6 +90,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private float? interestRateConcession = null;
         private float? feeRateConcession = null;
+        private int? ownerId = null;
 
         public int StaffId { set { staffId = value; } }
         public int? ToStaffId { set { toStaffId = value; } }
@@ -146,6 +147,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public string Flow_log { set { flow_log = value; } }
         public bool IsClassifiedReferBack { get { return isClassifiedReferBack; } set { isClassifiedReferBack = value; } }
         public List<WorkflowSetup> WorkflowSetup { get; private set; }
+        public int? OwnerId { set { ownerId = value; } }
+        
 
         private WorkflowSetup level;
         private WorkflowSetup currentlevel;
@@ -2105,6 +2108,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 placeholders = new AlertPlaceholders();
             }
+
+            var applicationUrls = context.TBL_SETUP_GLOBAL.FirstOrDefault()?.APPLICATION_URL;
+            var link = "<p>Click <a href=\"" + applicationUrls + "\">here to continue...</a></p>";
             string ownerFirstNameHolder = "@{{OwnerFirstName}}";
             string recipientNameHolder = "@{{RecipientName}}";
             string levelHolder = "@{{CurrentLevel}}";
@@ -2117,6 +2123,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             string customerNameHolder = "@{{customerName}}";
             string branchNameHolder = "@{{branchName}}";
             string locationNameHolder = "@{{Location}}";
+            string linkHolder = "@{{Link}}";
 
             messageBody = messageBody.Replace(ownerFirstNameHolder, ownerFirstName);
             messageBody = messageBody.Replace(recipientNameHolder, recipientName);
@@ -2130,6 +2137,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             messageBody = messageBody.Replace(customerNameHolder, placeholders.customerName);
             messageBody = messageBody.Replace(branchNameHolder, placeholders.branchName);
             messageBody = messageBody.Replace(locationNameHolder, placeholders.locationName);
+            messageBody = messageBody.Replace(linkHolder, link);
 
             return messageBody;
         }
@@ -2277,8 +2285,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 int tat = next != null ? next.SlaInterval : 0;
                 var time = String.Format("{0:F}", DateTime.Now);
                 var operation = context.TBL_OPERATIONS.Find(this.operationId);
-                var applicationUrls = "https://credit360.accessbankplc.com";
-                var links = "<p>Click <a href=\"" + applicationUrls + "\">here to continue...</a></p>";
+                //var applicationUrls = "https://credit360.accessbankplc.com";
+                
 
                 TBL_STAFF owner;
                 if (trailLog.Count() == 0)
@@ -2396,10 +2404,42 @@ namespace FintrakBanking.Repositories.WorkFlow
                         {
                             reciever = context.TBL_STAFF.Find(level.requestStaffId);
                             recipientName = reciever?.FIRSTNAME;
-                            this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
+                            //this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
                         }
                         messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, owner?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString());
                         LogWorkflowNotifications(this.support, reciever?.EMAIL, alert.TITLE, messageBody);
+                    }
+                }
+
+                if (this.fromLevelId > 0)
+                {
+                    var nextLevel = WorkflowSetup.FirstOrDefault(s => s.ApprovalLevelId == fromLevelId);
+                    if (nextLevel != null)
+                    {
+                        var levelWorkflowNotification = worflowNotificationSetups.FirstOrDefault(n => n.GROUPOPERATIONMAPPINGID == nextLevel.Mapping.GROUPOPERATIONMAPPINGID && n.APPROVALLEVELID == nextLevel.ApprovalLevelId);
+                        if (levelWorkflowNotification?.NOTIFYONWER ?? false)
+                        {
+                            var alert = context.TBL_ALERT_TITLE.FirstOrDefault(a => a.ALERTTITLEID == levelWorkflowNotification.OWNERALERTTITLEID);
+                            if (alert != null)
+                            {
+                                if (ownerId > 0)
+                                {
+                                    reciever = context.TBL_STAFF.Find(ownerId);
+                                    recipientName = reciever?.FIRSTNAME;
+                                    messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, reciever?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString());
+                                    LogWorkflowNotifications(this.support, reciever?.EMAIL, alert.TITLE, messageBody);
+                                }
+
+                                var initiatorId = trailLevels.FirstOrDefault()?.requestStaffId;
+                                if (initiatorId > 0)
+                                {
+                                    reciever = context.TBL_STAFF.Find(initiatorId);
+                                    recipientName = reciever?.FIRSTNAME;
+                                    messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, reciever?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString());
+                                    LogWorkflowNotifications(this.support, reciever?.EMAIL, alert.TITLE, messageBody);
+                                }
+                            }
+                        }
                     }
                 }
             }
