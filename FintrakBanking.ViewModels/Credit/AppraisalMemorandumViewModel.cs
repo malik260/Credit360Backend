@@ -59,6 +59,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal legalLendingLimit { get; set; }
         public bool isFromPc { get; set; }
         public int toStaffId { get; set; }
+        public int ownerId { get; set; }
 
     }
 

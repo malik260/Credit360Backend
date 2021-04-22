@@ -2108,6 +2108,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 placeholders = new AlertPlaceholders();
             }
+
+            var applicationUrls = context.TBL_SETUP_GLOBAL.FirstOrDefault()?.APPLICATION_URL;
+            var link = "<p>Click <a href=\"" + applicationUrls + "\">here to continue...</a></p>";
             string ownerFirstNameHolder = "@{{OwnerFirstName}}";
             string recipientNameHolder = "@{{RecipientName}}";
             string levelHolder = "@{{CurrentLevel}}";
@@ -2120,6 +2123,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             string customerNameHolder = "@{{customerName}}";
             string branchNameHolder = "@{{branchName}}";
             string locationNameHolder = "@{{Location}}";
+            string linkHolder = "@{{Link}}";
 
             messageBody = messageBody.Replace(ownerFirstNameHolder, ownerFirstName);
             messageBody = messageBody.Replace(recipientNameHolder, recipientName);
@@ -2133,6 +2137,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             messageBody = messageBody.Replace(customerNameHolder, placeholders.customerName);
             messageBody = messageBody.Replace(branchNameHolder, placeholders.branchName);
             messageBody = messageBody.Replace(locationNameHolder, placeholders.locationName);
+            messageBody = messageBody.Replace(linkHolder, link);
 
             return messageBody;
         }
@@ -2280,8 +2285,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 int tat = next != null ? next.SlaInterval : 0;
                 var time = String.Format("{0:F}", DateTime.Now);
                 var operation = context.TBL_OPERATIONS.Find(this.operationId);
-                var applicationUrls = "https://credit360.accessbankplc.com";
-                var links = "<p>Click <a href=\"" + applicationUrls + "\">here to continue...</a></p>";
+                //var applicationUrls = "https://credit360.accessbankplc.com";
+                
 
                 TBL_STAFF owner;
                 if (trailLog.Count() == 0)

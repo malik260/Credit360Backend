@@ -106,8 +106,9 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.ExternalInitialization = externalInitialization;
                     workflow.StatusId = ApprovalStatusId;
                     workflow.Amount = model.amount;
+                    if (model.ownerId > 0) workflow.OwnerId = model.ownerId;
                     if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
-                }
+            }
 
                 if (!externalInitialization)
                 {
@@ -119,8 +120,9 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.OperationId = operationId;
                     workflow.DeferredExecution = true;
                     workflow.ExternalInitialization = false;
+                    if (model.ownerId > 0) workflow.OwnerId = model.ownerId;
                     if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
-                }
+            }
 
                 workflow.LogActivity();
 
@@ -336,6 +338,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Amount = drawdownAmt;
                 workflow.BusinessUnitId = applicationDet.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = entity.isFromPc;
+                workflow.OwnerId = application.OWNEDBY;
 
                 if (drawdowProduct?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                 {
@@ -400,6 +403,7 @@ namespace FintrakBanking.Repositories.Credit
                         applicationId = request.LOAN_BOOKING_REQUESTID,
                         comment = "A request for booking needs your attention",
                         amount = request.AMOUNT_REQUESTED,
+                        ownerId = application.OWNEDBY,
                     };
 
                     if (operationId > 0) LogApproval(approvalModel, operationId, true, (short)ApprovalStatusEnum.Pending);
