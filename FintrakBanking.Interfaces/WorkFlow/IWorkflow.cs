@@ -52,6 +52,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool SkipLimitsCheck { set; }
         //bool? IgnorePostApprovalReviewwer { set; }
         List<WorkflowSetup> WorkflowSetup { get; }
+        int? OwnerId { set; }
 
 
         AlertPlaceholders Placeholders { set; }
