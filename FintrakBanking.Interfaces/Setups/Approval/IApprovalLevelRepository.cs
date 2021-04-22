@@ -44,5 +44,10 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         bool RerouteOperation(ForwardViewModel entity);
         IEnumerable<ApprovalTrailViewModel> GenericApprovalTrail(ApprovalTrailRequestViewModel entity);
         List<FintrakDropDownSelectList> GetTranchDisbursmentApprovalLevels();
-    }    
+
+        IQueryable<WorkflowNotificationViewModel> GetWorkflowMappingNotifications(int MappingId);
+        Task<bool> AddWorkflowMappingNotification(WorkflowNotificationViewModel model);
+        Task<bool> UpdateWorkflowMappingNotification(WorkflowNotificationViewModel model, int workflowNotificationId);
+        Task<bool> DeleteWorkflowMappingNotification(int MappingId, UserInfo user);
+    }
 }

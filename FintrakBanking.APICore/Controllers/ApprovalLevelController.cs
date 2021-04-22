@@ -245,9 +245,59 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
+        #region workflow notofications
+        [HttpGet]
+        [Route("approval-level/workflow-notification/{id}")]
+        public HttpResponseMessage GetWorkflowMappingNotification(int id)
+        {
+            try
+            {
+                var data = repo.GetWorkflowMappingNotifications(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch(SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("approval-level/workflow-notification")]
+        public async Task<HttpResponseMessage> AddWorkflowMappingNotification([FromBody] WorkflowNotificationViewModel model)
+        {
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                var data = await repo.AddWorkflowMappingNotification(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = data, message = "Workflow notification added successfully" });
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("approval-level/workflow-notification/{id}")]
+        public async Task<HttpResponseMessage> UpdateWorkflowMappingNotification([FromBody] WorkflowNotificationViewModel model, int id)
+        {
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                var data = await repo.UpdateWorkflowMappingNotification(model, id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = data, message = "Workflow notification updated successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
+
         #region preset route
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("preset-route-collection/operation/{operationId}/product-class/{classId}")]
         public HttpResponseMessage GetPresetRouteCollection(int operationId, int? classId)
         {

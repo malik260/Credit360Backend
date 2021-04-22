@@ -1441,6 +1441,15 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (entity != null)
             {
+                if (entity.companyDirectorTypeId == (int)CompanyDirectorTypeEnum.BoardMember)
+                {
+                    var promoterExistsForCompany = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Any(p => p.CUSTOMERID == entity.customerId);
+                    if (!promoterExistsForCompany && !entity.isThePromoter)
+                    {
+                        throw new SecureException("A promoter must be profiled for this company first!");
+                    }
+
+                }
                 try
                 {
                     TBL_CUSTOMER_COMPANY_DIRECTOR directors;
