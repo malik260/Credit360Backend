@@ -16710,7 +16710,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+                defaultEmail = alertTitleInfo.DEFAULTEMAIL;
             }
 
             if (loanRepaymentReminder != null && loanRepaymentReminder.Count() > 0)
@@ -16756,7 +16756,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         alertTemplate = alertTemplate.Replace("@{{interestAmountDue}}", interestAmountDue);
                         alertTemplate = alertTemplate.Replace("@{{interestDueDate}}", interestDueDate);
                         emailList = customerDetail?.EMAIL;
-                        //emailList = emailList+";"+defaultEmail;
+                        emailList = emailList+";"+defaultEmail;
                         alert.receiverEmailList.Add(emailList);
                         alert.template = alertTemplate;
                         alert.alertTitle = alertTitle;
