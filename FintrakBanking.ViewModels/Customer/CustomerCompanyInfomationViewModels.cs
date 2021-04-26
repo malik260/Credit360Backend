@@ -44,7 +44,7 @@ namespace FintrakBanking.ViewModels.Customer
         public object moratorium { get; set; }
         public decimal approvedAmount { get; set; }
         public decimal amountGranted { get; set; }
-        public int tenorType { get; set; }
+        public string tenorType { get; set; }
         public double rate { get; set; }
         public string scheduleType { get; set; }
         public string sector { get; set; }
@@ -57,7 +57,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string wpower { get; set; }
         public string esRating { get; set; }
         public string bvn { get; set; }
-        public DateTime? baseYear { get; set; }
+        public int? baseYear { get; set; }
+        public string refNo { get; set; }
     }
 
   

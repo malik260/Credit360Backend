@@ -95,35 +95,39 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool LogApproval(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId)
         {
-            if (externalInitialization)
-            {
-                workflow.StaffId = model.createdBy;
-                workflow.OperationId = operationId;
-                workflow.TargetId = model.applicationId;
-                workflow.CompanyId = model.companyId;
-                workflow.Comment = model.comment;
-                workflow.ExternalInitialization = externalInitialization;
-                workflow.StatusId = ApprovalStatusId;
-                workflow.Amount = model.amount;
-                if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
+            
+                if (externalInitialization)
+                {
+                    workflow.StaffId = model.createdBy;
+                    workflow.OperationId = operationId;
+                    workflow.TargetId = model.applicationId;
+                    workflow.CompanyId = model.companyId;
+                    workflow.Comment = model.comment;
+                    workflow.ExternalInitialization = externalInitialization;
+                    workflow.StatusId = ApprovalStatusId;
+                    workflow.Amount = model.amount;
+                    if (model.ownerId > 0) workflow.OwnerId = model.ownerId;
+                    if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
             }
 
-            if (!externalInitialization)
-            {
-                workflow.StaffId = model.createdBy;
-                workflow.CompanyId = model.companyId;
-                workflow.StatusId = ApprovalStatusId;
-                workflow.TargetId = model.applicationId;
-                workflow.Comment = model.comment;
-                workflow.OperationId = operationId;
-                workflow.DeferredExecution = true;
-                workflow.ExternalInitialization = false;
-                if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
+                if (!externalInitialization)
+                {
+                    workflow.StaffId = model.createdBy;
+                    workflow.CompanyId = model.companyId;
+                    workflow.StatusId = ApprovalStatusId;
+                    workflow.TargetId = model.applicationId;
+                    workflow.Comment = model.comment;
+                    workflow.OperationId = operationId;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = false;
+                    if (model.ownerId > 0) workflow.OwnerId = model.ownerId;
+                    if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
             }
 
-            workflow.LogActivity();
+                workflow.LogActivity();
 
-            return context.SaveChanges() > 0;
+                return context.SaveChanges() > 0;
+            
         }
 
         public CurrentCustomerExposure GetCurrentCompanyExposure()
@@ -334,6 +338,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Amount = drawdownAmt;
                 workflow.BusinessUnitId = applicationDet.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = entity.isFromPc;
+                workflow.OwnerId = application.OWNEDBY;
 
                 if (drawdowProduct?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                 {
@@ -398,6 +403,7 @@ namespace FintrakBanking.Repositories.Credit
                         applicationId = request.LOAN_BOOKING_REQUESTID,
                         comment = "A request for booking needs your attention",
                         amount = request.AMOUNT_REQUESTED,
+                        ownerId = application.OWNEDBY,
                     };
 
                     if (operationId > 0) LogApproval(approvalModel, operationId, true, (short)ApprovalStatusEnum.Pending);

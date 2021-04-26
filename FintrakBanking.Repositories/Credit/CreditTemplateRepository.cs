@@ -787,6 +787,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
+
         public LoadedDocumentSectionViewModel GetDocumentSectionBulkLiquidation(int staffId, int operationId, int targetId, int sectionId)
         {
             var staff = context.TBL_STAFF.Find(staffId);
@@ -815,6 +816,30 @@ namespace FintrakBanking.Repositories.Credit
                 canEdit = section.CANEDIT,
                 editable = section.CANEDIT && sectionIds.Contains(doc.TEMPLATESECTIONID),
             };
+        }
+
+        public InsurancePolicy GetInsurancePolicyConfirmationStatus(int staffId, int appDetailId)
+        {
+            var insurancePolicy = (from a in context.TBL_COLLATERAL_INSURANCE_TRACKING
+                        where a.DELETED == false && a.COLLATERALINSURANCETRACKINGID == appDetailId
+                        select new InsurancePolicy
+                        {
+                            isPolicyInformationConfirmed = a.ISINFORMATIONCONFIRMED,
+                            isInformationConfirmed = a.ISINFORMATIONCONFIRMED == true? "TRUE" : "FALSE",
+                        }).FirstOrDefault();
+            return insurancePolicy;
+        }
+
+        public InsurancePolicy GetInsurancePolicyConfirmationStatusByAppDetailId(int staffId, int appDetailId)
+        {
+            var insurancePolicy = (from a in context.TBL_COLLATERAL_INSURANCE_TRACKING
+                                   where a.DELETED == false && a.LOANAPPLICATIONDETAILID == appDetailId
+                                   select new InsurancePolicy
+                                   {
+                                       isPolicyInformationConfirmed = a.ISINFORMATIONCONFIRMED,
+                                       isInformationConfirmed = a.ISINFORMATIONCONFIRMED == true ? "TRUE" : "FALSE",
+                                   }).FirstOrDefault();
+            return insurancePolicy;
         }
 
         public LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId, int customerId, int targetIdForWorkFlow, bool isGeneric = false)

@@ -180,6 +180,8 @@ namespace FintrakBanking.Interfaces.Reports
         string SubmissionOfOriginalDocuments(DateRange param);
         string SecurityReleaseReport(DateRange param);
         string CorporateCustomerCreation(DateRange param);
+        string InsuranceSpoolReport(DateRange param);
+
 
     }
 

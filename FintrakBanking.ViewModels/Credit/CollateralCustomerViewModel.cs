@@ -123,6 +123,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipDuration { get; set; }
         public DateTime cStartDate { get; set; }
         public string taxNumber { get; set; }
+        public int? age { get; set; }
 
         // casa
         public int collateralCasaId { get; set; }
@@ -563,6 +564,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountOfficerName { get; set; }
         public string accountOfficerEmail { get; set; }
         public string valueCode { get; set; }
+        public bool isPolicyInformationConfirmed { get; set; }
+        public string applicationreferenceNumber { get; set; }
+        public string otherInsuranceCompany { get; set; }
+        public string otherValuers { get; set; }
+        public int? collateralCustomerId { get; set; }
+        public string otherInsurancePolicyType { get; set; }
     }
 
     public class NewCollateralViewModel

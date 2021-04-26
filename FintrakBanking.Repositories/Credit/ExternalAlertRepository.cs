@@ -7017,12 +7017,13 @@ namespace FintrakBanking.Repositories.Credit
             bool result = false;
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             List<TBL_LOAN_RECOVERY_ASSIGNMENT> bulkLoanTable = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
-            var userAdminRole = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLENAME.ToUpper().Contains("RELATIONSHIP MANAGER")).FirstOrDefault();
+            var userRole = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE.ToUpper().Contains("TLRC")).FirstOrDefault();
+            var staffInRole = context.TBL_STAFF.Where(x => x.STAFFROLEID == userRole.STAFFROLEID).FirstOrDefault();
             GlobalExposureApplicationViewModel assignOperations = new GlobalExposureApplicationViewModel();
 
             foreach (var customerRequest in models)
             {
-                assignOperations.createdBy = 10065;
+                assignOperations.createdBy = staffInRole.STAFFID;
                 assignOperations.accreditedConsultant = accreditedConsultant;
                 assignOperations.applicationReferenceNumber = customerRequest.loanReferenceNumber; 
                 assignOperations.loanReferenceNumber = customerRequest.loanReferenceNumber;
@@ -7063,7 +7064,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-                    workflow.StaffId = 10065;
+                    workflow.StaffId = staffInRole.STAFFID;
                     workflow.CompanyId = 1;
                     workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                     workflow.TargetId = removeLienOperation.BULKRECOVERYAPPROVALID;

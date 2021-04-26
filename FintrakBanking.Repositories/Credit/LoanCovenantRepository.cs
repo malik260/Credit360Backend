@@ -971,7 +971,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public CasaBalanceViewModel GetCustomerAccountBalance(string customerAccount)
         {
-            if (!USE_THIRD_PARTY_INTEGRATION) return null;
+            //if (!USE_THIRD_PARTY_INTEGRATION) return null;
             CasaBalanceViewModel accountOutput = null;
             Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
                 .GetResult();

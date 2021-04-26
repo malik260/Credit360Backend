@@ -408,6 +408,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.IsFlowTest = model.isFlowTest;
                         workflow.StatusId = (short)ApprovalStatusEnum.Pending;
                         workflow.Amount = appl.TOTALEXPOSUREAMOUNT;   //model.legalLendingLimit;
+                        workflow.FacilityAmount = appl.APPLICATIONAMOUNT;
                         workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                         workflow.LogActivity();
                         
@@ -432,6 +433,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
                 workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
+                workflow.FacilityAmount = appl.APPLICATIONAMOUNT;
                 workflow.InvestmentGrade = model.investmentGrade;
                 workflow.PoliticallyExposed = model.politicallyExposed;
                 workflow.Untenored = model.untenored;
@@ -442,6 +444,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = model.isFromPc;
                 workflow.IsFlowTest = model.isFlowTest;
+                workflow.OwnerId = appl.OWNEDBY;
                 workflow.SkipLimitsCheck = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISREALATEDPARTY == true);
                 var details = appl.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.DELETED == false
                                              && d.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.CAMBased
