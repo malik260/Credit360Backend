@@ -94,6 +94,7 @@
     <Compile Include="Models\TBL_CONTRACTOR_CRITERIA.cs" />
     <Compile Include="Models\TBL_CONTRACTOR_CRITERIA_OPTION.cs" />
     <Compile Include="Models\TBL_CONTRACTOR_TIERING.cs" />
+    <Compile Include="Models\TBL_CORPORATE_CUSTOMER_TYPE.cs" />
     <Compile Include="Models\TBL_CURRENCY_LIMIT.cs" />
     <Compile Include="Models\TBL_CUSTOMER_ARCHIVE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EMAIL.cs" />

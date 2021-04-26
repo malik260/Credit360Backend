@@ -1191,6 +1191,8 @@ namespace FintrakBanking.Repositories.Customer
                             company.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
                             company.ISSTARTUP = entity.isStartUp;
                             company.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
+                            company.TOTALASSETS = entity.totalAssets;
+                            company.CORPORATECUSTOMERTYPEID = entity.corporateCustomerTypeId;
                         }
                         else //If customer main table AccountCreationCompleted equals true then save record in temp table
                         {
@@ -1222,6 +1224,8 @@ namespace FintrakBanking.Repositories.Customer
                                 temp.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
                                 temp.ISSTARTUP = entity.isStartUp;
                                 temp.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
+                                temp.TOTALASSETS = entity.totalAssets;
+                                temp.CORPORATECUSTOMERTYPEID = entity.corporateCustomerTypeId;
                             }
                             else //if customer company information has no existing record being modified and approved, insert new row
                             {
@@ -1247,6 +1251,8 @@ namespace FintrakBanking.Repositories.Customer
                                 temp.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
                                 temp.ISSTARTUP = entity.isStartUp;
                                 temp.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
+                                temp.TOTALASSETS = entity.totalAssets;
+                                temp.CORPORATECUSTOMERTYPEID = entity.corporateCustomerTypeId;
 
                                 context.TBL_TEMP_CUSTOMER_COMPANYINFO.Add(temp);
                             }
@@ -1313,6 +1319,8 @@ namespace FintrakBanking.Repositories.Customer
                         company.NOOFFEMALEEMPLOYEES = entity.noOfFemaleEmployees;
                         company.ISSTARTUP = entity.isStartUp;
                         company.ISFIRSTTIMECREDIT = entity.isFirstTimeCredit;
+                        company.TOTALASSETS = entity.totalAssets;
+                        company.CORPORATECUSTOMERTYPEID = entity.corporateCustomerTypeId;
                         context.TBL_CUSTOMER_COMPANYINFOMATION.Add(company);
 
                     }
@@ -1368,6 +1376,8 @@ namespace FintrakBanking.Repositories.Customer
                 info.NOOFFEMALEEMPLOYEES = ent.noOfFemaleEmployees;
                 info.ISSTARTUP = ent.isStartUp;
                 info.ISFIRSTTIMECREDIT = ent.isFirstTimeCredit;
+                info.TOTALASSETS = ent.totalAssets;
+                info.CORPORATECUSTOMERTYPEID = ent.corporateCustomerTypeId;
                 context.TBL_CUSTOMER_COMPANYINFOMATION.Add(info);
 
                 // Audit Section ---------------------------
@@ -1417,6 +1427,8 @@ namespace FintrakBanking.Repositories.Customer
                     info.NOOFFEMALEEMPLOYEES = ent.noOfFemaleEmployees;
                     info.ISSTARTUP = ent.isStartUp;
                     info.ISFIRSTTIMECREDIT = ent.isFirstTimeCredit;
+                    info.TOTALASSETS = ent.totalAssets;
+                    info.CORPORATECUSTOMERTYPEID = ent.corporateCustomerTypeId;
                 }
             }
 
@@ -2951,6 +2963,16 @@ namespace FintrakBanking.Repositories.Customer
             return type.Where(x => x.isHybrid == false).ToList();
         }
 
+        public IEnumerable<CorporateCustomerTypeViewModels> GetCorporateCustomerType()
+        {
+            var type = from a in context.TBL_CORPORATE_CUSTOMER_TYPE
+                       select new CorporateCustomerTypeViewModels
+                       {
+                           corporateCustomerTypeId = a.CORPORATECUSTOMERTYPEID,
+                           corporateCustomerTypeName = a.CORPORATECUSTOMERTYPENAME
+                       };
+            return type.ToList();
+        }
         public IEnumerable<CustomerTypeViewModels> GetCustomerTypeWithHybrid()
         {
             var type = from a in context.TBL_CUSTOMER_TYPE
@@ -3787,7 +3809,9 @@ namespace FintrakBanking.Repositories.Customer
                               numberOfEmployees = d.NUMBEROFEMPLOYEES,
                               noOfFemaleEmployees = d.NOOFFEMALEEMPLOYEES,
                               isStartUp = d.ISSTARTUP,
-                              isFirstTimeCredit = d.ISFIRSTTIMECREDIT
+                              isFirstTimeCredit = d.ISFIRSTTIMECREDIT,
+                              totalAssets = d.TOTALASSETS,
+                              corporateCustomerTypeId = d.CORPORATECUSTOMERTYPEID,
                           }).FirstOrDefault();
             return comany;
         }
@@ -3815,7 +3839,9 @@ namespace FintrakBanking.Repositories.Customer
                               companyStructure = d.COMPANYSTRUCTURE,
                               noOfFemaleEmployees = d.NOOFFEMALEEMPLOYEES,
                               isStartUp = d.ISSTARTUP,
-                              isFirstTimeCredit = d.ISFIRSTTIMECREDIT
+                              isFirstTimeCredit = d.ISFIRSTTIMECREDIT,
+                              totalAssets = d.TOTALASSETS,
+                              corporateCustomerTypeId = d.CORPORATECUSTOMERTYPEID,
                           }).FirstOrDefault();
             return comany;
         }
@@ -4956,6 +4982,8 @@ namespace FintrakBanking.Repositories.Customer
                 entity.ISSTARTUP = temp.ISSTARTUP;
                 entity.ISFIRSTTIMECREDIT = temp.ISFIRSTTIMECREDIT;
                 entity.NUMBEROFEMPLOYEES = temp.NUMBEROFEMPLOYEES;
+                entity.TOTALASSETS = temp.TOTALASSETS;
+                entity.CORPORATECUSTOMERTYPEID = temp.CORPORATECUSTOMERTYPEID;
             }
             else
             {
@@ -4976,6 +5004,8 @@ namespace FintrakBanking.Repositories.Customer
                 corporateInfo.ISSTARTUP = entity.ISSTARTUP;
                 corporateInfo.ISFIRSTTIMECREDIT = entity.ISFIRSTTIMECREDIT;
                 corporateInfo.NUMBEROFEMPLOYEES = entity.NUMBEROFEMPLOYEES;
+                corporateInfo.TOTALASSETS = entity.TOTALASSETS;
+                corporateInfo.CORPORATECUSTOMERTYPEID = entity.CORPORATECUSTOMERTYPEID;
                 context.TBL_CUSTOMER_COMPANYINFOMATION.Add(corporateInfo);
             }
 
