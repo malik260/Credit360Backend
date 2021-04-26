@@ -60,6 +60,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string bvn { get; set; }
         public int? baseYear { get; set; }
         public string refNo { get; set; }
+        public int? totalAssets { get; set; }
+        public int? corporateCustomerTypeId { get; set; }
     }
 
   

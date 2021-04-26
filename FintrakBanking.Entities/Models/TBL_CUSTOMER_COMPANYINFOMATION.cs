@@ -50,6 +50,8 @@ namespace FintrakBanking.Entities.Models
         public int NOOFFEMALEEMPLOYEES { get; set; }
         public bool ISSTARTUP { get; set; }
         public bool ISFIRSTTIMECREDIT { get; set; }
+        public int? TOTALASSETS { get; set; }
+        public int? CORPORATECUSTOMERTYPEID { get; set; }
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }

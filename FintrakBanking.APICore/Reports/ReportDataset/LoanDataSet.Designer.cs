@@ -11810,6 +11810,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnfacilityType;
             
+            private global::System.Data.DataColumn columnrefNo;
+            
+            private global::System.Data.DataColumn columncustomerCode;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public CorporateCustomerCreationDataTable() {
@@ -12101,6 +12105,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn refNoColumn {
+                get {
+                    return this.columnrefNo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn customerCodeColumn {
+                get {
+                    return this.columncustomerCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -12168,7 +12188,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string moratorium, 
                         string esRating, 
                         string wpower, 
-                        string facilityType) {
+                        string facilityType, 
+                        string refNo, 
+                        string customerCode) {
                 CorporateCustomerCreationRow rowCorporateCustomerCreationRow = ((CorporateCustomerCreationRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         companyName,
@@ -12202,7 +12224,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         moratorium,
                         esRating,
                         wpower,
-                        facilityType};
+                        facilityType,
+                        refNo,
+                        customerCode};
                 rowCorporateCustomerCreationRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowCorporateCustomerCreationRow);
                 return rowCorporateCustomerCreationRow;
@@ -12257,6 +12281,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnesRating = base.Columns["esRating"];
                 this.columnwpower = base.Columns["wpower"];
                 this.columnfacilityType = base.Columns["facilityType"];
+                this.columnrefNo = base.Columns["refNo"];
+                this.columncustomerCode = base.Columns["customerCode"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -12326,6 +12352,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnwpower);
                 this.columnfacilityType = new global::System.Data.DataColumn("facilityType", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnfacilityType);
+                this.columnrefNo = new global::System.Data.DataColumn("refNo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrefNo);
+                this.columncustomerCode = new global::System.Data.DataColumn("customerCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerCode);
                 this.columncompanyName.Caption = "customerID";
                 this.columnfullName.Caption = "fintrakReferenceId";
                 this.columnbirthDate.Caption = "customerName";
@@ -23174,6 +23204,39 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string refNo {
+                get {
+                    try {
+                        return ((string)(this[this.tableCorporateCustomerCreation.refNoColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'refNo\' in table \'CorporateCustomerCreation\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCorporateCustomerCreation.refNoColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string customerCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableCorporateCustomerCreation.customerCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerCode\' in table \'CorporateCustomerCreation\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableCorporateCustomerCreation.customerCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public bool IscompanyNameNull() {
                 return this.IsNull(this.tableCorporateCustomerCreation.companyNameColumn);
             }
@@ -23554,6 +23617,30 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void SetfacilityTypeNull() {
                 this[this.tableCorporateCustomerCreation.facilityTypeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsrefNoNull() {
+                return this.IsNull(this.tableCorporateCustomerCreation.refNoColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetrefNoNull() {
+                this[this.tableCorporateCustomerCreation.refNoColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IscustomerCodeNull() {
+                return this.IsNull(this.tableCorporateCustomerCreation.customerCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetcustomerCodeNull() {
+                this[this.tableCorporateCustomerCreation.customerCodeColumn] = global::System.Convert.DBNull;
             }
         }
         
