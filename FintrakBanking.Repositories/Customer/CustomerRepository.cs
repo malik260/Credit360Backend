@@ -1441,6 +1441,15 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (entity != null)
             {
+                if (entity.companyDirectorTypeId == (int)CompanyDirectorTypeEnum.BoardMember)
+                {
+                    var promoterExistsForCompany = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Any(p => p.CUSTOMERID == entity.customerId && p.ISTHEPROMOTER);
+                    if (!promoterExistsForCompany && !entity.isThePromoter)
+                    {
+                        throw new SecureException("A promoter must be profiled for this company first!");
+                    }
+
+                }
                 try
                 {
                     TBL_CUSTOMER_COMPANY_DIRECTOR directors;
@@ -1636,9 +1645,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.EMAILADDRESS = entity.email;
                             temp.CREATEDBY = entity.createdBy;
                             temp.DATECREATED = DateTime.Now;
-                            //temp.GENDER = entity.gender;
+                            temp.GENDER = entity.gender;
                             //temp.MARITALSTATUSID = entity.maritalStatusId;
-                            //temp.DATEOFBIRTH = entity.dateOfBirth;
+                            temp.DATEOFBIRTH = entity.dateOfBirth;
                             // temp.TBL_TEMP_COMPANY_BENEFICIA = beneficialList;
 
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
@@ -1670,9 +1679,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
                             temp.ISTHEPROMOTER = entity.isThePromoter;
-                            //temp.GENDER = entity.gender;
+                            temp.GENDER = entity.gender;
                             //temp.MARITALSTATUSID = entity.maritalStatusId;
-                            //temp.DATEOFBIRTH = entity.dateOfBirth;
+                            temp.DATEOFBIRTH = entity.dateOfBirth;
                             context.TBL_TEMP_CUSTOMER_DIRECTOR.Add(temp);
 
                         }

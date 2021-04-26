@@ -444,6 +444,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = model.isFromPc;
                 workflow.IsFlowTest = model.isFlowTest;
+                workflow.OwnerId = appl.OWNEDBY;
                 workflow.SkipLimitsCheck = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISREALATEDPARTY == true);
                 var details = appl.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.DELETED == false
                                              && d.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.CAMBased

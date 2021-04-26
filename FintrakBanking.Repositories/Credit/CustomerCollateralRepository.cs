@@ -4841,6 +4841,7 @@ namespace FintrakBanking.Repositories.Credit
                     guarantee.EMAILADDRESS = entity.emailAddress;
                     guarantee.RELATIONSHIP = entity.relationship;
                     guarantee.RELATIONSHIPDURATION = entity.relationshipDuration;
+                    guarantee.AGE = entity.age;
                     comment = $"guarantee collateral type has been update through loan application by {entity.createdBy} staffid";
 
                 }
@@ -4865,7 +4866,8 @@ namespace FintrakBanking.Repositories.Credit
                         EMAILADDRESS = entity.emailAddress,
                         RELATIONSHIP = entity.relationship,
                         RELATIONSHIPDURATION = entity.relationshipDuration,
-                    });
+                        AGE = entity.age,
+                });
 
                     comment = $"New guarantee collateral type has been update through loan application by {entity.createdBy} staffid";
                 }
@@ -4896,6 +4898,7 @@ namespace FintrakBanking.Repositories.Credit
                     RELATIONSHIP = entity.relationship,
                     RELATIONSHIPDURATION = entity.relationshipDuration,
                     TAXNUMBER = entity.taxNumber,
+                    AGE = entity.age,
                 });
 
                 comment = $"New temp guarantee collateral type has been update through loan application by {entity.createdBy} staffid";
