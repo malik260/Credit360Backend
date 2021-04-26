@@ -1,6 +1,5 @@
 ﻿using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Repositories.AlertMonitoring;
-using FintrakBanking.Repositories.Setups.General;
 using Ninject;
 using System;
 using System.Configuration;
@@ -47,7 +46,6 @@ namespace FintrakBanking.MonitoringMessageLogger
                 return false;
             return true;
         }
-
         public bool Stop(HostControl hostControl)
         {
             _syncTimer.Elapsed += StopJob;
