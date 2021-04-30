@@ -59,12 +59,6 @@ using FinTrakBanking.ThirdPartyIntegration;
 using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
 using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration;
 using Ninject.Modules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThirdPartyIntegration;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
 namespace FintrakBanking.MonitoringMessageLogger

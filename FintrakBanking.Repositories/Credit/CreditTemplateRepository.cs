@@ -830,11 +830,12 @@ namespace FintrakBanking.Repositories.Credit
             return insurancePolicy;
         }
 
-        public InsurancePolicy GetInsurancePolicyConfirmationStatusByAppDetailId(int staffId, int appDetailId)
+        public InsurancePolicyRecordViewModel GetInsurancePolicyConfirmationStatusByAppDetailId(int staffId, int appDetailId)
         {
-            var insurancePolicy = (from a in context.TBL_COLLATERAL_INSURANCE_TRACKING
+            InsurancePolicyRecordViewModel insurancePolicy = null;
+            insurancePolicy = (from a in context.TBL_COLLATERAL_INSURANCE_TRACKING
                                    where a.DELETED == false && a.LOANAPPLICATIONDETAILID == appDetailId
-                                   select new InsurancePolicy
+                                   select new InsurancePolicyRecordViewModel
                                    {
                                        isPolicyInformationConfirmed = a.ISINFORMATIONCONFIRMED,
                                        isInformationConfirmed = a.ISINFORMATIONCONFIRMED == true ? "TRUE" : "FALSE",

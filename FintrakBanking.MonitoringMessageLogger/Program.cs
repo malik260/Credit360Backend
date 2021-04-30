@@ -1,10 +1,4 @@
-﻿using FintrakBanking.Interfaces.Setups.General;
-using Ninject;
-using NLog;
-using System;
-using System.Reflection;
-using Topshelf;
-using Topshelf.Logging;
+﻿using Topshelf;
 using Topshelf.Ninject;
 
 namespace FintrakBanking.MonitoringMessageLogger
