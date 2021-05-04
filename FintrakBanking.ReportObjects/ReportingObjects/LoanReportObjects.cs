@@ -4879,6 +4879,8 @@ namespace FintrakBanking.ReportObjects
                     where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                     DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                     && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
+                    && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                    && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
                     select new CustomerCompanyInfomationViewModels
                     {
                         companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
@@ -4936,6 +4938,8 @@ namespace FintrakBanking.ReportObjects
                     where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                     DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                     && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
+                    && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                    && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
                          select new CustomerCompanyInfomationViewModels
                     {
                         companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
@@ -4991,6 +4995,8 @@ namespace FintrakBanking.ReportObjects
                               where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                               DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                               && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
+                              && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                              && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
                               select new CustomerCompanyInfomationViewModels
                               {
                                   companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
