@@ -12,7 +12,7 @@
         <div>
             <asp:ScriptManager ID="ScriptManager1" runat="server">
             </asp:ScriptManager>
-            <rsweb:ReportViewer KeepSessionAlive="false"  Font-Names="Fruitger LT 45"  KeepSessionAlive="false" AsyncRendering="false" ID="ReportViewer" runat="server" Height="800px" Width="100%">
+            <rsweb:ReportViewer  Font-Names="Fruitger LT 45"  KeepSessionAlive="false" AsyncRendering="false" ID="ReportViewer" runat="server" Height="800px" Width="100%">
             </rsweb:ReportViewer>
         </div>
     </form>
