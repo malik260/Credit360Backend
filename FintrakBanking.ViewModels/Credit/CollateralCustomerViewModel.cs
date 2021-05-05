@@ -577,7 +577,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int? applicationId { get; set; }
         public int customerId { get; set; }
     }
-   
+
+    public class InsurancePolicyRecordViewModel
+    {
+        public bool isPolicyInformationConfirmed { get; set; }
+        public string isInformationConfirmed { get; set; }
+    }
+
     public class AllCollateralViewModel : CollateralViewModel
     {
        // public DateTime nextValuationDate { get { return lastValuationDate.AddDays((double)(valuationCycle)); } set { } }

@@ -4878,8 +4878,9 @@ namespace FintrakBanking.ReportObjects
 
                     where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                     DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
-                    && es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
-                    && sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
+                    && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
+                    && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                    && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
                     select new CustomerCompanyInfomationViewModels
                     {
                         companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
@@ -4913,7 +4914,9 @@ namespace FintrakBanking.ReportObjects
                         moratorium = d.MORATORIUM,
                         esRating = sc.GRADE,
                         wpower = pc.PRODUCTCLASSID == 31 ? "Yes" : "No",
-                        facilityType = p.PRODUCTNAME
+                        facilityType = p.PRODUCTNAME,
+                        refNo = l.APPLICATIONREFERENCENUMBER,
+                        customerCode = c.CUSTOMERCODE
 
                     })
                .ToList();
@@ -4934,9 +4937,10 @@ namespace FintrakBanking.ReportObjects
 
                     where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                     DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
-                    && es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
-                    && sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
-                    select new CustomerCompanyInfomationViewModels
+                    && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
+                    && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                    && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
+                         select new CustomerCompanyInfomationViewModels
                     {
                         companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
                         fullName = cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME,
@@ -4969,9 +4973,11 @@ namespace FintrakBanking.ReportObjects
                         moratorium = d.MORATORIUM,
                         esRating = sc.GRADE,
                         wpower = pc.PRODUCTCLASSID == 31 ? "Yes" : "No",
-                        facilityType = p.PRODUCTNAME
+                        facilityType = p.PRODUCTNAME,
+                        refNo = l.APPLICATIONREFERENCENUMBER,
+                        customerCode = c.CUSTOMERCODE
 
-                    });
+                         });
             var contingent = (from ln in context.TBL_LOAN_CONTINGENT
                               join r in context.TBL_LOAN_BOOKING_REQUEST on ln.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
                               join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -4988,8 +4994,9 @@ namespace FintrakBanking.ReportObjects
 
                               where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                               DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
-                              && es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
-                              && sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
+                              && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
+                              && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                              && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
                               select new CustomerCompanyInfomationViewModels
                               {
                                   companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
@@ -5023,7 +5030,9 @@ namespace FintrakBanking.ReportObjects
                                   moratorium = d.MORATORIUM,
                                   esRating = sc.GRADE,
                                   wpower = pc.PRODUCTCLASSID == 31 ? "Yes" : "No",
-                                  facilityType = p.PRODUCTNAME
+                                  facilityType = p.PRODUCTNAME,
+                                  refNo = l.APPLICATIONREFERENCENUMBER,
+                                  customerCode = c.CUSTOMERCODE
 
                               });
             var result = data.Union(revolving).Union(contingent).ToList();

@@ -21,4 +21,9 @@ namespace FintrakBanking.Common.Enum
         Individual = 1,
         Corporate = 2
     }
+    public enum CorporateCustomerTypeEnum
+    {
+        SME = 1,
+        SmallCorporate = 2
+    }
 }

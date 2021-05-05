@@ -653,6 +653,8 @@ namespace FintrakBanking.Entities.Models
         //public virtual DbSet<TBL_EXCEPTIONAL_RAC_DEFINITION> TBL_EXCEPTIONAL_RAC_DEFINITION { get; set; }
         public virtual DbSet<TBL_EXCEPTIONAL_RAC_DETAIL> TBL_EXCEPTIONAL_RAC_DETAIL { get; set; }
         public virtual DbSet<TBL_CUSTOMER_ARCHIVE> TBL_CUSTOMER_ARCHIVE { get; set; }
+        public virtual DbSet<TBL_CORPORATE_CUSTOMER_TYPE> TBL_CORPORATE_CUSTOMER_TYPE { get; set; }
+
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

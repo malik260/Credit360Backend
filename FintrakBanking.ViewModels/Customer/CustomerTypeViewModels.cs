@@ -33,4 +33,9 @@
         public int companyDirectorTypeId { get; set; }
         public string name { get; set; }
     }
+    public class CorporateCustomerTypeViewModels
+    {
+        public int corporateCustomerTypeId { get; set; }
+        public string corporateCustomerTypeName { get; set; }
+    }
 }

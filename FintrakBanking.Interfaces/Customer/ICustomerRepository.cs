@@ -20,6 +20,7 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerViewModels> GetCustomerByCompanyId(int companyId);
 
         IEnumerable<CustomerTypeViewModels> GetCustomerType();
+        IEnumerable<CorporateCustomerTypeViewModels> GetCorporateCustomerType();
         IEnumerable<CustomerTypeViewModels> GetCustomerTypeWithHybrid();
 
         IEnumerable<CustomerSupplierTypeViewModels> GetClientSupplierType();

@@ -9,6 +9,7 @@ namespace FintrakBanking.ViewModels.Customer
         public int companyInfomationId { get; set; }
         public int customerId { get; set; }
         public string registrationNumber { get; set; }
+        public string customerCode { get; set; }
         public string companyWebsite { get; set; }
         public string companyEmail { get; set; }
         public string registeredOffice { get; set; }
@@ -59,6 +60,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string bvn { get; set; }
         public int? baseYear { get; set; }
         public string refNo { get; set; }
+        public int? totalAssets { get; set; }
+        public int? corporateCustomerTypeId { get; set; }
     }
 
   
