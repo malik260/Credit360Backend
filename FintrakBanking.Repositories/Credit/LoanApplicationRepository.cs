@@ -7992,7 +7992,7 @@ namespace FintrakBanking.Repositories.Credit
                                 select new LoanReviewApplicationViewModel
                                 {
                                     applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                    customerName = g.FIRSTNAME + "" + g.MIDDLENAME + "" + g.LASTNAME,
+                                    customerName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
                                     loanApplicationId = a.LOANAPPLICATIONID,
                                     applicationDate = a.APPLICATIONDATE,
                                     applicationAmount = d.PROPOSEDAMOUNT,
@@ -8226,11 +8226,11 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LmsLaonApplcationCancelllationCompelted(LoanReviewApplicationViewModel data)
         {
-            var val = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanReviewApplicationId).Select(x => x).FirstOrDefault();
+            var val = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
             val.LASTUPDATEDBY = data.createdBy;
             val.DATETIMEUPDATED = DateTime.Now;
-            ArchiveLmsLoanApplication(data.loanReviewApplicationId, (int)OperationsEnum.LmsLoanApplicationCancellation, val.APPLICATIONSTATUSID, data.createdBy);
+            ArchiveLmsLoanApplication(data.loanApplicationId, (int)OperationsEnum.LmsLoanApplicationCancellation, val.APPLICATIONSTATUSID, data.createdBy);
             var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == data.createdBy);
             var lastTrail = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == val.LOANAPPLICATIONID && t.OPERATIONID == val.OPERATIONID).OrderByDescending(t => t.APPROVALTRAILID).FirstOrDefault();
             if (lastTrail != null)

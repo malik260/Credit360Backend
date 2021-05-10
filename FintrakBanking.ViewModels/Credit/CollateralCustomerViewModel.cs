@@ -804,6 +804,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool hasExpired { get; set; }
         public string companyAddress { get; set; }
         public int policyId { get; set; }
+        public string customerCode { get; set; }
+        public bool passed { get; set; }
     }
 
     public class CollateralGauranteeViewModel
@@ -1311,14 +1313,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string companyAddress { get; set; }
         public DateTime startDate { get; set; }
         public DateTime expiryDate { get; set; }
-        public int insurancePolicyTypeId { get; set; }
-        public int collateralCustomerId { get; set; }
+        public int? insurancePolicyTypeId { get; set; }
+        public int? collateralCustomerId { get; set; }
         public string collateralDetails { get; set; }
-        public decimal forcedSaleValue { get; set; }
-        public decimal openMarketValue { get; set; }
-        public DateTime valuationEndDate { get; set; }
+        public decimal? forcedSaleValue { get; set; }
+        public decimal? openMarketValue { get; set; }
+        public DateTime? valuationEndDate { get; set; }
         public string valuer { get; set; }
-        public DateTime valuationStartDate { get; set; }
+        public DateTime? valuationStartDate { get; set; }
         public int loanApplicationDetailId { get; set; }
         public int insuranceStatus { get; set; }
         public decimal inSurPremiumAmount { get; set; }
@@ -1334,6 +1336,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string firstLossPayee { get; set; }
         public decimal? insurableValue { get; set; }
         public string comment { get; set; }
+        public object COMMENT { get; set; }
+        public string customerCode { get; set; }
+        public bool passed { get; set; }
+        public List<string> errorMessages { get; set; }
+        public string isCollateral { get; set; }
+        public string policyType { get; set; }
+        public string collateralCode { get; set; }
     }
 
  }
