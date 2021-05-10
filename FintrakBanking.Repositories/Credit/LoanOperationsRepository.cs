@@ -33217,7 +33217,6 @@ namespace FintrakBanking.Repositories.Credit
                                         divisionCode = ln.DIVISIONCODE,
                                         region = ln.REGIONCODE + " " + ln.REGIONNAME,
                                         phoneNo = ln.PHONENO,
-                                        
                                         valueDate = ln.VALUEDATE,
                                         maturityRevDate = ln.MATURITYDATE,
                                         overduePrincipalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,

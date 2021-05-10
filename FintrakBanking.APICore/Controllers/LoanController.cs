@@ -2088,6 +2088,52 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Bulk Disbursement data" });
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("pre-multiple-insurance")]
+        public async Task<HttpResponseMessage> UploadBulkInsuranceData()
+        {
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+
+            var isFinal = Convert.ToBoolean(provider.FormData["isFinal"]);
+
+            var entity = new UserInfo
+            {
+                BranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+
+            var file = provider.Contents.FirstOrDefault();
+            var buffer = await file.ReadAsByteArrayAsync();
+            var data = repo.preBulkInsurance(buffer, entity, isFinal);
+
+            if (buffer != null)
+            {
+                bool success = true;
+                if (data.Item2 == false && isFinal) { success = false; }
+                if (!success) { return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Bulk insurance failed to upload." }); }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Bulk Insurance data was successfully uploaded" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Bulk Insurance data" });
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("work-flow-tracker-booking/operation/{operationId}/target/{targetId}")]
