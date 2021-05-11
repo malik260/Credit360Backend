@@ -20767,7 +20767,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 MultipleInsuranceOutputViewModel currentLine = new MultipleInsuranceOutputViewModel();
                 int ctr = 0;
-                currentLine.errorMessages = null;
+                currentLine.errorMessages = new List<string>(); 
                 for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
                 {
                     ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
@@ -20788,14 +20788,14 @@ namespace FintrakBanking.Repositories.Credit
                             try {
                                 currentLine.customerId = cell.Value.ToString();
                                 var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == currentLine.customerId).FirstOrDefault();
-                                if (customer == null)
+                                if (customer == null && (currentLine.isCollateral.ToLower() == "n" || currentLine.isCollateral.ToLower() == "no"))
                                 {
-                                    
                                     currentLine.passed = false;
-                                    currentLine.errorMessages.Add("Customer with customercode " + currentLine.customerId + " does not exist on Credit360");
+                                    currentLine.errorMessages.Add("Customer with customercode " + cell.Value.ToString() + " does not exist on Credit360");
                                 }
 
-                            } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
                             break;
                         case "C":
                             currentLine.passed = true;
@@ -20806,7 +20806,7 @@ namespace FintrakBanking.Repositories.Credit
                                     if (customerCollateral == null)
                                     {
                                         currentLine.passed = false;
-                                        currentLine.errorMessages.Add("Collateral with collateralcode " + cell.Value.ToString() + " does not exist on Credit360");
+                                        currentLine.errorMessages.Add("<br/>Collateral with collateralcode " + cell.Value.ToString() + " does not exist on Credit360");
                                     }
                                     else
                                     {
@@ -20823,17 +20823,18 @@ namespace FintrakBanking.Repositories.Credit
                                             currentLine.collateralDetails = "";
                                             currentLine.collateralCode = "";
                                             currentLine.passed = false;
-                                            currentLine.errorMessages.Add("Collateral with customercode " + currentLine.customerId + " does not exist on Credit360");
+                                            currentLine.errorMessages.Add("<br/>Collateral with customercode " + currentLine.customerId + " does not exist on Credit360");
                                         }
                                         var validateCollateralInsurance = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).ToList();
                                         if (validateCollateralInsurance.Any())
                                         {
                                             currentLine.passed = false;
-                                            currentLine.errorMessages.Add("Insurance already exist on Credit360");
+                                            currentLine.errorMessages.Add("<br/>Insurance already exist on Credit360");
                                         }
                                     }
                                 }
-                            } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
                             break;
                         case "D":
                             currentLine.passed = true;
@@ -20842,11 +20843,12 @@ namespace FintrakBanking.Repositories.Credit
                                 if (validateInsurancePolicy.Any())
                                 {
                                     currentLine.passed = false;
-                                    currentLine.errorMessages.Add("Policy number " + cell.Value.ToString() + " already exist on Credit360");
+                                    currentLine.errorMessages.Add("<br/>Policy number " + cell.Value.ToString() + " already exist on Credit360");
                                 }
 
                             }
-                            catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message); 
+                            }
                             break;
                         case "E":
                             currentLine.passed = true;
@@ -20858,14 +20860,15 @@ namespace FintrakBanking.Repositories.Credit
                                 {
                                     currentLine.insurancePolicyTypeId = null;
                                     currentLine.passed = false;
-                                    currentLine.errorMessages.Add("Policy type " + cell.Value.ToString() + " does not exist on Credit360");
+                                    currentLine.errorMessages.Add("<br/>Policy type " + cell.Value.ToString() + " does not exist on Credit360");
                                 }
                                 else
                                 {
                                     currentLine.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
                                 }
                             }
-                            catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
                             break;
                         case "F":
                             currentLine.passed = true;
@@ -20876,30 +20879,35 @@ namespace FintrakBanking.Repositories.Credit
                                     currentLine.insuranceCompanyId = null;
                                     currentLine.companyAddress = null;
                                     currentLine.passed = false;
-                                    currentLine.errorMessages.Add("Insurance company " + cell.Value.ToString() + " does not exist on Credit360");
+                                    currentLine.errorMessages.Add("<br/>Insurance company " + cell.Value.ToString() + " does not exist on Credit360");
                                 }
                                 else
                                 {
                                     currentLine.insuranceCompanyId = insuranceCompanyDetail.INSURANCECOMPANYID;
                                     currentLine.companyAddress = insuranceCompanyDetail.ADDRESS;
                                 }
-                            } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
                             break;
                         case "G":
                             currentLine.passed = true;
-                            try { currentLine.startDate = Convert.ToDateTime(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            try { currentLine.startDate = Convert.ToDateTime(cell.Value); } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
                             break;
                         case "H":
                             currentLine.passed = true;
-                            try { currentLine.expiryDate = Convert.ToDateTime(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            try { currentLine.expiryDate = Convert.ToDateTime(cell.Value); } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
                             break;
                         case "I":
                             currentLine.passed = true;
-                            try { currentLine.sumInsured = Convert.ToDecimal(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            try { currentLine.sumInsured = Convert.ToDecimal(cell.Value); } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
                             break;
                         case "J":
                             currentLine.passed = true;
-                            try { currentLine.premiumAmount = Convert.ToDecimal(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            try { currentLine.premiumAmount = Convert.ToDecimal(cell.Value); } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
                             break;
                     }
                 }
