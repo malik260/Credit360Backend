@@ -280,7 +280,7 @@ namespace FintrakBanking.Interfaces.Credit
         AccountBalanceViewModel GetLoanBalances(int loanId, int companyId);
 
         Tuple<List<multipleDisbursementOutputViewModel>, bool> preBulkLoanDisbursement(byte[] file, UserInfo user, bool isFinal);
-
+        Tuple<List<MultipleInsuranceOutputViewModel>, bool> preBulkInsurance(byte[] file, UserInfo user, bool isFinal);
         IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId);
        // IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId);
 
