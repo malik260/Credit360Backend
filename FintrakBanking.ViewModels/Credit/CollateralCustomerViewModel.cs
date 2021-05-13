@@ -1304,8 +1304,6 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralInsuranceTrackingViewModel : GeneralEntity
     {
-
-    
         public int collateralId { get; set; }
         public string referenceNumber { get; set; }
         public decimal sumInsured { get; set; }

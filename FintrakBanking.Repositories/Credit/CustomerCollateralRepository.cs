@@ -8876,13 +8876,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public int AddCollateralInsuranceTrackingForm(int accountOfficer, CollateralInsuranceTrackingViewModel model)
         {
-            if (String.IsNullOrWhiteSpace(model.referenceNumber) || String.IsNullOrEmpty(model.referenceNumber))
-            {
+            
+                if (model == null)
+                {
+                    throw new ConditionNotMetException("Error while saving record");
+
+                }
+
+                if (String.IsNullOrWhiteSpace(model.referenceNumber) || String.IsNullOrEmpty(model.referenceNumber))
+                {
                 var refNo = CommonHelpers.GenerateRandomDigitCode(7);
                 model.referenceNumber = refNo;
-            }
+                }
 
-            var insurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == model.referenceNumber.Trim()).Select(x => x).FirstOrDefault();
+                var insurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == model.referenceNumber.Trim()).Select(x => x).FirstOrDefault();
 
             if (insurancePolicy != null)
             {
@@ -8925,22 +8932,15 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now
                 });
 
-                try
-                {
+                
                     if (context.SaveChanges() > 0)
                     {
                         return insuranceTracking.COLLATERALINSURANCETRACKINGID;
                     }
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                
 
-            }
-
-
-
+             }
+            
             return 0;
         }
 
@@ -11294,7 +11294,7 @@ namespace FintrakBanking.Repositories.Credit
                     i.customerName = customer.FIRSTNAME + " " + customer.MIDDLENAME + " " + customer.LASTNAME;
                     i.customerCode = customer.CUSTOMERCODE;
                     i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION).FirstOrDefault();
-                    i.insuranceStatus = (i.insuranceStatusId == 0 || i.insuranceStatusId == null) ? "" : context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == i.insuranceStatusId).Select(o => o.INSURANCESTATUS).FirstOrDefault();
+                    i.insuranceStatus = (i.insuranceStatusId == 0 || i.insuranceStatusId == null || i.expiryDate < DateTime.Now) ? "Expired" : "Active"; //(i.insuranceStatusId == 0 || i.insuranceStatusId == null) ? "" : context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == i.insuranceStatusId).Select(o => o.INSURANCESTATUS).FirstOrDefault();
                     i.customerPhone = customer.PHONENUMBEROFSIGNATORY;
 
                     var div = context.TBL_PROFILE_BUSINESS_UNIT.Find(customer.BUSINESSUNTID);
@@ -11403,7 +11403,7 @@ namespace FintrakBanking.Repositories.Credit
                         i.customerName = customer.FIRSTNAME + " " + customer.MIDDLENAME + " " + customer.LASTNAME;
                         i.customerCode = customer.CUSTOMERCODE;
                         i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION).FirstOrDefault();
-                        i.insuranceStatus = (i.insuranceStatusId == 0 || i.insuranceStatusId == null) ? "" : context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == i.insuranceStatusId).Select(o => o.INSURANCESTATUS).FirstOrDefault();
+                        i.insuranceStatus = (i.insuranceStatusId == 0 || i.insuranceStatusId == null || i.expiryDate < DateTime.Now) ? "Expired" : "Active"; //(i.insuranceStatusId == 0 || i.insuranceStatusId == null) ? "" : context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == i.insuranceStatusId).Select(o => o.INSURANCESTATUS).FirstOrDefault();
                         i.customerPhone = customer.PHONENUMBEROFSIGNATORY;
 
                         var div = context.TBL_PROFILE_BUSINESS_UNIT.Find(customer.BUSINESSUNTID);
@@ -11514,7 +11514,7 @@ namespace FintrakBanking.Repositories.Credit
                     i.customerName = customer.FIRSTNAME + " " + customer.MIDDLENAME + " " + customer.LASTNAME;
                     i.customerCode = customer.CUSTOMERCODE;
                     i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION).FirstOrDefault();
-                    i.insuranceStatus = (i.insuranceStatusId == 0 || i.insuranceStatusId == null) ? "" : context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == i.insuranceStatusId).Select(o => o.INSURANCESTATUS).FirstOrDefault();
+                    i.insuranceStatus = (i.insuranceStatusId == 0 || i.insuranceStatusId == null || i.expiryDate < DateTime.Now) ? "Expired" : "Active"; //(i.insuranceStatusId == 0 || i.insuranceStatusId == null) ? "" : context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == i.insuranceStatusId).Select(o => o.INSURANCESTATUS).FirstOrDefault();
                     i.customerPhone = customer.PHONENUMBEROFSIGNATORY;
 
                     var div = context.TBL_PROFILE_BUSINESS_UNIT.Find(customer.BUSINESSUNTID);
@@ -11625,7 +11625,7 @@ namespace FintrakBanking.Repositories.Credit
                     i.customerName = customer.FIRSTNAME + " " + customer.MIDDLENAME + " " + customer.LASTNAME;
                     i.customerCode = customer.CUSTOMERCODE;
                     i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION).FirstOrDefault();
-                    i.insuranceStatus = (i.insuranceStatusId == 0 || i.insuranceStatusId == null) ? "" : context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == i.insuranceStatusId).Select(o => o.INSURANCESTATUS).FirstOrDefault();
+                    i.insuranceStatus = (i.insuranceStatusId == 0 || i.insuranceStatusId == null || i.expiryDate < DateTime.Now) ? "Expired" : "Active"; //(i.insuranceStatusId == 0 || i.insuranceStatusId == null || i.expiryDate < DateTime.Now) ? "Expired" : context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == i.insuranceStatusId).Select(o => o.INSURANCESTATUS).FirstOrDefault();
                     i.customerPhone = customer.PHONENUMBEROFSIGNATORY;
 
                     var div = context.TBL_PROFILE_BUSINESS_UNIT.Find(customer.BUSINESSUNTID);
