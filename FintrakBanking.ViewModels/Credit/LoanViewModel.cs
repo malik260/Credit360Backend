@@ -112,7 +112,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatusName { get; set; }
         public bool isBidbond { get; set; }
         public bool isOverdraft { get; set; }
-        public object commercialPrincipal { get; set; }
+        public string commercialPrincipal { get; set; }
 
         public int notificationDuration { get; set; }
         public int loanId { get; set; }
@@ -317,7 +317,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? lastRestructureDate  { get; set; }
         public short loanSystemTypeId  { get; set; }
         public bool isPerforming { get; set; }
-        public object loanPrincipal { get; set; }
+        public decimal? loanPrincipal { get; set; }
         public List<LoanDisbursementViewModel> loanBeneficiary { get; set; }
         public string approvedComment { get; set; }
         public decimal scheduleDayCountConvention { get; set; }
@@ -426,7 +426,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalExistingLimitAmount { get; set; }
         public string crmsCode { get; set; }
         public string customerEmail { get; set; }
-        public object totalRepayment { get; set; }
+        public decimal? totalRepayment { get; set; }
         public string loanSystemTypeName { get; set; }
         public decimal writtenOffAmount { get; set; }
         public bool passed { get; set; }
@@ -824,7 +824,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int tenorUsed { get; set; }
 
-        public object isBooked { get; set; }
+        public bool isBooked { get; set; }
 
         public bool isUnderApproval { get; set; }
         public bool isApprovalOwner { get; set; }

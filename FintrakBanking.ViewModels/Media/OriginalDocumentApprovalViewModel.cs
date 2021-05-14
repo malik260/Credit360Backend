@@ -30,8 +30,8 @@ namespace FintrakBanking.ViewModels.Media
         public decimal applicationAmount { get; set; }
         public double interestRate { get; set; }
         public string productName { get; set; }
-        public object relationshipOfficerName { get; set; }
-        public object relationshipManagerName { get; set; }
+        public string relationshipOfficerName { get; set; }
+        public string relationshipManagerName { get; set; }
         public int operationId { get; set; }
         public string comment { get; set; }
         public DateTime? approvalDate { get; set; }

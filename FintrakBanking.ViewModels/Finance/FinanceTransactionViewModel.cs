@@ -123,7 +123,7 @@ namespace FintrakBanking.ViewModels.Finance
         public CASAAccountStatusEnum accountStatusId { get; set; }
 
         public bool hasBalance { get; set; }
-        public object errorMessage { get; set; }
+        public string errorMessage { get; set; }
     }
 
     public class CasaAccountLienViewModel

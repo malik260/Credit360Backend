@@ -9,19 +9,12 @@ using System.Web;
 using FintrakBanking.APICore.core;
 using System.Net;
 using FintrakBanking.Common.CustomException;
-using System.Web.Http.Cors;
-using FintrakBanking.Interfaces.ErrorLogger;
 using System.Linq;
 using FintrakBanking.Interfaces.Setups.Credit;
-using System.Data.SqlClient;
-using System.IO;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 using System.Globalization;
-using FintrakBanking.Common;
-using System.Web.Script.Serialization;
 using Newtonsoft.Json;
-using System.Net.Http.Formatting;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.WorkFlow;
@@ -665,22 +658,26 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost, Route("customer-collateral-insurance-tracking")]
-        public HttpResponseMessage GetCustomerCollateralInsuranceTracking([FromBody] CollateralInsuranceTrackingViewModel model)
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("customer-collateral-insurance-tracking")]
+        public HttpResponseMessage saveCustomerCollateralInsuranceTracking([FromBody] CollateralInsuranceTrackingViewModel data)
         {
             try
             {
-                int response = repo.AddCollateralInsuranceTrackingForm(token.GetStaffId, model);
+                int response = repo.AddCollateralInsuranceTrackingForm(token.GetStaffId, data);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = "Error saving the record", message = "Error saving the record" });
             }
         }
 
-        [HttpPut, Route("customer-collateral-insurance-tracking-update/{id}")]
-        public HttpResponseMessage GetCustomerCollateralInsuranceTrackingUpdate(int id, [FromBody] CollateralInsuranceTrackingViewModel model)
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("customer-collateral-insurance-tracking-update/{id}")]
+        public HttpResponseMessage saveCustomerCollateralInsuranceTrackingUpdate(int id, [FromBody] CollateralInsuranceTrackingViewModel model)
         {
             try
             {
@@ -694,7 +691,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("customer-collateral-insurance-details-confirmation/{id}")]
-        public HttpResponseMessage GetCustomerCollateralInsuranceDetailsConfirmation(int id)
+        public HttpResponseMessage getCustomerCollateralInsuranceDetailsConfirmation(int id)
         {
             try
             {
@@ -708,7 +705,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("delete-customer-collateral-insurance-details/{id}")]
-        public HttpResponseMessage DeleteCustomerCollateralInsuranceDetails(int id)
+        public HttpResponseMessage deleteCustomerCollateralInsuranceDetails(int id)
         {
             try
             {
@@ -781,7 +778,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("collateral-insurance-policy-list")]
-        public HttpResponseMessage GetCollateralInsurancePolicyList([FromBody] InsurancePolicy model)
+        public HttpResponseMessage GetCollateralInsurancePolicyList([FromBody]InsurancePolicy model)
         {
             try
             {

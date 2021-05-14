@@ -8,7 +8,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string dueHours { get; set; }
         //public int dueDate;
         public int dueDay { get; set; }
-        public object divisionCode { get; set; }
+        public string divisionCode { get; set; }
         public string divisionName { get; set; }
         public string customerDivisionShortCode { get; set; }
         public int approvalTrailId { get; set; }
