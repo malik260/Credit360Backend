@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
         public string recievingHub { get; set; }
 
-        public object recievingUnitName { get; set; }
+        public string recievingUnitName { get; set; }
 
         public short? jobSourceId { get; set; }
         public string responseStaffName { get; set; }
@@ -145,7 +145,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int operationsId { get; set; }
 
         public string accreditedConsultantName { get; set; }
-        public object jobSubTypeName { get; set; }
+        public string jobSubTypeName { get; set; }
         public short jobTypeId { get; set; }
         public string jobTypeName { get; set; }
 

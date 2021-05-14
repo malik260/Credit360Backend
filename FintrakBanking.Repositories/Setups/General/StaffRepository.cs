@@ -40,7 +40,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private IStaffMIS staffMIS;
         TBL_PROFILE_SETTING profile_Setting;
 
-        public object FileUploadControl { get; private set; }
+        public string FileUploadControl { get; private set; }
 
         public StaffRepository(FinTrakBankingContext _context,
                                IAuditTrailRepository _auditTrail,

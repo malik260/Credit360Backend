@@ -4,7 +4,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 {
     public class MessageLogViewModel
     {
-        public object targetId;
+        public int? targetId;
 
         public string ReferenceCode { get; set; }
 
