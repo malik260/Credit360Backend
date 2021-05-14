@@ -530,7 +530,19 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountOfficer { get; set; }
         public int? insurancePolicyTypeId { get; set; }
         public string insurancePolicyType { get; set; }
-        public string insuranceStatus { get; set; }
+        public string insuranceStatus { get
+            {
+                if (this.expiryDate > DateTime.Now)
+                {
+                    return "Active";
+                }
+                else
+                {
+                    return "Expired";
+                }
+            }
+               set { } }
+
         public string collateralDetails { get; set; }
         public DateTime? valuationStartDate { get; set; }
         public DateTime? valuationEndDate { get; set; }
@@ -1335,7 +1347,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string firstLossPayee { get; set; }
         public decimal? insurableValue { get; set; }
         public string comment { get; set; }
-        public object COMMENT { get; set; }
         public string customerCode { get; set; }
         public bool passed { get; set; }
         public List<string> errorMessages { get; set; }
@@ -1344,4 +1355,4 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralCode { get; set; }
     }
 
- }
+}
