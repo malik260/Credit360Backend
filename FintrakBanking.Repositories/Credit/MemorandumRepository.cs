@@ -5413,6 +5413,11 @@ namespace FintrakBanking.Repositories.Credit
                 var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(g.Key);
                 custFacilitiesAmount += facility.APPROVEDAMOUNT * (decimal)facility.EXCHANGERATE;
             }
+
+            if(custFacilitiesAmount == 0)
+            {
+                custFacilitiesAmount = 1;
+            }
             int n = 0;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=1000px cellpadding=0 cellspacing=0>
