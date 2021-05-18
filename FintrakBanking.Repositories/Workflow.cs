@@ -2144,6 +2144,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public void LogWorkflowNotifications(string fromAddress, string toAddress, string messageSubject, string messageBody)
         {
+            if (toAddress == null || toAddress == "") return;
+            
             var message = new TBL_MESSAGE_LOG()
             {
                 TOADDRESS = toAddress,
