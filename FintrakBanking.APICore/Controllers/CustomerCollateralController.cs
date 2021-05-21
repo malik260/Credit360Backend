@@ -160,6 +160,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("customer-collateral/release-collateral")]
+        [ClaimsAuthorization]
         public HttpResponseMessage ReleaseCollateral([FromBody] CollateralViewModel entity)
         {
             try
@@ -189,6 +190,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("customer-collateral/release-collateral-awaiting-approval")]
+        [ClaimsAuthorization]
         public HttpResponseMessage GetCollateralReleaseAwaitingApproval()
         {
             try
@@ -202,6 +204,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost, Route("customer-collateral/complete-job-request-release-collateral")]
+        [ClaimsAuthorization]
         public HttpResponseMessage ReleaseCollateralJobRequest([FromBody] CollateralViewModel entity)
         {
             try
@@ -232,6 +235,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost, Route("customer-collateral/go-for-approval-release-collateral")]
+        [ClaimsAuthorization]
         public HttpResponseMessage ReleaseCollateralGoForApproval([FromBody] ApprovalViewModel entity)
         {
             try
@@ -274,6 +278,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet, Route("customer-collateral/release-collateral-awaiting-job-request")]
+        [ClaimsAuthorization]
         public HttpResponseMessage GetCollateralReleaseAwaitingJobRequest()
         {
             try
@@ -288,6 +293,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("customer-collateral/release-collateral-awaiting-job-request/collateralId/{collateralId}")]
+        [ClaimsAuthorization]
         public HttpResponseMessage GetCollateralReleaseAwaitingJobRequest(int collateralId)
         {
             try
@@ -302,6 +308,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("customer-collateral/get-collateral-information/colateralcustomerId/{colateralcustomerId}")]
+        [ClaimsAuthorization]
         public HttpResponseMessage GetCollateralInformation(int colateralcustomerId)
         {
             try
@@ -316,6 +323,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("customer-property-collateral/customerId/{customerId}")]
+        [ClaimsAuthorization]
         public HttpResponseMessage GetCustomerPropertyCollaterals(int? customerId)
         {
             try
@@ -377,6 +385,7 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
         [HttpPost, Route("customer-join-collateral")]
+        [ClaimsAuthorization]
         public async Task<HttpResponseMessage> AddJoinCollateralInformation()
         {
 
@@ -432,6 +441,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut, Route("customer-collateral/{collateralId}")]
+        [ClaimsAuthorization]
         public HttpResponseMessage UpdateCollateral([FromBody] CollateralViewModel entity, int collateralId)
         {
             //try
@@ -457,6 +467,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("customer-collateral/customer/{id}/application/{applicationId}")]
+        [ClaimsAuthorization]
         public HttpResponseMessage GetCustomerCollateral(int id, int? applicationId)
         {
             try
@@ -471,6 +482,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("customer-facility/customer/{id}")]
+        [ClaimsAuthorization]
         public HttpResponseMessage GetCustomerFacility(int id)
         {
             try
@@ -485,6 +497,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("customer-cash-collateral/customer/{id}/application/{applicationId}")]
+        [ClaimsAuthorization]
         public HttpResponseMessage GetCustomerCashCollateral(int id, int? applicationId)
         {
             try
@@ -499,6 +512,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("customer-cash-collateral-applications/collateralCustomerId/{id}")]
+        [ClaimsAuthorization]
         public HttpResponseMessage GetCustomerCashCollateralApplications(int id)
         {
             try
