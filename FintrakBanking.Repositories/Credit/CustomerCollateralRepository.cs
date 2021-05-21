@@ -976,37 +976,39 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateCollateral(CollateralViewModel entity, int collateralId)
         {
-            UpdateCollateralMainForm(entity, collateralId);
+                entity.collateralId = collateralId;
+                UpdateCollateralMainForm(entity, collateralId);
 
-            switch (entity.collateralTypeId)
-            {
-                case (int)CollateralTypeEnum.FixedDeposit: UpdateDepositCollateral(entity); break;
-                case (int)CollateralTypeEnum.PlantAndMachinery: UpdateEquipmentCollateral(entity); break;
-                //  case (int)CollateralTypeEnum.Miscellaneous: UpdateMiscellaneousCollateral(entity); break;
-                case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(entity); break;
-                case (int)CollateralTypeEnum.CASA: UpdateCasaCollateral(entity); break;
-                case (int)CollateralTypeEnum.Property: UpdateImmovablePropertyCollateral(entity); break;
-                case (int)CollateralTypeEnum.TreasuryBillsAndBonds: UpdateMarketableSecuritiesCollateral(entity); break;
-                case (int)CollateralTypeEnum.InsurancePolicy: UpdatePolicyCollateral(entity); break;
-                case (int)CollateralTypeEnum.PreciousMetal: UpdatePreciousMetalCollateral(entity); break;
-                case (int)CollateralTypeEnum.MarketableSecurities_Shares: UpdateStockCollateral(entity); break;
-                case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(entity); break;
-                case (int)CollateralTypeEnum.Promissory: UpdatePromissoryCollateral(entity); break;
-                case (int)CollateralTypeEnum.ISPO: UpdateISPOCollateral(entity); break;
-                case (int)CollateralTypeEnum.DomiciliationSalary: UpdateSalaryDomiciliationCollateral(entity); break;
-                case (int)CollateralTypeEnum.DomiciliationContract: UpdateContractDomiciliationCollateral(entity); break;
-                case (int)CollateralTypeEnum.Indemity: UpdateIndemityCollateral(entity); break;
+                switch (entity.collateralTypeId)
+                {
+                    case (int)CollateralTypeEnum.FixedDeposit: UpdateDepositCollateral(entity); break;
+                    case (int)CollateralTypeEnum.PlantAndMachinery: UpdateEquipmentCollateral(entity); break;
+                    //  case (int)CollateralTypeEnum.Miscellaneous: UpdateMiscellaneousCollateral(entity); break;
+                    case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(entity); break;
+                    case (int)CollateralTypeEnum.CASA: UpdateCasaCollateral(entity); break;
+                    case (int)CollateralTypeEnum.Property: UpdateImmovablePropertyCollateral(entity); break;
+                    case (int)CollateralTypeEnum.TreasuryBillsAndBonds: UpdateMarketableSecuritiesCollateral(entity); break;
+                    case (int)CollateralTypeEnum.InsurancePolicy: UpdatePolicyCollateral(entity); break;
+                    case (int)CollateralTypeEnum.PreciousMetal: UpdatePreciousMetalCollateral(entity); break;
+                    case (int)CollateralTypeEnum.MarketableSecurities_Shares: UpdateStockCollateral(entity); break;
+                    case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(entity); break;
+                    case (int)CollateralTypeEnum.Promissory: UpdatePromissoryCollateral(entity); break;
+                    case (int)CollateralTypeEnum.ISPO: UpdateISPOCollateral(entity); break;
+                    case (int)CollateralTypeEnum.DomiciliationSalary: UpdateSalaryDomiciliationCollateral(entity); break;
+                    case (int)CollateralTypeEnum.DomiciliationContract: UpdateContractDomiciliationCollateral(entity); break;
+                    case (int)CollateralTypeEnum.Indemity: UpdateIndemityCollateral(entity); break;
 
-                default: break;
-            }
+                    default: break;
+                }
 
             //if (entity.hasInsurance) { UpdateItemInsurancePolicy(entity); }
+           
+                bool saved = context.SaveChanges() > 0;
 
-            bool saved = context.SaveChanges() != 0;
+                if (saved) { return true; } // audit here
 
-            if (saved) { return true; } // audit here
-
-            return false;
+                return false;
+            
         }
 
         // MAIN collateral
@@ -1048,27 +1050,29 @@ namespace FintrakBanking.Repositories.Credit
 
         private void UpdateCollateralMainForm(CollateralViewModel model, int collateralId)
         {
-            var collateral = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId);
-            if (collateral == null) return;
-            if (collateral.VALIDTILL != model.validTill)
-            {
-                NotifyForCollateralValidity(collateral, model.validTill);
-            }
-            collateral.COLLATERALTYPEID = model.collateralTypeId;
-            collateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
-            collateral.COLLATERALCODE = model.collateralCode.Trim();
-            collateral.COLLATERALVALUE = (decimal)model.collateralValue;
-            collateral.ALLOWSHARING = model.allowSharing;
-            collateral.ISLOCATIONBASED = model.isLocationBased;
-            collateral.VALUATIONCYCLE = model.valuationCycle;
-            collateral.HAIRCUT = model.haircut;
-            collateral.CURRENCYID = model.currencyId;
-            collateral.CAMREFNUMBER = model.camRefNumber;
-            collateral.LASTUPDATEDBY = model.lastUpdatedBy;
-            collateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
-            collateral.EXCHANGERATE = model.exchangeRate;
-            collateral.COLLATERALSUMMARY = model.collateralSummary;
-            collateral.VALIDTILL = model.validTill;
+           
+                var collateral = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId);
+                if (collateral == null) return;
+                if (collateral.VALIDTILL != model.validTill)
+                {
+                    NotifyForCollateralValidity(collateral, model.validTill);
+                }
+                collateral.COLLATERALTYPEID = model.collateralTypeId;
+                collateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
+                collateral.COLLATERALCODE = model.collateralCode.Trim();
+                collateral.COLLATERALVALUE = (decimal)model.collateralValue;
+                collateral.ALLOWSHARING = model.allowSharing;
+                collateral.ISLOCATIONBASED = model.isLocationBased;
+                collateral.VALUATIONCYCLE = model.valuationCycle;
+                collateral.HAIRCUT = model.haircut;
+                collateral.CURRENCYID = model.currencyId;
+                collateral.CAMREFNUMBER = model.camRefNumber;
+                collateral.LASTUPDATEDBY = model.lastUpdatedBy;
+                collateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
+                collateral.EXCHANGERATE = model.exchangeRate;
+                collateral.COLLATERALSUMMARY = model.collateralSummary;
+                collateral.VALIDTILL = model.validTill;
+            
         }
 
         private void DeleteCollateral(int collateralId)
@@ -5135,119 +5139,120 @@ namespace FintrakBanking.Repositories.Credit
 
         private void UpdateImmovablePropertyCollateral(CollateralViewModel entity)
         {
-            var collaterals = context.TBL_COLLATERAL_IMMOVE_PROPERTY.ToList();
-            var collateral = collaterals.FirstOrDefault(x => x.COLLATERALCUSTOMERID == entity.collateralId);
-            TBL_COLLATERAL_IMMOVE_PROPERTY imCollateral = new TBL_COLLATERAL_IMMOVE_PROPERTY();
-            if (collateral == null)
-            {
-                imCollateral.PROPERTYNAME = entity.propertyName;
-                imCollateral.CITYID = (int)entity.cityId;
-                imCollateral.COUNTRYID = entity.countryId;
-                imCollateral.CONSTRUCTIONDATE = entity.constructionDate;
-                imCollateral.PROPERTYADDRESS = entity.propertyAddress;
-                imCollateral.DATEOFACQUISITION = entity.dateOfAcquisition;
-                imCollateral.LASTVALUATIONDATE = entity.lastValuationDate;
-                //imCollateral.NEXTVALUATIONDATE = entity.nextValuationDate;
-                imCollateral.VALUERID = entity.valuerId;
-                imCollateral.VALUERREFERENCENUMBER = entity.valuerReferenceNumber;
-                imCollateral.PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId;
-                imCollateral.OPENMARKETVALUE = entity.openMarketValue;
-
-                // imCollateral.COLLATERALVALUE = (decimal)entity.collateralValue;
-                imCollateral.COLLATERALCUSTOMERID = entity.collateralId;
-                imCollateral.FORCEDSALEVALUE = entity.forcedSaleValue;
-                imCollateral.STAMPTOCOVER = entity.stampToCover.ToString();
-                //imCollateral.VALUATIONSOURCE = entity.valuationSource;
-                //imCollateral.ORIGINALVALUE = entity.originalValue;
-
-                //imCollateral.AVAILABLEVALUE = entity.availableValue;
-
-                imCollateral.SECURITYVALUE = entity.securityValue;
-                imCollateral.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
-                imCollateral.REMARK = entity.remark;
-                imCollateral.NEARESTLANDMARK = entity.nearestLandMark;
-                imCollateral.NEARESTBUSSTOP = entity.nearestBusStop;
-                imCollateral.LONGITUDE = entity.longitude;
-                imCollateral.LATITUDE = entity.latitude;
-                imCollateral.PERFECTIONSTATUSID = (byte)entity.perfectionStatusId;
-                imCollateral.PERFECTIONSTATUSREASON = entity.perfectionStatusReason;
-                imCollateral.VALUATIONAMOUNT = entity.valuationAmount;
-                imCollateral.ISRESIDENTIAL = entity.isResidential;
-                imCollateral.ISOWNEROCCUPIED = entity.isOwnerOccupied;
-                imCollateral.ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty;
-                imCollateral.THRIDPARTYNAME = entity.thirdPartyName;
-                imCollateral.ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee;
-                imCollateral.TRUSTEENAME = entity.trusteeName;
-                imCollateral.STATEID = entity.stateId;
-                imCollateral.LOCALGOVERNMENTID = entity.localGovernmentId;
-                imCollateral.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
-                imCollateral.ESTIMATEDVALUE = entity.estimatedValue;
-                imCollateral.COLLATERALCUSTOMERID = entity.collateralId;
-                context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(imCollateral);
-                if (context.SaveChanges() != 0)
+            
+                var collaterals = context.TBL_COLLATERAL_IMMOVE_PROPERTY.ToList();
+                var collateral = collaterals.FirstOrDefault(x => x.COLLATERALCUSTOMERID == entity.collateralId);
+                TBL_COLLATERAL_IMMOVE_PROPERTY imCollateral = new TBL_COLLATERAL_IMMOVE_PROPERTY();
+                if (collateral == null)
                 {
-                    var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == imCollateral.COLLATERALCUSTOMERID);
+                    imCollateral.PROPERTYNAME = entity.propertyName;
+                    imCollateral.CITYID = (int)entity.cityId;
+                    imCollateral.COUNTRYID = entity.countryId;
+                    imCollateral.CONSTRUCTIONDATE = entity.constructionDate;
+                    imCollateral.PROPERTYADDRESS = entity.propertyAddress;
+                    imCollateral.DATEOFACQUISITION = entity.dateOfAcquisition;
+                    imCollateral.LASTVALUATIONDATE = entity.lastValuationDate;
+                    //imCollateral.NEXTVALUATIONDATE = entity.nextValuationDate;
+                    imCollateral.VALUERID = entity.valuerId;
+                    imCollateral.VALUERREFERENCENUMBER = entity.valuerReferenceNumber;
+                    imCollateral.PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId;
+                    imCollateral.OPENMARKETVALUE = entity.openMarketValue;
+
+                    // imCollateral.COLLATERALVALUE = (decimal)entity.collateralValue;
+                    imCollateral.COLLATERALCUSTOMERID = entity.collateralId;
+                    imCollateral.FORCEDSALEVALUE = entity.forcedSaleValue;
+                    imCollateral.STAMPTOCOVER = entity.stampToCover.ToString();
+                    //imCollateral.VALUATIONSOURCE = entity.valuationSource;
+                    //imCollateral.ORIGINALVALUE = entity.originalValue;
+
+                    //imCollateral.AVAILABLEVALUE = entity.availableValue;
+
+                    imCollateral.SECURITYVALUE = entity.securityValue;
+                    imCollateral.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
+                    imCollateral.REMARK = entity.remark;
+                    imCollateral.NEARESTLANDMARK = entity.nearestLandMark;
+                    imCollateral.NEARESTBUSSTOP = entity.nearestBusStop;
+                    imCollateral.LONGITUDE = entity.longitude;
+                    imCollateral.LATITUDE = entity.latitude;
+                    imCollateral.PERFECTIONSTATUSID = (byte)entity.perfectionStatusId;
+                    imCollateral.PERFECTIONSTATUSREASON = entity.perfectionStatusReason;
+                    imCollateral.VALUATIONAMOUNT = entity.valuationAmount;
+                    imCollateral.ISRESIDENTIAL = entity.isResidential;
+                    imCollateral.ISOWNEROCCUPIED = entity.isOwnerOccupied;
+                    imCollateral.ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty;
+                    imCollateral.THRIDPARTYNAME = entity.thirdPartyName;
+                    imCollateral.ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee;
+                    imCollateral.TRUSTEENAME = entity.trusteeName;
+                    imCollateral.STATEID = entity.stateId;
+                    imCollateral.LOCALGOVERNMENTID = entity.localGovernmentId;
+                    imCollateral.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
+                    imCollateral.ESTIMATEDVALUE = entity.estimatedValue;
+                    imCollateral.COLLATERALCUSTOMERID = entity.collateralId;
+                    context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(imCollateral);
+                    if (context.SaveChanges() != 0)
+                    {
+                        var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == imCollateral.COLLATERALCUSTOMERID);
+                        NotifyForCollateralStatusUpdate(collateralMain, entity.perfectionStatusId);
+                        NotifyForCollateralRevaluation(collateralMain, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
+                        NotifyForCollateralVisitation(collateralMain);
+                    }
+
+                    return;
+                }
+                if ((byte)entity.perfectionStatusId != collateral.PERFECTIONSTATUSID)
+                {
+                    var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
                     NotifyForCollateralStatusUpdate(collateralMain, entity.perfectionStatusId);
+                }
+                if (entity.lastValuationDate != collateral.LASTVALUATIONDATE)
+                {
+                    var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
                     NotifyForCollateralRevaluation(collateralMain, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
                     NotifyForCollateralVisitation(collateralMain);
                 }
+                collateral.PROPERTYNAME = entity.propertyName;
+                collateral.CITYID = (int)entity.cityId;
+                collateral.COUNTRYID = entity.countryId;
+                collateral.CONSTRUCTIONDATE = entity.constructionDate;
+                collateral.PROPERTYADDRESS = entity.propertyAddress;
+                collateral.DATEOFACQUISITION = entity.dateOfAcquisition;
+                collateral.LASTVALUATIONDATE = entity.lastValuationDate;
+                //collateral.NEXTVALUATIONDATE = entity.nextValuationDate;
+                collateral.VALUERID = entity.valuerId;
+                collateral.VALUERREFERENCENUMBER = entity.valuerReferenceNumber;
+                collateral.PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId;
+                collateral.OPENMARKETVALUE = entity.openMarketValue;
 
-                return;
-            }
-            if ((byte)entity.perfectionStatusId != collateral.PERFECTIONSTATUSID)
-            {
-                var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
-                NotifyForCollateralStatusUpdate(collateralMain, entity.perfectionStatusId);
-            }
-            if (entity.lastValuationDate != collateral.LASTVALUATIONDATE)
-            {
-                var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
-                NotifyForCollateralRevaluation(collateralMain, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
-                NotifyForCollateralVisitation(collateralMain);
-            }
-            collateral.PROPERTYNAME = entity.propertyName;
-            collateral.CITYID = (int)entity.cityId;
-            collateral.COUNTRYID = entity.countryId;
-            collateral.CONSTRUCTIONDATE = entity.constructionDate;
-            collateral.PROPERTYADDRESS = entity.propertyAddress;
-            collateral.DATEOFACQUISITION = entity.dateOfAcquisition;
-            collateral.LASTVALUATIONDATE = entity.lastValuationDate;
-            //collateral.NEXTVALUATIONDATE = entity.nextValuationDate;
-            collateral.VALUERID = entity.valuerId;
-            collateral.VALUERREFERENCENUMBER = entity.valuerReferenceNumber;
-            collateral.PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId;
-            collateral.OPENMARKETVALUE = entity.openMarketValue;
+                // collateral.COLLATERALVALUE = (decimal)entity.collateralValue;
 
-            // collateral.COLLATERALVALUE = (decimal)entity.collateralValue;
+                collateral.FORCEDSALEVALUE = entity.forcedSaleValue;
+                collateral.STAMPTOCOVER = entity.stampToCover.ToString();
+                //collateral.VALUATIONSOURCE = entity.valuationSource;
+                //collateral.ORIGINALVALUE = entity.originalValue;
 
-            collateral.FORCEDSALEVALUE = entity.forcedSaleValue;
-            collateral.STAMPTOCOVER = entity.stampToCover.ToString();
-            //collateral.VALUATIONSOURCE = entity.valuationSource;
-            //collateral.ORIGINALVALUE = entity.originalValue;
+                //collateral.AVAILABLEVALUE = entity.availableValue;
 
-            //collateral.AVAILABLEVALUE = entity.availableValue;
-
-            collateral.SECURITYVALUE = entity.securityValue;
-            collateral.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
-            collateral.REMARK = entity.remark;
-            collateral.NEARESTLANDMARK = entity.nearestLandMark;
-            collateral.NEARESTBUSSTOP = entity.nearestBusStop;
-            collateral.LONGITUDE = entity.longitude;
-            collateral.LATITUDE = entity.latitude;
-            collateral.PERFECTIONSTATUSID = (byte)entity.perfectionStatusId;
-            collateral.PERFECTIONSTATUSREASON = entity.perfectionStatusReason;
-            collateral.VALUATIONAMOUNT = entity.valuationAmount;
-            collateral.ISRESIDENTIAL = entity.isResidential;
-            collateral.ISOWNEROCCUPIED = entity.isOwnerOccupied;
-            collateral.ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty;
-            collateral.THRIDPARTYNAME = entity.thirdPartyName;
-            collateral.ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee;
-            collateral.TRUSTEENAME = entity.trusteeName;
-            collateral.STATEID = entity.stateId;
-            collateral.LOCALGOVERNMENTID = entity.localGovernmentId;
-            collateral.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
-            collateral.ESTIMATEDVALUE = entity.estimatedValue;
-
+                collateral.SECURITYVALUE = entity.securityValue;
+                collateral.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
+                collateral.REMARK = entity.remark;
+                collateral.NEARESTLANDMARK = entity.nearestLandMark;
+                collateral.NEARESTBUSSTOP = entity.nearestBusStop;
+                collateral.LONGITUDE = entity.longitude;
+                collateral.LATITUDE = entity.latitude;
+                collateral.PERFECTIONSTATUSID = (byte)entity.perfectionStatusId;
+                collateral.PERFECTIONSTATUSREASON = entity.perfectionStatusReason;
+                collateral.VALUATIONAMOUNT = entity.valuationAmount;
+                collateral.ISRESIDENTIAL = entity.isResidential;
+                collateral.ISOWNEROCCUPIED = entity.isOwnerOccupied;
+                collateral.ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty;
+                collateral.THRIDPARTYNAME = entity.thirdPartyName;
+                collateral.ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee;
+                collateral.TRUSTEENAME = entity.trusteeName;
+                collateral.STATEID = entity.stateId;
+                collateral.LOCALGOVERNMENTID = entity.localGovernmentId;
+                collateral.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
+                collateral.ESTIMATEDVALUE = entity.estimatedValue;
+            
         }
 
         private CollateralViewModel GetCollateralImmovableProperty(int collateralId)
@@ -8980,21 +8985,13 @@ namespace FintrakBanking.Repositories.Credit
                 cit.COMMENT = model.comment;
                 cit.UPDATEDBY = accountOfficer;
                 cit.DATETIMEUPDATED = DateTime.Now;
-                try
-                {
+                
                     if (context.SaveChanges() > 0)
                     {
                         return cit.COLLATERALINSURANCETRACKINGID;
                     }
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
 
             }
-
-
 
             return 0;
         }
