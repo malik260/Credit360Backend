@@ -636,6 +636,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string employer { get; set; }
         public string operationName { get; set; }
         public int currentOperationId { get; set; }
+        public int? creditAppraisalOperationId { get; set; }
+        public int? creditAppraisalLoanApplicationId { get; set; }
+        public int? loanReviewApplicationDetailId { get; set; }
     }
 
     public class applicationDetails
