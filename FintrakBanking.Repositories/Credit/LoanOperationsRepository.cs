@@ -34143,6 +34143,36 @@ namespace FintrakBanking.Repositories.Credit
             
         }
 
+
+
+        public CollectionsRetailComputationVariableSetupViewModel getAllRecoveryComputationVariables(int staffId, int companyId)
+        {
+            var data = (from x in context.TBL_COLLECTION_COMPUTATION_VARIABLES_SETUP
+                                where
+                                x.DELETED == false
+
+                                select new CollectionsRetailComputationVariableSetupViewModel
+                                {
+                                    computationVariableId = x.COMPUTATIONVARIABLEID,
+                                    vat = x.VAT,
+                                    wht = x.WHT,
+                                    commissionPayable = x.COMMISSIONPAYABLE,
+                                    commissionPayableLimit = x.COMMISSIONPAYABLELIMIT,
+                                    commissionRateExternal = x.COMMISSIONRATEEXTERNAL,
+                                    createdBy = x.CREATEDBY,
+                                    dateTimeCreated = x.DATETIMECREATED,
+                                    recoveredAmountAbove = x.RECOVEREDAMOUNTABOVE,
+                                    recoveredAmountBelow = x.RECOVEREDAMOUNTBELOW,
+                                    commissionRateExternal2 = x.COMMISSIONRATEEXTERNALTWO,
+                                    recoveredAmountExternalAbove = x.RECOVEREDAMOUNTEXTERNALABOVE,
+                                    recoveredAmountExternalBelow = x.RECOVEREDAMOUNTEXTERNALBELOW,
+                                    deleted = x.DELETED
+                                }).FirstOrDefault();
+
+            return data;
+
+        }
+
         public IEnumerable<GlobalExposureApplicationViewModel> getAllUnassignedRecoveryOperationByAgent(string source, int staffId, int companyId)
             {
                 var applicationDate = generalSetup.GetApplicationDate();
@@ -34501,6 +34531,7 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryBand = ln.EXPIRINGBAND,
                                     divisionName = ln.DIVISIONNAME,
                                     totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                     dpdExposure = ln.UNPODAYSOVERDUE,
                                     loanCategory = ln.CBNCLASSIFICATION,
                                     casaAccount = ln.ACCOUNTNUMBER,
@@ -34551,6 +34582,7 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryBand = ln.EXPIRINGBAND,
                                     divisionName = ln.DIVISIONNAME,
                                     totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                     dpdExposure = ln.UNPODAYSOVERDUE,
                                     loanCategory = ln.CBNCLASSIFICATION,
                                     casaAccount = ln.ACCOUNTNUMBER,
@@ -34622,6 +34654,7 @@ namespace FintrakBanking.Repositories.Credit
                                 branchId = ln.BRANCHID,
                                 amount = ld.APPROVEDAMOUNT,
                                 totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
+                                totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                 principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
@@ -34714,6 +34747,7 @@ namespace FintrakBanking.Repositories.Credit
                                          loanApplicationId = lp.LOANAPPLICATIONID,
                                          category = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY.ToUpper()).FirstOrDefault(),
                                          totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
+                                         totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                          currencyId = ld.CURRENCYID,
                                          agentAccountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.ACCOUNTNUMBER).FirstOrDefault(),
                                          agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
@@ -36017,6 +36051,7 @@ namespace FintrakBanking.Repositories.Credit
                                     collectionDate = lr.COLLECTIONDATE,
                                     amountRecovered = lr.AMOUNTRECOVERED,
                                     totalRecoveryAmount = (decimal?)lr.TOTALRECOVERYAMOUNT ?? 0,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     productId = (short)l.PRODUCTID,
                                     productClassId = l.PRODUCTCLASSID,
@@ -36061,6 +36096,7 @@ namespace FintrakBanking.Repositories.Credit
                                     collectionDate = lr.COLLECTIONDATE,
                                     amountRecovered = lr.AMOUNTRECOVERED,
                                     totalRecoveryAmount = (decimal?)lr.TOTALRECOVERYAMOUNT ?? 0,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     productId = (short)l.PRODUCTID,
                                     productClassId = l.PRODUCTCLASSID,
@@ -36105,6 +36141,7 @@ namespace FintrakBanking.Repositories.Credit
                                 accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
                                 accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
                                 accreditedConsultantId = (int)lr.ACCREDITEDCONSULTANT,
+                                totalUnsettledAmount = lr.TOTALRECOVERYAMOUNT,
                                 loanAssignId = (int)lr.LOANASSIGNID,
                                 agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY.ToUpper()).FirstOrDefault(),
                                 loanId = ln.TERMLOANID,
@@ -36154,6 +36191,7 @@ namespace FintrakBanking.Repositories.Credit
                                          accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
                                          accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
                                          accreditedConsultantId = (int)lr.ACCREDITEDCONSULTANT,
+                                         totalUnsettledAmount = lr.TOTALRECOVERYAMOUNT,
                                          loanAssignId = (int)lr.LOANASSIGNID,
                                          agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
                                          loanId = ln.REVOLVINGLOANID,
@@ -36217,6 +36255,7 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryBand = ln.EXPIRINGBAND,
                                     divisionName = ln.DIVISIONNAME,
                                     totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                     dpdExposure = ln.UNPODAYSOVERDUE,
                                     loanCategory = ln.CBNCLASSIFICATION,
                                     casaAccount = ln.ACCOUNTNUMBER,

@@ -381,6 +381,25 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collection-retail-computation-variables-setup")]
+        public HttpResponseMessage GetCollectionRetailComputationVariablesSetup()
+        {
+            var data = _repo.GetCollectionRetailComputationVariablesSetup();
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "" });
+            }
+
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("add-collection-retail-cron-setup")]
@@ -393,6 +412,33 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.companyId = _token.GetCompanyId;
                 var result = await _repo.AddRetailCollectionCronJobAsync(model);
+                if (result)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Cron setup has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = "There was an error saving this record" });
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-collection-retail-computation-variable-setup")]
+        public async Task<HttpResponseMessage> AddRetailCollectionComputationVariableAsync([FromBody]CollectionsRetailComputationVariableSetupViewModel model)
+        {
+            try
+            {
+                model.createdBy = _token.GetStaffId;
+                model.userBranchId = (short)_token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = _token.GetCompanyId;
+                var result = await _repo.AddRetailCollectionComputationVariableAsync(model);
                 if (result)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Cron setup has been created successfully" });
@@ -433,6 +479,35 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("collection-retail-computation-variable-setup/{id}")]
+        public HttpResponseMessage UpdateCollectionRetailComputationVariables([FromBody] CollectionsRetailComputationVariableSetupViewModel model, short id)
+        {
+
+            try
+            {
+                model.createdBy = _token.GetStaffId;
+                model.userBranchId = (short)_token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = _token.GetCompanyId;
+                var result = _repo.UpdateCollectionRetailComputationVariables(model, id);
+                if (result)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = result, message = "Changes saved successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Saved changes not successfull" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+
+        }
+
+
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("collection-retail-cron-setup/{id}")]
@@ -448,6 +523,31 @@ namespace FintrakBanking.APICore.Controllers
                     applicationUrl = HttpContext.Current.Request.Path,
                 };
                 var collection = await _repo.DeleteRetailCollectionCronJobAsync(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = collection, message = "Successfully deleted" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("collection-retail-computation-variables-setup/{id}")]
+        public async Task<HttpResponseMessage> DeleteRetailCollectionComputationVariablesAsync([FromUri] short id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = _token.GetBranchId,
+                    companyId = _token.GetCompanyId,
+                    staffId = _token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
+                var collection = await _repo.DeleteRetailCollectionComputationVariablesAsync(id, user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = collection, message = "Successfully deleted" });
             }
             catch (SecureException ex)

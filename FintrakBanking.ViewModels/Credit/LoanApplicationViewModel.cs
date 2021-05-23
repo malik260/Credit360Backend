@@ -1320,6 +1320,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productCode { get; set; }
         public string branchCode { get; set; }
         public short productClassId { get; set; }
+        public decimal? totalUnsettledAmount { get; set; }
     }
 
 

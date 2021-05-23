@@ -9667,6 +9667,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                     select new RetailRecoveryCustomerTransactionsViewModels
                                     {
+                                        totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                         loanApplicationId = lp.LOANAPPLICATIONID,
                                         currencyId = ld.CURRENCYID,
                                         accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
@@ -9740,6 +9741,7 @@ namespace FintrakBanking.Repositories.Credit
                                     casaAccountName = "CURRENT ACCOUNT",
                                     totalExposure = (decimal)ln.TOTALEXPOSURE,
                                     totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     applicationReferenceNumber = ln.REFERENCENUMBER,
                                     misCode = ln.ACCOUNTOFFICERCODE,
@@ -9788,6 +9790,7 @@ namespace FintrakBanking.Repositories.Credit
                                             casaAccountName = "CURRENT ACCOUNT",
                                             totalExposure = (decimal)ln.TOTALEXPOSURE,
                                             totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                            totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                             loanReferenceNumber = ln.REFERENCENUMBER,
                                             applicationReferenceNumber = ln.REFERENCENUMBER,
                                             misCode = ln.ACCOUNTOFFICERCODE,
@@ -9836,6 +9839,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                          select new RetailRecoveryCustomerTransactionsViewModels
                                          {
+                                             totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                              loanApplicationId = lp.LOANAPPLICATIONID,
                                              totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
                                              totalExposure = lp.TOTALEXPOSUREAMOUNT,
@@ -9902,6 +9906,7 @@ namespace FintrakBanking.Repositories.Credit
                                         totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
                                         loanReferenceNumber = ln.REFERENCENUMBER,
                                         applicationReferenceNumber = ln.REFERENCENUMBER,
+                                        totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                         misCode = ln.ACCOUNTOFFICERCODE,
                                         teamMiscode = ln.TEAMCODE,
                                         principalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
@@ -9949,6 +9954,7 @@ namespace FintrakBanking.Repositories.Credit
                                                totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
                                                loanReferenceNumber = ln.REFERENCENUMBER,
                                                applicationReferenceNumber = ln.REFERENCENUMBER,
+                                               totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                                misCode = ln.ACCOUNTOFFICERCODE,
                                                teamMiscode = ln.TEAMCODE,
                                                principalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
@@ -10012,6 +10018,7 @@ namespace FintrakBanking.Repositories.Credit
                                     branchId = ln.BRANCHID,
                                     totalExposure = lp.TOTALEXPOSUREAMOUNT,
                                     totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
+                                    totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                     loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                     applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                     principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
@@ -10069,6 +10076,7 @@ namespace FintrakBanking.Repositories.Credit
                                          loanApplicationId = lp.LOANAPPLICATIONID,
                                          totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
                                          totalExposure = lp.TOTALEXPOSUREAMOUNT,
+                                         totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                          currencyId = ld.CURRENCYID,
                                          accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
                                          accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
@@ -10122,6 +10130,7 @@ namespace FintrakBanking.Repositories.Credit
                              && (DbFunctions.TruncateTime(a.APPROVEDDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.APPROVEDDATE) <= DbFunctions.TruncateTime(endDate))
                              select new RetailRecoveryCustomerTransactionsViewModels
                              {
+                                 totalUnsettledAmount = record.totalUnsettledAmount,
                                  totalExposure = record.totalExposure,
                                  totalAmountRecovery = record.totalAmountRecovery,
                                  startDate = startDate,

@@ -924,7 +924,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 TimeSpan endCustomerrepay = new TimeSpan(13, 30, 0);
                 if ((now >= startCustomerrepay) && (now <= endCustomerrepay))
                 {
-                   // GetImminentMaturitiesForCustomers();
+                   GetImminentMaturitiesForCustomers();
                 }
             }
 
