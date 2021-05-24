@@ -62,6 +62,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string customerName { get; set; }
         public bool isOriginalCopy { get; set; }
 
+        public int? source { get; set; }
+
+        public int? edmsDocumentId { get; set; }
+
         public string fileSizeString { get {
                 string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
                 if (fileSize == 0)
