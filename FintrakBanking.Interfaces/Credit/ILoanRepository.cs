@@ -292,6 +292,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LookupViewModel> GetFullAndFinalStatus();
         bool CancelFullAndFinal(int loanId, int statusId);
         List<LoanViewModel> GetApprovedLoanReviewAwaitingOperation(int staffId, int companyId);
+        bool saveBulkInsurancePolicyEntries(List<MultipleInsuranceOutputViewModel> models, UserInfo user);
 
     }
 }

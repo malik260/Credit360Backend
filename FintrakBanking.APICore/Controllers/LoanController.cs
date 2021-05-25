@@ -1661,6 +1661,31 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("bulk-insurance-policy-entries")]
+        public HttpResponseMessage saveBulkInsurancePolicyEntries([FromBody] List<MultipleInsuranceOutputViewModel> models)
+        {
+            UserInfo user = new UserInfo();
+            user.BranchId = (short)token.GetBranchId;
+            user.applicationUrl = HttpContext.Current.Request.Path;
+            user.createdBy = token.GetStaffId;
+            user.companyId = token.GetCompanyId;
+
+            var data = repo.saveBulkInsurancePolicyEntries(models, user);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Bulk Insurance Policy was successfully saved" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving bulk Insurance Policy was unsuccessfully" });
+
+        }
+
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("multiple-disbursement")]
         public HttpResponseMessage disburseMultipleLoans([FromBody] List<multipleDisbursementOutputViewModel> models)
         {

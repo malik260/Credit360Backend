@@ -39767,7 +39767,7 @@ namespace FintrakBanking.Repositories.Credit
                                 firmName = ln.FIRMNAME,
                                 name = ln.NAME,
                                 accreditedConsultantId = ln.ACCREDITEDCONSULTANTID
-                            }).ToList();
+                            }).OrderBy(x=>x.firmName).ToList();
 
             return data;
         }
@@ -39783,7 +39783,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             customerId = x.CUSTOMERID,
                             customerName = x.FIRSTNAME + " " + x.LASTNAME,
-                        }).ToList();
+                        }).OrderBy(x=>x.customerName).ToList();
 
             return data;
         }
