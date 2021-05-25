@@ -61,4 +61,19 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int cronNature { get; set; }
     }
 
+    public class CollectionsRetailComputationVariableSetupViewModel : GeneralEntity
+    {
+        public int computationVariableId { get; set; }
+        public decimal vat { get; set; }
+        public decimal wht { get; set; }
+        public decimal commissionPayable { get; set; }
+        public decimal commissionPayableLimit { get; set; }
+        public int commissionRateExternal { get; set; }
+        public decimal recoveredAmountBelow { get; set; }
+        public decimal recoveredAmountAbove { get; set; }
+        public int commissionRateExternal2 { get; set; }
+        public decimal recoveredAmountExternalBelow { get; set; }
+        public decimal recoveredAmountExternalAbove { get; set; }
+    }
+
 }

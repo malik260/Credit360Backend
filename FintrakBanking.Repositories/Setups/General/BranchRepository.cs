@@ -634,6 +634,31 @@ namespace FintrakBanking.Repositories.Setups.General
             return retailCollection.ToList();
         }
 
+        public IEnumerable<CollectionsRetailComputationVariableSetupViewModel> GetCollectionRetailComputationVariablesSetup()
+        {
+            var retailCollection = from x in context.TBL_COLLECTION_COMPUTATION_VARIABLES_SETUP
+                                   where x.DELETED == false
+                                   select new CollectionsRetailComputationVariableSetupViewModel
+                                   {
+                                       computationVariableId = x.COMPUTATIONVARIABLEID,
+                                       vat = x.VAT,
+                                       wht = x.WHT,
+                                       commissionPayable = x.COMMISSIONPAYABLE,
+                                       commissionPayableLimit = x.COMMISSIONPAYABLELIMIT,
+                                       commissionRateExternal = x.COMMISSIONRATEEXTERNAL,
+                                       createdBy = x.CREATEDBY,
+                                       dateTimeCreated = x.DATETIMECREATED,
+                                       recoveredAmountAbove = x.RECOVEREDAMOUNTABOVE,
+                                       recoveredAmountBelow = x.RECOVEREDAMOUNTBELOW,
+                                       commissionRateExternal2 = x.COMMISSIONRATEEXTERNALTWO,
+                                       deleted = x.DELETED,
+                                       recoveredAmountExternalAbove = x.RECOVEREDAMOUNTEXTERNALABOVE,
+                                       recoveredAmountExternalBelow = x.RECOVEREDAMOUNTEXTERNALBELOW,
+                                   };
+
+            return retailCollection.ToList();
+        }
+
         public async Task<bool> AddRetailCollectionCronJobAsync(CollectionsRetailCronSetupViewModel model)
         {
             var response = 0;
@@ -660,6 +685,38 @@ namespace FintrakBanking.Repositories.Setups.General
             return response != 0;
         }
 
+        public async Task<bool> AddRetailCollectionComputationVariableAsync(CollectionsRetailComputationVariableSetupViewModel model)
+        {
+            var response = 0;
+
+            try
+            {
+                var setup = new TBL_COLLECTION_COMPUTATION_VARIABLES_SETUP()
+                {
+                    VAT = model.vat,
+                    WHT = model.wht,
+                    COMMISSIONPAYABLE = model.commissionPayable,
+                    COMMISSIONPAYABLELIMIT = model.commissionPayableLimit,
+                    COMMISSIONRATEEXTERNAL = model.commissionRateExternal,
+                    RECOVEREDAMOUNTBELOW = model.recoveredAmountBelow,
+                    RECOVEREDAMOUNTABOVE = model.recoveredAmountAbove,
+                    COMMISSIONRATEEXTERNALTWO = model.commissionRateExternal2,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                    DELETED = false,
+                    RECOVEREDAMOUNTEXTERNALBELOW = model.recoveredAmountExternalBelow,
+                    RECOVEREDAMOUNTEXTERNALABOVE = model.recoveredAmountExternalAbove,
+                };
+
+                this.context.TBL_COLLECTION_COMPUTATION_VARIABLES_SETUP.Add(setup);
+
+                response = await context.SaveChangesAsync();
+
+            }
+            catch (Exception ex) { }
+            return response != 0;
+        }
+
         public bool UpdateCollectionRetailCronJob(CollectionsRetailCronSetupViewModel model, short id)
         {
             var setup = context.TBL_COLLECTION_RETAIL_CRON_SETUP.Find(id);
@@ -677,6 +734,27 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() > 0;
         }
 
+        public bool UpdateCollectionRetailComputationVariables(CollectionsRetailComputationVariableSetupViewModel model, short id)
+        {
+            var setup = context.TBL_COLLECTION_COMPUTATION_VARIABLES_SETUP.Find(id);
+
+            if (setup != null)
+            {
+                setup.VAT = model.vat;
+                setup.WHT = model.wht;
+                setup.COMMISSIONPAYABLE = model.commissionPayable;
+                setup.COMMISSIONPAYABLELIMIT = model.commissionPayableLimit;
+                setup.COMMISSIONRATEEXTERNAL = model.commissionRateExternal;
+                setup.RECOVEREDAMOUNTBELOW = model.recoveredAmountBelow;
+                setup.RECOVEREDAMOUNTABOVE = model.recoveredAmountAbove;
+                setup.COMMISSIONRATEEXTERNALTWO = model.commissionRateExternal2;
+                setup.RECOVEREDAMOUNTEXTERNALBELOW = model.recoveredAmountExternalBelow;
+                setup.RECOVEREDAMOUNTEXTERNALABOVE = model.recoveredAmountExternalAbove;
+            }
+
+            return context.SaveChanges() > 0;
+        }
+
 
         public async Task<bool> DeleteRetailCollectionCronJobAsync(short id, UserInfo user)
         {
@@ -687,6 +765,20 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 setup.DELETED = true;
                 setup.DATETIMEDELETED = DateTime.Now;
+                response = await context.SaveChangesAsync();
+            }
+
+            return response != 0;
+        }
+
+        public async Task<bool> DeleteRetailCollectionComputationVariablesAsync(short id, UserInfo user)
+        {
+            var response = 0;
+            var setup = context.TBL_COLLECTION_COMPUTATION_VARIABLES_SETUP.Find(id);
+
+            if (setup != null)
+            {
+                setup.DELETED = true;
                 response = await context.SaveChangesAsync();
             }
 

@@ -1329,6 +1329,22 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/recovery-computation-variables")]
+        public HttpResponseMessage getAllRecoveryComputationVariables()
+        {
+            var data = repo.getAllRecoveryComputationVariables(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
         [Route("unassignment-loan-operation/recovery-operation-agents/{source}")]
         public HttpResponseMessage getAllUnassignedRecoveryOperationByAgent(string source)
         {

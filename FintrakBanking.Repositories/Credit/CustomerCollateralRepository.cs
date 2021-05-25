@@ -7582,7 +7582,8 @@ namespace FintrakBanking.Repositories.Credit
             var data2 = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == model.collateralCustomerId && o.DELETED == false).Select(o => o).FirstOrDefault();
 
             var staff = context.TBL_STAFF.Find(model.createdBy);
-            if (data != null && data.CREATEDBY == model.createdBy || staff.STAFFROLEID == 181 && data2 == null)
+            if (data != null && data2 == null)
+                //if (data != null && data.CREATEDBY == model.createdBy || staff.STAFFROLEID == 181 && data2 == null)
             {
                 data.DELETED = true;
                 data.DELETEDBY = model.deletedBy;

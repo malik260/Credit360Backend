@@ -8,9 +8,11 @@ namespace FintrakBanking.Interfaces.Setups.General
     public interface IBranchRepository
     {
         Task<bool> DeleteRetailCollectionCronJobAsync(short id, UserInfo user);
+        Task<bool> DeleteRetailCollectionComputationVariablesAsync(short id, UserInfo user);
         bool UpdateCollectionRetailCronJob(CollectionsRetailCronSetupViewModel model, short id);
         Task<bool> AddRetailCollectionCronJobAsync(CollectionsRetailCronSetupViewModel model);
         IEnumerable<CollectionsRetailCronSetupViewModel> GetCollectionRetailCronJobSetup();
+        IEnumerable<CollectionsRetailComputationVariableSetupViewModel> GetCollectionRetailComputationVariablesSetup();
         BranchViewModel GetBranch(short id);
 
         IEnumerable<BranchViewModel> GetAllBranch();
@@ -33,7 +35,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetAllRegionStaffType();
         Task<bool> DeleteBranchRegionStaff(short id, UserInfo user);
 
-
+        bool UpdateCollectionRetailComputationVariables(CollectionsRetailComputationVariableSetupViewModel model, short id);
 
         bool ValidateRegionName(string regionName);
 
@@ -52,5 +54,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         //Task<bool> UpdateBranchLimit(BranchLimitViewModel model);
 
         //Task<bool> DeleteBranchLimit(short id);
+        Task<bool> AddRetailCollectionComputationVariableAsync(CollectionsRetailComputationVariableSetupViewModel model);
     }
 }

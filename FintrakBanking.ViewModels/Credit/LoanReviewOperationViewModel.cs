@@ -1155,6 +1155,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string category { get; set; }
         public string divisionCode { get; set; }
         public string branchCode { get; set; }
+        public decimal? totalUnsettledAmount { get; set; }
     }
 
     public class RecoveryCollectionsViewModel
