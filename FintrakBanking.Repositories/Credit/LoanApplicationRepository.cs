@@ -8226,6 +8226,10 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LmsLaonApplcationCancelllationCompelted(LoanReviewApplicationViewModel data)
         {
+            if(data.loanApplicationId == 0)
+            {
+                data.loanApplicationId = data.loanReviewApplicationId;
+            }
             var val = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
             val.LASTUPDATEDBY = data.createdBy;

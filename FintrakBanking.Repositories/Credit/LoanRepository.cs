@@ -19474,7 +19474,7 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.productId = customerRequest.productId;
                     assignOperations.loanId = customerRequest.loanId;
                     assignOperations.assignmentType = assignmentType;
-                    assignOperations.customerId = customerRequest.customerCode;
+                    assignOperations.customerId = customerRequest.customerId;
                     assignOperations.productClassId = customerRequest.productClassId;
                     assignOperations.applicationReferenceNumber = customerRequest.applicationReferenceNumber;
                     var loanData = addBulkLoanAssignmentToAgent(assignOperations);
