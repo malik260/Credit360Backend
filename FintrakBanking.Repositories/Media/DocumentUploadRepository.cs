@@ -722,7 +722,14 @@ namespace FintrakBanking.Repositories.Media
                 DOCUMENTTYPEID = model.documentTypeId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
+                SOURCE = model.source
             };
+            if(model.edmsDocumentId != null)
+            {
+                entity.EDMSDOCID = model.edmsDocumentId;
+            }
+
+           
 
             docContext.TBL_DOCUMENT_UPLOAD.Add(entity);
 

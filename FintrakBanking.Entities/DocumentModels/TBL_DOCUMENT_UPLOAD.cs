@@ -48,6 +48,9 @@ namespace FintrakBanking.Entities.DocumentModels
 
         public int? DELETEDBY { get; set; }
 
+        public int? SOURCE { get; set; }
+        public int? EDMSDOCID { get; set; }
+
         public DateTime? DATETIMEDELETED { get; set; }
 
         public int? CREATEDBY { get; set; }
