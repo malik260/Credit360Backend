@@ -192,7 +192,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralLiquidationRecoveryId { get; set; }
         public int loanId { get; set; }
         public string applicationReferenceNumber { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int accreditedConsultant { get; set; }
         public int loanAssignId { get; set; }
         public bool isFullyRecovered { get; set; }
@@ -831,7 +831,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public int loanId { get; set; }
         public string loanReferenceNumber { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int accreditedConsultant { get; set; }
         public decimal? totalAmountRecovery { get; set; }
         public decimal? amountRecovered { get; set; }
@@ -909,7 +909,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public int loanId { get; set; }
         public string loanReferenceNumber { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int accreditedConsultant { get; set; }
         public decimal? totalAmountRecovery { get; set; }
         public decimal? amountRecovered { get; set; }
@@ -1001,7 +1001,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public int loanId { get; set; }
         public string loanReferenceNumber { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int accreditedConsultant { get; set; }
         public bool operationCompleted { get; set; }
         public decimal? totalAmountRecovery { get; set; }
@@ -1831,7 +1831,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal interestAmount { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public int loanId { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int productId { get; set; }
         public int productClassId { get; set; }
         public decimal productPriceIndexRate { get; set; }

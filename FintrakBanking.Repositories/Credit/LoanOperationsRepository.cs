@@ -33226,7 +33226,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var xx in exposureData)
                 {
                     xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                     xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                     xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                 }
@@ -33271,7 +33271,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var xx in exposureDigitalData)
                 {
                     xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                     xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                     xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                 }
@@ -33324,7 +33324,7 @@ namespace FintrakBanking.Repositories.Credit
                                     loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                     loanId = ln.TERMLOANID,
                                     loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
-                                    customerId = ln.CUSTOMERID,
+                                    customerId = cu.CUSTOMERCODE,
                                     productId = ln.PRODUCTID,
                                     productClassId = (int)pr.PRODUCTCLASSID,
                                     prepaymentAmount = op.PREPAYMENT,
@@ -33493,7 +33493,7 @@ namespace FintrakBanking.Repositories.Credit
                                              loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                              loanId = ln.REVOLVINGLOANID,
                                              loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
-                                             customerId = ln.CUSTOMERID,
+                                             customerId = cu.CUSTOMERCODE,
                                              productId = ln.PRODUCTID,
                                              productClassId = (int)pr.PRODUCTCLASSID,
                                              productTypeId = pr.PRODUCTTYPEID,
@@ -33618,7 +33618,7 @@ namespace FintrakBanking.Repositories.Credit
                                                  loanApplicationDetailId = ld.LOANAPPLICATIONDETAILID,
                                                  loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                                  loanId = ln.TERMLOANID,
-                                                 customerId = ln.CUSTOMERID,
+                                                 customerId = cu.CUSTOMERCODE,
                                                  productId = ln.PRODUCTID,
                                                  productClassId = (int)pr.PRODUCTCLASSID,
                                                  productTypeId = pr.PRODUCTTYPEID,
@@ -33733,7 +33733,7 @@ namespace FintrakBanking.Repositories.Credit
                                                       creditAppraisalOperationId = lp.OPERATIONID,
                                                       loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                                       loanId = ln.REVOLVINGLOANID,
-                                                      customerId = ln.CUSTOMERID,
+                                                      customerId = cu.CUSTOMERCODE,
                                                       productId = ln.PRODUCTID,
                                                       productClassId = (int)pr.PRODUCTCLASSID,
                                                       productTypeId = pr.PRODUCTTYPEID,
@@ -33865,7 +33865,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var xx in exposureData)
                 {
                     xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                     xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                     xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                 }
@@ -33918,7 +33918,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var xx in exposureDigitalData)
                 {
                     xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                     xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                     xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                 }
@@ -33966,7 +33966,7 @@ namespace FintrakBanking.Repositories.Credit
                                     creditAppraisalOperationId = lp.OPERATIONID,
                                     loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                     loanId = ln.TERMLOANID,
-                                    customerId = ln.CUSTOMERID,
+                                    customerId = cu.CUSTOMERCODE,
                                     productId = ln.PRODUCTID,
                                     productClassId = pr.PRODUCTCLASSID,
                                     productTypeId = pr.PRODUCTTYPEID,
@@ -34087,7 +34087,7 @@ namespace FintrakBanking.Repositories.Credit
                                              creditAppraisalOperationId = lp.OPERATIONID,
                                              loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                              loanId = ln.REVOLVINGLOANID,
-                                             customerId = ln.CUSTOMERID,
+                                             customerId = cu.CUSTOMERCODE,
                                              productId = ln.PRODUCTID,
                                              productClassId = pr.PRODUCTCLASSID,
                                              productTypeId = pr.PRODUCTTYPEID,
@@ -34226,7 +34226,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var xx in exposureData)
                 {
                     xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                     xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                     xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                 }
@@ -34280,7 +34280,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var xx in exposureDigitalData)
                 {
                     xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                    xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                     xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                     xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                 }
@@ -34324,7 +34324,7 @@ namespace FintrakBanking.Repositories.Credit
                                     creditAppraisalOperationId = lp.OPERATIONID,
                                     loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                     loanId = ln.TERMLOANID,
-                                    customerId = ln.CUSTOMERID,
+                                    customerId = cu.CUSTOMERCODE,
                                     productId = ln.PRODUCTID,
                                     productClassId = pr.PRODUCTCLASSID,
                                     productTypeId = pr.PRODUCTTYPEID,
@@ -34442,7 +34442,7 @@ namespace FintrakBanking.Repositories.Credit
                                              creditAppraisalOperationId = lp.OPERATIONID,
                                              loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                              loanId = ln.REVOLVINGLOANID,
-                                             customerId = ln.CUSTOMERID,
+                                             customerId = cu.CUSTOMERCODE,
                                              productId = ln.PRODUCTID,
                                              productClassId = pr.PRODUCTCLASSID,
                                              productTypeId = pr.PRODUCTTYPEID,
@@ -34551,7 +34551,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -34602,7 +34602,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureDigitalData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -34644,7 +34644,7 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAppraisalOperationId = lp.OPERATIONID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productClassId = pr.PRODUCTCLASSID,
                                 productTypeId = pr.PRODUCTTYPEID,
@@ -34760,7 +34760,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productClassId = pr.PRODUCTCLASSID,
                                          productTypeId = pr.PRODUCTTYPEID,
@@ -34873,7 +34873,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -34924,7 +34924,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureDigitalData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -34968,7 +34968,7 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAppraisalOperationId = lp.OPERATIONID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productClassId = pr.PRODUCTCLASSID,
                                 productTypeId = pr.PRODUCTTYPEID,
@@ -35083,7 +35083,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productClassId = pr.PRODUCTCLASSID,
                                          productTypeId = pr.PRODUCTTYPEID,
@@ -35191,7 +35191,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -35241,7 +35241,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureDigitalData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -35283,7 +35283,7 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAppraisalOperationId = lp.OPERATIONID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productClassId = pr.PRODUCTCLASSID,
                                 productTypeId = pr.PRODUCTTYPEID,
@@ -35397,7 +35397,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productClassId = pr.PRODUCTCLASSID,
                                          productTypeId = pr.PRODUCTTYPEID,
@@ -35521,7 +35521,7 @@ namespace FintrakBanking.Repositories.Credit
                         foreach (var xx in exposureData)
                         {
                             xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                            xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                            xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                             xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                             xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                         }
@@ -35574,7 +35574,7 @@ namespace FintrakBanking.Repositories.Credit
                         foreach (var xx in exposureDigitalData)
                         {
                             xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                            xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                            xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                             xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                             xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                         }
@@ -35911,7 +35911,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanAssignId = (int)lr.LOANASSIGNID,
                                 agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 expCompletionDate = l.EXPCOMPLETIONDATE,
                                 productId = ln.PRODUCTID,
                                 commissionRate = lr.COMMISSIONRATE,
@@ -35961,7 +35961,7 @@ namespace FintrakBanking.Repositories.Credit
                                          loanAssignId = (int)lr.LOANASSIGNID,
                                          agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          expCompletionDate = l.EXPCOMPLETIONDATE,
                                          commissionRate = lr.COMMISSIONRATE,
@@ -36145,7 +36145,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanAssignId = (int)lr.LOANASSIGNID,
                                 agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY.ToUpper()).FirstOrDefault(),
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 expCompletionDate = l.EXPCOMPLETIONDATE,
                                 productId = ln.PRODUCTID,
                                 modeOfCollection = lr.MODEOFCOLLECTION,
@@ -36195,7 +36195,7 @@ namespace FintrakBanking.Repositories.Credit
                                          loanAssignId = (int)lr.LOANASSIGNID,
                                          agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          expCompletionDate = l.EXPCOMPLETIONDATE,
                                          modeOfCollection = lr.MODEOFCOLLECTION,
@@ -36268,7 +36268,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -36308,7 +36308,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureDigitalData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -36340,7 +36340,7 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAppraisalOperationId = lp.OPERATIONID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
@@ -36435,7 +36435,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          casaAccountId = ln.CASAACCOUNTID,
@@ -36524,7 +36524,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -36564,7 +36564,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureDigitalData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -36596,7 +36596,7 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAppraisalOperationId = lp.OPERATIONID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
@@ -36691,7 +36691,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          casaAccountId = ln.CASAACCOUNTID,
@@ -36782,7 +36782,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -36826,7 +36826,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureDigitalData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -36858,7 +36858,7 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAppraisalOperationId = lp.OPERATIONID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
@@ -36953,7 +36953,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          casaAccountId = ln.CASAACCOUNTID,
@@ -37033,7 +37033,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -37066,7 +37066,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in exposureDigitalData)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -37117,7 +37117,7 @@ namespace FintrakBanking.Repositories.Credit
                                 
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
@@ -37235,7 +37235,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          casaAccountId = ln.CASAACCOUNTID,
@@ -37419,7 +37419,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in dataLoanExposure)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -37485,7 +37485,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in dataDigitalLoanExposure)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -37535,7 +37535,7 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAppraisalOperationId = lp.OPERATIONID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
@@ -37655,7 +37655,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          recoveryMisCode = context.TBL_LOAN_RECOVERY_REPORTING_APPROVAL.Where(x => x.REFERENCEID == l.REFERENCEID).Select(x => x.MISCODE).FirstOrDefault(),
                                          recoveryRegion = context.TBL_LOAN_RECOVERY_REPORTING_APPROVAL.Where(x => x.REFERENCEID == l.REFERENCEID).Select(x => x.REGION).FirstOrDefault(),
@@ -37828,7 +37828,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in dataLoanExposure)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -37884,7 +37884,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in dataDigitalLoanExposure)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -37919,7 +37919,7 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAppraisalOperationId = lp.OPERATIONID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
@@ -38025,7 +38025,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          totalAllrecoveryAmount = lr.TOTALAMOUNTRECOVERY,
@@ -38710,7 +38710,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in dataExposureLoan)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -38753,7 +38753,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in dataDigitalExposureLoan)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -38778,7 +38778,7 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAppraisalOperationId = lp.OPERATIONID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
@@ -38871,7 +38871,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          totalAllrecoveryAmount = lr.TOTALAMOUNTRECOVERY,
@@ -39113,7 +39113,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in dataExposureLoan)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -39172,7 +39172,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in dataDigitalExposureLoan)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -39223,7 +39223,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
@@ -39341,7 +39341,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          casaAccountId = ln.CASAACCOUNTID,
@@ -39454,7 +39454,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in dataExposureLoan)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -39515,7 +39515,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var xx in dataDigitalExposureLoan)
             {
                 xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
-                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
@@ -39566,7 +39566,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
-                                customerId = ln.CUSTOMERID,
+                                customerId = cu.CUSTOMERCODE,
                                 productId = ln.PRODUCTID,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
@@ -39683,7 +39683,7 @@ namespace FintrakBanking.Repositories.Credit
                                          creditAppraisalOperationId = lp.OPERATIONID,
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
-                                         customerId = ln.CUSTOMERID,
+                                         customerId = cu.CUSTOMERCODE,
                                          productId = ln.PRODUCTID,
                                          productTypeId = pr.PRODUCTTYPEID,
                                          casaAccountId = ln.CASAACCOUNTID,
@@ -39777,7 +39777,7 @@ namespace FintrakBanking.Repositories.Credit
             var customerIds = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == recoveryAgent && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Select(x => x.CUSTOMERID).Distinct().ToList();
             var data = (from x in context.TBL_CUSTOMER
                         where
-                        customerIds.Contains(x.CUSTOMERID)
+                        customerIds.Contains(x.CUSTOMERCODE)
 
                         select new RecoveryCollectionsViewModel
                         {

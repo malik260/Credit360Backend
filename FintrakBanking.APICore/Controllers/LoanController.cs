@@ -2004,7 +2004,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.overwrite = provider.FormData["overwrite"] == "true";
                 entity.applicationReferenceNumber = provider.FormData["applicationReferenceNumber"];
                 entity.loanId = Convert.ToInt32(provider.FormData["loanId"]);
-                entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
+                entity.customerId = provider.FormData["customerId"];
                 entity.accreditedConsultant = Convert.ToInt32(provider.FormData["accreditedConsultant"]);
                 entity.loanAssignId = Convert.ToInt32(provider.FormData["loanAssignId"]);
                 entity.totalRecoveryAmount = Convert.ToDecimal(provider.FormData["totalRecoveryAmount"]);

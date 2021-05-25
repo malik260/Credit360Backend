@@ -9639,7 +9639,7 @@ namespace FintrakBanking.Repositories.Credit
             return approvedCycles;
         }
 
-        public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId, int customer)
+        public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId, string customer)
         {
             IEnumerable<RetailRecoveryCustomerTransactionsViewModels> records = null; 
             List<RetailRecoveryCustomerTransactionsViewModels> dataTermLoan = null;
@@ -9648,7 +9648,7 @@ namespace FintrakBanking.Repositories.Credit
             List<RetailRecoveryCustomerTransactionsViewModels> dataDigitalExposureLoan = null;
             List<RetailRecoveryCustomerTransactionsViewModels> dataExposureLoan = null;
 
-            if (customer > 0)
+            if (customer != null)
             {
                  dataTermLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                     join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
@@ -9667,7 +9667,7 @@ namespace FintrakBanking.Repositories.Credit
                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                     && lr.SOURCE.ToLower() == "retail"
-                                    && cu.CUSTOMERID == customer
+                                    && lr.CUSTOMERID == customer
 
                                     select new RetailRecoveryCustomerTransactionsViewModels
                                     {
@@ -9839,7 +9839,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                          && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                          && lr.SOURCE.ToLower() == "retail"
-                                         && cu.CUSTOMERID == customer
+                                         && lr.CUSTOMERID == customer
 
                                          select new RetailRecoveryCustomerTransactionsViewModels
                                          {
