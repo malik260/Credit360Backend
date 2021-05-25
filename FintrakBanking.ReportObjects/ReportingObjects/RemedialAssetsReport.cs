@@ -17,7 +17,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from ln in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
+                                join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERCODE
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.LOANREFERENCE  equals b.LOANREFERENCE
                                 where
                                 (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
@@ -45,7 +45,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var dataLoan = (from ln in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
+                                join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERCODE
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
                                 (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
@@ -429,7 +429,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             {
                 var dataLoan = (from ln in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                 join a in context.TBL_GLOBAL_EXPOSURE on ln.LOANREFERENCE equals a.REFERENCENUMBER
-                                join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
+                                join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERCODE
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.LOANREFERENCE equals b.LOANREFERENCE
                                 where
                                 (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
@@ -450,7 +450,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 var dataDigitalLoan = (from ln in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                 join a in context.TBL_GLOBAL_EXPOSURE on ln.LOANREFERENCE equals a.REFERENCENUMBER
-                                join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
+                                join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERCODE
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.LOANREFERENCE equals b.LOANREFERENCE
                                 where
                                 (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
