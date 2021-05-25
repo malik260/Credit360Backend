@@ -1917,6 +1917,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string isCollateral { get; set; }
         public string policyType { get; set; }
         public string comment { get; set; }
+        public string otherValuer { get; set; }
+        public decimal? forcedSaleValue { get; set; }
+        public decimal? openMarketValue { get; set; }
     }
 
     //public class MaturityIntructionViewModel : GeneralEntity

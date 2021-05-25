@@ -19419,6 +19419,23 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
+
+        public bool saveBulkInsurancePolicyEntries(List<MultipleInsuranceOutputViewModel> models, UserInfo user)
+        {
+            List<TBL_COLLATERAL_INSURANCE_TRACKING> bulkPolicyTable = new List<TBL_COLLATERAL_INSURANCE_TRACKING>();
+            foreach (var policyRequest in models)
+            {
+                if (policyRequest.passed == true)
+                {
+                    var policyData = addBulkPolicy(policyRequest);
+
+                    bulkPolicyTable.Add(policyData);
+                }
+            }
+            context.TBL_COLLATERAL_INSURANCE_TRACKING.AddRange(bulkPolicyTable);
+            return context.SaveChanges() > 0;
+        }
+
         public bool saveBulkLoanAssignmentToAgent(List<GlobalExposureApplicationViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user)
         {
             bool result = false;
@@ -21077,6 +21094,42 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVALSTATUS = (short)ApprovalStatusEnum.Pending
             };
             return data;
+        }
+
+        private TBL_COLLATERAL_INSURANCE_TRACKING addBulkPolicy(MultipleInsuranceOutputViewModel insurancePolicy)
+        {
+
+            var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
+            {
+                INSURANCECOMPANYID = insurancePolicy.insuranceCompanyId,
+                ISURANCECOMPANYADDRESS = insurancePolicy.companyAddress,
+                POLICYNUMBER = insurancePolicy.referenceNumber,
+                INSURANCESTARTDATE = insurancePolicy.startDate,
+                INSURANCEENDDATE = insurancePolicy.expiryDate,
+                SUMINSURED = insurancePolicy.sumInsured,
+                PREMIUMPAID = insurancePolicy.inSurPremiumAmount,
+                INSURANCESTATUSID = insurancePolicy.insuranceStatus,
+                COLLATERALCUSTOMERID = insurancePolicy.collateralCustomerId,
+                LOANAPPLICATIONDETAILID = insurancePolicy.loanApplicationDetailId,
+                VALUATIONSTARTDATE = insurancePolicy.valuationStartDate,
+                VALUATIONENDDATE = insurancePolicy.valuationEndDate,
+                OMV = insurancePolicy.openMarketValue,
+                FSV = insurancePolicy.forcedSaleValue,
+                VALUERID = insurancePolicy.valuerId,
+                COLLATERALDETAILS = insurancePolicy.collateralDetails,
+                INSURANCEPOLICYTYPEID = insurancePolicy.insurancePolicyTypeId,
+                OTHERVALUER = insurancePolicy.otherValuer,
+                OTHERINSURANCECOMPANY = insurancePolicy.otherInsuranceCompany,
+                OTHERINSURANCEPOLICYTYPE = insurancePolicy.otherInsurancePolicyType,
+                COLLATERALTYPE = insurancePolicy.collateralTypeId,
+                COLLATERALSUBTYPE = insurancePolicy.collateralSubTypeId,
+                GPSCOORDINATES = insurancePolicy.gpsCoordinates,
+                FIRSTLOSSPAYEE = insurancePolicy.firstLossPayee,
+                INSURABLEVALUE = insurancePolicy.sumInsured,
+                COMMENT = insurancePolicy.comment,
+            });
+        
+            return insuranceTracking;
         }
 
 

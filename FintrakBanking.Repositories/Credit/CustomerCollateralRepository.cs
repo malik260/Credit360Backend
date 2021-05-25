@@ -11376,7 +11376,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
 
                         var customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).FirstOrDefault();
-                        if (customerCollateral.CUSTOMERID != null)
+                        if (customerCollateral?.CUSTOMERID != null)
                         {
                             customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerCollateral.CUSTOMERID).FirstOrDefault();
                         }
@@ -11485,7 +11485,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                     var customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).FirstOrDefault();
-                    if (customerCollateral.CUSTOMERID != null)
+                    if (customerCollateral?.CUSTOMERID != null)
                     {
                         customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerCollateral.CUSTOMERID).FirstOrDefault();
                     }
@@ -11596,7 +11596,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                     var customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).FirstOrDefault();
-                    if (customerCollateral.CUSTOMERID != null)
+                    if (customerCollateral?.CUSTOMERID != null)
                     {
                         customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerCollateral.CUSTOMERID).FirstOrDefault();
                     }

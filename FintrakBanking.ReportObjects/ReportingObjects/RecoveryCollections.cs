@@ -14,7 +14,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 {
     public class RecoveryCollections
     {
-        public IEnumerable<RecoveryCollectionsViewModel> DelinquentAccounts(DateTime startDate, DateTime endDate, int dpd)
+        public IEnumerable<RecoveryCollectionsViewModel> DelinquentAccounts(DateTime startDate, DateTime endDate, int dpd, decimal amount)
         {
             List<SubHead> staffmisi = new List<SubHead>();
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -29,7 +29,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                              && ln.UNPODAYSOVERDUE >= dpd
-                                             && lr.TOTALAMOUNTRECOVERY < 50000000
+                                             && lr.TOTALAMOUNTRECOVERY < amount
                                              && lr.ISFULLYRECOVERED == false
                                              && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                              && lr.SOURCE.ToLower() == "retail"
@@ -78,7 +78,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     where
                                     (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                     && ln.UNPODAYSOVERDUE >= dpd
-                                    && lr.TOTALAMOUNTRECOVERY < 50000000
+                                    && lr.TOTALAMOUNTRECOVERY < amount
                                     && lr.ISFULLYRECOVERED == false
                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                     && lr.SOURCE.ToLower() == "retail"
@@ -134,7 +134,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                              && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= dpd
-                                             && lr.TOTALAMOUNTRECOVERY < 50000000
+                                             && lr.TOTALAMOUNTRECOVERY < amount
                                              && lr.ISFULLYRECOVERED == false
                                              && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                              && lr.SOURCE.ToLower() == "retail"
@@ -203,7 +203,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                   where
                                                   (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                                   && DbFunctions.DiffDays(DateTime.UtcNow, ln.MATURITYDATE).Value >= dpd
-                                                  && lr.TOTALAMOUNTRECOVERY < 50000000
+                                                  && lr.TOTALAMOUNTRECOVERY < amount
                                                   && lr.ISFULLYRECOVERED == false
                                                   && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                                   && lr.SOURCE.ToLower() == "retail"
@@ -1206,7 +1206,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  productCode = ln.PRODUCTCODE,
                                                  productName = ln.PRODUCTNAME,
                                                  principalOutstandingBalLcy = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
-                                                 minimumAmountDueUnpaid = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
+                                                 minimumAmountDueUnpaid = (decimal)ln.TOTALUNSETTLEDAMOUNT, //(decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
                                                  totalOutstanding = lr.TOTALAMOUNTRECOVERY,
                                                  bookingDate = ln.BOOKINGDATE,
                                                  valueDate = ln.BOOKINGDATE,
@@ -1271,7 +1271,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                         productCode = ln.PRODUCTCODE,
                                         productName = ln.PRODUCTNAME,
                                         principalOutstandingBalLcy = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
-                                        minimumAmountDueUnpaid = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
+                                        minimumAmountDueUnpaid = (decimal)ln.TOTALUNSETTLEDAMOUNT, //(decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
                                         totalOutstanding = lr.TOTALAMOUNTRECOVERY,
                                         bookingDate = ln.BOOKINGDATE,
                                         valueDate = ln.BOOKINGDATE,
@@ -1476,7 +1476,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                             productCode = ln.PRODUCTCODE,
                                             productName = ln.PRODUCTNAME,
                                             principalOutstandingBalLcy = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
-                                            minimumAmountDueUnpaid = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
+                                            minimumAmountDueUnpaid = (decimal)ln.TOTALUNSETTLEDAMOUNT, //(decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
                                             totalOutstanding = lr.TOTALAMOUNTRECOVERY,
                                             bookingDate = ln.BOOKINGDATE,
                                             valueDate = ln.BOOKINGDATE,
@@ -1536,7 +1536,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                    productCode = ln.PRODUCTCODE,
                                                    productName = ln.PRODUCTNAME,
                                                    principalOutstandingBalLcy = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
-                                                   minimumAmountDueUnpaid = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
+                                                   minimumAmountDueUnpaid = (decimal)ln.TOTALUNSETTLEDAMOUNT, //(decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
                                                    totalOutstanding = lr.TOTALAMOUNTRECOVERY,
                                                    bookingDate = ln.BOOKINGDATE,
                                                    valueDate = ln.BOOKINGDATE,
