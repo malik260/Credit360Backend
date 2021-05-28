@@ -75,7 +75,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanViewModel> AddBulkPrepaymentReversal(LoanReviewOperationViewModel model, int companyId);
         bool AddBulkPrepaymentReversalData(LoanViewModel data, int batchCode, DateTime applicationDate);
         string GetTransactionReferenceNo();
-     
+        CollectionsRetailComputationVariableSetupViewModel getAllRecoveryComputationVariables(int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> getAllLoansOperationRecoveryAnalysisByAgent(string source, int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> GetLoanOperationRecoveryAnalysis(int staffId, int companyId);

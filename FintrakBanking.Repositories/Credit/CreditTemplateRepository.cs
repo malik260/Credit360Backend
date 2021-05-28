@@ -387,6 +387,14 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user, bool isThirdPartyFacility)
         {
             // int staffId, is REDUNDANT!
+
+            var templateOperation = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.TARGETID == targetId).FirstOrDefault();
+            if(templateOperation != null)
+            {
+                operationId = templateOperation.OPERATIONID;
+            }
+
             var printedDoc = "";
             var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)

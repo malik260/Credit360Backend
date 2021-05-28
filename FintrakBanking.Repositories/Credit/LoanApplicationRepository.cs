@@ -7992,7 +7992,7 @@ namespace FintrakBanking.Repositories.Credit
                                 select new LoanReviewApplicationViewModel
                                 {
                                     applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                    customerName = g.FIRSTNAME + "" + g.MIDDLENAME + "" + g.LASTNAME,
+                                    customerName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
                                     loanApplicationId = a.LOANAPPLICATIONID,
                                     applicationDate = a.APPLICATIONDATE,
                                     applicationAmount = d.PROPOSEDAMOUNT,
@@ -8226,11 +8226,15 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LmsLaonApplcationCancelllationCompelted(LoanReviewApplicationViewModel data)
         {
-            var val = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanReviewApplicationId).Select(x => x).FirstOrDefault();
+            if(data.loanApplicationId == 0)
+            {
+                data.loanApplicationId = data.loanReviewApplicationId;
+            }
+            var val = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
             val.LASTUPDATEDBY = data.createdBy;
             val.DATETIMEUPDATED = DateTime.Now;
-            ArchiveLmsLoanApplication(data.loanReviewApplicationId, (int)OperationsEnum.LmsLoanApplicationCancellation, val.APPLICATIONSTATUSID, data.createdBy);
+            ArchiveLmsLoanApplication(data.loanApplicationId, (int)OperationsEnum.LmsLoanApplicationCancellation, val.APPLICATIONSTATUSID, data.createdBy);
             var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == data.createdBy);
             var lastTrail = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == val.LOANAPPLICATIONID && t.OPERATIONID == val.OPERATIONID).OrderByDescending(t => t.APPROVALTRAILID).FirstOrDefault();
             if (lastTrail != null)
@@ -9635,7 +9639,7 @@ namespace FintrakBanking.Repositories.Credit
             return approvedCycles;
         }
 
-        public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId, int customer)
+        public IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId, string customer)
         {
             IEnumerable<RetailRecoveryCustomerTransactionsViewModels> records = null; 
             List<RetailRecoveryCustomerTransactionsViewModels> dataTermLoan = null;
@@ -9644,7 +9648,7 @@ namespace FintrakBanking.Repositories.Credit
             List<RetailRecoveryCustomerTransactionsViewModels> dataDigitalExposureLoan = null;
             List<RetailRecoveryCustomerTransactionsViewModels> dataExposureLoan = null;
 
-            if (customer > 0)
+            if (customer != null)
             {
                  dataTermLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                     join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
@@ -9663,10 +9667,11 @@ namespace FintrakBanking.Repositories.Credit
                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                     && lr.SOURCE.ToLower() == "retail"
-                                    && cu.CUSTOMERID == customer
+                                    && lr.CUSTOMERID == customer
 
                                     select new RetailRecoveryCustomerTransactionsViewModels
                                     {
+                                        totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                         loanApplicationId = lp.LOANAPPLICATIONID,
                                         currencyId = ld.CURRENCYID,
                                         accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
@@ -9740,6 +9745,7 @@ namespace FintrakBanking.Repositories.Credit
                                     casaAccountName = "CURRENT ACCOUNT",
                                     totalExposure = (decimal)ln.TOTALEXPOSURE,
                                     totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     applicationReferenceNumber = ln.REFERENCENUMBER,
                                     misCode = ln.ACCOUNTOFFICERCODE,
@@ -9788,6 +9794,7 @@ namespace FintrakBanking.Repositories.Credit
                                             casaAccountName = "CURRENT ACCOUNT",
                                             totalExposure = (decimal)ln.TOTALEXPOSURE,
                                             totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                            totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                             loanReferenceNumber = ln.REFERENCENUMBER,
                                             applicationReferenceNumber = ln.REFERENCENUMBER,
                                             misCode = ln.ACCOUNTOFFICERCODE,
@@ -9832,10 +9839,11 @@ namespace FintrakBanking.Repositories.Credit
                                          && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                          && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                          && lr.SOURCE.ToLower() == "retail"
-                                         && cu.CUSTOMERID == customer
+                                         && lr.CUSTOMERID == customer
 
                                          select new RetailRecoveryCustomerTransactionsViewModels
                                          {
+                                             totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                              loanApplicationId = lp.LOANAPPLICATIONID,
                                              totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
                                              totalExposure = lp.TOTALEXPOSUREAMOUNT,
@@ -9902,6 +9910,7 @@ namespace FintrakBanking.Repositories.Credit
                                         totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
                                         loanReferenceNumber = ln.REFERENCENUMBER,
                                         applicationReferenceNumber = ln.REFERENCENUMBER,
+                                        totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                         misCode = ln.ACCOUNTOFFICERCODE,
                                         teamMiscode = ln.TEAMCODE,
                                         principalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
@@ -9949,6 +9958,7 @@ namespace FintrakBanking.Repositories.Credit
                                                totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
                                                loanReferenceNumber = ln.REFERENCENUMBER,
                                                applicationReferenceNumber = ln.REFERENCENUMBER,
+                                               totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                                misCode = ln.ACCOUNTOFFICERCODE,
                                                teamMiscode = ln.TEAMCODE,
                                                principalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
@@ -10012,6 +10022,7 @@ namespace FintrakBanking.Repositories.Credit
                                     branchId = ln.BRANCHID,
                                     totalExposure = lp.TOTALEXPOSUREAMOUNT,
                                     totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
+                                    totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                     loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                     applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                     principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
@@ -10069,6 +10080,7 @@ namespace FintrakBanking.Repositories.Credit
                                          loanApplicationId = lp.LOANAPPLICATIONID,
                                          totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
                                          totalExposure = lp.TOTALEXPOSUREAMOUNT,
+                                         totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                          currencyId = ld.CURRENCYID,
                                          accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
                                          accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
@@ -10122,6 +10134,7 @@ namespace FintrakBanking.Repositories.Credit
                              && (DbFunctions.TruncateTime(a.APPROVEDDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.APPROVEDDATE) <= DbFunctions.TruncateTime(endDate))
                              select new RetailRecoveryCustomerTransactionsViewModels
                              {
+                                 totalUnsettledAmount = record.totalUnsettledAmount,
                                  totalExposure = record.totalExposure,
                                  totalAmountRecovery = record.totalAmountRecovery,
                                  startDate = startDate,

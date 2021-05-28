@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int LOANASSIGNID { get; set; }
         public int LOANID { get; set; }
         public string APPLICATIONREFERENCENUMBER { get; set; }
-        public int CUSTOMERID { get; set; }
+        public string CUSTOMERID { get; set; }
         public int ACCREDITEDCONSULTANT { get; set; }
         public DateTime DATEASSIGNED { get; set; }
         public int CREATEDBY { get; set; }

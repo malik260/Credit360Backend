@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         //public FinTrakBankingContext _bankingContext { get; private set; }
-        public object publicClientId { get; private set; }
+        public string publicClientId { get; private set; }
 
         public override Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {

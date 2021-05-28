@@ -31,7 +31,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository casaLien;
         private FinTrakBankingDocumentsContext documentsContext;
 
-        public object entiry { get; private set; }
+        public string entiry { get; private set; }
 
         public ContingentLoanUsageRepository(FinTrakBankingContext context, IGeneralSetupRepository genSetup,
             IAuditTrailRepository auditTrail, IWorkflow workflow, ICasaLienRepository casaLien, FinTrakBankingDocumentsContext documentsContext)

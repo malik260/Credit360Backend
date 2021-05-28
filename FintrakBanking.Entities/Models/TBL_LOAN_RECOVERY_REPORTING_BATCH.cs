@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int LOANRECOVERYREPORTBATCHID { get; set; }
         public string REFERENCEID { get; set; }
         public string LOANREFERENCENUMBER { get; set; }
-        public int CUSTOMERID { get; set; }
+        public string CUSTOMERID { get; set; }
         public int ACCREDITEDCONSULTANT { get; set; }
         public DateTime DATETIMECREATED { get; set; }
         public int CREATEDBY { get; set; }

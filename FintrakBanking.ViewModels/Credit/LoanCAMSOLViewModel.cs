@@ -79,10 +79,10 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal balance { get; set; }
         public decimal loanPrincipalAmount { get; set; }
         public string camsolTypeName { get; set; }
-        public object signatoryId { get; set; }
-        public object signatoryName { get; set; }
-        public object signatoryInitials { get; set; }
-        public object signatoryTitle { get; set; }
+        public int? signatoryId { get; set; }
+        public string signatoryName { get; set; }
+        public string signatoryInitials { get; set; }
+        public string signatoryTitle { get; set; }
     }
 
     public class camsolBulkFeedbackViewModel

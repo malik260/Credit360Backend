@@ -19419,6 +19419,23 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
+
+        public bool saveBulkInsurancePolicyEntries(List<MultipleInsuranceOutputViewModel> models, UserInfo user)
+        {
+            List<TBL_COLLATERAL_INSURANCE_TRACKING> bulkPolicyTable = new List<TBL_COLLATERAL_INSURANCE_TRACKING>();
+            foreach (var policyRequest in models)
+            {
+                if (policyRequest.passed == true)
+                {
+                    var policyData = addBulkPolicy(policyRequest);
+
+                    bulkPolicyTable.Add(policyData);
+                }
+            }
+            context.TBL_COLLATERAL_INSURANCE_TRACKING.AddRange(bulkPolicyTable);
+            return context.SaveChanges() > 0;
+        }
+
         public bool saveBulkLoanAssignmentToAgent(List<GlobalExposureApplicationViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user)
         {
             bool result = false;
@@ -20528,6 +20545,70 @@ namespace FintrakBanking.Repositories.Credit
             return new Tuple<List<multipleDisbursementOutputViewModel>, bool>(loanInputs, true);
         }
 
+
+        public Tuple<List<MultipleInsuranceOutputViewModel>, bool> preBulkInsurance(byte[] file, UserInfo user, bool isFinal)
+        {
+            List<TBL_COLLATERAL_INSURANCE_TRACKING> insurance = new List<TBL_COLLATERAL_INSURANCE_TRACKING>();
+            List<MultipleInsuranceOutputViewModel> insuranceInputs = GetBulkInsuranceInputs(file);
+            
+            var systemData = generalSetup.GetApplicationDate();
+            bool response = true;
+            List<InsurancePolicy> insurancePolicyViewModels = new List<InsurancePolicy>();
+            int ctr = 0;
+            foreach (var entry in insuranceInputs)
+            {
+                if (entry.isCollateral.ToLower() == "n" || entry.isCollateral.ToLower() == "no")
+                {
+                    ctr = ctr + 1;
+                    CollateralInsuranceTrackingViewModel insurancePolicy = new CollateralInsuranceTrackingViewModel();
+                    if (entry.passed == false)
+                    {
+                        insurancePolicy.customerCode = entry.customerCode;
+                        insurancePolicy.passed = entry.passed;
+                        insurancePolicy.errorMessages.AddRange(entry.errorMessages);
+                    }
+
+                    insurancePolicy.passed = entry.passed;
+                    insurancePolicy = buildInsuranceModel(entry, user);
+
+                    var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
+                    {
+                        INSURANCECOMPANYID = insurancePolicy.insuranceCompanyId,
+                        ISURANCECOMPANYADDRESS = insurancePolicy.companyAddress,
+                        POLICYNUMBER = insurancePolicy.referenceNumber,
+                        INSURANCESTARTDATE = insurancePolicy.startDate,
+                        INSURANCEENDDATE = insurancePolicy.expiryDate,
+                        SUMINSURED = insurancePolicy.sumInsured,
+                        PREMIUMPAID = insurancePolicy.inSurPremiumAmount,
+                        INSURANCESTATUSID = insurancePolicy.insuranceStatus,
+                        COLLATERALCUSTOMERID = insurancePolicy.collateralCustomerId,
+                        LOANAPPLICATIONDETAILID = insurancePolicy.loanApplicationDetailId,
+                        VALUATIONSTARTDATE = insurancePolicy.valuationStartDate,
+                        VALUATIONENDDATE = insurancePolicy.valuationEndDate,
+                        OMV = insurancePolicy.openMarketValue,
+                        FSV = insurancePolicy.forcedSaleValue,
+                        VALUERID = insurancePolicy.valuerId,
+                        COLLATERALDETAILS = insurancePolicy.collateralDetails,
+                        INSURANCEPOLICYTYPEID = insurancePolicy.insurancePolicyTypeId,
+                        OTHERVALUER = insurancePolicy.otherValuer,
+                        OTHERINSURANCECOMPANY = insurancePolicy.otherInsuranceCompany,
+                        OTHERINSURANCEPOLICYTYPE = insurancePolicy.otherInsurancePolicyType,
+                        COLLATERALTYPE = insurancePolicy.collateralTypeId,
+                        COLLATERALSUBTYPE = insurancePolicy.collateralSubTypeId,
+                        GPSCOORDINATES = insurancePolicy.gpsCoordinates,
+                        FIRSTLOSSPAYEE = insurancePolicy.firstLossPayee,
+                        INSURABLEVALUE = insurancePolicy.sumInsured,
+                        COMMENT = insurancePolicy.comment,
+                    });
+                }
+
+            }
+
+            if (isFinal) try { response = context.SaveChanges() > 0; } catch (Exception e) { throw e; } 
+
+            return new Tuple<List<MultipleInsuranceOutputViewModel>, bool>(insuranceInputs, true);
+        }
+
         //private multipleDisbursementOutputViewModel padOutPutModel(multipleDisbursementOutputViewModel output, LoanViewModel model)
         //{
         //    return output;
@@ -20682,6 +20763,225 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
+        private List<MultipleInsuranceOutputViewModel> GetBulkInsuranceInputs(byte[] file)
+        {
+            List<MultipleInsuranceOutputViewModel> bulkEntries = new List<MultipleInsuranceOutputViewModel>();
+            TBL_COLLATERAL_CUSTOMER customerCollateral = null;
+
+            //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
+
+            MemoryStream ms = new MemoryStream(file);
+
+            ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
+
+            //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+            ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
+
+            CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+
+            for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
+            {
+                MultipleInsuranceOutputViewModel currentLine = new MultipleInsuranceOutputViewModel();
+                int ctr = 0;
+                currentLine.errorMessages = new List<string>(); 
+                for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
+                {
+                    ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
+
+                    string cellName = CellRange.RowColumnToPosition(j, i);
+                    string cellRow = ExcelRowCollection.RowIndexToName(j);
+                    string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
+                    if (Convert.ToInt32(cellRow) == 1) continue;
+                    ctr = Convert.ToInt32(cellRow);
+                    switch (cellColumn)
+                    {
+                        case "A":
+                            currentLine.passed = true;
+                            try { currentLine.isCollateral = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            break;
+                        case "B":
+                            currentLine.passed = true;
+                            try {
+                                currentLine.customerId = cell.Value.ToString();
+                                var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == currentLine.customerId).FirstOrDefault();
+                                if (customer == null && (currentLine.isCollateral.ToLower() == "n" || currentLine.isCollateral.ToLower() == "no"))
+                                {
+                                    currentLine.passed = false;
+                                    currentLine.errorMessages.Add("Customer with customercode " + cell.Value.ToString() + " does not exist on Credit360");
+                                }
+
+                            } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "C":
+                            currentLine.passed = true;
+                            try { currentLine.collateralCode = cell.Value.ToString();
+                                if (currentLine.isCollateral.ToLower() == "n")
+                                {
+                                    customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == cell.Value.ToString()).FirstOrDefault();
+                                    if (customerCollateral == null)
+                                    {
+                                        currentLine.passed = false;
+                                        currentLine.errorMessages.Add("<br/>Collateral with collateralcode " + cell.Value.ToString() + " does not exist on Credit360");
+                                    }
+                                    else
+                                    {
+                                        var customerCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE == currentLine.customerId).ToList();
+                                        if (customerCollaterals.Count() > 0 && customerCollaterals.Count() == 1)
+                                        {
+                                            currentLine.collateralCustomerId = customerCollaterals[0].COLLATERALCUSTOMERID;
+                                            currentLine.collateralDetails = customerCollaterals[0].COLLATERALSUMMARY;
+                                            currentLine.collateralCode = customerCollaterals[0].COLLATERALCODE;
+                                        }
+                                        else
+                                        {
+                                            currentLine.collateralCustomerId = 0;
+                                            currentLine.collateralDetails = "";
+                                            currentLine.collateralCode = "";
+                                            currentLine.passed = false;
+                                            currentLine.errorMessages.Add("<br/>Collateral with customercode " + currentLine.customerId + " does not exist on Credit360");
+                                        }
+                                        var validateCollateralInsurance = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).ToList();
+                                        if (validateCollateralInsurance.Any())
+                                        {
+                                            currentLine.passed = false;
+                                            currentLine.errorMessages.Add("<br/>Insurance already exist on Credit360");
+                                        }
+                                    }
+                                }
+                            } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "D":
+                            currentLine.passed = true;
+                            try { currentLine.referenceNumber = cell.Value.ToString();
+                                var validateInsurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == cell.Value.ToString()).ToList();
+                                if (validateInsurancePolicy.Any())
+                                {
+                                    currentLine.passed = false;
+                                    currentLine.errorMessages.Add("<br/>Policy number " + cell.Value.ToString() + " already exist on Credit360");
+                                }
+
+                            }
+                            catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message); 
+                            }
+                            break;
+                        case "E":
+                            currentLine.passed = true;
+                            try
+                            {
+                                currentLine.policyType = cell.Value.ToString();
+                                var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => currentLine.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
+                                if (insurancePolicyTypeDetail == null)
+                                {
+                                    currentLine.insurancePolicyTypeId = null;
+                                    currentLine.passed = false;
+                                    currentLine.errorMessages.Add("<br/>Policy type " + cell.Value.ToString() + " does not exist on Credit360");
+                                }
+                                else
+                                {
+                                    currentLine.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
+                                }
+                            }
+                            catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "F":
+                            currentLine.passed = true;
+                            try { currentLine.insuranceCompany = cell.Value.ToString();
+                                var insuranceCompanyDetail = context.TBL_INSURANCE_COMPANY.Where(x => cell.Value.ToString().Contains(x.COMPANYNAME)).FirstOrDefault();
+                                if (insuranceCompanyDetail == null)
+                                {
+                                    currentLine.insuranceCompanyId = null;
+                                    currentLine.companyAddress = null;
+                                    currentLine.passed = false;
+                                    currentLine.errorMessages.Add("<br/>Insurance company " + cell.Value.ToString() + " does not exist on Credit360");
+                                }
+                                else
+                                {
+                                    currentLine.insuranceCompanyId = insuranceCompanyDetail.INSURANCECOMPANYID;
+                                    currentLine.companyAddress = insuranceCompanyDetail.ADDRESS;
+                                }
+                            } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "G":
+                            currentLine.passed = true;
+                            try { currentLine.startDate = Convert.ToDateTime(cell.Value); } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "H":
+                            currentLine.passed = true;
+                            try { currentLine.expiryDate = Convert.ToDateTime(cell.Value); } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "I":
+                            currentLine.passed = true;
+                            try { currentLine.sumInsured = Convert.ToDecimal(cell.Value); } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "J":
+                            currentLine.passed = true;
+                            try { currentLine.premiumAmount = Convert.ToDecimal(cell.Value); } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                    }
+                }
+                if (ctr > 1) bulkEntries.Add(currentLine);
+            };
+
+            return bulkEntries;
+        }
+
+        private CollateralInsuranceTrackingViewModel buildInsuranceModel(MultipleInsuranceOutputViewModel input, UserInfo user)
+        {
+            var model = new CollateralInsuranceTrackingViewModel();
+
+            if (String.IsNullOrWhiteSpace(input.referenceNumber) || String.IsNullOrEmpty(input.referenceNumber))
+            {
+                var refNo = CommonHelpers.GenerateRandomDigitCode(7);
+                input.referenceNumber = refNo;
+            }
+
+            if (String.IsNullOrWhiteSpace(input.collateralCode) || String.IsNullOrEmpty(input.collateralCode))
+            {
+                var collateralCode = CommonHelpers.GenerateRandomDigitCode(7);
+                input.collateralCode = collateralCode;
+            }
+
+
+
+            model.insuranceCompanyId = input.insuranceCompanyId;
+            model.companyAddress = input.companyAddress;
+            model.referenceNumber = input.referenceNumber;
+            model.startDate = (DateTime)input.startDate;
+            model.expiryDate = (DateTime)input.expiryDate;
+            model.sumInsured = (decimal)input.sumInsured;
+            model.inSurPremiumAmount = (decimal)input.premiumAmount;
+            model.insuranceStatus = (input.expiryDate.Value > DateTime.Now) ? 1 : 2;
+            model.collateralCustomerId = (int)input.collateralCustomerId;
+            model.loanApplicationDetailId = 0;
+            model.valuationStartDate = null;
+            model.valuationEndDate = null;
+            model.openMarketValue = null;
+            model.forcedSaleValue = null;
+            model.valuerId = null;
+            model.collateralDetails = input.collateralDetails;
+            model.insurancePolicyTypeId = input.insurancePolicyTypeId;
+            model.otherValuer = "";
+            model.otherInsuranceCompany = "";
+            model.otherInsurancePolicyType = "";
+            model.collateralTypeId = null;
+            model.collateralSubTypeId = null;
+            model.gpsCoordinates = input.gpsCoordinates;
+            model.firstLossPayee = input.firstLossPayee;
+            model.insurableValue = input.sumInsured;
+            model.comment = input.comment;
+            model.collateralCode = input.collateralCode;
+
+            return model;
+        }
 
         private TBL_LOAN addLoan(LoanViewModel entity)
         {
@@ -20794,6 +21094,42 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVALSTATUS = (short)ApprovalStatusEnum.Pending
             };
             return data;
+        }
+
+        private TBL_COLLATERAL_INSURANCE_TRACKING addBulkPolicy(MultipleInsuranceOutputViewModel insurancePolicy)
+        {
+
+            var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
+            {
+                INSURANCECOMPANYID = insurancePolicy.insuranceCompanyId,
+                ISURANCECOMPANYADDRESS = insurancePolicy.companyAddress,
+                POLICYNUMBER = insurancePolicy.referenceNumber,
+                INSURANCESTARTDATE = insurancePolicy.startDate,
+                INSURANCEENDDATE = insurancePolicy.expiryDate,
+                SUMINSURED = insurancePolicy.sumInsured,
+                PREMIUMPAID = insurancePolicy.inSurPremiumAmount,
+                INSURANCESTATUSID = insurancePolicy.insuranceStatus,
+                COLLATERALCUSTOMERID = insurancePolicy.collateralCustomerId,
+                LOANAPPLICATIONDETAILID = insurancePolicy.loanApplicationDetailId,
+                VALUATIONSTARTDATE = insurancePolicy.valuationStartDate,
+                VALUATIONENDDATE = insurancePolicy.valuationEndDate,
+                OMV = insurancePolicy.openMarketValue,
+                FSV = insurancePolicy.forcedSaleValue,
+                VALUERID = insurancePolicy.valuerId,
+                COLLATERALDETAILS = insurancePolicy.collateralDetails,
+                INSURANCEPOLICYTYPEID = insurancePolicy.insurancePolicyTypeId,
+                OTHERVALUER = insurancePolicy.otherValuer,
+                OTHERINSURANCECOMPANY = insurancePolicy.otherInsuranceCompany,
+                OTHERINSURANCEPOLICYTYPE = insurancePolicy.otherInsurancePolicyType,
+                COLLATERALTYPE = insurancePolicy.collateralTypeId,
+                COLLATERALSUBTYPE = insurancePolicy.collateralSubTypeId,
+                GPSCOORDINATES = insurancePolicy.gpsCoordinates,
+                FIRSTLOSSPAYEE = insurancePolicy.firstLossPayee,
+                INSURABLEVALUE = insurancePolicy.sumInsured,
+                COMMENT = insurancePolicy.comment,
+            });
+        
+            return insuranceTracking;
         }
 
 

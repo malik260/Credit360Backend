@@ -397,7 +397,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         var staffBusinessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(this.businessUnitId);
                         if (staffBusinessUnit != null && approvalSetup.ISRETAILONLYROUNDROBIN == true)
                         {
-                            if (staffBusinessUnit.BUSINESSCOMMONNAME?.ToLower() != "retail") return;
+                            if (!staffBusinessUnit.BUSINESSCOMMONNAME?.ToLower().Contains("retail") ?? false) return;
                         }
                     }
 
@@ -2144,6 +2144,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public void LogWorkflowNotifications(string fromAddress, string toAddress, string messageSubject, string messageBody)
         {
+            if (toAddress == null || toAddress == "") return;
+            
             var message = new TBL_MESSAGE_LOG()
             {
                 TOADDRESS = toAddress,

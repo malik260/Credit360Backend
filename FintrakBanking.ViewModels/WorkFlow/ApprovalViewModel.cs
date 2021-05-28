@@ -11,7 +11,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int? destinationOperationId { get; set; }
         private bool _keepPending = true;
         public int? toStaffId { get; set; }
-        public object[] applicationId { get; set; }
+        public int[] applicationId { get; set; }
         public bool isFlowTest { get; set; }
         public bool isFromPc { get; set; }
         public int? approvalLevelId { get; set; }
@@ -56,7 +56,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public decimal feeAmount { get; set; }
         public double feeRate { get; set; }
         public bool? documentProvided { get; set; }
-        public object[] requestId { get; set; }
+        public int[] requestId { get; set; }
         public string currentUserCode { get; set; }
         public short sourceOperationId { get; set; }
         public short sourceTargetId { get; set; }
@@ -74,7 +74,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int? destinationOperationId { get; set; }
         private bool _keepPending = true;
         public int? toStaffId { get; set; }
-        public object[] applicationId { get; set; }
+        public int[] applicationId { get; set; }
         public bool isFlowTest { get; set; }
         public bool isFromPc { get; set; }
         public int? approvalLevelId { get; set; }
@@ -120,7 +120,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public decimal feeAmount { get; set; }
         public double feeRate { get; set; }
         public bool? documentProvided { get; set; }
-        public object[] requestId { get; set; }
+        public int[] requestId { get; set; }
         public int bulkRecoveryApprovalId { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public string referenceId { get; set; }

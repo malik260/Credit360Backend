@@ -31,8 +31,8 @@ namespace FintrakBanking.ViewModels.Customer
         public bool isFirstTimeCredit { get; set; }
         public string fullName { get; set; }
         public DateTime? birthDate { get; set; }
-        public object gender { get; set; }
-        public object address { get; set; }
+        public string gender { get; set; }
+        public string address { get; set; }
         public string state { get; set; }
         public string phoneNo { get; set; }
         public string email { get; set; }
@@ -42,7 +42,7 @@ namespace FintrakBanking.ViewModels.Customer
         public int tenor { get; set; }
         public string startUp { get; set; }
         public string msmeAnnualTurnover { get; set; }
-        public object moratorium { get; set; }
+        public string moratorium { get; set; }
         public decimal approvedAmount { get; set; }
         public decimal amountGranted { get; set; }
         public string tenorType { get; set; }

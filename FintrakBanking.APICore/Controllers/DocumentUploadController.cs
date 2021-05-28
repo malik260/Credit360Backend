@@ -1,5 +1,6 @@
 using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Media;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
@@ -125,8 +126,8 @@ namespace FintrakBanking.APICore.Controllers
                 entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
                 entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
                 entity.overwrite = provider.FormData["overwrite"] == "true";
-            
-                var a = provider.FormData["targetId"];
+                entity.source = (int) DocUploadSourceEnum.InApp;
+            var a = provider.FormData["targetId"];
 
                 if (provider.FormData["targetId"] != null && provider.FormData["targetId"]!= "undefined")
                 {
@@ -152,6 +153,63 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("edms-document-upload")]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> AddDocumentUploadEdmsAsync()
+        {
+
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+        
+            var entity = new DocumentUploadViewModel();
+            entity.fileName = provider.FormData["fileName"];
+            entity.fileExtension = provider.FormData["fileExtension"];
+            entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+            entity.isOriginalCopy = Convert.ToBoolean(provider.FormData["isOriginalCopy"]);
+            entity.documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]);
+            entity.issueDate = GetCulture(provider.FormData["issueDate"]);
+            entity.expiryDate = GetCulture(provider.FormData["expiryDate"]);
+            entity.targetReferenceNumber = provider.FormData["targetReferenceNumber"];
+            entity.operationId = Convert.ToInt32(provider.FormData["operationId"]);
+            entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
+            entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
+            entity.overwrite = provider.FormData["overwrite"] == "true";
+            entity.source = (int) DocUploadSourceEnum.EDMS;
+            entity.edmsDocumentId = Convert.ToInt32(provider.FormData["edmsDocumentId"]);
+
+            var a = provider.FormData["targetId"];
+
+            if (provider.FormData["targetId"] != null && provider.FormData["targetId"] != "undefined")
+            {
+                entity.targetId = Convert.ToInt32(provider.FormData["targetId"]);
+            }
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+
+           
+            var buffer =  new byte[] { };
+            int response = repo.AddDocumentUpload(entity, buffer);
+
+
+            if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+            if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+            //}
+            //catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
+
+        }
         private DateTime? GetCulture(string dt)
         {
             if (String.IsNullOrEmpty(dt)) return null;
