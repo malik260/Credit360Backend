@@ -19474,7 +19474,7 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.productId = customerRequest.productId;
                     assignOperations.loanId = customerRequest.loanId;
                     assignOperations.assignmentType = assignmentType;
-                    assignOperations.customerId = customerRequest.customerId;
+                    assignOperations.customerId = customerRequest.customerCode == null ? customerRequest.customerId : customerRequest.customerCode;
                     assignOperations.productClassId = customerRequest.productClassId;
                     assignOperations.applicationReferenceNumber = customerRequest.applicationReferenceNumber;
                     var loanData = addBulkLoanAssignmentToAgent(assignOperations);
@@ -20138,70 +20138,71 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse saveMultipleRetailLoanUnAssignmentToAgent(List<GlobalExposureApplicationViewModel> model, UserInfo user)
         {
-
-            if (model == null)
-            {
-                throw new ConditionNotMetException("Kindly select at least one transaction.");
-            }
-
-            using (var trans = context.Database.BeginTransaction())
-            {
-                foreach (var r in model)
+            
+                if (model == null)
                 {
-                    var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(r.loanAssignId);
-                    validate.CREATEDBY = user.createdBy;
-                    validate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                    validate.OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent;
-
-                    TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL data = new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL();
-                    data = context.TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL
-                    {
-                        ACCREDITEDCONSULTANTID = validate.ACCREDITEDCONSULTANT,
-                        REFERENCEBATCHID = validate.REFERENCEID,
-                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                        OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent,
-                        REQUESTDATE = DateTime.Now,
-                        SOURCE = validate.SOURCE,
-                        LOANID = validate.LOANASSIGNID
-                    });
-                    context.SaveChanges();
-
-                    var approval = new ApprovalViewModel
-                    {
-                        staffId = user.createdBy,
-                        companyId = user.companyId,
-                        approvalStatusId = (short)ApprovalStatusEnum.Processing,
-                        comment = "Kindly help approve the recovery unassignment",
-                        targetId = data.BULKRECOVERYUNASSIGNAPPROVALID,
-                        operationId = data.OPERATIONID,
-                        BranchId = user.BranchId,
-                        deferredExecution = false
-                    };
-
-                    workflow.LogForApproval(approval);
-
-                    auditTrail.AddAuditTrail(new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
-                        STAFFID = user.createdBy,
-                        BRANCHID = (short)user.BranchId,
-                        DETAIL = $"Added TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL '{ validate.REFERENCEID}' ",
-                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                        URL = user.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now,
-                        DEVICENAME = CommonHelpers.GetDeviceName(),
-                        OSNAME = CommonHelpers.FriendlyName()
-                    });
-
-                    context.SaveChanges();
+                    throw new ConditionNotMetException("Kindly select at least one transaction.");
                 }
 
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    foreach (var r in model)
+                    {
+                        var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(r.loanAssignId);
+                        validate.CREATEDBY = user.createdBy;
+                        validate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                        validate.OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent;
 
-                trans.Commit();
-            }
+                        TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL data = new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL();
+                        data = context.TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL
+                        {
+                            ACCREDITEDCONSULTANTID = validate.ACCREDITEDCONSULTANT,
+                            REFERENCEBATCHID = validate.REFERENCEID,
+                            APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                            OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent,
+                            REQUESTDATE = DateTime.Now,
+                            SOURCE = validate.SOURCE,
+                            LOANID = validate.LOANASSIGNID
+                        });
+                        context.SaveChanges();
 
-            return workflow.Response;
+                        var approval = new ApprovalViewModel
+                        {
+                            staffId = user.createdBy,
+                            companyId = user.companyId,
+                            approvalStatusId = (short)ApprovalStatusEnum.Processing,
+                            comment = "Kindly help approve the recovery unassignment",
+                            targetId = data.BULKRECOVERYUNASSIGNAPPROVALID,
+                            operationId = data.OPERATIONID,
+                            BranchId = user.BranchId,
+                            deferredExecution = false
+                        };
+
+                        workflow.LogForApproval(approval);
+
+                        auditTrail.AddAuditTrail(new TBL_AUDIT
+                        {
+                            AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
+                            STAFFID = user.createdBy,
+                            BRANCHID = (short)user.BranchId,
+                            DETAIL = $"Added TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL '{ validate.REFERENCEID}' ",
+                            IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                            URL = user.applicationUrl,
+                            APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                            SYSTEMDATETIME = DateTime.Now,
+                            DEVICENAME = CommonHelpers.GetDeviceName(),
+                            OSNAME = CommonHelpers.FriendlyName()
+                        });
+
+                        context.SaveChanges();
+                    }
+
+
+                    trans.Commit();
+                }
+
+                return workflow.Response;
+            
         }
 
         public WorkflowResponse bulkLoanAssignmentToAgentGoForApproval(GlobalExposureApplicationViewModel models, UserInfo user)

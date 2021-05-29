@@ -1823,9 +1823,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? appraisalOperationId { get; set; }
         public string currencyCode { get; set; }
         public bool isBankFormat { get; set; }
-        public int companyId { get; set; }
         public string createdByName { get; set; }
-        public DateTime dateTimeCreated { get; set; }
         public decimal maturityAmount { get; set; }
         public string relatedReferenceNumber { get; set; }
         public decimal interestAmount { get; set; }
@@ -2017,7 +2015,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? outstandingAmount { get; set; }
         public string collateralCode { get; set; }
         public string collectionMode { get; set; }
-        public int createdBy { get; set; }
         public string sourceReferenceNumber { get; set; }
         public string lienReferenceNumber { get; set; }
         public decimal lienAmount { get; set; }
