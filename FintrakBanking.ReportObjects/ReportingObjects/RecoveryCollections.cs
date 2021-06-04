@@ -887,6 +887,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              orderby ln.ID descending
                                              select new RecoveryCollectionsViewModel
                                              {
+                                                 dpd = (int)ln.UNPODAYSOVERDUE,
                                                  accountNumber = ln.ACCOUNTNUMBER,
                                                  dateAssigned = lr.DATEASSIGNED,
                                                  agentAssigned = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.FIRMNAME).FirstOrDefault(),
@@ -923,7 +924,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  amountDue = (decimal)ln.AMOUNTDUE,
                                                  loanAmountLcy = (decimal)ln.LOANAMOUNYLCY,
                                                  totalExposureLcy = (decimal)ln.TOTALEXPOSURE,
-                                                 collections = lr.TOTALAMOUNTRECOVERY,
+                                                 collections = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED), //lr.TOTALAMOUNTRECOVERY,
                                                  actualRecovery = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED),
                                                  commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == lr.ACCREDITEDCONSULTANT && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE),
                                                  staffCode = ln.ACCOUNTOFFICERCODE,
@@ -949,6 +950,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     orderby ln.ID descending
                                     select new RecoveryCollectionsViewModel
                                     {
+                                        dpd = (int)ln.UNPODAYSOVERDUE,
                                         accountNumber = ln.ACCOUNTNUMBER,
                                         dateAssigned = lr.DATEASSIGNED,
                                         agentAssigned = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.FIRMNAME).FirstOrDefault(),
@@ -1063,7 +1065,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     i.regionName = "Nil";
                     i.groupName = "Nil";
                     i.teamName = "Nil";
-
+                    i.dpd = (DateTime.Now - i.maturityDate).Days;
                     var rm = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == i.supervisorId).FirstOrDefault();
                     if (rm != null)
                     {
@@ -1140,7 +1142,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     i.regionName = "Nil";
                     i.groupName = "Nil";
                     i.teamName = "Nil";
-
+                    i.dpd = (DateTime.Now - i.maturityDate).Days;
                     var rm = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == i.supervisorId).FirstOrDefault();
                     if (rm != null)
                     {

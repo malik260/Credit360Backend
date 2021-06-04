@@ -183,6 +183,12 @@ namespace FintrakBanking.Repositories.Credit
             var staff = context.TBL_STAFF.Find(staffId);
             List<int> sectionIds = new List<int>();
 
+            var sectionsOperation = context.TBL_DOC_TEMPLATE_DETAIL.Where(x => x.DELETED == false && x.TARGETID == targetId).FirstOrDefault();
+            if(sectionsOperation != null)
+            {
+                operationId = sectionsOperation.OPERATIONID;
+            }
+
             if (staff != null)
             {
                 sectionIds = context.TBL_DOC_TEMPLATE_SECTION_ROLE
