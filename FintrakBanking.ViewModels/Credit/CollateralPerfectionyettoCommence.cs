@@ -211,7 +211,7 @@ namespace FintrakBanking.ViewModels.Credit
         public Decimal? securityValue { get; set; }
         public Decimal? collateralCoverage { get; set; }
         public string collateralLocation { get; set; }
-        public string customerID { get; set; }
+        public string customerId { get; set; }
         public DateTime dateOfValuation { get; set; }
         public string nameOfValuer { get; set; }
         public short? valuerId { get; set; }
@@ -242,7 +242,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManager { get; set; }
         public int? businessUnitId { get; set; }
         public string groupHead { get; set; }
-        public IQueryable<string> sbu { get; set; }
+        public string sbu { get; set; }
         public short productId { get; set; }
         public int cCustomerId { get; set; }
         public int collateralTypeId { get; set; }
@@ -251,5 +251,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal percentageTangibleCoverage { get; set; }
         public decimal percentageIntangibleCoverage { get; set; }
         public decimal totalPercentageCoverage { get; set; }
+        public short currencyId { get; set; }
+        public string collateralCurrency { get; set; }
     }
 }
