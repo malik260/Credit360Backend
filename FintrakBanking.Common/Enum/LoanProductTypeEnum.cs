@@ -23,4 +23,11 @@
         ExternalFacility = 5,
 
     };
+
+    public enum CollateralClassificationEnum
+    {
+        Tangible = 1,
+        Intangible = 2,
+
+    };
 }

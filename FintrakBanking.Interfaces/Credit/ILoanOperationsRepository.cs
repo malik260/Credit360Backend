@@ -55,6 +55,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanRecoveryReportApprovalViewModel> BulkRecoveryReportingApplicationList(int staffId, int companyId);
         bool CreditDocumentationFillingLos(CreditDocumentationViewModel model);
         IEnumerable<CamProcessedLoanViewModel> GetLoanOperationDocumentationLos(int staffId, int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetLoanOperationDocumentationLosSearch(int staffId, int companyId, string searchString);
         IEnumerable<CamProcessedLoanViewModel> GetAllCompletedLoanOperationDocumentationLos(int staffId, int companyId, DateTime startDate, DateTime endDate);
         IEnumerable<LoanReviewOperationApprovalViewModel> BulkRecoveryToAgentAwaitingApprovalList(string source, int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApprovalList(string source, int staffId, int companyId);
@@ -80,6 +81,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureApplicationViewModel> getAllLoansOperationRecoveryAnalysisByAgent(string source, int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> GetLoanOperationRecoveryAnalysis(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentation(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentationSearch(int staffId, int companyId, string searchString);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetCompletedLoanOperationDocumentation(int staffId, int companyId, DateTime startDate, DateTime endDate);
         bool CreditDocumentationFilling(CreditDocumentationViewModel model);
         bool UpdateLoanClassification(DateTime applicationDate, int companyId);
