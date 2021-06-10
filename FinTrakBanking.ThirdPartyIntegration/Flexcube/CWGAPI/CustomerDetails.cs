@@ -365,7 +365,7 @@
                 {
                     handler.Dispose();
                     client.Dispose();
-
+                    responseDateTime = DateTime.Now;
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
                         APIURL = $"{API_URL}GetCustomerAccountBalances/{customerCode}",
@@ -443,7 +443,7 @@
                 {
                     handler.Dispose();
                     client.Dispose();
-
+                    responseDateTime = DateTime.Now;
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
                         APIURL = $"{API_URL}GetExposedPerson/{customerCode}",
@@ -520,7 +520,7 @@
                 responseMessage = await response.Content.ReadAsStringAsync();
                 handler.Dispose();
                 client.Dispose();
-
+                
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
                     APIURL = $"{API_URL}api/OfficeAccount/GetGlAccountRecord?customerCode={customerCode}",

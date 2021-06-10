@@ -1858,7 +1858,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? collateralUsageStatus { get; set; }
         public string requestReason { get; set; }
         public string requestComment { get; set; }
-        public short? approvalStatusId { get; set; }
+        public int? approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
         public string currentApprovalLevel { get; set; }
         public string customerId { get; set; }
@@ -1920,6 +1920,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string otherValuer { get; set; }
         public decimal? forcedSaleValue { get; set; }
         public decimal? openMarketValue { get; set; }
+        public string batchCode { get; set; }
+       
     }
 
     //public class MaturityIntructionViewModel : GeneralEntity

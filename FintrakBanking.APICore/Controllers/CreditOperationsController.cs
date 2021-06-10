@@ -1224,6 +1224,22 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/awaiting-documentation-search/{searchString}")]
+        public HttpResponseMessage GetLoanOperationAwaitingDocumentation(string searchString)
+        {
+            var data = repo.GetLoanOperationDocumentationSearch(token.GetStaffId, token.GetCompanyId, searchString);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-operation/lms-completed-documentation")]
@@ -1245,6 +1261,21 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetLoanOperationAwaitingDocumentationLos()
         {
             var data = repo.GetLoanOperationDocumentationLos(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/awaiting-documentation-los-search/{searchString}")]
+        public HttpResponseMessage GetLoanOperationAwaitingDocumentationLosSearch(string searchString)
+        {
+            var data = repo.GetLoanOperationDocumentationLosSearch(token.GetStaffId, token.GetCompanyId, searchString);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
