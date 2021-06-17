@@ -47,7 +47,7 @@ namespace FintrakBanking.ViewModels.Customer
 
         public int approvalStatusId { get; set; }
         public int operationId { get; set; }
-        
+        public short customerTypeId { get; set; }
     }
 
 

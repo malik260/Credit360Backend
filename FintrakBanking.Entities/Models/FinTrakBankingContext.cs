@@ -19,6 +19,8 @@ namespace FintrakBanking.Entities.Models
 
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }  
+        public virtual DbSet<TBL_BULK_INSURANCE_UPLOAD_APPROVAL> TBL_BULK_INSURANCE_UPLOAD_APPROVAL { get; set; }
+        public virtual DbSet<TEMP_COLLATERAL_INSURANCE_TRACKING> TEMP_COLLATERAL_INSURANCE_TRACKING { get; set; }
         public virtual DbSet<TBL_COLLECTION_COMPUTATION_VARIABLES_SETUP> TBL_COLLECTION_COMPUTATION_VARIABLES_SETUP { get; set; }
         public virtual DbSet<TBL_WORKFLOW_NOTIFICATION> TBL_WORKFLOW_NOTIFICATION { get; set; }
         public virtual DbSet<TBL_NEXT_PRINCIPAL_REPAYMENT> TBL_NEXT_PRINCIPAL_REPAYMENT { get; set; }

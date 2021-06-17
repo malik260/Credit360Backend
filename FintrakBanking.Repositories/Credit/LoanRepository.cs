@@ -15064,7 +15064,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
                     casaData = integration.FetchCustomerAccountsByCustomerCode(localGlobalReference.CUSTOMERID);
-
+                    //if (casaData == null || casaData.Count() <= 0) { throw new ConditionNotMetException("Not able to retrieve customer account"); }
                     if (casaData.Count > 0)
                     {
                         customerSearchAccountNumber = casaData.FirstOrDefault()?.productAccountNumber;
@@ -15086,7 +15086,9 @@ namespace FintrakBanking.Repositories.Credit
                         List<CustomerViewModels> cust = new List<CustomerViewModels>();
                         CustomerDetails customerAPI = new CustomerDetails(context);
                         Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(customerSearchAccountNumber)).GetAwaiter().GetResult();
-                        if (cust.Count() > 0)
+
+                    //if (cust == null || cust.Count() <= 0) { throw new ConditionNotMetException("Not able to retrieve customer account"); }
+                    if (cust.Count() > 0)
                         {
                         
                             foreach (var item in cust)
@@ -19420,20 +19422,99 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public bool saveBulkInsurancePolicyEntries(List<MultipleInsuranceOutputViewModel> models, UserInfo user)
+        public WorkflowResponse saveBulkInsurancePolicyEntries(List<MultipleInsuranceOutputViewModel> models, UserInfo user)
         {
-            List<TBL_COLLATERAL_INSURANCE_TRACKING> bulkPolicyTable = new List<TBL_COLLATERAL_INSURANCE_TRACKING>();
-            foreach (var policyRequest in models)
+            List<TEMP_COLLATERAL_INSURANCE_TRACKING> bulkPolicyTable = new List<TEMP_COLLATERAL_INSURANCE_TRACKING>();
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            using (TransactionScope transactionScope = new TransactionScope())
             {
-                if (policyRequest.passed == true)
+                foreach (var policyRequest in models)
                 {
-                    var policyData = addBulkPolicy(policyRequest);
+                    policyRequest.batchCode = batchCode;
+                    if (policyRequest.isCollateral.ToLower() == "n" || policyRequest.isCollateral.ToLower() == "no")
+                    {
+                        var collateralDetail = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == policyRequest.collateralCode).FirstOrDefault();
+                        if (collateralDetail != null)
+                        {
+                            policyRequest.collateralCustomerId = collateralDetail.COLLATERALCUSTOMERID;
+                            policyRequest.collateralDetails = collateralDetail.COLLATERALSUMMARY;
+                            policyRequest.collateralSubTypeId = collateralDetail.COLLATERALSUBTYPEID;
+                            policyRequest.collateralTypeId = collateralDetail.COLLATERALTYPEID;
+                        }
 
-                    bulkPolicyTable.Add(policyData);
+                        var confirmIfRecordAlreadyExist = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(t => t.COLLATERALCUSTOMERID == policyRequest.collateralCustomerId).FirstOrDefault();
+                        if (confirmIfRecordAlreadyExist == null)
+                        {
+                            if (policyRequest.expiryDate > DateTime.Now)
+                            {
+                                policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Active;
+                            }
+                            else { policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Expired; }
+
+                            var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => policyRequest.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
+                            if (insurancePolicyTypeDetail != null)
+                            {
+                                policyRequest.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
+                            }
+
+                            policyRequest.dateTimeCreated = DateTime.Now;
+                            policyRequest.createdBy = user.createdBy;
+                            if (policyRequest.passed == true)
+                            {
+                                var policyData = addBulkPolicy(policyRequest);
+
+                                bulkPolicyTable.Add(policyData);
+                            }
+                        }
+                    }
                 }
+                    context.TEMP_COLLATERAL_INSURANCE_TRACKING.AddRange(bulkPolicyTable);
+                    if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+                    TBL_BULK_INSURANCE_UPLOAD_APPROVAL insuranceOperation = new TBL_BULK_INSURANCE_UPLOAD_APPROVAL();
+                    insuranceOperation = context.TBL_BULK_INSURANCE_UPLOAD_APPROVAL.Add(new TBL_BULK_INSURANCE_UPLOAD_APPROVAL
+                    {
+                        CREATEDBY = user.createdBy,
+                        BATCHCODE = batchCode,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                        OPERATIONID = (int)OperationsEnum.InsuranceBulkUploadApproval,
+                        REQUESTDATE = DateTime.Now
+                    });
+                    if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+           
+
+                    workflow.StaffId = user.createdBy;
+                    workflow.CompanyId = user.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = insuranceOperation.BULKINSURANCEUPLOADAPPROVALID;
+                    workflow.Comment = "Kindly help approve the insurance bulk upload";
+                    workflow.OperationId = (int)OperationsEnum.InsuranceBulkUploadApproval;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = false;
+
+                    var response = workflow.LogActivity();
+                    context.SaveChanges();
+
+                    transactionScope.Complete();
+                    transactionScope.Dispose();
             }
-            context.TBL_COLLATERAL_INSURANCE_TRACKING.AddRange(bulkPolicyTable);
-            return context.SaveChanges() > 0;
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.InsuranceBulkUpload,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ batchCode}' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            });
+
+            context.SaveChanges();
+            return workflow.Response;
         }
 
         public bool saveBulkLoanAssignmentToAgent(List<GlobalExposureApplicationViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user)
@@ -19474,7 +19555,7 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.productId = customerRequest.productId;
                     assignOperations.loanId = customerRequest.loanId;
                     assignOperations.assignmentType = assignmentType;
-                    assignOperations.customerId = customerRequest.customerId;
+                    assignOperations.customerId = customerRequest.customerCode == null ? customerRequest.customerId : customerRequest.customerCode;
                     assignOperations.productClassId = customerRequest.productClassId;
                     assignOperations.applicationReferenceNumber = customerRequest.applicationReferenceNumber;
                     var loanData = addBulkLoanAssignmentToAgent(assignOperations);
@@ -20138,70 +20219,71 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse saveMultipleRetailLoanUnAssignmentToAgent(List<GlobalExposureApplicationViewModel> model, UserInfo user)
         {
-
-            if (model == null)
-            {
-                throw new ConditionNotMetException("Kindly select at least one transaction.");
-            }
-
-            using (var trans = context.Database.BeginTransaction())
-            {
-                foreach (var r in model)
+            
+                if (model == null)
                 {
-                    var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(r.loanAssignId);
-                    validate.CREATEDBY = user.createdBy;
-                    validate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                    validate.OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent;
-
-                    TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL data = new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL();
-                    data = context.TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL
-                    {
-                        ACCREDITEDCONSULTANTID = validate.ACCREDITEDCONSULTANT,
-                        REFERENCEBATCHID = validate.REFERENCEID,
-                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                        OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent,
-                        REQUESTDATE = DateTime.Now,
-                        SOURCE = validate.SOURCE,
-                        LOANID = validate.LOANASSIGNID
-                    });
-                    context.SaveChanges();
-
-                    var approval = new ApprovalViewModel
-                    {
-                        staffId = user.createdBy,
-                        companyId = user.companyId,
-                        approvalStatusId = (short)ApprovalStatusEnum.Processing,
-                        comment = "Kindly help approve the recovery unassignment",
-                        targetId = data.BULKRECOVERYUNASSIGNAPPROVALID,
-                        operationId = data.OPERATIONID,
-                        BranchId = user.BranchId,
-                        deferredExecution = false
-                    };
-
-                    workflow.LogForApproval(approval);
-
-                    auditTrail.AddAuditTrail(new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
-                        STAFFID = user.createdBy,
-                        BRANCHID = (short)user.BranchId,
-                        DETAIL = $"Added TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL '{ validate.REFERENCEID}' ",
-                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                        URL = user.applicationUrl,
-                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now,
-                        DEVICENAME = CommonHelpers.GetDeviceName(),
-                        OSNAME = CommonHelpers.FriendlyName()
-                    });
-
-                    context.SaveChanges();
+                    throw new ConditionNotMetException("Kindly select at least one transaction.");
                 }
 
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    foreach (var r in model)
+                    {
+                        var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(r.loanAssignId);
+                        validate.CREATEDBY = user.createdBy;
+                        validate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                        validate.OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent;
 
-                trans.Commit();
-            }
+                        TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL data = new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL();
+                        data = context.TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL
+                        {
+                            ACCREDITEDCONSULTANTID = validate.ACCREDITEDCONSULTANT,
+                            REFERENCEBATCHID = validate.REFERENCEID,
+                            APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                            OPERATIONID = (int)OperationsEnum.UnAssignRetailRecoveryLoansFromAgent,
+                            REQUESTDATE = DateTime.Now,
+                            SOURCE = validate.SOURCE,
+                            LOANID = validate.LOANASSIGNID
+                        });
+                        context.SaveChanges();
 
-            return workflow.Response;
+                        var approval = new ApprovalViewModel
+                        {
+                            staffId = user.createdBy,
+                            companyId = user.companyId,
+                            approvalStatusId = (short)ApprovalStatusEnum.Processing,
+                            comment = "Kindly help approve the recovery unassignment",
+                            targetId = data.BULKRECOVERYUNASSIGNAPPROVALID,
+                            operationId = data.OPERATIONID,
+                            BranchId = user.BranchId,
+                            deferredExecution = false
+                        };
+
+                        workflow.LogForApproval(approval);
+
+                        auditTrail.AddAuditTrail(new TBL_AUDIT
+                        {
+                            AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryAssignment,
+                            STAFFID = user.createdBy,
+                            BRANCHID = (short)user.BranchId,
+                            DETAIL = $"Added TBL_BULK_RECOVERY_UNASSIGNMENT_AGENT_APPROVAL '{ validate.REFERENCEID}' ",
+                            IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                            URL = user.applicationUrl,
+                            APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                            SYSTEMDATETIME = DateTime.Now,
+                            DEVICENAME = CommonHelpers.GetDeviceName(),
+                            OSNAME = CommonHelpers.FriendlyName()
+                        });
+
+                        context.SaveChanges();
+                    }
+
+
+                    trans.Commit();
+                }
+
+                return workflow.Response;
+            
         }
 
         public WorkflowResponse bulkLoanAssignmentToAgentGoForApproval(GlobalExposureApplicationViewModel models, UserInfo user)
@@ -20551,7 +20633,7 @@ namespace FintrakBanking.Repositories.Credit
             List<TBL_COLLATERAL_INSURANCE_TRACKING> insurance = new List<TBL_COLLATERAL_INSURANCE_TRACKING>();
             List<MultipleInsuranceOutputViewModel> insuranceInputs = GetBulkInsuranceInputs(file);
             
-            var systemData = generalSetup.GetApplicationDate();
+            /*var systemData = generalSetup.GetApplicationDate();
             bool response = true;
             List<InsurancePolicy> insurancePolicyViewModels = new List<InsurancePolicy>();
             int ctr = 0;
@@ -20604,7 +20686,7 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            if (isFinal) try { response = context.SaveChanges() > 0; } catch (Exception e) { throw e; } 
+            if (isFinal) try { response = context.SaveChanges() > 0; } catch (Exception e) { throw e; } */
 
             return new Tuple<List<MultipleInsuranceOutputViewModel>, bool>(insuranceInputs, true);
         }
@@ -20802,108 +20884,27 @@ namespace FintrakBanking.Repositories.Credit
                             break;
                         case "B":
                             currentLine.passed = true;
-                            try {
-                                currentLine.customerId = cell.Value.ToString();
-                                var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == currentLine.customerId).FirstOrDefault();
-                                if (customer == null && (currentLine.isCollateral.ToLower() == "n" || currentLine.isCollateral.ToLower() == "no"))
-                                {
-                                    currentLine.passed = false;
-                                    currentLine.errorMessages.Add("Customer with customercode " + cell.Value.ToString() + " does not exist on Credit360");
-                                }
-
-                            } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            try {currentLine.customerId = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
                             }
                             break;
                         case "C":
                             currentLine.passed = true;
-                            try { currentLine.collateralCode = cell.Value.ToString();
-                                if (currentLine.isCollateral.ToLower() == "n")
-                                {
-                                    customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == cell.Value.ToString()).FirstOrDefault();
-                                    if (customerCollateral == null)
-                                    {
-                                        currentLine.passed = false;
-                                        currentLine.errorMessages.Add("<br/>Collateral with collateralcode " + cell.Value.ToString() + " does not exist on Credit360");
-                                    }
-                                    else
-                                    {
-                                        var customerCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE == currentLine.customerId).ToList();
-                                        if (customerCollaterals.Count() > 0 && customerCollaterals.Count() == 1)
-                                        {
-                                            currentLine.collateralCustomerId = customerCollaterals[0].COLLATERALCUSTOMERID;
-                                            currentLine.collateralDetails = customerCollaterals[0].COLLATERALSUMMARY;
-                                            currentLine.collateralCode = customerCollaterals[0].COLLATERALCODE;
-                                        }
-                                        else
-                                        {
-                                            currentLine.collateralCustomerId = 0;
-                                            currentLine.collateralDetails = "";
-                                            currentLine.collateralCode = "";
-                                            currentLine.passed = false;
-                                            currentLine.errorMessages.Add("<br/>Collateral with customercode " + currentLine.customerId + " does not exist on Credit360");
-                                        }
-                                        var validateCollateralInsurance = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).ToList();
-                                        if (validateCollateralInsurance.Any())
-                                        {
-                                            currentLine.passed = false;
-                                            currentLine.errorMessages.Add("<br/>Insurance already exist on Credit360");
-                                        }
-                                    }
-                                }
-                            } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            try { currentLine.collateralCode = cell.Value.ToString();} catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
                             }
                             break;
                         case "D":
                             currentLine.passed = true;
-                            try { currentLine.referenceNumber = cell.Value.ToString();
-                                var validateInsurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == cell.Value.ToString()).ToList();
-                                if (validateInsurancePolicy.Any())
-                                {
-                                    currentLine.passed = false;
-                                    currentLine.errorMessages.Add("<br/>Policy number " + cell.Value.ToString() + " already exist on Credit360");
-                                }
-
-                            }
-                            catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message); 
+                            try { currentLine.referenceNumber = cell.Value.ToString();}catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); 
                             }
                             break;
                         case "E":
                             currentLine.passed = true;
-                            try
-                            {
-                                currentLine.policyType = cell.Value.ToString();
-                                var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => currentLine.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
-                                if (insurancePolicyTypeDetail == null)
-                                {
-                                    currentLine.insurancePolicyTypeId = null;
-                                    currentLine.passed = false;
-                                    currentLine.errorMessages.Add("<br/>Policy type " + cell.Value.ToString() + " does not exist on Credit360");
-                                }
-                                else
-                                {
-                                    currentLine.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
-                                }
-                            }
-                            catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            try{ currentLine.policyType = cell.Value.ToString();}catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
                             }
                             break;
                         case "F":
                             currentLine.passed = true;
-                            try { currentLine.insuranceCompany = cell.Value.ToString();
-                                var insuranceCompanyDetail = context.TBL_INSURANCE_COMPANY.Where(x => cell.Value.ToString().Contains(x.COMPANYNAME)).FirstOrDefault();
-                                if (insuranceCompanyDetail == null)
-                                {
-                                    currentLine.insuranceCompanyId = null;
-                                    currentLine.companyAddress = null;
-                                    currentLine.passed = false;
-                                    currentLine.errorMessages.Add("<br/>Insurance company " + cell.Value.ToString() + " does not exist on Credit360");
-                                }
-                                else
-                                {
-                                    currentLine.insuranceCompanyId = insuranceCompanyDetail.INSURANCECOMPANYID;
-                                    currentLine.companyAddress = insuranceCompanyDetail.ADDRESS;
-                                }
-                            } catch (Exception e) { currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            try { currentLine.insuranceCompany = cell.Value.ToString();} catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
                             }
                             break;
                         case "G":
@@ -20927,10 +20928,83 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             break;
                     }
+                    
                 }
+                
                 if (ctr > 1) bulkEntries.Add(currentLine);
             };
 
+            foreach(var currentLine in bulkEntries)
+            {
+                //========================================== other valiadation =============================
+                var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == currentLine.customerId).FirstOrDefault();
+                if (customer == null && (currentLine.isCollateral.ToLower() == "n" || currentLine.isCollateral.ToLower() == "no"))
+                {
+                    currentLine.passed = false;
+                    currentLine.errorMessages.Add("Customer with customercode " + currentLine.customerId.ToString() + " does not exist on Credit360");
+                }
+
+                if (currentLine.isCollateral.ToLower() == "n")
+                {
+                    customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode.ToString()).FirstOrDefault();
+                    if (customerCollateral == null)
+                    {
+                        currentLine.passed = false;
+                        currentLine.errorMessages.Add("<br/>Collateral with collateralcode " + currentLine.collateralCode.ToString() + " does not exist on Credit360");
+                    }
+                    else
+                    {
+                        var customerCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE == currentLine.customerId).ToList();
+                        if (customerCollaterals.Count() > 0 && customerCollaterals.Count() == 1)
+                        {
+                            currentLine.collateralCustomerId = customerCollaterals[0].COLLATERALCUSTOMERID;
+                            currentLine.collateralDetails = customerCollaterals[0].COLLATERALSUMMARY;
+                            currentLine.collateralCode = customerCollaterals[0].COLLATERALCODE;
+                        }
+                        else
+                        {
+                            currentLine.passed = false;
+                            currentLine.errorMessages.Add("<br/>Collateral with customercode " + currentLine.customerId + " does not exist on Credit360");
+                        }
+                        var validateCollateralInsurance = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).ToList();
+                        if (validateCollateralInsurance.Any())
+                        {
+                            currentLine.passed = false;
+                            currentLine.errorMessages.Add("<br/>Insurance already exist on Credit360");
+                        }
+                    }
+                }
+
+                var validateInsurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == currentLine.referenceNumber.ToString()).ToList();
+                if (validateInsurancePolicy.Any())
+                {
+                    currentLine.passed = false;
+                    currentLine.errorMessages.Add("<br/>Policy number " + currentLine.referenceNumber.ToString() + " already exist on Credit360");
+                }
+
+                var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => currentLine.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
+                if (insurancePolicyTypeDetail == null)
+                {
+                    currentLine.passed = false;
+                    currentLine.errorMessages.Add("<br/>Policy type " + currentLine.policyType.ToString() + " does not exist on Credit360");
+                }
+                else
+                {
+                    currentLine.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
+                }
+
+                var insuranceCompanyDetail = context.TBL_INSURANCE_COMPANY.Where(x => currentLine.insuranceCompany.ToString().Contains(x.COMPANYNAME)).FirstOrDefault();
+                if (insuranceCompanyDetail == null)
+                {
+                    currentLine.passed = false;
+                    currentLine.errorMessages.Add("<br/>Insurance company " + currentLine.insuranceCompany.ToString() + " does not exist on Credit360");
+                }
+                else
+                {
+                    currentLine.insuranceCompanyId = insuranceCompanyDetail.INSURANCECOMPANYID;
+                    currentLine.companyAddress = insuranceCompanyDetail.ADDRESS;
+                }
+            }
             return bulkEntries;
         }
 
@@ -21096,10 +21170,10 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        private TBL_COLLATERAL_INSURANCE_TRACKING addBulkPolicy(MultipleInsuranceOutputViewModel insurancePolicy)
+        private TEMP_COLLATERAL_INSURANCE_TRACKING addBulkPolicy(MultipleInsuranceOutputViewModel insurancePolicy)
         {
 
-            var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
+            var insuranceTracking = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Add(new TEMP_COLLATERAL_INSURANCE_TRACKING
             {
                 INSURANCECOMPANYID = insurancePolicy.insuranceCompanyId,
                 ISURANCECOMPANYADDRESS = insurancePolicy.companyAddress,
@@ -21107,7 +21181,7 @@ namespace FintrakBanking.Repositories.Credit
                 INSURANCESTARTDATE = insurancePolicy.startDate,
                 INSURANCEENDDATE = insurancePolicy.expiryDate,
                 SUMINSURED = insurancePolicy.sumInsured,
-                PREMIUMPAID = insurancePolicy.inSurPremiumAmount,
+                PREMIUMPAID = insurancePolicy.premiumAmount,
                 INSURANCESTATUSID = insurancePolicy.insuranceStatus,
                 COLLATERALCUSTOMERID = insurancePolicy.collateralCustomerId,
                 LOANAPPLICATIONDETAILID = insurancePolicy.loanApplicationDetailId,
@@ -21127,6 +21201,10 @@ namespace FintrakBanking.Repositories.Credit
                 FIRSTLOSSPAYEE = insurancePolicy.firstLossPayee,
                 INSURABLEVALUE = insurancePolicy.sumInsured,
                 COMMENT = insurancePolicy.comment,
+                DATETIMECREATED = insurancePolicy.dateTimeCreated,
+                CREATEDBY = insurancePolicy.createdBy,
+                APPROVALSTATUSID = insurancePolicy.approvalStatusId,
+                BATCHCODE = insurancePolicy.batchCode,
             });
         
             return insuranceTracking;

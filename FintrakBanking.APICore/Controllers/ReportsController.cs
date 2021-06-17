@@ -1120,6 +1120,32 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("collateral-adequacy")]
+        public HttpResponseMessage GetCollateralAdequacy([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetCollateralAdequacy(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost] [ClaimsAuthorization]
         [Route("stakeholders-on-experation-ftp")]
         public HttpResponseMessage GetStakeHolderOnExperationOfFfp(ReportSearchEntity reportSearchEntity)
