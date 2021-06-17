@@ -264,9 +264,9 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             RandomizeAllocation();
 
-            SendNotifications();
-
             SetResponseInformation();
+
+            SendNotifications();
 
             if (statusOnly) return true;
 
@@ -776,6 +776,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     var toLevel = context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == this.reviewerLevelId);
                     var nextLevelName = toLevel.LEVELNAME;
+                    response.nextLevelName = nextLevelName;
                     return "The " + itemHeading + " request has been APPROVED and SENT to " + nextLevelName;
                 }
                 else
@@ -2113,7 +2114,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var link = "<p>Click <a href=\"" + applicationUrls + "\">here to continue...</a></p>";
             string ownerFirstNameHolder = "@{{OwnerFirstName}}";
             string recipientNameHolder = "@{{RecipientName}}";
-            string levelHolder = "@{{CurrentLevel}}";
+            string currentLevelHolder = "@{{CurrentLevel}}";
             string operationNameHolder = "@{{OperationName}}";
             string statusHolder = "@{{Status}}";
             string timeHolder = "@{{Time}}";
@@ -2127,7 +2128,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             messageBody = messageBody.Replace(ownerFirstNameHolder, ownerFirstName);
             messageBody = messageBody.Replace(recipientNameHolder, recipientName);
-            messageBody = messageBody.Replace(levelHolder, fromLevelName);
+            messageBody = messageBody.Replace(currentLevelHolder, response.nextLevelName);
             messageBody = messageBody.Replace(operationNameHolder, operationName);
             messageBody = messageBody.Replace(statusHolder, status);
             messageBody = messageBody.Replace(timeHolder, time);
@@ -2213,14 +2214,14 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             var data3 = data.OrderByDescending(d => d.systemArrivalDateTime);
-            if (data.Count > 0 && currentLevelId > 0)//get only from the current level downwards
-            {
-                var firstTrail = data.FirstOrDefault(t => t.toApprovalLevelId == currentLevelId);
-                if (firstTrail != null)
-                {
-                    data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId).ToList();
-                }
-            }
+            //if (data.Count > 0 && currentLevelId > 0)//get only from the current level downwards
+            //{
+            //    var firstTrail = data.FirstOrDefault(t => t.toApprovalLevelId == currentLevelId);
+            //    if (firstTrail != null)
+            //    {
+            //        data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId).ToList();
+            //    }
+            //}
 
             if (data.Count == 0)
             {
@@ -2414,7 +2415,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
 
                 if (this.fromLevelId > 0)
-                {
+                {//to send to owner/initiator of a request
                     var nextLevel = WorkflowSetup.FirstOrDefault(s => s.ApprovalLevelId == fromLevelId);
                     if (nextLevel != null)
                     {

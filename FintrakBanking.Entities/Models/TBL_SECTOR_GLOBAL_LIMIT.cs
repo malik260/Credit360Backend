@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_SECTOR_GLOBAL_LIMIT
     {
         [Key]
-        public short ID { get; set; }
+        public int ID { get; set; }
         public string CBNSECTOR { get; set; }
         public string CBNSECTORID { get; set; }
         public DateTime? DATE { get; set; }

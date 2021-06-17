@@ -1315,6 +1315,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/bulk-insurance-upload-awaiting-approval")]
+        public HttpResponseMessage GetBulkInsuranceUploadAwaitingApproval()
+        {
+            var data = repo.GetBulkInsuranceUploadAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-operation/recovery-write-off-analysis")]
@@ -2508,6 +2524,32 @@ namespace FintrakBanking.APICore.Controllers
             else
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-insurance-upload-approval")]
+        public HttpResponseMessage GoForBulkInsuranceUploadApproval([FromBody]ApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.GoForBulkInsuranceUploadApproval(entity);
+
+            if (data.success)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = data.responseMessage });
             }
         }
 
