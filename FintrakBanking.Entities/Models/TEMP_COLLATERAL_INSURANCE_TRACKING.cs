@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    [Table("TBL_COLLATERAL_INSURANCE_TRACKING")]
-    public class TBL_COLLATERAL_INSURANCE_TRACKING
+    [Table("TEMP_COLLATERAL_INSURANCE_TRACKING")]
+    public class TEMP_COLLATERAL_INSURANCE_TRACKING
     {
         [Key]
-       public int COLLATERALINSURANCETRACKINGID { get; set; }
+        public int COLLATERALINSURANCETRACKINGID { get; set; }
         public int? LOANAPPLICATIONDETAILID { get; set; }
         public int? COLLATERALCUSTOMERID { get; set; }
         public decimal? SUMINSURED { get; set; }
@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
         public int? INSURANCECOMPANYID { get; set; }
         public string ISURANCECOMPANYADDRESS { get; set; }
         public string POLICYNUMBER { get; set; }
-       
+
         public DateTime? VALUATIONSTARTDATE { get; set; }
         public DateTime? VALUATIONENDDATE { get; set; }
         public decimal? OMV { get; set; }
@@ -46,7 +46,7 @@ namespace FintrakBanking.Entities.Models
         public int? UPDATEDBY { get; set; }
         public DateTime? DATETIMECREATED { get; set; }
         public DateTime? DATETIMEUPDATED { get; set; }
-        
-
+        public int? APPROVALSTATUSID { get; set; }
+        public string BATCHCODE { get; set; }
     }
 }
