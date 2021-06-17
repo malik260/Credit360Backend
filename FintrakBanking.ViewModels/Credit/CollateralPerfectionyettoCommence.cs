@@ -197,6 +197,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralForm { get; set; }
         public string collateralSummary { get; set; }
         public string guarantorName { get; set; }
+        public int collateralTypeId { get; set; }
     }
 
 

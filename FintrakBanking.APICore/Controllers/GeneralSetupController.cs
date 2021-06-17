@@ -422,7 +422,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("global-sectors")]
+        public HttpResponseMessage GetAllGlobalSectors()
+        {
+            try
+            {
+                var data = repo.GetAllGlobalSectors();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -471,6 +494,28 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "Sector has not been updated successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("global-sectors/{id}")]
+        public HttpResponseMessage UpdateGlobalSector([FromBody] GlobalSectorViewModel model, int id)
+        {
+            try
+            {
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.Path;
+                var data = repo.UpdateGlobalSector(model, id);
+
+               return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, message = "Global Sector limit has been updated successfully" });
             }
             catch (SecureException ex)
             {
