@@ -132,6 +132,19 @@ namespace FintrakBanking.ViewModels.Setups.General
         //        return string.Format("{0:#,0.00}", ObligorLimit);
         //    }
         //}
-        
+
+       
+
     }
+    public class GlobalSectorViewModel : GeneralEntity
+    {
+        public int id { get; set; }
+        public DateTime? date { get; set; }
+        public string cbnSector { get; set; }
+        public string cbnSectorId { get; set; }
+        public decimal? totalExposureLcy { get; set; }
+        public decimal? percentageExposures { get; set; }
+        public decimal? percentageSectorLimit { get; set; }
+    }
+    
 }

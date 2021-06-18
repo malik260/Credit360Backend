@@ -557,7 +557,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceCompanyName { get; set; }
         public int? valuerId { get; set; }
         public string gpsCoordinates { get; set; }
-        public decimal loanAmount { get; set; }
+        public decimal? loanAmount { get; set; }
         public string loanStatus { get; set; }
         public string loanTypeName { get; set; }
         public string securityReleaseStatus { get; set; }

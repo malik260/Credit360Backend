@@ -918,13 +918,26 @@ namespace FintrakBanking.Repositories.Setups.General
             TimeSpan startRepay = new TimeSpan(6, 0, 0);
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
 
+
+
+            // corporate customer information update 
+            int year = DateTime.Now.Year;
+            DateTime firstDay = new DateTime(year, 6, 11);
+            TimeSpan startCorporateCustomerUpdate = new TimeSpan(24, 0, 0);
+            TimeSpan endCorporateCustomerUpdate = new TimeSpan(24, 30, 0);
+            if (now >= startCorporateCustomerUpdate && now <= endCorporateCustomerUpdate && firstDay.Date == DateTime.Now.Date)
+            {
+                corporateCustomerUpdate();
+            }
+           
+
             if (CompareCustomerNotificationDate() == true)
             {
                 TimeSpan startCustomerrepay = new TimeSpan(13, 0, 0);
                 TimeSpan endCustomerrepay = new TimeSpan(13, 30, 0);
                 if ((now >= startCustomerrepay) && (now <= endCustomerrepay))
                 {
-                   GetImminentMaturitiesForCustomers();
+                   //GetImminentMaturitiesForCustomers();
                 }
             }
 
@@ -983,12 +996,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start2) && (now <= end2))
                 {
-                    /* GetSectorLimitExceedeBBDReminder();
+                     GetSectorLimitExceedeBBDReminder();
                      GetSectorLimitExceedeCBDReminder();
                      GetSectorLimitExceedeCIBDReminder();
                      GetSectorLimitExceedeRBDReminder();
                      GetSectorLimitExceededBankReminder();
-                     state = true;*/
+                     state = true;
                 }
 
 
@@ -1045,10 +1058,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start) && (now <= end))
                 {
-                    /*GroupImminentMaturitiesByGroupHeads();
+                    GroupImminentMaturitiesByGroupHeads();
                     GetImminentMaturities();
                     GetPastDueObligationsReminder();
-                    GetPastDueObligationsReminderByGroupHeads();*/
+                    GetPastDueObligationsReminderByGroupHeads();
                     state = true;
                 }
             }
@@ -1499,7 +1512,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
                         alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                        emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
+                        //emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
+                        emailList = defaultEmail;
 
                         alert.receiverEmailList.Add(emailList);
                         alert.template = alertTemplate;
@@ -1690,7 +1704,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
                             alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                            emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                            //emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                            emailList = defaultEmail;
                             alert.receiverEmailList.Add(emailList);
                             alert.template = alertTemplate;
                             alert.alertTitle = alertTitle;
@@ -6141,6 +6156,21 @@ namespace FintrakBanking.Repositories.Setups.General
             context.TBL_FINANCE_TRANSACTION.AddRange(financePostingList);
             return context.SaveChanges() > 0;
 
+        }
+
+
+        public bool corporateCustomerUpdate()
+        {
+            var nullifyCorpporateProfileCompletion = context.TBL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate).ToList();
+            if (nullifyCorpporateProfileCompletion.Any())
+            {
+                foreach (var item in nullifyCorpporateProfileCompletion)
+                {
+                    item.ACCOUNTCREATIONCOMPLETE = false;
+                    item.DATETIMEUPDATED = DateTime.Now;
+                }
+            }
+            return context.SaveChanges() > 0;
         }
 
     }

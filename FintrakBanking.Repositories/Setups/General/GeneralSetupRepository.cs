@@ -290,7 +290,24 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
-        
+        public IEnumerable<GlobalSectorViewModel> GetAllGlobalSectors()
+        {
+            var data = (from cs in context.TBL_SECTOR_GLOBAL_LIMIT
+                        select new GlobalSectorViewModel()
+                        {
+                            id = cs.ID,
+                            date = cs.DATE,
+                            cbnSector = cs.CBNSECTOR,
+                            cbnSectorId = cs.CBNSECTORID,
+                            totalExposureLcy = cs.TOTALEXPOSURELCY,
+                            percentageExposures = cs.EXPOSURES,
+                            percentageSectorLimit = cs.SECTORLIMIT
+                        });
+
+            return data;
+        }
+
+
 
         public IEnumerable<SectorViewModel> GetAllSubSectors()
         {
@@ -361,6 +378,7 @@ namespace FintrakBanking.Repositories.Setups.General
                      DEVICENAME = CommonHelpers.GetDeviceName(),
                     OSNAME = CommonHelpers.FriendlyName(),
             };
+            context.TBL_AUDIT.Add(audit);
             //end of Audit section -------------------------------
             response = context.SaveChanges();
             return response != 0;
@@ -393,11 +411,56 @@ namespace FintrakBanking.Repositories.Setups.General
                     DEVICENAME = CommonHelpers.GetDeviceName(),
                     OSNAME = CommonHelpers.FriendlyName(),
                 };
+                context.TBL_AUDIT.Add(audit);
                 //end of Audit section -------------------------------
                 response = context.SaveChanges();
             }
 
             return response != 0;
+        }
+
+        public bool UpdateGlobalSector(GlobalSectorViewModel model, int id)
+        {
+            var response = false;
+
+            var computeThreshold = context.TBL_SECTOR_GLOBAL_LIMIT.Where(x => x.CBNSECTORID != null).Sum(x => x.SECTORLIMIT);
+            var oldThreshold = computeThreshold - (decimal)model.percentageSectorLimit;
+            var currentThreshold = oldThreshold + (decimal)model.percentageSectorLimit;
+            if (computeThreshold != null && oldThreshold < (decimal)1.2000 && currentThreshold > (decimal)1.2000)
+            {
+                throw new SecureException("The limit entered has exceeded the cumulative threshold of 120 percent");
+            }
+            var sector = context.TBL_SECTOR_GLOBAL_LIMIT.Find(id);
+
+            if (sector != null)
+            {
+                sector.SECTORLIMIT = (decimal)model.percentageSectorLimit;
+                
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.SectorUpdated,
+                        STAFFID = model.createdBy,
+                        TARGETID = sector.ID,
+                        BRANCHID = model.userBranchId,
+                        DETAIL = $"Updated global sector: '{sector.CBNSECTOR}' with code: {sector.CBNSECTORID} ",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = DateTime.Now,
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
+                    };
+                    context.TBL_AUDIT.Add(audit);
+                    //end of Audit section -------------------------------
+                    if (context.SaveChanges() > 0)
+                    {
+                        return response = true;
+                    }
+                
+            }
+
+            return response;
         }
 
         public bool DeleteSector(int id, UserInfo user)
@@ -424,6 +487,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DEVICENAME = CommonHelpers.GetDeviceName(),
                     OSNAME = CommonHelpers.FriendlyName(),
                 };
+                context.TBL_AUDIT.Add(audit);
                 //end of Audit section -------------------------------
                 response = context.SaveChanges();
             }
@@ -656,8 +720,6 @@ namespace FintrakBanking.Repositories.Setups.General
             return staffs;
         }
 
-
-        
     }
 
 }

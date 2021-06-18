@@ -1206,7 +1206,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                         join d in context.TBL_LMSR_APPLICATION_DETAIL on e.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                         let owner = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == e.CREATEDBY)
                                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                                        where (a.OPERATIONID == e.OPERATIONID)
+                                        where operations.Contains(a.OPERATIONID)
                                            && ((DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
                                            && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)))
                                            && a.RESPONSESTAFFID == null
