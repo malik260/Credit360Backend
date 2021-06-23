@@ -6255,7 +6255,7 @@ namespace FintrakBanking.Repositories.Customer
                             finacle.AddCustomerAccounts(customerId, entity.customerCode);
                         }
                     }
-                    //customerMain.ISPROSPECT = false;
+                    customerMain.ISPROSPECT = false;
                     //context.TBL_CUSTOMER_MODIFICATION.Add(modified);
                     this.auditTrail.AddAuditTrail(audit);
                     //end of Audit section -------------------------------

@@ -33568,6 +33568,74 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+
+        public IEnumerable<MultipleInsuranceOutputApprovalViewModel> GetBulkInsuranceUploadAwaitingApproval(int staffId, int companyId)
+        {
+
+            IEnumerable<MultipleInsuranceOutputApprovalViewModel> allRecords = null;
+
+            var records = (from b in context.TBL_BULK_INSURANCE_UPLOAD_APPROVAL
+                                 join a in context.TEMP_COLLATERAL_INSURANCE_TRACKING on b.BATCHCODE equals a.BATCHCODE
+                                 join atrail in context.TBL_APPROVAL_TRAIL on b.BULKINSURANCEUPLOADAPPROVALID equals atrail.TARGETID
+                                 where
+                                 b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
+
+                                 orderby b.REQUESTDATE descending
+                                 select new MultipleInsuranceOutputApprovalViewModel()
+                                 {
+                                     bulkInsuranceUploadApprovalId = b.BULKINSURANCEUPLOADAPPROVALID,
+                                     systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
+                                     operationId = b.OPERATIONID,
+                                     insuranceCompanyId = a.INSURANCECOMPANYID,
+                                     companyAddress = a.ISURANCECOMPANYADDRESS,
+                                     referenceNumber = a.POLICYNUMBER,
+                                     startDate = a.INSURANCESTARTDATE,
+                                     expiryDate = a.INSURANCEENDDATE,
+                                     sumInsured = a.SUMINSURED,
+                                     premiumAmount = a.PREMIUMPAID,
+                                     insuranceStatus = (int)a.INSURANCESTATUSID,
+                                     collateralCustomerId = a.COLLATERALCUSTOMERID,
+                                     loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                     valuationStartDate = a.VALUATIONSTARTDATE,
+                                     valuationEndDate = a.VALUATIONENDDATE,
+                                     openMarketValue = a.OMV,
+                                     forcedSaleValue = a.FSV,
+                                     valuerId = a.VALUERID,
+                                     collateralDetails = a.COLLATERALDETAILS,
+                                     insurancePolicyTypeId = a.INSURANCEPOLICYTYPEID,
+                                     otherValuer = a.OTHERVALUER,
+                                     otherInsuranceCompany = a.OTHERINSURANCECOMPANY,
+                                     otherInsurancePolicyType = a.OTHERINSURANCEPOLICYTYPE,
+                                     collateralTypeId = a.COLLATERALTYPE,
+                                     collateralSubTypeId = a.COLLATERALSUBTYPE,
+                                     gpsCoordinates = a.GPSCOORDINATES,
+                                     firstLossPayee = a.FIRSTLOSSPAYEE,
+                                     comment = a.COMMENT,
+                                     dateTimeCreated = (DateTime)a.DATETIMECREATED,
+                                     createdBy = (int)a.CREATEDBY,
+                                     batchCode = a.BATCHCODE,
+                                     toStaffId = atrail.TOSTAFFID,
+                                     requestStaffId = atrail.REQUESTSTAFFID,
+                                     approvalTrailId = atrail.APPROVALTRAILID,
+                                     responseStaffId = atrail.RESPONSESTAFFID,
+                                     requestOperationId = (int)OperationsEnum.InsuranceBulkUploadApproval,
+                                     approvalStatusId = atrail.APPROVALSTATUSID,
+                                     approvalStatusName = (from y in context.TBL_APPROVAL_STATUS.Where(i => i.APPROVALSTATUSID == b.APPROVALSTATUSID) select y.APPROVALSTATUSNAME).FirstOrDefault(),
+
+                                 }).ToList();
+            foreach(var i in records)
+            {
+                i.iCustomerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALRELEASESTATUSID == i.collateralCustomerId).Select(x => x.CUSTOMERID).FirstOrDefault();
+                i.customerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALRELEASESTATUSID == i.collateralCustomerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+            }
+
+            var data = records.GroupBy(x => x.referenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.systemArrivalDateTime);
+
+            allRecords = data.ToList();
+            return allRecords;
+
+        }
+
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansOperationWriteOffAnalysis(int staffId, int companyId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
@@ -39408,6 +39476,170 @@ namespace FintrakBanking.Repositories.Credit
             return false;
 
         }
+
+        public WorkflowResponse GoForBulkInsuranceUploadApproval(ApprovalViewModel entity)
+        {
+
+            entity.applicationDate = generalSetup.GetApplicationDate();
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var reviewRecord = (from s in context.TBL_BULK_INSURANCE_UPLOAD_APPROVAL
+                                    where s.BULKINSURANCEUPLOADAPPROVALID == entity.targetId && s.OPERATIONID == entity.operationId
+                                    && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                    select s).FirstOrDefault();
+
+                if (entity.approvalStatusId == (short)ApprovalStatusEnum.Referred)
+                {
+
+                    int staffId = entity.staffId;
+                    var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+                    var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == entity.operationId)
+                         .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                         .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                             mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                             {
+                                 groupPosition = mg.m.POSITION,
+                                 levelPosition = l.POSITION,
+                                 levelId = l.APPROVALLEVELID,
+                                 levelName = l.LEVELNAME,
+                                 staffRoleId = l.STAFFROLEID,
+                             })
+                             .OrderBy(x => x.groupPosition)
+                             .ThenBy(x => x.levelPosition)
+                             .ToList();
+
+                    var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+                    var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+                    var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+                    workFlow.StaffId = entity.createdBy;
+                    workFlow.OperationId = entity.operationId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.ProductClassId = null;
+                    workFlow.ProductId = null;
+                    workFlow.NextLevelId = entity.approvalLevelId;
+                    workFlow.ToStaffId = staffId;
+                    workFlow.StatusId = (int)ApprovalStatusEnum.Referred;
+                    workFlow.Comment = entity.comment;
+                    workFlow.DeferredExecution = true;
+
+
+                    var loanAssigns = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE).ToList();
+                    foreach (var loanAssign in loanAssigns)
+                    {
+                        var record = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(loanAssign.COLLATERALINSURANCETRACKINGID);
+                        record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+                        context.SaveChanges();
+                    }
+                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+                    context.SaveChanges();
+                    trans.Commit();
+                    return workFlow.Response;
+                }
+
+                workFlow.StaffId = entity.staffId;
+                workFlow.CompanyId = entity.companyId;
+                workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                workFlow.TargetId = entity.targetId;
+                workFlow.Comment = entity.comment;
+                workFlow.OperationId = entity.operationId;
+                workFlow.DeferredExecution = true;
+                workFlow.LogActivity();
+
+
+                bool output = false;
+                if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                {
+
+                    var loanAssigns = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE).ToList();
+                    foreach (var loanAssign in loanAssigns)
+                    {
+                        var record = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(loanAssign.COLLATERALINSURANCETRACKINGID);
+                        record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                        context.SaveChanges();
+                    }
+                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    context.SaveChanges();
+                    trans.Commit();
+                    return workFlow.Response;
+                }
+
+                if (workFlow.NewState != (int)ApprovalState.Ended)
+                {
+                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    output = context.SaveChanges() > 0;
+                    trans.Commit();
+                    return workFlow.Response;
+                }
+                else if (workFlow.NewState == (int)ApprovalState.Ended)
+                {
+                    if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
+                    {
+                        var loanAssigns = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE).ToList();
+                        foreach (var loanAssign in loanAssigns)
+                        {
+                            var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x=>x.COLLATERALCUSTOMERID == loanAssign.COLLATERALCUSTOMERID).FirstOrDefault();
+                            if (doseRecordExist == null)
+                            {
+                                var record = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(loanAssign.COLLATERALINSURANCETRACKINGID);
+                                bulkInsuranceUploads(record);
+                                record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(record);
+                                output = context.SaveChanges() > 0;
+                            }
+                        }
+                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        output = context.SaveChanges() > 0;
+                    }
+                    if (output == true)
+                    {
+                        trans.Commit();
+
+                    }
+
+                }
+                return workFlow.Response;
+
+            }
+
+        }
+
+
+        private void bulkInsuranceUploads(TEMP_COLLATERAL_INSURANCE_TRACKING insurancePolicy)
+        {
+            var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
+            {
+                INSURANCECOMPANYID = insurancePolicy.INSURANCECOMPANYID,
+                ISURANCECOMPANYADDRESS = insurancePolicy.ISURANCECOMPANYADDRESS,
+                POLICYNUMBER = insurancePolicy.POLICYNUMBER,
+                INSURANCESTARTDATE = insurancePolicy.INSURANCESTARTDATE,
+                INSURANCEENDDATE = insurancePolicy.INSURANCEENDDATE,
+                SUMINSURED = insurancePolicy.SUMINSURED,
+                PREMIUMPAID = insurancePolicy.INSURANCESTATUSID,
+                INSURANCESTATUSID = insurancePolicy.COLLATERALCUSTOMERID,
+                COLLATERALCUSTOMERID = insurancePolicy.COLLATERALCUSTOMERID,
+                LOANAPPLICATIONDETAILID = insurancePolicy.LOANAPPLICATIONDETAILID,
+                VALUATIONSTARTDATE = insurancePolicy.VALUATIONSTARTDATE,
+                VALUATIONENDDATE = insurancePolicy.VALUATIONENDDATE,
+                OMV = insurancePolicy.OMV,
+                FSV = insurancePolicy.FSV,
+                VALUERID = insurancePolicy.VALUERID,
+                COLLATERALDETAILS = insurancePolicy.COLLATERALDETAILS,
+                INSURANCEPOLICYTYPEID = insurancePolicy.INSURANCEPOLICYTYPEID,
+                OTHERVALUER = insurancePolicy.OTHERVALUER,
+                OTHERINSURANCECOMPANY = insurancePolicy.OTHERINSURANCECOMPANY,
+                OTHERINSURANCEPOLICYTYPE = insurancePolicy.OTHERINSURANCEPOLICYTYPE,
+                COLLATERALTYPE = insurancePolicy.COLLATERALTYPE,
+                COLLATERALSUBTYPE = insurancePolicy.COLLATERALSUBTYPE,
+                GPSCOORDINATES = insurancePolicy.GPSCOORDINATES,
+                FIRSTLOSSPAYEE = insurancePolicy.FIRSTLOSSPAYEE,
+                INSURABLEVALUE = insurancePolicy.INSURABLEVALUE,
+                COMMENT = insurancePolicy.COMMENT,
+            });
+        }
+
         public IEnumerable<LoanRecoveryReportApprovalViewModel> GetBulkRecoveryReportingAwaitingApproval(int staffId, int companyId)
         {
             var applicationDate = generalSetup.GetApplicationDate();

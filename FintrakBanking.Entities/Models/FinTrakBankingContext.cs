@@ -9098,7 +9098,9 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_RAC_DEFINITION)
                 .WithRequired(e => e.TBL_RAC_ITEM)
                 .WillCascadeOnDelete(false);
-            
+
+            modelBuilder.Entity<TBL_SECTOR_GLOBAL_LIMIT>().Property(a => a.SECTORLIMIT).HasPrecision(38, 5);
+
         }
     }
 }
