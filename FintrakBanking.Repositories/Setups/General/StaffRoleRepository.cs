@@ -88,6 +88,8 @@ namespace FintrakBanking.Repositories.Setups.General
                        workEndDuration = a.WORKENDDURATION,
                        workStartDuration = a.WORKSTARTDURATION,
                        useRoundRublin = a.USEROUNDROBIN,
+                       useSbuRouting = a.USESBUROUTING,
+                       approvalFlowTypeId = a.APPROVALFLOWTYPEID,
                        
 
                        userGroup = a.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == a.STAFFROLEID).Select(x => new UserGroup
@@ -155,6 +157,8 @@ namespace FintrakBanking.Repositories.Setups.General
                    };
         }
 
+        
+
         public bool ValidateStaffRole(string staffRoleCode, string staffRoleName)
         {
             return context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE == staffRoleCode || x.STAFFROLENAME == staffRoleName).Any();
@@ -220,6 +224,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 staffRole.STAFFROLESHORTCODE = entity.staffRoleShortCode;
                 staffRole.WORKSTARTDURATION = entity.workStartDuration;
                 staffRole.WORKENDDURATION = entity.workEndDuration;
+                staffRole.APPROVALFLOWTYPEID = entity.approvalFlowTypeId;
+                staffRole.USEROUNDROBIN = entity.useRoundRublin;
+                staffRole.USESBUROUTING = entity.useSbuRouting;
                 staffRole.TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups;
                 staffRole.TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities;
             }
@@ -233,7 +240,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     WORKSTARTDURATION = entity.workStartDuration,
                     WORKENDDURATION = entity.workEndDuration,
                     COMPANYID = entity.companyId,
+                    APPROVALFLOWTYPEID = entity.approvalFlowTypeId,
                     USEROUNDROBIN = entity.useRoundRublin,
+                    USESBUROUTING = entity.useSbuRouting,
                     TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups,
                     TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities
                 };
@@ -486,6 +495,28 @@ namespace FintrakBanking.Repositories.Setups.General
                    };
         }
 
+        //public IEnumerable<ApprovalFlowTypeViewModel> GetAllApprovalFlowTypes()
+        //{
+        //    return from a in context.TBL_APPROVAL_FLOW_TYPE
+        //           select new ApprovalFlowTypeViewModel
+        //           {
+        //                       approvalFlowTypeId = a.APPROVALFLOWTYPEID,
+        //                       flowTypeName = a.FLOWTYPENAME
+        //           };
+
+        //}
+        public IEnumerable<ApprovalFlowTypeViewModel> GetAllApprovalFlowTypes()
+        {
+            var flowTypes = (from x in context.TBL_APPROVAL_FLOW_TYPE
+                             select new ApprovalFlowTypeViewModel
+                             {
+                                 approvalFlowTypeId = x.APPROVALFLOWTYPEID,
+                                 flowTypeName = x.FLOWTYPENAME,
+                             }).ToList();
+
+            return flowTypes;
+
+        }
 
         public bool UpdateApprovalSetUp(ApprovalSetUpViewModel entity)
         {

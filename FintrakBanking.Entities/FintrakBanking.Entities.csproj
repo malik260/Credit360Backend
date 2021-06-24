@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\TBL_DOCUMENT_USAGE_FINAL_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_APPROVAL_FLOW_TYPE.cs" />
     <Compile Include="Models\TBL_APPROVED_TRADE_CYCLE.cs" />
     <Compile Include="Models\TBL_BULK_INSURANCE_UPLOAD_APPROVAL.cs" />
     <Compile Include="Models\TBL_BULK_PREPAYMENT.cs" />
