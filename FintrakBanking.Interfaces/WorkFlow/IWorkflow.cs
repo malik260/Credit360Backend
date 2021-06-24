@@ -74,7 +74,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
                 bool isFlowTest = false,
                 int? businessUnitId = null,
                 int? finalLevel = null,
-                int amount = 0
+                int amount = 0,
+                int? productId = null
             );
 
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!

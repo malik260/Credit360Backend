@@ -674,9 +674,11 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
                         workflow.SetResponse = false;
-                        //workflow.ProductClassId = null;
-                        //workflow.ProductId = null;
-                        workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID);
+                    //workflow.ProductClassId = null;
+                    //workflow.ProductId = null;
+                        var productId = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
+                        workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, 
+                            model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
                     }
 
                     //workflow.Response.success = true;

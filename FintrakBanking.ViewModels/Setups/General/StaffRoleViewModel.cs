@@ -27,7 +27,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public List<int> activitieIds { get; set; }
         public string staffRoleShortCode { get; set; }
         public bool useRoundRublin { get; set; }
-
+        public bool useSbuRouting { get; set; }
+        public short? approvalFlowTypeId { get; set; }
     }
 
     public class ApprovalSetUpViewModel: GeneralEntity
@@ -59,4 +60,9 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     }
 
+    public class ApprovalFlowTypeViewModel : GeneralEntity
+    {
+        public int approvalFlowTypeId { get; set; }
+        public string flowTypeName { get; set; }
+    }
 }
