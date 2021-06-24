@@ -31,13 +31,13 @@ namespace FintrakBanking.Repositories.Notification
         {
             List<NotificationViewModel> logs = new List<NotificationViewModel>();
             var staff = context.TBL_STAFF.Where(a => a.STAFFID == staffId).FirstOrDefault();
-            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId || c.staffRoleId == staff.STAFFROLEID).ToList();
-            var staffApprovalLevels = approvalLevel.Select(x => x.approvalLevelId).Distinct();
+            var staffApprovalLevels = levelStaffRepo.GetAllDetailedApprovalLevelStaffApprovalLevelId(companyId, staffId).ToArray();
+           
 
             var result = (from a in context.TBL_APPROVAL_TRAIL
                           join b in context.TBL_OPERATIONS on a.OPERATIONID equals b.OPERATIONID
                           //join c in context.TBL_APPROVAL_LEVEL_STAFF  on a.TOAPPROVALLEVELID equals c.APPROVALLEVELID
-                          where staffApprovalLevels.ToList().Contains((int)a.TOAPPROVALLEVELID)
+                          where staffApprovalLevels.Contains((int)a.TOAPPROVALLEVELID)
                           && a.APPROVALSTATEID != (int)ApprovalState.Ended
                           && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                           //( a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
@@ -50,7 +50,7 @@ namespace FintrakBanking.Repositories.Notification
                           select new
                           {
                             operationId = p.FirstOrDefault().OPERATIONID,
-                            count = p.ToList().Count(),
+                            count = p.Count(),
                           }
                        ).ToList();
 
