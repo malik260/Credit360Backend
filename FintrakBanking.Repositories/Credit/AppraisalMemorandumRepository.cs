@@ -679,10 +679,11 @@ namespace FintrakBanking.Repositories.Credit
                         var productId = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
                         workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, 
                             model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
-                    }
+                    //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
+                }
 
-                    //workflow.Response.success = true;
-                    workflow.Response.isFinal = generateOutPutDocument;
+                //workflow.Response.success = true;
+                workflow.Response.isFinal = generateOutPutDocument;
                     return workflow.Response;
                 }
                 //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);

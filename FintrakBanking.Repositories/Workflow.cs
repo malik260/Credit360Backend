@@ -802,7 +802,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
             }
         }
-
+        //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
         public void NextProcess(
             int companyId,
             int staffId,
