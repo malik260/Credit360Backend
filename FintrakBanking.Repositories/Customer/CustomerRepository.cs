@@ -406,8 +406,7 @@ namespace FintrakBanking.Repositories.Customer
                     currentCustomer.DATETIMEUPDATED = DateTime.Now;
                     currentCustomer.LASTUPDATEDBY = createdBy;
 
-                    context.SaveChanges();
-                    return true;
+                    return context.SaveChanges() > 0;
 
                 }
 
