@@ -363,7 +363,7 @@ namespace FintrakBanking.ViewModels.Reports
         public int createdBy { get; set; }
         public string groupHead { get; set; }
         public int? businessUnitId { get; set; }
-        public IQueryable<string> sbu { get; set; }
+        public string sbu { get; set; }
     }
 
     public class FCYScheuledLoanViewModel

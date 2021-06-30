@@ -18,6 +18,9 @@
               <Width>3.74354cm</Width>
             </TablixColumn>
             <TablixColumn>
+              <Width>3.41852cm</Width>
+            </TablixColumn>
+            <TablixColumn>
               <Width>3.24083cm</Width>
             </TablixColumn>
             <TablixColumn>
@@ -235,6 +238,40 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
+                    <Textbox Name="Textbox14">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Collateral Code</Value>
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                                <FontWeight>SemiBold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox14</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>Orange</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
                     <Textbox Name="Textbox29">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -378,7 +415,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Collateral Value Omv</Value>
+                              <Value>Collateral Value OMV</Value>
                               <Style>
                                 <FontFamily>Verdana</FontFamily>
                                 <FontWeight>SemiBold</FontWeight>
@@ -412,7 +449,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Collateral Value Efsv</Value>
+                              <Value>Collateral Value FSV</Value>
                               <Style>
                                 <FontFamily>Verdana</FontFamily>
                                 <FontWeight>SemiBold</FontWeight>
@@ -1207,6 +1244,40 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>customername</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="collateralCode">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!collateralCode.Value</Value>
+                              <Style>
+                                <FontFamily>Verdana</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>collateralCode</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -2116,6 +2187,7 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
+            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -2132,7 +2204,7 @@
         <Top>0.16467cm</Top>
         <Left>0.34078cm</Left>
         <Height>1.2cm</Height>
-        <Width>100.29355cm</Width>
+        <Width>103.71206cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2140,10 +2212,10 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>2.69792in</Height>
+    <Height>2.04167in</Height>
     <Style />
   </Body>
-  <Width>39.61981in</Width>
+  <Width>41.58831in</Width>
   <Page>
     <PageHeader>
       <Height>3.683cm</Height>
@@ -2377,6 +2449,10 @@
         </Field>
         <Field Name="guarantorName">
           <DataField>guarantorName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="collateralCode">
+          <DataField>collateralCode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

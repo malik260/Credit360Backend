@@ -996,11 +996,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start2) && (now <= end2))
                 {
-                     GetSectorLimitExceedeBBDReminder();
+                     /*GetSectorLimitExceedeBBDReminder();
                      GetSectorLimitExceedeCBDReminder();
                      GetSectorLimitExceedeCIBDReminder();
                      GetSectorLimitExceedeRBDReminder();
-                     GetSectorLimitExceededBankReminder();
+                     GetSectorLimitExceededBankReminder();*/
                      state = true;
                 }
 
@@ -1023,14 +1023,14 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetDigitalLoanDPDDecrease();
                     GetDigitalLoanLiquidationIncrease();//////*/
 
-                    GetDigitalLoanLiquidationModuleIncrease();
+                    /*GetDigitalLoanLiquidationModuleIncrease();
                     //GetDigitalLoanLiquidationModuleDecrease();
                     GetDigitalLoanExceptionNPLModuleIncrease();
                     GetDigitalLoanExceptionNPLModuleDecrease();
                     GetDigitalLoanDPDModuleIncrease();
                     GetDigitalLoanDPDModuleDecrease();
                     GetDigitalLoanDisbursementModuleIncrease();
-                    GetDigitalLoanDisbursementModuleDecrease();
+                    GetDigitalLoanDisbursementModuleDecrease();*/
                     state = true;
                 }
 
@@ -1054,14 +1054,14 @@ namespace FintrakBanking.Repositories.Setups.General
             if (CompareDate() == true)
             {
                 TimeSpan start = new TimeSpan(8, 0, 0);
-                TimeSpan end = new TimeSpan(11, 0, 0);
+                TimeSpan end = new TimeSpan(16, 30, 0);
 
                 if ((now >= start) && (now <= end))
                 {
                     GroupImminentMaturitiesByGroupHeads();
                     GetImminentMaturities();
-                    GetPastDueObligationsReminder();
-                    GetPastDueObligationsReminderByGroupHeads();
+                    //GetPastDueObligationsReminder();
+                    //GetPastDueObligationsReminderByGroupHeads();
                     state = true;
                 }
             }
@@ -1161,7 +1161,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 foreach (var r in records)
                 {
                     int timeDiff = (int)currentDate.Subtract(r.SENDONDATETIME).TotalMinutes;
-                    if (timeDiff > 40)
+                    if (timeDiff > 60)
                     {
                         r.MESSAGESTATUSID = 3;
                         r.GATEWAYRESPONSE = "Email Sent Successfully";
@@ -1186,12 +1186,9 @@ namespace FintrakBanking.Repositories.Setups.General
                          || m.OPERATIONMETHOD.Trim() == "GetSiteVisitationAccountReminder"
                          || m.OPERATIONMETHOD.Trim() == "GetExpiredValuationReport"
                          || m.OPERATIONMETHOD.Trim() == "GetGroupCreditFileChecklistReminder"
-
-                         /* 
-                          * m.OPERATIONMETHOD.Trim() == "GetStaffLoanPortfolioReport"
-                         ||&& (m.OPERATIONMETHOD.Trim() == "GetImminentMaturities" 
+                         || m.OPERATIONMETHOD.Trim() == "GetImminentMaturities"
                          || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminder"
-                         */
+                         || m.OPERATIONMETHOD.Trim() == "GetStaffLoanPortfolioReport"
                          )).FirstOrDefault();
 
             if (DBdate == null)
@@ -1461,8 +1458,10 @@ namespace FintrakBanking.Repositories.Setups.General
                             accountOfficerFullName = "UNKNOWN ACCOUNT OFFICER";
                         }
 
-                        List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
-                        var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == accountOfficer.misCode && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
+                        //List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
+                        //var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == accountOfficer.misCode && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
+
+                        var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.ACCOUNTOFFICERCODE == accountOfficer.misCode && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
 
                         var n = 0;
 
@@ -1660,7 +1659,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     emailList = GetBusinessUsersEmails(staff.misCode);
 
                     List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
-                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
+                    //var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
+                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.ACCOUNTOFFICERCODE == staff.misCode && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
 
                     if (loanInformation != null && loanInformation.Count() > 0)
                     {
@@ -5401,6 +5401,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetRepaymentDefaultersAlert method
             var repaymentDefaulters = externalAlertRepository.GetRepaymentDefaultersAlert();
+            var OverdueObligation = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "OverdueObligation").FirstOrDefault();
 
             if (repaymentDefaulters != null && repaymentDefaulters.Count() > 0)
             {
@@ -5410,8 +5411,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     AlertsViewModel alert = new AlertsViewModel();
                     var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(repaymentDefaulter.periodPaymentAmount));
-                    var alertTitle = "REMINDER FOR YOUR PAST DUE LOAN REPAYMENT";
-                    var alertTemplate = "Dear " + repaymentDefaulter.customerName + " <br/>You have an outstanding repayment of " + amount + " kindly regularise";
+                    var alertTitle = OverdueObligation.TITLE;
+                    var alertTemplate = OverdueObligation.TEMPLATE;
+                    alertTemplate = alertTemplate.Replace("@{{loanAmount}}", amount);
+                    alertTemplate = alertTemplate.Replace("@{{customerName}}", repaymentDefaulter.customerName);
+                    alertTemplate = alertTemplate.Replace("@{{loanAmount}}", amount);
+                    alertTemplate = alertTemplate.Replace("@{{loanAmount}}", amount);
+                    alertTemplate = alertTemplate.Replace("@{{loanAmount}}", amount);
+
                     string emailList = repaymentDefaulter.customerEmail + ";" + repaymentDefaulter.guarantorEmail;
 
                     alert.receiverEmailList.Add(emailList);
