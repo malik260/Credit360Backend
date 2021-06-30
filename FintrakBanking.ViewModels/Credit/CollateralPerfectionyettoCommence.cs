@@ -183,7 +183,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? collateralCustomerID { get; set; }
 
         public DateTime? dateOfCollateralInspection { get; set; }
-        public DateTime collateralDescription { get; set; }
+        public string collateralDescription { get; set; }
         public DateTime dateOfInsurance { get; set; }
         public string insuranceCompany { get; set; }
         public string rmCode { get; set; }
@@ -193,11 +193,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string stc { get; set; }
         public string groupDescription { get; set; }
         public int loanApplicationId { get; set; }
-        public decimal exposure { get; set; }
+        public decimal? exposure { get; set; }
         public string collateralForm { get; set; }
         public string collateralSummary { get; set; }
         public string guarantorName { get; set; }
         public int collateralTypeId { get; set; }
+        public string customerCode { get; set; }
     }
 
 
@@ -229,7 +230,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string stc { get; set; }
         public string groupDescription { get; set; }
         public int loanApplicationId { get; set; }
-        public decimal exposure { get; set; }
+        public decimal? exposure { get; set; }
         public string collateralForm { get; set; }
         public string collateralSummary { get; set; }
         public string guarantorName { get; set; }
@@ -237,7 +238,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalDirectExposure { get; set; }
         public string collateralType { get; set; }
         public string currency { get; set; }
-        public decimal collateralValue { get; set; }
+        public decimal? collateralValue { get; set; }
         public string accountOfficer { get; set; }
         public int createdBy { get; set; }
         public string relationshipManager { get; set; }
@@ -254,5 +255,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalPercentageCoverage { get; set; }
         public short currencyId { get; set; }
         public string collateralCurrency { get; set; }
+        public decimal collateralVal { get; set; }
     }
 }

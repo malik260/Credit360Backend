@@ -183,7 +183,7 @@ namespace FintrakBanking.Repositories.Credit
             var staff = context.TBL_STAFF.Find(staffId);
             List<int> sectionIds = new List<int>();
 
-            var memoOperationId = 0;
+           /* var memoOperationId = 0;
             var sectionsOperation = context.TBL_DOC_TEMPLATE_DETAIL.Where(x => x.DELETED == false && x.TARGETID == targetId).FirstOrDefault();
             if(sectionsOperation != null)
             {
@@ -192,7 +192,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 memoOperationId = operationId;
-            }
+            }*/
 
             if (staff != null)
             {
@@ -203,7 +203,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var sections = context.TBL_DOC_TEMPLATE_DETAIL
-                .Where(x => x.DELETED == false && x.OPERATIONID == memoOperationId && x.TARGETID == targetId).OrderBy(x => x.POSITION)
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId).OrderBy(x => x.POSITION)
                 .Join(context.TBL_STAFF, d => d.CREATEDBY, s => s.STAFFID, (d, s) => new { d, s })
                 .Join(context.TBL_STAFF_ROLE, ds => ds.s.STAFFROLEID, r => r.STAFFROLEID, (ds, r) => new { t = ds.d, r })
                 .Select(x => new LoadedDocumentSectionViewModel
@@ -398,7 +398,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user, bool isThirdPartyFacility)
         {
             // int staffId, is REDUNDANT!
-            var memoOperationId = 0;
+           /* var memoOperationId = 0;
             var templateOperation = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.TARGETID == targetId).FirstOrDefault();
             if(templateOperation != null)
@@ -408,11 +408,11 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 memoOperationId = templateOperation.OPERATIONID;
-            }
+            }*/
 
             var printedDoc = "";
             var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
-                .Where(x => x.DELETED == false && x.OPERATIONID == memoOperationId && x.TARGETID == targetId)
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .OrderBy(x => x.POSITION)
                 .Select(x => new LoadedDocumentSectionViewModel
                 {
@@ -978,7 +978,7 @@ namespace FintrakBanking.Repositories.Credit
                     .ToList();
             }
 
-            var memoOperationId = 0;
+           /* var memoOperationId = 0;
             var memoOperation = context.TBL_DOC_TEMPLATE_DETAIL.FirstOrDefault(x => x.TARGETID == targetId && x.DOCUMENTDETAILID == sectionId);
             if(memoOperation != null)
             {
@@ -987,8 +987,8 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 memoOperationId = operationId;
-            }
-            var doc = context.TBL_DOC_TEMPLATE_DETAIL.FirstOrDefault(x => x.OPERATIONID == memoOperationId && x.DOCUMENTDETAILID == sectionId);
+            }*/
+            var doc = context.TBL_DOC_TEMPLATE_DETAIL.FirstOrDefault(x => x.OPERATIONID == operationId && x.DOCUMENTDETAILID == sectionId);
             var section = context.TBL_DOC_TEMPLATE_SECTION.FirstOrDefault(s => s.TEMPLATESECTIONID == doc.TEMPLATESECTIONID);
             if (doc == null) return new LoadedDocumentSectionViewModel();
 
