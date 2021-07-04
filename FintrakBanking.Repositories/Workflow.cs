@@ -831,6 +831,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.targetId = targetId;
            
             this.productClassId = productClassId;
+            this.productId = productId;
             this.comment = comment;
             this.externalInitialization = external;
             this.deferredExecution = deferred;

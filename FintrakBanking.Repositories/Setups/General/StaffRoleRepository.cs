@@ -88,7 +88,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        workEndDuration = a.WORKENDDURATION,
                        workStartDuration = a.WORKSTARTDURATION,
                        useRoundRublin = a.USEROUNDROBIN,
-                       useSbuRouting = a.USESBUROUTING,
+                      
                        approvalFlowTypeId = a.APPROVALFLOWTYPEID,
                        
 
@@ -226,7 +226,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 staffRole.WORKENDDURATION = entity.workEndDuration;
                 staffRole.APPROVALFLOWTYPEID = entity.approvalFlowTypeId;
                 staffRole.USEROUNDROBIN = entity.useRoundRublin;
-                staffRole.USESBUROUTING = entity.useSbuRouting;
+               
                 staffRole.TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups;
                 staffRole.TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities;
             }
@@ -242,7 +242,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     COMPANYID = entity.companyId,
                     APPROVALFLOWTYPEID = entity.approvalFlowTypeId,
                     USEROUNDROBIN = entity.useRoundRublin,
-                    USESBUROUTING = entity.useSbuRouting,
+                    
                     TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups,
                     TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities
                 };
