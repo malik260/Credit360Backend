@@ -7313,7 +7313,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             };
 
-                            status = casaLien.ReleaseLien(model, null, false);
+                            status = casaLien.ReleaseLien(model, null, false); 
 
                             //if (status == true)
                             //{
@@ -17274,7 +17274,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             operationTypeId = data.OPERATIONID,
                             operationTypeName = data.OPERATIONNAME,
-                        });
+                        }).OrderBy(x=>x.operationTypeName).ToList();
             }
             return (from data in context.TBL_OPERATIONS
                     where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
@@ -17283,18 +17283,28 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         operationTypeId = data.OPERATIONID,
                         operationTypeName = data.OPERATIONNAME,
-                    });
+                    }).OrderBy(x => x.operationTypeName).ToList();
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD()
         {
-            return (from data in context.TBL_OPERATIONS
+            var odOperations =  (from data in context.TBL_OPERATIONS
                     where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft && data.ISDISABLED == false
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
                         operationTypeName = data.OPERATIONNAME
-                    });
+                    }).OrderBy(x=>x.operationTypeName).ToList();
+
+            var odOperations2 = (from datas in context.TBL_OPERATIONS
+                                where datas.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement && datas.ISDISABLED == false
+                                select new LoanOperationTypeViewModel()
+                                {
+                                    operationTypeId = datas.OPERATIONID,
+                                    operationTypeName = datas.OPERATIONNAME
+                                }).OrderBy(x => x.operationTypeName).ToList();
+
+            return odOperations.Union(odOperations2).OrderBy(x=>x.operationTypeName);
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetRemedialOperationType()
@@ -39603,7 +39613,86 @@ namespace FintrakBanking.Repositories.Credit
                 return workFlow.Response;
 
             }
+        }
 
+
+        public WorkflowResponse GoForMultipleBulkInsuranceUploadApproval(List<MultipleInsuranceOutputViewModel> entity, UserInfo user, int approvalStatusId, string comment)
+        {
+
+            if (entity != null)
+            {
+
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    foreach (var record in entity)
+                    {
+
+                        var reviewRecord = (from s in context.TBL_BULK_INSURANCE_UPLOAD_APPROVAL
+                                            where s.BULKINSURANCEUPLOADAPPROVALID == record.targetId
+                                            && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                            select s).FirstOrDefault();
+
+                        var approval = new ApprovalViewModel
+                        {
+                            staffId = user.createdBy,
+                            companyId = user.companyId,
+                            approvalStatusId = ((short)approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)approvalStatusId,
+                            comment = comment,
+                            targetId = record.collateralInsuranceTrackingId,
+                            operationId = reviewRecord.OPERATIONID,
+                            BranchId = user.BranchId,
+                            deferredExecution = false
+                        };
+
+                        workFlow.LogForApproval(approval);
+
+                        if (approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                        {
+                            var loanAssigns = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE).ToList();
+                            foreach (var loanAssign in loanAssigns)
+                            {
+                                var records = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(loanAssign.COLLATERALINSURANCETRACKINGID);
+                                records.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                                context.SaveChanges();
+                            }
+                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                            context.SaveChanges();
+                            trans.Commit();
+                            return workFlow.Response;
+                        }
+
+                        if (workFlow.NewState != (int)ApprovalState.Ended)
+                        {
+                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+
+                        }
+                        else if (workFlow.NewState == (int)ApprovalState.Ended)
+                        {
+                            if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
+                            {
+                                var loanAssigns = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE).ToList();
+                                foreach (var loanAssign in loanAssigns)
+                                {
+                                    var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == loanAssign.COLLATERALCUSTOMERID).FirstOrDefault();
+                                    if (doseRecordExist == null)
+                                    {
+                                        var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(loanAssign.COLLATERALINSURANCETRACKINGID);
+                                        bulkInsuranceUploads(rec);
+                                        rec.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                        context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(rec);
+                                    }
+                                }
+                                reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            }
+                        }
+
+                    }
+                    context.SaveChanges();
+                    trans.Commit();
+                }
+
+            }
+            return workFlow.Response;
         }
 
 

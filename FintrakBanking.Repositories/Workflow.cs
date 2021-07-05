@@ -2466,7 +2466,25 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
-        private string GetApprovalStatusName(int statusId)
+        private string GetApprovalStatusName(int statusId) //as requested by the bank
+        {
+            switch (statusId)
+            {
+                case 0: return "initiated";
+                case 1: return "approved";
+                case 2: return "approved";
+                case 3: return "rejected";
+                case 4: return "authorised";
+                case 5: return "referred";
+                case 6: return "rerouted";
+                case 7: return "escalated";
+                default: break;
+            }
+            return "approved";
+        }
+
+
+        /*private string GetApprovalStatusName(int statusId)
         {
             switch (statusId)
             {
@@ -2481,7 +2499,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 default: break;
             }
             return "forwarded";
-        }
+        }*/
+
 
         private bool Authorization() // TODO: intended to manage delegated staff actions
         {

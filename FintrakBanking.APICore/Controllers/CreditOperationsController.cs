@@ -2553,6 +2553,34 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("multiple-bulk-insurance-upload-approval/{approvalStatusId}/{comment}")]
+        public HttpResponseMessage GoForMultipleBulkInsuranceUploadApproval(int approvalStatusId, string comment, [FromBody] List<MultipleInsuranceOutputViewModel> entity)
+        {
+
+            var user = new UserInfo
+            {
+                BranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            WorkflowResponse res = repo.GoForMultipleBulkInsuranceUploadApproval(entity, user, approvalStatusId, comment);
+
+            if (res != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = res.responseMessage });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("recovery-agents-list")]

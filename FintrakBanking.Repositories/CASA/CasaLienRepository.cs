@@ -431,7 +431,9 @@ namespace FintrakBanking.Repositories.CASA
                     throw new TwoFactorAuthenticationException(authenticated.message);
             }
 
-            if (USE_THIRD_PARTY_INTEGRATION)
+            ReleaseLienSub(model, existingLien);
+            // this block of code is commented because release lien is not applicable in access bank 
+            /*if (USE_THIRD_PARTY_INTEGRATION)
             {
 
                 ResponseMessage result = null;
@@ -452,7 +454,7 @@ namespace FintrakBanking.Repositories.CASA
             else
             {
                 ReleaseLienSub(model, existingLien);
-            }
+            }*/
 
             return true;
         }

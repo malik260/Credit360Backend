@@ -602,10 +602,9 @@ namespace FintrakBanking.Repositories.Finance
                         try
                         {
 
-                            loanOperation.ProcessReleaseLien(date, companyId, staffId);
+                            loanOperation.ProcessReleaseLien(date, companyId, staffId); //for eod to pass
 
                             //transactionScope.Complete();
-
                             //transactionScope.Dispose();
                         }
                         catch (Exception ex)
