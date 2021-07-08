@@ -212,6 +212,7 @@
     ContingentReviewDrawdownForExtension = 278,
     OverdraftReviewDrawdownForExtension = 279,
     LmsLoanApplicationCancellation = 285,
+    InsuranceBulkUploadApproval = 286,
 }
 
 

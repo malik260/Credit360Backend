@@ -1670,16 +1670,10 @@ namespace FintrakBanking.APICore.Controllers
             user.createdBy = token.GetStaffId;
             user.companyId = token.GetCompanyId;
 
-            var data = repo.saveBulkInsurancePolicyEntries(models, user);
-            if (data)
-            {
+            WorkflowResponse response = repo.saveBulkInsurancePolicyEntries(models, user);
+            
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Bulk Insurance Policy was successfully saved" });
-            }
-            return Request.CreateResponse(HttpStatusCode.OK,
-
-                new { success = false, message = "saving bulk Insurance Policy was unsuccessfully" });
-
+                    new { success = true, data = response.responseMessage, message = response.responseMessage });
         }
 
 

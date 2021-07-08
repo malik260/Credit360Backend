@@ -480,6 +480,7 @@ namespace FintrakBanking.Common.Enum
         LcUsanceExtensionAdded = 573,
         LcUsanceExtensionUpdated = 574,
         WorkflowMappingNotificationsDeleted = 577,
+        InsuranceBulkUpload = 578,
 
     };
     public enum RegulatoryTypeEnum

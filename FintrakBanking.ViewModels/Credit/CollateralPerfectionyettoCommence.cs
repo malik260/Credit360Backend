@@ -183,6 +183,43 @@ namespace FintrakBanking.ViewModels.Credit
         public int? collateralCustomerID { get; set; }
 
         public DateTime? dateOfCollateralInspection { get; set; }
+        public string collateralDescription { get; set; }
+        public DateTime dateOfInsurance { get; set; }
+        public string insuranceCompany { get; set; }
+        public string rmCode { get; set; }
+        public string rmName { get; set; }
+        public DateTime? dateOfExpiration { get; set; }
+        public int days { get; set; }
+        public string stc { get; set; }
+        public string groupDescription { get; set; }
+        public int loanApplicationId { get; set; }
+        public decimal? exposure { get; set; }
+        public string collateralForm { get; set; }
+        public string collateralSummary { get; set; }
+        public string guarantorName { get; set; }
+        public int collateralTypeId { get; set; }
+        public string customerCode { get; set; }
+    }
+
+
+    public class CollateralAdequacyViewModel 
+    {
+        public string glSubheadCode { get; set; }
+        public string accountNumber { get; set; }
+        public Decimal grossBalance { get; set; }
+        public Decimal collateralValueOmv { get; set; }
+        public Decimal collateralValueEfsv { get; set; }
+        public Decimal approvedAmount { get; set; }
+        public Decimal? securityValue { get; set; }
+        public Decimal? collateralCoverage { get; set; }
+        public string collateralLocation { get; set; }
+        public string customerId { get; set; }
+        public DateTime dateOfValuation { get; set; }
+        public string nameOfValuer { get; set; }
+        public short? valuerId { get; set; }
+        public int? collateralCustomerID { get; set; }
+
+        public DateTime? dateOfCollateralInspection { get; set; }
         public DateTime collateralDescription { get; set; }
         public DateTime dateOfInsurance { get; set; }
         public string insuranceCompany { get; set; }
@@ -193,6 +230,31 @@ namespace FintrakBanking.ViewModels.Credit
         public string stc { get; set; }
         public string groupDescription { get; set; }
         public int loanApplicationId { get; set; }
-
+        public decimal? exposure { get; set; }
+        public string collateralForm { get; set; }
+        public string collateralSummary { get; set; }
+        public string guarantorName { get; set; }
+        public string customerName { get; set; }
+        public decimal totalDirectExposure { get; set; }
+        public string collateralType { get; set; }
+        public string currency { get; set; }
+        public decimal? collateralValue { get; set; }
+        public string accountOfficer { get; set; }
+        public int createdBy { get; set; }
+        public string relationshipManager { get; set; }
+        public int? businessUnitId { get; set; }
+        public string groupHead { get; set; }
+        public string sbu { get; set; }
+        public short productId { get; set; }
+        public int cCustomerId { get; set; }
+        public int collateralTypeId { get; set; }
+        public decimal totalTangibleCollateral { get; set; }
+        public decimal totalIntangibleCollateral { get; set; }
+        public decimal percentageTangibleCoverage { get; set; }
+        public decimal percentageIntangibleCoverage { get; set; }
+        public decimal totalPercentageCoverage { get; set; }
+        public short currencyId { get; set; }
+        public string collateralCurrency { get; set; }
+        public decimal collateralVal { get; set; }
     }
 }

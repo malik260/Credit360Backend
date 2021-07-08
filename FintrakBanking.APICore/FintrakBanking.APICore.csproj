@@ -655,6 +655,13 @@
     <Compile Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx.designer.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CollateralAdequacy.aspx.cs">
+      <DependentUpon>CollateralAdequacy.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralAdequacy.aspx.designer.cs">
+      <DependentUpon>CollateralAdequacy.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CollateralRegister.aspx.cs">
       <DependentUpon>CollateralRegister.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1575,6 +1582,7 @@
     <Content Include="Reports\ReportViews\CollateralPerfection.aspx" />
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
+    <Content Include="Reports\ReportViews\CollateralAdequacy.aspx" />
     <Content Include="Reports\ReportViews\CollateralRegister.aspx" />
     <Content Include="Reports\ReportViews\CorporateCustomerCreation.aspx" />
     <Content Include="Reports\ReportViews\CorporateLoansReport.aspx" />
@@ -2082,6 +2090,7 @@
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashCollaterizedCredits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CollateralAdequacy.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralInsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPerfection.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPerfectionYetToCommence.rdlc" />

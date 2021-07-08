@@ -1,5 +1,4 @@
-﻿using FintrakBanking.Common.Enum;
-using FintrakBanking.Common.Extensions;
+﻿using FintrakBanking.Common.Extensions;
 using FintrakBanking.ReportObjects;
 using Microsoft.Reporting.WebForms;
 using System;
@@ -12,10 +11,11 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class LoanDocumentDeferred : System.Web.UI.Page
+    public partial class CollateralAdequacy : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
             if (!IsPostBack)
             {
                 try
@@ -23,21 +23,10 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                     DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
                     int companyId = Int32.Parse(Request.QueryString["companyId"]);
-
-                    string searchParameter = Request.QueryString["searchParameter"];
-
-                    //waivedOrDeferred = short.Parse(Request.QueryString["waivedOrDeferred"]);
-                    //CheckListStatusEnum waivedOrDeferred;
-                    //short.Parse(Request.QueryString["waivedOrDeferred"]);
-
-
-                    //short waivedOrDeferred = short.Parse(Request.QueryString["waivedOrDeferred"]);
                     short branchId = short.Parse(Request.QueryString["branchId"]);
+                    // int status = Int32.Parse(Request.QueryString["status"]);
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
-
-
-
 
                     HashHelper hash = new HashHelper();
 
@@ -62,29 +51,20 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         this.ReportViewer.LocalReport.Refresh();
                         return;
                     }
-                    LoanReportObjects dispursement = new LoanReportObjects();
-                   // var data = dispursement.LoanDocumentDeferred(startDate, endDate, companyId, branchId,searchParameter);
-                    var data = dispursement.LoanDocumentDeferred(startDate, endDate, companyId, branchId);
+                    LoanReportObjects CollateralRegister = new LoanReportObjects();
+                    var data = CollateralRegister.CollateralAdequacy(startDate, endDate, companyId, branchId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "LoanDocumentDefferals";
+                    reportDataSource.Name = "CollateralAdequacy";
 
-                    //ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
-                    //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
-
-                    string exportOption = "PDF";
-                    RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
-                    if (extension != null)
-                    {
-                        System.Reflection.FieldInfo fieldInfo = extension.GetType().GetField("m_isVisible", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-                        fieldInfo.SetValue(extension, false);
-                    }
+                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanDocumentDeferred.rdlc");
-                    //ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/CollateralAdequacy.rdlc");
+                    //ReportViewer1.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }
                 catch (Exception ex)
@@ -94,6 +74,10 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     return;
                 }
             }
+
+
+
+
         }
     }
 }

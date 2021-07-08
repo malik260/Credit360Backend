@@ -990,6 +990,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal periodPaymentAmount { get; set; }
         public decimal periodPrincipalAmount { get; set; }
         public decimal endPrincipalAmount { get; set; }
+        public string guarantorName { get; set; }
     }
 
 

@@ -92,6 +92,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             levelTypeId = x.LEVELTYPEID,
                             levelBusinessRuleId = x.APPROVALBUSINESSRULEID,
                             roleIdToRoute = x.ROLEIDTOROUTE,
+                            isPostApprovalReviewer = x.ISPOSTAPPROVALREVIEWER
+
                         }).OrderBy(x => x.position).ToList();
 
             return data;
@@ -122,7 +124,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             canApproveUntenored = a.CANAPPROVEUNTENORED,
                             canResolveDispute = a.CANRESOLVEDISPUTE,
                             isActive = a.ISACTIVE,
-
+                            isPostApprovalReviewer = a.ISPOSTAPPROVALREVIEWER,
                             canViewDocument = a.CANVIEWDOCUMENT,
                             canEdit = a.CANEDIT,
                             canViewUploadedFile = a.CANVIEWUPLOAD,
@@ -261,7 +263,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
                     LEVELTYPEID = model.levelTypeId,
                     APPROVALBUSINESSRULEID = model.levelBusinessRuleId,
-                    ROLEIDTOROUTE = model.roleIdToRoute
+                    ROLEIDTOROUTE = model.roleIdToRoute,
+                    ISPOSTAPPROVALREVIEWER = model.isPostApprovalReviewer
                 };
 
                 context.TBL_APPROVAL_LEVEL.Add(data);
@@ -322,7 +325,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                     OPERATION = "create",
-                    ROLEIDTOROUTE = model.roleIdToRoute
+                    ROLEIDTOROUTE = model.roleIdToRoute,
+
                 };
 
                 context.TBL_TEMP_APPROVAL_LEVEL.Add(data);
@@ -378,6 +382,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool UpdateApprovalLevel(int approvalLevelId, ApprovalLevelViewModel model)
         {
+
             var data = this.context.TBL_APPROVAL_LEVEL.Find(approvalLevelId);
             if (data == null) { return false; }
             if (admin.IsSuperAdmin(model.createdBy) == true)
@@ -425,6 +430,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 data.APPROVALBUSINESSRULEID = model.levelBusinessRuleId;
                 //data.LASTUPDATEDBY = model.lastUpdatedBy;
                 data.ROLEIDTOROUTE = model.roleIdToRoute;
+                data.ISPOSTAPPROVALREVIEWER = model.isPostApprovalReviewer;
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT

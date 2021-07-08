@@ -19,6 +19,8 @@ namespace FintrakBanking.Entities.Models
 
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }  
+        public virtual DbSet<TBL_BULK_INSURANCE_UPLOAD_APPROVAL> TBL_BULK_INSURANCE_UPLOAD_APPROVAL { get; set; }
+        public virtual DbSet<TEMP_COLLATERAL_INSURANCE_TRACKING> TEMP_COLLATERAL_INSURANCE_TRACKING { get; set; }
         public virtual DbSet<TBL_COLLECTION_COMPUTATION_VARIABLES_SETUP> TBL_COLLECTION_COMPUTATION_VARIABLES_SETUP { get; set; }
         public virtual DbSet<TBL_WORKFLOW_NOTIFICATION> TBL_WORKFLOW_NOTIFICATION { get; set; }
         public virtual DbSet<TBL_NEXT_PRINCIPAL_REPAYMENT> TBL_NEXT_PRINCIPAL_REPAYMENT { get; set; }
@@ -480,6 +482,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STAFF_JOBTITLE> TBL_STAFF_JOBTITLE { get; set; }
         public virtual DbSet<TBL_STAFF_RELIEF> TBL_STAFF_RELIEF { get; set; }
         public virtual DbSet<TBL_STAFF_ROLE> TBL_STAFF_ROLE { get; set; }
+        public virtual DbSet<TBL_APPROVAL_FLOW_TYPE> TBL_APPROVAL_FLOW_TYPE { get; set; }
         public virtual DbSet<TBL_STATE> TBL_STATE { get; set; }
         public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
         public virtual DbSet<TBL_STOCK_PRICE> TBL_STOCK_PRICE { get; set; }
@@ -9096,7 +9099,9 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_RAC_DEFINITION)
                 .WithRequired(e => e.TBL_RAC_ITEM)
                 .WillCascadeOnDelete(false);
-            
+
+            modelBuilder.Entity<TBL_SECTOR_GLOBAL_LIMIT>().Property(a => a.SECTORLIMIT).HasPrecision(38, 5);
+
         }
     }
 }
