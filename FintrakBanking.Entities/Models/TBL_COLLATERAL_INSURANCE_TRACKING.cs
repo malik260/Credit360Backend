@@ -32,6 +32,7 @@ namespace FintrakBanking.Entities.Models
         public int? VALUERID { get; set; }
         public string COLLATERALDETAILS { get; set; }
         public bool ISINFORMATIONCONFIRMED { get; set; }
+        public int? INFORMATIONCONFIRMEDBY { get; set; }
         public string OTHERVALUER { get; set; }
         public string OTHERINSURANCECOMPANY { get; set; }
         public string OTHERINSURANCEPOLICYTYPE { get; set; }

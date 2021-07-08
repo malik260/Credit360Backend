@@ -69,7 +69,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short solId { get; set; }
         public Decimal sanctionLimit { get; set; }
         public DateTime facilityGrantDate { get; set; }
-        public DateTime expiryDate { get; set; }
+        public DateTime? expiryDate { get; set; }
         public string collateralType { get; set; }
         public string perfectionStatus { get; set; }
         public string remarks { get; set; }
@@ -199,6 +199,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string guarantorName { get; set; }
         public int collateralTypeId { get; set; }
         public string customerCode { get; set; }
+        public string insurancePolicyType { get; set; }
+        public int? businessUnitId { get; set; }
     }
 
 
@@ -256,5 +258,45 @@ namespace FintrakBanking.ViewModels.Credit
         public short currencyId { get; set; }
         public string collateralCurrency { get; set; }
         public decimal collateralVal { get; set; }
+    }
+
+
+    public class CollateralRegisterReportViewModel : CollateralPerfectionViewModel
+    {
+        public string glSubheadCode { get; set; }
+        public string accountNumber { get; set; }
+        public Decimal grossBalance { get; set; }
+        public Decimal collateralValueOmv { get; set; }
+        public Decimal collateralValueEfsv { get; set; }
+        public Decimal approvedAmount { get; set; }
+        public Decimal? securityValue { get; set; }
+        public Decimal? collateralCoverage { get; set; }
+        public string collateralLocation { get; set; }
+        public string customerID { get; set; }
+        public DateTime dateOfValuation { get; set; }
+        public string nameOfValuer { get; set; }
+        public short? valuerId { get; set; }
+        public int? collateralCustomerID { get; set; }
+
+        public DateTime? dateOfCollateralInspection { get; set; }
+        public string collateralDescription { get; set; }
+        public DateTime? dateOfInsurance { get; set; }
+        public string insuranceCompany { get; set; }
+        public string rmCode { get; set; }
+        public string rmName { get; set; }
+        public DateTime? dateOfExpiration { get; set; }
+        public int days { get; set; }
+        public string stc { get; set; }
+        public string groupDescription { get; set; }
+        public int loanApplicationId { get; set; }
+        public decimal? exposure { get; set; }
+        public string collateralForm { get; set; }
+        public string collateralSummary { get; set; }
+        public string guarantorName { get; set; }
+        public int collateralTypeId { get; set; }
+        public string customerCode { get; set; }
+        public string insurancePolicyType { get; set; }
+        public int? businessUnitId { get; set; }
+        public decimal collateralValue { get; set; }
     }
 }

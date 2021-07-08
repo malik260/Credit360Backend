@@ -9009,6 +9009,7 @@ namespace FintrakBanking.Repositories.Credit
             if (cit == null) { return false; }
 
             cit.ISINFORMATIONCONFIRMED = true;
+            cit.INFORMATIONCONFIRMEDBY = getStaffId;
 
             if (context.SaveChanges() > 0)
             {
@@ -11179,6 +11180,7 @@ namespace FintrakBanking.Repositories.Credit
                     insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && x.DELETED == false)
                        .Select(x => new InsurancePolicy
                        {
+                           confirmedAdmin = context.TBL_STAFF.Where(a=>a.STAFFID == x.INFORMATIONCONFIRMEDBY).Select(a=>a.FIRSTNAME +" "+ a.MIDDLENAME +" "+ a.LASTNAME).FirstOrDefault(),
                            collateralInsuranceTrackingId = x.COLLATERALINSURANCETRACKINGID,
                            loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                            referenceNumber = x.POLICYNUMBER,
@@ -11320,6 +11322,7 @@ namespace FintrakBanking.Repositories.Credit
                     insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && x.DELETED == false)
                        .Select(x => new InsurancePolicy
                        {
+                           confirmedAdmin = context.TBL_STAFF.Where(a => a.STAFFID == x.INFORMATIONCONFIRMEDBY).Select(a => a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME).FirstOrDefault(),
                            collateralInsuranceTrackingId = x.COLLATERALINSURANCETRACKINGID,
                            loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                            referenceNumber = x.POLICYNUMBER,
@@ -11461,6 +11464,7 @@ namespace FintrakBanking.Repositories.Credit
                     insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && (DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value >= DbFunctions.TruncateTime(DateTime.Now)) && x.DELETED == false)
                        .Select(x => new InsurancePolicy
                        {
+                           confirmedAdmin = context.TBL_STAFF.Where(a => a.STAFFID == x.INFORMATIONCONFIRMEDBY).Select(a => a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME).FirstOrDefault(),
                            collateralInsuranceTrackingId = x.COLLATERALINSURANCETRACKINGID,
                            loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                            referenceNumber = x.POLICYNUMBER,
@@ -11602,6 +11606,7 @@ namespace FintrakBanking.Repositories.Credit
                     insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && (DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value < DbFunctions.TruncateTime(DateTime.Now)) && x.DELETED == false)
                        .Select(x => new InsurancePolicy
                        {
+                           confirmedAdmin = context.TBL_STAFF.Where(a => a.STAFFID == x.INFORMATIONCONFIRMEDBY).Select(a => a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME).FirstOrDefault(),
                            collateralInsuranceTrackingId = x.COLLATERALINSURANCETRACKINGID,
                            loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                            referenceNumber = x.POLICYNUMBER,
