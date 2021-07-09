@@ -66,7 +66,6 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease(int staffId);
         List<InsurancePolicy> GetCollateralInsurancePolicy(int collateralId);
         string GetInsurancePolicyCollateralReport(int trackingId);
-        bool DeleteCustomerCollateralInsuranceDetails(int getStaffId, int id);
         List<InsurancePolicy> GetCollateralInsurancePolicyReport(DateTime? startDate, DateTime? endDate, string searchString);
         IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId);
         //bool AssignCollateral(ActiveCustomerCollateralViewModel entity);
@@ -139,7 +138,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         CasaLienViewModel GetAccountLienDetail(string AccountNumber);
         //CasaLienViewModel GetAccountLienDetailForFD(string AccountNumber);//not implemented
-        bool AddCollateralInsuranceTrackingForm(int accountOfficer, CollateralInsuranceTrackingViewModel model);
+        int AddCollateralInsuranceTrackingForm(int accountOfficer, CollateralInsuranceTrackingViewModel model);
         IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId);
 
         IEnumerable<CollateralViewModel> GetCollateralStampToCoverValues(int customerId);
@@ -219,8 +218,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool checkInsurancePolicy(InsurancePolicy model);
         bool UpdateInsurancePolicyRequest(CollateralInsuranceRequestViewModel model, int id);
         string GetLastComment(int targetId, int operationId);
-        bool UpdateCollateralInsuranceTrackingForm(int getStaffId, int id, CollateralInsuranceTrackingViewModel model);
-        bool GetCustomerCollateralInsuranceDetailsConfirmation(int getStaffId, int id);
+        int UpdateCollateralInsuranceTrackingForm(int getStaffId, int id, CollateralInsuranceTrackingViewModel model);
+        int GetCustomerCollateralInsuranceDetailsConfirmation(int getStaffId, int id);
+        int DeleteCustomerCollateralInsuranceDetails(int getStaffId, int id);
         #endregion
     }
 }

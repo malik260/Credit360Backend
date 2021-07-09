@@ -39,14 +39,8 @@ namespace FintrakBanking.Entities.Models
         public int? COLLATERALTYPE { get; set; }
         public int? COLLATERALSUBTYPE { get; set; }
         public string FIRSTLOSSPAYEE { get; set; }
-        public decimal? INSURABLEVALUE { get; set; }
         public string COMMENT { get; set; }
+        public decimal? INSURABLEVALUE { get; set; }
         public bool DELETED { get; set; }
-        public int? CREATEDBY { get; set; }
-        public int? UPDATEDBY { get; set; }
-        public DateTime? DATETIMECREATED { get; set; }
-        public DateTime? DATETIMEUPDATED { get; set; }
-        
-
     }
 }

@@ -123,7 +123,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipDuration { get; set; }
         public DateTime cStartDate { get; set; }
         public string taxNumber { get; set; }
-        public int? age { get; set; }
 
         // casa
         public int collateralCasaId { get; set; }
@@ -530,19 +529,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountOfficer { get; set; }
         public int? insurancePolicyTypeId { get; set; }
         public string insurancePolicyType { get; set; }
-        public string insuranceStatus { get
-            {
-                if (this.expiryDate > DateTime.Now)
-                {
-                    return "Active";
-                }
-                else
-                {
-                    return "Expired";
-                }
-            }
-               set { } }
-
+        public string insuranceStatus { get; set; }
         public string collateralDetails { get; set; }
         public DateTime? valuationStartDate { get; set; }
         public DateTime? valuationEndDate { get; set; }
@@ -557,7 +544,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceCompanyName { get; set; }
         public int? valuerId { get; set; }
         public string gpsCoordinates { get; set; }
-        public decimal? loanAmount { get; set; }
+        public decimal loanAmount { get; set; }
         public string loanStatus { get; set; }
         public string loanTypeName { get; set; }
         public string securityReleaseStatus { get; set; }
@@ -567,7 +554,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? insurableValue { get; set; }
         public string customerCode { get; set; }
         public string customerAccount { get; set; }
-        public string customerPhone { get; set; }
         public string customerAddress { get; set; }
         public string teamName { get; set; }
         public string divisionName { get; set; }
@@ -576,13 +562,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountOfficerName { get; set; }
         public string accountOfficerEmail { get; set; }
         public string valueCode { get; set; }
-        public bool isPolicyInformationConfirmed { get; set; }
-        public string applicationreferenceNumber { get; set; }
-        public string otherInsuranceCompany { get; set; }
-        public string otherValuers { get; set; }
-        public int? collateralCustomerId { get; set; }
-        public string otherInsurancePolicyType { get; set; }
-        
+        public string customerPhone { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -590,13 +570,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? applicationId { get; set; }
         public int customerId { get; set; }
     }
-
-    public class InsurancePolicyRecordViewModel
-    {
-        public bool isPolicyInformationConfirmed { get; set; }
-        public string isInformationConfirmed { get; set; }
-    }
-
+   
     public class AllCollateralViewModel : CollateralViewModel
     {
        // public DateTime nextValuationDate { get { return lastValuationDate.AddDays((double)(valuationCycle)); } set { } }
@@ -817,8 +791,6 @@ namespace FintrakBanking.ViewModels.Credit
         public bool hasExpired { get; set; }
         public string companyAddress { get; set; }
         public int policyId { get; set; }
-        public string customerCode { get; set; }
-        public bool passed { get; set; }
     }
 
     public class CollateralGauranteeViewModel
@@ -1316,6 +1288,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralInsuranceTrackingViewModel : GeneralEntity
     {
+
+    
         public int collateralId { get; set; }
         public string referenceNumber { get; set; }
         public decimal sumInsured { get; set; }
@@ -1324,14 +1298,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string companyAddress { get; set; }
         public DateTime startDate { get; set; }
         public DateTime expiryDate { get; set; }
-        public int? insurancePolicyTypeId { get; set; }
-        public int? collateralCustomerId { get; set; }
+        public int insurancePolicyTypeId { get; set; }
+        public int collateralCustomerId { get; set; }
         public string collateralDetails { get; set; }
-        public decimal? forcedSaleValue { get; set; }
-        public decimal? openMarketValue { get; set; }
-        public DateTime? valuationEndDate { get; set; }
+        public decimal forcedSaleValue { get; set; }
+        public decimal openMarketValue { get; set; }
+        public DateTime valuationEndDate { get; set; }
         public string valuer { get; set; }
-        public DateTime? valuationStartDate { get; set; }
+        public DateTime valuationStartDate { get; set; }
         public int loanApplicationDetailId { get; set; }
         public int insuranceStatus { get; set; }
         public decimal inSurPremiumAmount { get; set; }
@@ -1347,12 +1321,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string firstLossPayee { get; set; }
         public decimal? insurableValue { get; set; }
         public string comment { get; set; }
-        public string customerCode { get; set; }
-        public bool passed { get; set; }
-        public List<string> errorMessages { get; set; }
-        public string isCollateral { get; set; }
-        public string policyType { get; set; }
-        public string collateralCode { get; set; }
     }
 
-}
+ }

@@ -15,11 +15,13 @@ using System.Web.Http;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.OAuth;
 using Microsoft.Owin.Security.Cookies;
 using System.Web;
 using FintrakBanking.Common.CustomException;
 using System.Text;
 using Microsoft.AspNet.Identity;
+using System.Web.Http.Controllers;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -177,111 +179,110 @@ namespace FintrakBanking.APICore.Controllers
         [Route("token")]
         public HttpResponseMessage GetTokenAsync([FromBody] TokenVM user)
         {
-            //  return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = user , password =  user.password, username = user.username, validTo = user.validTo, encodedToken = user.encodedToken});
+          //  return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = user , password =  user.password, username = user.username, validTo = user.validTo, encodedToken = user.encodedToken});
 
-            try
+            //try
+            //{
+            byte[] pass = Convert.FromBase64String(user.password);
+            string password = Encoding.UTF8.GetString(pass);
+
+
+            user.password = StaticHelpers.EncryptSha512(password, StaticHelpers.EncryptionKey);
+            string ipAddressStr = String.Empty;
+            if (token.LoginCode == null) ipAddressStr = token.LoginCode.Split('@')[1];
+
+            _repo.SessionInfo = _repo.CheckSessionState(user.username.ToLower(), ipAddressStr);
+            var foundUser = _repo.FindUserByUserNameAndPassword(user.username.ToLower(), user.password);
+
+            if (foundUser == null)
             {
-                byte[] pass = Convert.FromBase64String(user.password);
-                string password = Encoding.UTF8.GetString(pass);
-            
+                var found = _repo.GetSingleUserByUserName(user.username.ToLower());
 
-                user.password = StaticHelpers.EncryptSha512(password, StaticHelpers.EncryptionKey);
-                string ipAddressStr = String.Empty;
-                if (token.LoginCode == null) ipAddressStr = token.LoginCode.Split('@')[1];
-
-                _repo.SessionInfo = _repo.CheckSessionState(user.username.ToLower(), ipAddressStr);
-                var foundUser = _repo.FindUserByUserNameAndPassword(user.username.ToLower(), user.password);
-
-                if (foundUser == null)
+                if (found.branchId != null)
                 {
-                    var found = _repo.GetSingleUserByUserName(user.username.ToLower());
-
-                    if (found.branchId != null)
+                    var audit1 = new TBL_AUDIT
                     {
-                        var audit1 = new TBL_AUDIT
-                        {
-                            AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
-                            STAFFID = found.staffId,
-                            BRANCHID = (short)found.branchId,
-                            DETAIL = $"{user.username} login failed",
-                            IPADDRESS = CommonHelpers.GetLocalIpAddress(),//CommonHelpers.GetUserIP(),
-                            URL = Request.RequestUri.AbsoluteUri,
-                            APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                            SYSTEMDATETIME = DateTime.Now,
-                            TARGETID = -1,
-                            OSNAME = "Testing"
-                            //OSNAME = CommonHelpers.FriendlyName()
-                            // OSNAME = "test",
-                        };
-
-                        _auditTrail.AddAuditTrail(audit1);
-                    }
-
-                    _context.SaveChanges();
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = "1001 Login Failure." });
-                }
-            
-            var currUser = foundUser;
-                var userRole = _repo.GetDashboardStaffRole(currUser.staffId);
-                var userActivities = _repo.GetUserActivitiesByUser(currUser.user_id);
-
-                if (currUser.branchId != null)
-                {
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LoggedIn,
-                        STAFFID = currUser.staffId,
-                        BRANCHID = (short)currUser.branchId,
-                        DETAIL = $"{currUser.username} logged in",
+                        AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
+                        STAFFID = found.staffId,
+                        BRANCHID = (short)found.branchId,
+                        DETAIL = $"{user.username} login failed",
                         IPADDRESS = CommonHelpers.GetLocalIpAddress(),//CommonHelpers.GetUserIP(),
                         URL = Request.RequestUri.AbsoluteUri,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now,
                         TARGETID = -1,
-                        OSNAME = "",
+                        OSNAME = "Testing"
                         //OSNAME = CommonHelpers.FriendlyName()
-                        //OSNAME = "test",
+                       // OSNAME = "test",
                     };
 
-                    _auditTrail.AddAuditTrail(audit);
+                    _auditTrail.AddAuditTrail(audit1);
                 }
 
                 _context.SaveChanges();
-
-                //var ttttt = HttpUtility.HtmlDecode(user.encodedToken);
-                //var dat = HttpUtility.HtmlDecode(user.validTo);
-                byte[] data = Convert.FromBase64String(user.encodedToken);
-                string encodedToken = Encoding.UTF8.GetString(data);
-                byte[] data2 = Convert.FromBase64String(user.validTo);
-                string validTo = Encoding.UTF8.GetString(data2);
-                // build the json response
-                return Request.CreateResponse(HttpStatusCode.OK, new
-                {
-                    success = true,
-                    access_token = encodedToken,
-                    expiration = validTo,
-                    userInfo = new UserInfo
-                    {
-                        branchName = currUser.branchName,
-                        companyName = currUser.companyName,
-                        userName = currUser.username,
-                        activities = userActivities,
-                        staffId = currUser.staffId,
-                        staffName = currUser.staffName,
-                        sessionStatusInfo = currUser.sessionStatusInfo,
-                        applicationDate = _genSetup.GetApplicationDate(),
-                        lastLoginDate = currUser.lastLoginDate,
-                        staffRole = userRole.lookupName,
-                        corrMatrixId = currUser.corrMatrixId,
-                        corrMatrixDescription = currUser.corrMatrixDescription,
-                        businessUnitName = currUser.businessUnitName,
-                        staffRoleId = userRole.lookupId
-                    }
-                });
-
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = "1001 Login Failure." });
             }
-            catch (SecureException ex)
-            { throw ex; }
+
+            var currUser = foundUser;
+            var userRole = _repo.GetDashboardStaffRole(currUser.staffId);
+            var userActivities = _repo.GetUserActivitiesByUser(currUser.user_id);
+
+            if (currUser.branchId != null)
+            {
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoggedIn,
+                    STAFFID = currUser.staffId,
+                    BRANCHID = (short)currUser.branchId,
+                    DETAIL = $"{currUser.username} logged in",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),//CommonHelpers.GetUserIP(),
+                    URL = Request.RequestUri.AbsoluteUri,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = -1,
+                    OSNAME = "",
+                    //OSNAME = CommonHelpers.FriendlyName()
+                    //OSNAME = "test",
+                };
+
+                _auditTrail.AddAuditTrail(audit);
+            }
+
+            _context.SaveChanges();
+            //var ttttt = HttpUtility.HtmlDecode(user.encodedToken);
+            //var dat = HttpUtility.HtmlDecode(user.validTo);
+            byte[] data = Convert.FromBase64String(user.encodedToken);
+            string encodedToken = Encoding.UTF8.GetString(data);
+            byte[] data2 = Convert.FromBase64String(user.validTo);
+            string validTo = Encoding.UTF8.GetString(data2);
+            // build the json response
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                success = true,
+                access_token = encodedToken,
+                expiration = validTo,
+                userInfo = new UserInfo
+                {
+                    branchName = currUser.branchName,
+                    companyName = currUser.companyName,
+                    userName = currUser.username,
+                    activities = userActivities,
+                    staffId = currUser.staffId,
+                    staffName = currUser.staffName,
+                    sessionStatusInfo = currUser.sessionStatusInfo,
+                    applicationDate = _genSetup.GetApplicationDate(),
+                    lastLoginDate = currUser.lastLoginDate,
+                    staffRole = userRole.lookupName,
+                    corrMatrixId = currUser.corrMatrixId,
+                    corrMatrixDescription = currUser.corrMatrixDescription,
+                    businessUnitName = currUser.businessUnitName,
+                    staffRoleId = userRole.lookupId
+                }
+            });
+
+            //}
+            //catch (SecureException ex)
+            //{
             //    string str = string.Empty;
             //    _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
             //    if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
@@ -341,10 +342,11 @@ namespace FintrakBanking.APICore.Controllers
                 return this.Ok(new { success = false, message = "User Not Found" });
             }
 
-
-            //Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
             var authTypes = new string[] { DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.ExternalBearer, DefaultAuthenticationTypes.TwoFactorCookie, CookieAuthenticationDefaults.AuthenticationType, "Bearer" };
             Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+            //(new HttpActionContext()).RequestContext.Principal.Identity.IsAuthenticated = false;
+            //Authentication.SignOut(OAuthGrantResourceOwnerCredentialsContext.Options.AuthenticationType);
+
 
             var audit = new TBL_AUDIT()
             {
