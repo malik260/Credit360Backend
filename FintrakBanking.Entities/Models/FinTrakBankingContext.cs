@@ -482,6 +482,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STAFF_JOBTITLE> TBL_STAFF_JOBTITLE { get; set; }
         public virtual DbSet<TBL_STAFF_RELIEF> TBL_STAFF_RELIEF { get; set; }
         public virtual DbSet<TBL_STAFF_ROLE> TBL_STAFF_ROLE { get; set; }
+        public virtual DbSet<TBL_APPROVAL_FLOW_TYPE> TBL_APPROVAL_FLOW_TYPE { get; set; }
         public virtual DbSet<TBL_STATE> TBL_STATE { get; set; }
         public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
         public virtual DbSet<TBL_STOCK_PRICE> TBL_STOCK_PRICE { get; set; }

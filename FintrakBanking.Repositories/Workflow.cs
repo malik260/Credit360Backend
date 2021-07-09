@@ -802,7 +802,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
             }
         }
-
+        //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
         public void NextProcess(
             int companyId,
             int staffId,
@@ -818,7 +818,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             bool isFlowTest,
             int? businessUnitId,
             int? finalLevel = null,
-            int amount = 0
+            int amount = 0,
+            int? productId = null
             )
         {
             InitializeOperation();
@@ -830,6 +831,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.targetId = targetId;
            
             this.productClassId = productClassId;
+            this.productId = productId;
             this.comment = comment;
             this.externalInitialization = external;
             this.deferredExecution = deferred;
@@ -2103,7 +2105,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         //    }
         //}
 
-        public string ReplaceNotificationPlaceholders(string messageBody, string ownerFirstName, string recipientName, string fromLevelName, string operationName, string status, string time, string tat)
+        public string ReplaceNotificationPlaceholders(string messageBody, string ownerFirstName, string recipientName, string fromLevelName, string operationName, string status, string time, string tat, string userInCopyFirstName)
         {
             if (placeholders == null)
             {
@@ -2113,8 +2115,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             var applicationUrls = context.TBL_SETUP_GLOBAL.FirstOrDefault()?.APPLICATION_URL;
             var link = "<p>Click <a href=\"" + applicationUrls + "\">here to continue...</a></p>";
             string ownerFirstNameHolder = "@{{OwnerFirstName}}";
+            string userInCopyFirstNameHolder = "@{{userInCopyFirstName}}";
             string recipientNameHolder = "@{{RecipientName}}";
             string currentLevelHolder = "@{{CurrentLevel}}";
+            string fromLevelHolder = "@{{FromLevel}}";
             string operationNameHolder = "@{{OperationName}}";
             string statusHolder = "@{{Status}}";
             string timeHolder = "@{{Time}}";
@@ -2126,6 +2130,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             string locationNameHolder = "@{{Location}}";
             string linkHolder = "@{{Link}}";
 
+            messageBody = messageBody.Replace(fromLevelHolder, fromLevelName);
+            messageBody = messageBody.Replace(userInCopyFirstNameHolder, userInCopyFirstName);
             messageBody = messageBody.Replace(ownerFirstNameHolder, ownerFirstName);
             messageBody = messageBody.Replace(recipientNameHolder, recipientName);
             messageBody = messageBody.Replace(currentLevelHolder, response.nextLevelName);
@@ -2306,7 +2312,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 int operationId = this.operationId;
                 var message = new TBL_MESSAGE_LOG();
                 var reciever = new TBL_STAFF();
+                var recieverInCopy = new TBL_STAFF();
                 string recipientName = "All";
+                string userInCopyFirstName = "";
                 string operationName = operation == null ? "N/A" : operation.OPERATIONNAME.ToUpper();
                 //string messageSubject = "PENDING APPROVAL FOR " + operationName.ToUpper();
                 var messageBody = string.Empty;
@@ -2351,7 +2359,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 recipientName = reciever.FIRSTNAME;
                                 this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
                             }
-                            messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, owner?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString());
+                            userInCopyFirstName = recipientName;
+                            messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, owner?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString(), userInCopyFirstName);
                             LogWorkflowNotifications(this.support, reciever?.EMAIL, alert.TITLE, messageBody);
                         }
 
@@ -2375,7 +2384,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         emails.Add(reliefRecord.EMAIL);
                                     }
                                 }
-                                messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, owner?.FIRSTNAME, "All", fromLevelName, operationName, status, time, tat.ToString());
+                                userInCopyFirstName = "All";
+                                messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, owner?.FIRSTNAME, "All", fromLevelName, operationName, status, time, tat.ToString(), userInCopyFirstName);
                                 LogWorkflowNotifications(this.support, string.Join(";", emails.Distinct()), alert.TITLE, messageBody);
                             }
                         }
@@ -2405,17 +2415,20 @@ namespace FintrakBanking.Repositories.WorkFlow
                         }
                         if (level.requestStaffId > 0)
                         {
-                            reciever = context.TBL_STAFF.Find(level.requestStaffId);
+                            ///reciever = context.TBL_STAFF.Find(level.requestStaffId);
+                            recieverInCopy = context.TBL_STAFF.Find(level.requestStaffId); //just added
+                            userInCopyFirstName = recieverInCopy?.FIRSTNAME; //just added
                             recipientName = reciever?.FIRSTNAME;
                             //this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
                         }
-                        messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, owner?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString());
-                        LogWorkflowNotifications(this.support, reciever?.EMAIL, alert.TITLE, messageBody);
+                        messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, owner?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString(), userInCopyFirstName);
+                        LogWorkflowNotifications(this.support, recieverInCopy?.EMAIL, alert.TITLE, messageBody);
                     }
                 }
 
+                //to send to owner/initiator of a request
                 if (this.fromLevelId > 0)
-                {//to send to owner/initiator of a request
+                {
                     var nextLevel = WorkflowSetup.FirstOrDefault(s => s.ApprovalLevelId == fromLevelId);
                     if (nextLevel != null)
                     {
@@ -2427,9 +2440,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                             {
                                 if (ownerId > 0)
                                 {
-                                    reciever = context.TBL_STAFF.Find(ownerId);
+                                    ///reciever = context.TBL_STAFF.Find(ownerId);
+                                    recieverInCopy = context.TBL_STAFF.Find(ownerId); //just added
+                                    userInCopyFirstName = recieverInCopy?.FIRSTNAME; //just added
                                     recipientName = reciever?.FIRSTNAME;
-                                    messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, reciever?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString());
+                                    messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, reciever?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString(), userInCopyFirstName);
                                     LogWorkflowNotifications(this.support, reciever?.EMAIL, alert.TITLE, messageBody);
                                 }
 
@@ -2438,7 +2453,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 {
                                     reciever = context.TBL_STAFF.Find(initiatorId);
                                     recipientName = reciever?.FIRSTNAME;
-                                    messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, reciever?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString());
+
+                                    recieverInCopy = context.TBL_STAFF.Find(initiatorId); //just added
+                                    userInCopyFirstName = recieverInCopy?.FIRSTNAME; //just added
+
+                                    messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, reciever?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString(), userInCopyFirstName);
                                     LogWorkflowNotifications(this.support, reciever?.EMAIL, alert.TITLE, messageBody);
                                 }
                             }
@@ -2448,7 +2467,25 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
-        private string GetApprovalStatusName(int statusId)
+        private string GetApprovalStatusName(int statusId) //as requested by the bank
+        {
+            switch (statusId)
+            {
+                case 0: return "initiated";
+                case 1: return "approved";
+                case 2: return "approved";
+                case 3: return "rejected";
+                case 4: return "authorised";
+                case 5: return "referred";
+                case 6: return "rerouted";
+                case 7: return "escalated";
+                default: break;
+            }
+            return "approved";
+        }
+
+
+        /*private string GetApprovalStatusName(int statusId)
         {
             switch (statusId)
             {
@@ -2463,7 +2500,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 default: break;
             }
             return "forwarded";
-        }
+        }*/
+
 
         private bool Authorization() // TODO: intended to manage delegated staff actions
         {

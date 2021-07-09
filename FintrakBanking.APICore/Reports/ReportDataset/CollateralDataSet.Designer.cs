@@ -3289,6 +3289,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnguarantorName;
             
+            private global::System.Data.DataColumn columncollateralCode;
+            
+            private global::System.Data.DataColumn columninsurancePolicyType;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public CollateralRegisterDataTable() {
@@ -3548,6 +3552,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn collateralCodeColumn {
+                get {
+                    return this.columncollateralCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn insurancePolicyTypeColumn {
+                get {
+                    return this.columninsurancePolicyType;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -3611,7 +3631,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string exposure, 
                         string collateralForm, 
                         string collateralDescription, 
-                        string guarantorName) {
+                        string guarantorName, 
+                        string collateralCode, 
+                        string insurancePolicyType) {
                 CollateralRegisterRow rowCollateralRegisterRow = ((CollateralRegisterRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         customerID,
@@ -3641,7 +3663,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         exposure,
                         collateralForm,
                         collateralDescription,
-                        guarantorName};
+                        guarantorName,
+                        collateralCode,
+                        insurancePolicyType};
                 rowCollateralRegisterRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowCollateralRegisterRow);
                 return rowCollateralRegisterRow;
@@ -3692,6 +3716,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columncollateralForm = base.Columns["collateralForm"];
                 this.columncollateralDescription = base.Columns["collateralDescription"];
                 this.columnguarantorName = base.Columns["guarantorName"];
+                this.columncollateralCode = base.Columns["collateralCode"];
+                this.columninsurancePolicyType = base.Columns["insurancePolicyType"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3753,6 +3779,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columncollateralDescription);
                 this.columnguarantorName = new global::System.Data.DataColumn("guarantorName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnguarantorName);
+                this.columncollateralCode = new global::System.Data.DataColumn("collateralCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncollateralCode);
+                this.columninsurancePolicyType = new global::System.Data.DataColumn("insurancePolicyType", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columninsurancePolicyType);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -7422,6 +7452,39 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string collateralCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.collateralCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'collateralCode\' in table \'CollateralRegister\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.collateralCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string insurancePolicyType {
+                get {
+                    try {
+                        return ((string)(this[this.tableCollateralRegister.insurancePolicyTypeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'insurancePolicyType\' in table \'CollateralRegister\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableCollateralRegister.insurancePolicyTypeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscustomerIDNull() {
                 return this.IsNull(this.tableCollateralRegister.customerIDColumn);
             }
@@ -7754,6 +7817,30 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetguarantorNameNull() {
                 this[this.tableCollateralRegister.guarantorNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IscollateralCodeNull() {
+                return this.IsNull(this.tableCollateralRegister.collateralCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetcollateralCodeNull() {
+                this[this.tableCollateralRegister.collateralCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsinsurancePolicyTypeNull() {
+                return this.IsNull(this.tableCollateralRegister.insurancePolicyTypeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetinsurancePolicyTypeNull() {
+                this[this.tableCollateralRegister.insurancePolicyTypeColumn] = global::System.Convert.DBNull;
             }
         }
         

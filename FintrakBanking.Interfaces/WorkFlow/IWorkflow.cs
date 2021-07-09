@@ -60,6 +60,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         LevelBusinessRule LevelBusinessRule { set; }
         bool LogActivity();
         IEnumerable<dynamic> GetWorkFlowSetupLevelIds();
+        //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
         void NextProcess(
                 int companyId,
                 int staffId,
@@ -74,7 +75,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
                 bool isFlowTest = false,
                 int? businessUnitId = null,
                 int? finalLevel = null,
-                int amount = 0
+                int amount = 0,
+                int? productId = null
             );
 
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!

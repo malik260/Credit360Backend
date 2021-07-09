@@ -169,6 +169,8 @@
               <xs:element name="collateralForm" msprop:Generator_ColumnVarNameInTable="columncollateralForm" msprop:Generator_ColumnPropNameInRow="collateralForm" msprop:Generator_ColumnPropNameInTable="collateralFormColumn" msprop:Generator_UserColumnName="collateralForm" type="xs:string" minOccurs="0" />
               <xs:element name="collateralDescription" msprop:Generator_ColumnVarNameInTable="columncollateralDescription" msprop:Generator_ColumnPropNameInRow="collateralDescription" msprop:Generator_ColumnPropNameInTable="collateralDescriptionColumn" msprop:Generator_UserColumnName="collateralDescription" type="xs:string" minOccurs="0" />
               <xs:element name="guarantorName" msprop:Generator_ColumnVarNameInTable="columnguarantorName" msprop:Generator_ColumnPropNameInRow="guarantorName" msprop:Generator_ColumnPropNameInTable="guarantorNameColumn" msprop:Generator_UserColumnName="guarantorName" type="xs:string" minOccurs="0" />
+              <xs:element name="collateralCode" msprop:Generator_ColumnVarNameInTable="columncollateralCode" msprop:Generator_ColumnPropNameInRow="collateralCode" msprop:Generator_ColumnPropNameInTable="collateralCodeColumn" msprop:Generator_UserColumnName="collateralCode" type="xs:string" minOccurs="0" />
+              <xs:element name="insurancePolicyType" msprop:Generator_ColumnVarNameInTable="columninsurancePolicyType" msprop:Generator_ColumnPropNameInRow="insurancePolicyType" msprop:Generator_ColumnPropNameInTable="insurancePolicyTypeColumn" msprop:Generator_UserColumnName="insurancePolicyType" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
