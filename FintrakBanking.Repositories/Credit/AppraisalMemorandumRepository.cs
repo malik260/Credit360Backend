@@ -676,8 +676,10 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.SetResponse = false;
                     //workflow.ProductClassId = null;
                     //workflow.ProductId = null;
+                    workflow.ExclusiveFlowChangeId = null;
                         var productId = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
-                        workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID, 
+                    //The null passed in place of appl.FlowchangeId should be made generic 07/08/2021 after enum.offerletappr.
+                        workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, 
                             model.applicationId, appl.PRODUCTCLASSID, "New approved application", true, false, false, 
                             model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
                     //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
