@@ -922,7 +922,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             // corporate customer information update 
             int year = DateTime.Now.Year;
-            DateTime firstDay = new DateTime(year, 6, 11);
+            DateTime firstDay = new DateTime(year, 1, 1);
             TimeSpan startCorporateCustomerUpdate = new TimeSpan(24, 0, 0);
             TimeSpan endCorporateCustomerUpdate = new TimeSpan(24, 30, 0);
             if (now >= startCorporateCustomerUpdate && now <= endCorporateCustomerUpdate && firstDay.Date == DateTime.Now.Date)
@@ -943,11 +943,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareInsuranceNotificationDate() == true)
             {
-                TimeSpan startInsurance = new TimeSpan(10, 0, 0);
-                TimeSpan endInsurance = new TimeSpan(10, 30, 0);
+                TimeSpan startInsurance = new TimeSpan(15, 0, 0);
+                TimeSpan endInsurance = new TimeSpan(15, 30, 0);
                 if ((now >= startInsurance) && (now <= endInsurance))
                 {
                     GetInsurancePolicyExpirationNotification();
+                    GetInsurancePolicyExpiredNotification();
                 }
             }
 
@@ -1058,8 +1059,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start) && (now <= end))
                 {
-                    GroupImminentMaturitiesByGroupHeads();
-                    GetImminentMaturities();
+                    //GroupImminentMaturitiesByGroupHeads();
+                   // GetImminentMaturities();
                     //GetPastDueObligationsReminder();
                     //GetPastDueObligationsReminderByGroupHeads();
                     state = true;
@@ -1219,6 +1220,7 @@ namespace FintrakBanking.Repositories.Setups.General
             DateTime currentDate = DateTime.Now;
             var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
                          && (m.OPERATIONMETHOD.Trim() == "GetInsurancePolicyExpirationNotification"
+                         || m.OPERATIONMETHOD.Trim() == "GetInsurancePolicyExpiredNotification"
                          )).FirstOrDefault();
 
             if (DBdate == null)
@@ -1878,6 +1880,89 @@ namespace FintrakBanking.Repositories.Setups.General
                             alert.canFire = true;
                             alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                             alerts.Add(alert);
+                }
+                SendAlertNotification(alerts);
+            }
+        }
+
+
+
+        public void GetInsurancePolicyExpiredNotification()
+        {
+            // GetInsurancePolicyExpirationNotification method
+            var insurancePolicyNotification = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => DbFunctions.DiffDays(DateTime.UtcNow, d.INSURANCEENDDATE).Value < 1 && d.DELETED == false).ToList();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpiredNotification").FirstOrDefault();
+            var defaultEmail = "";
+            var emailList = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (insurancePolicyNotification.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var i in insurancePolicyNotification)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+
+                    var appDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(i.LOANAPPLICATIONDETAILID);
+                    var staff = context.TBL_STAFF.Find(appDetails.CREATEDBY);
+                    var customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == appDetails.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                    var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == appDetails.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                    var accountOfficerEmail = context.TBL_STAFF.Where(x => x.STAFFID == appDetails.CREATEDBY).Select(x => x.EMAIL).FirstOrDefault();
+                    var rmEmail = context.TBL_STAFF.Where(x => x.STATEID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL)?.FirstOrDefault();
+                    //var previousInsurancePolicyDetails = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => d.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID && DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)).OrderBy(d=>d.INSURANCEENDDATE).ToList();
+
+                    var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
+
+                    var omv = string.Format("{0:#,##.00}", Convert.ToDecimal(i.OMV));
+                    var sumInsured = string.Format("{0:#,##.00}", Convert.ToDecimal(i.SUMINSURED));
+                    var premium = string.Format("{0:#,##.00}", Convert.ToDecimal(i.PREMIUMPAID));
+                    var expiryDate = i.INSURANCEENDDATE?.ToString("dd-MM-yyyy");
+                    int numberOfDays = (i.INSURANCEENDDATE.Value - DateTime.Now).Days;
+
+
+
+                    var result = $@"
+                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>Collateral Detail</b></td>
+                            <td><b>Open Market Value</b></td>
+                            <td><b>Sum Insured</b></td>
+                            <td><b>Premium</b></td>
+                            <td><b>Insurance Expiry Date</b></td>
+                            <td><b>Insurance Policy Type</b></td>
+                        </tr>";
+
+                    result = result + $@"
+                        <tr>
+                            <td>{i.COLLATERALDETAILS}</td>
+                            <td>{$"{omv}"}</td>
+                            <td>{$"{sumInsured}"}</td>
+                            <td>{$"{premium}"}</td>
+                            <td>{expiryDate}</td>
+                            <td>{insurancePolicyType}</td>
+                        </tr>";
+
+                    result = result + $"</table>";
+
+                    alertTitle = alertTitle.Replace("@{{customerName}}", customerName);
+                    alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", accountOfficerName);
+                    alertTemplate = alertTemplate.Replace("@{{customerName}}", customerName);
+                    alertTemplate = alertTemplate.Replace("@{{daysToExpire}}", numberOfDays.ToString());
+                    alertTemplate = alertTemplate.Replace("@{{detail}}", result);
+                    emailList = rmEmail + ";" + accountOfficerEmail;
+                    emailList = emailList + defaultEmail;
+                    alert.receiverEmailList.Add(emailList);
+                    alert.template = alertTemplate;
+                    alert.alertTitle = alertTitle;
+                    alert.canFire = true;
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                    alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
             }

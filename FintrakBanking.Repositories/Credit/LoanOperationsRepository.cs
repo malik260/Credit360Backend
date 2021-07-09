@@ -7226,131 +7226,130 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool ProcessReleaseLien(DateTime applicationDate, int companyId, int staffId)
         {
+                List<TBL_LOAN> _TBL_LOAN = new List<TBL_LOAN>();
 
-            List<TBL_LOAN> _TBL_LOAN = new List<TBL_LOAN>();
+                bool status = false;
 
-            bool status = false;
+                //var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.PRODUCTID == (short)ProductClassEnum.InvoiceDiscountingFacility && x.MATURITYDATE == applicationDate && x.COMPANYID == companyId);
 
-            //var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.PRODUCTID == (short)ProductClassEnum.InvoiceDiscountingFacility && x.MATURITYDATE == applicationDate && x.COMPANYID == companyId);
+                var loans = from l in context.TBL_LOAN
+                            join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
+                            where p.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility
+                            && l.LOANSTATUSID == (short)LoanStatusEnum.Active && l.MATURITYDATE == applicationDate && l.COMPANYID == companyId
+                            select l;
 
-            var loans = from l in context.TBL_LOAN
-                        join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
-                        where p.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility
-                        && l.LOANSTATUSID == (short)LoanStatusEnum.Active && l.MATURITYDATE == applicationDate && l.COMPANYID == companyId
-                        select l;
-
-            var eod_Operation_Log = context.TBL_EOD_OPERATION_LOG.Where(c => c.EODDATE == applicationDate && c.EODOPERATIONID == (int)EodOperationEnum.ProcessReleaseLien && c.COMPANYID == companyId).FirstOrDefault();
+                var eod_Operation_Log = context.TBL_EOD_OPERATION_LOG.Where(c => c.EODDATE == applicationDate && c.EODOPERATIONID == (int)EodOperationEnum.ProcessReleaseLien && c.COMPANYID == companyId).FirstOrDefault();
 
 
-            List<TBL_EOD_OPERATION_LOG_DETAIL> eod_operation_Detail_List = new List<TBL_EOD_OPERATION_LOG_DETAIL>();
+                List<TBL_EOD_OPERATION_LOG_DETAIL> eod_operation_Detail_List = new List<TBL_EOD_OPERATION_LOG_DETAIL>();
 
-            if (loans.Count() != 0)
-            {
-                var eodOperations = context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION).ToList();
-
-                foreach (TBL_LOAN loan in loans)
+                if (loans.Count() != 0)
                 {
+                    var eodOperations = context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION).ToList();
 
-                    TBL_EOD_OPERATION_LOG_DETAIL eod_operation_Detail = new TBL_EOD_OPERATION_LOG_DETAIL();
-
-                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.LOANREFERENCENUMBER && c.EODDATE == applicationDate && c.EODOPERATIONID == (int)EodOperationEnum.ProcessReleaseLien).FirstOrDefault();
-
-                    if (checkExistence == null)
+                    foreach (TBL_LOAN loan in loans)
                     {
-                        eod_operation_Detail.EODOPERATIONLOGID = eod_Operation_Log.EODOPERATIONLOGID;
-                        eod_operation_Detail.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
-                        eod_operation_Detail.REFERENCENUMBER = loan.LOANREFERENCENUMBER;
-                        eod_operation_Detail.EODOPERATIONID = (int)EodOperationEnum.ProcessReleaseLien;
-                        eod_operation_Detail.EODDATE = applicationDate;
-                        eod_operation_Detail.EODUSERID = staffId;
-                        eod_operation_Detail_List.Add(eod_operation_Detail);
+
+                        TBL_EOD_OPERATION_LOG_DETAIL eod_operation_Detail = new TBL_EOD_OPERATION_LOG_DETAIL();
+
+                        var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.LOANREFERENCENUMBER && c.EODDATE == applicationDate && c.EODOPERATIONID == (int)EodOperationEnum.ProcessReleaseLien).FirstOrDefault();
+
+                        if (checkExistence == null)
+                        {
+                            eod_operation_Detail.EODOPERATIONLOGID = eod_Operation_Log.EODOPERATIONLOGID;
+                            eod_operation_Detail.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
+                            eod_operation_Detail.REFERENCENUMBER = loan.LOANREFERENCENUMBER;
+                            eod_operation_Detail.EODOPERATIONID = (int)EodOperationEnum.ProcessReleaseLien;
+                            eod_operation_Detail.EODDATE = applicationDate;
+                            eod_operation_Detail.EODUSERID = staffId;
+                            eod_operation_Detail_List.Add(eod_operation_Detail);
+
+                        }
 
                     }
 
+                    context.TBL_EOD_OPERATION_LOG_DETAIL.AddRange(eod_operation_Detail_List);
+
+                    context.SaveChanges();
+
                 }
 
-                context.TBL_EOD_OPERATION_LOG_DETAIL.AddRange(eod_operation_Detail_List);
 
-                context.SaveChanges();
-
-            }
-
-
-            if (loans.Count() > 0)
-            {
-
-                foreach (var item in loans)
+                if (loans.Count() > 0)
                 {
 
-                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == item.LOANREFERENCENUMBER && c.EODDATE == applicationDate && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.ProcessReleaseLien).FirstOrDefault();
-
-
-                    if (checkExistence != null)
+                    foreach (var item in loans)
                     {
 
-                        var eod_Operation_Log_Detail_Set_Value = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == item.LOANREFERENCENUMBER && c.EODDATE == applicationDate && c.EODOPERATIONID == (int)EodOperationEnum.ProcessReleaseLien).FirstOrDefault();
+                        var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == item.LOANREFERENCENUMBER && c.EODDATE == applicationDate && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.ProcessReleaseLien).FirstOrDefault();
 
-                        eod_Operation_Log_Detail_Set_Value.STARTDATETIME = DateTime.Now;
-                        eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
 
-                        context.SaveChanges();
-
-                        try
+                        if (checkExistence != null)
                         {
 
-                            var casaLienInfo = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == item.LOANREFERENCENUMBER && x.COMPANYID == item.COMPANYID);
+                            var eod_Operation_Log_Detail_Set_Value = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == item.LOANREFERENCENUMBER && c.EODDATE == applicationDate && c.EODOPERATIONID == (int)EodOperationEnum.ProcessReleaseLien).FirstOrDefault();
 
-                            _transactionReferenceNo = item.LOANREFERENCENUMBER;
+                            eod_Operation_Log_Detail_Set_Value.STARTDATETIME = DateTime.Now;
+                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
 
-                            CasaLienViewModel model = new CasaLienViewModel
+                            context.SaveChanges();
+
+                            try
                             {
-                                lienReferenceNumber = casaLienInfo.LIENREFERENCENUMBER,
-                                companyId = item.COMPANYID,
-                                productAccountNumber = casaLienInfo.PRODUCTACCOUNTNUMBER,
-                                description = casaLienInfo.DESCRIPTION,
-                                branchId = item.BRANCHID,
-                                createdBy = staffId
 
-                            };
+                                var casaLienInfo = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == item.LOANREFERENCENUMBER && x.COMPANYID == item.COMPANYID);
 
-                            status = casaLien.ReleaseLien(model, null, false); 
+                                _transactionReferenceNo = item.LOANREFERENCENUMBER;
 
-                            //if (status == true)
-                            //{
-                            //    item.LOANSTATUSID = (short)LoanStatusEnum.Completed;
-                            //}
+                                CasaLienViewModel model = new CasaLienViewModel
+                                {
+                                    lienReferenceNumber = casaLienInfo.LIENREFERENCENUMBER,
+                                    companyId = item.COMPANYID,
+                                    productAccountNumber = casaLienInfo.PRODUCTACCOUNTNUMBER,
+                                    description = casaLienInfo.DESCRIPTION,
+                                    branchId = item.BRANCHID,
+                                    createdBy = staffId
 
-                            eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
-                            eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                            eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
-                            //context.SaveChanges();
+                                };
 
-                            context.SaveChanges();
+                                status = casaLien.ReleaseLien(model, null, false);
+
+                                //if (status == true)
+                                //{
+                                //    item.LOANSTATUSID = (short)LoanStatusEnum.Completed;
+                                //}
+
+                                eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                                eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                                eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                                eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
+                                //context.SaveChanges();
+
+                                context.SaveChanges();
+
+                            }
+                            catch (Exception ex)
+                            {
+
+                                eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                                eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
+                                eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                                eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.LOANREFERENCENUMBER} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                                context.SaveChanges();
+                            }
+
+
 
                         }
-                        catch (Exception ex)
-                        {
-
-                            eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
-                            eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
-                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                            eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.LOANREFERENCENUMBER} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
-                            context.SaveChanges();
-                        }
-
 
 
                     }
 
+                    return true;
 
                 }
 
-                return true;
-
-            }
-
-            return false;
+                return false;
 
         }
 

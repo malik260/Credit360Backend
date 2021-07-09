@@ -553,7 +553,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -602,7 +602,7 @@ namespace FintrakBanking.Repositories.Finance
                         try
                         {
 
-                            loanOperation.ProcessReleaseLien(date, companyId, staffId); //for eod to pass
+                            loanOperation.ProcessReleaseLien(date, companyId, staffId); 
 
                             //transactionScope.Complete();
                             //transactionScope.Dispose();
@@ -612,7 +612,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -669,7 +669,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException?.InnerException?.Message;
                             }
@@ -728,7 +728,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException?.InnerException?.Message;
                             }
@@ -788,7 +788,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -845,7 +845,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -903,7 +903,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException?.Message;
                             }
@@ -960,7 +960,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -1026,7 +1026,7 @@ namespace FintrakBanking.Repositories.Finance
                             var line = frame.GetFileLineNumber();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException?.InnerException?.Message;
                             }
@@ -1194,7 +1194,7 @@ namespace FintrakBanking.Repositories.Finance
                             var line = frame.GetFileLineNumber();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException?.InnerException?.Message;
                             }
@@ -1250,7 +1250,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -1307,7 +1307,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }

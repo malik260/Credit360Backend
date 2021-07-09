@@ -7035,6 +7035,7 @@ namespace FintrakBanking.Repositories.Credit
                 )
             .Select(x => new LoanReviewApplicationViewModel
             {
+                applicationStatusId = x.APPLICATIONSTATUSID,
                 applicationDate = x.APPLICATIONDATE,
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 approvalStatusId = (int)x.APPROVALSTATUSID,
@@ -7119,6 +7120,7 @@ namespace FintrakBanking.Repositories.Credit
                 )
             .Select(x => new LoanApplicationViewModel
             {
+                applicationDate = (DateTime)x.APPLICATIONDATE,
                 loanApplicationId = x.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                 relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
