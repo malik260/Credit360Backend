@@ -95,6 +95,7 @@
     <Compile Include="CustomException\SecureException.cs" />
     <Compile Include="CustomException\TwoFactorAuthenticationException.cs" />
     <Compile Include="EmailHelpers.cs" />
+    <Compile Include="EncryptionHelper.cs" />
     <Compile Include="Enum\AdjustedFacilityTypeEnum.cs" />
     <Compile Include="Enum\ApprovalLevelType.cs" />
     <Compile Include="Enum\DocUploadTypeEnum.cs" />

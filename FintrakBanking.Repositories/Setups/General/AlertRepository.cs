@@ -18,6 +18,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
@@ -34,7 +35,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         string API_KEY, API_URL = string.Empty;
         private IEnumerable<TBL_API_URL> APIUrlConfig;
-
+        private string pass = ConfigurationManager.AppSettings["pass"];
         //private ILoanArchiveRepository loanArchive;
         private string maxUsers = ConfigurationManager.AppSettings["muTrace"];
 
@@ -919,6 +920,13 @@ namespace FintrakBanking.Repositories.Setups.General
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
 
 
+            //encripted password 
+            var requiredPassword = pass;
+            //string encryptedstring = EncryptionHelper.Encrypt("sqluser10$");
+            //Console.WriteLine("encripted Result  = " + encryptedstring);
+            Console.WriteLine("");
+            string decryptedstring = EncryptionHelper.Decrypt(requiredPassword);
+            Console.WriteLine("decripted Result  = " + decryptedstring);
 
             // corporate customer information update 
             int year = DateTime.Now.Year;
@@ -1060,7 +1068,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if ((now >= start) && (now <= end))
                 {
                     //GroupImminentMaturitiesByGroupHeads();
-                   // GetImminentMaturities();
+                    GetImminentMaturities();
                     //GetPastDueObligationsReminder();
                     //GetPastDueObligationsReminderByGroupHeads();
                     state = true;
@@ -1133,6 +1141,25 @@ namespace FintrakBanking.Repositories.Setups.General
             return state;
         }
 
+       /* public static bool CompareHash(string attemptedPassword, byte[] hash, int salt)
+        {
+            PasswordWithSaltHasher pwHasher = new PasswordWithSaltHasher();
+            HashWithSaltResult hashResultSha512 = pwHasher.HashWithSalt(attemptedPassword, salt, SHA512.Create());
+            string base64Hash = Convert.ToBase64String(hash);
+            string base64AttemptedHash = hashResultSha512.Salt;
+            Console.WriteLine("password match = " + base64Hash == base64AttemptedHash);
+            return base64Hash == base64AttemptedHash;
+        }
+
+        private static void TestPasswordHasher()
+        {
+            PasswordWithSaltHasher pwHasher = new PasswordWithSaltHasher();
+            //HashWithSaltResult hashResultSha256 = pwHasher.HashWithSalt("fin360user", 64, SHA256.Create());
+            HashWithSaltResult hashResultSha512 = pwHasher.HashWithSalt("fin360user", 64, SHA512.Create());
+            Console.WriteLine();
+            Console.WriteLine("hash Result Sha512 Salt = " + hashResultSha512.Salt);
+            Console.WriteLine("hash Result Sha512 Digest = " + hashResultSha512.Digest);
+        }*/
 
         private void CheckFailedAlertByDate()
         {
