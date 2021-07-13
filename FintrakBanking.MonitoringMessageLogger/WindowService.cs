@@ -21,6 +21,7 @@ namespace FintrakBanking.MonitoringMessageLogger
         EmailSender emailSender = new EmailSender();
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
         private string slaEscalationIntervalInHours = ConfigurationManager.AppSettings["SLAEscalationIntervalInHours"];
+       
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
         AlertMessageLogger logger = new AlertMessageLogger();

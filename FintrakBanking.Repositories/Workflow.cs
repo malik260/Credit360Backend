@@ -2475,10 +2475,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 case 1: return "approved";
                 case 2: return "approved";
                 case 3: return "rejected";
-                case 4: return "authorised";
+                case 4: return "approved";
                 case 5: return "referred";
-                case 6: return "rerouted";
-                case 7: return "escalated";
+                case 6: return "approved";
+                case 7: return "approved";
                 default: break;
             }
             return "approved";
