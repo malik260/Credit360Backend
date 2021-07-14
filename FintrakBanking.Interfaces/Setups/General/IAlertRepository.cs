@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IAlertRepository
     {
+        bool UpdateAlertTitleStatus(AlertTitleViewModel model);
         string GetBusinessTeamEmails(string accountOfficerMIsCode);
         bool validateAlertCheck();
         void GetImminentMaturities();

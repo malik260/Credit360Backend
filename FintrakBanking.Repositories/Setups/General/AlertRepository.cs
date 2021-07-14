@@ -18,6 +18,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
@@ -34,7 +35,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         string API_KEY, API_URL = string.Empty;
         private IEnumerable<TBL_API_URL> APIUrlConfig;
-
+        private string pass = ConfigurationManager.AppSettings["pass"];
         //private ILoanArchiveRepository loanArchive;
         private string maxUsers = ConfigurationManager.AppSettings["muTrace"];
 
@@ -119,6 +120,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               lastSentDate = a.LASTSENTDATE,
                               actionStatus = a.ACTIONSTATUS,
                               bindingMethod = a.BINDINGMETHOD,
+                              isActive = a.ISACTIVE,
                           }).ToList();
             return alerts;
         }
@@ -162,6 +164,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               lastSentDate = a.LASTSENTDATE,
                               actionStatus = a.ACTIONSTATUS,
                               bindingMethod = a.BINDINGMETHOD,
+                              isActive = a.ISACTIVE
                           }).ToList();
             return alerts;
         }
@@ -182,6 +185,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              lastSentDate = a.LASTSENTDATE,
                              actionStatus = a.ACTIONSTATUS,
                              bindingMethod = a.BINDINGMETHOD,
+                             isActive = a.ISACTIVE
                          }).FirstOrDefault();
             return alert;
         }
@@ -197,6 +201,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 TEMPLATETYPE = model.templateType,
                 DEFAULTEMAIL = model.defaultEmail,
                 BINDINGMETHOD = model.bindingMethod,
+                ISACTIVE = true,
                 //LASTSENTDATE = general.GetApplicationDate(),
                 ACTIONSTATUS = 1,
             };
@@ -270,6 +275,34 @@ namespace FintrakBanking.Repositories.Setups.General
                 DETAIL = $"TBL_ALERT_TITLE '{entity.ToString()}' was deleted by {auditStaff}",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.ALERTTITLEID,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+
+
+        public bool UpdateAlertTitleStatus(AlertTitleViewModel model)
+        {
+            var entity = this.context.TBL_ALERT_TITLE.Find(model.alertTitleId);
+            entity.ISACTIVE = model.isActive;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertTitleUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_TITLE'{entity.TITLE}' was updated by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 TARGETID = entity.ALERTTITLEID,
@@ -919,6 +952,13 @@ namespace FintrakBanking.Repositories.Setups.General
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
 
 
+            //encripted password 
+            var requiredPassword = pass;
+            //string encryptedstring = EncryptionHelper.Encrypt("sqluser10$");
+            //Console.WriteLine("encripted Result  = " + encryptedstring);
+            Console.WriteLine("");
+            string decryptedstring = EncryptionHelper.Decrypt(requiredPassword);
+            Console.WriteLine("decripted Result  = " + decryptedstring);
 
             // corporate customer information update 
             int year = DateTime.Now.Year;
@@ -1060,7 +1100,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if ((now >= start) && (now <= end))
                 {
                     //GroupImminentMaturitiesByGroupHeads();
-                   // GetImminentMaturities();
+                    GetImminentMaturities();
                     //GetPastDueObligationsReminder();
                     //GetPastDueObligationsReminderByGroupHeads();
                     state = true;
@@ -1133,6 +1173,25 @@ namespace FintrakBanking.Repositories.Setups.General
             return state;
         }
 
+       /* public static bool CompareHash(string attemptedPassword, byte[] hash, int salt)
+        {
+            PasswordWithSaltHasher pwHasher = new PasswordWithSaltHasher();
+            HashWithSaltResult hashResultSha512 = pwHasher.HashWithSalt(attemptedPassword, salt, SHA512.Create());
+            string base64Hash = Convert.ToBase64String(hash);
+            string base64AttemptedHash = hashResultSha512.Salt;
+            Console.WriteLine("password match = " + base64Hash == base64AttemptedHash);
+            return base64Hash == base64AttemptedHash;
+        }
+
+        private static void TestPasswordHasher()
+        {
+            PasswordWithSaltHasher pwHasher = new PasswordWithSaltHasher();
+            //HashWithSaltResult hashResultSha256 = pwHasher.HashWithSalt("fin360user", 64, SHA256.Create());
+            HashWithSaltResult hashResultSha512 = pwHasher.HashWithSalt("fin360user", 64, SHA512.Create());
+            Console.WriteLine();
+            Console.WriteLine("hash Result Sha512 Salt = " + hashResultSha512.Salt);
+            Console.WriteLine("hash Result Sha512 Digest = " + hashResultSha512.Digest);
+        }*/
 
         private void CheckFailedAlertByDate()
         {

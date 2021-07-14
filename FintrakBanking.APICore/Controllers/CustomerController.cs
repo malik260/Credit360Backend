@@ -1323,7 +1323,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+                   new { success = false, message = $"{e.Message}" });
             }
         }
 
