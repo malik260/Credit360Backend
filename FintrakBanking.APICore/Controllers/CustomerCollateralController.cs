@@ -670,7 +670,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                int response = repo.AddCollateralInsuranceTrackingForm(token.GetStaffId, model);
+                var response = repo.AddCollateralInsuranceTrackingForm(token.GetStaffId, model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -684,7 +684,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                int response = repo.UpdateCollateralInsuranceTrackingForm(token.GetStaffId, id, model);
+                var response = repo.UpdateCollateralInsuranceTrackingForm(token.GetStaffId, id, model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -698,7 +698,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                int response = repo.GetCustomerCollateralInsuranceDetailsConfirmation(token.GetStaffId, id);
+                var response = repo.GetCustomerCollateralInsuranceDetailsConfirmation(token.GetStaffId, id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -712,7 +712,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                int response = repo.DeleteCustomerCollateralInsuranceDetails(token.GetStaffId, id);
+                var response = repo.DeleteCustomerCollateralInsuranceDetails(token.GetStaffId, id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
