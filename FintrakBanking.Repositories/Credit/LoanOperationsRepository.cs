@@ -33634,8 +33634,11 @@ namespace FintrakBanking.Repositories.Credit
                                  }).ToList();
             foreach(var i in records)
             {
-                i.iCustomerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALRELEASESTATUSID == i.collateralCustomerId).Select(x => x.CUSTOMERID).FirstOrDefault();
-                i.customerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALRELEASESTATUSID == i.collateralCustomerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+                i.insuranceCompany = i.insuranceCompanyId > 0 ? context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == i.insuranceCompanyId).Select(x => x.COMPANYNAME).FirstOrDefault() : i.otherInsuranceCompany;
+                i.policyType = i.insurancePolicyTypeId > 0 ? context.TBL_INSURANCE_POLICY_TYPE.Where(x => x.POLICYTYPEID == i.insurancePolicyTypeId).Select(x => x.DESCRIPTION).FirstOrDefault() : i.otherInsurancePolicyType;
+                i.collateralCode = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.COLLATERALCODE).FirstOrDefault();
+                i.iCustomerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.CUSTOMERID).FirstOrDefault();
+                i.customerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
             }
 
             var data = records.GroupBy(x => x.referenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.systemArrivalDateTime);

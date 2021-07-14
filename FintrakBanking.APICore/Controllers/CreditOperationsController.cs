@@ -2542,7 +2542,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse data = repo.GoForBulkInsuranceUploadApproval(entity);
 
-            if (data.success)
+            if (data != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = data.responseMessage });

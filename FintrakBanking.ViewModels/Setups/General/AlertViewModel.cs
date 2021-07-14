@@ -23,6 +23,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string bindingMethod { get; set; }
         public DateTime? lastSentDate { get; set; }
         public int? actionStatus { get; set; }
+        public bool isActive { get; set; }
 
         //public DateTime lastSentDate { get; set; }
         //public int source { get; set; }

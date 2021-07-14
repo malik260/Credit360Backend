@@ -120,6 +120,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               lastSentDate = a.LASTSENTDATE,
                               actionStatus = a.ACTIONSTATUS,
                               bindingMethod = a.BINDINGMETHOD,
+                              isActive = a.ISACTIVE,
                           }).ToList();
             return alerts;
         }
@@ -163,6 +164,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               lastSentDate = a.LASTSENTDATE,
                               actionStatus = a.ACTIONSTATUS,
                               bindingMethod = a.BINDINGMETHOD,
+                              isActive = a.ISACTIVE
                           }).ToList();
             return alerts;
         }
@@ -183,6 +185,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              lastSentDate = a.LASTSENTDATE,
                              actionStatus = a.ACTIONSTATUS,
                              bindingMethod = a.BINDINGMETHOD,
+                             isActive = a.ISACTIVE
                          }).FirstOrDefault();
             return alert;
         }
@@ -198,6 +201,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 TEMPLATETYPE = model.templateType,
                 DEFAULTEMAIL = model.defaultEmail,
                 BINDINGMETHOD = model.bindingMethod,
+                ISACTIVE = true,
                 //LASTSENTDATE = general.GetApplicationDate(),
                 ACTIONSTATUS = 1,
             };
@@ -271,6 +275,34 @@ namespace FintrakBanking.Repositories.Setups.General
                 DETAIL = $"TBL_ALERT_TITLE '{entity.ToString()}' was deleted by {auditStaff}",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.ALERTTITLEID,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+
+
+        public bool UpdateAlertTitleStatus(AlertTitleViewModel model)
+        {
+            var entity = this.context.TBL_ALERT_TITLE.Find(model.alertTitleId);
+            entity.ISACTIVE = model.isActive;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertTitleUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_TITLE'{entity.TITLE}' was updated by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 TARGETID = entity.ALERTTITLEID,
