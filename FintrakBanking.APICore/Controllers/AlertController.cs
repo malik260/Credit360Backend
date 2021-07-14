@@ -139,6 +139,34 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("alert-title-status")]
+        public HttpResponseMessage UpdateAlertTitleStatus([FromBody] AlertTitleViewModel entity)
+        {
+            try
+            {
+                entity.companyId = _token.GetCompanyId;
+                entity.userBranchId = (short)_token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = _token.GetStaffId;
+
+                var data = _repo.UpdateAlertTitleStatus(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
         [HttpPut]
         [ClaimsAuthorization]
         [Route("alert-title/{id}")]

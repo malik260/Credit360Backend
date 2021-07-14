@@ -2146,6 +2146,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             public async Task<bool> UpdateProduct(int productId, ProductViewModel productModel)
             {
+            try
+            {
                 bool output = false;
                 var targetProductId = 0;
 
@@ -2185,7 +2187,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     // Remove exisiting product fees, currency and collaterals
 
-                    if (existingProductCurrencies.Count > 0 && productModel.currencies.Count()>0)
+                    if (existingProductCurrencies.Count > 0 && productModel.currencies.Count() > 0)
                     {
                         foreach (var curr in existingProductCurrencies)
                         {
@@ -2193,7 +2195,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         }
                     }
 
-                    if (existingProductFees.Count > 0 && productModel.fees.Count()>0)
+                    if (existingProductFees.Count > 0 && productModel.fees.Count() > 0)
                     {
                         foreach (var fee in existingProductFees)
                         {
@@ -2201,7 +2203,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         }
                     }
 
-                    if (existingProductCollateral.Count > 0 && productModel.collaterals.Count()>0)
+                    if (existingProductCollateral.Count > 0 && productModel.collaterals.Count() > 0)
                     {
                         foreach (var coll in existingProductCollateral)
                         {
@@ -2222,6 +2224,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             };
                             productCurrencies.Add(productCurrency);
                         }
+                       
                     }
 
                     if (productModel.fees.Count() > 0)
@@ -2320,43 +2323,43 @@ namespace FintrakBanking.Repositories.Setups.General
                     //Product Behaviour Update
                     //if (existingTempProductBehaviour != null)
                     //{
-                        tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
-                        {
-                            //TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID,
-                            PRODUCTCODE = productModel.productCode,
-                            COLLATERAL_FCY_LIMIT = productModel.productBehaviour.collateralFcyLimit,
-                            COLLATERAL_LCY_LIMIT = productModel.productBehaviour.collateralLcyLimit,
-                            CUSTOMER_LIMIT = productModel.productBehaviour.customerLimit,
-                            ISCURRENT = true,
-                            APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                            ISINVOICEBASED = productModel.productBehaviour.isInvoiceBased,
-                            PRODUCT_LIMIT = productModel.productBehaviour.productLimit,
-                            INVOICE_LIMIT = productModel.productBehaviour.invoiceLimit,
-                            ISTEMPORARYOVERDRAFT = productModel.productBehaviour.isTemporaryOverDraft,
-                            ALLOWFUNDUSAGE = productModel.productBehaviour.allowFundUsage,
-                            DATETIMECREATED = DateTime.Now,
-                            CREATEDBY = productModel.createdBy,
-                            CRMSREGULATORYID = productModel.productBehaviour.crmsRegulatoryId,
-                        };
+                    tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
+                    {
+                        //TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID,
+                        PRODUCTCODE = productModel.productCode,
+                        COLLATERAL_FCY_LIMIT = productModel.productBehaviour.collateralFcyLimit,
+                        COLLATERAL_LCY_LIMIT = productModel.productBehaviour.collateralLcyLimit,
+                        CUSTOMER_LIMIT = productModel.productBehaviour.customerLimit,
+                        ISCURRENT = true,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                        ISINVOICEBASED = productModel.productBehaviour.isInvoiceBased,
+                        PRODUCT_LIMIT = productModel.productBehaviour.productLimit,
+                        INVOICE_LIMIT = productModel.productBehaviour.invoiceLimit,
+                        ISTEMPORARYOVERDRAFT = productModel.productBehaviour.isTemporaryOverDraft,
+                        ALLOWFUNDUSAGE = productModel.productBehaviour.allowFundUsage,
+                        DATETIMECREATED = DateTime.Now,
+                        CREATEDBY = productModel.createdBy,
+                        CRMSREGULATORYID = productModel.productBehaviour.crmsRegulatoryId,
+                    };
                     //}
 
                     context.TBL_TEMP_PRODUCT.Add(tempProductToUpdate);
 
                     //if (existingTempProductBehaviour != null)
                     //{
-                        //tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
-                        context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
+                    //tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
+                    context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
                     //}
 
                     context.SaveChanges();
                     tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
 
-            }
+                }
                 else
                 {
                     var targetProduct = context.TBL_PRODUCT.Find(productId);
                     var targetProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == targetProduct.PRODUCTID).FirstOrDefault();
-                     //Storing the updated product currencies
+                    //Storing the updated product currencies
                     if (productModel.currencies.Count() > 0)
                     {
                         foreach (var item in productModel.currencies)
@@ -2408,7 +2411,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             productCollaterals.Add(collateral);
                         }
                     }
-                        //End of storing the updated product currencies
+                    //End of storing the updated product currencies
                     tempProduct = new TBL_TEMP_PRODUCT()
                     {
                         ISFACILITYLINE = productModel.isFacilityLine,
@@ -2551,6 +2554,10 @@ namespace FintrakBanking.Repositories.Setups.General
                         throw new SecureException(ex.Message);
                     }
                 }
+            }catch(Exception ex)
+            {
+                throw ex;
+            }
             }
 
         //private bool UpdateProduct2(int productId, ProductViewModel product)
