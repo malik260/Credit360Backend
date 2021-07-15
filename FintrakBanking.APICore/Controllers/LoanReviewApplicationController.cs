@@ -18,7 +18,6 @@ using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    //[ClaimsAuthorization]
     [RoutePrefix("api/v1/credit")]
     [SecureExceptionFilterAttribute]
     public class LoanReviewApplicationController : ApiControllerBase
@@ -237,6 +236,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
 
         }
+
 
         [HttpGet, Route("loan-review-application/select-list")]
         [ClaimsAuthorization]
