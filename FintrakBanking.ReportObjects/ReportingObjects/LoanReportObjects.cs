@@ -5837,7 +5837,7 @@ namespace FintrakBanking.ReportObjects
                                                             cCustomerId = c.CUSTOMERID,
                                                             productId = l.PROPOSEDPRODUCTID,
                                                             businessUnitId = c.BUSINESSUNTID,
-                                                            createdBy = ccu.CREATEDBY,
+                                                            createdBy = l.CREATEDBY,
                                                             accountOfficer = context.TBL_STAFF.Where(o => o.STAFFID == ccu.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                                                             currency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == ccu.CURRENCYID).Select(x => x.CURRENCYCODE).FirstOrDefault(),
                                                             customerId = c.CUSTOMERCODE,
@@ -5848,7 +5848,6 @@ namespace FintrakBanking.ReportObjects
 
                     foreach (var k in collateralAdequacyReportData)
                     {
-
                             if (k.collateralTypeId == (int)CollateralTypeEnum.Property)
                             {
                                 var cim = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == k.collateralCustomerID).FirstOrDefault();
@@ -5890,10 +5889,10 @@ namespace FintrakBanking.ReportObjects
                                                 join pp in context.TBL_PRODUCT on o.PROPOSEDPRODUCTID equals pp.PRODUCTID
                                                 join pt in context.TBL_PRODUCT_TYPE on pp.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                                 where a.CUSTOMERID == k.cCustomerId && a.COLLATERALCUSTOMERID == k.collateralCustomerID && pt.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
-                                                select a).ToList();
+                                                select a).Take(50).ToList();
 
                             k.collateralCurrency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == k.currencyId).Select(x => x.CURRENCYCODE)?.FirstOrDefault();
-                            if (allExposures != null)
+                            if (allExposures.Count() > 0)
                             {
                                 k.totalDirectExposure = allExposures.Sum(x => x.COLLATERALCOVERAGE);
                             }
@@ -5902,7 +5901,7 @@ namespace FintrakBanking.ReportObjects
                                                        join pp in context.TBL_COLLATERAL_IMMOVE_PROPERTY on z.COLLATERALCUSTOMERID equals pp.COLLATERALCUSTOMERID
                                                        where z.CUSTOMERID == k.cCustomerId && z.COLLATERALCUSTOMERID == k.collateralCustomerID && to.COLLATERALTYPEID == k.collateralTypeId && to.COLLATERALCLASSIFICATIONID == (int)CollateralClassificationEnum.Tangible
                                                        select pp).ToList();
-                            if (tangibleCollaterals != null)
+                            if (tangibleCollaterals.Count() > 0)
                             {
                                 k.totalTangibleCollateral = (decimal)tangibleCollaterals.Sum(x => x.FORCEDSALEVALUE);
                             }
@@ -5910,7 +5909,7 @@ namespace FintrakBanking.ReportObjects
                                                          join to in context.TBL_COLLATERAL_TYPE on z.COLLATERALTYPEID equals to.COLLATERALTYPEID
                                                          where z.CUSTOMERID == k.cCustomerId && z.COLLATERALCUSTOMERID == k.collateralCustomerID && to.COLLATERALTYPEID == k.collateralTypeId && to.COLLATERALCLASSIFICATIONID == (int)CollateralClassificationEnum.Intangible
                                                          select z).ToList();
-                            if (intangibleCollaterals != null)
+                            if (intangibleCollaterals.Count() > 0)
                             {
                                 k.totalIntangibleCollateral = intangibleCollaterals.Sum(x => x.COLLATERALVALUE);
                             }
