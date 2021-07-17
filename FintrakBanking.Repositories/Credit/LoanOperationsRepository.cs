@@ -33588,6 +33588,8 @@ namespace FintrakBanking.Repositories.Credit
                                  join atrail in context.TBL_APPROVAL_TRAIL on b.BULKINSURANCEUPLOADAPPROVALID equals atrail.TARGETID
                                  where
                                  b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
+                                 && b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+                                 && a.ISCOLLATERAL == false
 
                                  orderby b.REQUESTDATE descending
                                  select new MultipleInsuranceOutputApprovalViewModel()
@@ -33647,6 +33649,79 @@ namespace FintrakBanking.Repositories.Credit
             return allRecords;
 
         }
+
+        public IEnumerable<MultipleInsuranceOutputApprovalViewModel> GetBulkInsuranceUploadRejectedApproval(int staffId, int companyId)
+        {
+
+            IEnumerable<MultipleInsuranceOutputApprovalViewModel> allRecords = null;
+
+            var records = (from b in context.TBL_BULK_INSURANCE_UPLOAD_APPROVAL
+                           join a in context.TEMP_COLLATERAL_INSURANCE_TRACKING on b.BATCHCODE equals a.BATCHCODE
+                           join atrail in context.TBL_APPROVAL_TRAIL on b.BULKINSURANCEUPLOADAPPROVALID equals atrail.TARGETID
+                           where
+                           b.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved
+                           || a.ISCOLLATERAL == true
+
+                           orderby b.REQUESTDATE descending
+                           select new MultipleInsuranceOutputApprovalViewModel()
+                           {
+                               bulkInsuranceUploadApprovalId = b.BULKINSURANCEUPLOADAPPROVALID,
+                               systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
+                               operationId = b.OPERATIONID,
+                               insuranceCompanyId = a.INSURANCECOMPANYID,
+                               companyAddress = a.ISURANCECOMPANYADDRESS,
+                               referenceNumber = a.POLICYNUMBER,
+                               startDate = a.INSURANCESTARTDATE,
+                               expiryDate = a.INSURANCEENDDATE,
+                               sumInsured = a.SUMINSURED,
+                               premiumAmount = a.PREMIUMPAID,
+                               insuranceStatus = (int)a.INSURANCESTATUSID,
+                               collateralCustomerId = a.COLLATERALCUSTOMERID,
+                               loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                               valuationStartDate = a.VALUATIONSTARTDATE,
+                               valuationEndDate = a.VALUATIONENDDATE,
+                               openMarketValue = a.OMV,
+                               forcedSaleValue = a.FSV,
+                               valuerId = a.VALUERID,
+                               collateralDetails = a.COLLATERALDETAILS,
+                               insurancePolicyTypeId = a.INSURANCEPOLICYTYPEID,
+                               otherValuer = a.OTHERVALUER,
+                               otherInsuranceCompany = a.OTHERINSURANCECOMPANY,
+                               otherInsurancePolicyType = a.OTHERINSURANCEPOLICYTYPE,
+                               collateralTypeId = a.COLLATERALTYPE,
+                               collateralSubTypeId = a.COLLATERALSUBTYPE,
+                               gpsCoordinates = a.GPSCOORDINATES,
+                               firstLossPayee = a.FIRSTLOSSPAYEE,
+                               comment = a.COMMENT,
+                               dateTimeCreated = (DateTime)a.DATETIMECREATED,
+                               createdBy = (int)a.CREATEDBY,
+                               batchCode = a.BATCHCODE,
+                               toStaffId = atrail.TOSTAFFID,
+                               requestStaffId = atrail.REQUESTSTAFFID,
+                               approvalTrailId = atrail.APPROVALTRAILID,
+                               responseStaffId = atrail.RESPONSESTAFFID,
+                               requestOperationId = (int)OperationsEnum.InsuranceBulkUploadApproval,
+                               approvalStatusId = atrail.APPROVALSTATUSID,
+                               approvalStatusName = (from y in context.TBL_APPROVAL_STATUS.Where(i => i.APPROVALSTATUSID == b.APPROVALSTATUSID) select y.APPROVALSTATUSNAME).FirstOrDefault(),
+                               isCollateral = a.ISCOLLATERAL == true ? "Yes" : "No",
+                               validityStatus = a.VALIDITYSTATUS == true ? "passed" : "failed"
+                           }).ToList();
+            foreach (var i in records)
+            {
+                i.insuranceCompany = i.insuranceCompanyId > 0 ? context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == i.insuranceCompanyId).Select(x => x.COMPANYNAME).FirstOrDefault() : i.otherInsuranceCompany;
+                i.policyType = i.insurancePolicyTypeId > 0 ? context.TBL_INSURANCE_POLICY_TYPE.Where(x => x.POLICYTYPEID == i.insurancePolicyTypeId).Select(x => x.DESCRIPTION).FirstOrDefault() : i.otherInsurancePolicyType;
+                i.collateralCode = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.COLLATERALCODE).FirstOrDefault();
+                i.iCustomerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.CUSTOMERID).FirstOrDefault();
+                i.customerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+            }
+
+            var data = records.GroupBy(x => x.referenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.systemArrivalDateTime);
+
+            allRecords = data.ToList();
+            return allRecords;
+
+        }
+
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansOperationWriteOffAnalysis(int staffId, int companyId)
         {
@@ -39589,7 +39664,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
                     {
-                        var loanAssigns = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE).ToList();
+                        var loanAssigns = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.ISCOLLATERAL == false && x.VALIDITYSTATUS == true).ToList();
                         foreach (var loanAssign in loanAssigns)
                         {
                             var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x=>x.COLLATERALCUSTOMERID == loanAssign.COLLATERALCUSTOMERID).FirstOrDefault();
@@ -39672,13 +39747,13 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
                             {
-                                var loanAssigns = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE).ToList();
-                                foreach (var loanAssign in loanAssigns)
+                                var validRecords = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.ISCOLLATERAL == false).ToList();
+                                foreach (var validRecord in validRecords)
                                 {
-                                    var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == loanAssign.COLLATERALCUSTOMERID).FirstOrDefault();
+                                    var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == validRecord.COLLATERALCUSTOMERID).FirstOrDefault();
                                     if (doseRecordExist == null)
                                     {
-                                        var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(loanAssign.COLLATERALINSURANCETRACKINGID);
+                                        var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
                                         bulkInsuranceUploads(rec);
                                         rec.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                                         context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(rec);
@@ -39728,6 +39803,8 @@ namespace FintrakBanking.Repositories.Credit
                 FIRSTLOSSPAYEE = insurancePolicy.FIRSTLOSSPAYEE,
                 INSURABLEVALUE = insurancePolicy.INSURABLEVALUE,
                 COMMENT = insurancePolicy.COMMENT,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = insurancePolicy.CREATEDBY
             });
         }
 

@@ -2166,12 +2166,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 var unApprovedProductEdit = context.TBL_TEMP_PRODUCT
                     .Where(x => x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                    && x.PRODUCTCODE.ToLower() == productModel.productCode.ToLower());
+                    && x.PRODUCTCODE.ToLower() == productModel.productCode.ToLower()).FirstOrDefault();
 
                 TBL_TEMP_PRODUCT tempProduct = new TBL_TEMP_PRODUCT();
                 TBL_TEMP_PRODUCT_BEHAVIOUR tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR();
 
-                if (unApprovedProductEdit.Any())
+                if (unApprovedProductEdit != null)
                 {
                     throw new SecureException("Product is already undergoing approval");
                 }
@@ -2316,13 +2316,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     //tempProductToUpdate.PRODUCT_BEHAVIOURID = productModel.productBehaviourId;
                     tempProductToUpdate.OPERATION = "update";
                     tempProductToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+
                     tempProductToUpdate.TBL_TEMP_PRODUCT_CURRENCY = productCurrencies;
                     tempProductToUpdate.TBL_TEMP_PRODUCT_CHARGE_FEE = productFees;
                     tempProductToUpdate.TBL_TEMP_PRODUCT_COLLATERALTYP = productCollaterals;
 
-                    //Product Behaviour Update
-                    //if (existingTempProductBehaviour != null)
-                    //{
                     tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
                     {
                         //TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID,
@@ -2341,16 +2339,10 @@ namespace FintrakBanking.Repositories.Setups.General
                         CREATEDBY = productModel.createdBy,
                         CRMSREGULATORYID = productModel.productBehaviour.crmsRegulatoryId,
                     };
-                    //}
-
+                    
                     context.TBL_TEMP_PRODUCT.Add(tempProductToUpdate);
-
-                    //if (existingTempProductBehaviour != null)
-                    //{
-                    //tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
                     context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
-                    //}
-
+                        
                     context.SaveChanges();
                     tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
 
