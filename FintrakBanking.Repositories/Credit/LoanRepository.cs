@@ -19431,7 +19431,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var policyRequest in models)
                 {
                     policyRequest.batchCode = batchCode;
-                    if (policyRequest.isCollateral.ToLower() == "n" || policyRequest.isCollateral.ToLower() == "no")
+                    if (policyRequest.isCollateral.ToLower() != "")
                     {
                         var collateralDetail = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == policyRequest.collateralCode).FirstOrDefault();
                         if (collateralDetail != null)
@@ -19445,7 +19445,7 @@ namespace FintrakBanking.Repositories.Credit
                         var confirmIfRecordAlreadyExist = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(t => t.COLLATERALCUSTOMERID == policyRequest.collateralCustomerId).FirstOrDefault();
                         if (confirmIfRecordAlreadyExist == null)
                         {
-                            if (policyRequest.expiryDate > DateTime.Now)
+                            if (policyRequest.expiryDate.Value.Date > DateTime.Now.Date)
                             {
                                 policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Active;
                             }
@@ -19459,12 +19459,10 @@ namespace FintrakBanking.Repositories.Credit
 
                             policyRequest.dateTimeCreated = DateTime.Now;
                             policyRequest.createdBy = user.createdBy;
-                            if (policyRequest.passed == true)
-                            {
-                                var policyData = addBulkPolicy(policyRequest);
-
-                                bulkPolicyTable.Add(policyData);
-                            }
+                            
+                            var policyData = addBulkPolicy(policyRequest);
+                            bulkPolicyTable.Add(policyData);
+                            
                         }
                     }
                 }
@@ -20964,6 +20962,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (var currentLine in bulkEntries)
                 {
+                try
+                {
                     var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
                     //========================================== other valiadation =============================
 
@@ -20972,39 +20972,57 @@ namespace FintrakBanking.Repositories.Credit
                         currentLine.referenceNumber = referenceNumber;
                     }
                     var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == currentLine.customerId).FirstOrDefault();
-                    if (customer == null && (currentLine.isCollateral.ToLower() == "n" || currentLine.isCollateral.ToLower() == "no"))
+                    if (customer == null)
                     {
                         currentLine.passed = false;
                         currentLine.errorMessages.Add("Customer with customercode " + currentLine.customerId.ToString() + " does not exist on Credit360");
                     }
 
-                    if (currentLine.isCollateral.ToLower() == "n")
+                    if (currentLine.isCollateral.ToLower() != "")
                     {
-                        customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode.ToString()).FirstOrDefault();
-                        if (customerCollateral == null)
+                        if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
                         {
                             currentLine.passed = false;
-                            currentLine.errorMessages.Add("<br/>Collateral with collateralcode " + currentLine.collateralCode.ToString() + " does not exist on Credit360");
+                            currentLine.errorMessages.Add("<br/>Only collateral insurance policy is allowed to be uploaded. Collateral with collateralcode " + currentLine.collateralCode.ToString() + " is not an insurance policy");
                         }
                         else
                         {
-                            var customerCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.COLLATERALCODE == currentLine.collateralCode).ToList();
-                            if (customerCollaterals.Count() > 0 && customerCollaterals.Count() == 1)
+                            customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode.ToString()).FirstOrDefault();
+
+                            if (customerCollateral == null)
                             {
-                                currentLine.collateralCustomerId = customerCollateral.COLLATERALCUSTOMERID;
-                                currentLine.collateralDetails = customerCollateral.COLLATERALSUMMARY;
-                                currentLine.collateralCode = customerCollateral.COLLATERALCODE;
+                                currentLine.passed = false;
+                                currentLine.errorMessages.Add("<br/>Collateral with collateralcode " + currentLine.collateralCode.ToString() + " does not exist on Credit360");
                             }
                             else
                             {
-                                currentLine.passed = false;
-                                currentLine.errorMessages.Add("<br/>Customer must have only single collateral for bulk upload on credit360");
-                            }
-                            var validateCollateralInsurance = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).ToList();
-                            if (validateCollateralInsurance.Any())
-                            {
-                                currentLine.passed = false;
-                                currentLine.errorMessages.Add("<br/>Insurance already exist on Credit360");
+                                var customerExistingCollateralPolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).FirstOrDefault();
+                                if (customerExistingCollateralPolicy != null)
+                                {
+                                    currentLine.passed = false;
+                                    currentLine.errorMessages.Add("<br/>Policy with collateralcode " + currentLine.collateralCode.ToString() + " already exist on Credit360");
+                                }
+                                else
+                                {
+                                    var customerCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.COLLATERALCODE == currentLine.collateralCode).ToList();
+                                    if (customerCollaterals.Count() > 0 && customerCollaterals.Count() == 1)
+                                    {
+                                        currentLine.collateralCustomerId = customerCollateral.COLLATERALCUSTOMERID;
+                                        currentLine.collateralDetails = customerCollateral.COLLATERALSUMMARY;
+                                        currentLine.collateralCode = customerCollateral.COLLATERALCODE;
+                                    }
+                                    else
+                                    {
+                                        currentLine.passed = false;
+                                        currentLine.errorMessages.Add("<br/>Customer must have only single collateral for bulk upload on credit360");
+                                    }
+                                    var validateCollateralInsurance = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).ToList();
+                                    if (validateCollateralInsurance.Any())
+                                    {
+                                        currentLine.passed = false;
+                                        currentLine.errorMessages.Add("<br/>Insurance already exist on Credit360");
+                                    }
+                                }
                             }
                         }
                     }
@@ -21020,7 +21038,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (insurancePolicyTypeDetail == null)
                     {
                         currentLine.passed = false;
-                        currentLine.errorMessages.Add("<br/>Policy type " +currentLine.policyType.ToString() + " does not exist on Credit360");
+                        currentLine.errorMessages.Add("<br/>Policy type " + currentLine.policyType.ToString() + " does not exist on Credit360");
                     }
                     else
                     {
@@ -21038,6 +21056,28 @@ namespace FintrakBanking.Repositories.Credit
                         currentLine.insuranceCompanyId = insuranceCompanyDetail.INSURANCECOMPANYID;
                         currentLine.companyAddress = insuranceCompanyDetail.ADDRESS;
                     }
+
+                    if (currentLine.passed == true)
+                    {
+                        currentLine.validityStatus = "Passed";
+                    }
+                    else
+                    {
+                        currentLine.validityStatus = "Failed";
+                    }
+
+                    if (currentLine.isCollateral.ToLower() == "n" || currentLine.isCollateral.ToLower() == "no")
+                    {
+                        currentLine.isCollateral = "No";
+                    }
+                    else
+                    {
+                        currentLine.isCollateral = "Yes";
+                    }
+                }catch(Exception e)
+                {
+                    throw e;
+                }
                 }
                 return bulkEntries;
             
@@ -21240,6 +21280,8 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = insurancePolicy.createdBy,
                 APPROVALSTATUSID = insurancePolicy.approvalStatusId,
                 BATCHCODE = insurancePolicy.batchCode,
+                VALIDITYSTATUS = insurancePolicy.passed,
+                ISCOLLATERAL = (insurancePolicy.isCollateral.ToLower() == "n" || insurancePolicy.isCollateral.ToLower() == "no") ? false : true,
             });
         
             return insuranceTracking;

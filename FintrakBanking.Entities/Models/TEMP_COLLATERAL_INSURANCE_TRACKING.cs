@@ -48,5 +48,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
         public int? APPROVALSTATUSID { get; set; }
         public string BATCHCODE { get; set; }
+        public bool? ISCOLLATERAL { get; set; }
+        public bool? VALIDITYSTATUS { get; set; }
     }
 }

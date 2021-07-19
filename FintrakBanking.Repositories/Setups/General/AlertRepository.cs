@@ -291,8 +291,10 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool UpdateAlertTitleStatus(AlertTitleViewModel model)
         {
             var entity = this.context.TBL_ALERT_TITLE.Find(model.alertTitleId);
-            entity.ISACTIVE = model.isActive;
-
+            if (entity != null)
+            {
+                entity.ISACTIVE = model.isActive;
+            }
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
@@ -1100,7 +1102,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if ((now >= start) && (now <= end))
                 {
                     //GroupImminentMaturitiesByGroupHeads();
-                    GetImminentMaturities();
+                    //GetImminentMaturities();
                     //GetPastDueObligationsReminder();
                     //GetPastDueObligationsReminderByGroupHeads();
                     state = true;
@@ -1483,14 +1485,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // Maturing Obligations/GetImminentMaturities method by group heads
             var groupHeadsList = externalAlertRepository.GetImminentMaturitiesGroupHeads();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = alertTitleInfo.DEFAULTEMAIL;
             }
-            if (groupHeadsList != null && groupHeadsList.Count() > 0)
+            if (alertTitleInfo != null && groupHeadsList != null && groupHeadsList.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -1594,14 +1596,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetPastDueObligationsReminder method by group heads
             var groupHeadsList = externalAlertRepository.GetPastDueObligationsReminderByGroupHeads();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetPastDueObligationsReminder").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetPastDueObligationsReminder" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
-            if (groupHeadsList != null && groupHeadsList.Count() > 0)
+            if (alertTitleInfo != null && groupHeadsList != null && groupHeadsList.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -1695,14 +1697,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // Maturing Obligations/GetImminentMaturities method
             var staffList = externalAlertRepository.GetAccountOfficersWithImminentMaturities();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
-            if (staffList != null && staffList.Count() > 0)
+            if (alertTitleInfo != null && staffList != null && staffList.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -1791,7 +1793,7 @@ namespace FintrakBanking.Repositories.Setups.General
            
             List<int> days = new List<int> { 30, 21, 14, 7, 5, 2, 1 };
             var loanRepaymentReminder = context.TBL_NEXT_PRINCIPAL_REPAYMENT.Where(d => d.AMOUNTDUE.Value > 0 && days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value)).ToList();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentReminder").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentReminder" && a.ISACTIVE == true).FirstOrDefault();
             int numberOfDays = 0;
             int daysToUse = 0;
             int numberOfInterestDays = 0;
@@ -1799,12 +1801,12 @@ namespace FintrakBanking.Repositories.Setups.General
             var interestDueDate = "";
             var interestAmountDue = "";
 
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo!= null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = alertTitleInfo.DEFAULTEMAIL;
             }
 
-            if (loanRepaymentReminder != null && loanRepaymentReminder.Count() > 0)
+            if (loanRepaymentReminder != null && loanRepaymentReminder.Count() > 0 && alertTitleInfo != null)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -1867,15 +1869,15 @@ namespace FintrakBanking.Repositories.Setups.General
             // GetInsurancePolicyExpirationNotification method
             List<int> days = new List<int> { 60, 30, 21, 14, 7, 5, 2, 1 };
             var insurancePolicyNotification = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.INSURANCEENDDATE).Value) && d.DELETED == false && d.INSURANCESTATUSID != (int)InsuranceStatusEnum.Expired).ToList();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpirationNotification").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpirationNotification" && a.ISACTIVE == true).FirstOrDefault();
             var defaultEmail = "";
             var emailList = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
 
-            if (insurancePolicyNotification.Count() > 0)
+            if (alertTitleInfo != null && insurancePolicyNotification.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -1950,15 +1952,15 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetInsurancePolicyExpirationNotification method
             var insurancePolicyNotification = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => DbFunctions.DiffDays(DateTime.UtcNow, d.INSURANCEENDDATE).Value < 1 && d.DELETED == false).ToList();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpiredNotification").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpiredNotification" && a.ISACTIVE == true).FirstOrDefault();
             var defaultEmail = "";
             var emailList = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
 
-            if (insurancePolicyNotification.Count() > 0)
+            if (alertTitleInfo != null && insurancePolicyNotification.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -2050,15 +2052,15 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetCreditCardMaturingObligations method
             var staffCreditCardMaturingObligations = externalAlertRepository.GetCreditCardMaturingObligations();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetCreditCardMaturingObligations").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetCreditCardMaturingObligations" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
 
-            if (staffCreditCardMaturingObligations != null && staffCreditCardMaturingObligations.Count() > 0)
+            if (alertTitleInfo != null && staffCreditCardMaturingObligations != null && staffCreditCardMaturingObligations.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -2121,14 +2123,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetUnpaidObligationReminder method
             var unpaidObligationReminder = externalAlertRepository.GetUnpaidObligationReminder();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetUnpaidObligationReminder").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetUnpaidObligationReminder" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
-            if (unpaidObligationReminder != null && unpaidObligationReminder.Count() > 0)
+            if (alertTitleInfo != null && unpaidObligationReminder != null && unpaidObligationReminder.Count() > 0)
             {
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
                 foreach (var i in unpaidObligationReminder)
@@ -2160,14 +2162,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetExpiringFacilityReport method
             var expiringFacilityReport = externalAlertRepository.GetExpiringFacilityReport();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetExpiringFacilityReport").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetExpiringFacilityReport" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
-            if (expiringFacilityReport != null && expiringFacilityReport.Count() > 0)
+            if (alertTitleInfo != null && expiringFacilityReport != null && expiringFacilityReport.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -2224,15 +2226,15 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetLoanExpirationReminder method
             var loanExpirationReminder = externalAlertRepository.GetLoanExpirationReminder();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanExpirationReminder").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanExpirationReminder" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
 
-            if (loanExpirationReminder != null && loanExpirationReminder.Count() > 0)
+            if (alertTitleInfo != null && loanExpirationReminder != null && loanExpirationReminder.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -2260,15 +2262,15 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetLoanExpirationReminderAccountOfficer method
             var loanExpirationReminderAccountOfficer = externalAlertRepository.GetLoanExpirationReminderAccountOfficer();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanExpirationReminderAccountOfficer").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanExpirationReminderAccountOfficer" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
 
-            if (loanExpirationReminderAccountOfficer != null && loanExpirationReminderAccountOfficer.Count() > 0)
+            if (alertTitleInfo != null && loanExpirationReminderAccountOfficer != null && loanExpirationReminderAccountOfficer.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -2332,15 +2334,15 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetUnAuthorizedOverdraftReport method
             var unAuthorizedOverdraftReport = externalAlertRepository.GetUnAuthorizedOverdraftReport();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetUnAuthorizedOverdraftReport").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetUnAuthorizedOverdraftReport" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
 
-            if (unAuthorizedOverdraftReport != null && unAuthorizedOverdraftReport.Count() > 0)
+            if (alertTitleInfo != null && unAuthorizedOverdraftReport != null && unAuthorizedOverdraftReport.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -2371,14 +2373,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetOverlineMonitoringReport method
             var overlineMonitoringReport = externalAlertRepository.GetOverlineMonitoringReport();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetOverlineMonitoringReport").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetOverlineMonitoringReport" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
-            if (overlineMonitoringReport != null && overlineMonitoringReport.Count() > 0)
+            if (alertTitleInfo != null && overlineMonitoringReport != null && overlineMonitoringReport.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -5545,9 +5547,9 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetRepaymentDefaultersAlert method
             var repaymentDefaulters = externalAlertRepository.GetRepaymentDefaultersAlert();
-            var OverdueObligation = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "OverdueObligation").FirstOrDefault();
+            var OverdueObligation = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "OverdueObligation" && a.ISACTIVE == true).FirstOrDefault();
 
-            if (repaymentDefaulters != null && repaymentDefaulters.Count() > 0)
+            if (OverdueObligation != null && repaymentDefaulters != null && repaymentDefaulters.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -5617,14 +5619,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             //GetRecoveryAssignmentDueCompletionDate method
             var aboutToExpiredList = externalAlertRepository.GetRecoveryAssignmentDueCompletionDate();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetRecoveryAssignmentDueCompletionDate").FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetRecoveryAssignmentDueCompletionDate" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
-            if (alertTitleInfo.DEFAULTEMAIL != null)
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
             }
-            if (aboutToExpiredList != null && aboutToExpiredList.Count() > 0)
+            if (alertTitleInfo != null && aboutToExpiredList != null && aboutToExpiredList.Count() > 0)
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();

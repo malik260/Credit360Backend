@@ -141,7 +141,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("alert-title-status")]
+        [Route("update-alert-title-status")]
         public HttpResponseMessage UpdateAlertTitleStatus([FromBody] AlertTitleViewModel entity)
         {
             try
@@ -155,15 +155,15 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = $"The record has been created successfully" });
+                        new { success = true, result = data, message = $"The record status has been updated successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error creating this record" });
+                   new { success = false, message = $"There was an error updating this record status" });
             }
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+                   new { success = false, message = $"There was an error updating this record status {e.Message}" });
             }
         }
 

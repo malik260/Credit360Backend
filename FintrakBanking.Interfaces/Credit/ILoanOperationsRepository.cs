@@ -38,6 +38,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool generateRecoveryMailToAgents(string source, int staffId, int companyId);
         WorkflowResponse GoForBulkAssignLoansToAgentApproval(List<BulkRecoveryApprovalViewModel> entity, UserInfo user, int approvalStatusId, string comment);
         IEnumerable<RetailLoanRecoveryCommissionViewModel> getAllRecoveryCommissonByAgents(int staffId, int companyId);
+        IEnumerable<MultipleInsuranceOutputApprovalViewModel> GetBulkInsuranceUploadRejectedApproval(int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> GetAllLoansRecoveredByAgents(int staffId, int companyId);
         bool GoForDocumentationFillingApproval(ApprovalViewModel entity);
         WorkflowResponse GoForBulkInsuranceUploadApproval(ApprovalViewModel entity);
