@@ -113,7 +113,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\inetpub\wwwroot\FintrakBankingApi\bin\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\FintrakBanking.APICore\bin\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
