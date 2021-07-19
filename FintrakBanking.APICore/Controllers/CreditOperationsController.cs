@@ -1333,6 +1333,21 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-operation/bulk-insurance-upload-rejected-approval")]
+        public HttpResponseMessage GetBulkInsuranceUploadRejectedApproval()
+        {
+            var data = repo.GetBulkInsuranceUploadRejectedApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-operation/recovery-write-off-analysis")]
         public HttpResponseMessage GetAllLoansOperationWriteOffAnalysis()
         {

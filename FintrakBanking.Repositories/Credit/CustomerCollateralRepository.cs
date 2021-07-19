@@ -11266,12 +11266,11 @@ namespace FintrakBanking.Repositories.Credit
                                     i.customerName = customer?.FIRSTNAME + " " + customer?.MIDDLENAME + " " + customer?.LASTNAME;
                                     i.customerCode = customer?.CUSTOMERCODE;
                                     i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION)?.FirstOrDefault();
-                                    i.customerPhone = customer.PHONENUMBEROFSIGNATORY;
-                                    var div = context.TBL_PROFILE_BUSINESS_UNIT.Where(x=>x.BUSINESSUNITID == customer.BUSINESSUNTID)?.FirstOrDefault();
-                                    i.divisionName = div?.BUSINESSUNITSHORTCODE;
+                                    i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x=>x.PHONENUMBER).FirstOrDefault();
+                                    i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x => x.BUSINESSUNITNAME + " " + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                     i.customerEmail = customer?.EMAILADDRESS;
 
-                                }
+                            }
                                 else
                                 {
                                     i.securityReleaseStatus = (from y in context.TBL_COLLATERAL_RELEASE join p in context.TBL_COLLATERAL_RELEASE_TYPE on y.COLLATERALRELEASETYPEID equals p.COLLATERALRELEASETYPEID where y.COLLATERALCUSTOMERID == i.collateralCustomerId select p.COLLATERALRELEASETYPENAME)?.FirstOrDefault();
@@ -11281,9 +11280,8 @@ namespace FintrakBanking.Repositories.Credit
                                     i.customerName = customer?.FIRSTNAME + " " + customer?.MIDDLENAME + " " + customer?.LASTNAME;
                                     i.customerCode = customer?.CUSTOMERCODE;
                                     i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION)?.FirstOrDefault();
-                                    i.customerPhone = customer?.PHONENUMBEROFSIGNATORY;
-                                    var div = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID)?.FirstOrDefault();
-                                    i.divisionName = div?.BUSINESSUNITSHORTCODE;
+                                    i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
+                                    i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x=>x.BUSINESSUNITNAME +" "+ x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                     i.customerEmail = customer?.EMAILADDRESS;
 
                                 }
@@ -11408,9 +11406,8 @@ namespace FintrakBanking.Repositories.Credit
                                 i.customerName = customer?.FIRSTNAME + " " + customer?.MIDDLENAME + " " + customer?.LASTNAME;
                                 i.customerCode = customer?.CUSTOMERCODE;
                                 i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION)?.FirstOrDefault();
-                                i.customerPhone = customer.PHONENUMBEROFSIGNATORY;
-                                var div = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID)?.FirstOrDefault();
-                                i.divisionName = div?.BUSINESSUNITSHORTCODE;
+                                i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
+                                i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x => x.BUSINESSUNITNAME + " " + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                 i.customerEmail = customer?.EMAILADDRESS;
 
                             }
@@ -11423,9 +11420,8 @@ namespace FintrakBanking.Repositories.Credit
                                 i.customerName = customer?.FIRSTNAME + " " + customer?.MIDDLENAME + " " + customer?.LASTNAME;
                                 i.customerCode = customer?.CUSTOMERCODE;
                                 i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION)?.FirstOrDefault();
-                                i.customerPhone = customer?.PHONENUMBEROFSIGNATORY;
-                                var div = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID)?.FirstOrDefault();
-                                i.divisionName = div?.BUSINESSUNITSHORTCODE;
+                                i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
+                                i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x => x.BUSINESSUNITNAME + " " + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                 i.customerEmail = customer?.EMAILADDRESS;
 
                             }
@@ -11550,9 +11546,8 @@ namespace FintrakBanking.Repositories.Credit
                                 i.customerName = customer?.FIRSTNAME + " " + customer?.MIDDLENAME + " " + customer?.LASTNAME;
                                 i.customerCode = customer?.CUSTOMERCODE;
                                 i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION)?.FirstOrDefault();
-                                i.customerPhone = customer.PHONENUMBEROFSIGNATORY;
-                                var div = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID)?.FirstOrDefault();
-                                i.divisionName = div?.BUSINESSUNITSHORTCODE;
+                                i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
+                                i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x => x.BUSINESSUNITNAME + " " + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                 i.customerEmail = customer?.EMAILADDRESS;
 
                             }
@@ -11565,9 +11560,8 @@ namespace FintrakBanking.Repositories.Credit
                                 i.customerName = customer?.FIRSTNAME + " " + customer?.MIDDLENAME + " " + customer?.LASTNAME;
                                 i.customerCode = customer?.CUSTOMERCODE;
                                 i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION)?.FirstOrDefault();
-                                i.customerPhone = customer?.PHONENUMBEROFSIGNATORY;
-                                var div = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID)?.FirstOrDefault();
-                                i.divisionName = div?.BUSINESSUNITSHORTCODE;
+                                i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
+                                i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x => x.BUSINESSUNITNAME + " " + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                 i.customerEmail = customer?.EMAILADDRESS;
 
                             }
@@ -11693,12 +11687,11 @@ namespace FintrakBanking.Repositories.Credit
                                     i.customerName = customer?.FIRSTNAME + " " + customer?.MIDDLENAME + " " + customer?.LASTNAME;
                                     i.customerCode = customer?.CUSTOMERCODE;
                                     i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION)?.FirstOrDefault();
-                                    i.customerPhone = customer.PHONENUMBEROFSIGNATORY;
-                                    var div = context.TBL_PROFILE_BUSINESS_UNIT.Where(x=>x.BUSINESSUNITID == customer.BUSINESSUNTID)?.FirstOrDefault();
-                                    i.divisionName = div?.BUSINESSUNITSHORTCODE;
+                                    i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
+                                    i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x => x.BUSINESSUNITNAME + " " + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                     i.customerEmail = customer?.EMAILADDRESS;
 
-                                }
+                            }
                                 else
                                 {
                                     i.securityReleaseStatus = (from y in context.TBL_COLLATERAL_RELEASE join p in context.TBL_COLLATERAL_RELEASE_TYPE on y.COLLATERALRELEASETYPEID equals p.COLLATERALRELEASETYPEID where y.COLLATERALCUSTOMERID == i.collateralCustomerId select p.COLLATERALRELEASETYPENAME)?.FirstOrDefault();
@@ -11709,11 +11702,11 @@ namespace FintrakBanking.Repositories.Credit
                                     i.customerCode = customer?.CUSTOMERCODE;
                                     i.insurancePolicyType = (i.insurancePolicyTypeId == 0 || i.insurancePolicyTypeId == null) ? i.otherInsurancePolicyType : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.insurancePolicyTypeId).Select(o => o.DESCRIPTION)?.FirstOrDefault();
                                     i.customerPhone = customer?.PHONENUMBEROFSIGNATORY;
-                                    var div = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID)?.FirstOrDefault();
-                                    i.divisionName = div?.BUSINESSUNITSHORTCODE;
+                                    i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
+                                    i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x => x.BUSINESSUNITNAME + " " + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                     i.customerEmail = customer?.EMAILADDRESS;
 
-                                }
+                            }
 
                                 var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
                                 if (createdBy > 0)

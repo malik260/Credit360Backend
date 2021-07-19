@@ -1916,6 +1916,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? openMarketValue { get; set; }
         public string batchCode { get; set; }
         public int? approvalStatusId { get; set; }
+        public string validityStatus { get; set; }
     }
 
 
@@ -2024,6 +2025,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int requestOperationId { get; set; }
         public int? iCustomerId { get; set; }
         public int? bulkInsuranceUploadApprovalId { get; set; }
+        public string validityStatus { get; set; }
     }
 
     //public class MaturityIntructionViewModel : GeneralEntity
