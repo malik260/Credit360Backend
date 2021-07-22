@@ -1111,6 +1111,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal principalAmount { get; set; }
         public decimal outstandingPrincipal { get; set; }
         public decimal totalOutstanding { get; set; }
+        public DateTime lastVisitationDate { get; set; }
     }
 
     public class CollateralHistory
