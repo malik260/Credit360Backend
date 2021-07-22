@@ -1887,9 +1887,12 @@ namespace FintrakBanking.Repositories.Credit
                     //workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
                 }
 
+                
                 using (var trans = context.Database.BeginTransaction())
                 {
                     var lmsrDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                    var exchangeRate = context.TBL_CURRENCY_EXCHANGERATE.Where(e => e.CURRENCYID == lmsrDetail.FirstOrDefault().CURRENCYID).Select(e => e.EXCHANGERATE).FirstOrDefault();
+                    var realAmt = context.TBL_LOAN.FirstOrDefault(l => l.TERMLOANID == lmsrDetail.FirstOrDefault().LOANID) != null ? appl.TOTALEXPOSUREAMOUNT * (decimal)context.TBL_LOAN.FirstOrDefault(l => l.TERMLOANID == lmsrDetail.FirstOrDefault().LOANID)?.EXCHANGERATE : (decimal)appl.TOTALEXPOSUREAMOUNT * (decimal)exchangeRate;
                     workflow.FacilityAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT) > 0 ? lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT) : (appl.APPROVEDAMOUNT ?? 0);
                     workflow.BusinessUnitId = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == lmsrDetail.FirstOrDefault().CUSTOMERID).BUSINESSUNTID;
                     workflow.StaffId = model.lastUpdatedBy;
@@ -1910,16 +1913,16 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
                     workflow.LevelBusinessRule = new LevelBusinessRule
                     {
-                        Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
-                        //Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                        PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
+                        Amount = realAmt,
+                    //Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
+                    //Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                    PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
                         Pep = model.politicallyExposed,
                         //InsiderRelated = appl.ISRELATEDPARTY ?? false,
                         ProjectRelated = appl.ISPROJECTRELATED ?? false,
                         OnLending = appl.ISONLENDING ?? false,
                         InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
                         WithInstruction = appl.WITHINSTRUCTION ?? false,
-                        isAgricRelated = appl.ISAGRICRELATED,
                         //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                         DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
                         tenor = operationIsTenorExtension ? lmsrDetail.Max(d => d.APPROVEDTENOR) : 0,
