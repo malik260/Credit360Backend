@@ -265,15 +265,15 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string glSubheadCode { get; set; }
         public string accountNumber { get; set; }
-        public Decimal grossBalance { get; set; }
-        public Decimal collateralValueOmv { get; set; }
-        public Decimal collateralValueEfsv { get; set; }
-        public Decimal approvedAmount { get; set; }
+        public Decimal? grossBalance { get; set; }
+        public Decimal? collateralValueOmv { get; set; }
+        public Decimal? collateralValueEfsv { get; set; }
+        public Decimal? approvedAmount { get; set; }
         public Decimal? securityValue { get; set; }
         public Decimal? collateralCoverage { get; set; }
         public string collateralLocation { get; set; }
         public string customerID { get; set; }
-        public DateTime dateOfValuation { get; set; }
+        public DateTime? dateOfValuation { get; set; }
         public string nameOfValuer { get; set; }
         public short? valuerId { get; set; }
         public int? collateralCustomerID { get; set; }
@@ -297,6 +297,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public string insurancePolicyType { get; set; }
         public int? businessUnitId { get; set; }
-        public decimal collateralValue { get; set; }
+        public decimal? collateralValue { get; set; }
+        public int collCustomerId { get; set; }
     }
 }

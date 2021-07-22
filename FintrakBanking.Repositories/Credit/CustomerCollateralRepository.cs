@@ -8099,6 +8099,7 @@ namespace FintrakBanking.Repositories.Credit
                                                  haircut = c.HAIRCUT < 1 ? 0 : c.HAIRCUT,
                                                  exchangeRate = l.EXCHANGERATE < 1 ? 0 : l.EXCHANGERATE,
                                                  approvedLoanAmount = l.PRINCIPALAMOUNT < 1 ? 0 : l.PRINCIPALAMOUNT,
+                                                 lastVisitationDate = context.TBL_COLLATERAL_VISITATION.Where(x=>x.COLLATERALCUSTOMERID == c.COLLATERALCUSTOMERID).Select(x=>x.VISITATIONDATE).FirstOrDefault(),
                                              }).ToList();
 
             var odTiedToCollateral = (from c in context.TBL_COLLATERAL_CUSTOMER
@@ -8125,6 +8126,7 @@ namespace FintrakBanking.Repositories.Credit
                                           haircut = c.HAIRCUT < 1 ? 0 : c.HAIRCUT,
                                           exchangeRate = l.EXCHANGERATE < 1 ? 0 : l.EXCHANGERATE,
                                           approvedLoanAmount = l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT < 1 ? 0 : l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                                          lastVisitationDate = context.TBL_COLLATERAL_VISITATION.Where(x => x.COLLATERALCUSTOMERID == c.COLLATERALCUSTOMERID).Select(x => x.VISITATIONDATE).FirstOrDefault(),
                                       }).ToList();
 
             var bondTiedtoCollateral = (from c in context.TBL_COLLATERAL_CUSTOMER
@@ -8151,6 +8153,7 @@ namespace FintrakBanking.Repositories.Credit
                                             haircut = c.HAIRCUT < 1 ? 0 : c.HAIRCUT,
                                             exchangeRate = l.EXCHANGERATE < 1 ? 0 : l.EXCHANGERATE,
                                             approvedLoanAmount = l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT < 1 ? 0 : l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                                            lastVisitationDate = context.TBL_COLLATERAL_VISITATION.Where(x => x.COLLATERALCUSTOMERID == c.COLLATERALCUSTOMERID).Select(x => x.VISITATIONDATE).FirstOrDefault(),
                                         }).ToList();
 
             var collaterals = new CollateralHistory();
@@ -9011,9 +9014,18 @@ namespace FintrakBanking.Repositories.Credit
             
             var cit = context.TBL_COLLATERAL_INSURANCE_TRACKING.Find(id);
             if (cit == null) { return false; }
-
             cit.ISINFORMATIONCONFIRMED = true;
             cit.INFORMATIONCONFIRMEDBY = getStaffId;
+
+            var cit2 = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x=>x.LOANAPPLICATIONDETAILID == cit.LOANAPPLICATIONDETAILID).ToList();
+            if(cit2.Count() > 0)
+            {
+                foreach(var i in cit2)
+                {
+                    i.ISINFORMATIONCONFIRMED = true;
+                    i.INFORMATIONCONFIRMEDBY = getStaffId;
+                }
+            }
 
             if (context.SaveChanges() > 0)
             {
