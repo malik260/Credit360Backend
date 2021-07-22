@@ -5547,7 +5547,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetRepaymentDefaultersAlert method
             var repaymentDefaulters = externalAlertRepository.GetRepaymentDefaultersAlert();
-            var OverdueObligation = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "OverdueObligation" && a.ISACTIVE == true).FirstOrDefault();
+            var OverdueObligation = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "OverdueObligation" && x.ISACTIVE == true).FirstOrDefault();
 
             if (OverdueObligation != null && repaymentDefaulters != null && repaymentDefaulters.Count() > 0)
             {
