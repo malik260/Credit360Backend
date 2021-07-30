@@ -1211,6 +1211,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public LicenseFileDetail ExamineLicense()
         {
+            
             //  ----- Examine the application's license file, and report back on what's inside.
             LicenseFileDetail result = new LicenseFileDetail();
             string usePath;
@@ -1226,8 +1227,9 @@ namespace FintrakBanking.Repositories.Setups.General
             result.Status = LicenseStatus.MissingLicenseFile;
             usePath = System.Web.Hosting.HostingEnvironment.MapPath(System.Configuration.ConfigurationManager.AppSettings["licencePath"]); // "C:\\inetpub\\wwwroot\\FinTrakLicensePath\\FinTrakCredit360License.lic";
             var keyPath = System.Web.Hosting.HostingEnvironment.MapPath(System.Configuration.ConfigurationManager.AppSettings["publicKeyPath"]);
-            if (usePath == "")
+            if (usePath == "" || usePath == null)
             {
+                throw new ConditionNotMetException("Application License Issue");
                 //usePath = FileSystem.CombinePath(My.Application.Info.DirectoryPath, DefaultLicenseFile);
             }
 

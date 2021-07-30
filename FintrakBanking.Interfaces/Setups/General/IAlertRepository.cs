@@ -43,6 +43,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<AlertMisViewModel> GetAllUserMisCode();
         IEnumerable<AlertTitleViewModel> GetAlerts();
         IEnumerable<AlertFrequencyViewModel> GetAllFrequency();
+        IEnumerable<AlertPlaceHoldersViewModel> GetAllAlertPlaceHoldersy();
         IEnumerable<AlertConditionViewModel> GetAllConditions();
         AlertConditionViewModel GetAlertConditionById(int id);
         bool AddAlertCondition(AlertConditionViewModel model);

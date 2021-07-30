@@ -2441,15 +2441,17 @@ namespace FintrakBanking.Repositories.Credit
                                join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                join d in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
-                               join r in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
                                join cu in context.TBL_CUSTOMER on d.CUSTOMERID equals cu.CUSTOMERID
                                join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+                               join r in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID into rr
+                               from r in rr.DefaultIfEmpty()
                                join tl in context.TBL_LOAN on r.LOAN_BOOKING_REQUESTID equals tl.LOAN_BOOKING_REQUESTID into tlr
                                join cl in context.TBL_LOAN_CONTINGENT on r.LOAN_BOOKING_REQUESTID equals cl.LOAN_BOOKING_REQUESTID into clr
                                join rl in context.TBL_LOAN_REVOLVING on r.LOAN_BOOKING_REQUESTID equals rl.LOAN_BOOKING_REQUESTID into rlr
                                from tl in tlr.DefaultIfEmpty()
                                from cl in clr.DefaultIfEmpty()
                                from rl in rlr.DefaultIfEmpty()
+                               
                                    //let isProperty = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Any(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID)
                                let isTermLoan = (tl != null)
                                let isContingent = (cl != null)
