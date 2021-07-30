@@ -8593,19 +8593,23 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int staffId, int companyId, int applicationDetailId, int loanBookingRequestId)
         {
-            var data = AvailedLoanApplicationsReadyForBookingByApplicationDetailId(staffId, companyId, applicationDetailId, loanBookingRequestId); //.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Approved);
+            
+                var data = AvailedLoanApplicationsReadyForBookingByApplicationDetailId(staffId, companyId, applicationDetailId, loanBookingRequestId); //.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Approved);
 
-            data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
-
-            foreach (var item in data)
-            {
-                if (item.customerAvailableAmount != 0)
+                data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
+                if(data.Count() == 0)
                 {
-                    if (!item.customerAvailableAmount.HasValue)
-                        item.customerAvailableAmount = item.approvedAmount;
+                    throw new ConditionNotMetException("Customer available balance is less then the requested amount");
                 }
-            }
-            return data;
+                foreach (var item in data)
+                {
+                    if (item.customerAvailableAmount != 0)
+                    {
+                        if (!item.customerAvailableAmount.HasValue)
+                            item.customerAvailableAmount = item.approvedAmount;
+                    }
+                }
+                return data;
         }
 
         private decimal getDisbursableAmount(int operationId, int loanApplicationDetailId)
