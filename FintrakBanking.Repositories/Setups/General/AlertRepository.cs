@@ -6524,5 +6524,126 @@ namespace FintrakBanking.Repositories.Setups.General
             return list;
         }
 
+
+        public bool AddAlertPlaceholder(AlertPlaceHoldersViewModel model)
+        {
+            var entity = new TBL_ALERT_PLACEHOLDER
+            {
+                ALERTTITLEID = model.alertTitleId,
+                PLACEHOLDER = model.placeHolder,
+                DESCRIPTION = model.description,
+                PARTITION = model.partition,
+            };
+
+            context.TBL_ALERT_PLACEHOLDER.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertLevelAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_PLACEHOLDER '{entity.ToString()}' created by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddAlertPlaceholderUpdate(int id, AlertPlaceHoldersViewModel model)
+        {
+            var entity = this.context.TBL_ALERT_PLACEHOLDER.Find(id);
+            entity.ALERTTITLEID = model.alertTitleId;
+            entity.PLACEHOLDER = model.placeHolder;
+            entity.DESCRIPTION = model.description;
+            entity.PARTITION = model.partition;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_PLACEHOLDER'{entity.ToString()}' was updated by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PLACEHOLDERID,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddAlertBindingMethod(AlertBindingMethodsViewModel model)
+        {
+            var entity = new TBL_ALERT_BINDING_METHODS
+            {
+                METHODTITLE = model.methodTitle,
+                METHODTNAME = model.methodName,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now,
+            };
+
+            context.TBL_ALERT_BINDING_METHODS.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertLevelAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_BINDING_METHODS '{entity.ToString()}' created by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddAlertBindingMethosUpdate(int id, AlertBindingMethodsViewModel model)
+        {
+            var entity = this.context.TBL_ALERT_BINDING_METHODS.Find(id);
+            entity.METHODTITLE = model.methodTitle;
+            entity.METHODTNAME = model.methodName;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_BINDING_METHODS'{entity.ToString()}' was updated by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.BINDINGMEHTODID,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
     }
 }
