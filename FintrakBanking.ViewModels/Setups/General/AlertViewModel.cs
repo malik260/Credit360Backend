@@ -146,7 +146,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string templateBody { get; set; }
     }
 
-    public class AlertPlaceHoldersViewModel
+    public class AlertPlaceHoldersViewModel : GeneralEntity
     {
         public short placeHolderId { get; set; }
         public string placeHolder { get; set; }
@@ -157,7 +157,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public object title { get; set; }
     }
 
-    public class AlertScheduleViewModel
+    public class AlertScheduleViewModel : GeneralEntity
     {
         public int alertScheduleId { get; set; }
         public int frequencyId { get; set; }
@@ -167,13 +167,11 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int alertTitleId { get; set; }
     }
 
-    public class AlertBindingMethodsViewModel
+    public class AlertBindingMethodsViewModel : GeneralEntity
     {
         public int bindingMethodId { get; set; }
         public string methodName { get; set; }
         public string methodTitle { get; set; }
-        public DateTime dateTimeCreated { get; set; }
-        public int createdBy { get; set; }
     }
 
 }

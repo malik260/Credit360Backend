@@ -11,6 +11,10 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IAlertRepository
     {
+        bool AddAlertBindingMethosUpdate(int id, AlertBindingMethodsViewModel model);
+        bool AddAlertPlaceholderUpdate(int id, AlertPlaceHoldersViewModel model);
+        bool AddAlertBindingMethod(AlertBindingMethodsViewModel model);
+        bool AddAlertPlaceholder(AlertPlaceHoldersViewModel model);
         bool UpdateAlertTitleStatus(AlertTitleViewModel model);
         string GetBusinessTeamEmails(string accountOfficerMIsCode);
         bool validateAlertCheck();

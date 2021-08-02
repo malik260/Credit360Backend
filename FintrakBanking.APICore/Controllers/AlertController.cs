@@ -890,6 +890,114 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("alert-placeholder")]
+        public HttpResponseMessage AddAlertPlaceholder([FromBody] AlertPlaceHoldersViewModel entity)
+        {
+            try
+            {
+
+                entity.userBranchId = (short)_token.GetBranchId;
+                entity.createdBy = _token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = _repo.AddAlertPlaceholder(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("alert-placeholder-update/{placeHolderId}")]
+        public HttpResponseMessage AddAlertPlaceholderUpdate(int placeHolderId, [FromBody] AlertPlaceHoldersViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)_token.GetBranchId;
+                entity.createdBy = _token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                var data = _repo.AddAlertPlaceholderUpdate(placeHolderId,entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("alert-binding-method")]
+        public HttpResponseMessage AddAlertBindingMethod([FromBody] AlertBindingMethodsViewModel entity)
+        {
+            try
+            {
+
+                entity.userBranchId = (short)_token.GetBranchId;
+                entity.createdBy = _token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = _repo.AddAlertBindingMethod(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("alert-binding-method-update/{bindingMethodId}")]
+        public HttpResponseMessage AddAlertBindingMethodUpdate(int bindingMethodId, [FromBody] AlertBindingMethodsViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)_token.GetBranchId;
+                entity.createdBy = _token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                var data = _repo.AddAlertBindingMethosUpdate(bindingMethodId, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
     }
 
 }
