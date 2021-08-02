@@ -152,7 +152,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                       defaultEmail = a.DEFAULTEMAIL,
                                       lastSentDate = a.LASTSENTDATE,
                                       actionStatus = a.ACTIONSTATUS,
-                                      isActive = a.ISACTIVE,
+                                      //isActive = a.ISACTIVE
                                       alertScheduleId = b.ALERTSCHEDULEID,
                                       frequencyId = b.FREQUENCYID,
                                       alertFrequencyId = b.FREQUENCYID,
@@ -6588,6 +6588,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddAlertBindingMethod(AlertBindingMethodsViewModel model)
         {
+            var validateAlertMethod = context.TBL_ALERT_BINDING_METHODS.Where(x => model.methodName.Contains(x.METHODTNAME));
+            if (validateAlertMethod.Any())
+            {
+                throw new SecureException($"method name '{model.methodName}'' already exist");
+            }
             var entity = new TBL_ALERT_BINDING_METHODS
             {
                 METHODTITLE = model.methodTitle,
