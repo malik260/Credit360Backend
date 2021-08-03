@@ -17295,15 +17295,15 @@ namespace FintrakBanking.Repositories.Credit
                         operationTypeName = data.OPERATIONNAME
                     }).OrderBy(x=>x.operationTypeName).ToList();
 
-            var odOperations2 = (from datas in context.TBL_OPERATIONS
-                                where datas.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement && datas.ISDISABLED == false
-                                select new LoanOperationTypeViewModel()
-                                {
-                                    operationTypeId = datas.OPERATIONID,
-                                    operationTypeName = datas.OPERATIONNAME
-                                }).OrderBy(x => x.operationTypeName).ToList();
+            //var odOperations2 = (from datas in context.TBL_OPERATIONS
+            //                    where datas.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement && datas.ISDISABLED == false
+            //                    select new LoanOperationTypeViewModel()
+            //                    {
+            //                        operationTypeId = datas.OPERATIONID,
+            //                        operationTypeName = datas.OPERATIONNAME
+            //                    }).OrderBy(x => x.operationTypeName).ToList();
 
-            return odOperations.Union(odOperations2).OrderBy(x=>x.operationTypeName);
+            return odOperations.OrderBy(x=>x.operationTypeName);
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetRemedialOperationType()
@@ -39665,13 +39665,13 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
                     {
-                        var loanAssigns = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.ISCOLLATERAL == false && x.VALIDITYSTATUS == true).ToList();
-                        foreach (var loanAssign in loanAssigns)
+                        var policyRecords = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.ISCOLLATERAL == false && x.VALIDITYSTATUS == true).ToList();
+                        foreach (var policyRecord in policyRecords)
                         {
-                            var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x=>x.COLLATERALCUSTOMERID == loanAssign.COLLATERALCUSTOMERID).FirstOrDefault();
+                            var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x=>x.COLLATERALCUSTOMERID == policyRecord.COLLATERALCUSTOMERID).FirstOrDefault();
                             if (doseRecordExist == null)
                             {
-                                var record = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(loanAssign.COLLATERALINSURANCETRACKINGID);
+                                var record = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(policyRecord.COLLATERALINSURANCETRACKINGID);
                                 bulkInsuranceUploads(record);
                                 record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                                 context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(record);
@@ -39784,7 +39784,7 @@ namespace FintrakBanking.Repositories.Credit
                 INSURANCESTARTDATE = insurancePolicy.INSURANCESTARTDATE,
                 INSURANCEENDDATE = insurancePolicy.INSURANCEENDDATE,
                 SUMINSURED = insurancePolicy.SUMINSURED,
-                PREMIUMPAID = insurancePolicy.INSURANCESTATUSID,
+                PREMIUMPAID = insurancePolicy.PREMIUMPAID,
                 INSURANCESTATUSID = insurancePolicy.COLLATERALCUSTOMERID,
                 COLLATERALCUSTOMERID = insurancePolicy.COLLATERALCUSTOMERID,
                 LOANAPPLICATIONDETAILID = insurancePolicy.LOANAPPLICATIONDETAILID,
