@@ -33590,6 +33590,7 @@ namespace FintrakBanking.Repositories.Credit
                                  b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                  && b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
                                  && a.ISCOLLATERAL == false
+                                 && a.VALIDITYSTATUS == true
 
                                  orderby b.REQUESTDATE descending
                                  select new MultipleInsuranceOutputApprovalViewModel()

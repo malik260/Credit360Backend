@@ -5734,7 +5734,7 @@ namespace FintrakBanking.ReportObjects
                             k.approvedAmount = loanDetail.APPROVEDAMOUNT;
                             k.dateOfExpiration = loanDetail.EXPIRYDATE;
                             var proposedCols = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.COLLATERALCUSTOMERID == k.collateralCustomerID).ToList();
-                            k.collateralCoverage = (proposedCols.Sum(x=>x.COLLATERALCOVERAGE) > 0 && k.grossBalance > 0) ? (proposedCols.Sum(x => x.COLLATERALCOVERAGE) / k.grossBalance) * 100 : 0;
+                            k.collateralCoverage = (proposedCols.Sum(x=>x.COLLATERALCOVERAGE) > 0 && k.grossBalance > 0) ? (proposedCols.Sum(x => x.COLLATERALCOVERAGE) / k.grossBalance) : 0;
                         }
                          k.accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == k.collCustomerId).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
                          

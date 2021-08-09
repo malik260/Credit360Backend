@@ -183,7 +183,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 byte[] pass = Convert.FromBase64String(user.password);
                 string password = Encoding.UTF8.GetString(pass);
-            
+
 
                 user.password = StaticHelpers.EncryptSha512(password, StaticHelpers.EncryptionKey);
                 string ipAddressStr = String.Empty;
@@ -220,8 +220,8 @@ namespace FintrakBanking.APICore.Controllers
                     _context.SaveChanges();
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = "1001 Login Failure." });
                 }
-            
-            var currUser = foundUser;
+
+                var currUser = foundUser;
                 var userRole = _repo.GetDashboardStaffRole(currUser.staffId);
                 var userActivities = _repo.GetUserActivitiesByUser(currUser.user_id);
 
@@ -281,16 +281,18 @@ namespace FintrakBanking.APICore.Controllers
 
             }
             catch (SecureException ex)
-            { throw ex; }
-            //    string str = string.Empty;
-            //    _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-            //    if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
-            //    {
-            //        str = ex.Message.Replace("1001", "");
-            //    }
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = str });
-            //}
+            {
+                //{ throw ex; }
+                //string str = string.Empty;
+                //_errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                //if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
+                //{
+                //    str = ex.Message.Replace("1001", "");
+                //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            
         }
+    }
 
         [HttpPost] //[ClaimsAuthorization]
         [Route("endpendingsession")]
