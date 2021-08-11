@@ -21,6 +21,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         void GetImminentMaturities();
         void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMethod);
         IEnumerable<AlertTitleViewModel> GetAllAlerts();
+        IEnumerable<AlertTitleViewModel> GetAllAlertsForDropdown();
         bool AddAlertTitle(AlertTitleViewModel model);
         bool DeleteAlertTitle(int id, UserInfo user);
         AlertTitleViewModel GetAlertById(int id);

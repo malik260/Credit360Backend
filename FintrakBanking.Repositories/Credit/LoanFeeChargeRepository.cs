@@ -95,7 +95,7 @@ namespace FintrakBanking.Repositories.Credit
                     DESCRIPTION = detail.description,
                     ISMANUAL = true,
                     CREATEDBY = staffId,
-                    DATETIMECREATED = applicationDate,
+                    DATETIMECREATED = DateTime.Now,
                     CASAACCOUNTID = detail.casaAccount,
                     
                 });
@@ -118,7 +118,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = (int)ApprovalStatusEnum.Pending;
                 workflow.TargetId = feeCharge.LOANCHARGEFEEID; // model.loanReviewOperationsId;
                 workflow.Comment = "Take Fee";
-                workflow.OperationId = (int)OperationsEnum.ManualFeeCharge;
+                workflow.OperationId = (int)OperationsEnum.ManualFeeChargeCollectionApproval;
                 workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                 workflow.ExternalInitialization = true;
                 var response = workflow.LogActivity();
@@ -141,25 +141,27 @@ namespace FintrakBanking.Repositories.Credit
         {
             var activities = admin.GetUserActivitiesByUser(staffId);
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
-            var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ManualFeeCharge).ToList();
-            var dataLoan = (from ld in context.TBL_LOAN_APPLICATION_DETAIL
-
-                            join ln in context.TBL_LOAN on ld.LOANAPPLICATIONDETAILID equals ln.LOANAPPLICATIONDETAILID
-                            join op in context.TBL_LOAN_FEE on ln.TERMLOANID equals op.LOANID
+            var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ManualFeeChargeCollectionApproval).ToList();
+            var dataLoan = (from op in context.TBL_LOAN_FEE
+                            join ln in context.TBL_LOAN on op.LOANID equals ln.TERMLOANID
+                            join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                             join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANCHARGEFEEID equals atrail.TARGETID
                             join cu in context.TBL_CUSTOMER on ld.CUSTOMERID equals cu.CUSTOMERID
-                           
                             join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                             join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
-                            join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                            where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                            && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeCharge
-                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                            && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                            && op.ISPOSTED ==false
+                            join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID into x
+                            from ch in x.DefaultIfEmpty()
+                            where 
+                            (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeChargeCollectionApproval
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && atrail.RESPONSESTAFFID == null 
+                            && op.ISPOSTED == false
                             orderby op.DATETIMECREATED descending
 
                             select new LoanReviewOperationApprovalViewModel
@@ -173,7 +175,6 @@ namespace FintrakBanking.Repositories.Credit
                                 loanChargeFeeId=op.LOANCHARGEFEEID,
                                 takeFeeCasaAccountId = op.CASAACCOUNTID,
                                 takeFeeCasaAccountName = op.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "("+ x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME+")").FirstOrDefault(),
-
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
@@ -243,32 +244,30 @@ namespace FintrakBanking.Repositories.Credit
                                 relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
                                 productName = pr.PRODUCTNAME,
                                 comment = "",
-
                                 approvedAmount = ld.APPROVEDAMOUNT,
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
                                 //lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.TERMLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                 // lmsLoanReferenceNumber = mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 dateTimeCreated = op.DATETIMECREATED
                             }).ToList();
-            var dataRevolvingLoan = (from ld in context.TBL_LOAN_APPLICATION_DETAIL
 
-                                     join ln in context.TBL_LOAN_REVOLVING on ld.LOANAPPLICATIONDETAILID equals ln.LOANAPPLICATIONDETAILID
-                                     join op in context.TBL_LOAN_FEE on ln.REVOLVINGLOANID equals op.LOANID
+            var dataRevolvingLoan = (from op in context.TBL_LOAN_FEE 
+                                     join ln in context.TBL_LOAN_REVOLVING on op.LOANID equals ln.REVOLVINGLOANID
+                                     join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
                                      join atrail in context.TBL_APPROVAL_TRAIL on op.LOANCHARGEFEEID equals atrail.TARGETID
                                      join cu in context.TBL_CUSTOMER on ld.CUSTOMERID equals cu.CUSTOMERID
-
                                      join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
-                                     join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-
+                                     join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID into x
+                                     from ch in x.DefaultIfEmpty()
                                      where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                            && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeCharge
-                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                            && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                                        && op.ISPOSTED == false
+                                        && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeChargeCollectionApproval
+                                        && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
+                                        && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                        && op.ISPOSTED == false
 
                                      orderby op.DATETIMECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
@@ -280,7 +279,6 @@ namespace FintrakBanking.Repositories.Credit
                                          loanChargeFeeId = op.LOANCHARGEFEEID,
                                          takeFeeCasaAccountId = op.CASAACCOUNTID,
                                          takeFeeCasaAccountName = op.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
-
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
                                          customerId = ln.CUSTOMERID,
@@ -325,32 +323,30 @@ namespace FintrakBanking.Repositories.Credit
                                          productName = pr.PRODUCTNAME,
                                          comment = "",
                                          dateTimeCreated = op.DATETIMECREATED,
-
                                          currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                          productAccountNumber = ch.ACCOUNTCODE,
                                          productAccountName = ch.ACCOUNTNAME,
                                          approvedAmount = ld.APPROVEDAMOUNT,
                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
-
                                      }).ToList();
-            var dataContingentLoan = (from ld in context.TBL_LOAN_APPLICATION_DETAIL
 
-                                      join ln in context.TBL_LOAN_CONTINGENT on ld.LOANAPPLICATIONDETAILID equals ln.LOANAPPLICATIONDETAILID
-                                      join op in context.TBL_LOAN_FEE on ln.CONTINGENTLOANID equals op.LOANID
+            var dataContingentLoan = (from op in context.TBL_LOAN_FEE
+                                      join ln in context.TBL_LOAN_CONTINGENT on op.LOANID equals ln.CONTINGENTLOANID
+                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                       join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
                                       join atrail in context.TBL_APPROVAL_TRAIL on op.LOANCHARGEFEEID equals atrail.TARGETID
                                       join cu in context.TBL_CUSTOMER on ld.CUSTOMERID equals cu.CUSTOMERID
-
                                       join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                       join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                                       join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                       join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
-                                      join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                                      join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID into x
+                                      from ch in x.DefaultIfEmpty()
 
                                       where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                             && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeCharge
-                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                         && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeChargeCollectionApproval
+                                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
+                                         && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                                          && op.ISPOSTED == false
 
                                       orderby op.DATETIMECREATED descending

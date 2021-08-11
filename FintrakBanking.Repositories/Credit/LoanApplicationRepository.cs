@@ -9250,7 +9250,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = x.LOANREVIEWAPPLICATIONID,
                             }).ToList();
             var finalQuery = queryOne.Union(queryTwo);
-            return finalQuery;
+            return finalQuery.ToList();
         }
 
 
