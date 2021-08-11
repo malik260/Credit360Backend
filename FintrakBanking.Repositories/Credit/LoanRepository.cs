@@ -17069,6 +17069,7 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                         where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
                           && l.OPERATIONPERFORMED == false
+                          && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
                           && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                         //&& d.EXPIRYDATE >= systemDate
                         select new CamProcessedLoanViewModel
@@ -17162,6 +17163,7 @@ namespace FintrakBanking.Repositories.Credit
                            && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                            && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                            && op.OPERATIONCOMPLETED == false
+                           && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
                            && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
                             select new CamProcessedLoanViewModel
                             {
