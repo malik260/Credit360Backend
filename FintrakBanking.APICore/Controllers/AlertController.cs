@@ -47,6 +47,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("alert-title-dropdown")]
+        public HttpResponseMessage GetAlertTitleForDropdown()
+        {
+            try
+            {
+                var alertViewModels = _repo.GetAllAlerts();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("load-staff-role")]
         public HttpResponseMessage GetAlertStaffRoles()
         {

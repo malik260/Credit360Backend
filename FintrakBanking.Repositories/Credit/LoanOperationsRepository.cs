@@ -8874,6 +8874,7 @@ namespace FintrakBanking.Repositories.Credit
                      || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountAddition
                      || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension
                      || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook
+                     || data.OPERATIONID == (int)OperationsEnum.AnnualReview
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
@@ -17288,8 +17289,14 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD()
         {
             var odOperations =  (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft && data.ISDISABLED == false
-                    select new LoanOperationTypeViewModel()
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft 
+                    && data.ISDISABLED == false
+                    || data.OPERATIONID == (int)OperationsEnum.AnnualReview
+                    || data.OPERATIONID == (int)OperationsEnum.LoanTermination
+                    || data.OPERATIONID == (int)OperationsEnum.CompleteWriteOff
+                    || data.OPERATIONID == (int)OperationsEnum.FullAndFinalCompleteWriteOff
+                    || data.OPERATIONID == (int)OperationsEnum.LoanRecapitilization
+                                 select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
                         operationTypeName = data.OPERATIONNAME

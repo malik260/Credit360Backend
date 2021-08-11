@@ -132,35 +132,68 @@ namespace FintrakBanking.Repositories.Setups.General
                               frequency = b.FREQUENCYID,
                           }).OrderBy(x=>x.title).ToList(); 
 
-             var alertsMethods = (from c in context.TBL_ALERT_BINDING_METHODS
+             
+            return alerts;
+        }
+
+        public IEnumerable<AlertTitleViewModel> GetAllAlertsForDropdown()
+        {
+            var alerts = (from a in context.TBL_ALERT_TITLE
+                          join b in context.TBL_ALERT_SCHEDULE on a.ALERTTITLEID equals b.ALERTTITLEID into p
+                          from b in p.DefaultIfEmpty()
+                          select new AlertTitleViewModel
+                          {
+                              alertTitleId = a.ALERTTITLEID,
+                              title = a.TITLE,
+                              template = a.TEMPLATE,
+                              templateType = a.TEMPLATETYPE,
+                              businessOwner = a.BUSINESSOWNER,
+                              senderEmail = a.SENDEREMAIL,
+                              senderName = a.SENDERNAME,
+                              templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
+                              defaultEmail = a.DEFAULTEMAIL,
+                              lastSentDate = a.LASTSENTDATE,
+                              actionStatus = a.ACTIONSTATUS,
+                              bindingMethod = a.BINDINGMETHOD,
+                              bindingMethodId = a.ALERTTITLEID,
+                              isActive = a.ISACTIVE,
+                              alertScheduleId = b.ALERTSCHEDULEID,
+                              frequencyId = b.FREQUENCYID,
+                              alertTime = b.ALERTTIME,
+                              timeFrom = b.TIMEFROM,
+                              timeTo = b.TIMETO,
+                              frequency = b.FREQUENCYID,
+                          }).OrderBy(x => x.title).ToList();
+
+            var alertsMethods = (from c in context.TBL_ALERT_BINDING_METHODS
                                  join a in context.TBL_ALERT_TITLE on c.METHODTNAME equals a.BINDINGMETHOD into p
                                  from a in p.DefaultIfEmpty()
                                  join b in context.TBL_ALERT_SCHEDULE on a.ALERTTITLEID equals b.ALERTTITLEID into x
                                  from b in x.DefaultIfEmpty()
                                  select new AlertTitleViewModel
-                                  {
-                                      alertTitleId = c.BINDINGMEHTODID,
-                                      title = c.METHODTITLE,
-                                      bindingMethod = c.METHODTNAME,
-                                      bindingMethodId = c.BINDINGMEHTODID,
-                                      template = a.TEMPLATE,
-                                      templateType = a.TEMPLATETYPE,
-                                      businessOwner = a.BUSINESSOWNER,
-                                      senderEmail = a.SENDEREMAIL,
-                                      senderName = a.SENDERNAME,
-                                      templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
-                                      defaultEmail = a.DEFAULTEMAIL,
-                                      lastSentDate = a.LASTSENTDATE,
-                                      actionStatus = a.ACTIONSTATUS,
-                                      isActive = a.ISACTIVE == false ? true : true,
-                                      alertScheduleId = b.ALERTSCHEDULEID,
-                                      frequencyId = b.FREQUENCYID,
-                                      alertFrequencyId = b.FREQUENCYID,
-                                      frequency = b.FREQUENCYID,
-                                      alertTime = b.ALERTTIME,
-                                      timeFrom = b.TIMEFROM,
-                                      timeTo = b.TIMETO,
-                                  }).OrderBy(x => x.title).ToList();
+                                 {
+                                     alertTitleId = c.BINDINGMEHTODID,
+                                     title = c.METHODTITLE,
+                                     bindingMethod = c.METHODTNAME,
+                                     bindingMethodId = c.BINDINGMEHTODID,
+                                     template = a.TEMPLATE,
+                                     templateType = a.TEMPLATETYPE,
+                                     businessOwner = a.BUSINESSOWNER,
+                                     senderEmail = a.SENDEREMAIL,
+                                     senderName = a.SENDERNAME,
+                                     templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
+                                     defaultEmail = a.DEFAULTEMAIL,
+                                     lastSentDate = a.LASTSENTDATE,
+                                     actionStatus = a.ACTIONSTATUS,
+                                     isActive = a.ISACTIVE == false ? true : true,
+                                     alertScheduleId = b.ALERTSCHEDULEID,
+                                     frequencyId = b.FREQUENCYID,
+                                     alertFrequencyId = b.FREQUENCYID,
+                                     frequency = b.FREQUENCYID,
+                                     alertTime = b.ALERTTIME,
+                                     timeFrom = b.TIMEFROM,
+                                     timeTo = b.TIMETO,
+                                 }).OrderBy(x => x.title).ToList();
 
             var data = alerts.Union(alertsMethods);
             return data;
@@ -386,25 +419,13 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool UpdateAlertTitleStatus(AlertTitleViewModel model)
         {
-            TBL_ALERT_TITLE entity = null;
-            var rec = context.TBL_ALERT_BINDING_METHODS.Where(x => x.BINDINGMEHTODID == model.alertTitleId).FirstOrDefault();
-
-            if (rec != null)
+            
+            var entity = context.TBL_ALERT_TITLE.Find(model.alertTitleId);
+            if (entity != null)
             {
-                 entity = this.context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD.ToLower() == rec.METHODTNAME.ToLower()).FirstOrDefault();
-                if (entity != null)
-                {
-                    entity.ISACTIVE = model.isActive;
-                }
+                entity.ISACTIVE = model.isActive;
             }
-            else
-            {
-                 entity = this.context.TBL_ALERT_TITLE.Find(model.alertTitleId);
-                if (entity != null)
-                {
-                    entity.ISACTIVE = model.isActive;
-                }
-            }
+            
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
@@ -1084,11 +1105,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
 
             //encripted password 
-            var requiredPassword = pass;
+            ///var requiredPassword = pass;
             //string encryptedstring = EncryptionHelper.Encrypt("sqluser10$");
             //Console.WriteLine("encripted Result  = " + encryptedstring);
-            Console.WriteLine("");
-            string decryptedstring = EncryptionHelper.Decrypt(requiredPassword);
+           //// Console.WriteLine("");
+            ////string decryptedstring = EncryptionHelper.Decrypt(requiredPassword);
             //Console.WriteLine("decripted Result  = " + decryptedstring);
 
             // corporate customer information update 
@@ -1098,7 +1119,7 @@ namespace FintrakBanking.Repositories.Setups.General
             TimeSpan endCorporateCustomerUpdate = new TimeSpan(24, 30, 0);
             if (now >= startCorporateCustomerUpdate && now <= endCorporateCustomerUpdate && firstDay.Date == DateTime.Now.Date)
             {
-                corporateCustomerUpdate();
+                //corporateCustomerUpdate();
             }
 
             //general alert
@@ -1233,10 +1254,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start) && (now <= end))
                 {
-                    GroupImminentMaturitiesByGroupHeads();
+                    /*GroupImminentMaturitiesByGroupHeads();
                     GetImminentMaturities();
                     GetPastDueObligationsReminder();
-                    GetPastDueObligationsReminderByGroupHeads();
+                    GetPastDueObligationsReminderByGroupHeads();*/
                     state = true;
                 }
             }
