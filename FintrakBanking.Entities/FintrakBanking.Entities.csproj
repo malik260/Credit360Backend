@@ -266,6 +266,7 @@
     <Compile Include="Models\TBL_RAC_OPTION_ITEM.cs" />
     <Compile Include="Models\TBL_CORR_RISK_MATRIX.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.cs" />
+    <Compile Include="Models\TBL_RECORD_TRACKING.cs" />
     <Compile Include="Models\TBL_RECOVERY_REPORT_COLLECTION.cs" />
     <Compile Include="Models\TBL_REPAYMENT_TERM.cs" />
     <Compile Include="Models\TBL_SECTOR_GLOBAL_LIMIT.cs" />

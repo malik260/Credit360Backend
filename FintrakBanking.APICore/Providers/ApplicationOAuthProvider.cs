@@ -12,6 +12,7 @@ using Microsoft.Owin.Security.OAuth;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
@@ -286,40 +287,57 @@ namespace FintrakBanking.APICore.Providers
                 // this section is for lisence validation
 
                 /* license*/
-                /*
+               /* 
                     var result = authRepo.ExamineLicense();
+                    var checkMessage = _bankingContext.TBL_RECORD_TRACKING.Where(x => DbFunctions.TruncateTime(x.CURRENTDATE) == DbFunctions.TruncateTime(DateTime.Now)).FirstOrDefault();
+                if (checkMessage == null)
+                {
+                    var entity = new TBL_RECORD_TRACKING();
                     if (result.Status == LicenseStatus.CorruptLicenseFile)
                     {
-                        context.SetError("invalid_grant", "Currupt License File!");
-
-                        return;
+                        //context.SetError("invalid_grant", "Currupt License File!");
+                        //return;
+                        entity.STATUSMESSAGE = "Currupt License File!";
+                        entity.CURRENTDATE = DateTime.Now;
                     }
                     else if (result.Status == LicenseStatus.InvalidSignature)
                     {
-                        context.SetError("invalid_grant", "Invalid Signature!");
-                        return;
+                        //context.SetError("invalid_grant", "Invalid Signature!");
+                        //return;
+                        entity.STATUSMESSAGE = "Invalid Signature!";
+                        entity.CURRENTDATE = DateTime.Now;
                     }
                     else if (result.Status == LicenseStatus.LicenseExpired)
                     {
-                        context.SetError("invalid_grant", "License Expired!");
-                        return;
+                        // context.SetError("invalid_grant", "License Expired!");
+                        // return;
+                        entity.STATUSMESSAGE = "License Expired!";
+                        entity.CURRENTDATE = DateTime.Now;
                     }
                     else if (result.Status == LicenseStatus.MissingLicenseFile)
                     {
-                        context.SetError("invalid_grant", "Missing License File!");
-                        return;
+                        //context.SetError("invalid_grant", "Missing License File!");
+                        //return;
+                        entity.STATUSMESSAGE = "Missing License File!";
+                        entity.CURRENTDATE = DateTime.Now;
                     }
                     else if (result.Status == LicenseStatus.NotYetLicensed)
                     {
-                        context.SetError("invalid_grant", "Application Not Licensed!");
-                        return;
+                        //context.SetError("invalid_grant", "Application Not Licensed!");
+                        // return;
+                        entity.STATUSMESSAGE = "Application Not Licensed!";
+                        entity.CURRENTDATE = DateTime.Now;
                     }
                     else if (result.Status == LicenseStatus.VersionMismatch)
                     {
-                        context.SetError("invalid_grant", "Application License Version Mismatch!");
-                        return;
+                        //context.SetError("invalid_grant", "Application License Version Mismatch!");
+                        // return;
+                        entity.STATUSMESSAGE = "Application License Version Mismatch!";
+                        entity.CURRENTDATE = DateTime.Now;
                     }
-                */
+                    var save = _bankingContext.TBL_RECORD_TRACKING.Add(entity);
+                    _bankingContext.SaveChanges();
+                }*/
                 /*end of lisence validation*/
 
 
