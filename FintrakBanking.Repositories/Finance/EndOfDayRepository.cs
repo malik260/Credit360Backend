@@ -138,8 +138,9 @@ namespace FintrakBanking.Repositories.Finance
 
 
             if (financeEod == true)
+            {
                 throw new ConditionNotMetException("End of Day for " + applicationDate + " has already been run.");
-
+            }
             var countryId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).COUNTRYID;
 
             var nextWorkDay = publicHoliday.GetNextWorkDay(applicationDate, countryId);

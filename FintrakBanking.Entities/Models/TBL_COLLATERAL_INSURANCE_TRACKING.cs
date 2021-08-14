@@ -43,9 +43,9 @@ namespace FintrakBanking.Entities.Models
         public string COMMENT { get; set; }
         public decimal? INSURABLEVALUE { get; set; }
         public bool DELETED { get; set; }
-        public DateTime DATETIMEUPDATED { get; set; }
-        public int UPDATEDBY { get; set; }
-        public int CREATEDBY { get; set; }
-        public DateTime DATETIMECREATED { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
+        public int? UPDATEDBY { get; set; }
+        public int? CREATEDBY { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
     }
 }

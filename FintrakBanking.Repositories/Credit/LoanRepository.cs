@@ -8593,19 +8593,23 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int staffId, int companyId, int applicationDetailId, int loanBookingRequestId)
         {
-            var data = AvailedLoanApplicationsReadyForBookingByApplicationDetailId(staffId, companyId, applicationDetailId, loanBookingRequestId); //.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Approved);
+            
+                var data = AvailedLoanApplicationsReadyForBookingByApplicationDetailId(staffId, companyId, applicationDetailId, loanBookingRequestId); //.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Approved);
 
-            data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
-
-            foreach (var item in data)
-            {
-                if (item.customerAvailableAmount != 0)
+                data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
+                if(data.Count() == 0)
                 {
-                    if (!item.customerAvailableAmount.HasValue)
-                        item.customerAvailableAmount = item.approvedAmount;
+                    throw new ConditionNotMetException("Customer available balance is less then the requested amount");
                 }
-            }
-            return data;
+                foreach (var item in data)
+                {
+                    if (item.customerAvailableAmount != 0)
+                    {
+                        if (!item.customerAvailableAmount.HasValue)
+                            item.customerAvailableAmount = item.approvedAmount;
+                    }
+                }
+                return data;
         }
 
         private decimal getDisbursableAmount(int operationId, int loanApplicationDetailId)
@@ -17065,6 +17069,7 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                         where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
                           && l.OPERATIONPERFORMED == false
+                          && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
                           && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                         //&& d.EXPIRYDATE >= systemDate
                         select new CamProcessedLoanViewModel
@@ -17158,6 +17163,7 @@ namespace FintrakBanking.Repositories.Credit
                            && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                            && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                            && op.OPERATIONCOMPLETED == false
+                           && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
                            && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
                             select new CamProcessedLoanViewModel
                             {
