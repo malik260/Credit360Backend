@@ -5149,7 +5149,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     imCollateral.PROPERTYNAME = entity.propertyName;
                     imCollateral.CITYID = (int)entity.cityId;
-                    imCollateral.COUNTRYID = entity.countryId;
+                    imCollateral.COUNTRYID = (short)entity.countryId;
                     imCollateral.CONSTRUCTIONDATE = entity.constructionDate;
                     imCollateral.PROPERTYADDRESS = entity.propertyAddress;
                     imCollateral.DATEOFACQUISITION = entity.dateOfAcquisition;
@@ -5214,7 +5214,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 collateral.PROPERTYNAME = entity.propertyName;
                 collateral.CITYID = (int)entity.cityId;
-                collateral.COUNTRYID = entity.countryId;
+                collateral.COUNTRYID = (short)entity.countryId;
                 collateral.CONSTRUCTIONDATE = entity.constructionDate;
                 collateral.PROPERTYADDRESS = entity.propertyAddress;
                 collateral.DATEOFACQUISITION = entity.dateOfAcquisition;
@@ -8238,7 +8238,7 @@ namespace FintrakBanking.Repositories.Credit
                     property.CITYID = entity.cityId;
                     property.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
                     property.CONSTRUCTIONDATE = entity.constructionDate;
-                    property.COUNTRYID = entity.countryId;
+                    property.COUNTRYID = (short)entity.countryId;
                     property.DATEOFACQUISITION = entity.dateOfAcquisition;
                     property.FORCEDSALEVALUE = entity.forcedSaleValue;
                     property.LASTVALUATIONDATE = entity.lastValuationDate;
@@ -8287,7 +8287,7 @@ namespace FintrakBanking.Repositories.Credit
                         COLLATERALCUSTOMERID = collateralId,
                         COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
                         CONSTRUCTIONDATE = entity.constructionDate,
-                        COUNTRYID = entity.countryId,
+                        COUNTRYID = (short)entity.countryId,
                         DATEOFACQUISITION = entity.dateOfAcquisition,
                         FORCEDSALEVALUE = entity.forcedSaleValue,
                         LASTVALUATIONDATE = entity.lastValuationDate,
@@ -8343,7 +8343,7 @@ namespace FintrakBanking.Repositories.Credit
                     TEMPCOLLATERALCUSTOMERID = collateralId,
                     PROPERTYNAME = entity.propertyName,
                     CITYID = (int)entity.cityId,
-                    COUNTRYID = entity.countryId,
+                    COUNTRYID = (short)entity.countryId,
                     CONSTRUCTIONDATE = entity.constructionDate,
                     PROPERTYADDRESS = entity.propertyAddress,
                     DATEOFACQUISITION = entity.dateOfAcquisition,
