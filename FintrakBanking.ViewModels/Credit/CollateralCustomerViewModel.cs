@@ -6,7 +6,6 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class CollateralViewModel : GeneralEntity 
     {
-        public CollateralViewModel() { }
         public bool requireInsurancePolicy;
         public int isRegistrationDoneViaLoanApplication;
         public string collateralDetail { get; set; }
