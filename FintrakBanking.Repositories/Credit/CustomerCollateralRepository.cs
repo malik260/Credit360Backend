@@ -5149,7 +5149,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     imCollateral.PROPERTYNAME = entity.propertyName;
                     imCollateral.CITYID = (int)entity.cityId;
-                    imCollateral.COUNTRYID = entity.countryId;
+                    imCollateral.COUNTRYID = (short)entity.countryId;
                     imCollateral.CONSTRUCTIONDATE = entity.constructionDate;
                     imCollateral.PROPERTYADDRESS = entity.propertyAddress;
                     imCollateral.DATEOFACQUISITION = entity.dateOfAcquisition;
@@ -5214,7 +5214,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 collateral.PROPERTYNAME = entity.propertyName;
                 collateral.CITYID = (int)entity.cityId;
-                collateral.COUNTRYID = entity.countryId;
+                collateral.COUNTRYID = (short)entity.countryId;
                 collateral.CONSTRUCTIONDATE = entity.constructionDate;
                 collateral.PROPERTYADDRESS = entity.propertyAddress;
                 collateral.DATEOFACQUISITION = entity.dateOfAcquisition;
@@ -8238,7 +8238,7 @@ namespace FintrakBanking.Repositories.Credit
                     property.CITYID = entity.cityId;
                     property.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
                     property.CONSTRUCTIONDATE = entity.constructionDate;
-                    property.COUNTRYID = entity.countryId;
+                    property.COUNTRYID = (short)entity.countryId;
                     property.DATEOFACQUISITION = entity.dateOfAcquisition;
                     property.FORCEDSALEVALUE = entity.forcedSaleValue;
                     property.LASTVALUATIONDATE = entity.lastValuationDate;
@@ -8269,7 +8269,7 @@ namespace FintrakBanking.Repositories.Credit
                     property.LOCALGOVERNMENTID = entity.localGovernmentId;
                     property.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
                     property.ESTIMATEDVALUE = entity.estimatedValue;
-                    comment = $"Prperty collateral type has been updated through loan application by {entity.createdBy} staffid";
+                    comment = $"Property collateral type has been updated through loan application by {entity.createdBy} staffid";
 
                     property.VALUERNAME = entity.valuerName;
                     property.VALUERACCOUNTNUMBER = entity.valuerAccountNumber;
@@ -8287,7 +8287,7 @@ namespace FintrakBanking.Repositories.Credit
                         COLLATERALCUSTOMERID = collateralId,
                         COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
                         CONSTRUCTIONDATE = entity.constructionDate,
-                        COUNTRYID = entity.countryId,
+                        COUNTRYID = (short)entity.countryId,
                         DATEOFACQUISITION = entity.dateOfAcquisition,
                         FORCEDSALEVALUE = entity.forcedSaleValue,
                         LASTVALUATIONDATE = entity.lastValuationDate,
@@ -8343,7 +8343,7 @@ namespace FintrakBanking.Repositories.Credit
                     TEMPCOLLATERALCUSTOMERID = collateralId,
                     PROPERTYNAME = entity.propertyName,
                     CITYID = (int)entity.cityId,
-                    COUNTRYID = entity.countryId,
+                    COUNTRYID = (short)entity.countryId,
                     CONSTRUCTIONDATE = entity.constructionDate,
                     PROPERTYADDRESS = entity.propertyAddress,
                     DATEOFACQUISITION = entity.dateOfAcquisition,
@@ -9091,8 +9091,8 @@ namespace FintrakBanking.Repositories.Credit
                 alertSubject = "NOTIFICATION COLLATERAL VALUATION REMINDER FROM FINTRAK ALERT";
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staffFullName} <br /><br />," +
-                               $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer?.LASTNAME + ", " + customer?.FIRSTNAME + " " + customer?.MIDDLENAME}" +
-                               $"(Customer ID: {collateral.CUSTOMERCODE}) with OMV {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.OPENMARKETVALUE)} and FSV of {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.FORCEDSALEVALUE)} is due for revaluation on {nextVisit} <br /><br />" +
+                               $"This is to inform you that the collateral, {collateral?.COLLATERALSUMMARY} belonging to {customer?.LASTNAME + ", " + customer?.FIRSTNAME + " " + customer?.MIDDLENAME}" +
+                               $"(Customer ID: {collateral?.CUSTOMERCODE}) with OMV {collateral?.TBL_CURRENCY?.CURRENCYCODE} {String.Format("{0:0,0.00}", property?.OPENMARKETVALUE)} and FSV of {collateral?.TBL_CURRENCY?.CURRENCYCODE} {String.Format("{0:0,0.00}", property?.FORCEDSALEVALUE)} is due for revaluation on {nextVisit} <br /><br />" +
                                $"Kindly inform the customer, and initiate request for revaluation on Fintrak <br /><br />" +
                                $"Regards"
                                ;
@@ -9157,8 +9157,8 @@ namespace FintrakBanking.Repositories.Credit
                 alertSubject = "NOTIFICATION COLLATERAL VALUATION REMINDER FROM FINTRAK";
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staffFullName} <br /><br />," +
-                               $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer?.LASTNAME + ", " + customer?.FIRSTNAME + " " + customer?.MIDDLENAME}" +
-                               $"(Customer ID: {collateral.CUSTOMERCODE}) with OMV {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.OPENMARKETVALUE)} and FSV of {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.FORCEDSALEVALUE)} is due for revaluation on {valuationDate.ToShortDateString()} <br /><br />" +
+                               $"This is to inform you that the collateral, {collateral?.COLLATERALSUMMARY} belonging to {customer?.LASTNAME + ", " + customer?.FIRSTNAME + " " + customer?.MIDDLENAME}" +
+                               $"(Customer ID: {collateral?.CUSTOMERCODE}) with OMV {collateral?.TBL_CURRENCY?.CURRENCYCODE} {String.Format("{0:0,0.00}", property?.OPENMARKETVALUE)} and FSV of {collateral?.TBL_CURRENCY?.CURRENCYCODE} {String.Format("{0:0,0.00}", property?.FORCEDSALEVALUE)} is due for revaluation on {valuationDate.ToShortDateString()} <br /><br />" +
                                $"Kindly inform the customer, and initiate request for revaluation on Fintrak <br /><br />" +
                                $"Regards";
 
@@ -9214,7 +9214,7 @@ namespace FintrakBanking.Repositories.Credit
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staffFullName}, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
-                               $"The collateral, {collateral.COLLATERALSUMMARY} of {customer?.LASTNAME} {customer?.FIRSTNAME} {customer?.MIDDLENAME} with customerId {customer?.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                               $"The collateral, {collateral.COLLATERALSUMMARY} of {customer?.LASTNAME} {customer?.FIRSTNAME} {customer?.MIDDLENAME} with customerId {customer?.CUSTOMERCODE} of value {collateral?.TBL_CURRENCY?.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral?.COLLATERALVALUE)}" +
                                $" has it's perfection status updated as {perfectionStatus}"
                                ;
                 LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
@@ -9668,7 +9668,10 @@ namespace FintrakBanking.Repositories.Credit
                         APPROVALSTATUS = (int)ApprovalStatusEnum.Approved
                     });
                     context.SaveChanges();
-                    NotifyForCollateralValidity(data, mainCollateral.VALIDTILL, true);
+                    if (data != null)
+                    {
+                        NotifyForCollateralValidity(data, mainCollateral.VALIDTILL, true);
+                    }
                     return returnCollateralId.COLLATERALCUSTOMERID;
                 }
 
