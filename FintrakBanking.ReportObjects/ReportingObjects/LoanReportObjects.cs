@@ -5697,7 +5697,7 @@ namespace FintrakBanking.ReportObjects
                             var cim = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == k.collateralCustomerID).FirstOrDefault();
                             if (cim != null)
                             {
-                                k.nameOfValuer = context.TBL_COLLATERAL_VALUER.Where(x => x.COLLATERALVALUERID == cim.VALUERID).Select(o => o.NAME)?.FirstOrDefault();
+                                k.nameOfValuer = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == cim.VALUERID).Select(o => o.FIRMNAME)?.FirstOrDefault();
                                 k.perfectionStatus = cim.TBL_COLLATERAL_PERFECTN_STAT.PERFECTIONSTATUSNAME;
                                 k.collateralValueOmv = cim.OPENMARKETVALUE ?? (decimal)0;
                                 k.collateralValueEfsv = cim.FORCEDSALEVALUE ?? (decimal)0;
