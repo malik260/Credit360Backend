@@ -144,20 +144,20 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return PropertyRevaluation;
         } //done
 
-        public List<CollateralViewModel> CollateralPropertyDueForVisitation(DateTime startDate, DateTime endDate)
+        public List<CollateralVisitationViewModel> CollateralPropertyDueForVisitation(DateTime startDate, DateTime endDate)
         {
-            List<CollateralViewModel> PropertyDueForVisitation = (from a in context.TBL_COLLATERAL_CUSTOMER
+            List<CollateralVisitationViewModel> PropertyDueForVisitation = (from a in context.TBL_COLLATERAL_CUSTOMER
                                                      join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                                      join c in context.TBL_STAFF on a.CREATEDBY equals c.STAFFID
                                                      join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
                                                      join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
                                                      join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
                                                      join v in context.TBL_COLLATERAL_VISITATION on a.COLLATERALCUSTOMERID equals v.COLLATERALCUSTOMERID
-                                                     where v.VISITATIONDATE >= startDate && v.VISITATIONDATE <= endDate
+                                                     where DbFunctions.TruncateTime(v.VISITATIONDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(v.VISITATIONDATE).Value <= DbFunctions.TruncateTime(endDate).Value
                                                            && d.REQUIREVISITATION == true
                                                      orderby v.VISITATIONDATE descending
 
-                                                     select new CollateralViewModel
+                                                     select new CollateralVisitationViewModel
                                                      {
                                                          collateralTypeId = a.COLLATERALTYPEID,
                                                          collateralType = d.COLLATERALTYPENAME,
@@ -167,7 +167,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                          propertyName = f.PROPERTYNAME,
                                                          lastVisitationDate = v.VISITATIONDATE,
                                                          nextVisitationDate = v.VISITATIONDATE,
-                                                         visitationCycle = (int)e.VISITATIONCYCLE,
+                                                         visitationCycle = e.VISITATIONCYCLE,
                                                          relationshipManagerId = a.CREATEDBY,
                                                          relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
                                                          relationshipManagerEmail = c.EMAIL,

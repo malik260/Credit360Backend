@@ -4367,6 +4367,13 @@ namespace FintrakBanking.Repositories.Credit
             return terms;
         }
 
+        public string GetAllOldApplicationReference(string data)
+        {
+            var terms = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == data).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault();
+            // todo code
+            return terms;
+        }
+
         public List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity)
         {
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);

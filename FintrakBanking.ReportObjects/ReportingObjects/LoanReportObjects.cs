@@ -4943,18 +4943,18 @@ namespace FintrakBanking.ReportObjects
             var data = new List<OriginalDocumentApprovalViewModel>();
             FinTrakBankingContext context = new FinTrakBankingContext();
 
-            data = (from l in context.TBL_LOAN
-                    join x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL on l.LOANAPPLICATIONDETAILID equals x.LOANAPPLICATIONID
+            data = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                     join ll in context.TBL_LOAN_APPLICATION_COLLATERL on x.COLLATERALCUSTOMERID equals ll.COLLATERALCUSTOMERID
-                    join a in context.TBL_LOAN_APPLICATION_DETAIL on ll.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                    join a in context.TBL_LOAN_APPLICATION_DETAIL on ll.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                     join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                    join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
-                    join sta in context.TBL_STAFF on l.RELATIONSHIPMANAGERID equals sta.STAFFID
-                    join ss in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals ss.SUPERVISOR_STAFFID
-
-                    where l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED == false
-                    && DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
-                                            DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                    join l in context.TBL_LOAN on a.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID 
+                    join p in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals p.PRODUCTID
+                    join sta in context.TBL_STAFF on x.CREATEDBY equals sta.STAFFID
+                    
+                    where 
+                    l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED == false
+                    && DbFunctions.TruncateTime(x.DATETIMECREATED).Value >= DbFunctions.TruncateTime(startDate).Value &&
+                                            DbFunctions.TruncateTime(x.DATETIMECREATED).Value <= DbFunctions.TruncateTime(endDate).Value
                     select new OriginalDocumentApprovalViewModel
                     {   
                         customerID = c.CUSTOMERID,
@@ -4964,13 +4964,26 @@ namespace FintrakBanking.ReportObjects
                         facilityAmount = l.PRINCIPALAMOUNT,
                         bookingDate = l.BOOKINGDATE,
                         sla = "N/A",
-                        daysOverdue = (int)DbFunctions.DiffDays(l.MATURITYDATE, DateTime.Now),
+                        daysOverdue = (int)DbFunctions.DiffDays(DateTime.Now, l.MATURITYDATE),
                         accountOfficer = sta.FIRSTNAME + " " + sta.LASTNAME,
-                        groupHead = ss.FIRSTNAME + " " + ss.LASTNAME,
-                        team = context.TBL_DEPARTMENT.Where(d => d.COMPANYID == l.COMPANYID).Select(d => d.DEPARTMENTNAME).FirstOrDefault(),
+                        createdBy = sta.STAFFID,
+                        team = sta.MISCODE,
                         division = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == l.CUSTOMERID select p.BUSINESSUNITNAME).FirstOrDefault(),
-                    })
-               .ToList();
+                    }).ToList();
+
+            foreach(var i in data)
+            {
+                var rm = context.TBL_STAFF.Where(xx => xx.STAFFID == i.createdBy).Select(xx => xx.SUPERVISOR_STAFFID).FirstOrDefault();
+                if(rm != null)
+                {
+                    var zh = context.TBL_STAFF.Where(xx => xx.STAFFID == rm).Select(xx => xx.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (zh != null)
+                    {
+                        i.groupHead = context.TBL_STAFF.Where(xx => xx.STAFFID == zh).Select(xx => xx.FIRSTNAME +" "+xx.MIDDLENAME +" "+ xx.LASTNAME).FirstOrDefault();
+                    }
+                }
+            }
+
             return data;
         }
 
@@ -5684,7 +5697,7 @@ namespace FintrakBanking.ReportObjects
                             var cim = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == k.collateralCustomerID).FirstOrDefault();
                             if (cim != null)
                             {
-                                k.nameOfValuer = context.TBL_COLLATERAL_VALUER.Where(x => x.COLLATERALVALUERID == cim.VALUERID).Select(o => o.NAME)?.FirstOrDefault();
+                                k.nameOfValuer = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == cim.VALUERID).Select(o => o.FIRMNAME)?.FirstOrDefault();
                                 k.perfectionStatus = cim.TBL_COLLATERAL_PERFECTN_STAT.PERFECTIONSTATUSNAME;
                                 k.collateralValueOmv = cim.OPENMARKETVALUE ?? (decimal)0;
                                 k.collateralValueEfsv = cim.FORCEDSALEVALUE ?? (decimal)0;
