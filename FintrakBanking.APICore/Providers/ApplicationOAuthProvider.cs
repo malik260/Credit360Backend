@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
@@ -11,6 +12,7 @@ using Microsoft.Owin.Security.OAuth;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
@@ -282,43 +284,60 @@ namespace FintrakBanking.APICore.Providers
                 FinTrakBankingContext _bankingContext = new FinTrakBankingContext();
                 var authRepo = new AuthenticationRepository(_bankingContext, null, null);
 
-              // this section is for lisence validation
-                 
-               /* license*/
-               /*
-                var result = authRepo.ExamineLicense();
-                if (result.Status == LicenseStatus.CorruptLicenseFile)
-                {
-                    context.SetError("invalid_grant", "Currupt License File!");
+                // this section is for lisence validation
 
-                    return;
-                }
-                else if (result.Status == LicenseStatus.InvalidSignature)
+                /* license*/
+               /* 
+                    var result = authRepo.ExamineLicense();
+                    var checkMessage = _bankingContext.TBL_RECORD_TRACKING.Where(x => DbFunctions.TruncateTime(x.CURRENTDATE) == DbFunctions.TruncateTime(DateTime.Now)).FirstOrDefault();
+                if (checkMessage == null)
                 {
-                    context.SetError("invalid_grant", "Invalid Signature!");
-                    return;
-                }
-                else if (result.Status == LicenseStatus.LicenseExpired)
-                {
-                    context.SetError("invalid_grant", "License Expired!");
-                    return;
-                }
-                else if (result.Status == LicenseStatus.MissingLicenseFile)
-                {
-                    context.SetError("invalid_grant", "Missing License File!");
-                    return;
-                }
-                else if (result.Status == LicenseStatus.NotYetLicensed)
-                {
-                    context.SetError("invalid_grant", "Application Not Licensed!");
-                    return;
-                }
-                else if (result.Status == LicenseStatus.VersionMismatch)
-                {
-                    context.SetError("invalid_grant", "Application License Version Mismatch!");
-                    return;
-                } */
-                
+                    var entity = new TBL_RECORD_TRACKING();
+                    if (result.Status == LicenseStatus.CorruptLicenseFile)
+                    {
+                        //context.SetError("invalid_grant", "Currupt License File!");
+                        //return;
+                        entity.STATUSMESSAGE = "Currupt License File!";
+                        entity.CURRENTDATE = DateTime.Now;
+                    }
+                    else if (result.Status == LicenseStatus.InvalidSignature)
+                    {
+                        //context.SetError("invalid_grant", "Invalid Signature!");
+                        //return;
+                        entity.STATUSMESSAGE = "Invalid Signature!";
+                        entity.CURRENTDATE = DateTime.Now;
+                    }
+                    else if (result.Status == LicenseStatus.LicenseExpired)
+                    {
+                        // context.SetError("invalid_grant", "License Expired!");
+                        // return;
+                        entity.STATUSMESSAGE = "License Expired!";
+                        entity.CURRENTDATE = DateTime.Now;
+                    }
+                    else if (result.Status == LicenseStatus.MissingLicenseFile)
+                    {
+                        //context.SetError("invalid_grant", "Missing License File!");
+                        //return;
+                        entity.STATUSMESSAGE = "Missing License File!";
+                        entity.CURRENTDATE = DateTime.Now;
+                    }
+                    else if (result.Status == LicenseStatus.NotYetLicensed)
+                    {
+                        //context.SetError("invalid_grant", "Application Not Licensed!");
+                        // return;
+                        entity.STATUSMESSAGE = "Application Not Licensed!";
+                        entity.CURRENTDATE = DateTime.Now;
+                    }
+                    else if (result.Status == LicenseStatus.VersionMismatch)
+                    {
+                        //context.SetError("invalid_grant", "Application License Version Mismatch!");
+                        // return;
+                        entity.STATUSMESSAGE = "Application License Version Mismatch!";
+                        entity.CURRENTDATE = DateTime.Now;
+                    }
+                    var save = _bankingContext.TBL_RECORD_TRACKING.Add(entity);
+                    _bankingContext.SaveChanges();
+                }*/
                 /*end of lisence validation*/
 
 
@@ -452,16 +471,17 @@ namespace FintrakBanking.APICore.Providers
                 //    isUserAccountValid = false;
                 //}
 
-                //if (isUserAccountValid)
+                
+                //if (user.logincode == null)
                 //{
-                if (user.logincode == null)
-                {//ify, to eliminate multiple sources of truth for the logincode
-                    var profile = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME == user.username);
-                    var loginCode = Guid.NewGuid().ToString() + "@" + ipAddress;
-                    profile.LOGINCODE = loginCode;
-                    user.logincode = loginCode;
-                    _bankingContext.SaveChanges();
-                }
+                //    //ify, to eliminate multiple sources of truth for the logincode
+                //    var profile = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME == user.username);
+                //    var loginCode = Guid.NewGuid().ToString() + "@" + ipAddress;
+                //    profile.LOGINCODE = loginCode;
+                //    user.logincode = loginCode;
+                //    _bankingContext.SaveChanges();
+                //}
+
                 var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
 
                 currIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
@@ -473,6 +493,7 @@ namespace FintrakBanking.APICore.Providers
                 currIdentity.AddClaim(new Claim("userId", user.user_id.ToString()));
                 currIdentity.AddClaim(new Claim("roleId", user.roleId.ToString()));
                 currIdentity.AddClaim(new Claim("userGroupId", user.userGroupId.ToString()));
+                currIdentity.AddClaim(new Claim("usersRole", record.STAFFROLECODE.ToString()));
                 currIdentity.AddClaim(new Claim("logincode", user.logincode == null ? Guid.NewGuid().ToString() + "@" + ipAddress : user.logincode));
                 var today = DateTime.Now;
 
@@ -502,7 +523,7 @@ namespace FintrakBanking.APICore.Providers
             {
                 if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
                 {
-                    string str = ex.Message.Replace("1001", "");
+                    string str = ex.Message.Replace("1001", " ");
                     context.SetError("invalid_grant", str);
                     return;
                 }

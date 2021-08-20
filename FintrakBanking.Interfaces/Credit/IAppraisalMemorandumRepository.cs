@@ -93,7 +93,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<MonitoringTriggersViewModel> SaveApplicationMonitoringTriggers(int applicationId, List<MonitoringTriggersViewModel> entity, int staffId);
 
         bool WorkflowTest();
-
+        string GetAllOldApplicationReference(string data);
         ApprovalTrailViewModel GetapprovalTrailByTrailId(int approvalTrailId);
 
         IEnumerable<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity);

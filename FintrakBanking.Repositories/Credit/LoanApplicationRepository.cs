@@ -162,6 +162,7 @@ namespace FintrakBanking.Repositories.Credit
                                 proposedProductId = b.PROPOSEDPRODUCTID,
                                 proposedTenor = b.PROPOSEDTENOR, //Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
                                 statusId = b.STATUSID,
+                                oldApplicationRefForRenewal = b.OLDAPPLICATIONREFFORRENEWAL,
                                 proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
                                 productClassId = b.TBL_PRODUCT.PRODUCTCLASSID,
                                 productClass = b.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
@@ -299,6 +300,7 @@ namespace FintrakBanking.Repositories.Credit
                                  proposedInterestRate = c.PROPOSEDINTERESTRATE,
                                  proposedProductId = c.PROPOSEDPRODUCTID,
                                  proposedProductName = c.TBL_PRODUCT.PRODUCTNAME,
+                                 oldApplicationRefForRenewal = c.OLDAPPLICATIONREFFORRENEWAL,
                                  //proposedTenor = Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
                                  statusId = c.STATUSID
                              }).ToList()
@@ -3284,6 +3286,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.DATETIMEUPDATED = DateTime.Now;
             detail.LASTUPDATEDBY = loan.createdBy;
             detail.APPROVEDTRADECYCLEID = update.approvedTradeCycleId;
+            detail.OLDAPPLICATIONREFFORRENEWAL = update.oldApplicationRefForRenewal;
 
             var currentProduct = context.TBL_PRODUCT.Find(detail.APPROVEDPRODUCTID);
 
@@ -3680,7 +3683,8 @@ namespace FintrakBanking.Repositories.Credit
                 MORATORIUM = a.moratorium,
                 APPROVEDLINELIMIT = a.approvedLineLimit,
                 APPROVALSTATUSID = (int) ApprovalStatusEnum.Processing,
-                BREACHEDLIMITNAME = breachedLimitName
+                BREACHEDLIMITNAME = breachedLimitName,
+                OLDAPPLICATIONREFFORRENEWAL = a.oldApplicationRefForRenewal
             };
 
             context.TBL_EXCEPTIONAL_LOAN_APPL_DETAIL.Add(data);
@@ -3814,7 +3818,8 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTREPAYMENT = a.interestRepayment,
                 INTERESTREPAYMENTID = a.interestRepaymentId,
                 MORATORIUM = a.moratorium,
-                APPROVEDLINELIMIT = a.approvedLineLimit
+                APPROVEDLINELIMIT = a.approvedLineLimit,
+                OLDAPPLICATIONREFFORRENEWAL = a.oldApplicationRefForRenewal
             };
 
             //var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
@@ -9250,7 +9255,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = x.LOANREVIEWAPPLICATIONID,
                             }).ToList();
             var finalQuery = queryOne.Union(queryTwo);
-            return finalQuery;
+            return finalQuery.ToList();
         }
 
 

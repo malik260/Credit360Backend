@@ -79,8 +79,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\TBL_DOCUMENT_USAGE_FINAL_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_ALERT_PLACEHOLDER.cs" />
+    <Compile Include="Models\TBL_ALERT_SCHEDULE.cs" />
     <Compile Include="Models\TBL_APPROVAL_FLOW_TYPE.cs" />
     <Compile Include="Models\TBL_APPROVED_TRADE_CYCLE.cs" />
+    <Compile Include="Models\TBL_ALERT_BINDING_METHODS.cs" />
     <Compile Include="Models\TBL_BULK_INSURANCE_UPLOAD_APPROVAL.cs" />
     <Compile Include="Models\TBL_BULK_PREPAYMENT.cs" />
     <Compile Include="Models\TBL_BULK_PREPAYMENTREVERSAL.cs" />
@@ -263,6 +266,7 @@
     <Compile Include="Models\TBL_RAC_OPTION_ITEM.cs" />
     <Compile Include="Models\TBL_CORR_RISK_MATRIX.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.cs" />
+    <Compile Include="Models\TBL_RECORD_TRACKING.cs" />
     <Compile Include="Models\TBL_RECOVERY_REPORT_COLLECTION.cs" />
     <Compile Include="Models\TBL_REPAYMENT_TERM.cs" />
     <Compile Include="Models\TBL_SECTOR_GLOBAL_LIMIT.cs" />
