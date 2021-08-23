@@ -21,6 +21,7 @@ namespace FintrakBanking.Entities.Models
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }  
         //public virtual DbSet<TBL_NEXT_INTEREST_REPAYMENT> TBL_NEXT_INTEREST_REPAYMENT { get; set; }
         //public virtual DbSet<TBL_NEXT_PRINCIPAL_REPAYMENT> TBL_NEXT_PRINCIPAL_REPAYMENT { get; set; } 
+        public virtual DbSet<TBL_RECORD_TRACKING> TBL_RECORD_TRACKING { get; set; }
         public virtual DbSet<TBL_ALERT_BINDING_METHODS> TBL_ALERT_BINDING_METHODS { get; set; }
         public virtual DbSet<TBL_ALERT_SCHEDULE> TBL_ALERT_SCHEDULE { get; set; }
         public virtual DbSet<TBL_ALERT_PLACEHOLDER> TBL_ALERT_PLACEHOLDER { get; set; }

@@ -144,6 +144,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_EXCEPTIONAL_LOAN_APPL_DETL_FEE> TBL_EXCEPTIONAL_LOAN_APPL_DETL_FEE { get; set; }
-
+        public string OLDAPPLICATIONREFFORRENEWAL { get; set; }
     }
 }

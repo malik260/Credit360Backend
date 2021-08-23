@@ -1571,7 +1571,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.AddCollateral(entity);
             if (response > 0)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully and sent for approval" });
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });

@@ -6,7 +6,6 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class CollateralViewModel : GeneralEntity 
     {
-
         public bool requireInsurancePolicy;
         public int isRegistrationDoneViaLoanApplication;
         public string collateralDetail { get; set; }
@@ -135,7 +134,6 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string propertyName { get; set; }
         public int cityId { get; set; }
-        public short countryId { get; set; }
         public DateTime? constructionDate { get; set; }
         public string propertyAddress { get; set; }
         public DateTime dateOfAcquisition { get; set; }
@@ -1356,4 +1354,20 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralCode { get; set; }
     }
 
-}
+    public class CollateralVisitationViewModel
+    {
+        public int collateralTypeId { get; set; }
+        public string collateralType { get; set; }
+        public string collateralCode { get; set; }
+        public string collateralSubType { get; set; }
+        public string customerName { get; set; }
+        public string propertyName { get; set; }
+        public DateTime lastVisitationDate { get; set; }
+        public DateTime nextVisitationDate { get; set; }
+        public int? visitationCycle { get; set; }
+        public int relationshipManagerId { get; set; }
+        public string relationshipManager { get; set; }
+        public string relationshipManagerEmail { get; set; }
+    }
+
+    }
