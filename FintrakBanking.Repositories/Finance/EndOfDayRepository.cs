@@ -138,8 +138,9 @@ namespace FintrakBanking.Repositories.Finance
 
 
             if (financeEod == true)
+            {
                 throw new ConditionNotMetException("End of Day for " + applicationDate + " has already been run.");
-
+            }
             var countryId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).COUNTRYID;
 
             var nextWorkDay = publicHoliday.GetNextWorkDay(applicationDate, countryId);
@@ -553,7 +554,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -602,10 +603,9 @@ namespace FintrakBanking.Repositories.Finance
                         try
                         {
 
-                            loanOperation.ProcessReleaseLien(date, companyId, staffId);
+                            loanOperation.ProcessReleaseLien(date, companyId, staffId); 
 
                             //transactionScope.Complete();
-
                             //transactionScope.Dispose();
                         }
                         catch (Exception ex)
@@ -613,7 +613,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -670,7 +670,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException?.InnerException?.Message;
                             }
@@ -729,7 +729,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException?.InnerException?.Message;
                             }
@@ -789,7 +789,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -846,7 +846,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -904,7 +904,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException?.Message;
                             }
@@ -961,7 +961,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -1027,7 +1027,7 @@ namespace FintrakBanking.Repositories.Finance
                             var line = frame.GetFileLineNumber();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException?.InnerException?.Message;
                             }
@@ -1195,7 +1195,7 @@ namespace FintrakBanking.Repositories.Finance
                             var line = frame.GetFileLineNumber();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException?.InnerException?.Message;
                             }
@@ -1251,7 +1251,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }
@@ -1308,7 +1308,7 @@ namespace FintrakBanking.Repositories.Finance
                             //transactionScope.Dispose();
 
                             var innerException = "";
-                            if (ex.InnerException != null)
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null)
                             {
                                 innerException = ex.InnerException.InnerException.Message;
                             }

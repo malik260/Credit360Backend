@@ -54,8 +54,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal facilityAmount { get; set; }
         public string customerAccount { get; set; }
         public int targetId { get; set; }
-        public object relationshipOfficerName { get; set; }
-        public object relationshipManagerName { get; set; }
+        public string relationshipOfficerName { get; set; }
+        public string relationshipManagerName { get; set; }
         public string referenceNumber { get; set; }
         public string branchName { get; set; }
         public string customerCode { get; set; }
@@ -63,5 +63,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal applicationAmount { get; set; }
         public double interestRate { get; set; }
         public DateTime applicationDate { get; set; }
+        public string currency { get; set; }
+        public string fileName { get; set; }
+        public DateTime drawdownInitiationDate { get; set; }
     }
 }

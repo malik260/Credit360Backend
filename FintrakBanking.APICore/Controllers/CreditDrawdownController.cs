@@ -11,6 +11,7 @@ using FintrakBanking.Common.Extensions;
 using FintrakBanking.ViewModels.Credit;
 using System.Collections.Generic;
 using FintrakBanking.Common.CustomException;
+using System;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -47,40 +48,49 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-request/approval/{loanBookingRequestId}")]
         public HttpResponseMessage ApproveInitiatedLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
         {
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            model.BranchId = (short)token.GetBranchId;
-            model.staffId = token.GetStaffId;
+            try
+            {
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.BranchId = (short)token.GetBranchId;
+                model.staffId = token.GetStaffId;
 
-            var response = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
-            if (response != null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = response.responseMessage });
+                var response = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = response.responseMessage });
+                }
+                //if (responseId == 1)
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK,
+                //        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                //}
+                //else if (responseId == 0)
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK,
+                //                            new { success = true, message = "Loan request has been successfully approved" });
+                //}
+                //else if (responseId == 3)
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK,
+                //                            new { success = true, message = "Loan request was successfully disapproved" });
+                //}
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
+                }
+
             }
-            //if (responseId == 1)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK,
-            //        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-            //}
-            //else if (responseId == 0)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK,
-            //                            new { success = true, message = "Loan request has been successfully approved" });
-            //}
-            //else if (responseId == 3)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK,
-            //                            new { success = true, message = "Loan request was successfully disapproved" });
-            //}
-            else
+            catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
+                throw e;
             }
         }
+            
 
         [HttpPut]
         [ClaimsAuthorization]

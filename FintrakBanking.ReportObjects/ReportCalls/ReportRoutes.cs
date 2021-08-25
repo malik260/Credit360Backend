@@ -1142,6 +1142,22 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string CorporateCustomerCreation(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/CorporateCustomerCreation.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+        public string InsuranceSpoolReport(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/InsuranceSpoolReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&documentTypeId=" + dateRange.documentTypeId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
         public string SecurityReleaseReport(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
@@ -1606,13 +1622,22 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-
-        public string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate, int dpd)
+        public string GetCollateralAdequacy(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/DelinquentAccounts.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue+"&dpd="+dpd;
+            path = reportPath + "ReportViews/CollateralAdequacy.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&branchId=" + dateRange.branchId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+
+
+        public string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate, int dpd, decimal amount)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/DelinquentAccounts.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue+"&dpd="+dpd + "&amount=" + amount;
             return path;
         }
 

@@ -84,6 +84,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal exchangeAmount { get; set; }
 
         public double exchangeRate { get; set; }
+        public string oldApplicationRefForRenewal { get; set; }
     }
 
     public class LoanApplicationCommentViewModel 

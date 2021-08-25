@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<StaffRoleViewModel> GetStaffRoleByCompanyId(int companyId);
 
         IEnumerable<StaffRoleViewModel> GetStaffRoles();
+        IEnumerable<ApprovalFlowTypeViewModel> GetAllApprovalFlowTypes();
 
         bool AddUpdateStaffRole(StaffRoleViewModel entity);
 

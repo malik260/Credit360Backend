@@ -55,8 +55,8 @@
       <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -95,8 +95,11 @@
     <Compile Include="CustomException\SecureException.cs" />
     <Compile Include="CustomException\TwoFactorAuthenticationException.cs" />
     <Compile Include="EmailHelpers.cs" />
+    <Compile Include="EncryptionHelper.cs" />
     <Compile Include="Enum\AdjustedFacilityTypeEnum.cs" />
     <Compile Include="Enum\ApprovalLevelType.cs" />
+    <Compile Include="Enum\DocUploadTypeEnum.cs" />
+    <Compile Include="Enum\InsuranceStatusEnum.cs" />
     <Compile Include="Enum\AttachmentTypeEnum.cs" />
     <Compile Include="Enum\CamsolTypeEnum.cs" />
     <Compile Include="Enum\ChargeTypeEnum.cs" />

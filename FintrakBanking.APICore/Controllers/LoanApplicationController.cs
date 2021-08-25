@@ -491,7 +491,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("retail-recovery-report/{startDate}/{endDate}/{accreditedConsultantId}/{customer}")]
-        public HttpResponseMessage GetRetailRecoveryReporting([FromUri] DateTime startDate, [FromUri] DateTime endDate, [FromUri] int customer, [FromUri] int accreditedConsultantId)
+        public HttpResponseMessage GetRetailRecoveryReporting([FromUri] DateTime startDate, [FromUri] DateTime endDate, [FromUri] string customer, [FromUri] int accreditedConsultantId)
         {
                 var records = repo.GetRetailRecoveryReporting(startDate, endDate, accreditedConsultantId, customer);
             if (records != null) {
@@ -1634,7 +1634,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             else if (response == 2)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Application Has been Cancelled Successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Application Has been saved Successfully and sent for approval" });
             }
             else
             {

@@ -8,6 +8,7 @@ namespace FintrakBanking.Common.Enum
 {
    public enum DocumentTypeEnum
     {
-        LoanApplicationApprovalOuputDocument =30
+        LoanApplicationApprovalOuputDocument =30,
+        InsurancePolicy = 147
     }
 }

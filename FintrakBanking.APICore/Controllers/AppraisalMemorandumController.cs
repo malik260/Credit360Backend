@@ -788,6 +788,14 @@ namespace FintrakBanking.APICore.Controllers
             //}
         }
 
+        [HttpGet]
+        [Route("get-old-application-reference/{data}")]
+        public HttpResponseMessage GetAllOldApplicationReference(string data)
+        {
+            var response = repo.GetAllOldApplicationReference(data);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        }
+
         [HttpPost]
         //[ClaimsAuthorization]
         [Route("repayment-schedule-terms")]

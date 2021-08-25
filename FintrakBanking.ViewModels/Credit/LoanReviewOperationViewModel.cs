@@ -192,7 +192,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralLiquidationRecoveryId { get; set; }
         public int loanId { get; set; }
         public string applicationReferenceNumber { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int accreditedConsultant { get; set; }
         public int loanAssignId { get; set; }
         public bool isFullyRecovered { get; set; }
@@ -626,8 +626,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? bookingOperationId { get; set; }
         public int bookingRequestId { get; set; }
         public string loanInformation { get; set; }
-        public bool isOnLending { get; set; }
-        public bool isInterventionFunds { get; set; }
+        public bool? isOnLending { get; set; }
+        public bool? isInterventionFunds { get; set; }
         public string applicationStatus { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
@@ -636,6 +636,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string employer { get; set; }
         public string operationName { get; set; }
         public int currentOperationId { get; set; }
+        public int? creditAppraisalOperationId { get; set; }
+        public int? creditAppraisalLoanApplicationId { get; set; }
+        public int? loanReviewApplicationDetailId { get; set; }
     }
 
     public class applicationDetails
@@ -828,7 +831,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public int loanId { get; set; }
         public string loanReferenceNumber { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int accreditedConsultant { get; set; }
         public decimal? totalAmountRecovery { get; set; }
         public decimal? amountRecovered { get; set; }
@@ -906,7 +909,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public int loanId { get; set; }
         public string loanReferenceNumber { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int accreditedConsultant { get; set; }
         public decimal? totalAmountRecovery { get; set; }
         public decimal? amountRecovered { get; set; }
@@ -987,6 +990,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal periodPaymentAmount { get; set; }
         public decimal periodPrincipalAmount { get; set; }
         public decimal endPrincipalAmount { get; set; }
+        public string guarantorName { get; set; }
     }
 
 
@@ -998,7 +1002,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public int loanId { get; set; }
         public string loanReferenceNumber { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int accreditedConsultant { get; set; }
         public bool operationCompleted { get; set; }
         public decimal? totalAmountRecovery { get; set; }
@@ -1152,6 +1156,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string category { get; set; }
         public string divisionCode { get; set; }
         public string branchCode { get; set; }
+        public decimal? totalUnsettledAmount { get; set; }
     }
 
     public class RecoveryCollectionsViewModel
@@ -1819,15 +1824,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int? appraisalOperationId { get; set; }
         public string currencyCode { get; set; }
         public bool isBankFormat { get; set; }
-        public int companyId { get; set; }
         public string createdByName { get; set; }
-        public DateTime dateTimeCreated { get; set; }
         public decimal maturityAmount { get; set; }
         public string relatedReferenceNumber { get; set; }
         public decimal interestAmount { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public int loanId { get; set; }
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int productId { get; set; }
         public int productClassId { get; set; }
         public decimal productPriceIndexRate { get; set; }
@@ -2013,7 +2016,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? outstandingAmount { get; set; }
         public string collateralCode { get; set; }
         public string collectionMode { get; set; }
-        public int createdBy { get; set; }
         public string sourceReferenceNumber { get; set; }
         public string lienReferenceNumber { get; set; }
         public decimal lienAmount { get; set; }

@@ -32,6 +32,7 @@ namespace FintrakBanking.Entities.Models
         public int? VALUERID { get; set; }
         public string COLLATERALDETAILS { get; set; }
         public bool ISINFORMATIONCONFIRMED { get; set; }
+        public int? INFORMATIONCONFIRMEDBY { get; set; }
         public string OTHERVALUER { get; set; }
         public string OTHERINSURANCECOMPANY { get; set; }
         public string OTHERINSURANCEPOLICYTYPE { get; set; }
@@ -42,5 +43,9 @@ namespace FintrakBanking.Entities.Models
         public string COMMENT { get; set; }
         public decimal? INSURABLEVALUE { get; set; }
         public bool DELETED { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
+        public int? UPDATEDBY { get; set; }
+        public int? CREATEDBY { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
     }
 }

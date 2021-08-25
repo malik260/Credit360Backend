@@ -1224,6 +1224,22 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/awaiting-documentation-search/{searchString}")]
+        public HttpResponseMessage GetLoanOperationAwaitingDocumentation(string searchString)
+        {
+            var data = repo.GetLoanOperationDocumentationSearch(token.GetStaffId, token.GetCompanyId, searchString);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-operation/lms-completed-documentation")]
@@ -1254,6 +1270,21 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/awaiting-documentation-los-search/{searchString}")]
+        public HttpResponseMessage GetLoanOperationAwaitingDocumentationLosSearch(string searchString)
+        {
+            var data = repo.GetLoanOperationDocumentationLosSearch(token.GetStaffId, token.GetCompanyId, searchString);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-operation/completed-documentation-los")]
@@ -1275,6 +1306,37 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetLoanOperationDocumentationLosApproval()
         {
             var data = repo.GetLoanOperationDocumentationLosApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/bulk-insurance-upload-awaiting-approval")]
+        public HttpResponseMessage GetBulkInsuranceUploadAwaitingApproval()
+        {
+            var data = repo.GetBulkInsuranceUploadAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/bulk-insurance-upload-rejected-approval")]
+        public HttpResponseMessage GetBulkInsuranceUploadRejectedApproval()
+        {
+            var data = repo.GetBulkInsuranceUploadRejectedApproval(token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1326,6 +1388,22 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "No record found" });
             }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/recovery-computation-variables")]
+        public HttpResponseMessage getAllRecoveryComputationVariables()
+        {
+            var data = repo.getAllRecoveryComputationVariables(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
         }
 
@@ -1686,12 +1764,20 @@ namespace FintrakBanking.APICore.Controllers
             entity.applicationUrl = HttpContext.Current.Request.Path;
             entity.userIPAddress = Request.RequestUri.Host;
             entity.createdBy = token.GetStaffId;
-            
-            var data = repo.GoForApproval(entity);
 
-            if (data == 1)
+            WorkflowResponse data = repo.GoForApproval(entity);
+
+            if (data.stateId == (int)ApprovalState.Ended)
             {
-                if (entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && entity.operationId != (int)OperationsEnum.CompleteWriteOff)
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation has been approved successfully. Sent to Credit Documentation for filling" });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+               /*if (entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook && entity.operationId != (int)OperationsEnum.CompleteWriteOff)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation has been approved successfully. Sent to Credit Documentation for filling" });
@@ -1741,7 +1827,7 @@ namespace FintrakBanking.APICore.Controllers
             else
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
-            }
+            }*/
         }
 
         [HttpPost]
@@ -2449,6 +2535,60 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Approved" });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-insurance-upload-approval")]
+        public HttpResponseMessage GoForBulkInsuranceUploadApproval([FromBody]ApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.GoForBulkInsuranceUploadApproval(entity);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = data.responseMessage });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("multiple-bulk-insurance-upload-approval/{approvalStatusId}/{comment}")]
+        public HttpResponseMessage GoForMultipleBulkInsuranceUploadApproval(int approvalStatusId, string comment, [FromBody] List<MultipleInsuranceOutputViewModel> entity)
+        {
+
+            var user = new UserInfo
+            {
+                BranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            WorkflowResponse res = repo.GoForMultipleBulkInsuranceUploadApproval(entity, user, approvalStatusId, comment);
+
+            if (res != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = res.responseMessage });
             }
             else
             {

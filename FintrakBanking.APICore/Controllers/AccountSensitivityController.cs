@@ -18,7 +18,7 @@ namespace FintrakBanking.APICore.Controllers
             repo = _repo;
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("getaccountsensitivity")]
         public HttpResponseMessage GetSensitivityLevels( )
         {  

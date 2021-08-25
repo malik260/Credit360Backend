@@ -1661,6 +1661,25 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("bulk-insurance-policy-entries")]
+        public HttpResponseMessage saveBulkInsurancePolicyEntries([FromBody] List<MultipleInsuranceOutputViewModel> models)
+        {
+            UserInfo user = new UserInfo();
+            user.BranchId = (short)token.GetBranchId;
+            user.applicationUrl = HttpContext.Current.Request.Path;
+            user.createdBy = token.GetStaffId;
+            user.companyId = token.GetCompanyId;
+
+            WorkflowResponse response = repo.saveBulkInsurancePolicyEntries(models, user);
+            
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = response.responseMessage, message = response.responseMessage });
+        }
+
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("multiple-disbursement")]
         public HttpResponseMessage disburseMultipleLoans([FromBody] List<multipleDisbursementOutputViewModel> models)
         {
@@ -1979,7 +1998,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.overwrite = provider.FormData["overwrite"] == "true";
                 entity.applicationReferenceNumber = provider.FormData["applicationReferenceNumber"];
                 entity.loanId = Convert.ToInt32(provider.FormData["loanId"]);
-                entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
+                entity.customerId = provider.FormData["customerId"];
                 entity.accreditedConsultant = Convert.ToInt32(provider.FormData["accreditedConsultant"]);
                 entity.loanAssignId = Convert.ToInt32(provider.FormData["loanAssignId"]);
                 entity.totalRecoveryAmount = Convert.ToDecimal(provider.FormData["totalRecoveryAmount"]);
@@ -2086,6 +2105,52 @@ namespace FintrakBanking.APICore.Controllers
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Bulk Disbursement data" });
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("pre-multiple-insurance")]
+        public async Task<HttpResponseMessage> UploadBulkInsuranceData()
+        {
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+
+            var isFinal = Convert.ToBoolean(provider.FormData["isFinal"]);
+
+            var entity = new UserInfo
+            {
+                BranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+
+            var file = provider.Contents.FirstOrDefault();
+            var buffer = await file.ReadAsByteArrayAsync();
+            var data = repo.preBulkInsurance(buffer, entity, isFinal);
+
+            if (buffer != null)
+            {
+                bool success = true;
+                if (data.Item2 == false && isFinal) { success = false; }
+                if (!success) { return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Pre Bulk insurance failed to upload." }); }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Pre Bulk Insurance data was successfully uploaded" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Pre Bulk Insurance data" });
         }
 
         [HttpGet]

@@ -1,6 +1,5 @@
 ﻿using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Repositories.AlertMonitoring;
-using FintrakBanking.Repositories.Setups.General;
 using Ninject;
 using System;
 using System.Configuration;
@@ -22,6 +21,7 @@ namespace FintrakBanking.MonitoringMessageLogger
         EmailSender emailSender = new EmailSender();
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
         private string slaEscalationIntervalInHours = ConfigurationManager.AppSettings["SLAEscalationIntervalInHours"];
+       
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
         AlertMessageLogger logger = new AlertMessageLogger();
@@ -47,7 +47,6 @@ namespace FintrakBanking.MonitoringMessageLogger
                 return false;
             return true;
         }
-
         public bool Stop(HostControl hostControl)
         {
             _syncTimer.Elapsed += StopJob;

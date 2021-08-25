@@ -18,7 +18,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetRecoveryCollectionReport(DateTime startDate, DateTime endDate);
         string GetComputationForExternalAgentsReport(DateTime startDate, DateTime endDate);
         string GetPaydayLoanRecoveryCollectionReport(DateTime startDate, DateTime endDate);
-        string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate, int dpd);
+        string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate, int dpd, decimal amount);
         string GetOutOfCourtSettlement(DateTime startDate, DateTime endDate);
         string GetCollateralSales(DateTime startDate, DateTime endDate);
         string GetRecoveryAgentUpdate(DateTime startDate, DateTime endDate);
@@ -173,12 +173,17 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCollateralPerfection(DateRange dateRange);
         string CorporateLoansReport(DateRange dateRange);
         string GetCollateralRegister(DateRange dateRange);
+        string GetCollateralAdequacy(DateRange dateRange);
         string GetFixedDepositCollaterals(int companyId, string collateralCode, int staffId);
         string GetValidCollaterals(DateTime startDate, DateTime endDate);
         string GetJobRequestReport(DateRange dateRange, int companyId, int staffId);
         string GetDisbursedFacilityCollateralReport(DateRange param);
         string SubmissionOfOriginalDocuments(DateRange param);
         string SecurityReleaseReport(DateRange param);
+        string CorporateCustomerCreation(DateRange param);
+        string InsuranceSpoolReport(DateRange param);
+
+
     }
 
 

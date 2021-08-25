@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels;
 using System.Threading.Tasks;
 using System.Text;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -44,6 +45,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("staff-role-by-staffid")]
@@ -65,6 +68,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+               
         [HttpGet] [ClaimsAuthorization]  
         [Route("staff-role/{staffRoleId}")]
         public HttpResponseMessage GetStaffRole(int rankId)
@@ -125,7 +129,18 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approval-flow-type")]
+        public HttpResponseMessage GetAllApprovalFlowTypes()
+ 
+            {
+                IEnumerable<ApprovalFlowTypeViewModel> response = repo.GetAllApprovalFlowTypes();
+                if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+
+
         [HttpPost] [ClaimsAuthorization]
         [Route("staff-role")]
         public HttpResponseMessage AddUpdateStaffRole([FromBody] StaffRoleViewModel entity)

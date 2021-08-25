@@ -11,11 +11,17 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IAlertRepository
     {
+        bool AddAlertBindingMethosUpdate(int id, AlertBindingMethodsViewModel model);
+        bool AddAlertPlaceholderUpdate(int id, AlertPlaceHoldersViewModel model);
+        bool AddAlertBindingMethod(AlertBindingMethodsViewModel model);
+        bool AddAlertPlaceholder(AlertPlaceHoldersViewModel model);
+        bool UpdateAlertTitleStatus(AlertTitleViewModel model);
         string GetBusinessTeamEmails(string accountOfficerMIsCode);
         bool validateAlertCheck();
         void GetImminentMaturities();
         void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMethod);
         IEnumerable<AlertTitleViewModel> GetAllAlerts();
+        IEnumerable<AlertTitleViewModel> GetAllAlertsForDropdown();
         bool AddAlertTitle(AlertTitleViewModel model);
         bool DeleteAlertTitle(int id, UserInfo user);
         AlertTitleViewModel GetAlertById(int id);
@@ -42,6 +48,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<AlertMisViewModel> GetAllUserMisCode();
         IEnumerable<AlertTitleViewModel> GetAlerts();
         IEnumerable<AlertFrequencyViewModel> GetAllFrequency();
+        IEnumerable<AlertPlaceHoldersViewModel> GetAllAlertPlaceHoldersy();
         IEnumerable<AlertConditionViewModel> GetAllConditions();
         AlertConditionViewModel GetAlertConditionById(int id);
         bool AddAlertCondition(AlertConditionViewModel model);

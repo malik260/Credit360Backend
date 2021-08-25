@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using System.Collections.Generic;
 
@@ -56,5 +57,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoadedDocumentSectionViewModel GetDocumentSectionBulkLiquidation(int staffId, int operationId, int targetId, int sectionId);
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentBulkLiquidation(int staffId, int operationId, int targetId, UserInfo user);
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentationBulkLiquidation(int staffId, int operationId, int targetId, UserInfo user);
+        InsurancePolicy GetInsurancePolicyConfirmationStatus(int staffId, int appDetailId);
+        InsurancePolicyRecordViewModel GetInsurancePolicyConfirmationStatusByAppDetailId(int staffId, int appDetailId);
     }
 }

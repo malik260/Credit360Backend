@@ -1120,6 +1120,32 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("collateral-adequacy")]
+        public HttpResponseMessage GetCollateralAdequacy([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetCollateralAdequacy(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost] [ClaimsAuthorization]
         [Route("stakeholders-on-experation-ftp")]
         public HttpResponseMessage GetStakeHolderOnExperationOfFfp(ReportSearchEntity reportSearchEntity)
@@ -2510,6 +2536,55 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [Route("corporate-customer-creation")]
+        public HttpResponseMessage CorporateCustomerCreation([FromBody] DateRange param)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.CorporateCustomerCreation(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("insurance-spool-report")]
+        public HttpResponseMessage InsuranceSpoolReport([FromBody] DateRange param)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.InsuranceSpoolReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [AllowAnonymous]
         [Route("security-release-report")]
         public HttpResponseMessage SecurityReleaseReport([FromBody] DateRange param)
         {
@@ -3744,7 +3819,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetRecoveryDelinquentAccountsReport(obj.startDate, obj.endDate, obj.dpd);
+                var data = repo.GetRecoveryDelinquentAccountsReport(obj.startDate, obj.endDate, obj.dpd, obj.amount);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

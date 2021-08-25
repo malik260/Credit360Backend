@@ -82,6 +82,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         }
 
         public int? levelBusinessRuleId { get; set; }
+        public bool isPostApprovalReviewer { get; set; }
     }
 
     public class PresetRouteViewModel : GeneralEntity
@@ -99,5 +100,20 @@ namespace FintrakBanking.ViewModels.Setups.Approval
     {
         public int id { get; set; }
         public string name { get; set; }
+    }
+
+    public class WorkflowNotificationViewModel : GeneralEntity
+    {
+        public int workflowNotificationId { get; set; }
+        public int groupOperationMappingId { get; set; }
+        public int approvalLevelId { get; set; }
+        public int? proceedingActionsAlertTitleId { get; set; }
+        public int? poolAlertTitleId { get; set; }
+        public int? ownerAlertTitleId { get; set; }
+        public int? pendingApprovalAlertTitleId { get; set; }
+        public bool includePoolInNotification { get; set; }
+        public bool notifyOfProceedingWorkflowActions { get; set; }
+        public bool notifyOfPendingApprovals { get; set; }
+        public bool notifyOnwer { get; set; }
     }
 }

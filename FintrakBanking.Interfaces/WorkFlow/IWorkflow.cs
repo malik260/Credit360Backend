@@ -24,6 +24,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         int Tenor { set; }
         string Comment { set; }
         decimal Amount { set; }
+        decimal FacilityAmount { set; }
         int StatusId { get; set; }
         int GroupStatusId { get; }
         int NewState { get; }
@@ -50,11 +51,16 @@ namespace FintrakBanking.Interfaces.WorkFlow
         string Flow_log { set; }
         bool SkipLimitsCheck { set; }
         //bool? IgnorePostApprovalReviewwer { set; }
+        List<WorkflowSetup> WorkflowSetup { get; }
+        int? OwnerId { set; }
+
 
         AlertPlaceholders Placeholders { set; }
         WorkflowResponse Response { get; set; }
         LevelBusinessRule LevelBusinessRule { set; }
         bool LogActivity();
+        IEnumerable<dynamic> GetWorkFlowSetupLevelIds();
+        //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
         void NextProcess(
                 int companyId,
                 int staffId,
@@ -69,7 +75,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
                 bool isFlowTest = false,
                 int? businessUnitId = null,
                 int? finalLevel = null,
-                int amount = 0
+                int amount = 0,
+                int? productId = null
             );
 
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!
@@ -103,6 +110,39 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public string facilityType { get; set; }
         public string branchName { get; set; }
         public string locationName { get; set; }
+    }
+
+    public class WorkflowSetup
+    {
+        public int Sn { get; set; }
+        public int SlaInterval { get; set; }
+        public int GroupPosition { get; set; }
+        public int LevelPosition { get; set; }
+        public int ApprovalLevelId { get; set; }
+        public int NumberOfUsers { get; set; }
+        public int NumberOfApprovals { get; set; }
+        public bool CanRouteBack { get; set; }
+        public bool IsPoliticallyExposed { get; set; }
+        //public bool IsInsiderRelated { get; set; }
+        public bool IsActive { get; set; }
+        public bool CanEdit { get; set; }
+        public bool CanRecieveEmail { get; set; }
+        public bool CanRecieveSMS { get; set; }
+        public bool RouteViaStaffOrganogram { get; set; }
+        public int? Tenor { get; set; }
+        public decimal MaximumAmount { get; set; }
+        public decimal? InvestmentGradeAmount { get; set; }
+        public int? DefaultRoleId { get; set; }
+        public int? LevelTypeId { get; set; }
+        public int? LevelBusinessRuleId { get; set; }
+        public TBL_APPROVAL_LEVEL Level { get; set; }
+        public TBL_APPROVAL_GROUP Group { get; set; }
+        public TBL_APPROVAL_GROUP_MAPPING Mapping { get; set; }
+        public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
+        public TBL_APPROVAL_BUSINESS_RULE LevelBusinessRule { get; set; }
+        public bool AllowMultipleInitiator { get; set; }
+        public int? ROLEIDTOROUTE { get; set; }
+        public bool ISPOSTAPPROVALREVIEWER { get; set; }
     }
 
 }

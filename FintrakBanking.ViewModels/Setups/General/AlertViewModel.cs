@@ -23,6 +23,15 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string bindingMethod { get; set; }
         public DateTime? lastSentDate { get; set; }
         public int? actionStatus { get; set; }
+        public bool isActive { get; set; }
+        public int? frequency { get; set; }
+        public string alertTime { get; set; }
+        public string timeFrom { get; set; }
+        public string timeTo { get; set; }
+        public int? alertScheduleId { get; set; }
+        public int? frequencyId { get; set; }
+        public int bindingMethodId { get; set; }
+        public int? alertFrequencyId { get; set; }
 
         //public DateTime lastSentDate { get; set; }
         //public int source { get; set; }
@@ -135,6 +144,34 @@ namespace FintrakBanking.ViewModels.Setups.General
     {
         public int templateId { get; set; }
         public string templateBody { get; set; }
+    }
+
+    public class AlertPlaceHoldersViewModel : GeneralEntity
+    {
+        public short placeHolderId { get; set; }
+        public string placeHolder { get; set; }
+        public string description { get; set; }
+        public string type { get; set; }
+        public int? alertTitleId { get; set; }
+        public string partition { get; set; }
+        public object title { get; set; }
+    }
+
+    public class AlertScheduleViewModel : GeneralEntity
+    {
+        public int alertScheduleId { get; set; }
+        public int frequencyId { get; set; }
+        public string alertTime { get; set; }
+        public string timeFrom { get; set; }
+        public string timeTo { get; set; }
+        public int alertTitleId { get; set; }
+    }
+
+    public class AlertBindingMethodsViewModel : GeneralEntity
+    {
+        public int bindingMethodId { get; set; }
+        public string methodName { get; set; }
+        public string methodTitle { get; set; }
     }
 
 }

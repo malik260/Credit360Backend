@@ -2001,6 +2001,7 @@ namespace FintrakBanking.Repositories.Customer
                                                          customerCode = c.CUSTOMERCODE,
                                                          customerName = c.FIRSTNAME + " " + c.LASTNAME,
                                                          customerType = c.TBL_CUSTOMER_TYPE.NAME,
+                                                         customerTypeId = c.TBL_CUSTOMER_TYPE.CUSTOMERTYPEID,
                                                          relationshipTypeId = b.RELATIONSHIPTYPEID,
                                                          relationshipTypeName = b.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
                                                          productAccountNumber = context.TBL_CASA.FirstOrDefault(x => x.CUSTOMERID == c.CUSTOMERID).PRODUCTACCOUNTNUMBER,

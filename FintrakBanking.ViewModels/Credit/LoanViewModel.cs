@@ -112,7 +112,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatusName { get; set; }
         public bool isBidbond { get; set; }
         public bool isOverdraft { get; set; }
-        public object commercialPrincipal { get; set; }
+        public string commercialPrincipal { get; set; }
 
         public int notificationDuration { get; set; }
         public int loanId { get; set; }
@@ -317,7 +317,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? lastRestructureDate  { get; set; }
         public short loanSystemTypeId  { get; set; }
         public bool isPerforming { get; set; }
-        public object loanPrincipal { get; set; }
+        public decimal? loanPrincipal { get; set; }
         public List<LoanDisbursementViewModel> loanBeneficiary { get; set; }
         public string approvedComment { get; set; }
         public decimal scheduleDayCountConvention { get; set; }
@@ -426,7 +426,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalExistingLimitAmount { get; set; }
         public string crmsCode { get; set; }
         public string customerEmail { get; set; }
-        public object totalRepayment { get; set; }
+        public decimal? totalRepayment { get; set; }
         public string loanSystemTypeName { get; set; }
         public decimal writtenOffAmount { get; set; }
         public bool passed { get; set; }
@@ -824,7 +824,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int tenorUsed { get; set; }
 
-        public object isBooked { get; set; }
+        public bool isBooked { get; set; }
 
         public bool isUnderApproval { get; set; }
         public bool isApprovalOwner { get; set; }
@@ -1822,6 +1822,211 @@ namespace FintrakBanking.ViewModels.Credit
     }
 
 
+    public class MultipleInsuranceOutputViewModel : GeneralEntity
+    {
+        public string referenceNumber { get; set; }
+        public decimal? sumInsured { get; set; }
+        public string insuranceCompany { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? expiryDate { get; set; }
+        public string insuranceType { get; set; }
+
+        public bool hasExpired { get; set; }
+        public int? collateraalId { get; set; }
+        public string collateralCode { get; set; }
+        public string collateralType { get; set; }
+        public string collateralSubType { get; set; }
+        public decimal? collateralValue { get; set; }
+        public int? policyId { get; set; }
+        public int? collateralTypeId { get; set; }
+        public int? collateralSubTypeId { get; set; }
+        public string customerName { get; set; }
+        public decimal? premiumAmount { get; set; }
+        public decimal? inSurPremiumAmount { get; set; }
+        public string description { get; set; }
+        public int? premiumPercent { get; set; }
+        public int? insuranceTypeId { get; set; }
+        public int? insuranceCompanyId { get; set; }
+        public string address { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+        public int requestNumber { get; set; }
+        public int insuranceRequestId { get; set; }
+        public double haircut { get; set; }
+        public string collateralReleaseStatusName { get; set; }
+        public int? collateralUsageStatus { get; set; }
+        public string customerId { get; set; }
+        public bool differInsurancePolicy { get; set; }
+        public string policyStateId { get; set; }
+        public string companyAddress { get; set; }
+        public int? prevoiusInsuranceId { get; set; }
+        public int approvalTrailId { get; set; }
+        public int targetId { get; set; }
+        public DateTime arrivalTime { get; set; }
+        public string accountOfficer { get; set; }
+        public int? insurancePolicyTypeId { get; set; }
+        public string insurancePolicyType { get; set; }
+        public int insuranceStatus { get; set; }
+        public string collateralDetails { get; set; }
+        public DateTime? valuationStartDate { get; set; }
+        public DateTime? valuationEndDate { get; set; }
+        public decimal? omv { get; set; }
+        public decimal? fsv { get; set; }
+        public string valuer { get; set; }
+        public int? insuranceStatusId { get; set; }
+        public int collateralInsuranceTrackingId { get; set; }
+        public string isInformationConfirmed { get; set; }
+        public int? loanApplicationDetailId { get; set; }
+        public int? customerGroupId { get; set; }
+        public string insuranceCompanyName { get; set; }
+        public int? valuerId { get; set; }
+        public string gpsCoordinates { get; set; }
+        public decimal loanAmount { get; set; }
+        public string loanStatus { get; set; }
+        public string loanTypeName { get; set; }
+        public string securityReleaseStatus { get; set; }
+        public string taxNumber { get; set; }
+        public string rcNumber { get; set; }
+        public string firstLossPayee { get; set; }
+        public decimal? insurableValue { get; set; }
+        public string customerCode { get; set; }
+        public string customerAccount { get; set; }
+        public string customerPhone { get; set; }
+        public string customerAddress { get; set; }
+        public string teamName { get; set; }
+        public string divisionName { get; set; }
+        public string groupHead { get; set; }
+        public string customerEmail { get; set; }
+        public string accountOfficerName { get; set; }
+        public string accountOfficerEmail { get; set; }
+        public string valueCode { get; set; }
+        public bool isPolicyInformationConfirmed { get; set; }
+        public string applicationreferenceNumber { get; set; }
+        public string otherInsuranceCompany { get; set; }
+        public string otherValuers { get; set; }
+        public int? collateralCustomerId { get; set; }
+        public string otherInsurancePolicyType { get; set; }
+        public bool passed { get; set; }
+        public List<string> errorMessages { get; set; }
+        public string isCollateral { get; set; }
+        public string policyType { get; set; }
+        public string comment { get; set; }
+        public string otherValuer { get; set; }
+        public decimal? forcedSaleValue { get; set; }
+        public decimal? openMarketValue { get; set; }
+        public string batchCode { get; set; }
+        public int? approvalStatusId { get; set; }
+        public string validityStatus { get; set; }
+    }
+
+
+    public class MultipleInsuranceOutputApprovalViewModel : GeneralEntity
+    {
+        public string referenceNumber { get; set; }
+        public decimal? sumInsured { get; set; }
+        public string insuranceCompany { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? expiryDate { get; set; }
+        public string insuranceType { get; set; }
+
+        public bool hasExpired { get; set; }
+        public int? collateraalId { get; set; }
+        public string collateralCode { get; set; }
+        public string collateralType { get; set; }
+        public string collateralSubType { get; set; }
+        public decimal? collateralValue { get; set; }
+        public int? policyId { get; set; }
+        public int? collateralTypeId { get; set; }
+        public int? collateralSubTypeId { get; set; }
+        public string customerName { get; set; }
+        public decimal? premiumAmount { get; set; }
+        public decimal? inSurPremiumAmount { get; set; }
+        public string description { get; set; }
+        public int? premiumPercent { get; set; }
+        public int? insuranceTypeId { get; set; }
+        public int? insuranceCompanyId { get; set; }
+        public string address { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+        public int? operationId { get; set; }
+        public int requestNumber { get; set; }
+        public int insuranceRequestId { get; set; }
+        public double haircut { get; set; }
+        public string collateralReleaseStatusName { get; set; }
+        public int? collateralUsageStatus { get; set; }
+        public string requestReason { get; set; }
+        public string requestComment { get; set; }
+        public int? approvalStatusId { get; set; }
+        public string approvalStatusName { get; set; }
+        public string currentApprovalLevel { get; set; }
+        public string customerId { get; set; }
+        public bool differInsurancePolicy { get; set; }
+        public string policyStateId { get; set; }
+        public string companyAddress { get; set; }
+        public int? prevoiusInsuranceId { get; set; }
+        public int approvalTrailId { get; set; }
+        public int targetId { get; set; }
+        public DateTime arrivalTime { get; set; }
+        public string accountOfficer { get; set; }
+        public int? insurancePolicyTypeId { get; set; }
+        public string insurancePolicyType { get; set; }
+        public int insuranceStatus { get; set; }
+        public string collateralDetails { get; set; }
+        public DateTime? valuationStartDate { get; set; }
+        public DateTime? valuationEndDate { get; set; }
+        public decimal? omv { get; set; }
+        public decimal? fsv { get; set; }
+        public string valuer { get; set; }
+        public int? insuranceStatusId { get; set; }
+        public int collateralInsuranceTrackingId { get; set; }
+        public string isInformationConfirmed { get; set; }
+        public int? loanApplicationDetailId { get; set; }
+        public int? customerGroupId { get; set; }
+        public string insuranceCompanyName { get; set; }
+        public int? valuerId { get; set; }
+        public string gpsCoordinates { get; set; }
+        public decimal loanAmount { get; set; }
+        public string loanStatus { get; set; }
+        public string loanTypeName { get; set; }
+        public string securityReleaseStatus { get; set; }
+        public string taxNumber { get; set; }
+        public string rcNumber { get; set; }
+        public string firstLossPayee { get; set; }
+        public decimal? insurableValue { get; set; }
+        public string customerCode { get; set; }
+        public string customerAccount { get; set; }
+        public string customerPhone { get; set; }
+        public string customerAddress { get; set; }
+        public string teamName { get; set; }
+        public string divisionName { get; set; }
+        public string groupHead { get; set; }
+        public string customerEmail { get; set; }
+        public string accountOfficerName { get; set; }
+        public string accountOfficerEmail { get; set; }
+        public string valueCode { get; set; }
+        public bool isPolicyInformationConfirmed { get; set; }
+        public string applicationreferenceNumber { get; set; }
+        public string otherInsuranceCompany { get; set; }
+        public string otherValuers { get; set; }
+        public int? collateralCustomerId { get; set; }
+        public string otherInsurancePolicyType { get; set; }
+        public bool passed { get; set; }
+        public List<string> errorMessages { get; set; }
+        public string isCollateral { get; set; }
+        public string policyType { get; set; }
+        public string comment { get; set; }
+        public string otherValuer { get; set; }
+        public decimal? forcedSaleValue { get; set; }
+        public decimal? openMarketValue { get; set; }
+        public string batchCode { get; set; }
+        public int? toStaffId { get; set; }
+        public int requestStaffId { get; set; }
+        public int? responseStaffId { get; set; }
+        public int requestOperationId { get; set; }
+        public int? iCustomerId { get; set; }
+        public int? bulkInsuranceUploadApprovalId { get; set; }
+        public string validityStatus { get; set; }
+    }
 
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
