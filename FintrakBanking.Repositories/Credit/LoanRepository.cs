@@ -17062,16 +17062,41 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var applicationDate = generalSetup.GetApplicationDate();
-            var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
-                        join l in context.TBL_LMSR_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals l.LOANID
+            var data = (from op in context.TBL_LOAN_REVIEW_OPERATION
+                        join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                        join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                        join l in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANID equals l.LOANID
                         join e in context.TBL_LMSR_APPLICATION on l.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                        join d in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                         where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
-                          && l.OPERATIONPERFORMED == false
-                          && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
-                          && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                        //&& d.EXPIRYDATE >= systemDate
+                        && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && op.OPERATIONCOMPLETED == false
+                        && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+                        && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
+                        && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                        && atrail.OPERATIONID == op.OPERATIONTYPEID
+                        && atrail.RESPONSESTAFFID == null 
+                        && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
+                        && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
+
+                    /*
+                    from d in context.TBL_LOAN_APPLICATION_DETAIL
+                    join l in context.TBL_LMSR_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals l.LOANID
+                    join e in context.TBL_LMSR_APPLICATION on l.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                    join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                    join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
+                    where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
+                      && l.OPERATIONPERFORMED == false
+                      && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+                      && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred
+                      && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
+                      && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                      && l.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred
+                    //&& d.EXPIRYDATE >= systemDate*/
+
                         select new CamProcessedLoanViewModel
                         {
                             divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
@@ -17146,25 +17171,29 @@ namespace FintrakBanking.Repositories.Credit
 
                         }).ToList();
 
-            var referred = (from op in context.TBL_LOAN_REVIEW_OPERATION
-                           join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
-                           join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+           /* var referred = (from op in context.TBL_LOAN_REVIEW_OPERATION
+                           //join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                          // join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                            join l in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANID equals l.LOANID
                            join e in context.TBL_LMSR_APPLICATION on l.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                            join d in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANID equals d.LOANAPPLICATIONDETAILID
                            join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                            join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                            where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
-                             //&& l.OPERATIONPERFORMED == false
                            && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                           && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                           && atrail.OPERATIONID == op.OPERATIONTYPEID
-                           && atrail.RESPONSESTAFFID == null 
-                           && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                            && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                            && op.OPERATIONCOMPLETED == false
                            && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
-                           && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
+                           && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred
+                           && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
+                           && l.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred
+
+                            /*&& atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                            && atrail.OPERATIONID == op.OPERATIONTYPEID
+                            && atrail.RESPONSESTAFFID == null 
+                            && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
+                            && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
+
                             select new CamProcessedLoanViewModel
                             {
                                 divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
@@ -17237,9 +17266,9 @@ namespace FintrakBanking.Repositories.Credit
                                 loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                                 lmsApplicationDetailId = l.LOANREVIEWAPPLICATIONID,
 
-                            }).ToList();
+                            }).ToList();*/
 
-            data = data.Union(referred).ToList();
+            //data = data.Union(referred).ToList();
             List<CamProcessedLoanViewModel> lcyLoans = new List<CamProcessedLoanViewModel>();
             List<CamProcessedLoanViewModel> fcyLoans = new List<CamProcessedLoanViewModel>();
 
