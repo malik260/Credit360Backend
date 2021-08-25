@@ -58,7 +58,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                             principalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
                                             interest = (decimal)ln.UNPOINTERESTAMOUNT,
                                             penalCharges = 0,
-                                            amountDue = (decimal)ln.TOTALUNPAIDOBLIGATION,
+                                            amountDue = (decimal)ln.TOTALUNSETTLEDAMOUNT,
                                             loanAmountLcy = (decimal)ln.LOANAMOUNYLCY,
                                             totalExposureLcy = (decimal)ln.TOTALEXPOSURE,
                                             collections = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE).Sum(c => c.AMOUNTRECOVERED),
