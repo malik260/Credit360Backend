@@ -1215,7 +1215,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var initiation = data.FirstOrDefault();
             if (initiation?.fromApprovalLevelId == null)
             {
-                data.Remove(initiation);
+                //data.Remove(initiation);
                 data = data.OrderByDescending(d => d.approvalTrailId).ToList();
             }
 
@@ -1291,7 +1291,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var initiation = data.FirstOrDefault();
             if (initiation?.fromApprovalLevelId == null)
             {
-                data.Remove(initiation);
+                //data.Remove(initiation);
                 data = data.OrderByDescending(d => d.approvalTrailId).ToList();
             }
             data.OrderByDescending(d => d.systemArrivalDateTime);

@@ -19,12 +19,12 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             List<SubHead> staffmisi = new List<SubHead>();
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                using (FinTrakBankingStagingContext stagingContext = new FinTrakBankingStagingContext())
-                {
-                    staffmisi = (from sl in stagingContext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION }).ToList();
-                }
                 try
                 {
+                    using (FinTrakBankingStagingContext stagingContext = new FinTrakBankingStagingContext())
+                    {
+                        staffmisi = (from sl in stagingContext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION }).ToList();
+                    }
 
                     var dataExposure = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                         join ln in context.TBL_GLOBAL_EXPOSURE on lr.LOANREFERENCE equals ln.REFERENCENUMBER
@@ -109,7 +109,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                    principalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
                                                    interest = (decimal)ln.UNPOINTERESTAMOUNT,
                                                    penalCharges = 0,
-                                                   amountDue = (decimal)ln.TOTALUNPAIDOBLIGATION,
+                                                   amountDue = (decimal)ln.TOTALUNSETTLEDAMOUNT,
                                                    loanAmountLcy = (decimal)ln.LOANAMOUNYLCY,
                                                    totalExposureLcy = (decimal)ln.TOTALEXPOSURE,
                                                    collections = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == lr.LOANREFERENCE).Sum(c => c.AMOUNTRECOVERED),
@@ -787,6 +787,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 }
 
                 var dataRevolvingNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                                  join ra in context.TBL_ACCREDITEDCONSULTANT on lr.ACCREDITEDCONSULTANT equals ra.ACCREDITEDCONSULTANTID
                                                   join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                                   join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                                   join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -800,6 +801,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                   && lr.ISFULLYRECOVERED == false
                                                   && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                                   && lr.SOURCE.ToLower() == "retail"
+                                                  && ra.CATEGORY.ToLower() == "external"
                                                   && lr.DELETED == false
 
                                                   orderby ln.DATETIMECREATED descending
@@ -1377,6 +1379,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                              }).ToList();
 
                 var dataRevolvingNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                                  join ra in context.TBL_ACCREDITEDCONSULTANT on lr.ACCREDITEDCONSULTANT equals ra.ACCREDITEDCONSULTANTID
                                                   join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                                   join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                                   join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -1390,6 +1393,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                   && lr.ISFULLYRECOVERED == false
                                                   && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                                   && lr.SOURCE.ToLower() == "retail"
+                                                  && ra.CATEGORY.ToLower() == "internal"
                                                   && lr.DELETED == false
 
                                                   orderby ln.DATETIMECREATED descending
@@ -1644,6 +1648,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                       && lr.ISFULLYRECOVERED == false
                                                       && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                                       && lr.SOURCE.ToLower() == "retail"
+                                                      && ra.CATEGORY.ToLower() == "internal"
                                                       && lr.DELETED == false
 
                                                       orderby ln.DATETIMECREATED descending
@@ -1685,13 +1690,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
                     var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
 
-                var dataExposure2 = dataExposure.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
-                var dataDigitalExposure2 = dataDigitalExposure.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
+                    var dataExposure2 = dataExposure.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
+                    var dataDigitalExposure2 = dataDigitalExposure.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
 
 
-                var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure2).Union(dataDigitalExposure2);
-                var allData = unionAll.GroupBy(r => r.customerCode).FirstOrDefault();
-                               //.Select(p => p.OrderByDescending(r => r.customerCode).FirstOrDefault()).ToList(); //unionAll.GroupBy(x => x.customerCode).ToList();
+                    var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure2).Union(dataDigitalExposure2);
+                    var allData = unionAll.GroupBy(r => r.accreditedConsultant).FirstOrDefault();
+                                   //.Select(p => p.OrderByDescending(r => r.customerCode).FirstOrDefault()).ToList(); //unionAll.GroupBy(x => x.customerCode).ToList();
 
                     foreach (var consultant in allData)
                     {
