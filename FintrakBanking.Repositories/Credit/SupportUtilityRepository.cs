@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.SupportUtility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,6 +89,17 @@ namespace FintrakBanking.Repositories.Credit
                            customerBVN = a.CUSTOMERBVN,
                            customerIssueTypeId = IssueTypeId 
                    };
+        }
+
+       public SupportUtilityViewModel GetSupportIssueType(int supportIssueTypeId)
+        {
+            var entity = context.TBL_SUPPORTISSUETYPE.FirstOrDefault(x => x.SUPPORTISSUETYPEID == supportIssueTypeId);
+            return new SupportUtilityViewModel
+            {
+                supportIssueTypeId = entity.SUPPORTISSUETYPEID,
+                description = entity.DESCRIPTION,
+                tag = entity.TAG,
+            };
         }
 
     }

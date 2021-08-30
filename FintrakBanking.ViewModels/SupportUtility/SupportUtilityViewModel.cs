@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.SupportUtility
 {
-   public class SupportUtilityViewModel
+   public class SupportUtilityViewModel: GeneralEntity
     {
+        public int supportIssueTypeId { get; set; }
+        public string description { get; set; }
+        public string tag { get; set; }
     }
 }

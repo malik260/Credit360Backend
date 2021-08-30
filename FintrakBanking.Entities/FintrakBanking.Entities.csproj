@@ -270,6 +270,7 @@
     <Compile Include="Models\TBL_RECOVERY_REPORT_COLLECTION.cs" />
     <Compile Include="Models\TBL_REPAYMENT_TERM.cs" />
     <Compile Include="Models\TBL_SECTOR_GLOBAL_LIMIT.cs" />
+    <Compile Include="Models\TBL_SUPPORTISSUETYPE.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_INDEMNITY.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_ISPO.cs" />

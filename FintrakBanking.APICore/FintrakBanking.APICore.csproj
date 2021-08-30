@@ -438,6 +438,7 @@
     <Compile Include="Controllers\RiskAssessmentController.cs" />
     <Compile Include="Controllers\RiskController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
+    <Compile Include="Controllers\SupportUtilityController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TermSheetController.cs" />
     <Compile Include="Controllers\TestCollateralController.cs" />
