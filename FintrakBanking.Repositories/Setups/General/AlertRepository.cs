@@ -65853,7 +65853,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     AlertsViewModel alert = new AlertsViewModel();
                     var alertTitle = alertTitleInfo.TITLE;
                     var alertTemplate = alertTitleInfo.TEMPLATE;
-                    if (i.LOANAPPLICATIONDETAILID == null)
+                    if(i.CREATEDBY != null)
+                    {
+                        appDetails = (int)i.CREATEDBY;
+                    }
+                    else if (i.LOANAPPLICATIONDETAILID == null)
                     {
                         appDetails = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).Select(x => x.CREATEDBY).FirstOrDefault();
                     }
@@ -65861,6 +65865,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         appDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.LOANAPPLICATIONDETAILID).Select(x => x.CREATEDBY).FirstOrDefault();
                     }
+
                     var staff = context.TBL_STAFF.Find(appDetails);
                     var customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == appDetails).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                     var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
@@ -65944,7 +65949,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     var alertTemplate = alertTitleInfo.TEMPLATE;
 
                     int appDetails;
-                    if (i.LOANAPPLICATIONDETAILID == null)
+                    if(i.CREATEDBY != null)
+                    {
+                        appDetails = (int)i.CREATEDBY;
+                    }
+                    else if (i.LOANAPPLICATIONDETAILID == null)
                     {
                         appDetails = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).Select(x => x.CREATEDBY).FirstOrDefault();
                     }
