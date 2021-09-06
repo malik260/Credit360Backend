@@ -17409,7 +17409,6 @@ namespace FintrakBanking.Repositories.Credit
                                   //  && atrail.RESPONSESTAFFID == null
                                   && b.OPERATIONPERFORMED == false
                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
-                                  && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
                                   && ((cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId)) // currency filter                                                                                                                                  
                                    select new LoanViewModel

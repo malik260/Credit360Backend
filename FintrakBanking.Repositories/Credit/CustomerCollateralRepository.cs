@@ -8898,7 +8898,7 @@ namespace FintrakBanking.Repositories.Credit
                 model.referenceNumber = refNo;
                 }
 
-                var insurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == model.referenceNumber.Trim()).Select(x => x).FirstOrDefault();
+                var insurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == model.referenceNumber.Trim() && x.DELETED == false).Select(x => x).FirstOrDefault();
 
                 if (insurancePolicy != null)
                 {
@@ -8906,7 +8906,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
-                var insurancePolicy2 = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && x.COLLATERALCUSTOMERID == model.collateralCustomerId).Select(x => x).FirstOrDefault();
+                var insurancePolicy2 = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && x.COLLATERALCUSTOMERID == model.collateralCustomerId && x.DELETED == false).Select(x => x).FirstOrDefault();
 
                 if (insurancePolicy2 != null)
                 {
