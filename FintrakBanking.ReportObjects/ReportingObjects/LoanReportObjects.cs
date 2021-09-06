@@ -5855,6 +5855,7 @@ namespace FintrakBanking.ReportObjects
                             {
                                 k.sbu = context.TBL_PROFILE_BUSINESS_UNIT.Where(f => f.BUSINESSUNITID == k.businessUnitId).Select(f => f.BUSINESSUNITNAME + " " + f.BUSINESSUNITSHORTCODE)?.FirstOrDefault();
                             }
+
                             var allExposures = (from a in context.TBL_LOAN_APPLICATION_COLLATERL
                                                 join b in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
                                                 join o in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals o.LOANAPPLICATIONDETAILID
