@@ -1144,6 +1144,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     GetInsurancePolicyExpirationNotification();
                     GetInsurancePolicyExpiredNotification();
+                    GetInsurancePolicyExpiredNotificationForZonalAndGroupHeads();
                 }
             }
 
@@ -1250,14 +1251,14 @@ namespace FintrakBanking.Repositories.Setups.General
             if (CompareDate() == true)
             {
                 TimeSpan start = new TimeSpan(8, 0, 0);
-                TimeSpan end = new TimeSpan(16, 30, 0);
+                TimeSpan end = new TimeSpan(8, 30, 0);
 
                 if ((now >= start) && (now <= end))
                 {
-                    /*GroupImminentMaturitiesByGroupHeads();
+                    GroupImminentMaturitiesByGroupHeads();
                     GetImminentMaturities();
                     GetPastDueObligationsReminder();
-                    GetPastDueObligationsReminderByGroupHeads();*/
+                    GetPastDueObligationsReminderByGroupHeads();
                     state = true;
                 }
             }
@@ -1404,6 +1405,8 @@ namespace FintrakBanking.Repositories.Setups.General
                          || m.OPERATIONMETHOD.Trim() == "GetImminentMaturities"
                          || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminder"
                          || m.OPERATIONMETHOD.Trim() == "GetStaffLoanPortfolioReport"
+                         || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminderGroupHeads"
+                         || m.OPERATIONMETHOD.Trim() == "GetImminentMaturitiesGroupHeads"
                          )).FirstOrDefault();
 
             if (DBdate == null)
@@ -1639,12 +1642,12 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // Maturing Obligations/GetImminentMaturities method by group heads
             var groupHeadsList = externalAlertRepository.GetImminentMaturitiesGroupHeads();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities" && a.ISACTIVE == true).FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturitiesGroupHeads" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = alertTitleInfo.DEFAULTEMAIL;
+                defaultEmail = alertTitleInfo.DEFAULTEMAIL.ToLower().Replace("olukayode.ajayi@accessbankplc.com;", "");
             }
             if (alertTitleInfo != null && groupHeadsList != null && groupHeadsList.Count() > 0)
             {
@@ -1657,7 +1660,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var alertTemplate = alertTitleInfo.TEMPLATE;
                     string emailList = "";
                     var groupHeadDetail = context.TBL_STAFF.Where(b => b.MISCODE == groupHead.misCode).FirstOrDefault();
-                    var accountOfficers = externalAlertRepository.GetAccountOfficersByGroupHeads(groupHead.misCode).ToList();
+                    var accountOfficers = externalAlertRepository.GetAccountOfficersByGroupHeads(groupHead.misCode).Where(x=>x.Email.ToLower() != "herbert.wigwe@accessbankplc.com" && x.Email.ToLower() != "wigweh@accessbankplc.com").ToList();
                     var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
 
 
@@ -1726,7 +1729,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
                         alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                        emailList = defaultEmail; // groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
+                        emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail;
                         alert.receiverEmailList.Add(emailList);
                         alert.template = alertTemplate;
                         alert.alertTitle = alertTitle;
@@ -1746,12 +1749,12 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetPastDueObligationsReminder method by group heads
             var groupHeadsList = externalAlertRepository.GetPastDueObligationsReminderByGroupHeads();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetPastDueObligationsReminder" && a.ISACTIVE == true).FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetPastDueObligationsReminderGroupHeads" && a.ISACTIVE == true).FirstOrDefault();
 
             var defaultEmail = "";
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower().Replace("olukayode.ajayi@accessbankplc.com;", "");
             }
             if (alertTitleInfo != null && groupHeadsList != null && groupHeadsList.Count() > 0)
             {
@@ -1764,7 +1767,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var alertTemplate = alertTitleInfo.TEMPLATE;
                     string emailList = "";
                     var groupHeadDetail = context.TBL_STAFF.Where(b => b.MISCODE == groupHead.misCode).FirstOrDefault();
-                    var accountOfficers = externalAlertRepository.GetPasDueObligationsAccountOfficersByGroupHeads(groupHeadDetail.MISCODE).ToList();
+                    var accountOfficers = externalAlertRepository.GetPasDueObligationsAccountOfficersByGroupHeads(groupHeadDetail.MISCODE).Where(x=> x.Email.ToLower() != "herbert.wigwe@accessbankplc.com" && x.Email.ToLower() != "wigweh@accessbankplc.com").ToList();
                     var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
 
                     var result = string.Empty;
@@ -1827,7 +1830,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
                         alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                        emailList = defaultEmail; // groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
+                        emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail;
                         alert.receiverEmailList.Add(emailList);
                         alert.template = alertTemplate;
                         alert.alertTitle = alertTitle;
@@ -65853,24 +65856,29 @@ namespace FintrakBanking.Repositories.Setups.General
                     AlertsViewModel alert = new AlertsViewModel();
                     var alertTitle = alertTitleInfo.TITLE;
                     var alertTemplate = alertTitleInfo.TEMPLATE;
-                    if(i.CREATEDBY != null)
+                    var customerName = "";
+                    
+                    if (i.CREATEDBY != null && i.CREATEDBY > 0)
                     {
                         appDetails = (int)i.CREATEDBY;
                     }
                     else if (i.LOANAPPLICATIONDETAILID == null)
                     {
-                        appDetails = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).Select(x => x.CREATEDBY).FirstOrDefault();
+                        var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
+                        customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                        appDetails = customer.CREATEDBY;
                     }
                     else
                     {
-                        appDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.LOANAPPLICATIONDETAILID).Select(x => x.CREATEDBY).FirstOrDefault();
+                        var customer = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                        customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                        appDetails = customer.CREATEDBY;
                     }
 
                     var staff = context.TBL_STAFF.Find(appDetails);
-                    var customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == appDetails).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                     var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                     var accountOfficerEmail = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.EMAIL).FirstOrDefault();
-                    var rmEmail = context.TBL_STAFF.Where(x => x.STATEID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL).FirstOrDefault();
+                    var rmEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL).FirstOrDefault();
                     //var previousInsurancePolicyDetails = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => d.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID && DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)).OrderBy(d=>d.INSURANCEENDDATE).ToList();
 
                     var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
@@ -65949,23 +65957,28 @@ namespace FintrakBanking.Repositories.Setups.General
                     var alertTemplate = alertTitleInfo.TEMPLATE;
 
                     int appDetails;
-                    if(i.CREATEDBY != null)
+                    var customerName = "";
+
+                    if (i.CREATEDBY != null && i.CREATEDBY > 0)
                     {
                         appDetails = (int)i.CREATEDBY;
                     }
                     else if (i.LOANAPPLICATIONDETAILID == null)
                     {
-                        appDetails = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).Select(x => x.CREATEDBY).FirstOrDefault();
+                        var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
+                        customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                        appDetails = customer.CREATEDBY;
                     }
                     else
                     {
-                        appDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.LOANAPPLICATIONDETAILID).Select(x => x.CREATEDBY).FirstOrDefault();
+                        var customer = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                        customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                        appDetails = customer.CREATEDBY;
                     }
                     var staff = context.TBL_STAFF.Find(appDetails);
-                    var customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == appDetails).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                     var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                     var accountOfficerEmail = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.EMAIL).FirstOrDefault();
-                    var rmEmail = context.TBL_STAFF.Where(x => x.STATEID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL)?.FirstOrDefault();
+                    var rmEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL)?.FirstOrDefault();
                     //var previousInsurancePolicyDetails = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => d.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID && DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)).OrderBy(d=>d.INSURANCEENDDATE).ToList();
 
                     var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
@@ -66018,6 +66031,203 @@ namespace FintrakBanking.Repositories.Setups.General
                 SendAlertNotification(alerts);
             }
         }
+
+        public void GetInsurancePolicyExpiredNotificationForZonalAndGroupHeads()
+        {
+            // GetInsurancePolicyExpirationNotification method
+            var insurancePolicyNotification = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => DbFunctions.DiffDays(DateTime.UtcNow, d.INSURANCEENDDATE).Value < 1 && d.DELETED == false).ToList();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpiredNotificationForZonalAndGroupHeads" && a.ISACTIVE == true).FirstOrDefault();
+            var defaultEmail = "";
+            var emailList = "";
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (alertTitleInfo != null && insurancePolicyNotification.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var i in insurancePolicyNotification)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+
+                    int appDetails;
+                    var customerName = "";
+
+                    if (i.CREATEDBY != null && i.CREATEDBY > 0)
+                    {
+                        appDetails = (int)i.CREATEDBY;
+                    }
+                    else if (i.LOANAPPLICATIONDETAILID == null)
+                    {
+                        var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
+                        customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                        appDetails = customer.CREATEDBY;
+                    }
+                    else
+                    {
+                        var customer = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                        customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                        appDetails = customer.CREATEDBY;
+                    }
+                    var staff = context.TBL_STAFF.Find(appDetails);
+                    var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                    var accountOfficerEmail = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.EMAIL).FirstOrDefault();
+                    var rmEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL)?.FirstOrDefault();
+                    //var previousInsurancePolicyDetails = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => d.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID && DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)).OrderBy(d=>d.INSURANCEENDDATE).ToList();
+
+                    var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
+
+                    var omv = string.Format("{0:#,##.00}", Convert.ToDecimal(i.OMV));
+                    var sumInsured = string.Format("{0:#,##.00}", Convert.ToDecimal(i.SUMINSURED));
+                    var premium = string.Format("{0:#,##.00}", Convert.ToDecimal(i.PREMIUMPAID));
+                    var expiryDate = i.INSURANCEENDDATE?.ToString("dd-MM-yyyy");
+                    int numberOfDays = (i.INSURANCEENDDATE.Value - DateTime.Now).Days;
+
+
+
+                    var result = $@"
+                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>Collateral Detail</b></td>
+                            <td><b>Open Market Value</b></td>
+                            <td><b>Sum Insured</b></td>
+                            <td><b>Premium</b></td>
+                            <td><b>Insurance Expiry Date</b></td>
+                            <td><b>Insurance Policy Type</b></td>
+                        </tr>";
+
+                    result = result + $@"
+                        <tr>
+                            <td>{i.COLLATERALDETAILS}</td>
+                            <td>{$"{omv}"}</td>
+                            <td>{$"{sumInsured}"}</td>
+                            <td>{$"{premium}"}</td>
+                            <td>{expiryDate}</td>
+                            <td>{insurancePolicyType}</td>
+                        </tr>";
+
+                    result = result + $"</table>";
+
+                    alertTitle = alertTitle.Replace("@{{customerName}}", customerName);
+                    alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", accountOfficerName);
+                    alertTemplate = alertTemplate.Replace("@{{customerName}}", customerName);
+                    alertTemplate = alertTemplate.Replace("@{{daysToExpire}}", numberOfDays.ToString());
+                    alertTemplate = alertTemplate.Replace("@{{detail}}", result);
+                    emailList = rmEmail + ";" + accountOfficerEmail;
+                    emailList = emailList + defaultEmail;
+                    alert.receiverEmailList.Add(emailList);
+                    alert.template = alertTemplate;
+                    alert.alertTitle = alertTitle;
+                    alert.canFire = true;
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                    alerts.Add(alert);
+                }
+                SendAlertNotification(alerts);
+            }
+        }
+
+        public void GetInsurancePolicyExpiredNotificationForEds()
+        {
+            // GetInsurancePolicyExpirationNotification method
+            var insurancePolicyNotification = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => DbFunctions.DiffDays(DateTime.UtcNow, d.INSURANCEENDDATE).Value < 1 && d.DELETED == false).ToList();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpiredNotificationForEds" && a.ISACTIVE == true).FirstOrDefault();
+            var defaultEmail = "";
+            var emailList = "";
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (alertTitleInfo != null && insurancePolicyNotification.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var i in insurancePolicyNotification)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+
+                    int appDetails;
+                    var customerName = "";
+
+                    if (i.CREATEDBY != null && i.CREATEDBY > 0)
+                    {
+                        appDetails = (int)i.CREATEDBY;
+                    }
+                    else if (i.LOANAPPLICATIONDETAILID == null)
+                    {
+                        var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
+                        customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                        appDetails = customer.CREATEDBY;
+                    }
+                    else
+                    {
+                        var customer = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                        customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                        appDetails = customer.CREATEDBY;
+                    }
+                    var staff = context.TBL_STAFF.Find(appDetails);
+                    var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                    var accountOfficerEmail = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.EMAIL).FirstOrDefault();
+                    var rmEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL)?.FirstOrDefault();
+                    //var previousInsurancePolicyDetails = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => d.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID && DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)).OrderBy(d=>d.INSURANCEENDDATE).ToList();
+
+                    var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
+
+                    var omv = string.Format("{0:#,##.00}", Convert.ToDecimal(i.OMV));
+                    var sumInsured = string.Format("{0:#,##.00}", Convert.ToDecimal(i.SUMINSURED));
+                    var premium = string.Format("{0:#,##.00}", Convert.ToDecimal(i.PREMIUMPAID));
+                    var expiryDate = i.INSURANCEENDDATE?.ToString("dd-MM-yyyy");
+                    int numberOfDays = (i.INSURANCEENDDATE.Value - DateTime.Now).Days;
+
+
+
+                    var result = $@"
+                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>Collateral Detail</b></td>
+                            <td><b>Open Market Value</b></td>
+                            <td><b>Sum Insured</b></td>
+                            <td><b>Premium</b></td>
+                            <td><b>Insurance Expiry Date</b></td>
+                            <td><b>Insurance Policy Type</b></td>
+                        </tr>";
+
+                    result = result + $@"
+                        <tr>
+                            <td>{i.COLLATERALDETAILS}</td>
+                            <td>{$"{omv}"}</td>
+                            <td>{$"{sumInsured}"}</td>
+                            <td>{$"{premium}"}</td>
+                            <td>{expiryDate}</td>
+                            <td>{insurancePolicyType}</td>
+                        </tr>";
+
+                    result = result + $"</table>";
+
+                    alertTitle = alertTitle.Replace("@{{customerName}}", customerName);
+                    alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", accountOfficerName);
+                    alertTemplate = alertTemplate.Replace("@{{customerName}}", customerName);
+                    alertTemplate = alertTemplate.Replace("@{{daysToExpire}}", numberOfDays.ToString());
+                    alertTemplate = alertTemplate.Replace("@{{detail}}", result);
+                    emailList = rmEmail + ";" + accountOfficerEmail;
+                    emailList = emailList + defaultEmail;
+                    alert.receiverEmailList.Add(emailList);
+                    alert.template = alertTemplate;
+                    alert.alertTitle = alertTitle;
+                    alert.canFire = true;
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                    alerts.Add(alert);
+                }
+                SendAlertNotification(alerts);
+            }
+        }
+
 
 
         public void UpdateInsurancePolicyStatus()
@@ -68137,15 +68347,15 @@ namespace FintrakBanking.Repositories.Setups.General
         public string GetAllDivisionHeadsEmails(string regionCode)
         {
             var list = "";
-            var regionEmails = externalAlertRepository.GetDivisionalOfficersByGroupHeads(regionCode);
+            var regionEmails = externalAlertRepository.GetDivisionalOfficersByGroupHeads(regionCode).Where(x=>x.Email.ToLower() != "herbert.wigwe@accessbankplc.com" && x.Email.ToLower() != "wigweh@accessbankplc.com").ToList();
 
             foreach (var t in regionEmails)
             {
                 list = list + ";" + t.Email;
-                if (t.misCode == "IBG800")
-                {
-                    list = list + ";ogbonnar@accessbankplc.com;Soji-OkusanyaI@accessbankplc.com";
-                }
+                //if (t.misCode == "IBG800")
+                //{
+                //    list = list + ";ogbonnar@accessbankplc.com;Soji-OkusanyaI@accessbankplc.com";
+                //}
             }
             return list;
         }
