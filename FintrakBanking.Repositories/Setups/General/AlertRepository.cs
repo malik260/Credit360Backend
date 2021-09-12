@@ -130,11 +130,11 @@ namespace FintrakBanking.Repositories.Setups.General
                               timeFrom = b.TIMEFROM,
                               timeTo = b.TIMETO,
                               frequency = b.FREQUENCYID,
-                          }).OrderBy(x=>x.title).ToList(); 
+                          }).OrderBy(x=>x.title).ToList();
 
-             
             return alerts;
         }
+
 
         public IEnumerable<AlertTitleViewModel> GetAllAlertsForDropdown()
         {
@@ -198,6 +198,58 @@ namespace FintrakBanking.Repositories.Setups.General
             var data = alerts.Union(alertsMethods);
             return data;
         }
+
+        public IEnumerable<AlertTitleViewModel> GetAllAlertsBindingMethods()
+        {
+            var method = context.TBL_ALERT_BINDING_METHODS.Where(m => m.METHODTNAME != null).Select(m => m.METHODTNAME.ToLower()).ToList();
+
+            var methods = (from c in context.TBL_ALERT_BINDING_METHODS
+                                 select new AlertTitleViewModel
+                                 {
+                                     alertTitleId = c.BINDINGMEHTODID,
+                                     title = c.METHODTITLE,
+                                     bindingMethod = c.METHODTNAME,
+                                     bindingMethodId = c.BINDINGMEHTODID,
+                                 }).ToList();
+
+            var methods2 = (from x in context.TBL_ALERT_TITLE
+                            where !method.Contains(x.BINDINGMETHOD.ToLower())
+                            select new AlertTitleViewModel
+                           {
+                               alertTitleId = x.ALERTTITLEID,
+                               title = x.TITLE,
+                               bindingMethod = x.BINDINGMETHOD,
+                               bindingMethodId = x.ALERTTITLEID,
+                           }).ToList();
+
+            var data = methods.Union(methods2);
+            return data.OrderBy(x => x.title).ToList();
+        }
+
+        public IEnumerable<AlertTitleViewModel> GetAllBindingMethods()
+        {
+            var alertsMethods = (from c in context.TBL_ALERT_BINDING_METHODS
+                                 select new AlertTitleViewModel
+                                 {
+                                     alertTitleId = c.BINDINGMEHTODID,
+                                     title = c.METHODTITLE,
+                                     bindingMethod = c.METHODTNAME,
+                                     bindingMethodId = c.BINDINGMEHTODID,
+                                 }).OrderBy(x => x.title).ToList();
+
+            var methods = (from x in context.TBL_ALERT_TITLE
+                           select new AlertTitleViewModel
+                                 {
+                                     alertTitleId = x.ALERTTITLEID,
+                                     title = x.TITLE,
+                                     bindingMethod = x.BINDINGMETHOD,
+                                     bindingMethodId = x.ALERTTITLEID,
+                           }).OrderBy(y => y.title).ToList();
+
+            var data = alertsMethods.Union(methods);
+            return data;
+        }
+
         public IEnumerable<StaffRoleViewModel> GetAllStaffRoles()
         {
             var staffRoles = (from a in context.TBL_STAFF_ROLE
@@ -1145,6 +1197,28 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetInsurancePolicyExpirationNotification();
                     GetInsurancePolicyExpiredNotification();
                     GetInsurancePolicyExpiredNotificationForZonalAndGroupHeads();
+                    GetInsurancePolicyExpiredNotificationForEds();
+                }
+            }
+
+            if (CompareInsuranceNotificationEdDate() == true)
+            {
+                TimeSpan startInsurance = new TimeSpan(12, 0, 0);
+                TimeSpan endInsurance = new TimeSpan(12, 30, 0);
+                if ((now >= startInsurance) && (now <= endInsurance))
+                {
+                    var monday = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+                    var lastDayOfMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+                    var today = DateTime.Now.Day;
+                    if (monday.Date == DateTime.Now.Date)
+                    {
+                        GetInsurancePolicyExpiredNotificationForZonalAndGroupHeads();
+                    }
+
+                    if (lastDayOfMonth == today)
+                    {
+                        GetInsurancePolicyExpiredNotificationForEds();
+                    }
                 }
             }
 
@@ -1441,6 +1515,21 @@ namespace FintrakBanking.Repositories.Setups.General
                          || m.OPERATIONMETHOD.Trim() == "GetInsurancePolicyExpiredNotification"
                          )).FirstOrDefault();
 
+            if (DBdate == null)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private bool CompareInsuranceNotificationEdDate()
+        {
+            DateTime currentDate = DateTime.Now;
+            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                         && (m.OPERATIONMETHOD.Trim() == "GetInsurancePolicyExpiredNotificationForZonalAndGroupHeads"
+                         || m.OPERATIONMETHOD.Trim() == "GetInsurancePolicyExpiredNotificationForEds"
+                         )).FirstOrDefault();
             if (DBdate == null)
             {
                 return true;
@@ -66039,6 +66128,8 @@ namespace FintrakBanking.Repositories.Setups.General
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpiredNotificationForZonalAndGroupHeads" && a.ISACTIVE == true).FirstOrDefault();
             var defaultEmail = "";
             var emailList = "";
+            var zonalEmail = "";
+            var groupEmail = "";
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
@@ -66048,12 +66139,24 @@ namespace FintrakBanking.Repositories.Setups.General
             {
 
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                var result = string.Empty;
+                AlertsViewModel alert = new AlertsViewModel();
+                var alertTitle = alertTitleInfo.TITLE;
+                var alertTemplate = alertTitleInfo.TEMPLATE;
+                var n = 0;
+                result = $@"
+                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>Collateral Detail</b></td>
+                            <td><b>Customer Name</b></td>
+                            <td><b>Open Market Value</b></td>
+                            <td><b>Sum Insured</b></td>
+                            <td><b>Premium</b></td>
+                            <td><b>Insurance Expiry Date</b></td>
+                            <td><b>Insurance Policy Type</b></td>
+                        </tr>";
                 foreach (var i in insurancePolicyNotification)
                 {
-                    AlertsViewModel alert = new AlertsViewModel();
-                    var alertTitle = alertTitleInfo.TITLE;
-                    var alertTemplate = alertTitleInfo.TEMPLATE;
-
                     int appDetails;
                     var customerName = "";
 
@@ -66073,11 +66176,13 @@ namespace FintrakBanking.Repositories.Setups.General
                         customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = customer.CREATEDBY;
                     }
-                    var staff = context.TBL_STAFF.Find(appDetails);
-                    var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
-                    var accountOfficerEmail = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.EMAIL).FirstOrDefault();
-                    var rmEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL)?.FirstOrDefault();
-                    //var previousInsurancePolicyDetails = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => d.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID && DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)).OrderBy(d=>d.INSURANCEENDDATE).ToList();
+                    var ao = context.TBL_STAFF.Find(appDetails);
+                    var rm = context.TBL_STAFF.Find(ao.SUPERVISOR_STAFFID);
+                    var zh = context.TBL_STAFF.Find(rm.SUPERVISOR_STAFFID);
+                    var gh = context.TBL_STAFF.Find(zh.SUPERVISOR_STAFFID);
+
+                    zonalEmail = zh?.EMAIL;
+                    groupEmail = gh?.EMAIL;
 
                     var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
 
@@ -66086,38 +66191,23 @@ namespace FintrakBanking.Repositories.Setups.General
                     var premium = string.Format("{0:#,##.00}", Convert.ToDecimal(i.PREMIUMPAID));
                     var expiryDate = i.INSURANCEENDDATE?.ToString("dd-MM-yyyy");
                     int numberOfDays = (i.INSURANCEENDDATE.Value - DateTime.Now).Days;
-
-
-
-                    var result = $@"
-                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
-                        <tr>
-                            <td><b>Collateral Detail</b></td>
-                            <td><b>Open Market Value</b></td>
-                            <td><b>Sum Insured</b></td>
-                            <td><b>Premium</b></td>
-                            <td><b>Insurance Expiry Date</b></td>
-                            <td><b>Insurance Policy Type</b></td>
-                        </tr>";
-
+                    n++;
                     result = result + $@"
                         <tr>
+                            <td>{n}</td>
                             <td>{i.COLLATERALDETAILS}</td>
+                            <td>{customerName}</td>
                             <td>{$"{omv}"}</td>
                             <td>{$"{sumInsured}"}</td>
                             <td>{$"{premium}"}</td>
                             <td>{expiryDate}</td>
                             <td>{insurancePolicyType}</td>
                         </tr>";
-
+                }
                     result = result + $"</table>";
 
-                    alertTitle = alertTitle.Replace("@{{customerName}}", customerName);
-                    alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", accountOfficerName);
-                    alertTemplate = alertTemplate.Replace("@{{customerName}}", customerName);
-                    alertTemplate = alertTemplate.Replace("@{{daysToExpire}}", numberOfDays.ToString());
                     alertTemplate = alertTemplate.Replace("@{{detail}}", result);
-                    emailList = rmEmail + ";" + accountOfficerEmail;
+                    emailList = zonalEmail + ";" + groupEmail;
                     emailList = emailList + defaultEmail;
                     alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
@@ -66125,8 +66215,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.canFire = true;
                     alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
+                if (alerts != null)
+                {
+                    SendAlertNotification(alerts);
                 }
-                SendAlertNotification(alerts);
             }
         }
 
@@ -66144,14 +66236,29 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (alertTitleInfo != null && insurancePolicyNotification.Count() > 0)
             {
-
+                var result = string.Empty;
+                var tempResult = string.Empty;
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                 tempResult = $@"
+                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>S/N</b></td>
+                            <td><b>Collateral Detail</b></td>
+                            <td><b>Customer Name</b></td>
+                            <td><b>Open Market Value</b></td>
+                            <td><b>Sum Insured</b></td>
+                            <td><b>Premium</b></td>
+                            <td><b>Insurance Expiry Date</b></td>
+                            <td><b>Insurance Policy Type</b></td>
+                        </tr>";
+
+                        AlertsViewModel alert = new AlertsViewModel();
+                        var alertTitle = alertTitleInfo.TITLE;
+                        var alertTemplate = alertTitleInfo.TEMPLATE;
+                var n = 0;
                 foreach (var i in insurancePolicyNotification)
                 {
-                    AlertsViewModel alert = new AlertsViewModel();
-                    var alertTitle = alertTitleInfo.TITLE;
-                    var alertTemplate = alertTitleInfo.TEMPLATE;
-
+                    n++;
                     int appDetails;
                     var customerName = "";
 
@@ -66171,11 +66278,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = customer.CREATEDBY;
                     }
-                    var staff = context.TBL_STAFF.Find(appDetails);
-                    var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
-                    var accountOfficerEmail = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x.EMAIL).FirstOrDefault();
-                    var rmEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL)?.FirstOrDefault();
-                    //var previousInsurancePolicyDetails = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => d.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID && DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)).OrderBy(d=>d.INSURANCEENDDATE).ToList();
 
                     var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
 
@@ -66185,46 +66287,33 @@ namespace FintrakBanking.Repositories.Setups.General
                     var expiryDate = i.INSURANCEENDDATE?.ToString("dd-MM-yyyy");
                     int numberOfDays = (i.INSURANCEENDDATE.Value - DateTime.Now).Days;
 
-
-
-                    var result = $@"
-                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                       tempResult = tempResult + $@"
                         <tr>
-                            <td><b>Collateral Detail</b></td>
-                            <td><b>Open Market Value</b></td>
-                            <td><b>Sum Insured</b></td>
-                            <td><b>Premium</b></td>
-                            <td><b>Insurance Expiry Date</b></td>
-                            <td><b>Insurance Policy Type</b></td>
-                        </tr>";
-
-                    result = result + $@"
-                        <tr>
+                            <td>{n}</td>
                             <td>{i.COLLATERALDETAILS}</td>
+                            <td>{customerName}</td>
                             <td>{$"{omv}"}</td>
                             <td>{$"{sumInsured}"}</td>
                             <td>{$"{premium}"}</td>
                             <td>{expiryDate}</td>
                             <td>{insurancePolicyType}</td>
                         </tr>";
+                }
+                       tempResult = tempResult + $"</table>";
 
-                    result = result + $"</table>";
-
-                    alertTitle = alertTitle.Replace("@{{customerName}}", customerName);
-                    alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", accountOfficerName);
-                    alertTemplate = alertTemplate.Replace("@{{customerName}}", customerName);
-                    alertTemplate = alertTemplate.Replace("@{{daysToExpire}}", numberOfDays.ToString());
-                    alertTemplate = alertTemplate.Replace("@{{detail}}", result);
-                    emailList = rmEmail + ";" + accountOfficerEmail;
-                    emailList = emailList + defaultEmail;
+                    alertTemplate = alertTemplate.Replace("@{{detail}}", tempResult);
+                    emailList = defaultEmail;
                     alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
                     alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
+
+                if (alerts != null)
+                {
+                    SendAlertNotification(alerts);
                 }
-                SendAlertNotification(alerts);
             }
         }
 

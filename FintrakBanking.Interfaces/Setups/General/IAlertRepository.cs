@@ -59,5 +59,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<StaffGroupEmailViewModel> GetAllStaffGroupEmail();
         IEnumerable<AlertLevelViewModel> GetAllAlertGroupEmail();
         bool AddAlertGroupEmail(AlertLevelViewModel model);
+        IEnumerable<AlertTitleViewModel> GetAllAlertsBindingMethods();
+        IEnumerable<AlertTitleViewModel> GetAllBindingMethods();
     }
 }
