@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using FintrakBanking.Common;
 using FintrakBanking.Common.CustomException;
@@ -10,7 +11,6 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -62,79 +62,83 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public string SubmitTakeFee(LoanFeeChargesViewModel model)
+        public WorkflowResponse SubmitTakeFee(LoanFeeChargesViewModel model)
         {
             int staffId = model.createdBy;
             var applicationDate = general.GetApplicationDate();
-
- 
-            List<int> customerIds = new List<int>();
-            LoanViewModel loan = new LoanViewModel();
-            TBL_LOAN_FEE feeCharge = new TBL_LOAN_FEE();
-
-            foreach (var detail in model.feeDetails)
+            using (var transaction = context.Database.BeginTransaction())
             {
-                int tenor = detail.loanSystemTypeId == 4 ? loan.tenorUsed : loan.tenor;
 
-                feeCharge = context.TBL_LOAN_FEE.Add(new TBL_LOAN_FEE
+                List<int> customerIds = new List<int>();
+                LoanViewModel loan = new LoanViewModel();
+                TBL_LOAN_FEE feeCharge = new TBL_LOAN_FEE();
+
+                foreach (var detail in model.feeDetails)
                 {
-                    LOANID = detail.loanId,
-                    LOANSYSTEMTYPEID = detail.loanSystemTypeId,/*Term/Disbursed Facility..Overdraft Facility..Contingent Liability*/
-                    CHARGEFEEID = detail.chargeFeeId, // refactor to operationId from ui!
-                    ISPOSTED = false,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,// REMOVE DUPLICATE [STATUSID]
-                    FEERATEVALUE = detail.feeRate,
-                    FEEDEPENDENTAMOUNT = 0,
-                    FEEAMOUNT = detail.feeAmount,
-                    EARNEDFEEAMOUNT = 0,
-                    TAXAMOUNT = 0,
-                    EARNEDTAXAMOUNT = 0,
-                    ISINTEGRALFEE = false,
-                    ISRECURRING = false,
-                    RECURRINGPAYMENTDAY = 0,
-                    DESCRIPTION = detail.description,
-                    ISMANUAL = true,
-                    CREATEDBY = staffId,
-                    DATETIMECREATED = DateTime.Now,
-                    CASAACCOUNTID = detail.casaAccount,
-                    
-                });
-                if (context.SaveChanges() == 0) throw new SecureException("An error occured while saving the data!"); // this save is necessary to grab targetid
-                audit.AddAuditTrail(new TBL_AUDIT
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.LoanChargeFee,
-                    STAFFID = model.createdBy,
-                    BRANCHID = model.userBranchId,
-                    DETAIL = $"Added to tbl_Loan_Fee '{ feeCharge.LOANCHARGEFEEID}' ",
-                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                    URL = model.applicationUrl,
-                    APPLICATIONDATE = general.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now,
-                    DEVICENAME = CommonHelpers.GetDeviceName(),
-                    OSNAME = CommonHelpers.FriendlyName()
-                });
-                workflow.StaffId = model.createdBy;
-                workflow.CompanyId = model.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                workflow.TargetId = feeCharge.LOANCHARGEFEEID; // model.loanReviewOperationsId;
-                workflow.Comment = "Take Fee";
-                workflow.OperationId = (int)OperationsEnum.ManualFeeChargeCollectionApproval;
-                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                workflow.ExternalInitialization = true;
-                var response = workflow.LogActivity();
+                    int tenor = detail.loanSystemTypeId == 4 ? loan.tenorUsed : loan.tenor;
 
-               
+                    feeCharge = context.TBL_LOAN_FEE.Add(new TBL_LOAN_FEE
+                    {
+                        LOANID = detail.loanId,
+                        LOANSYSTEMTYPEID = detail.loanSystemTypeId,/*Term/Disbursed Facility..Overdraft Facility..Contingent Liability*/
+                        CHARGEFEEID = detail.chargeFeeId, // refactor to operationId from ui!
+                        ISPOSTED = false,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,// REMOVE DUPLICATE [STATUSID]
+                        FEERATEVALUE = detail.feeRate,
+                        FEEDEPENDENTAMOUNT = 0,
+                        FEEAMOUNT = detail.feeAmount,
+                        EARNEDFEEAMOUNT = 0,
+                        TAXAMOUNT = 0,
+                        EARNEDTAXAMOUNT = 0,
+                        ISINTEGRALFEE = false,
+                        ISRECURRING = false,
+                        RECURRINGPAYMENTDAY = 0,
+                        DESCRIPTION = detail.description,
+                        ISMANUAL = true,
+                        CREATEDBY = staffId,
+                        DATETIMECREATED = DateTime.Now,
+                        CASAACCOUNTID = detail.casaAccount,
 
+                    });
+                    if (context.SaveChanges() == 0) throw new SecureException("An error occured while saving the data!"); // this save is necessary to grab targetid
+                    audit.AddAuditTrail(new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoanChargeFee,
+                        STAFFID = model.createdBy,
+                        BRANCHID = model.userBranchId,
+                        DETAIL = $"Added to tbl_Loan_Fee '{ feeCharge.LOANCHARGEFEEID}' ",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
+                    });
+                    workflow.StaffId = model.createdBy;
+                    workflow.CompanyId = model.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    workflow.TargetId = feeCharge.LOANCHARGEFEEID; // model.loanReviewOperationsId;
+                    workflow.Comment = "Take Fee";
+                    workflow.OperationId = (int)OperationsEnum.ManualFeeChargeCollectionApproval;
+                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workflow.ExternalInitialization = true;
+                    var response = workflow.LogActivity();
+
+
+
+                }
+                var result = context.SaveChanges() > 0;
+                transaction.Commit();
+                return workflow.Response;
             }
-            var result = context.SaveChanges() > 0;
-            if (result)
-            {
-                return "Successful!! Fee(s) Has Been Sent For Approval ";
-            }
-            else
-            {
-                throw new SecureException("An error occured while saving the data!");
-            }
+            //if (result)
+           //{
+            //    return "Successful!! Fee(s) Has Been Sent For Approval ";
+            //}
+            //else
+            //{
+            //    throw new SecureException("An error occured while saving the data!");
+            //}
 
         }
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetTakeFeeAwaitingApproval(int staffId, int companyId)
@@ -155,12 +159,12 @@ namespace FintrakBanking.Repositories.Credit
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID into x
                             from ch in x.DefaultIfEmpty()
                             where 
-                            (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                            (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                             && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeChargeCollectionApproval
-                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            //&& ids.Contains((int)atrail.TOAPPROVALLEVELID)
                             && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                            && atrail.RESPONSESTAFFID == null 
+                            && atrail.RESPONSESTAFFID == null
                             && op.ISPOSTED == false
                             orderby op.DATETIMECREATED descending
 
@@ -203,7 +207,7 @@ namespace FintrakBanking.Repositories.Credit
                                 principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
                                 interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
                                 approvalStatusId = op.APPROVALSTATUSID,
-                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == atrail.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                 approvedBy = (int)ln.APPROVEDBY,
                                 approverComment = ln.APPROVERCOMMENT,
                                 dateApproved = ln.DATEAPPROVED,
@@ -263,10 +267,13 @@ namespace FintrakBanking.Repositories.Credit
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                      join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID into x
                                      from ch in x.DefaultIfEmpty()
-                                     where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                                     where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                                           || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred 
+                                            )
                                         && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeChargeCollectionApproval
-                                        && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                                        && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                        && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                                        && atrail.RESPONSESTAFFID == null 
+                                        && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                         && op.ISPOSTED == false
 
                                      orderby op.DATETIMECREATED descending
@@ -343,11 +350,14 @@ namespace FintrakBanking.Repositories.Credit
                                       join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID into x
                                       from ch in x.DefaultIfEmpty()
 
-                                      where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                                      where 
+                                      (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                                      || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                                          && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeChargeCollectionApproval
-                                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                                         && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                                         && op.ISPOSTED == false
+                                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                                         && atrail.RESPONSESTAFFID == null 
+                                         && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                         && op.ISPOSTED == false
 
                                       orderby op.DATETIMECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
@@ -626,7 +636,7 @@ namespace FintrakBanking.Repositories.Credit
             return inputTransactions;
         }
 
-        public ApprovalStatusEnum ApproveTakeFee(ApprovalViewModel userModel)
+        public WorkflowResponse ApproveTakeFee(ApprovalViewModel userModel)
         {
             //if(userModel.approvalStatusId<0 || string.IsNullOrEmpty(userModel.comment))
             //{
@@ -653,7 +663,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.StatusId = ((int)userModel.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)userModel.approvalStatusId;
                     workflow.TargetId = userModel.targetId;
                     workflow.Comment = userModel.comment;
-                    workflow.OperationId = (int)OperationsEnum.ManualFeeCharge;
+                    workflow.OperationId = (int)OperationsEnum.ManualFeeChargeCollectionApproval;
                     workflow.DeferredExecution = true;
                     workflow.ExternalInitialization = false;
 
@@ -674,14 +684,14 @@ namespace FintrakBanking.Repositories.Credit
                         feeCharge.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
                         context.SaveChanges();
                         trans.Commit();
-                        return ApprovalStatusEnum.Disapproved;
+                        return workflow.Response;
                     }
                     if (workflow.NewState != (int)ApprovalState.Ended)
                     {
                         feeCharge.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                         output = context.SaveChanges() > 0;
                         trans.Commit();
-                        return ApprovalStatusEnum.Processing;
+                        return workflow.Response;
                     }
 
                     if (workflow.NewState == (int)ApprovalState.Ended)
@@ -722,15 +732,15 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 var EXE = ex;
                             }
-                        
-                        return ApprovalStatusEnum.Approved;
+
+                        return workflow.Response;
                     }
                     else
                     {
                         trans.Commit();
                     }
 
-                    return 0;
+                    return workflow.Response;
                 }
                 catch (Exception ex)
                 {
