@@ -40,6 +40,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return (from m in context.TBL_ACCREDITEDCONSULTANT
                     where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTTYPEID == accreditedConsultantId
+                    && m.DELETED == false
                     select new AccreditedConsultantsViewModel
                     {
                         accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
@@ -77,6 +78,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         join c in context.TBL_ACCREDITEDCONSULTANT_STATE on m.ACCREDITEDCONSULTANTID equals c.ACCREDITEDCONSULTANTID
                         where m.COMPANYID == companyId
                         && m.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent
+                        && m.DELETED == false
                         select new AccreditedConsultantsViewModel
                         {
                             accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
@@ -109,6 +111,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var data = (from m in context.TBL_ACCREDITEDCONSULTANT
                         where m.COMPANYID == companyId
                         && m.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent
+                        && m.DELETED == false
                         select new AccreditedConsultantsViewModel
                         {
                             accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
@@ -175,6 +178,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var data = (from m in context.TBL_ACCREDITEDCONSULTANT
                         join c in context.TBL_ACCREDITEDCONSULTANT_STATE on m.ACCREDITEDCONSULTANTID equals c.ACCREDITEDCONSULTANTID
                         where m.COMPANYID == companyId && c.STATEID == stateId
+                        && m.DELETED == false
                         select new AccreditedConsultantsViewModel
                         {
                             accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
@@ -1256,10 +1260,47 @@ namespace FintrakBanking.Repositories.Setups.General
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
+                AUDITTYPEID = (short)AuditTypeEnum.LoanConsultantUpdated,
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"Deleted Condition Precedent' ",
+                DETAIL = $"Deleted loan consultant Precedent' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            };
+            auditTrail.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool RemoveConsultant(int id, UserInfo user)
+        {
+            var data = this.context.TBL_ACCREDITEDCONSULTANT.Find(id);
+            if (data == null) return false;
+
+            var validateRecoveryCollection = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == id && x.DELETED == false).ToList();
+            if (validateRecoveryCollection.Count() > 0)
+            {
+                throw new SecureException("The agent is currently on recovery collection list. Kindly unassign before deleting");
+            }
+
+            data.DELETED = true;
+            data.DATETIMEDELETED = DateTime.Now;
+            data.DELETEDBY = user.createdBy;
+
+            context.Entry(data).State = System.Data.Entity.EntityState.Modified;
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanConsultantUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted accredited consultant' ",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),

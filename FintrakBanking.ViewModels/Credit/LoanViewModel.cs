@@ -1658,7 +1658,7 @@ namespace FintrakBanking.ViewModels.Credit
         
         
         public string subHead { get; set; }
-        
+        public string customerCode { get; set; }
     }
 
     public class RuniningLoanViewModel : ImpairedWatchListViewModel
