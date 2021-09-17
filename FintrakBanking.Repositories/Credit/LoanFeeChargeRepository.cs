@@ -162,7 +162,7 @@ namespace FintrakBanking.Repositories.Credit
                             (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                             && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeChargeCollectionApproval
-                            //&& ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                             && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && atrail.RESPONSESTAFFID == null
                             && op.ISPOSTED == false
@@ -335,6 +335,33 @@ namespace FintrakBanking.Repositories.Credit
                                          productAccountName = ch.ACCOUNTNAME,
                                          approvedAmount = ld.APPROVEDAMOUNT,
                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+
+                                         divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                                         divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cu.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                                         principalFrequencyTypeId = 0,
+                                         pricipalFrequencyTypeName = "",
+                                         interestFrequencyTypeId =  0,
+                                         interestFrequencyTypeName = "",
+                                         principalNumberOfInstallment = 0,
+                                         interestNumberOfInstallment = 0,
+                                         principalAmount = 0,
+                                         principalInstallmentLeft = 0,
+                                         interestInstallmentLeft = 0,
+                                         scheduleTypeId = 0,
+                                         disbursedBy = null,
+                                         equityContribution = 0,
+                                         firstPrincipalPaymentDate = null,
+                                         firstInterestPaymentDate = null,
+                                         outstandingPrincipal = 0,
+                                         principalAdditionCount = 0,
+                                         principalReductionCount = 0,
+                                         fixedPrincipal = false,
+                                         profileLoan = true,
+                                         scheduled = null,
+                                         isScheduledPrepayment = null,
+                                         scheduledPrepaymentAmount = 0,
+                                         scheduledPrepaymentDate = null
+                                         
                                      }).ToList();
 
             var dataContingentLoan = (from op in context.TBL_LOAN_FEE
@@ -369,8 +396,6 @@ namespace FintrakBanking.Repositories.Credit
                                           loanChargeFeeId = op.LOANCHARGEFEEID,
                                           takeFeeCasaAccountId = op.CASAACCOUNTID,
                                           takeFeeCasaAccountName = op.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
-
-
                                           loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                           loanId = ln.CONTINGENTLOANID,
                                           customerId = ln.CUSTOMERID,
@@ -387,7 +412,6 @@ namespace FintrakBanking.Repositories.Credit
                                           misCode = ln.MISCODE,
                                           teamMiscode = ln.TEAMMISCODE,
                                           principalAmount = ln.CONTINGENTAMOUNT,
-                                          //interestRate = ln.INTERESTRATE,
                                           effectiveDate = ln.EFFECTIVEDATE,
                                           maturityDate = ln.MATURITYDATE,
                                           bookingDate = ln.BOOKINGDATE,
@@ -407,7 +431,6 @@ namespace FintrakBanking.Repositories.Credit
                                           subSectorName = ln.TBL_SUB_SECTOR.NAME,
                                           sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                           dischargeLetter = ln.DISCHARGELETTER,
-                                          //suspendInterest = ln.SUSPENDINTEREST,
                                           customerCode = cu.CUSTOMERCODE,
                                           loanTypeName = at.LOANAPPLICATIONTYPENAME,
                                           customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
@@ -418,17 +441,37 @@ namespace FintrakBanking.Repositories.Credit
                                           relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
                                           productName = pr.PRODUCTNAME,
                                           comment = "",
-                                          
-                                          //lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.CONTINGENTLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                           dateTimeCreated = op.DATETIMECREATED,
-
-
                                           currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                           productAccountNumber = ch.ACCOUNTCODE,
                                           productAccountName = ch.ACCOUNTNAME,
                                           approvedAmount = ld.APPROVEDAMOUNT,
                                           creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
 
+                                          divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                                          divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cu.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                                          principalFrequencyTypeId = 0,
+                                          pricipalFrequencyTypeName = "",
+                                          interestFrequencyTypeId = 0,
+                                          interestFrequencyTypeName = "",
+                                          principalNumberOfInstallment = 0,
+                                          interestNumberOfInstallment = 0,
+                                          principalInstallmentLeft = 0,
+                                          interestInstallmentLeft = 0,
+                                          scheduleTypeId = 0,
+                                          disbursedBy = null,
+                                          equityContribution = 0,
+                                          firstPrincipalPaymentDate = null,
+                                          firstInterestPaymentDate = null,
+                                          outstandingPrincipal = 0,
+                                          principalAdditionCount = 0,
+                                          principalReductionCount = 0,
+                                          fixedPrincipal = false,
+                                          profileLoan = true,
+                                          scheduled = null,
+                                          isScheduledPrepayment = null,
+                                          scheduledPrepaymentAmount = 0,
+                                          scheduledPrepaymentDate = null
                                       }).ToList();
 
 
@@ -438,25 +481,24 @@ namespace FintrakBanking.Repositories.Credit
             var unionAll = termLoanData.Union(revolvingLoanData);
 
             var data = unionAll.Union(contingentLoanData);
-            List<LoanReviewOperationApprovalViewModel> lcyLoans = new List<LoanReviewOperationApprovalViewModel>();
-            List<LoanReviewOperationApprovalViewModel> fcyLoans = new List<LoanReviewOperationApprovalViewModel>();
+            /* List<LoanReviewOperationApprovalViewModel> lcyLoans = new List<LoanReviewOperationApprovalViewModel>();
+             List<LoanReviewOperationApprovalViewModel> fcyLoans = new List<LoanReviewOperationApprovalViewModel>();
 
-            var isLCYUser = activities.Contains("lcy-user");
-            var isFCYUser = activities.Contains("fcy-user");
+             var isLCYUser = activities.Contains("lcy-user");
+             var isFCYUser = activities.Contains("fcy-user");
 
-            if (isLCYUser == true)
-            {
-                lcyLoans = data.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
-                //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
-            }
+             if (isLCYUser == true)
+             {
+                 lcyLoans = data.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+             }
 
-            if (isFCYUser == true)
-            {
-                fcyLoans = data.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+             if (isFCYUser == true)
+             {
+                 fcyLoans = data.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
 
-            }
+             }
 
-            data = lcyLoans.Union(fcyLoans).ToList();
+             data = lcyLoans.Union(fcyLoans).ToList();*/
             return data;
         }
 
