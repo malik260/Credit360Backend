@@ -699,7 +699,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     xx.facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == product.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault();
                 }
 
-                var dataLoanNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                /*var dataLoanNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                              join ra in context.TBL_ACCREDITEDCONSULTANT on lr.ACCREDITEDCONSULTANT equals ra.ACCREDITEDCONSULTANTID
                                              join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                                              join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -859,8 +859,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.loanReference).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReference).ToList();
                 var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanReference).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReference).ToList();
-
-                var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure).Union(dataDigitalExposure);
+                
+                var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure).Union(dataDigitalExposure);*/
+                var unionAll = dataExposure.Union(dataDigitalExposure);
                 var allData = unionAll.ToList();
                 
                 return allData;
@@ -1003,166 +1004,167 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     xx.facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == product.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault();
                 }
 
-                var dataLoanNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                             join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
-                                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
-                                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
-                                             join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
-                                             join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
-                                             join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
-                                             join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                             join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
-                                             where
-                                             (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
-                                             && lr.ISFULLYRECOVERED == false
-                                             && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                             && lr.SOURCE.ToLower() == "retail"
-                                             && lr.DELETED == false
+                /* var dataLoanNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                              join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
+                                              join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                              join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                              join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                              join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                              join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                              join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                              join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
+                                              where
+                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                              && lr.ISFULLYRECOVERED == false
+                                              && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                              && lr.SOURCE.ToLower() == "retail"
+                                              && lr.DELETED == false
 
-                                             orderby ln.DATETIMECREATED descending
-                                             select new RecoveryCollectionsViewModel
-                                             {
-                                                 accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-                                                 dateAssigned = lr.DATEASSIGNED,
-                                                 agentAssigned = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.FIRMNAME).FirstOrDefault(),
-                                                 loanReference = lr.LOANREFERENCE,
-                                                 settlementAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-                                                 customerCode = cu.CUSTOMERCODE,
-                                                 customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
-                                                 referenceNumber = ln.LOANREFERENCENUMBER,
-                                                 productClass = context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID == pr.PRODUCTCLASSID).Select(p => p.PRODUCTCLASSNAME).FirstOrDefault(),
-                                                 main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
-                                                 businessLine = "Nil",
-                                                 subBusinessLine = "Nil",
-                                                 mobileNumber = "Nil",
-                                                 divisionName = "Nil",
-                                                 productCode = pr.PRODUCTCODE,
-                                                 productName = pr.PRODUCTNAME,
-                                                 principalOutstandingBalLcy = ln.OUTSTANDINGPRINCIPAL,
-                                                 bookingDate = ln.BOOKINGDATE,
-                                                 valueDate = ln.DATETIMECREATED,
-                                                 referenceDate = ln.EFFECTIVEDATE,
-                                                 maturityDate = ln.MATURITYDATE,
-                                                 principalAmount = ln.PRINCIPALAMOUNT,
-                                                 accountOfficerCode = st.STAFFCODE,
-                                                 accountOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                                                 processDate = ln.BOOKINGDATE,
-                                                 interest = ln.INTERESTONPASTDUEINTEREST,
-                                                 penalCharges = ln.PENALCHARGEAMOUNT,
-                                                 amountDue = ln.PRINCIPALINSTALLMENTLEFT,
-                                                 loanAmountLcy = ld.APPROVEDAMOUNT,
-                                                 totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
-                                                 collections = lr.TOTALAMOUNTRECOVERY,
-                                                 actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.AMOUNTRECOVERED),
-                                                 commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.COMMISSIONPAYABLE),
-                                                 facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
-                                                 staffCode = st.STAFFCODE,
-                                                 supervisorId = st.SUPERVISOR_STAFFID,
-                                                 location = br.BRANCHNAME,
-                                             }).ToList();
+                                              orderby ln.DATETIMECREATED descending
+                                              select new RecoveryCollectionsViewModel
+                                              {
+                                                  accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                                  dateAssigned = lr.DATEASSIGNED,
+                                                  agentAssigned = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.FIRMNAME).FirstOrDefault(),
+                                                  loanReference = lr.LOANREFERENCE,
+                                                  settlementAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                                  customerCode = cu.CUSTOMERCODE,
+                                                  customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                                  referenceNumber = ln.LOANREFERENCENUMBER,
+                                                  productClass = context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID == pr.PRODUCTCLASSID).Select(p => p.PRODUCTCLASSNAME).FirstOrDefault(),
+                                                  main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
+                                                  businessLine = "Nil",
+                                                  subBusinessLine = "Nil",
+                                                  mobileNumber = "Nil",
+                                                  divisionName = "Nil",
+                                                  productCode = pr.PRODUCTCODE,
+                                                  productName = pr.PRODUCTNAME,
+                                                  principalOutstandingBalLcy = ln.OUTSTANDINGPRINCIPAL,
+                                                  bookingDate = ln.BOOKINGDATE,
+                                                  valueDate = ln.DATETIMECREATED,
+                                                  referenceDate = ln.EFFECTIVEDATE,
+                                                  maturityDate = ln.MATURITYDATE,
+                                                  principalAmount = ln.PRINCIPALAMOUNT,
+                                                  accountOfficerCode = st.STAFFCODE,
+                                                  accountOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                                  processDate = ln.BOOKINGDATE,
+                                                  interest = ln.INTERESTONPASTDUEINTEREST,
+                                                  penalCharges = ln.PENALCHARGEAMOUNT,
+                                                  amountDue = ln.PRINCIPALINSTALLMENTLEFT,
+                                                  loanAmountLcy = ld.APPROVEDAMOUNT,
+                                                  totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
+                                                  collections = lr.TOTALAMOUNTRECOVERY,
+                                                  actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.AMOUNTRECOVERED),
+                                                  commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.COMMISSIONPAYABLE),
+                                                  facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
+                                                  staffCode = st.STAFFCODE,
+                                                  supervisorId = st.SUPERVISOR_STAFFID,
+                                                  location = br.BRANCHNAME,
+                                              }).ToList();
 
-                foreach (var i in dataLoanNonPerforming)
-                {
-                    i.groupHeadName = "Nil";
-                    i.regionName = "Nil";
-                    i.groupName = "Nil";
-                    i.teamName = "Nil";
-                    i.dpd = (DateTime.Now - i.maturityDate).Days;
-                    var rm = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == i.supervisorId).FirstOrDefault();
-                    if (rm != null)
-                    {
-                        var zonalHead = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
-                        if (zonalHead != null)
-                        {
-                            i.groupHeadName = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == zonalHead.SUPERVISOR_STAFFID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
-                        }
-                    }
-                    i.regionName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.region).FirstOrDefault();
-                    i.groupName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.businessUnit).FirstOrDefault();
-                    i.teamName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.deptName).FirstOrDefault();
-                }
+                 foreach (var i in dataLoanNonPerforming)
+                 {
+                     i.groupHeadName = "Nil";
+                     i.regionName = "Nil";
+                     i.groupName = "Nil";
+                     i.teamName = "Nil";
+                     i.dpd = (DateTime.Now - i.maturityDate).Days;
+                     var rm = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == i.supervisorId).FirstOrDefault();
+                     if (rm != null)
+                     {
+                         var zonalHead = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+                         if (zonalHead != null)
+                         {
+                             i.groupHeadName = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == zonalHead.SUPERVISOR_STAFFID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                         }
+                     }
+                     i.regionName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.region).FirstOrDefault();
+                     i.groupName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.businessUnit).FirstOrDefault();
+                     i.teamName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.deptName).FirstOrDefault();
+                 }
 
-                var dataRevolvingNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
-                                                  join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
-                                                  join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
-                                                  join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
-                                                  join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
-                                                  join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
-                                                  join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
-                                                  join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
-                                                  join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
-                                                  where
-                                                  (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
-                                                  && lr.ISFULLYRECOVERED == false
-                                                  && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                                  && lr.SOURCE.ToLower() == "retail"
-                                                  && lr.DELETED == false
+                 var dataRevolvingNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                                   join ln in context.TBL_LOAN_REVOLVING on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
+                                                   join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                                   join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                                   join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                                   join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                                   join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                                   join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                                   join st in context.TBL_STAFF on lr.CREATEDBY equals st.STAFFID
+                                                   where
+                                                   (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                                   && lr.ISFULLYRECOVERED == false
+                                                   && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                                   && lr.SOURCE.ToLower() == "retail"
+                                                   && lr.DELETED == false
 
-                                                  orderby ln.DATETIMECREATED descending
-                                                  select new RecoveryCollectionsViewModel
-                                                  {
-                                                      dateAssigned = lr.DATEASSIGNED,
-                                                      agentAssigned = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.FIRMNAME).FirstOrDefault(),
-                                                      loanReference = lr.LOANREFERENCE,
-                                                      accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-                                                      customerCode = cu.CUSTOMERCODE,
-                                                      customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
-                                                      referenceNumber = ln.LOANREFERENCENUMBER,
-                                                      productClass = context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID == pr.PRODUCTCLASSID).Select(p => p.PRODUCTCLASSNAME).FirstOrDefault(),
-                                                      main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
-                                                      businessLine = "Nil",
-                                                      subBusinessLine = "Nil",
-                                                      mobileNumber = "Nil",
-                                                      divisionName = "Nil",
-                                                      productCode = pr.PRODUCTCODE,
-                                                      accountOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
-                                                      processDate = ln.BOOKINGDATE,
-                                                      productName = pr.PRODUCTNAME,
-                                                      principalOutstandingBalLcy = ln.PASTDUEPRINCIPAL,
-                                                      bookingDate = ln.BOOKINGDATE,
-                                                      valueDate = ln.DATETIMECREATED,
-                                                      referenceDate = ln.EFFECTIVEDATE,
-                                                      maturityDate = ln.MATURITYDATE,
-                                                      principalAmount = ln.OVERDRAFTLIMIT,
-                                                      interest = ln.INTERESTONPASTDUEINTEREST,
-                                                      penalCharges = ln.PENALCHARGEAMOUNT,
-                                                      amountDue = ln.PASTDUEPRINCIPAL,
-                                                      loanAmountLcy = ld.APPROVEDAMOUNT,
-                                                      totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
-                                                      collections = lr.TOTALAMOUNTRECOVERY,
-                                                      actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.AMOUNTRECOVERED),
-                                                      commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.COMMISSIONPAYABLE),
-                                                      facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
-                                                      staffCode = st.STAFFCODE,
-                                                      supervisorId = st.SUPERVISOR_STAFFID,
-                                                      location = br.BRANCHNAME,
-                                                  }).ToList();
+                                                   orderby ln.DATETIMECREATED descending
+                                                   select new RecoveryCollectionsViewModel
+                                                   {
+                                                       dateAssigned = lr.DATEASSIGNED,
+                                                       agentAssigned = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(a => a.FIRMNAME).FirstOrDefault(),
+                                                       loanReference = lr.LOANREFERENCE,
+                                                       accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                                       customerCode = cu.CUSTOMERCODE,
+                                                       customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                                       referenceNumber = ln.LOANREFERENCENUMBER,
+                                                       productClass = context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID == pr.PRODUCTCLASSID).Select(p => p.PRODUCTCLASSNAME).FirstOrDefault(),
+                                                       main = cu.CUSTOMERTYPEID == 1 ? "Retail" : "Non Retail",
+                                                       businessLine = "Nil",
+                                                       subBusinessLine = "Nil",
+                                                       mobileNumber = "Nil",
+                                                       divisionName = "Nil",
+                                                       productCode = pr.PRODUCTCODE,
+                                                       accountOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                                       processDate = ln.BOOKINGDATE,
+                                                       productName = pr.PRODUCTNAME,
+                                                       principalOutstandingBalLcy = ln.PASTDUEPRINCIPAL,
+                                                       bookingDate = ln.BOOKINGDATE,
+                                                       valueDate = ln.DATETIMECREATED,
+                                                       referenceDate = ln.EFFECTIVEDATE,
+                                                       maturityDate = ln.MATURITYDATE,
+                                                       principalAmount = ln.OVERDRAFTLIMIT,
+                                                       interest = ln.INTERESTONPASTDUEINTEREST,
+                                                       penalCharges = ln.PENALCHARGEAMOUNT,
+                                                       amountDue = ln.PASTDUEPRINCIPAL,
+                                                       loanAmountLcy = ld.APPROVEDAMOUNT,
+                                                       totalExposureLcy = lp.TOTALEXPOSUREAMOUNT,
+                                                       collections = lr.TOTALAMOUNTRECOVERY,
+                                                       actualRecovery = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.AMOUNTRECOVERED),
+                                                       commission = context.TBL_LOAN_RECOVERY_COMMISSION_RETAIL.Where(c => c.LOANREFERENCE == ln.LOANREFERENCENUMBER).Sum(c => c.COMMISSIONPAYABLE),
+                                                       facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault(),
+                                                       staffCode = st.STAFFCODE,
+                                                       supervisorId = st.SUPERVISOR_STAFFID,
+                                                       location = br.BRANCHNAME,
+                                                   }).ToList();
 
-                foreach (var i in dataRevolvingNonPerforming)
-                {
-                    i.groupHeadName = "Nil";
-                    i.regionName = "Nil";
-                    i.groupName = "Nil";
-                    i.teamName = "Nil";
-                    i.dpd = (DateTime.Now - i.maturityDate).Days;
-                    var rm = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == i.supervisorId).FirstOrDefault();
-                    if (rm != null)
-                    {
-                        var zonalHead = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
-                        if (zonalHead != null)
-                        {
-                            i.groupHeadName = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == zonalHead.SUPERVISOR_STAFFID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
-                        }
-                    }
-                    i.regionName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.region).FirstOrDefault();
-                    i.groupName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.businessUnit).FirstOrDefault();
-                    i.teamName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.deptName).FirstOrDefault();
-                }
+                 foreach (var i in dataRevolvingNonPerforming)
+                 {
+                     i.groupHeadName = "Nil";
+                     i.regionName = "Nil";
+                     i.groupName = "Nil";
+                     i.teamName = "Nil";
+                     i.dpd = (DateTime.Now - i.maturityDate).Days;
+                     var rm = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == i.supervisorId).FirstOrDefault();
+                     if (rm != null)
+                     {
+                         var zonalHead = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+                         if (zonalHead != null)
+                         {
+                             i.groupHeadName = context.TBL_STAFF.Where(s => s.SUPERVISOR_STAFFID == zonalHead.SUPERVISOR_STAFFID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+                         }
+                     }
+                     i.regionName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.region).FirstOrDefault();
+                     i.groupName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.businessUnit).FirstOrDefault();
+                     i.teamName = staffmisi.Where(z => z.staffCode == i.staffCode).Select(z => z.deptName).FirstOrDefault();
+                 }
 
-                var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.loanReference).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReference).ToList();
-                var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanReference).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReference).ToList();
+                 var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.loanReference).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReference).ToList();
+                 var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanReference).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReference).ToList();
 
-                var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure).Union(dataDigitalExposure);
+                 var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure).Union(dataDigitalExposure);*/
+                var unionAll = dataExposure.Union(dataDigitalExposure);
                 var allData = unionAll.ToList();
 
                 return allData;
@@ -1683,11 +1685,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
                     var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure2).Union(dataDigitalExposure2); */
 
-                    var dataExposure2 = dataExposure.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
-                    var dataDigitalExposure2 = dataDigitalExposure.GroupBy(x => x.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
-
-
-                    var unionAll = dataExposure2.Union(dataDigitalExposure2);
+                    var unionAll = dataExposure.Union(dataDigitalExposure);
                     var allData = unionAll.GroupBy(r => r.accreditedConsultant).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.agentAssigned).ToList();
 
                     foreach (var consultant in allData)
