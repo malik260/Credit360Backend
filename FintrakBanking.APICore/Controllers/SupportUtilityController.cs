@@ -52,15 +52,46 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
-        [HttpPost]
+        [HttpGet]
         [ClaimsAuthorization]
-        [Route("view-approval-trail")]
-        public HttpResponseMessage GetApprovalTrail(WorkflowSupportUtilityViewModel model, int staffId)
+        [Route("view-approval-trail/{searchString}")]
+        public HttpResponseMessage GetApprovalTrail(string searchString)
         {
-            var response = repo.GetApprovalTrail(model.searchString, staffId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Approval trail for " + model.searchString, result = response.Count() });
+            var response = repo.GetApprovalTrail(searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Approval trail for " + searchString, result = response });
 
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("view-unique-operations/{searchString}")]
+        public HttpResponseMessage GetUniqueOperations(string searchString)
+        {
+            var response = repo.GetDistinctOperations(searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Approval trail for " + searchString, result = response });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("view-expected-workflow/{searchString}")]
+        public HttpResponseMessage GetExpectedWorkFlow(int searchString)
+        {
+            var response = repo.GetExpectedWorkFlow(searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Approval trail for " + searchString, result = response });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-business-rule")]
+        public HttpResponseMessage GetBusinessRule()
+        {
+            var response = repo.GetBusinessRule();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Approval trail for " ,  result = response });
+
+        }
+
 
     }
 }
