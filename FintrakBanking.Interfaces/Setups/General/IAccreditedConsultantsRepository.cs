@@ -34,7 +34,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool EditLoanConsultant(int id, LoanConsultantViewModel entity);
         bool RemoveLoanConsultant(int id, UserInfo user);
         List<LoanConsultantViewModel> GetLoanConsultant(int applicationId);
-        bool RemoveConsultant(int id, UserInfo user);
 
         ////Recovery Agent
         //IEnumerable<AccreditedRecoveryAgentViewModel> GetAccreditedRecoveryAgent(int companyId);

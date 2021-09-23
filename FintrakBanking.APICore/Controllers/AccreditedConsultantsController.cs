@@ -565,30 +565,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("accredited-consultant/{id}")]
-        public HttpResponseMessage RemoveAccreditedConsultant(int id)
-        {
-            try
-            {
-                UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                    createdBy = token.GetStaffId,
-                    userIPAddress = Request.RequestUri.Host,
-                };
-                bool response = repo.RemoveConsultant(id, user);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been deleted successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
-            }
-        }
-
         #endregion Loan Consultants
 
     }

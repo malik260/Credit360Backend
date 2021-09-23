@@ -12102,23 +12102,22 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
 
         }
-
         public bool ProposeCollateralForUsage(CollateralCoverageViewModel model)
         {
             decimal facilitiesValue = 0m;
             decimal availableCollateralValues = 0m;
             var data = new TBL_LOAN_APPLICATION_COLLATERL();
 
-            //just open up the code now
-            var proposedCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Any(o => o.COLLATERALCUSTOMERID == model.collateralId
-                                            && o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && o.DELETED == false);
+            //var proposedCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Any(o => o.COLLATERALCUSTOMERID == model.collateralId
+            //                                && o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && o.DELETED == false);
 
-            if (proposedCollateral == true) throw new Exception("This Collateral has already been proposed for this facility");
-            //end of just open up the code now
+            //if (proposedCollateral == true) throw new Exception("This Collateral has already been proposed for this facility");
 
             var facility = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).Select(o => o).FirstOrDefault();
 
             var obligorId = facility.CUSTOMERID;
+
+
             var facilityCurrencyId = facility.CURRENCYID;
 
             var collateral = context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == model.collateralId).Select(o => o).FirstOrDefault();
@@ -12154,41 +12153,39 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
+                //o.LOANAPPLICATIONDETAILID != model.loanApplicationDetailId
                 var collateralMappedToFacilities = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == model.collateralId && o.DELETED == false).Select(o => o).ToList();
+                // o.COLLATERALCUSTOMERID != model.collateralId
                 var facilityMappedToCollaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && o.DELETED == false).Select(o => o).ToList();
                 availableCollateralValues = collateral.COLLATERALVALUE;
-                facilitiesValue = decimal.Multiply((facilitiesValue + facility.APPROVEDAMOUNT), coverage);
+                //facilitiesValue = decimal.Multiply((facilitiesValue + facilityValue.APPROVEDAMOUNT), coverage);
 
                 if (facilityMappedToCollaterals.Count != 0)
                 {
-                    //===============start ====
-                    if (facilityMappedToCollaterals.Sum(f => f.COLLATERALCOVERAGE) >= decimal.Multiply(facility.APPROVEDAMOUNT, coverage))
-                    {
-                        throw new Exception("Facility is already fully covered");
-                    }
+                    //if (facilityMappedToCollaterals.Sum(f => f.COLLATERALCOVERAGE) >= decimal.Multiply(facilityValue.APPROVEDAMOUNT, coverage))
+                    //{
+                    //    throw new Exception("Facility is already fully covered");
+                    //}
 
-
-                    foreach (var x in facilityMappedToCollaterals)
-                    {
-                        availableCollateralValues = availableCollateralValues + context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).Select(o => o.COLLATERALVALUE).FirstOrDefault();
-                    }
-                    //===============end ====
+                    //foreach (var x in facilityMappedToCollaterals)
+                    //{
+                    //    availableCollateralValues = availableCollateralValues + context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).Select(o => o.COLLATERALVALUE).FirstOrDefault();
+                    //}
                 }
 
                 if (collateralMappedToFacilities.Count != 0)
                 {
                     availableCollateralValues = availableCollateralValues - collateralMappedToFacilities.Sum(c => c.COLLATERALCOVERAGE);
-                    //===============start ====
-                    foreach (var x in collateralMappedToFacilities)
-                    {
-                        facilitiesValue = facilitiesValue + context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.APPROVEDAMOUNT).FirstOrDefault();
-                    } //===============end ====
+                    //foreach (var x in collateralMappedToFacilities)
+                    //{
+                    //    facilitiesValue = facilitiesValue + context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.APPROVEDAMOUNT).FirstOrDefault();
+                    //}
                 }
 
-                //===============start ====
-                availableCollateralValues = availableCollateralValues + collateral.COLLATERALVALUE;
-                availableCollateralValues = decimal.Subtract(availableCollateralValues, facilitiesValue);
-                //===============end ====
+                //availableCollateralValues = availableCollateralValues + collateral.COLLATERALVALUE;
+
+                //availableCollateralValues = decimal.Subtract(availableCollateralValues, facilitiesValue);
+
 
                 if (availableCollateralValues > 0)
                 {
