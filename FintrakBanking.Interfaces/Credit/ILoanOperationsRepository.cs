@@ -197,7 +197,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool SendEmailToRecoveryAgent(int companyId, int staffId, short branchId, int accreditedConsultantId);
 
         LoanViewModel GetWriteOffLoans(int companyId, string refNo);
-        IEnumerable<CamProcessedLoanViewModel> GetLoanOperationDocumentationLosApprovalSearch(int staffId, int companyId, string search);
 
 
 

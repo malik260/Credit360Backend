@@ -198,8 +198,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteLoanApplicationThatFailedRAC(int loanApplicationDetailId, int deletedBy);
 
         LoanApplicationFlowChangeViewModel GetLoanAppicationFlowChange(int id);
-        LoanApplicationViewModel GetFacilityByApplicationDetailIdLOS(int loanApplicationDetailId);
-        LoanApplicationViewModel GetFacilityByApplicationDetailIdLMS(int loanApplicationDetailId);
 
         IEnumerable<LoanApplicationFlowChangeViewModel> GetLoanApplicationFlowChange();
  

@@ -1155,12 +1155,12 @@ namespace FintrakBanking.Repositories.Setups.General
             TimeSpan startRepay = new TimeSpan(6, 0, 0);
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
 
-           
+
             //encripted password 
             ///var requiredPassword = pass;
             //string encryptedstring = EncryptionHelper.Encrypt("sqluser10$");
             //Console.WriteLine("encripted Result  = " + encryptedstring);
-            //// Console.WriteLine("");
+           //// Console.WriteLine("");
             ////string decryptedstring = EncryptionHelper.Decrypt(requiredPassword);
             //Console.WriteLine("decripted Result  = " + decryptedstring);
 
@@ -66147,7 +66147,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 result = $@"
                      <table cellpadding='0' cellspacing='0' border='1' width='800px'>
                         <tr>
-                            <td><b>S/N</b></td>
                             <td><b>Collateral Detail</b></td>
                             <td><b>Customer Name</b></td>
                             <td><b>Open Market Value</b></td>
@@ -66155,34 +66154,21 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td><b>Premium</b></td>
                             <td><b>Insurance Expiry Date</b></td>
                             <td><b>Insurance Policy Type</b></td>
-                            <td><b>Account Officer</b></td>
-                            <td><b>Relationship Manager</b></td>
                         </tr>";
                 foreach (var i in insurancePolicyNotification)
                 {
                     int appDetails;
                     var customerName = "";
-                    decimal openMarketValue = 0;
 
                     if (i.CREATEDBY != null && i.CREATEDBY > 0)
                     {
-                        var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
-                        customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = (int)i.CREATEDBY;
-                        if(customer.COLLATERALTYPEID == (int)CollateralTypeEnum.Property)
-                        {
-                            openMarketValue = (decimal)context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).Select(x=>x.OPENMARKETVALUE).FirstOrDefault();
-                        }
                     }
                     else if (i.LOANAPPLICATIONDETAILID == null)
                     {
                         var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
                         customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = customer.CREATEDBY;
-                        if (customer.COLLATERALTYPEID == (int)CollateralTypeEnum.Property)
-                        {
-                            openMarketValue = (decimal)context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).Select(x => x.OPENMARKETVALUE).FirstOrDefault();
-                        }
                     }
                     else
                     {
@@ -66200,7 +66186,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
 
-                    var omv = i.OMV != null ? string.Format("{0:#,##.00}", Convert.ToDecimal(i.OMV)) : string.Format("{0:#,##.00}", Convert.ToDecimal(openMarketValue));
+                    var omv = string.Format("{0:#,##.00}", Convert.ToDecimal(i.OMV));
                     var sumInsured = string.Format("{0:#,##.00}", Convert.ToDecimal(i.SUMINSURED));
                     var premium = string.Format("{0:#,##.00}", Convert.ToDecimal(i.PREMIUMPAID));
                     var expiryDate = i.INSURANCEENDDATE?.ToString("dd-MM-yyyy");
@@ -66216,8 +66202,6 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td>{$"{premium}"}</td>
                             <td>{expiryDate}</td>
                             <td>{insurancePolicyType}</td>
-                            <td>{ao?.FIRSTNAME +" "+ao?.MIDDLENAME +" "+ ao?.LASTNAME}</td>
-                            <td>{rm?.FIRSTNAME + " " + rm?.MIDDLENAME + " " + rm?.LASTNAME}</td>
                         </tr>";
                 }
                     result = result + $"</table>";
@@ -66266,11 +66250,9 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td><b>Premium</b></td>
                             <td><b>Insurance Expiry Date</b></td>
                             <td><b>Insurance Policy Type</b></td>
-                            <td><b>Account Officer</b></td>
-                            <td><b>Relationship Manager</b></td>
                         </tr>";
-                
-                AlertsViewModel alert = new AlertsViewModel();
+
+                        AlertsViewModel alert = new AlertsViewModel();
                         var alertTitle = alertTitleInfo.TITLE;
                         var alertTemplate = alertTitleInfo.TEMPLATE;
                 var n = 0;
@@ -66279,27 +66261,16 @@ namespace FintrakBanking.Repositories.Setups.General
                     n++;
                     int appDetails;
                     var customerName = "";
-                    decimal openMarketValue = 0;
 
                     if (i.CREATEDBY != null && i.CREATEDBY > 0)
                     {
-                        var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
-                        customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = (int)i.CREATEDBY;
-                        if (customer.COLLATERALTYPEID == (int)CollateralTypeEnum.Property)
-                        {
-                            openMarketValue = (decimal)context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).Select(x => x.OPENMARKETVALUE).FirstOrDefault();
-                        }
                     }
                     else if (i.LOANAPPLICATIONDETAILID == null)
                     {
                         var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
                         customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = customer.CREATEDBY;
-                        if (customer.COLLATERALTYPEID == (int)CollateralTypeEnum.Property)
-                        {
-                            openMarketValue = (decimal)context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).Select(x => x.OPENMARKETVALUE).FirstOrDefault();
-                        }
                     }
                     else
                     {
@@ -66309,9 +66280,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
 
                     var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
-                    var ao = context.TBL_STAFF.Find(appDetails);
-                    var rm = context.TBL_STAFF.Find(ao.SUPERVISOR_STAFFID);
-                    var omv = i.OMV != null ? string.Format("{0:#,##.00}", Convert.ToDecimal(i.OMV)) : string.Format("{0:#,##.00}", Convert.ToDecimal(openMarketValue));
+
+                    var omv = string.Format("{0:#,##.00}", Convert.ToDecimal(i.OMV));
                     var sumInsured = string.Format("{0:#,##.00}", Convert.ToDecimal(i.SUMINSURED));
                     var premium = string.Format("{0:#,##.00}", Convert.ToDecimal(i.PREMIUMPAID));
                     var expiryDate = i.INSURANCEENDDATE?.ToString("dd-MM-yyyy");
@@ -66327,8 +66297,6 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td>{$"{premium}"}</td>
                             <td>{expiryDate}</td>
                             <td>{insurancePolicyType}</td>
-                            <td>{ao?.FIRSTNAME + " " + ao?.MIDDLENAME + " " + ao?.LASTNAME}</td>
-                            <td>{rm?.FIRSTNAME + " " + rm?.MIDDLENAME + " " + rm?.LASTNAME}</td>
                         </tr>";
                 }
                        tempResult = tempResult + $"</table>";
