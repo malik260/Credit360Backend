@@ -116,42 +116,42 @@ namespace FintrakBanking.Repositories.Credit
                .ToList();
         }
 
-        public IEnumerable<BusinessRuleViewModel> GetBusinessRule()
+        public IEnumerable<BusinessRuleViewModel> GetBusinessRule( int approvalLevelId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var busRule = (from a in context.TBL_APPROVAL_LEVEL
-                         join x in context.TBL_APPROVAL_BUSINESS_RULE on a.APPROVALBUSINESSRULEID equals x.APPROVALBUSINESSRULEID
-     
-                             select new BusinessRuleViewModel
-                             {
-                                 levelBusinessRuleId = x.APPROVALBUSINESSRULEID,
-                                 description = x.DESCRIPTION,
-                                 minimumAmount = x.MINIMUMAMOUNT,
-                                 maximumAmount = x.MAXIMUMAMOUNT,
-                                 pepAmount = x.PEPAMOUNT,
-                                 pep = x.PEP,
-                                 projectRelated = x.PROJECTRELATED,
-                                 insiderRelated = x.INSIDERRELATED,
-                                 onLending = x.ONLENDING,
-                                 interventionFunds = x.INTERVENTIONFUNDS,
-                                 orrBasedApproval = x.ORRBASEDAPPROVAL,
-                                 esrm = x.ESRM,
-                                 isForContingentFacility = x.ISFORCONTINGENTFACILITY,
-                                 isForRevolvingFacility = x.ISFORREVOLVINGFACILITY,
-                                 isForRenewal = x.ISFORRENEWAL,
-                                 exemptContingentFacility = x.EXEMPTCONTINGENTFACILITY,
-                                 exemptRevolvingFacility = x.EXEMPTREVOLVINGFACILITY,
-                                 exemptRenewal = x.EXEMPTRENEWAL,
-                                 tenor = x.TENOR,
-                                 withoutInstruction = x.WITHINSTRUCTION,
-                                 domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
-                                 excludeLevel = x.EXCLUDELEVEL,
-                                 isAgricRelated = x.ISAGRICRELATED,
-                             }).OrderBy(b => b.description)
-                            .ToList();
+                return from a in context.TBL_APPROVAL_LEVEL
+                       join x in context.TBL_APPROVAL_BUSINESS_RULE on a.APPROVALBUSINESSRULEID equals x.APPROVALBUSINESSRULEID
+                       where approvalLevelId == a.APPROVALLEVELID
 
-                return busRule;
+                       select new BusinessRuleViewModel
+                       {
+                           levelBusinessRuleId = x.APPROVALBUSINESSRULEID,
+                           description = x.DESCRIPTION,
+                           minimumAmount = x.MINIMUMAMOUNT,
+                           maximumAmount = x.MAXIMUMAMOUNT,
+                           pepAmount = x.PEPAMOUNT,
+                           pep = x.PEP,
+                           projectRelated = x.PROJECTRELATED,
+                           insiderRelated = x.INSIDERRELATED,
+                           onLending = x.ONLENDING,
+                           interventionFunds = x.INTERVENTIONFUNDS,
+                           orrBasedApproval = x.ORRBASEDAPPROVAL,
+                           esrm = x.ESRM,
+                           isForContingentFacility = x.ISFORCONTINGENTFACILITY,
+                           isForRevolvingFacility = x.ISFORREVOLVINGFACILITY,
+                           isForRenewal = x.ISFORRENEWAL,
+                           exemptContingentFacility = x.EXEMPTCONTINGENTFACILITY,
+                           exemptRevolvingFacility = x.EXEMPTREVOLVINGFACILITY,
+                           exemptRenewal = x.EXEMPTRENEWAL,
+                           tenor = x.TENOR,
+                           withoutInstruction = x.WITHINSTRUCTION,
+                           domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
+                           excludeLevel = x.EXCLUDELEVEL,
+                           isAgricRelated = x.ISAGRICRELATED,
+                       };
+
+               
             }
         }
 

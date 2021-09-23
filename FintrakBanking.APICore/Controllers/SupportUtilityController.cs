@@ -84,10 +84,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-business-rule")]
-        public HttpResponseMessage GetBusinessRule()
+        [Route("get-business-rule/{approvalLevelId}")]
+        public HttpResponseMessage GetBusinessRule( int approvalLevelId)
         {
-            var response = repo.GetBusinessRule();
+            var response = repo.GetBusinessRule(approvalLevelId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Approval trail for " ,  result = response });
 
         }
