@@ -29,6 +29,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
             this.loanRepo = _loanRepo;
         }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("take-fee/submit")]
@@ -51,6 +52,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("take-fee-approval")]

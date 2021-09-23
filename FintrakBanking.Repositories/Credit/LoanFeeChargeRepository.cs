@@ -570,15 +570,91 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
+            if(loanDetails == null)
+            {
+                var termDetails = (from a in context.TBL_LOAN_CONTINGENT
+                               where a.CONTINGENTLOANID == loanFee.LOANID
+                               select new LoanViewModel
+                               {
+                                   loanId = a.CONTINGENTLOANID,
+                                   companyId = a.COMPANYID,
+                                   currencyId = a.CURRENCYID,
+                                   loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                   branchId = a.BRANCHID,
+                                   createdBy = loanFee.CREATEDBY
+                               }).FirstOrDefault();
+                if (termDetails != null)
+                {
+                    loanDetails = termDetails;
+                }
+                else
+                {
+                    var contingentDetails = (from a in context.TBL_LOAN_CONTINGENT
+                                             where a.CONTINGENTLOANID == loanFee.LOANID
+                                             select new LoanViewModel
+                                             {
+                                                 loanId = a.CONTINGENTLOANID,
+                                                 companyId = a.COMPANYID,
+                                                 currencyId = a.CURRENCYID,
+                                                 loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                                 branchId = a.BRANCHID,
+                                                 createdBy = loanFee.CREATEDBY
+                                             }).FirstOrDefault();
+                    if (contingentDetails != null)
+                    {
+                        loanDetails = contingentDetails;
+                    }
+                    else
+                    {
+                        var revolDetails = (from a in context.TBL_LOAN_REVOLVING
+                                       where a.REVOLVINGLOANID == loanFee.LOANID
+                                       select new LoanViewModel
+                                       {
+                                           loanId = a.REVOLVINGLOANID,
+                                           companyId = a.COMPANYID,
+                                           currencyId = a.CURRENCYID,
+                                           loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                           branchId = a.BRANCHID,
+                                           createdBy = loanFee.CREATEDBY
+                                       }).FirstOrDefault();
+                        if (revolDetails != null)
+                        {
+                            loanDetails = revolDetails;
+                        }
+                        else
+                        {
+                           var lineDetails = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                                           join b in context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                           where a.LOANAPPLICATIONDETAILID == loanFee.LOANID
+                                           select new LoanViewModel
+                                           {
+                                               loanId = a.LOANAPPLICATIONDETAILID,
+                                               companyId = b.COMPANYID,
+                                               currencyId = a.CURRENCYID,
+                                               loanReferenceNumber = b.APPLICATIONREFERENCENUMBER + "-" + a.LOANAPPLICATIONDETAILID,
+                                               branchId = b.BRANCHID,
+                                               createdBy = loanFee.CREATEDBY
+                                           }).FirstOrDefault();
+                            if (lineDetails != null)
+                            {
+                                loanDetails = lineDetails;
+                            }
+                        }
+                    }
+                }
+
+            }
+
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
             TBL_LOAN loanTable = new TBL_LOAN();
             //var bookingRequestDetails = context.TBL_LOAN_BOOKING_REQUEST.FirstOrDefault(x => x.LOAN_BOOKING_REQUESTID == loanDetails.loanBookingRequestId);
 
-            var company = context.TBL_COMPANY.Find(loanDetails.companyId);
+            var staff = context.TBL_STAFF.Find(loanFee.CREATEDBY); 
+            var company = context.TBL_COMPANY.Find(staff.COMPANYID); 
           //  foreach (var item in loanDetails.loanChargeFee)
-           // {
-                if (loanFee.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility)
+          // {
+            if (loanFee.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility)
                 {
                     loanTable = context.TBL_LOAN.Find(loanFee.LOANID);
                 }
@@ -603,7 +679,7 @@ namespace FintrakBanking.Repositories.Credit
                             else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
                                 debitAmount = (decimal)debits.VALUE;
 
-                            debit.operationId = (int)OperationsEnum.ManualFeeCharge;
+                            debit.operationId = (int)OperationsEnum.ManualFeeChargeCollectionApproval;
                             debit.description = $"Fee charge on {debits.DESCRIPTION}";
                             debit.valueDate = general.GetApplicationDate();
                             debit.transactionDate = debit.valueDate;
@@ -644,7 +720,7 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAmount = (decimal)credits.VALUE;
 
 
-                            credit.operationId = (int)OperationsEnum.ManualFeeCharge;
+                            credit.operationId = (int)OperationsEnum.ManualFeeChargeCollectionApproval;
                             credit.description = $"Fee charge on {credits.DESCRIPTION}";
                             credit.valueDate = general.GetApplicationDate();
                             credit.transactionDate = credit.valueDate;

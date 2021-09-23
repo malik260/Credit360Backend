@@ -936,9 +936,12 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 foreach (var xx in dataExposure)
                 {
-                    var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x).FirstOrDefault();
-                    xx.productClass = context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID == product.PRODUCTCLASSID).Select(p => p.PRODUCTCLASSNAME).FirstOrDefault();
-                    xx.facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == product.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault();
+                    var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x)?.FirstOrDefault();
+                    if (product != null)
+                    {
+                        xx.productClass = context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID == product.PRODUCTCLASSID).Select(p => p.PRODUCTCLASSNAME).FirstOrDefault();
+                        xx.facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == product.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault();
+                    }
                 }
 
                 var dataDigitalExposure = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
@@ -999,9 +1002,12 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 foreach (var xx in dataDigitalExposure)
                 {
-                    var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x).FirstOrDefault();
-                    xx.productClass = context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID == product.PRODUCTCLASSID).Select(p => p.PRODUCTCLASSNAME).FirstOrDefault();
-                    xx.facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == product.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault();
+                    var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x)?.FirstOrDefault();
+                    if (product != null)
+                    {
+                        xx.productClass = context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID == product.PRODUCTCLASSID).Select(p => p.PRODUCTCLASSNAME).FirstOrDefault();
+                        xx.facilityType = context.TBL_PRODUCT_TYPE.Where(f => f.PRODUCTTYPEID == product.PRODUCTTYPEID).Select(f => f.PRODUCTTYPENAME).FirstOrDefault();
+                    }
                 }
 
                 /* var dataLoanNonPerforming = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
