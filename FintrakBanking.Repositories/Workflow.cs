@@ -2341,7 +2341,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {   
                     //forNotifyOfPendingTransactions
                     var nextLevel = WorkflowSetup.FirstOrDefault(s => s.ApprovalLevelId == this.nextLevelId);
-                    var levelWorkflowNotification = worflowNotificationSetups.FirstOrDefault(n => n.GROUPOPERATIONMAPPINGID == nextLevel.Mapping.GROUPOPERATIONMAPPINGID && n.APPROVALLEVELID == nextLevel.ApprovalLevelId);
+                    var levelWorkflowNotification = worflowNotificationSetups?.FirstOrDefault(n => n.GROUPOPERATIONMAPPINGID == nextLevel?.Mapping.GROUPOPERATIONMAPPINGID && n.APPROVALLEVELID == nextLevel?.ApprovalLevelId);
                     if (levelWorkflowNotification?.NOTIFYOFPENDINGAPPROVALS ?? false)
                     {
                         var alert = context.TBL_ALERT_TITLE.FirstOrDefault(a => a.ALERTTITLEID == levelWorkflowNotification.PENDINGAPPROVALALERTTITLEID);

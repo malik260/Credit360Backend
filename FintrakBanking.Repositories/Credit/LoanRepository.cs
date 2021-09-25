@@ -17067,11 +17067,11 @@ namespace FintrakBanking.Repositories.Credit
                         join e in context.TBL_LMSR_APPLICATION on l.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
-                        where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
+                        where 
+                          l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
                           && l.OPERATIONPERFORMED == false
-                          && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+                          && e.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                           && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                        //&& d.EXPIRYDATE >= systemDate
                         select new CamProcessedLoanViewModel
                         {
                             divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
@@ -17409,7 +17409,6 @@ namespace FintrakBanking.Repositories.Credit
                                   //  && atrail.RESPONSESTAFFID == null
                                   && b.OPERATIONPERFORMED == false
                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
-                                  && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
                                   && ((cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId)) // currency filter                                                                                                                                  
                                    select new LoanViewModel
