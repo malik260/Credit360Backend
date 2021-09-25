@@ -111,18 +111,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-<<<<<<< HEAD
     <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\XLeratorDLL-financial.dll</HintPath>
-    <!--<Reference Include="XLeratorDLL-financial">
-      <HintPath>..\..\..\Users\FINTRAK\Desktop\lic\Mazino\XLeratorDLL-financial.dll</HintPath>
->>>>>>> 2f955ac5c9541b0fb10df89bcf7e8a77e964dbbf-->
-=======
-    <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\XLeratorDLL-financial.dll</HintPath>
->>>>>>> 1c214d8a962b44fdbfb8f7c285b0ece8a45512c9
     </Reference>
   </ItemGroup>
   <ItemGroup>
