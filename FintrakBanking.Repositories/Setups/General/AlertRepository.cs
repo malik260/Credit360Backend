@@ -1175,7 +1175,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
 
             //general alert
-              //GeneralAlert()
+            //GeneralAlert()
 
             if (CompareCustomerNotificationDate() == true)
             {
@@ -1736,7 +1736,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var defaultEmail = "";
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = alertTitleInfo.DEFAULTEMAIL.ToLower().Replace("olukayode.ajayi@accessbankplc.com;", "");
+                defaultEmail = alertTitleInfo.DEFAULTEMAIL.ToLower();
             }
             if (alertTitleInfo != null && groupHeadsList != null && groupHeadsList.Count() > 0)
             {
@@ -1843,7 +1843,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var defaultEmail = "";
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower().Replace("olukayode.ajayi@accessbankplc.com;", "");
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower(); //.Replace("olukayode.ajayi@accessbankplc.com;", "");
             }
             if (alertTitleInfo != null && groupHeadsList != null && groupHeadsList.Count() > 0)
             {
@@ -2007,7 +2007,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
                             alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
-                            emailList = defaultEmail; // emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                            emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
                             
                             alert.receiverEmailList.Add(emailList);
                             alert.template = alertTemplate;
@@ -66867,7 +66867,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
                             alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                            emailList = defaultEmail; // emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                            emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
                             alert.receiverEmailList.Add(emailList);
                             alert.template = alertTemplate;
                             alert.alertTitle = alertTitle;
