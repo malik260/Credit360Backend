@@ -1018,7 +1018,6 @@ namespace FintrakBanking.Repositories.Credit
                         var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationNotification").Select(x => x).FirstOrDefault();
                         var letterBody = letter?.TEMPLATE;
                         var letterTitle = letter?.TITLE;
-                        var currentMonth = 
                         letterBody = letterBody.Replace("@{{month}}", DateTime.Now.Month.ToString());
                         letterBody = letterBody.Replace("@{{year}}", DateTime.Now.Year.ToString());
                         letterBody = letterBody.Replace("@{{referenceNumber}}", prereqisite?.REFERENCENUMBER);

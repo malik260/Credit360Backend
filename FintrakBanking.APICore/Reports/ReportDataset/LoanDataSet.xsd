@@ -547,6 +547,10 @@
               <xs:element name="facilityType" msprop:Generator_ColumnVarNameInTable="columnfacilityType" msprop:Generator_ColumnPropNameInRow="facilityType" msprop:Generator_ColumnPropNameInTable="facilityTypeColumn" msprop:Generator_UserColumnName="facilityType" type="xs:string" minOccurs="0" />
               <xs:element name="refNo" msprop:Generator_ColumnVarNameInTable="columnrefNo" msprop:Generator_ColumnPropNameInRow="refNo" msprop:Generator_ColumnPropNameInTable="refNoColumn" msprop:Generator_UserColumnName="refNo" type="xs:string" minOccurs="0" />
               <xs:element name="customerCode" msprop:Generator_ColumnVarNameInTable="columncustomerCode" msprop:Generator_ColumnPropNameInRow="customerCode" msprop:Generator_ColumnPropNameInTable="customerCodeColumn" msprop:Generator_UserColumnName="customerCode" type="xs:string" minOccurs="0" />
+              <xs:element name="totalAsset" msprop:Generator_ColumnVarNameInTable="columntotalAsset" msprop:Generator_ColumnPropNameInRow="totalAsset" msprop:Generator_ColumnPropNameInTable="totalAssetColumn" msprop:Generator_UserColumnName="totalAsset" type="xs:string" minOccurs="0" />
+              <xs:element name="field1" msprop:Generator_ColumnVarNameInTable="columnfield1" msprop:Generator_ColumnPropNameInRow="field1" msprop:Generator_ColumnPropNameInTable="field1Column" msprop:Generator_UserColumnName="field1" type="xs:string" minOccurs="0" />
+              <xs:element name="field2" msprop:Generator_ColumnVarNameInTable="columnfield2" msprop:Generator_ColumnPropNameInRow="field2" msprop:Generator_ColumnPropNameInTable="field2Column" msprop:Generator_UserColumnName="field2" type="xs:string" minOccurs="0" />
+              <xs:element name="field3" msprop:Generator_ColumnVarNameInTable="columnfield3" msprop:Generator_ColumnPropNameInRow="field3" msprop:Generator_ColumnPropNameInTable="field3Column" msprop:Generator_UserColumnName="field3" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
