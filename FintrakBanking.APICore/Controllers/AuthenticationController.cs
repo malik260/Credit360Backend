@@ -289,7 +289,7 @@ namespace FintrakBanking.APICore.Controllers
                 //{
                 //    str = ex.Message.Replace("1001", "");
                 //}
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Wrong Username or password!" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             
         }
     }
