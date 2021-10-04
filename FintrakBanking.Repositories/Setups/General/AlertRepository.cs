@@ -1155,12 +1155,16 @@ namespace FintrakBanking.Repositories.Setups.General
             TimeSpan startRepay = new TimeSpan(6, 0, 0);
             TimeSpan endRepay = new TimeSpan(23, 30, 0);
 
+            GetInsurancePolicyExpiredNotificationForZonalAndGroupHeads();
+            GetInsurancePolicyExpiredNotificationForEds();
+            GetPastDueObligationsReminderByGroupHeads();
+            GroupImminentMaturitiesByGroupHeads();
 
             //encripted password 
             ///var requiredPassword = pass;
             //string encryptedstring = EncryptionHelper.Encrypt("sqluser10$");
             //Console.WriteLine("encripted Result  = " + encryptedstring);
-           //// Console.WriteLine("");
+            //// Console.WriteLine("");
             ////string decryptedstring = EncryptionHelper.Decrypt(requiredPassword);
             //Console.WriteLine("decripted Result  = " + decryptedstring);
 
@@ -1196,8 +1200,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     GetInsurancePolicyExpirationNotification();
                     GetInsurancePolicyExpiredNotification();
-                    GetInsurancePolicyExpiredNotificationForZonalAndGroupHeads();
-                    GetInsurancePolicyExpiredNotificationForEds();
                 }
             }
 
@@ -1329,10 +1331,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if ((now >= start) && (now <= end))
                 {
-                    GroupImminentMaturitiesByGroupHeads();
                     GetImminentMaturities();
                     GetPastDueObligationsReminder();
                     GetPastDueObligationsReminderByGroupHeads();
+                    GroupImminentMaturitiesByGroupHeads();
                     state = true;
                 }
             }
@@ -1741,6 +1743,8 @@ namespace FintrakBanking.Repositories.Setups.General
             if (alertTitleInfo != null && groupHeadsList != null && groupHeadsList.Count() > 0)
             {
 
+                var result = string.Empty;
+                var tempResult = string.Empty;
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
                 foreach (var groupHead in groupHeadsList)
                 {
@@ -1753,8 +1757,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
 
 
-                    var result = string.Empty;
-                    var tempResult = string.Empty;
+                    
                     foreach (var accountOfficer in accountOfficers)
                     {
                         var accountOfficerFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == accountOfficer.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
@@ -1828,7 +1831,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         alerts.Add(alert);
                     }
                 }
-                if (alerts.Count() > 0)
+                if (alerts.Count() > 0 && result != null && result.Count() > 0)
                 {
                     SendAlertNotification(alerts);
                 }
@@ -1848,6 +1851,8 @@ namespace FintrakBanking.Repositories.Setups.General
             if (alertTitleInfo != null && groupHeadsList != null && groupHeadsList.Count() > 0)
             {
 
+                var result = string.Empty;
+                var tempResult = string.Empty;
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
                 foreach (var groupHead in groupHeadsList)
                 {
@@ -1859,8 +1864,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var accountOfficers = externalAlertRepository.GetPasDueObligationsAccountOfficersByGroupHeads(groupHeadDetail.MISCODE).Where(x=> x.Email.ToLower() != "herbert.wigwe@accessbankplc.com" && x.Email.ToLower() != "wigweh@accessbankplc.com").ToList();
                     var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
 
-                    var result = string.Empty;
-                    var tempResult = string.Empty;
+                    
 
                     foreach (var accountOfficer in accountOfficers)
                     {
@@ -1929,7 +1933,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         alerts.Add(alert);
                     }
                 }
-                if (alerts.Count() > 0)
+                if (alerts.Count() > 0 && result != null && result.Count() > 0)
                 {
                     SendAlertNotification(alerts);
                 }
@@ -66128,8 +66132,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetInsurancePolicyExpiredNotificationForZonalAndGroupHeads" && a.ISACTIVE == true).FirstOrDefault();
             var defaultEmail = "";
             var emailList = "";
-            var zonalEmail = "";
-            var groupEmail = "";
+            
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
@@ -66144,6 +66147,15 @@ namespace FintrakBanking.Repositories.Setups.General
                 var alertTitle = alertTitleInfo.TITLE;
                 var alertTemplate = alertTitleInfo.TEMPLATE;
                 var n = 0;
+
+                int appDetails;
+                var customerName = "";
+                TBL_STAFF staff = null;
+                TBL_STAFF rm = null;
+                TBL_STAFF zh = null;
+                TBL_STAFF gh = null;
+                var divisionName = "";
+
                 result = $@"
                      <table cellpadding='0' cellspacing='0' border='1' width='800px'>
                         <tr>
@@ -66154,37 +66166,88 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td><b>Premium</b></td>
                             <td><b>Insurance Expiry Date</b></td>
                             <td><b>Insurance Policy Type</b></td>
+                            <td><b>Account Officer</b></td>
+                            <td><b>Relationship Manager</b></td>
+                            <td><b>Group Head</b></td>
+                            <td><b>Division</b></td>
                         </tr>";
                 foreach (var i in insurancePolicyNotification)
                 {
-                    int appDetails;
-                    var customerName = "";
+                    
 
                     if (i.CREATEDBY != null && i.CREATEDBY > 0)
                     {
                         var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
                         customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = (int)i.CREATEDBY;
+                        staff = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x).FirstOrDefault();
+                        if (staff != null)
+                        {
+                            rm = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                            if(rm != null)
+                            {
+                                zh = context.TBL_STAFF.Where(x => x.STAFFID == rm.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                if(zh != null)
+                                {
+                                    gh = context.TBL_STAFF.Where(x => x.STAFFID == zh.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                }
+                            }
+                        }
+
+                        var customerUnit = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.BUSINESSUNTID).FirstOrDefault();
+                        if (customerUnit != null)
+                        {
+                            divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customerUnit).Select(x => x.BUSINESSUNITNAME + "-" + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
+                        }
                     }
                     else if (i.LOANAPPLICATIONDETAILID == null)
                     {
                         var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
                         customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = customer.CREATEDBY;
+                        staff = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x).FirstOrDefault();
+                        if (staff != null)
+                        {
+                            rm = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                            if (rm != null)
+                            {
+                                zh = context.TBL_STAFF.Where(x => x.STAFFID == rm.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                if (zh != null)
+                                {
+                                    gh = context.TBL_STAFF.Where(x => x.STAFFID == zh.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                }
+                            }
+                        }
+                        var customerUnit = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.BUSINESSUNTID).FirstOrDefault();
+                        if (customerUnit != null)
+                        {
+                            divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customerUnit).Select(x => x.BUSINESSUNITNAME + "-" + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
+                        }
                     }
                     else
                     {
                         var customer = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.LOANAPPLICATIONDETAILID).FirstOrDefault();
                         customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = customer.CREATEDBY;
+                        staff = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x).FirstOrDefault();
+                        if (staff != null)
+                        {
+                            rm = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                            if (rm != null)
+                            {
+                                zh = context.TBL_STAFF.Where(x => x.STAFFID == rm.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                if (zh != null)
+                                {
+                                    gh = context.TBL_STAFF.Where(x => x.STAFFID == zh.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                }
+                            }
+                        }
+                        var customerUnit = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.BUSINESSUNTID).FirstOrDefault();
+                        if (customerUnit != null)
+                        {
+                            divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customerUnit).Select(x => x.BUSINESSUNITNAME + "-" + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
+                        }
                     }
-                    var ao = context.TBL_STAFF.Find(appDetails);
-                    var rm = context.TBL_STAFF.Find(ao.SUPERVISOR_STAFFID);
-                    var zh = context.TBL_STAFF.Find(rm.SUPERVISOR_STAFFID);
-                    var gh = context.TBL_STAFF.Find(zh.SUPERVISOR_STAFFID);
-
-                    zonalEmail = zh?.EMAIL;
-                    groupEmail = gh?.EMAIL;
 
                     var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
 
@@ -66204,12 +66267,16 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td>{$"{premium}"}</td>
                             <td>{expiryDate}</td>
                             <td>{insurancePolicyType}</td>
+                            <td>{staff?.FIRSTNAME + " " + staff?.MIDDLENAME + " " + staff?.LASTNAME}</td>
+                            <td>{rm?.FIRSTNAME + " " + rm?.MIDDLENAME + " " + rm?.LASTNAME}</td>
+                            <td>{gh?.FIRSTNAME + " " + gh?.MIDDLENAME + " " + gh?.LASTNAME}</td>
+                            <td>{divisionName}</td>
                         </tr>";
                 }
                     result = result + $"</table>";
 
                     alertTemplate = alertTemplate.Replace("@{{detail}}", result);
-                    emailList = zonalEmail + ";" + groupEmail;
+                    emailList = zh?.EMAIL + ";" + gh?.EMAIL;
                     emailList = emailList + defaultEmail;
                     alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
@@ -66217,7 +66284,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.canFire = true;
                     alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
-                if (alerts != null)
+                if (alerts != null && result != null)
                 {
                     SendAlertNotification(alerts);
                 }
@@ -66240,6 +66307,15 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 var result = string.Empty;
                 var tempResult = string.Empty;
+
+                int appDetails;
+                var customerName = "";
+                TBL_STAFF staff = null;
+                TBL_STAFF rm = null;
+                TBL_STAFF zh = null;
+                TBL_STAFF gh = null;
+                var divisionName = "";
+
                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
                  tempResult = $@"
                      <table cellpadding='0' cellspacing='0' border='1' width='800px'>
@@ -66252,6 +66328,10 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td><b>Premium</b></td>
                             <td><b>Insurance Expiry Date</b></td>
                             <td><b>Insurance Policy Type</b></td>
+                            <td><b>Account Officer</b></td>
+                            <td><b>Relationship Manager</b></td>
+                            <td><b>Group Head</b></td>
+                            <td><b>Division</b></td>
                         </tr>";
 
                         AlertsViewModel alert = new AlertsViewModel();
@@ -66261,26 +66341,77 @@ namespace FintrakBanking.Repositories.Setups.General
                 foreach (var i in insurancePolicyNotification)
                 {
                     n++;
-                    int appDetails;
-                    var customerName = "";
-
                     if (i.CREATEDBY != null && i.CREATEDBY > 0)
                     {
                         var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
                         customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = (int)i.CREATEDBY;
+                        staff = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x).FirstOrDefault();
+                        if (staff != null)
+                        {
+                            rm = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                            if (rm != null)
+                            {
+                                zh = context.TBL_STAFF.Where(x => x.STAFFID == rm.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                if (zh != null)
+                                {
+                                    gh = context.TBL_STAFF.Where(x => x.STAFFID == zh.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                }
+                            }
+                        }
+                        var customerUnit = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.BUSINESSUNTID).FirstOrDefault();
+                        if (customerUnit != null)
+                        {
+                            divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customerUnit).Select(x => x.BUSINESSUNITNAME + "-" + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
+                        }
                     }
                     else if (i.LOANAPPLICATIONDETAILID == null)
                     {
                         var customer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID).FirstOrDefault();
                         customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = customer.CREATEDBY;
+                        staff = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x).FirstOrDefault();
+                        if (staff != null)
+                        {
+                            rm = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                            if (rm != null)
+                            {
+                                zh = context.TBL_STAFF.Where(x => x.STAFFID == rm.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                if (zh != null)
+                                {
+                                    gh = context.TBL_STAFF.Where(x => x.STAFFID == zh.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                }
+                            }
+                        }
+                        var customerUnit = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.BUSINESSUNTID).FirstOrDefault();
+                        if (customerUnit != null)
+                        {
+                            divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customerUnit).Select(x => x.BUSINESSUNITNAME + "-" + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
+                        }
                     }
                     else
                     {
                         var customer = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.LOANAPPLICATIONDETAILID).FirstOrDefault();
                         customerName = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                         appDetails = customer.CREATEDBY;
+                        staff = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x).FirstOrDefault();
+                        if (staff != null)
+                        {
+                            rm = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                            if (rm != null)
+                            {
+                                zh = context.TBL_STAFF.Where(x => x.STAFFID == rm.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                if (zh != null)
+                                {
+                                    gh = context.TBL_STAFF.Where(x => x.STAFFID == zh.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                                }
+                            }
+                        }
+                        var customerUnit = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.BUSINESSUNTID).FirstOrDefault();
+                        if (customerUnit != null)
+                        {
+                            divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customerUnit).Select(x => x.BUSINESSUNITNAME + "-" + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
+                        }
                     }
 
                     var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
@@ -66301,6 +66432,10 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td>{$"{premium}"}</td>
                             <td>{expiryDate}</td>
                             <td>{insurancePolicyType}</td>
+                            <td>{staff?.FIRSTNAME + " " + staff?.MIDDLENAME + " " + staff?.LASTNAME}</td>
+                            <td>{rm?.FIRSTNAME + " " + rm?.MIDDLENAME + " " + rm?.LASTNAME}</td>
+                            <td>{gh?.FIRSTNAME + " " + gh?.MIDDLENAME + " " + gh?.LASTNAME}</td>
+                            <td>{divisionName}</td>
                         </tr>";
                 }
                        tempResult = tempResult + $"</table>";

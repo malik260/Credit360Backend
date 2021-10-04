@@ -30,7 +30,7 @@
               <Width>3.04207cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>3.29375cm</Width>
+              <Width>3.77cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>3.7829cm</Width>
@@ -75,7 +75,7 @@
               <Width>3.69063cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.5cm</Width>
+              <Width>4.96062cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>3.79646cm</Width>
@@ -84,7 +84,7 @@
               <Width>3.29375cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.5cm</Width>
+              <Width>3.92875cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>3.74354cm</Width>
@@ -381,7 +381,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Gross Balance</Value>
+                              <Value>Current Exposure</Value>
                               <Style>
                                 <FontFamily>Verdana</FontFamily>
                                 <FontWeight>SemiBold</FontWeight>
@@ -857,7 +857,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Date Of Expiration</Value>
+                              <Value>Date Of Expiration of Pledged  Collatetals</Value>
                               <Style>
                                 <FontFamily>Verdana</FontFamily>
                                 <FontWeight>SemiBold</FontWeight>
@@ -891,7 +891,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>STC</Value>
+                              <Value>Stamp To Cover Amount</Value>
                               <Style>
                                 <FontFamily>Verdana</FontFamily>
                                 <FontWeight>SemiBold</FontWeight>
@@ -993,7 +993,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Exposure</Value>
+                              <Value>Facility Limit</Value>
                               <Style>
                                 <FontFamily>Verdana</FontFamily>
                                 <FontWeight>SemiBold</FontWeight>
@@ -2203,7 +2203,7 @@
         <Top>0.16467cm</Top>
         <Left>0.34078cm</Left>
         <Height>1.2cm</Height>
-        <Width>107.35728cm</Width>
+        <Width>111.7229cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2214,7 +2214,7 @@
     <Height>2.69792in</Height>
     <Style />
   </Body>
-  <Width>43.55681in</Width>
+  <Width>44.11956in</Width>
   <Page>
     <PageHeader>
       <Height>3.683cm</Height>
