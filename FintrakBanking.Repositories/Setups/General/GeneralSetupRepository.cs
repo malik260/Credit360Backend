@@ -547,8 +547,17 @@ namespace FintrakBanking.Repositories.Setups.General
                 .SelectMany(x => x.TBL_APPROVAL_LEVEL
                 .Where(l => l.DELETED == false && l.ISACTIVE == true)).ToList();
 
-                var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId && x.DELETED == false).ToList();
+            if (operationId == 0)
+            {
+                allLevels = context.TBL_APPROVAL_GROUP_MAPPING
+                .Where(x => x.DELETED == false)
+                .Select(g => g.TBL_APPROVAL_GROUP)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL
+                .Where(l => l.DELETED == false && l.ISACTIVE == true)).ToList();
+            }
 
+            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId && x.DELETED == false).ToList();
+                
             if (staffWorkflow.Count() > 0) scope = staffWorkflow.Max(x => x.PROCESSVIEWSCOPEID);
 
             if (scope == 3) return allLevels.Select(x => x.APPROVALLEVELID).Distinct().Union(roleLevelIds).Union(relievedLevelids);
