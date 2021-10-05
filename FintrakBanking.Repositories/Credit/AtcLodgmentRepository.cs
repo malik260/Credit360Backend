@@ -184,9 +184,38 @@ namespace FintrakBanking.Repositories.credit
                               currencyId = atc.CURRENCYID,
                               currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == atc.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
                               branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == atc.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                              exchangeRate = context.TBL_CURRENCY_EXCHANGERATE.Where(o => o.CURRENCYID == atc.CURRENCYID).Select(o => o.EXCHANGERATE).FirstOrDefault(),
                           }).ToList();
 
             return result;
+        }
+
+        public decimal  GetAtcLodgmentsSumByCustomerId(int customerId)
+        {
+            decimal totalSum = 0;
+            var result = (from atc in context.TBL_ATC_LODGMENT
+                          join c in context.TBL_CUSTOMER on atc.CUSTOMERID equals c.CUSTOMERID
+                          where atc.CUSTOMERID == customerId
+                            && atc.DELETED == false
+                            && atc.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                          orderby atc.ATCLODGMENTID descending
+                          select new AtcLodgmentViewModel
+                          {
+                              customerId = atc.CUSTOMERID,
+                              numberOfBags = atc.NUMBEROFBAGS,
+                              unitNumber = atc.UNITNUMBER,
+                              unitValue = atc.UNITVALUE,
+                              atcLodgmentId = atc.ATCLODGMENTID,
+                              exchangeRate = context.TBL_CURRENCY_EXCHANGERATE.Where(o => o.CURRENCYID == atc.CURRENCYID).Select(o => o.EXCHANGERATE).FirstOrDefault(),
+                          }).ToList();
+            
+            foreach(var t in result)
+            {
+                totalSum = totalSum + ((t.numberOfBags * t.unitNumber * t.unitValue) * (decimal)t.exchangeRate);
+                
+            }
+
+            return totalSum;
         }
 
         public IEnumerable<AtcLodgmentViewModel> GetAtcReleaseForApproval(int staffId)
