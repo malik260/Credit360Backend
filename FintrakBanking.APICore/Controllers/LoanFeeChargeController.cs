@@ -4,7 +4,6 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -29,7 +28,6 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
             this.loanRepo = _loanRepo;
         }
-
         [HttpPost]
         [ClaimsAuthorization]
         [Route("take-fee/submit")]
@@ -40,8 +38,8 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
                 entity.userBranchId = (short)token.GetBranchId;
-                WorkflowResponse response = repo.SubmitTakeFee(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response.responseMessage, result = response.responseMessage });
+                string response = repo.SubmitTakeFee(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
             }
             catch (ConditionNotMetException e)
             {
@@ -52,7 +50,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
             }
         }
-
         [HttpGet]
         [ClaimsAuthorization]
         [Route("take-fee-approval")]
@@ -84,13 +81,39 @@ namespace FintrakBanking.APICore.Controllers
 
                 // var data = repo.addApplicationLineTenorChangeApproval(entity);
 
-                WorkflowResponse data = repo.ApproveTakeFee(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.responseMessage, message = data.responseMessage });
-               
+                var data = repo.ApproveTakeFee(entity);
+
+                if (data == ApprovalStatusEnum.Approved)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Fee Charge Approved Successfully." });
+                }
+                else if (data == ApprovalStatusEnum.Processing)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Fee Charge successful, request has been routed to the next approving office" });
+                }
+                else if (data == ApprovalStatusEnum.Disapproved)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Fee Charge details has been disapproved." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Fee Charge successful, request has been routed to the next approving office." });
+                }
             }
             catch (ConditionNotMetException ce)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
 
         }

@@ -497,7 +497,7 @@ namespace FintrakBanking.Repositories.Setups.General
             get => _sessionInfo;
             set => _sessionInfo = value;
         }
-    
+
         public UserViewModel FindUserByUserNameAndPassword(string username, string password) // ERROR POINT 2 - 
         {
             UserViewModel data = null;
