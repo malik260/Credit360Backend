@@ -29,7 +29,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public virtual TBL_ATC_LODGMENT TBL_ATC_LODGMENT { get; set; }
-        public string DESCRIPTION { get; set; }
+        //public string DESCRIPTION { get; set; }
     }
 }
         /*
