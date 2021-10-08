@@ -4,7 +4,6 @@ namespace FintrakBanking.Entities.Models
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
-    using FintrakBanking.Entities.AlertReportingModels;
 
     //[DbConfigurationType(typeof(OracleDatabaseConfiguration))]
     [DbConfigurationType(typeof(SqlDatabaseConfiguration))]
