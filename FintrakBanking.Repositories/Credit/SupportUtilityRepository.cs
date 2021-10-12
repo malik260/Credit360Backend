@@ -3,6 +3,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.SupportUtility;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -279,6 +280,208 @@ namespace FintrakBanking.Repositories.Credit
 
                 return operations;
             }
+
+        }
+
+        public List<StaffSupportUtilityViewModel> GetStaff(string searchString)
+        {
+            searchString = searchString.Trim().ToLower();
+
+            var staff = (from c in context.TBL_STAFF
+                        where c.STAFFCODE.ToLower().Contains(searchString)
+                        || c.FIRSTNAME.ToLower().Contains(searchString)
+                        || c.MIDDLENAME.ToLower().Contains(searchString)
+                        || c.LASTNAME.ToLower().Contains(searchString)
+                        
+                         select new StaffSupportUtilityViewModel
+                         {
+                             staffId = c.STAFFID,
+                             BranchId = c.BRANCHID,
+                             //customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
+                            // DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
+                             email = c.EMAIL,
+                             gender = c.GENDER,
+                            //s jobTitleId = c.JOBTITLEID,
+                             MisinfoId = c.MISINFOID,
+                             Phone = c.PHONE,
+                             StateId = c.STATEID,
+                             FirstName = c.FIRSTNAME,
+                             MiddleName = c.MIDDLENAME,
+                             deleted = c.DELETED,
+                             updatedById = c.LASTUPDATEDBY,
+                             updatedBy = context.TBL_STAFF.Where(o => o.LASTUPDATEDBY == c.STAFFID).Select(o => o.FIRSTNAME).FirstOrDefault(),
+                             LastName = c.LASTNAME,
+                             StaffCode = c.STAFFCODE,
+                             staffRoleId = c.STAFFROLEID,
+                             staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                             supervisorStaffId = c.SUPERVISOR_STAFFID,
+                             supervisorStaffName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
+                             businessUnitId = c.BUSINESSUNITID,
+                             misCode = c.MISCODE,
+                            businessUnitName = c.BUSINESSUNITID != null ? c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
+                         }).ToList();
+    
+            return staff;
+        }
+
+        public StaffInfoViewModel GetStaffCompairRecord(string searchString)
+        {
+            searchString = searchString.Trim().ToLower();
+
+            var tempStaffRecord = (from c in context.TBL_TEMP_STAFF
+                               where c.STAFFCODE.Trim() == searchString
+                               
+
+                               select new StaffInfoViewModel
+                               {
+                                 FirstName = c.FIRSTNAME,
+                                 MiddleName = c.MIDDLENAME,
+                                 LastName = c.LASTNAME,
+                                 StaffCode = c.STAFFCODE, 
+                                 staffRoleId = c.STAFFROLEID,
+                                   staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                                   supervisorStaffId = c.SUPERVISOR_STAFFID,
+                                 BranchId = c.BRANCHID,
+                                 customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
+                                 Email = c.EMAIL,
+                                 Gender = c.GENDER,
+                                 Phone = c.PHONE,
+                                 StateId = c.STATEID,
+                                 CityId = c.CITYID,
+                                 ApprovalStatusId = c.APPROVALSTATUSID,
+                                 loanLimit = c.LOAN_LIMIT,
+                                 workStartDuration = c.WORKSTARTDURATION,
+                                 workEndDuration = c.WORKENDDURATION,
+                                 businessUnitId = c.BUSINESSUNITID,
+                                misCode  = c.MISCODE,
+                               }).FirstOrDefault();
+        return tempStaffRecord;
+        }
+
+        public List<CustomerViewModels> GetSingleCustomerGeneralInfo(string searchString)
+        {
+            searchString = searchString.Trim().ToLower();
+            var data = (from a in context.TBL_CUSTOMER
+                        where a.CUSTOMERCODE == searchString
+                                   ||   a.FIRSTNAME.ToLower().Contains(searchString.ToLower())
+                                   || a.LASTNAME.ToLower().Contains(searchString.ToLower())
+                                   || a.MAIDENNAME.ToLower().Contains(searchString.ToLower())
+                                   || a.CUSTOMERCODE.Contains(searchString)
+                        select new CustomerViewModels
+                        {
+                            crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
+                            crmsLegalStatusId = a.CRMSLEGALSTATUSID,
+                            crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
+                            accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
+                            branchId = a.BRANCHID,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            companyMainId = a.COMPANYID,
+                            createdBy = a.CREATEDBY,
+                            //lastUpdatedBy = (int)a.LASTUPDATEDBY,
+                            creationMailSent = a.CREATIONMAILSENT,
+                            customerCode = a.CUSTOMERCODE,
+                            customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                            customerTypeId = (short)a.CUSTOMERTYPEID,
+                            dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                            customerId = a.CUSTOMERID,
+                            emailAddress = a.EMAILADDRESS,
+                            firstName = a.FIRSTNAME,
+                            gender = a.GENDER,
+                            lastName = a.LASTNAME,
+                            maidenName = a.MAIDENNAME,
+                            maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : a.MARITALSTATUS.Value == 2 ? "F" : null,
+                            title = a.TITLE,
+                            middleName = a.MIDDLENAME,
+                            customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
+                            misCode = a.MISCODE,
+                            misStaff = a.MISSTAFF,
+                            nationalityId = a.NATIONALITYID,
+                            occupation = a.OCCUPATION,
+                            placeOfBirth = a.PLACEOFBIRTH,
+                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                            isInvestmentGrade = a.ISINVESTMENTGRADE,
+                            isRealatedParty = a.ISREALATEDPARTY,
+                            isProspect = a.ISPROSPECT,
+                             relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                            spouse = a.SPOUSE,
+                            sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
+                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                            subSectorId = (short)a.SUBSECTORID,
+                            subSectorName = a.TBL_SUB_SECTOR.NAME,
+                            taxNumber = a.TAXNUMBER,
+                            prospectCustomerCode = a.PROSPECTCUSTOMERCODE,
+                            customerRating = a.CUSTOMERRATING,
+                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                            businessUnitId = a.BUSINESSUNTID,
+                            businessUnitName = context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == a.BUSINESSUNTID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
+                            ownership = a.OWNERSHIP,
+                            relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
+                                .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
+                            riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                            customerBVN = a.CUSTOMERBVN,
+                            nameofSignatories = a.NAMEOFSIGNATORY,
+                            addressofSignatories = a.ADDRESSOFSIGNATORY,
+                            phoneNumberofSignatories = a.PHONENUMBEROFSIGNATORY,
+                            emailofSignatories = a.EMAILOFSIGNATORY,
+                            bvnNumberofSignatories = a.BVNNUMBEROFSIGNATORY,
+                            deleted = a.DELETED,
+                            dateTimeUpdated = a.DATETIMEUPDATED,
+                        }).ToList();
+            
+            return data;
+        }
+
+        public CustomerViewModels GetTempCustomerRecord(int customerId)
+        {
+            var tempCustomer = (from a in context.TBL_TEMP_CUSTOMER
+                        where a.CUSTOMERID == customerId
+                        select new CustomerViewModels
+                        {
+                            crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
+                            crmsLegalStatusId = a.CRMSLEGALSTATUSID,
+                            crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
+                            accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
+                            branchId = a.BRANCHID,
+                            companyMainId = a.COMPANYID,
+                            createdBy = a.CREATEDBY,
+                            creationMailSent = a.CREATIONMAILSENT,
+                            customerCode = a.CUSTOMERCODE,
+                            customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                            customerTypeId = (short)a.CUSTOMERTYPEID,
+                            dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                            customerId = a.CUSTOMERID,
+                            emailAddress = a.EMAILADDRESS,
+                            firstName = a.FIRSTNAME,
+                            gender = a.GENDER,
+                            lastName = a.LASTNAME,
+                            maidenName = a.MAIDENNAME,
+                            maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : a.MARITALSTATUS.Value == 2 ? "F" : null,
+                            title = a.TITLE,
+                            middleName = a.MIDDLENAME,
+                            misCode = a.MISCODE,
+                            misStaff = a.MISSTAFF,
+                            nationalityId = a.NATIONALITYID,
+                            occupation = a.OCCUPATION,
+                            placeOfBirth = a.PLACEOFBIRTH,
+                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                            isInvestmentGrade = a.ISINVESTMENTGRADE,
+                            isRealatedParty = a.ISREALATEDPARTY,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                            spouse = a.SPOUSE,
+                            subSectorId = (short)a.SUBSECTORID,
+                            taxNumber = a.TAXNUMBER,
+                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                            businessUnitId = a.BUSINESSUNTID,
+                            businessUnitName = context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == a.BUSINESSUNTID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
+                            ownership = a.OWNERSHIP,
+                            relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
+                                .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
+                            approvalStatus= a.APPROVALSTATUSID,
+                           approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                        }).FirstOrDefault();
+
+            return tempCustomer;
         }
     }
 }

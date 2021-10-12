@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.SupportUtility
 {
-   public class SupportUtilityViewModel: GeneralEntity
-   {
+    public class SupportUtilityViewModel : GeneralEntity
+    {
         public int supportIssueTypeId { get; set; }
         public string description { get; set; }
         public int? tag { get; set; }
-   }
+    }
 
     public class WorkflowSupportUtilityViewModel : GeneralEntity
     {
@@ -27,7 +27,7 @@ namespace FintrakBanking.ViewModels.SupportUtility
         public int responseStaffId { get; set; }
         public int tostaffId { get; set; }
         public int relievedStaffId { get; set; }
-        public int fromApprovalLevelId {get; set; }
+        public int fromApprovalLevelId { get; set; }
         public int toApprovalLevelId { get; set; }
         public int approvalStateId { get; set; }
         public short approvalStatusId { get; set; }
@@ -60,7 +60,7 @@ namespace FintrakBanking.ViewModels.SupportUtility
         public string oprationName { get; set; }
     }
 
-    public class ExpectedWorkflowViewModel: GeneralEntity
+    public class ExpectedWorkflowViewModel : GeneralEntity
     {
         public string operationName { get; set; }
         public string productClassName { get; set; }
@@ -76,4 +76,38 @@ namespace FintrakBanking.ViewModels.SupportUtility
         public string businessRule { get; set; }
         public string productName { get; set; }
     }
+
+    public class StaffSupportUtilityViewModel
+    {
+        public int staffId { get; set; }
+        public int DepartmentId  { get; set; }
+        public string email { get; set; }
+        public string gender { get; set; }
+        public string FullName { get { return $"{FirstName} {MiddleName} {LastName}"; } }
+        public string Phone { get; set; }
+        public string FirstName { get; set; }
+        public string MiddleName { get; set; }
+        public string LastName { get; set; }
+        public string StaffCode { get; set; }
+        public int staffRoleId { get; set; }
+        public string staffRoleName { get; set; }
+        public int supervisorStafFId { get; set; }
+        public int? supervisorStaffId { get; set; }
+        public string supervisorStafFName { get; set; }
+        public string supervisorStaffName { get; set; }
+        public string misCode { get; set; }
+        public short customerSensitivityLevelId { get; set; }
+        public short? BranchId { get; set; }
+        public int? jobTitleId { get; set; }
+        public int? StateId { get; set; }
+        public int? MisinfoId { get; set; }
+        public int? businessUnitId { get; set; }
+        public string SensitivityLevel { get; set; }
+        public string businessUnitName { get; set; }
+        public bool deleted { get; set; }
+        public int? updatedById { get; set; }
+        public string updatedBy { get; set; }
+    }
+
 }
+

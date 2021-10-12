@@ -168,6 +168,8 @@ namespace FintrakBanking.ViewModels.Customer
         public int? businessUnitId { get; set; }
         public decimal? pastDueObligations { get; set; }
         public string ownership { get; set; }
+        public string businessUnitName { get; set; }
+        public string approvalStatusName { get; set; }
     }
 
     public class CustomerViewModels2 : GeneralEntity

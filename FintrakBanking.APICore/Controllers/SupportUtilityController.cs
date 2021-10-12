@@ -92,6 +92,44 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-staff-record/{searchString}")]
+        public HttpResponseMessage GetStaff(string searchString)
+        {
+            var response = repo.GetStaff(searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Staff record for " + searchString, result = response });
 
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-temp-staff-record/{searchString}")]
+        public HttpResponseMessage GetStaffCompairRecord(string searchString)
+        {
+            var response = repo.GetStaffCompairRecord(searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Temp Staff record for " + searchString, result = response });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-customer-record/{searchString}")]
+        public HttpResponseMessage GetCustomer(string searchString)
+        {
+            var response = repo.GetSingleCustomerGeneralInfo(searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "customer record for " + searchString, result = response });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-temp-customer-record/{customerId}")]
+        public HttpResponseMessage GetTempCustomerRecord(int customerId)
+        {
+            var response = repo.GetTempCustomerRecord(customerId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "customer record for " + customerId, result = response });
+
+        }
     }
 }

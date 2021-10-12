@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.SupportUtility;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -20,6 +21,10 @@ namespace FintrakBanking.Interfaces.Credit
       List<WorkflowSupportUtilityViewModel> GetDistinctOperations(string searchString);
       List<ExpectedWorkflowViewModel> GetExpectedWorkFlow(int searchString);
       IEnumerable<BusinessRuleViewModel> GetBusinessRule(int approvalLevelId);
+      List<StaffSupportUtilityViewModel> GetStaff(string searchString);
+      StaffInfoViewModel GetStaffCompairRecord(string searchString);
+      List<CustomerViewModels> GetSingleCustomerGeneralInfo(string searchString);
+      CustomerViewModels GetTempCustomerRecord(int customerId);
     }
 
 }
