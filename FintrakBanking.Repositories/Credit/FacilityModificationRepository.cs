@@ -128,18 +128,24 @@ namespace FintrakBanking.Repositories.credit
                 var save = context.TBL_FACILITY_MODIFICATION.Add(entity);
                 context.SaveChanges();
                 var fees = new List<TBL_FACILITY_MOD_DETL_FEE>();
-                foreach (var f in model.fees)
+                if (model.fees != null)
                 {
-                    var existingFee = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(c => c.LOANAPPLICATIONDETAILID == save.LOANAPPLICATIONDETAILID && c.CHARGEFEEID == f.feeId && c.DELETED == false);
-                    var fee = new TBL_FACILITY_MOD_DETL_FEE
+                    foreach (var f in model.fees)
                     {
-                        FACILITYMODIFICATIONID = save.FACILITYMODIFICATIONID,
-                        LOANCHARGEFEEID = existingFee.LOANCHARGEFEEID,
-                        CHARGEFEEID = existingFee.CHARGEFEEID,
-                        DEFAULT_FEERATEVALUE = existingFee.DEFAULT_FEERATEVALUE,
-                        RECOMMENDED_FEERATEVALUE = f.rate
-                    };
-                    fees.Add(fee);
+                        var existingFee = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(c => c.LOANAPPLICATIONDETAILID == save.LOANAPPLICATIONDETAILID && c.CHARGEFEEID == f.feeId && c.DELETED == false);
+                        if (existingFee != null)
+                        {
+                            var fee = new TBL_FACILITY_MOD_DETL_FEE
+                            {
+                                FACILITYMODIFICATIONID = save.FACILITYMODIFICATIONID,
+                                LOANCHARGEFEEID = existingFee.LOANCHARGEFEEID,
+                                CHARGEFEEID = existingFee.CHARGEFEEID,
+                                DEFAULT_FEERATEVALUE = existingFee.DEFAULT_FEERATEVALUE,
+                                RECOMMENDED_FEERATEVALUE = f.rate
+                            };
+                            fees.Add(fee);
+                        }
+                    }
                 }
 
                 if (fees.Count > 0)

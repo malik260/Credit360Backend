@@ -78,7 +78,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Interfaces.credit;
     using FintrakBanking.Repositories.credit;
     using FintrakBanking.APICore.Controllers;
-    using FintrakBanking.Entities.AlertReportingModels;
+    
 
     public static class NinjectWebCommon
     {

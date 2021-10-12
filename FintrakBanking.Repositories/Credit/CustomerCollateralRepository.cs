@@ -98,10 +98,12 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public int AddCollateral(CollateralViewModel entity) //, 
         {
+           
             int collateralId = AddTempCollateralMainForm(entity);
-
+            
             if (collateralId > 0)
             {
+
                 switch (entity.collateralTypeId)
                 {
                     case (int)CollateralTypeEnum.FixedDeposit: AddDepositCollateral(collateralId, entity); break;
@@ -137,15 +139,10 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("Error has occured while creating this collateral");
                 }
-                if (saved)
-                {
-
-                    return collateralId;
-                }
 
             }
 
-            return 0;
+            return collateralId;
         }
 
         //public int AddCollateral(CollateralViewModel entity, byte[] file) //, 
@@ -1288,6 +1285,7 @@ namespace FintrakBanking.Repositories.Credit
                     NOTE = entity.note,
                 });
 
+                context.SaveChanges();
                 //if (context.SaveChanges() > 0) // EF will take care of this
                 AddMiscellaneousNotes(entity, collateral.TEMPCOLLATERALMISCELLANEOUSID);
             }
@@ -1308,7 +1306,7 @@ namespace FintrakBanking.Repositories.Credit
                         DATETIMECREATED = DateTime.Now
                     });
                 }
-                //context.SaveChanges();
+                context.SaveChanges();
             }
         }
 
@@ -8653,14 +8651,18 @@ namespace FintrakBanking.Repositories.Credit
                                join atrail in context.TBL_APPROVAL_TRAIL on x.TEMPCOLLATERALCUSTOMERID equals atrail.TARGETID
                                join a in context.TBL_CUSTOMER on x.CUSTOMERID equals a.CUSTOMERID
                                let ColSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(c => c.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID).Select(c => c.COLLATERALSUBTYPENAME).FirstOrDefault()
-                               where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing && x.ISCURRENT == true//|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
-                                                                                                                         //  && x.ISCURRENT == true
+                               where 
+                               (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                                     || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                                     && x.ISCURRENT == true //|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
+                                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved                                                                      //  && x.ISCURRENT == true
                                      && atrail.RESPONSESTAFFID == null
                                      && atrail.OPERATIONID == (int)OperationsEnum.CollateralApproval
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                orderby x.TEMPCOLLATERALCUSTOMERID descending
                                select new CollateralViewModel
                                {
+                                   approvalTrailId = atrail.APPROVALTRAILID,
                                    collateralId = x.TEMPCOLLATERALCUSTOMERID,
                                    collateralTypeId = x.COLLATERALTYPEID,
                                    collateralSubTypeId = x.COLLATERALSUBTYPEID,
@@ -8684,8 +8686,9 @@ namespace FintrakBanking.Repositories.Credit
                                    customerName = a.FIRSTNAME + " " + a.LASTNAME + " " + a.MAIDENNAME,
 
                                }).ToList();
+            var data = collaterals.GroupBy(x => x.collateralId).Select(x => x.First()).ToList();
 
-            return collaterals;
+            return data;
         }
 
         public IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId)
@@ -8732,19 +8735,20 @@ namespace FintrakBanking.Repositories.Credit
                 var refNo = CommonHelpers.GenerateRandomDigitCode(7);
                 model.collateralCode = refNo;
             }
+            int collateralId = 0;
             DateTime date = DateTime.Now;
             var xchRate = repo.GetExchangeRate(date, model.currencyId, model.companyId);
             if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
                 var mainCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE.Trim() == model.collateralCode.Trim()).Select(x => x).FirstOrDefault();
 
-                if (mainCollateral != null)
+                if (mainCollateral != null && model.validTill != null)
                 {
-                    
                     if (mainCollateral.VALIDTILL != model.validTill)
                     {
                         NotifyForCollateralValidity(mainCollateral, model.validTill);
                     }
+
 
                     mainCollateral.COLLATERALCODE = model.collateralCode;
                     //mainCollateral.COLLATERALTYPEID = model.collateralTypeId;
@@ -8768,7 +8772,8 @@ namespace FintrakBanking.Repositories.Credit
                     mainCollateral.RELATEDCOLLATERALCODE = model.relatedCollateralCode;
                     mainCollateral.COLLATERALSUMMARY = model.collateralSummary;
                     context.SaveChanges();
-                    return mainCollateral.COLLATERALCUSTOMERID;
+                    collateralId = mainCollateral.COLLATERALCUSTOMERID;
+                    return collateralId;
                 }
                 else
                 {
@@ -8811,17 +8816,14 @@ namespace FintrakBanking.Repositories.Credit
                     //else
                     //    collateral.CUSTOMERID = model.customerId;                    
 
-                    try
+                    if (context.SaveChanges() > 0)
                     {
-                        if (context.SaveChanges() > 0)
+                        collateralId = collateral.COLLATERALCUSTOMERID;
+                        if (model.validTill != null)
                         {
                             NotifyForCollateralValidity(collateral, model.validTill, true);
-                            return collateral.COLLATERALCUSTOMERID;
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        throw ex;
+                        return collateralId;
                     }
 
                 }
@@ -8839,6 +8841,7 @@ namespace FintrakBanking.Repositories.Credit
                     var refNo = CommonHelpers.GenerateRandomDigitCode(7);
                     model.collateralCode = refNo;
                 }
+
                 var collateral = context.TBL_TEMP_COLLATERAL_CUSTOMER.Add(new TBL_TEMP_COLLATERAL_CUSTOMER
                 {
                     COLLATERALTYPEID = model.collateralTypeId,
@@ -8862,7 +8865,7 @@ namespace FintrakBanking.Repositories.Credit
                     COLLATERALSUMMARY = model.collateralSummary,
                     COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose,
                     ISCURRENT = true,
-                    VALIDTILL = model.validTill,
+                    VALIDTILL = model.validTill == null ? null : model.validTill,
                 });
 
                 //if (model.customerId > 0)
@@ -8874,18 +8877,14 @@ namespace FintrakBanking.Repositories.Credit
                 //else
                 //    collateral.CUSTOMERID = model.customerId;
 
-                try
+
+                if (context.SaveChanges() > 0)
                 {
-                    if (context.SaveChanges() > 0)
-                    {
-                        return collateral.TEMPCOLLATERALCUSTOMERID;
-                    }
+                    collateralId = collateral.TEMPCOLLATERALCUSTOMERID;
+                    return collateralId;
                 }
-                catch (Exception ex) { throw ex; }
             }
-
-
-            return 0;
+            return collateralId;
         }
 
 
@@ -8898,7 +8897,7 @@ namespace FintrakBanking.Repositories.Credit
                 model.referenceNumber = refNo;
                 }
 
-                var insurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == model.referenceNumber.Trim()).Select(x => x).FirstOrDefault();
+                var insurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == model.referenceNumber.Trim() && x.DELETED == false).Select(x => x).FirstOrDefault();
 
                 if (insurancePolicy != null)
                 {
@@ -8906,7 +8905,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
-                var insurancePolicy2 = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && x.COLLATERALCUSTOMERID == model.collateralCustomerId).Select(x => x).FirstOrDefault();
+                var insurancePolicy2 = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && x.COLLATERALCUSTOMERID == model.collateralCustomerId && x.DELETED == false).Select(x => x).FirstOrDefault();
 
                 if (insurancePolicy2 != null)
                 {
@@ -11277,6 +11276,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 if (customerCollateral.CUSTOMERID != null)
                                 {
+                                    i.collateralCode = customerCollateral.COLLATERALCODE;
                                     i.securityReleaseStatus = (from y in context.TBL_COLLATERAL_RELEASE join p in context.TBL_COLLATERAL_RELEASE_TYPE on y.COLLATERALRELEASETYPEID equals p.COLLATERALRELEASETYPEID where y.COLLATERALCUSTOMERID == i.collateralCustomerId select p.COLLATERALRELEASETYPENAME)?.FirstOrDefault();
                                     customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerCollateral.CUSTOMERID)?.FirstOrDefault();
                                     i.taxNumber = customer?.TAXNUMBER;
@@ -11301,7 +11301,7 @@ namespace FintrakBanking.Repositories.Credit
                                     i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
                                     i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x=>x.BUSINESSUNITNAME +" "+ x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                     i.customerEmail = customer?.EMAILADDRESS;
-
+                                    i.collateralCode = customerCollateral.COLLATERALCODE;
                                 }
 
                                 var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
@@ -11417,6 +11417,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             if (customerCollateral.CUSTOMERID != null)
                             {
+                                i.collateralCode = customerCollateral.COLLATERALCODE;
                                 i.securityReleaseStatus = (from y in context.TBL_COLLATERAL_RELEASE join p in context.TBL_COLLATERAL_RELEASE_TYPE on y.COLLATERALRELEASETYPEID equals p.COLLATERALRELEASETYPEID where y.COLLATERALCUSTOMERID == i.collateralCustomerId select p.COLLATERALRELEASETYPENAME)?.FirstOrDefault();
                                 customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerCollateral.CUSTOMERID)?.FirstOrDefault();
                                 i.taxNumber = customer?.TAXNUMBER;
@@ -11441,6 +11442,7 @@ namespace FintrakBanking.Repositories.Credit
                                 i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
                                 i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x => x.BUSINESSUNITNAME + " " + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                 i.customerEmail = customer?.EMAILADDRESS;
+                                i.collateralCode = customerCollateral.COLLATERALCODE;
 
                             }
 
@@ -11557,6 +11559,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             if (customerCollateral.CUSTOMERID != null)
                             {
+                                i.collateralCode = customerCollateral.COLLATERALCODE;
                                 i.securityReleaseStatus = (from y in context.TBL_COLLATERAL_RELEASE join p in context.TBL_COLLATERAL_RELEASE_TYPE on y.COLLATERALRELEASETYPEID equals p.COLLATERALRELEASETYPEID where y.COLLATERALCUSTOMERID == i.collateralCustomerId select p.COLLATERALRELEASETYPENAME)?.FirstOrDefault();
                                 customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerCollateral.CUSTOMERID)?.FirstOrDefault();
                                 i.taxNumber = customer?.TAXNUMBER;
@@ -11581,6 +11584,7 @@ namespace FintrakBanking.Repositories.Credit
                                 i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
                                 i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x => x.BUSINESSUNITNAME + " " + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                 i.customerEmail = customer?.EMAILADDRESS;
+                                i.collateralCode = customerCollateral.COLLATERALCODE;
 
                             }
 
@@ -11698,7 +11702,8 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 if (customerCollateral.CUSTOMERID != null)
                                 {
-                                    i.securityReleaseStatus = (from y in context.TBL_COLLATERAL_RELEASE join p in context.TBL_COLLATERAL_RELEASE_TYPE on y.COLLATERALRELEASETYPEID equals p.COLLATERALRELEASETYPEID where y.COLLATERALCUSTOMERID == i.collateralCustomerId select p.COLLATERALRELEASETYPENAME)?.FirstOrDefault();
+                                    i.collateralCode = customerCollateral.COLLATERALCODE;
+                                     i.securityReleaseStatus = (from y in context.TBL_COLLATERAL_RELEASE join p in context.TBL_COLLATERAL_RELEASE_TYPE on y.COLLATERALRELEASETYPEID equals p.COLLATERALRELEASETYPEID where y.COLLATERALCUSTOMERID == i.collateralCustomerId select p.COLLATERALRELEASETYPENAME)?.FirstOrDefault();
                                     customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerCollateral.CUSTOMERID)?.FirstOrDefault();
                                     i.taxNumber = customer?.TAXNUMBER;
                                     i.rcNumber = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.REGISTRATIONNUMBER)?.FirstOrDefault();
@@ -11723,6 +11728,7 @@ namespace FintrakBanking.Repositories.Credit
                                     i.customerPhone = context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customer.CUSTOMERID).Select(x => x.PHONENUMBER).FirstOrDefault();
                                     i.divisionName = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == customer.BUSINESSUNTID).Select(x => x.BUSINESSUNITNAME + " " + x.BUSINESSUNITSHORTCODE).FirstOrDefault();
                                     i.customerEmail = customer?.EMAILADDRESS;
+                                    i.collateralCode = customerCollateral.COLLATERALCODE;
 
                             }
 

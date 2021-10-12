@@ -54,6 +54,11 @@ namespace FintrakBanking.ViewModels.credit
         public int unitBalance { get; set; }
 
         public DateTime? dateReleased { get; set; }
+        public double exchangeRate { get; set; }
+        public decimal localEquivalent { get { return totalValue * (decimal) exchangeRate; } }
+
+        public decimal totalSum { get; set; }
+
     }
 
 

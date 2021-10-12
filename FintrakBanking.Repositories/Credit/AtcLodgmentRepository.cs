@@ -144,6 +144,8 @@ namespace FintrakBanking.Repositories.credit
                         approvalStatusId = atrail.APPROVALSTATUSID,
                         dateCreated = x.DATETIMECREATED,
                         operationId = atrail.OPERATIONID,
+                        currencyId = x.CURRENCYID,
+                        currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
                         approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
@@ -182,9 +184,38 @@ namespace FintrakBanking.Repositories.credit
                               currencyId = atc.CURRENCYID,
                               currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == atc.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
                               branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == atc.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                              exchangeRate = context.TBL_CURRENCY_EXCHANGERATE.Where(o => o.CURRENCYID == atc.CURRENCYID).Select(o => o.EXCHANGERATE).FirstOrDefault(),
                           }).ToList();
 
             return result;
+        }
+
+        public decimal  GetAtcLodgmentsSumByCustomerId(int customerId)
+        {
+            decimal totalSum = 0;
+            var result = (from atc in context.TBL_ATC_LODGMENT
+                          join c in context.TBL_CUSTOMER on atc.CUSTOMERID equals c.CUSTOMERID
+                          where atc.CUSTOMERID == customerId
+                            && atc.DELETED == false
+                            && atc.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                          orderby atc.ATCLODGMENTID descending
+                          select new AtcLodgmentViewModel
+                          {
+                              customerId = atc.CUSTOMERID,
+                              numberOfBags = atc.NUMBEROFBAGS,
+                              unitNumber = atc.UNITNUMBER,
+                              unitValue = atc.UNITVALUE,
+                              atcLodgmentId = atc.ATCLODGMENTID,
+                              exchangeRate = context.TBL_CURRENCY_EXCHANGERATE.Where(o => o.CURRENCYID == atc.CURRENCYID).Select(o => o.EXCHANGERATE).FirstOrDefault(),
+                          }).ToList();
+            
+            foreach(var t in result)
+            {
+                totalSum = totalSum + ((t.numberOfBags * t.unitNumber * t.unitValue) * (decimal)t.exchangeRate);
+                
+            }
+
+            return totalSum;
         }
 
         public IEnumerable<AtcLodgmentViewModel> GetAtcReleaseForApproval(int staffId)
@@ -585,10 +616,10 @@ namespace FintrakBanking.Repositories.credit
             return context.SaveChanges() != 0;
         }
 
-        public bool atclodgmentApproval(AtcLodgmentViewModel model)
+        public bool atclodgeApproval(AtcLodgmentViewModel model)
         {
 
-            if(model.approvalStatusId == (short)ApprovalStatusEnum.Referred)
+            if (model.approvalStatusId == (short)ApprovalStatusEnum.Referred)
             {
                 bool responce = false;
 
@@ -642,7 +673,7 @@ namespace FintrakBanking.Repositories.credit
                 workflow.ExternalInitialization = true;
                 workflow.TargetId = model.atcLodgmentId;
                 workflow.LogActivity();
-                
+
                 if (context.SaveChanges() != 0)
                 {
                     entity.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
@@ -650,7 +681,19 @@ namespace FintrakBanking.Repositories.credit
 
                 return context.SaveChanges() != 0;
             }
-            
+
+        }
+
+        public WorkflowResponse AtclodgmentApproval(IEnumerable<AtcLodgmentViewModel> model)
+        {
+           
+
+            foreach (var atc in model)
+            {
+                atclodgeApproval(atc);
+            }
+            var saved = context.SaveChanges() > 0;
+            return workflow.Response;
         }
 
         public bool SaveEditedATCRelease(AtcReleaseViewModel model, int id)
@@ -780,11 +823,11 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForRelease()
         {
-            
-            return (from x in context.TBL_ATC_LODGMENT
+                    return (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                     where x.DELETED == false && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && x.UNITNUMBER > 0
                     select new AtcLodgmentViewModel
+                    
                     {
                         atcLodgmentId = x.ATCLODGMENTID,
                         customerId = x.CUSTOMERID,
@@ -802,8 +845,10 @@ namespace FintrakBanking.Repositories.credit
                         approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
+                        currencyId = x.CURRENCYID,
+                        currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-
+                        exchangeRate = context.TBL_CURRENCY_EXCHANGERATE.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.EXCHANGERATE).FirstOrDefault(),
                         dateReleased = x.DATETIMEUPDATED,
                     }).OrderByDescending(o => o.atcLodgmentId)
              .ToList();

@@ -1634,11 +1634,18 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
         public string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate, int dpd, decimal amount)
         {
-            HashProperty hashValue = GetHashedDateValue(dateInfor);
+            try
+            {
+                HashProperty hashValue = GetHashedDateValue(dateInfor);
 
-            string path = string.Empty;
-            path = reportPath + "ReportViews/DelinquentAccounts.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue+"&dpd="+dpd + "&amount=" + amount;
-            return path;
+                string path = string.Empty;
+                path = reportPath + "ReportViews/DelinquentAccounts.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue + "&dpd=" + dpd + "&amount=" + amount;
+                return path;
+            }
+            catch( Exception en)
+            {
+                throw en;
+            }
         }
 
         public string GetPaydayLoanRecoveryCollectionReport(DateTime startDate, DateTime endDate)
