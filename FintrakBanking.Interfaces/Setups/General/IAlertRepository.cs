@@ -11,6 +11,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IAlertRepository
     {
+        bool saveBulkInsurancePolicyEntries(List<MultipleCustomerCodeOutputViewModel> models, UserInfo user);
+        Tuple<List<MultipleCustomerCodeOutputViewModel>, bool> preBulkCustomerCode(byte[] file, UserInfo user, bool isFinal);
         bool AddAlertBindingMethosUpdate(int id, AlertBindingMethodsViewModel model);
         bool AddAlertPlaceholderUpdate(int id, AlertPlaceHoldersViewModel model);
         bool AddAlertBindingMethod(AlertBindingMethodsViewModel model);

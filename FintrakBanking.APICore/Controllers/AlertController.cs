@@ -11,6 +11,9 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.APICore.core;
+using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -1046,6 +1049,67 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("pre-multiple-customer-code")]
+        public async Task<HttpResponseMessage> UploadBulkCustomerCodeData()
+        {
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            var isFinal = Convert.ToBoolean(provider.FormData["isFinal"]);
+
+            var entity = new UserInfo
+            {
+                BranchId = (short)_token.GetBranchId,
+                companyId = _token.GetCompanyId,
+                createdBy = _token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+
+            var file = provider.Contents.FirstOrDefault();
+            var buffer = await file.ReadAsByteArrayAsync();
+            var data = _repo.preBulkCustomerCode(buffer, entity, isFinal);
+
+            if (buffer != null)
+            {
+                bool success = true;
+                if (data.Item2 == false && isFinal) { success = false; }
+                if (!success) { return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Pre Bulk Customer code failed to upload." }); }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Pre Bulk customer code data was successfully uploaded" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Pre Bulk Customer code data" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-customer-code-entries")]
+        public HttpResponseMessage saveBulkCustomerCodeEntries([FromBody] List<MultipleCustomerCodeOutputViewModel> models)
+        {
+            UserInfo user = new UserInfo();
+            user.BranchId = (short)_token.GetBranchId;
+            user.applicationUrl = HttpContext.Current.Request.Path;
+            user.createdBy = _token.GetStaffId;
+            user.companyId = _token.GetCompanyId;
+
+            var response = _repo.saveBulkInsurancePolicyEntries(models, user);
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, data = response, message = "Records uploaded successfully" });
         }
 
     }
