@@ -38,6 +38,12 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public short? vote { get; set; }
         public short? sourceOperationId { get; set; }
         public int? sourceTargetId { get; set; }
+        public string responsestaffName { get; set; }
+        public int? reliefStaffId { get; set; }
+        public string reliefStaff { get; set; }
+        public string loopedStaff { get; set; }
+        public string oprationName { get; set; }
+        public short? referBackState { get; set; }
     }
     public class ApprovalTrailDetailsViewModel : ApprovalTrailViewModel
     {

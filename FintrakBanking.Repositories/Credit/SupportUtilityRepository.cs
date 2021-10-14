@@ -22,6 +22,16 @@ namespace FintrakBanking.Repositories.Credit
             context = _context;
         }
 
+
+        private IQueryable<OperationStaffViewModel> GetAllStaffNames()
+        {
+            return this.context.TBL_STAFF.Select(s => new OperationStaffViewModel
+            {
+                id = s.STAFFID,
+                name = s.FIRSTNAME + " " + s.LASTNAME
+                //name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME
+            });
+        }
         public IEnumerable<CustomerViewModels> GetCustomersIssuesByParams(string searchParam, short? IssueTypeId)
         {
            if(IssueTypeId == (short)IssueTypeEnum.CustomerBusinessUnitNotSet) { return GetCustomersByParams(searchParam, IssueTypeId).Where(x => x.businessUnitId == null); }
@@ -117,42 +127,41 @@ namespace FintrakBanking.Repositories.Credit
                .ToList();
         }
 
-        public IEnumerable<BusinessRuleViewModel> GetBusinessRule( int approvalLevelId)
+        public BusinessRuleViewModel GetBusinessRule( int approvalLevelId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                return from a in context.TBL_APPROVAL_LEVEL
-                       join x in context.TBL_APPROVAL_BUSINESS_RULE on a.APPROVALBUSINESSRULEID equals x.APPROVALBUSINESSRULEID
-                       where approvalLevelId == a.APPROVALLEVELID
+                var businessRule = (from a in context.TBL_APPROVAL_LEVEL
+                                       join x in context.TBL_APPROVAL_BUSINESS_RULE on a.APPROVALBUSINESSRULEID equals x.APPROVALBUSINESSRULEID
+                                       where approvalLevelId == a.APPROVALLEVELID
 
-                       select new BusinessRuleViewModel
-                       {
-                           levelBusinessRuleId = x.APPROVALBUSINESSRULEID,
-                           description = x.DESCRIPTION,
-                           minimumAmount = x.MINIMUMAMOUNT,
-                           maximumAmount = x.MAXIMUMAMOUNT,
-                           pepAmount = x.PEPAMOUNT,
-                           pep = x.PEP,
-                           projectRelated = x.PROJECTRELATED,
-                           insiderRelated = x.INSIDERRELATED,
-                           onLending = x.ONLENDING,
-                           interventionFunds = x.INTERVENTIONFUNDS,
-                           orrBasedApproval = x.ORRBASEDAPPROVAL,
-                           esrm = x.ESRM,
-                           isForContingentFacility = x.ISFORCONTINGENTFACILITY,
-                           isForRevolvingFacility = x.ISFORREVOLVINGFACILITY,
-                           isForRenewal = x.ISFORRENEWAL,
-                           exemptContingentFacility = x.EXEMPTCONTINGENTFACILITY,
-                           exemptRevolvingFacility = x.EXEMPTREVOLVINGFACILITY,
-                           exemptRenewal = x.EXEMPTRENEWAL,
-                           tenor = x.TENOR,
-                           withoutInstruction = x.WITHINSTRUCTION,
-                           domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
-                           excludeLevel = x.EXCLUDELEVEL,
-                           isAgricRelated = x.ISAGRICRELATED,
-                       };
-
-               
+                                   select new BusinessRuleViewModel
+                                   {
+                                       levelBusinessRuleId = x.APPROVALBUSINESSRULEID,
+                                       description = x.DESCRIPTION,
+                                       minimumAmount = x.MINIMUMAMOUNT,
+                                       maximumAmount = x.MAXIMUMAMOUNT,
+                                       pepAmount = x.PEPAMOUNT,
+                                       pep = x.PEP,
+                                       projectRelated = x.PROJECTRELATED,
+                                       insiderRelated = x.INSIDERRELATED,
+                                       onLending = x.ONLENDING,
+                                       interventionFunds = x.INTERVENTIONFUNDS,
+                                       orrBasedApproval = x.ORRBASEDAPPROVAL,
+                                       esrm = x.ESRM,
+                                       isForContingentFacility = x.ISFORCONTINGENTFACILITY,
+                                       isForRevolvingFacility = x.ISFORREVOLVINGFACILITY,
+                                       isForRenewal = x.ISFORRENEWAL,
+                                       exemptContingentFacility = x.EXEMPTCONTINGENTFACILITY,
+                                       exemptRevolvingFacility = x.EXEMPTREVOLVINGFACILITY,
+                                       exemptRenewal = x.EXEMPTRENEWAL,
+                                       tenor = x.TENOR,
+                                       withoutInstruction = x.WITHINSTRUCTION,
+                                       domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
+                                       excludeLevel = x.EXCLUDELEVEL,
+                                       isAgricRelated = x.ISAGRICRELATED,
+                                   }).FirstOrDefault();
+               return businessRule;               
             }
         }
 
@@ -188,7 +197,7 @@ namespace FintrakBanking.Repositories.Credit
                                         productName = pr.PRODUCTNAME,
                                         customerGroupId = x.CUSTOMERGROUPID,
                                         loanTypeId = x.LOANAPPLICATIONTYPEID,
-                                        applicationDate = x.APPLICATIONDATE,
+                                        transactionDate = c.SYSTEMARRIVALDATETIME,
                                         applicationAmount = x.APPLICATIONAMOUNT,
                                         approvedAmount = x.APPROVEDAMOUNT,
                                         productClassId = x.PRODUCTCLASSID,
@@ -197,6 +206,7 @@ namespace FintrakBanking.Repositories.Credit
                                         isRelatedParty = x.ISRELATEDPARTY,
                                         isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
                                         isInvestmentGrade = x.ISINVESTMENTGRADE,
+                                        approvalTrailId = c.APPROVALTRAILID,
                                         approvalStatusId = (short)x.APPROVALSTATUSID,
                                         approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                         applicationStatusId = x.APPLICATIONSTATUSID,
@@ -213,6 +223,49 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+
+        public ApprovalTrailViewModel GetSingleTrail(int approvalTrailId)
+        {
+            var allstaff = this.GetAllStaffNames();
+            var staffs = from s in context.TBL_STAFF select s;
+
+            var singleTrail = (from x in context.TBL_APPROVAL_TRAIL
+                                   where x.APPROVALTRAILID == approvalTrailId
+
+
+                                   select new ApprovalTrailViewModel
+                                   {
+                                       approvalTrailId = x.APPROVALTRAILID,
+                                       comment = x.COMMENT,
+                                       targetId = x.TARGETID,
+                                       arrivalDate = x.ARRIVALDATE,
+                                       systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                                       responseDate = x.RESPONSEDATE,
+                                       systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                                       responseStaffId = x.RESPONSESTAFFID,
+                                       requestStaffId = x.REQUESTSTAFFID,
+                                       toStaffId = x.TOSTAFFID,
+                                       loopedStaffId = x.LOOPEDSTAFFID,
+                                       loopedStaff = allstaff.FirstOrDefault(s => s.id == x.LOOPEDSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.LOOPEDSTAFFID).name,
+                                       fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                                       fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                       toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                       toApprovalLevelId = x.TOAPPROVALLEVELID,
+                                       approvalStateId = x.APPROVALSTATEID,
+                                       approvalStatusId = x.APPROVALSTATUSID,
+                                       reliefStaffId = x.RELIEVEDSTAFFID,
+                                       reliefStaff = allstaff.FirstOrDefault(s => s.id == x.RELIEVEDSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RELIEVEDSTAFFID).name,
+                                       vote = x.VOTE,
+                                       oprationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == x.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
+                                       approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                                       approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                       responsestaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                                       fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+                                       toStaffName = allstaff.FirstOrDefault(s => s.id == x.TOSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.TOSTAFFID).name,
+                                       referBackState = x.REFEREBACKSTATEID,
+                                   }).FirstOrDefault();
+            return singleTrail;
+        }
 
         public List<ExpectedWorkflowViewModel> GetExpectedWorkFlow(int searchString)
         {
@@ -454,6 +507,7 @@ namespace FintrakBanking.Repositories.Credit
                             emailAddress = a.EMAILADDRESS,
                             firstName = a.FIRSTNAME,
                             gender = a.GENDER,
+                            customerTypeName = context.TBL_CUSTOMER_TYPE.Where(o => o.CUSTOMERTYPEID == a.CUSTOMERTYPEID).Select(o => o.NAME).FirstOrDefault(),
                             lastName = a.LASTNAME,
                             maidenName = a.MAIDENNAME,
                             maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : a.MARITALSTATUS.Value == 2 ? "F" : null,

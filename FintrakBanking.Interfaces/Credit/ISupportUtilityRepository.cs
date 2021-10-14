@@ -20,11 +20,12 @@ namespace FintrakBanking.Interfaces.Credit
       List<WorkflowSupportUtilityViewModel> GetApprovalTrail(string searchString);
       List<WorkflowSupportUtilityViewModel> GetDistinctOperations(string searchString);
       List<ExpectedWorkflowViewModel> GetExpectedWorkFlow(int searchString);
-      IEnumerable<BusinessRuleViewModel> GetBusinessRule(int approvalLevelId);
+      BusinessRuleViewModel GetBusinessRule(int approvalLevelId);
       List<StaffSupportUtilityViewModel> GetStaff(string searchString);
       StaffInfoViewModel GetStaffCompairRecord(string searchString);
       List<CustomerViewModels> GetSingleCustomerGeneralInfo(string searchString);
       CustomerViewModels GetTempCustomerRecord(int customerId);
+      ApprovalTrailViewModel GetSingleTrail(int approvalTrailId);
     }
 
 }

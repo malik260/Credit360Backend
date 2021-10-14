@@ -34,7 +34,7 @@ namespace FintrakBanking.ViewModels.SupportUtility
         public int operationId { get; set; }
         public string productName { get; set; }
         public int customerId { get; set; }
-        public DateTime applicationDate { get; set; }
+        public DateTime? applicationDate { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         public string customerName { get; set; }
@@ -58,6 +58,7 @@ namespace FintrakBanking.ViewModels.SupportUtility
         public string customerGroupName { get; set; }
         public string loanTypeName { get; set; }
         public string oprationName { get; set; }
+        public DateTime transactionDate { get; set; }
     }
 
     public class ExpectedWorkflowViewModel : GeneralEntity

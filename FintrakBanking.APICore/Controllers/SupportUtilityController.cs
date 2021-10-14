@@ -64,6 +64,16 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("view-single-trail/{approvalTrailId}")]
+        public HttpResponseMessage GetSingleTrail(int approvalTrailId)
+        {
+            var response = repo.GetSingleTrail(approvalTrailId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Approval trail for " + approvalTrailId, result = response });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("view-unique-operations/{searchString}")]
         public HttpResponseMessage GetUniqueOperations(string searchString)
         {
