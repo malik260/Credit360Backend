@@ -174,7 +174,8 @@ namespace FintrakBanking.APICore.Controllers
         //    return context != null ? (string)context.Request.UserHostAddress : null;
         //}
 
-        [HttpPost]// [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("token")]
         public HttpResponseMessage GetTokenAsync([FromBody] TokenVM user)
         {
@@ -256,6 +257,16 @@ namespace FintrakBanking.APICore.Controllers
                 byte[] data2 = Convert.FromBase64String(user.validTo);
                 string validTo = Encoding.UTF8.GetString(data2);
                 // build the json response
+
+                var userClaim = new TBL_USER_CLAIMS
+                {
+                    TOKEN = encodedToken,
+                    ISACTIVE = true,
+                    USERID = currUser.staffId,
+                    DATETIMECREATED = DateTime.Now,
+                };
+                _context.TBL_USER_CLAIMS.Add(userClaim);
+                _context.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     success = true,
@@ -366,6 +377,13 @@ namespace FintrakBanking.APICore.Controllers
             };
 
             _auditTrail.AddAuditTrail(audit);
+            var req = Request;
+            string bearerToken = req.Headers.Authorization.Parameter;
+            var tokenExist = _context.TBL_USER_CLAIMS.Where(x => x.TOKEN == bearerToken).FirstOrDefault();
+            if (tokenExist != null)
+            {
+                tokenExist.ISACTIVE = false;
+            }
 
             _context.SaveChanges();
 
