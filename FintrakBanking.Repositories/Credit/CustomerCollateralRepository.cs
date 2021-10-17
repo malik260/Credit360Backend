@@ -8651,11 +8651,9 @@ namespace FintrakBanking.Repositories.Credit
                                join atrail in context.TBL_APPROVAL_TRAIL on x.TEMPCOLLATERALCUSTOMERID equals atrail.TARGETID
                                join a in context.TBL_CUSTOMER on x.CUSTOMERID equals a.CUSTOMERID
                                let ColSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(c => c.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID).Select(c => c.COLLATERALSUBTYPENAME).FirstOrDefault()
-                               where 
-                               (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
-                                     || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
-                                     && x.ISCURRENT == true //|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
-                                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved                                                                      //  && x.ISCURRENT == true
+                               where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                                     || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.ISCURRENT == true //|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
+                                                                                                                         //  && x.ISCURRENT == true
                                      && atrail.RESPONSESTAFFID == null
                                      && atrail.OPERATIONID == (int)OperationsEnum.CollateralApproval
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
@@ -8742,8 +8740,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var mainCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE.Trim() == model.collateralCode.Trim()).Select(x => x).FirstOrDefault();
 
-                if (mainCollateral != null && model.validTill != null)
+                if (mainCollateral != null)
                 {
+
                     if (mainCollateral.VALIDTILL != model.validTill)
                     {
                         NotifyForCollateralValidity(mainCollateral, model.validTill);
@@ -8819,10 +8818,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (context.SaveChanges() > 0)
                     {
                         collateralId = collateral.COLLATERALCUSTOMERID;
-                        if (model.validTill != null)
-                        {
-                            NotifyForCollateralValidity(collateral, model.validTill, true);
-                        }
+                        NotifyForCollateralValidity(collateral, model.validTill, true);
                         return collateralId;
                     }
 
@@ -8840,6 +8836,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var refNo = CommonHelpers.GenerateRandomDigitCode(7);
                     model.collateralCode = refNo;
+                }
+
+                if (model.validTill.Value == null)
+                {
+                    model.validTill = null;
                 }
 
                 var collateral = context.TBL_TEMP_COLLATERAL_CUSTOMER.Add(new TBL_TEMP_COLLATERAL_CUSTOMER
@@ -8865,7 +8866,7 @@ namespace FintrakBanking.Repositories.Credit
                     COLLATERALSUMMARY = model.collateralSummary,
                     COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose,
                     ISCURRENT = true,
-                    VALIDTILL = model.validTill == null ? null : model.validTill,
+                    VALIDTILL = model.validTill,
                 });
 
                 //if (model.customerId > 0)

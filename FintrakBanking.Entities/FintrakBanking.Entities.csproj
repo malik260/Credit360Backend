@@ -79,7 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\TBL_DOCUMENT_USAGE_FINAL_ARCHIVE.cs" />
-    <Compile Include="Models\TBL_ALERT_CUSTOMER_CODE.cs" />
     <Compile Include="Models\TBL_ALERT_PLACEHOLDER.cs" />
     <Compile Include="Models\TBL_ALERT_SCHEDULE.cs" />
     <Compile Include="Models\TBL_APPROVAL_FLOW_TYPE.cs" />
@@ -722,7 +721,6 @@
     <Compile Include="Models\TBL_TERM_SHEET.cs" />
     <Compile Include="Models\TBL_THIRDPARTY_LOAN_MAPPING.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
-    <Compile Include="Models\TBL_USER_CLAIMS.cs" />
     <Compile Include="Models\TBL_VALUATION_REPORT.cs" />
     <Compile Include="Models\TBL_VALUATION_REQUEST_TYPE.cs" />
     <Compile Include="Models\TBL_WORKFLOW_NOTIFICATION.cs" />
