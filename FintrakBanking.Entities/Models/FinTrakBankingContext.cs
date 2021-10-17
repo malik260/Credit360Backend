@@ -665,6 +665,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOMER_ARCHIVE> TBL_CUSTOMER_ARCHIVE { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
+        public virtual DbSet<TBL_USER_CLAIMS> TBL_USER_CLAIMS { get; set; }
 
 
 
