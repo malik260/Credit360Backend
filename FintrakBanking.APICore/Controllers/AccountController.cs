@@ -24,6 +24,8 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using Newtonsoft.Json.Linq;
 using FintrakBanking.APICore.core;
+using System.Web.Providers.Entities;
+using System.Web.Security;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -91,7 +93,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             repo.ClearLoginToken(token.GetUsername);
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
-
+            
             var audit = new TBL_AUDIT()
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoggedOut,
@@ -110,8 +112,10 @@ namespace FintrakBanking.APICore.Controllers
             context.SaveChanges();
 
             var successObject = new { success = true, message = "User Logged Off" };
-
+            
             var successMessage = JToken.FromObject(successObject);
+            FormsAuthentication.SignOut();
+
             return Ok(successMessage);
 
         }
@@ -289,6 +293,7 @@ namespace FintrakBanking.APICore.Controllers
             if (externalLogin.LoginProvider != provider)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+                FormsAuthentication.SignOut();
                 return new ChallengeResult(provider, this);
             }
 

@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Http;
 using System.Collections.Generic;
 using FintrakBanking.Common.CustomException;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -750,7 +751,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("documentation/operation/{operationId}/target/{targetId}/{isThirdPartyFacility}")]
-        public HttpResponseMessage GetLoadedDocumentation(int operationId, int targetId, bool isThirdPartyFacility)
+        public async Task<HttpResponseMessage> GetLoadedDocumentation(int operationId, int targetId, bool isThirdPartyFacility)
         {
             try
             {
@@ -758,7 +759,7 @@ namespace FintrakBanking.APICore.Controllers
                 user.BranchId = token.GetBranchId;
                 user.staffId = token.GetStaffId;
                 user.companyId = token.GetCompanyId;
-                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId, operationId, targetId, user, isThirdPartyFacility);
+                List<LoadedDocumentSectionViewModel> response = await repo.GetLoadedDocumentation(token.GetStaffId, operationId, targetId, user, isThirdPartyFacility);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)

@@ -20,6 +20,7 @@ using System.Web;
 using FintrakBanking.Common.CustomException;
 using System.Text;
 using Microsoft.AspNet.Identity;
+using System.Web.Security;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -173,7 +174,8 @@ namespace FintrakBanking.APICore.Controllers
         //    return context != null ? (string)context.Request.UserHostAddress : null;
         //}
 
-        [HttpPost]// [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("token")]
         public HttpResponseMessage GetTokenAsync([FromBody] TokenVM user)
         {
@@ -255,6 +257,16 @@ namespace FintrakBanking.APICore.Controllers
                 byte[] data2 = Convert.FromBase64String(user.validTo);
                 string validTo = Encoding.UTF8.GetString(data2);
                 // build the json response
+
+                var userClaim = new TBL_USER_CLAIMS
+                {
+                    TOKEN = encodedToken,
+                    ISACTIVE = true,
+                    USERID = currUser.staffId,
+                    DATETIMECREATED = DateTime.Now,
+                };
+                _context.TBL_USER_CLAIMS.Add(userClaim);
+                _context.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     success = true,
@@ -347,7 +359,9 @@ namespace FintrakBanking.APICore.Controllers
             //Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
             var authTypes = new string[] { DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.ExternalBearer, DefaultAuthenticationTypes.TwoFactorCookie, CookieAuthenticationDefaults.AuthenticationType, "Bearer" };
             Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-
+            Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+            FormsAuthentication.SignOut();
+            
             var audit = new TBL_AUDIT()
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoggedOut,
@@ -363,6 +377,13 @@ namespace FintrakBanking.APICore.Controllers
             };
 
             _auditTrail.AddAuditTrail(audit);
+            var req = Request;
+            string bearerToken = req.Headers.Authorization.Parameter;
+            var tokenExist = _context.TBL_USER_CLAIMS.Where(x => x.TOKEN == bearerToken).FirstOrDefault();
+            if (tokenExist != null)
+            {
+                tokenExist.ISACTIVE = false;
+            }
 
             _context.SaveChanges();
 
@@ -388,6 +409,7 @@ namespace FintrakBanking.APICore.Controllers
             //{
             //    return this.Ok(new { success = true, message = "User Logged Off" });
             //}
+            FormsAuthentication.SignOut();
             var staffDetails = _repo.GetSingleUserByUserName(token.GetUsername);
 
             if (staffDetails == null || staffDetails.username == "")
@@ -397,7 +419,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
-
+            FormsAuthentication.SignOut();
 
             var audit = new TBL_AUDIT
             {

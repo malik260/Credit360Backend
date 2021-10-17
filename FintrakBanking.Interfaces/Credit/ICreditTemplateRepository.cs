@@ -2,6 +2,7 @@
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -42,7 +43,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         // form CAM impl
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentSections(int staffId, int operationId, int targetId);
-        List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user,bool isThirdPartyFacility = false);
+        Task<List<LoadedDocumentSectionViewModel>> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user,bool isThirdPartyFacility = false);
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentationGeneric(int staffId, int operationId, int targetId, int targetIdForWorkFlow, UserInfo user, int customerId);
         bool LoadDocumentTemplate(DocumentTemplateViewModel entity);
         bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity);

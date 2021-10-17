@@ -1685,6 +1685,16 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         }
 
 
+        public string GetOutstandingDocumentDeferredList()
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/OutstandingDocumentDeferredList.aspx?hashValue=" + hashValue;
+            return path;
+        }
+
+
     }
 
 }
