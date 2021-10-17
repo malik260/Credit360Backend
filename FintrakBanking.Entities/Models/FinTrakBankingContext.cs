@@ -4,6 +4,7 @@ namespace FintrakBanking.Entities.Models
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
+    using FintrakBanking.Entities.AlertReportingModels;
 
     //[DbConfigurationType(typeof(OracleDatabaseConfiguration))]
     [DbConfigurationType(typeof(SqlDatabaseConfiguration))]
@@ -20,7 +21,6 @@ namespace FintrakBanking.Entities.Models
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }  
         //public virtual DbSet<TBL_NEXT_INTEREST_REPAYMENT> TBL_NEXT_INTEREST_REPAYMENT { get; set; }
         //public virtual DbSet<TBL_NEXT_PRINCIPAL_REPAYMENT> TBL_NEXT_PRINCIPAL_REPAYMENT { get; set; } 
-        public virtual DbSet<TBL_ALERT_CUSTOMER_CODE> TBL_ALERT_CUSTOMER_CODE { get; set; }
         public virtual DbSet<TBL_RECORD_TRACKING> TBL_RECORD_TRACKING { get; set; }
         public virtual DbSet<TBL_ALERT_BINDING_METHODS> TBL_ALERT_BINDING_METHODS { get; set; }
         public virtual DbSet<TBL_ALERT_SCHEDULE> TBL_ALERT_SCHEDULE { get; set; }
@@ -665,7 +665,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOMER_ARCHIVE> TBL_CUSTOMER_ARCHIVE { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
-        public virtual DbSet<TBL_USER_CLAIMS> TBL_USER_CLAIMS { get; set; }
 
 
 

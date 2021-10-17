@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FintrakBanking.Entities.Models
+namespace FintrakBanking.Entities.AlertReportingModels
 {
 
     [Table("TBL_GLOBAL_EXPOSURE")]

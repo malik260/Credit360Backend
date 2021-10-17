@@ -7648,57 +7648,5 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public IEnumerable<StaffInfoViewModel> GetDocumentDeferralList()
-        {
-            var deferralList = (from x in context.TBL_LOAN_CONDITION_PRECEDENT 
-                                join d in  context.TBL_LOAN_CONDITION_DEFERRAL on x.LOANCONDITIONID equals d.LOANCONDITIONID
-                                where 
-                                d.DEFERREDDATE != null 
-                                && DbFunctions.TruncateTime(d.DEFERREDDATE).Value <= DbFunctions.TruncateTime(DateTime.Now).Value
-                                &&  x.ISDOCUMENT == true
-                                && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                select d.CREATEDBY).ToList();
-
-            var staffList = (from s in context.TBL_STAFF
-                             where deferralList.Contains(s.STAFFID)
-                             select new StaffInfoViewModel
-                             {
-                                 staffId = s.STAFFID,
-                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
-                                 Email = s.EMAIL,
-                                 misCode = s.MISCODE,
-                             }).GroupBy(x=>x.staffId).Select(x=>x.First()).ToList();
-
-            return staffList;
-        }
-
-
-        public IEnumerable<PendingDocumentDeferralViewModel> GetOutstandingDocumentDeferralList(int accountOfficer)
-        {
-            var deferralList = (from x in context.TBL_LOAN_CONDITION_PRECEDENT
-                                join d in context.TBL_LOAN_CONDITION_DEFERRAL on x.LOANCONDITIONID equals d.LOANCONDITIONID
-                                join l in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID
-                                where
-                                d.DEFERREDDATE != null
-                                && DbFunctions.TruncateTime(d.DEFERREDDATE).Value <= DbFunctions.TruncateTime(DateTime.Now).Value
-                                && x.ISDOCUMENT == true
-                                && d.CREATEDBY == accountOfficer
-                                && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                             select new PendingDocumentDeferralViewModel
-                             {
-                                 customerCode = context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == l.CUSTOMERID).Select(c=>c.CUSTOMERCODE).FirstOrDefault(),
-                                 customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == l.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault(),
-                                 facilityType = context.TBL_PRODUCT.Where(c => c.PRODUCTID == l.APPROVEDPRODUCTID).Select(c => c.PRODUCTNAME).FirstOrDefault(),
-                                 facilityAmount = l.APPROVEDAMOUNT,
-                                 condition = x.CONDITION,
-                                 reference = d.CHECKLISTDEFERRALID,
-                                 deferredDate = d.DEFERREDDATE,
-                                 sbu = (from c in context.TBL_CUSTOMER join b in context.TBL_PROFILE_BUSINESS_UNIT on c.BUSINESSUNTID equals b.BUSINESSUNITID where c.CUSTOMERID == l.CUSTOMERID select b.BUSINESSUNITNAME).FirstOrDefault()
-                             }).ToList();
-
-            return deferralList;
-        }
-
-
     }
 }

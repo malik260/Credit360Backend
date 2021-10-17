@@ -11,8 +11,6 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
-        IEnumerable<PendingDocumentDeferralViewModel> GetOutstandingDocumentDeferralList(int accountOfficer);
-        IEnumerable<StaffInfoViewModel> GetDocumentDeferralList();
         string Decrypt(string cipher);
         void ValidateProfiledUsers(int maxUsers);
         IEnumerable<GlobalExposureApplicationViewModel> GetRecoveryAssignmentDueCompletionDate();

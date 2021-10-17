@@ -47,7 +47,6 @@ namespace FintrakBanking.Interfaces.credit
         WorkflowResponse AtclodgmentApproval(IEnumerable<AtcLodgmentViewModel> model);
         bool SaveEditedATCRelease(AtcReleaseViewModel model, int id);
         IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentsByCustomerId(int customerId);
-        decimal GetAtcLodgmentsSumByCustomerId(int customerId);
         WorkflowResponse SubmitReferredAtcBackIntoWorkflow(AtcReleaseViewModel model);
     }
 }

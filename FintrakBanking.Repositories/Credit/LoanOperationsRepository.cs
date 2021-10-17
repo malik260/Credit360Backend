@@ -41011,7 +41011,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<AccreditedConsultantsViewModel> GetAllInternalRecoveryAgents(int staffId, int companyId, DateTime month)
         {
-            month  = month.AddDays(1);
             var data = (from ln in context.TBL_ACCREDITEDCONSULTANT
                         join a in context.TBL_LOAN_RECOVERY_REPORT_COLLECTION on ln.ACCREDITEDCONSULTANTID equals a.ACCREDITEDCONSULTANT
                         where
