@@ -47,6 +47,7 @@ namespace FintrakBanking.Repositories.Credit
                 condition = c.CONDITION,
                 isExternal = c.ISEXTERNAL,
                 isSubsequent = c.ISSUBSEQUENT,
+                isDocument = c.ISDOCUMENT,
                 corporate = c.CORPORATE,
                 retail = c.RETAIL,
                 productId = c.PRODUCTID,
@@ -72,6 +73,7 @@ namespace FintrakBanking.Repositories.Credit
                 condition = c.CONDITION,
                 isExternal = c.ISEXTERNAL,
                 isSubsequent = c.ISSUBSEQUENT,
+                isDocument = c.ISDOCUMENT,
                 corporate = c.CORPORATE,
                 retail = c.RETAIL,
                 productId = c.PRODUCTID,
@@ -95,6 +97,7 @@ namespace FintrakBanking.Repositories.Credit
                 CONDITION = model.condition,
                 ISEXTERNAL = (bool)model.isExternal,
                 ISSUBSEQUENT = model.isSubsequent,
+                ISDOCUMENT = model.isDocument,
                 CREATEDBY = model.createdBy,
                 //LOANAPPLICATIONID = model.loanApplicationId,
                 TIMELINEID = model.timelineId,
@@ -143,6 +146,7 @@ namespace FintrakBanking.Repositories.Credit
                         CONDITIONID = c.CONDITIONID,
                         ISEXTERNAL = (bool)c.ISEXTERNAL,
                         ISSUBSEQUENT = c.ISSUBSEQUENT,
+                        ISDOCUMENT = c.ISDOCUMENT,
                         CREATEDBY = c.CREATEDBY,
                         //CHECKLISTVALIDATED=false,
                         TIMELINEID = c.TIMELINEID,
@@ -177,6 +181,7 @@ namespace FintrakBanking.Repositories.Credit
             data.CONDITION = model.condition;
             data.ISEXTERNAL = (bool)model.isExternal;
             data.ISSUBSEQUENT = (bool)model.isSubsequent;
+            data.ISDOCUMENT = (bool)model.isDocument;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
             data.TIMELINEID = model.timelineId;
@@ -219,6 +224,7 @@ namespace FintrakBanking.Repositories.Credit
                         conditionId = c.CONDITIONID == null ? 0 : (int)c.CONDITIONID,
                         isExternal = c.ISEXTERNAL,
                         isSubsequent = c.ISSUBSEQUENT,
+                        isDocument = c.ISDOCUMENT,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
                         loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                         loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
@@ -275,6 +281,7 @@ namespace FintrakBanking.Repositories.Credit
                 condition = c.CONDITION,
                 isExternal = c.ISEXTERNAL,
                 isSubsequent = c.ISSUBSEQUENT,
+                isDocument = c.ISDOCUMENT,
                 corporate = c.CORPORATE,
                 retail = c.RETAIL,
                 productId = c.PRODUCTID,
@@ -292,6 +299,7 @@ namespace FintrakBanking.Repositories.Credit
                 CONDITION = model.condition,
                 ISEXTERNAL = model.isExternal,
                 ISSUBSEQUENT = model.isSubsequent,
+                ISDOCUMENT = model.isDocument,
                 PRODUCTID = model.productId,
                 TIMELINEID = model.timelineId,
                 SECTORID = model.sectorId,
@@ -336,6 +344,7 @@ namespace FintrakBanking.Repositories.Credit
             data.CONDITION = model.condition;
             data.ISEXTERNAL = model.isExternal;
             data.ISSUBSEQUENT = model.isSubsequent;
+            data.ISDOCUMENT = model.isDocument;
             data.PRODUCTID = (short)model.productId;
             data.TIMELINEID = model.timelineId;
             //data.CORPORATE = model.corporate;

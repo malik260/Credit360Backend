@@ -1242,11 +1242,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareDate() == true)
             {
-                TimeSpan start = new TimeSpan(17, 0, 0);
-                TimeSpan end = new TimeSpan(17, 30, 0);
+                TimeSpan start = new TimeSpan(13, 0, 0);
+                TimeSpan end = new TimeSpan(13, 30, 0);
 
                 if ((now >= start) && (now <= end))
                 {
+                    
                     //GetStaffLoanPortfolioReport();
                     /*GetValuationReminder();
                     GetSiteVisitationAccountReminder();
@@ -1334,6 +1335,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetPastDueObligationsReminder();
                     GetPastDueObligationsReminderByGroupHeads();
                     GroupImminentMaturitiesByGroupHeads();
+                    GetOutstandingDocumentList();
                     state = true;
                 }
             }
@@ -1482,6 +1484,7 @@ namespace FintrakBanking.Repositories.Setups.General
                          || m.OPERATIONMETHOD.Trim() == "GetStaffLoanPortfolioReport"
                          || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminderGroupHeads"
                          || m.OPERATIONMETHOD.Trim() == "GetImminentMaturitiesGroupHeads"
+                         || m.OPERATIONMETHOD.Trim() == "GetOutstandingDocumentList"
                          )).FirstOrDefault();
 
             if (DBdate == null)
@@ -1737,7 +1740,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var defaultEmail = "";
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = alertTitleInfo.DEFAULTEMAIL.ToLower().Replace("olukayode.ajayi@accessbankplc.com;", ""); 
+                defaultEmail = alertTitleInfo.DEFAULTEMAIL.ToLower(); 
             }
             if (alertTitleInfo != null && groupHeadsList != null && groupHeadsList.Count() > 0)
             {
@@ -1848,7 +1851,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var defaultEmail = "";
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower().Replace("olukayode.ajayi@accessbankplc.com;", "");
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower();
             }
             if (alertTitleInfo != null && groupHeadsList != null && groupHeadsList.Count() > 0)
             {
@@ -1955,7 +1958,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var defaultEmail = "";
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower().Replace("olukayode.ajayi@accessbankplc.com;", ""); 
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower(); 
             }
             if (alertTitleInfo != null && staffList != null && staffList.Count() > 0)
             {
@@ -3259,7 +3262,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var defaultEmail = "";
             if (alertTitleInfo.DEFAULTEMAIL != null)
             {
-                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower().Replace("olukayode.ajayi@accessbankplc.com;", ""); 
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower(); 
             }
             if (pastDueObligationsReminder != null && pastDueObligationsReminder.Count() > 0)
             {
@@ -7354,6 +7357,113 @@ namespace FintrakBanking.Repositories.Setups.General
             });
 
             return insuranceTracking;
+        }
+
+        public void GetOutstandingDocumentList()
+        {
+            // GetOutstandingDocumentList method
+            var staffList = externalAlertRepository.GetDocumentDeferralList();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetOutstandingDocumentList" && a.ISACTIVE == true).FirstOrDefault();
+
+            var defaultEmail = "";
+            var result = string.Empty;
+            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower();
+            }
+            if (alertTitleInfo != null && staffList != null && staffList.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var staff in staffList)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    string emailList = "";
+                    
+                    emailList = GetBusinessUsersEmailsToGroupHead(staff.misCode);
+
+                    var accountOfficerName = context.TBL_STAFF.Where(s => s.STAFFID == staff.staffId).FirstOrDefault();
+                    var rmName = context.TBL_STAFF.Where(s => s.STAFFID == accountOfficerName.SUPERVISOR_STAFFID).FirstOrDefault();
+                    var zhName = context.TBL_STAFF.Where(s => s.STAFFID == rmName.SUPERVISOR_STAFFID).FirstOrDefault();
+                    var ghName = context.TBL_STAFF.Where(s => s.STAFFID == zhName.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                    var deferredInformationList = externalAlertRepository.GetOutstandingDocumentDeferralList(staff.staffId);
+
+                    if (deferredInformationList != null && deferredInformationList.Count() > 0)
+                    {
+                        var n = 0;
+                        result = $@"
+                        <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>S/N</b></td>
+                            <td><b>Customer ID</b></td>
+                            <td><b>Customer</b></td>
+                            <td><b>Facility Type</b></td>
+                            <td><b>Facility Amount</b></td>
+                            <td><b>Reference/Process ID</b></td>
+                            <td><b>Account Officer</b></td>
+                            <td><b>Relationship Manager</b></td>
+                            <td><b>Group Head</b></td>
+                            <td><b>SBU</b></td>
+                            <td><b>Document Outstanding</b></td>
+                            <td><b>Number Of Days Outstanding</b></td>
+                        </tr>
+                        ";
+
+                        foreach (var t in deferredInformationList)
+                        {
+                            n++;
+
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.facilityAmount));
+                            int numberOfDays = (DateTime.Now - t.deferredDate.Value).Days;
+
+                            result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{t.customerCode}</td>
+                            <td>{t.customerName}</td>
+                            <td>{t.facilityType}</td>
+                            <td>{$"{amount}"}</td>
+                            <td>{t.reference}</td>
+                            <td>{accountOfficerName?.FIRSTNAME +" "+ accountOfficerName?.MIDDLENAME + " "+ accountOfficerName?.LASTNAME}</td>
+                            <td>{rmName?.FIRSTNAME + " " + rmName?.MIDDLENAME + " " + rmName?.LASTNAME}</td>
+                            <td>{ghName?.FIRSTNAME + " " + ghName?.MIDDLENAME + " " + ghName?.LASTNAME}</td>
+                            <td>{t.sbu}</td>
+                            <td>{t.condition}</td>
+                            <td>{numberOfDays}</td>
+                        </tr>
+                        ";
+                        }
+
+                        result = result + $"</table>";
+
+                        if (result.Count() > 0 && alertTemplate.Replace("@{{deferredInformationList}}", result).Count() > 0)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{deferredInformationList}}", result);
+                            emailList = emailList + defaultEmail;
+
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                            alerts.Add(alert);
+                        }
+                    }
+                    else
+                    {
+                        result = null;
+                    }
+                }
+
+                if (alerts.Count() > 0 &&  result != null)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
         }
 
     }

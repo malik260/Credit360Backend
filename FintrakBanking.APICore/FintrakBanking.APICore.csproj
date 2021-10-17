@@ -672,6 +672,13 @@
     <Compile Include="Reports\ReportViews\CollateralRegister.aspx.designer.cs">
       <DependentUpon>CollateralRegister.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\OutstandingDocumentDeferredList.aspx.cs">
+      <DependentUpon>OutstandingDocumentDeferredList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OutstandingDocumentDeferredList.aspx.designer.cs">
+      <DependentUpon>OutstandingDocumentDeferredList.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CorporateCustomerCreation.aspx.cs">
       <DependentUpon>CorporateCustomerCreation.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1587,6 +1594,7 @@
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\CollateralAdequacy.aspx" />
     <Content Include="Reports\ReportViews\CollateralRegister.aspx" />
+    <Content Include="Reports\ReportViews\OutstandingDocumentDeferredList.aspx" />
     <Content Include="Reports\ReportViews\CorporateCustomerCreation.aspx" />
     <Content Include="Reports\ReportViews\CorporateLoansReport.aspx" />
     <Content Include="Reports\ReportViews\CreditBureau.aspx" />
@@ -1728,9 +1736,6 @@
     <Content Include="Reports\ReportDataset\DRAWDOWN.xsc">
       <DependentUpon>DRAWDOWN.xsd</DependentUpon>
     </Content>
-    <Content Include="Reports\ReportDataset\DeferralWaiver.xsc">
-      <DependentUpon>DeferralWaiver.xsd</DependentUpon>
-    </Content>
     <Content Include="Reports\Credit\OfferLetterGeneration\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
@@ -1770,6 +1775,12 @@
     <Content Include="Reports\ReportDataset\CollateralDataSet.xss">
       <DependentUpon>CollateralDataSet.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\ReportDataset\DisbursalCreditTurnover.xsc">
+      <DependentUpon>DisbursalCreditTurnover.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\DeferralWaiver.xsc">
+      <DependentUpon>DeferralWaiver.xsd</DependentUpon>
+    </Content>
     <None Include="Reports\ReportDataset\DeferralWaiver.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>DeferralWaiver.Designer.cs</LastGenOutput>
@@ -1777,9 +1788,6 @@
     </None>
     <Content Include="Reports\ReportDataset\DeferralWaiver.xss">
       <DependentUpon>DeferralWaiver.xsd</DependentUpon>
-    </Content>
-    <Content Include="Reports\ReportDataset\DisbursalCreditTurnover.xsc">
-      <DependentUpon>DisbursalCreditTurnover.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\DisbursalCreditTurnover.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -2164,6 +2172,7 @@
     <EmbeddedResource Include="Reports\Report\OutputDocument.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Reports\Report\OutstandingDocumentDeferredList.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
     <EmbeddedResource Include="Reports\Report\PaydayLoanCollection.rdlc" />
     <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />

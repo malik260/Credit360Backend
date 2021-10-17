@@ -23,6 +23,7 @@ using FintrakBanking.ReportObjects.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
 using FintrakBanking.ViewModels.Credit;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -298,7 +299,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("form3800b-los")]
-        public HttpResponseMessage GetGeneratedForm3800bLos(string applicationRefNumber)
+        public async Task<HttpResponseMessage> GetGeneratedForm3800bLos(string applicationRefNumber)
         {
             try
             {
@@ -310,7 +311,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = creditTemplateRepo.GetSavedDocumentation(6, loanAppId);
                 if (data.Count == 0)
                 {
-                    data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId, user);
+                    data = await creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId, user);
                 }
                // var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
                 if (data == null)
@@ -331,7 +332,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("form3800b-lmsr")]
-        public HttpResponseMessage GetGeneratedForm3800bLmsr(string applicationRefNumber)
+        public async Task<HttpResponseMessage> GetGeneratedForm3800bLmsr(string applicationRefNumber)
         {
             try
             {
@@ -343,7 +344,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = creditTemplateRepo.GetSavedDocumentation(46, loanAppId);
                 if (data.Count == 0)
                 {
-                    data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 46, loanAppId, user);
+                    data = await creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 46, loanAppId, user);
                 }
                 // var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
                 if (data == null)
@@ -3918,6 +3919,30 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetComputationForInternalAgentsReport(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("outstanding-document-deferred-list-report")]
+        public HttpResponseMessage GetOutstandingDocumentDeferredList()
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetOutstandingDocumentDeferredList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
