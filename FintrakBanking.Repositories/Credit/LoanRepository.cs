@@ -8216,8 +8216,6 @@ namespace FintrakBanking.Repositories.Credit
             var company = context.TBL_COMPANY.Find(companyId);
 
             var staffIds = generalSetup.GetStaffRlieved(staffId);
-
-
             //IEnumerable<CamProcessedLoanViewModel> data2;
 
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
@@ -15052,10 +15050,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddExistingLoan(LoanViewModel entity)
         {
-            
                 var systemDate = generalSetup.GetApplicationDate();
                 var company = context.TBL_COMPANY.Find(entity.companyId);
                 var localGlobalReference = context.TBL_GLOBAL_EXPOSURE.FirstOrDefault(x => x.ID == entity.loanId);
+                if (localGlobalReference == null) { throw new ConditionNotMetException("Loan facility or type does not exist on Credit360"); }
 
                 var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == localGlobalReference.PRODUCTCODE).FirstOrDefault();
                 if (product == null) { throw new ConditionNotMetException("Loan facility or type does not exist on Credit360"); }
@@ -17832,7 +17830,7 @@ namespace FintrakBanking.Repositories.Credit
                                 appraisalLoanApplicationId = e.LOANAPPLICATIONID,
                                 synOperationId = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == b.OPERATIONID).Select(o => o.SYNCHOPERATIONID).FirstOrDefault(),
                                 loanReviewApplicationId = b.LOANREVIEWAPPLICATIONID,
-                                customerId = b.CUSTOMERID == null ? context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == e.CUSTOMERGROUPID).Select(c => c.CUSTOMERGROUPID).FirstOrDefault() : b.CUSTOMERID,
+                                customerId = b.CUSTOMERID == 0 ? context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == e.CUSTOMERGROUPID).Select(c => c.CUSTOMERGROUPID).FirstOrDefault() : b.CUSTOMERID,
                                 loanTypeId2 = e.LOANAPPLICATIONTYPEID,
                                 customerType = e.LOANAPPLICATIONTYPEID == 1 ? "Single" : "Group",
                                 currencyCode = context.TBL_CURRENCY.Where(x => x.CURRENCYID == b.CURRENCYID).Select(x => x.CURRENCYCODE).FirstOrDefault(), //a.TBL_CURRENCY.CURRENCYCODE,
@@ -17932,7 +17930,7 @@ namespace FintrakBanking.Repositories.Credit
                                      appraisalLoanApplicationId = e.LOANAPPLICATIONID,
                                      synOperationId = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == b.OPERATIONID).Select(o => o.SYNCHOPERATIONID).FirstOrDefault(),
                                      loanReviewApplicationId = b.LOANREVIEWAPPLICATIONID,
-                                     customerId = b.CUSTOMERID == null ? context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == e.CUSTOMERGROUPID).Select(c => c.CUSTOMERGROUPID).FirstOrDefault() : b.CUSTOMERID,
+                                     customerId = b.CUSTOMERID == 0 ? context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == e.CUSTOMERGROUPID).Select(c => c.CUSTOMERGROUPID).FirstOrDefault() : b.CUSTOMERID,
                                      customerCode = b.TBL_CUSTOMER.CUSTOMERCODE == null ? context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == e.CUSTOMERGROUPID).Select(c => c.GROUPCODE).FirstOrDefault() : b.TBL_CUSTOMER.CUSTOMERCODE,
                                      customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.LASTNAME,
                                      customerGroupName = context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == e.CUSTOMERGROUPID).Select(c => c.GROUPNAME).FirstOrDefault(),
