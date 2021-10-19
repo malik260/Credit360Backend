@@ -15053,7 +15053,7 @@ namespace FintrakBanking.Repositories.Credit
                 var systemDate = generalSetup.GetApplicationDate();
                 var company = context.TBL_COMPANY.Find(entity.companyId);
                 var localGlobalReference = context.TBL_GLOBAL_EXPOSURE.FirstOrDefault(x => x.ID == entity.loanId);
-                if (localGlobalReference == null) { throw new ConditionNotMetException("Loan facility or type does not exist on Credit360"); }
+                if (localGlobalReference == null) { throw new ConditionNotMetException("Loan facility or type does not exist on Credit360 Application"); }
 
                 var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == localGlobalReference.PRODUCTCODE).FirstOrDefault();
                 if (product == null) { throw new ConditionNotMetException("Loan facility or type does not exist on Credit360"); }
