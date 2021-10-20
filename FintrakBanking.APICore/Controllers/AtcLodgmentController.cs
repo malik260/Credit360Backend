@@ -341,15 +341,6 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("atc-lodgment-release-sum/{customerId}")]
-        public HttpResponseMessage GetAtcLodgmentsSumByCustomerId(int customerId)
-        {
-            decimal response = repo.GetAtcLodgmentsSumByCustomerId(customerId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response});
-        }
-
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("atc-release/{id}")]

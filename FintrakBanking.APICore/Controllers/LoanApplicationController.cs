@@ -2112,6 +2112,27 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("facility-by-loanApplication-detail-id-los/{loanApplicationDetailId}")] 
+        public HttpResponseMessage GetFacilityByApplicationDetailIdLos(int loanApplicationDetailId)
+        {
+            var response = repo.GetFacilityByApplicationDetailIdLos(loanApplicationDetailId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("facility-by-loanApplication-detail-id-lms/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetFacilityByApplicationDetailIdLms(int loanApplicationDetailId)
+        {
+            var response = repo.GetFacilityByApplicationDetailIdLms(loanApplicationDetailId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("delete-failedrac-loan-application/{loanApplicationDetailId}")]

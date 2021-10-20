@@ -32,6 +32,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? frequencyId { get; set; }
         public int bindingMethodId { get; set; }
         public int? alertFrequencyId { get; set; }
+        public string userActivities { get; set; }
 
         //public DateTime lastSentDate { get; set; }
         //public int source { get; set; }
@@ -173,16 +174,5 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string methodName { get; set; }
         public string methodTitle { get; set; }
     }
-
-    public class MultipleCustomerCodeOutputViewModel
-    {
-        public int customerCodeId { get; set; }
-        public string customerCode { get; set; }
-        public DateTime? dateTimeCreated { get; set; }
-        public List<string> errorMessages { get; set; }
-        public bool passed { get; set; }
-        public string validityStatus { get; set; }
-    }
-    
 
 }

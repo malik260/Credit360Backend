@@ -11,7 +11,6 @@ using System.Linq;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common;
-using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -396,7 +395,7 @@ namespace FintrakBanking.Repositories.Credit
             return replacedSections;
         }
 
-        public async Task<List<LoadedDocumentSectionViewModel>> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user, bool isThirdPartyFacility)
+        public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user, bool isThirdPartyFacility)
         {
             // int staffId, is REDUNDANT!
            /* var memoOperationId = 0;
@@ -478,7 +477,7 @@ namespace FintrakBanking.Repositories.Credit
                 OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
-            await context.SaveChangesAsync();
+            context.SaveChanges();
            
             return replacedSections;
         }
