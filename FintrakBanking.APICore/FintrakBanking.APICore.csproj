@@ -1741,7 +1741,6 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
-    <None Include="Properties\PublishProfiles\PUBLISH.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
@@ -2210,6 +2209,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
+    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\Testing\" />
   </ItemGroup>
   <ItemGroup>
