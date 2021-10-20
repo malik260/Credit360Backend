@@ -32,6 +32,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? frequencyId { get; set; }
         public int bindingMethodId { get; set; }
         public int? alertFrequencyId { get; set; }
+        public string userActivities { get; set; }
 
         //public DateTime lastSentDate { get; set; }
         //public int source { get; set; }

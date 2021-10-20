@@ -14,6 +14,7 @@ using FintrakBanking.APICore.core;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -203,7 +204,13 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)_token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = _token.GetStaffId;
+                entity.userActivities = _token.GetUserActivities.ToLower();
 
+                if(!_token.GetUserActivities.ToLower().Contains(entity.userActivities.ToLower()))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Unauthorize api access" });
+                }
                 var data = _repo.UpdateAlertTitleStatus(entity);
                 if (data)
                 {
