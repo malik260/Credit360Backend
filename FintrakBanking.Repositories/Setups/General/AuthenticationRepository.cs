@@ -409,10 +409,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     where a.USERNAME.ToLower() == username
                     select a.LOGINCODE).FirstOrDefault();
 
-             user = (from a in context.TBL_PROFILE_USER
-                             where a.USERNAME.ToLower() == username
-                             select a).FirstOrDefault();
 
+            //.FirstOrDefault(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
             SessionStatusInfo result = null;
             string loginCodeStr = null;
             string ipAddressStr = null;
@@ -444,6 +442,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
                 else if (loginCodeStr != null)
                 {
+                    //  int timeStamp = 1;// (DateTime.Now - Convert.ToDateTime(user.LASTLOCKOUTDATE.HasValue) ).Minutes;
                     if (ipAddressStr == ipAddress && loginCodeStr != Guid.Empty.ToString())
                     {
                         this.LogCode = loginCodeStr + "@" + ipAddressStr;

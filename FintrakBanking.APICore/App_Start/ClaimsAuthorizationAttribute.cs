@@ -29,13 +29,29 @@ namespace FintrakBanking.APICore
         {
             string Username = actionContext.RequestContext.Principal.Identity.Name;
 
-            var principal = actionContext.RequestContext.Principal as ClaimsPrincipal;
+            if (
+                actionContext.Request.RequestUri.AbsolutePath.Contains("auth/token"))
+                {
+                return Task.FromResult<object>(null);
+                }
+              
+                var principal = actionContext.RequestContext.Principal as ClaimsPrincipal;
 
             if (!principal.Identity.IsAuthenticated)
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
                 return Task.FromResult<object>(null);
             }
+            var token = actionContext.Request.Headers.Authorization.Parameter;
+            var _context = new FinTrakBankingContext();
+
+            var tokenIsValid   =  _context.TBL_USER_CLAIMS.Where(x => x.TOKEN == token && x.ISACTIVE == true).FirstOrDefault();
+            if ( tokenIsValid == null)
+            {
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
+                return Task.FromResult<object>(null);
+            }
+
 
             //var _context = new FinTrakBankingContext();
             //////if (!(principal.HasClaim(x => x.Type == "logincode" && x.Value == user.LOGINCODE)))
