@@ -19,6 +19,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
+        LoanApplicationViewModel GetFacilityByApplicationDetailIdLos(int loanApplicationDetailId);
+        LoanApplicationViewModel GetFacilityByApplicationDetailIdLms(int loanApplicationDetailId);
         IEnumerable<RetailRecoveryCustomerTransactionsViewModels> GetRetailRecoveryReporting(DateTime startDate, DateTime endDate, int accreditedConsultantId, string customer);
         bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsLMSViewModel model, int id, UserInfo user);
         LoanApplicationTagsLMSViewModel GetLoanApplicationTagsLMS(int id);
