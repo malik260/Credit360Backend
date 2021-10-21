@@ -362,6 +362,7 @@
     <Compile Include="Controllers\LcCashBuildUpPlanController.cs" />
     <Compile Include="Controllers\LcIssuanceController.cs" />
     <Compile Include="Controllers\LetterGenerationRequestController.cs" />
+    <Compile Include="Controllers\SubsidiaryToHeadOfficeController.cs" />
     <Compile Include="Controllers\LoanFeeChargeController.cs" />
     <Compile Include="Controllers\OriginalDocumentApprovalController.cs" />
     <Compile Include="Controllers\OriginalDocumentReleaseController.cs" />
