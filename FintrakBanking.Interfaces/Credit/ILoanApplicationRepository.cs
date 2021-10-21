@@ -150,7 +150,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoanReviewApplicationViewModel ViewLmsLaonApplicationCancellationDetails(LoanReviewApplicationViewModel values);
         bool GoForLoanApplicationCancellationApproval(LoanApplicationViewModel data);
         bool GoForLmsLoanApplicationCancellationApproval(LoanReviewApplicationViewModel data);
-        bool IncomingLoanApplicationApproval(HeadOfficeFacilityApprovalViewModel data);
+
         List<TransactionDynamicsViewModel> GetTrnasactionDynamics(int loanApplicationId);
 
         List<ConditionPrecedentViewModel> GetConditionPrecidents(int loanApplicationId);
