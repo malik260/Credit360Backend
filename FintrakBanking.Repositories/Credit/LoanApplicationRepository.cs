@@ -26,12 +26,14 @@ using GemBox.Spreadsheet;
 using System.IO;
 using System.Data.Entity.Validation;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.Entities.StagingModels;
 
 namespace FintrakBanking.Repositories.Credit
 {
     public partial class LoanApplicationRepository : ILoanApplicationRepository
     {
         private FinTrakBankingContext context;
+        private FinTrakBankingStagingContext scontext;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IWorkflow workflow;
@@ -57,6 +59,7 @@ namespace FintrakBanking.Repositories.Credit
             ICasaRepository _casa,
             IGeneralSetupRepository _genSetup,
             FinTrakBankingContext _context,
+            FinTrakBankingStagingContext _scontext,
             IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
             IIntegrationWithFinacle _integration,
@@ -71,6 +74,7 @@ namespace FintrakBanking.Repositories.Credit
             this.casa = _casa;
             this.genSetup = _genSetup;
             this.context = _context;
+            this.scontext = _scontext;
             approvalLevel = _approvallevel;
             workflow = _workflow;
             this.integration = _integration;
@@ -10239,5 +10243,59 @@ namespace FintrakBanking.Repositories.Credit
             }
             return records;
         }
+
+
+        public bool AddApprovalFromSubsidiary(HeadOfficeFacilityApprovalViewModel model)
+        {
+            bool response = false;
+
+            if(model != null)
+            {
+                var inputRecords = new STG_SUB_BASICTRANSACTION()
+                {
+                    LOANAPPLICATIONID = model.loanApplicationId,
+                    LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                    APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
+                    RELATEDREFERENCENUMBER = model.relatedReferenceNumber,
+                    SUBSIDIARYID = model.subsidiaryId,
+                    CUSTOMERID = model.customerId,
+                    CUSTOMERGLOBALID = model.customerGlobalId,
+                    APPLICATIONDATE = model.applicationDate,
+                    INTERESTRATE = model.interestRate,
+                    APPLICATIONTENOR = model.applicationTenor,
+                    APPROVALSTATUSID = model.approvalStatusId,
+                    APPROVALLEVELID = model.approvalLevelId,
+                    APPROVALLEVELGLOBALCODE = model.approvalLevelGlobalCode,
+                    TOSTAFFID = model.toStaffId,
+                    APPLICATIONSTATUSID = model.applicationStatusId,
+                    OPERATIONNAME = model.operationName,
+                    PRODUCTCLASSNAME = model.productClassName,
+                    PRODUCTNAME = model.productName,
+                    PRODUCT_CLASS_PROCESS = model.productClassProcess,
+                    LOANAPPLICATIONTYPENAME = model.loanApplicationTypeName,
+                    FIRSTNAME = model.firstName,
+                    MIDDLENAME = model.middleName,
+                    LASTNAME = model.lastName,
+                    SYSTEMARRIVALDATETIME = model.systemArrivalDateTime,
+                    BUSINESSUNITSHORTCODE = model.businessUnitShortCode,
+                    APPLICATIONAMOUNT = model.applicationAmount,
+                    TOTALEXPOSUREAMOUNT = model.totalExposureAmount,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = model.dateTimeCreated,
+                    LASTUPDATEDBY = model.loanApplicationId,
+                    DATETIMEUPDATED = model.dateTimeUpdated,
+                    DELETED = model.deleted,
+                    DELETEDBY = model.deletedBy,
+                    DATETIMEDELETED = model.dateTimeDeleted,
+                    SYSTEMDATETIME = model.systemDateTime,
+                };
+
+                scontext.STG_SUB_BASICTRANSACTION.Add(inputRecords);
+                response = scontext.SaveChanges() > 0;
+            }
+
+            return response;
+        }
+
     }
 }

@@ -1935,5 +1935,7 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion END OF LOAN REQUEST METHODS
 
+
+        
     }
 }

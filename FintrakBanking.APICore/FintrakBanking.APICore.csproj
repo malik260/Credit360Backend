@@ -348,6 +348,7 @@
     <Compile Include="Controllers\BulkDisbursementPackageController.cs" />
     <Compile Include="Controllers\BusinessRuleController.cs" />
     <Compile Include="Controllers\CashBackController.cs" />
+    <Compile Include="Controllers\SubsidiaryToHeadOfficeController.cs" />
     <Compile Include="Controllers\CashFlowLendingController.cs" />
     <Compile Include="Controllers\CollateralValuationController.cs" />
     <Compile Include="Controllers\CreditDrawdownController.cs" />

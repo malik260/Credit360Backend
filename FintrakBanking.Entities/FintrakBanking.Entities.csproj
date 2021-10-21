@@ -1164,6 +1164,8 @@
     <Compile Include="StagingModels\STG_STAFF.cs" />
     <Compile Include="StagingModels\STG_STAFFMIS.cs" />
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
+    <Compile Include="StagingModels\STG_SUBSIDIARIES.cs" />
+    <Compile Include="StagingModels\STG_SUB_BASICTRANSACTION.cs" />
     <Compile Include="StagingModels\STG_SUB_SECTOR.cs" />
     <Compile Include="StagingModels\STG_TEAM.cs" />
     <Compile Include="StagingModels\STG_TREASURY_RATE_TBL.cs" />
