@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.StagingModels
             Database.SetInitializer<FinTrakBankingStagingContext>(null);
         }
 
+        public virtual DbSet<STG_SUBSIDIARIES> STG_SUBSIDIARIES { get; set; }
+        public virtual DbSet<STG_SUB_BASICTRANSACTION> STG_SUB_BASICTRANSACTION { get; set; }
         public virtual DbSet<TBL_SECTOR_LIMIT_ALERT> TBL_SECTOR_LIMIT_ALERT { get; set; }
         public virtual DbSet<TBL_TRIGGER_MEASURES_PRODUCT> TBL_TRIGGER_MEASURES_PRODUCT { get; set; }
         public virtual DbSet<TBL_TRIGGER_MEASURES_MODULE> TBL_TRIGGER_MEASURES_MODULE { get; set; }
