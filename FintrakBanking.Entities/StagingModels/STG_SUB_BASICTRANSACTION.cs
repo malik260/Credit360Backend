@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.StagingModels
         public string RELATEDREFERENCENUMBER { get; set; }
         public int SUBSIDIARYID { get; set; }
         public int? CUSTOMERID { get; set; }
+        public string COUNTRYCODE { get; set; }
         public int? CUSTOMERGLOBALID { get; set; }
         public DateTime APPLICATIONDATE { get; set; }
         public double INTERESTRATE { get; set; }
@@ -41,6 +42,7 @@ namespace FintrakBanking.Entities.StagingModels
         public decimal APPLICATIONAMOUNT { get; set; }
         public decimal TOTALEXPOSUREAMOUNT { get; set; }
         public int CREATEDBY { get; set; }
+        public string CREATEDBYNAME { get; set; }
         public DateTime DATETIMECREATED { get; set; }
         public int LASTUPDATEDBY { get; set; }
         public DateTime? DATETIMEUPDATED { get; set; }
