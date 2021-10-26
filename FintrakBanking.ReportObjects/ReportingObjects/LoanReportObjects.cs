@@ -6227,7 +6227,66 @@ namespace FintrakBanking.ReportObjects
             return data;
         }
 
-        public IEnumerable<RecoveryCollectionsViewModel> GetOutstandingDocumentDeferralList() { }
+        public IEnumerable<OutStandingDocumentViewModel> GetOutstandingDocumentDeferralList() {
+            var data = new List<OutStandingDocumentViewModel>();
+
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            data = (from a in context.TBL_LOAN_CONDITION_DEFERRAL
+                    join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANCONDITIONID equals b.LOANCONDITIONID
+                    join c in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                    where a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                    && (DbFunctions.TruncateTime(a.DEFEREDDATEONFINALAPPROVAL) <= DbFunctions.TruncateTime(DateTime.Now)
+                    || DbFunctions.TruncateTime(a.DEFERREDDATE) <= DbFunctions.TruncateTime(DateTime.Now))
+
+                    select new OutStandingDocumentViewModel
+                    {
+                        reference = context.TBL_LOAN_APPLICATION.Where(s => s.LOANAPPLICATIONID == c.LOANAPPLICATIONID).Select(s => s.APPLICATIONREFERENCENUMBER + "-" + a.CHECKLISTDEFERRALID).FirstOrDefault(),
+                        condition = b.CONDITION,
+                        facilityAmount = c.APPROVEDAMOUNT,
+                        facilityType = context.TBL_PRODUCT.Where(p=>p.PRODUCTID == c.APPROVEDPRODUCTID).Select(p=>p.PRODUCTNAME).FirstOrDefault(),
+                        createdBy = a.CREATEDBY,
+                        customerId = c.CUSTOMERID,
+                        deferredDate = a.DEFERREDDATE,
+                        dateOnFinalApproval = a.DEFEREDDATEONFINALAPPROVAL,
+                        accountOfficerName = context.TBL_STAFF.Where(s=>s.STAFFID == a.CREATEDBY).Select(s=>s.FIRSTNAME +" "+ s.MIDDLENAME +" "+ s.LASTNAME).FirstOrDefault(),
+                        customerCode = context.TBL_CUSTOMER.Where(p => p.CUSTOMERID == c.CUSTOMERID).Select(p => p.CUSTOMERCODE).FirstOrDefault(),
+                        customerName = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == c.CUSTOMERID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
+                    }).ToList();
+
+            foreach (var d in data)
+            {
+                var ao = context.TBL_STAFF.Where(x => x.STAFFID == d.createdBy).FirstOrDefault();
+                var cus = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == d.customerId).FirstOrDefault();
+
+                if (ao != null)
+                {
+                    var rm = context.TBL_STAFF.Where(x => x.STAFFID == ao.SUPERVISOR_STAFFID).FirstOrDefault();
+                    d.relationshipManager = rm?.FIRSTNAME + " " + rm?.MIDDLENAME + " " + rm?.LASTNAME;
+                    if(rm != null)
+                    {
+                        var zh = context.TBL_STAFF.Where(x => x.STAFFID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+                        if(zh != null)
+                        {
+                            var gh = context.TBL_STAFF.Where(x => x.STAFFID == zh.SUPERVISOR_STAFFID).FirstOrDefault();
+                            d.groupHead = gh?.FIRSTNAME + " " + gh?.MIDDLENAME + " " + gh?.LASTNAME;
+                        }
+                    }
+                }
+
+                d.sbu = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == cus.BUSINESSUNTID).Select(x=>x.BUSINESSUNITNAME +"-"+x.BUSINESSUNITSHORTCODE).FirstOrDefault();
+                if(d.dateOnFinalApproval != null)
+                {
+                    d.numberOfDays = (int)(DateTime.Now - (DateTime)d.dateOnFinalApproval).TotalDays;
+                }
+                else { 
+                    d.numberOfDays = (int)(DateTime.Now - (DateTime)d.deferredDate).TotalDays;
+                }
+
+            }
+
+            return data;
+        }
 
     }
 }

@@ -28,6 +28,8 @@
 
         public bool ISSUBSEQUENT { get; set; }
 
+        public bool ISDOCUMENT { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public int LOANREVIEWAPPLICATIONID { get; set; }
