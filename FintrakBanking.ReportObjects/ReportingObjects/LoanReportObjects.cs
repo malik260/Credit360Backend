@@ -6238,6 +6238,7 @@ namespace FintrakBanking.ReportObjects
                     where a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                     && (DbFunctions.TruncateTime(a.DEFEREDDATEONFINALAPPROVAL) <= DbFunctions.TruncateTime(DateTime.Now)
                     || DbFunctions.TruncateTime(a.DEFERREDDATE) <= DbFunctions.TruncateTime(DateTime.Now))
+                    && b.ISDOCUMENT == true
 
                     select new OutStandingDocumentViewModel
                     {
