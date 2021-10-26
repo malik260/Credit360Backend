@@ -477,15 +477,15 @@ namespace FintrakBanking.APICore.Providers
                 //}
 
 
-                //if (user.logincode == null)
-                //{
-                //    //ify, to eliminate multiple sources of truth for the logincode
-                //    var profile = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME == user.username);
-                //    var loginCode = Guid.NewGuid().ToString() + "@" + ipAddress;
-                //    profile.LOGINCODE = loginCode;
-                //    user.logincode = loginCode;
-                //    _bankingContext.SaveChanges();
-                //}
+                if (user.logincode == null)
+                {
+                    //ify, to eliminate multiple sources of truth for the logincode
+                    var profile = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME == user.username);
+                    var loginCode = Guid.NewGuid().ToString() + "@" + ipAddress;
+                    profile.LOGINCODE = loginCode;
+                    user.logincode = loginCode;
+                    _bankingContext.SaveChanges();
+                }
 
                 var userActivities = authRepo.GetUserActivitiesByUser(user.user_id);
                 string userActivitiesJson = JsonConvert.SerializeObject(userActivities);

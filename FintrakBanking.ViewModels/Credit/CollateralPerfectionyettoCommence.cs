@@ -250,11 +250,11 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public int cCustomerId { get; set; }
         public int collateralTypeId { get; set; }
-        public decimal totalTangibleCollateral { get; set; }
-        public decimal totalIntangibleCollateral { get; set; }
-        public decimal percentageTangibleCoverage { get; set; }
-        public decimal percentageIntangibleCoverage { get; set; }
-        public decimal totalPercentageCoverage { get; set; }
+        public decimal? totalTangibleCollateral { get; set; }
+        public decimal? totalIntangibleCollateral { get; set; }
+        public decimal? percentageTangibleCoverage { get; set; }
+        public decimal? percentageIntangibleCoverage { get; set; }
+        public decimal? totalPercentageCoverage { get; set; }
         public short currencyId { get; set; }
         public string collateralCurrency { get; set; }
         public decimal collateralVal { get; set; }
