@@ -348,6 +348,7 @@
     <Compile Include="Controllers\BulkDisbursementPackageController.cs" />
     <Compile Include="Controllers\BusinessRuleController.cs" />
     <Compile Include="Controllers\CashBackController.cs" />
+    <Compile Include="Controllers\SubsidiaryToHeadOfficeController.cs" />
     <Compile Include="Controllers\CashFlowLendingController.cs" />
     <Compile Include="Controllers\CollateralValuationController.cs" />
     <Compile Include="Controllers\CreditDrawdownController.cs" />
@@ -746,6 +747,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\LoanStatusReport.aspx.designer.cs">
       <DependentUpon>LoanStatusReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OutstandingDocumentDeferredList.aspx.cs">
+      <DependentUpon>OutstandingDocumentDeferredList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OutstandingDocumentDeferredList.aspx.designer.cs">
+      <DependentUpon>OutstandingDocumentDeferredList.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\PaydayLoanCollection.aspx.cs">
       <DependentUpon>PaydayLoanCollection.aspx</DependentUpon>
@@ -1596,6 +1604,7 @@
     <Content Include="Reports\ReportViews\InsuranceSpoolReport.aspx" />
     <Content Include="Reports\ReportViews\JobRequestReport.aspx" />
     <Content Include="Reports\ReportViews\LoanStatusReport.aspx" />
+    <Content Include="Reports\ReportViews\OutstandingDocumentDeferredList.aspx" />
     <Content Include="Reports\ReportViews\PaydayLoanCollection.aspx" />
     <Content Include="Reports\ReportViews\ComputationForExternalAgents.aspx" />
     <Content Include="Reports\ReportViews\ComputationForInternalAgents.aspx" />
@@ -2162,6 +2171,7 @@
     <EmbeddedResource Include="Reports\Report\OutputDocument.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Reports\Report\OutstandingDocumentDeferredList.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
     <EmbeddedResource Include="Reports\Report\PaydayLoanCollection.rdlc" />
     <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />

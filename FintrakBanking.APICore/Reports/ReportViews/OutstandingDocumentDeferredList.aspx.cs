@@ -1,5 +1,5 @@
 ﻿using FintrakBanking.Common.Extensions;
-using FintrakBanking.ReportObjects.ReportingObjects;
+using FintrakBanking.ReportObjects;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
@@ -31,8 +31,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     //var incomingDateHash = hash.HashString(startDateString).Replace("-", "");
 
 
-                    RecoveryCollections recoveryCollection = new RecoveryCollections();
-                    var data = recoveryCollection.GetOutstandingDocumentDeferralList();
+                    LoanReportObjects reportObjects = new LoanReportObjects();
+                    var data = reportObjects.GetOutstandingDocumentDeferralList();
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));

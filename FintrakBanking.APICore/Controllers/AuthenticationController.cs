@@ -365,7 +365,7 @@ namespace FintrakBanking.APICore.Controllers
             _auditTrail.AddAuditTrail(audit);
 
             _context.SaveChanges();
-
+            
             return this.Ok(new { success = true, message = "User Logged Off" });
 
             //}
@@ -416,7 +416,7 @@ namespace FintrakBanking.APICore.Controllers
             _auditTrail.AddAuditTrail(audit);
 
             _context.SaveChanges();
-
+            
             return this.Ok(new { success = true, message = "User Logged Off" });
 
             //}
