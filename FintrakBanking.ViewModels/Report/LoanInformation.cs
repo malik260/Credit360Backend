@@ -354,6 +354,16 @@ namespace FintrakBanking.ViewModels.Reports
         public string teamCode { get; set; }
         public string groupCode { get; set; }
         public string deskCode { get; set; }
+        public string reasonForDeferral { get; set; }
+        public string currency { get; set; }
+        public DateTime? finalApprovalDate { get; set; }
+        public string perfectionRelated { get; set; }
+        public string accountOfficer { get; set; }
+        public string relationshipManager { get; set; }
+        public int createdBy { get; set; }
+        public string groupHead { get; set; }
+        public int? businessUnitId { get; set; }
+        public string sbu { get; set; }
     }
 
     public class FCYScheuledLoanViewModel
@@ -380,7 +390,8 @@ namespace FintrakBanking.ViewModels.Reports
         public string logoPath { get; set; }
         public string applicationRefrenceNumber { get; set; }
         public decimal loanFigure { get; set; }
-     
+        public string currency { set; get; }
+
     }
 
     public class RiskAssets

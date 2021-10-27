@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Approval Level
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("approval-level")]
         public HttpResponseMessage AddApprovalLevel([FromBody] ApprovalLevelViewModel model)
         {
@@ -58,7 +58,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+      [HttpGet] [AdminClaimsAuthorization]  
         [Route("approval-level/all")]
         public HttpResponseMessage GetAllApprovalLevel()
         {
@@ -79,7 +79,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("approval-levels/operation/{operationId}/product-class/{classId}")]
         public HttpResponseMessage GetApprovalLevelByOperationIdAndProductClassId(int operationId, int? classId)
         {
@@ -110,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [AdminClaimsAuthorization]  
         [Route("approval-level-detailed/all")]
         public HttpResponseMessage GetAllDetailedApprovalLevel()
         {
@@ -183,7 +183,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("approval-level/{id}")]
         public HttpResponseMessage UpdateApprovalLevel(int id, [FromBody] ApprovalLevelViewModel model)
         {
@@ -215,7 +215,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete] [AdminClaimsAuthorization]
         [Route("approval-level/{id}")]
         public async Task<HttpResponseMessage> DeleteApprovalLevelAsync(int id)
         {
@@ -330,7 +330,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("approval-level-list-for-approval")]
         public HttpResponseMessage GetApprovalLevelForApproval()
         {

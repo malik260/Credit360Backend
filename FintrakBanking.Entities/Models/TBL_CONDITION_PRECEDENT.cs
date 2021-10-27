@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISSUBSEQUENT { get; set; }
 
+        public bool ISDOCUMENT { get; set; }
+
         public bool CORPORATE { get; set; }
 
         public bool RETAIL { get; set; }

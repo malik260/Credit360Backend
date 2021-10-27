@@ -63,7 +63,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         //bool Confirmation(int type, int applicationId);
 
-        IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, bool isSpecific = false);
+        Task<IQueryable<LoanApplicationViewModel>> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, bool isSpecific = false);
+        Task<IEnumerable<LoanApplicationViewModel>> GetSubsidiaryPendingLoanApplications();
+        Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaries();
         List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps);
         IQueryable<LoanApplicationViewModel> GetPoolApplications(int operationId, int companyId, int branchId, int staffId, int? classId);
         bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity entity);
@@ -93,7 +95,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<MonitoringTriggersViewModel> SaveApplicationMonitoringTriggers(int applicationId, List<MonitoringTriggersViewModel> entity, int staffId);
 
         bool WorkflowTest();
-
+        string GetAllOldApplicationReference(string data);
         ApprovalTrailViewModel GetapprovalTrailByTrailId(int approvalTrailId);
 
         IEnumerable<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity);

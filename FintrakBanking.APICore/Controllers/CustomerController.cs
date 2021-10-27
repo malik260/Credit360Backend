@@ -1323,7 +1323,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+                   new { success = false, message = $"{e.Message}" });
             }
         }
 
@@ -2331,7 +2331,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         [HttpGet]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("customer/approvals/temp")]
         public HttpResponseMessage GetAllCustomerInformationAwaitingApproval()
         {
@@ -2351,7 +2351,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {

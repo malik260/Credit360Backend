@@ -679,12 +679,17 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                int response = repo.AddCollateralInsuranceTrackingForm(token.GetStaffId, data);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                bool response = repo.AddCollateralInsuranceTrackingForm(token.GetStaffId, data);
+                
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = "Error saving the record", message = "Error saving the record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
             }
         }
 
@@ -695,12 +700,16 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                int response = repo.UpdateCollateralInsuranceTrackingForm(token.GetStaffId, id, model);
+                bool response = repo.UpdateCollateralInsuranceTrackingForm(token.GetStaffId, id, model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
             }
         }
 
@@ -709,12 +718,16 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                int response = repo.GetCustomerCollateralInsuranceDetailsConfirmation(token.GetStaffId, id);
+                bool response = repo.GetCustomerCollateralInsuranceDetailsConfirmation(token.GetStaffId, id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
             }
         }
 
@@ -723,12 +736,16 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                int response = repo.DeleteCustomerCollateralInsuranceDetails(token.GetStaffId, id);
+                bool response = repo.DeleteCustomerCollateralInsuranceDetails(token.GetStaffId, id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
             }
         }
 
@@ -1554,7 +1571,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.AddCollateral(entity);
             if (response > 0)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully and sent for approval" });
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });

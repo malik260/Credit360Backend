@@ -30,6 +30,7 @@ using System.Net;
 using System.Web.Script.Serialization;
 using System.Text;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
+using FintrakBanking.Entities.StagingModels;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -48,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
         private ILoanApplicationRepository loanApp;
         private IMemorandumRepository memo;
         private TransactionPosting transaction;
-
+        FinTrakBankingStagingContext stgContext;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -60,7 +61,8 @@ namespace FintrakBanking.Repositories.Credit
             IOfferLetterAndAvailmentRepository _offerLetter,
             ILoanApplicationRepository _loanApp,
             IMemorandumRepository _memo,
-            TransactionPosting _transaction
+            TransactionPosting _transaction,
+            FinTrakBankingStagingContext _stgContext
             )
         {
             this.context = context;
@@ -73,6 +75,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanApp = _loanApp;
             this.memo = _memo;
             this.transaction = _transaction;
+            this.stgContext = _stgContext;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -621,8 +624,10 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             contextControl.SaveChanges();
 
-                            if (model.isFlowTest == false) { trans.Commit(); }
-                            else { trans.Rollback(); }
+                            if (model.isFlowTest == true) 
+                            { 
+                                trans.Rollback();
+                            }
                         }
                     }
 
@@ -665,8 +670,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     ///ResolveBusinessUnitForED(appl);
 
-                    if (model.isFlowTest == false) { trans.Commit(); }
-                    else { trans.Rollback(); }
 
                     var lastStatus = workflow.StatusId; // prevents the next
 
@@ -674,13 +677,22 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
                         workflow.SetResponse = false;
-                        //workflow.ProductClassId = null;
-                        //workflow.ProductId = null;
-                        workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID);
+                    //workflow.ProductClassId = null;
+                    //workflow.ProductId = null;
+                    workflow.ExclusiveFlowChangeId = null;
+                        var productId = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
+                    //The null passed in place of appl.FlowchangeId should be made generic 07/08/2021 after enum.offerletappr.
+                        workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, 
+                            model.applicationId, appl.PRODUCTCLASSID, "New approved application", true, false, false, 
+                            model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
+                    //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
                     }
 
-                    //workflow.Response.success = true;
-                    workflow.Response.isFinal = generateOutPutDocument;
+                if (model.isFlowTest == false) { trans.Commit(); }
+                else { trans.Rollback(); }
+
+                //workflow.Response.success = true;
+                workflow.Response.isFinal = generateOutPutDocument;
                     return workflow.Response;
                 }
                 //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
@@ -3396,7 +3408,7 @@ namespace FintrakBanking.Repositories.Credit
 
         #region FAM Pending Applications
 
-        public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId, bool isSpecific)
+        public async Task<IQueryable<LoanApplicationViewModel>> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId, bool isSpecific)
         {
             // var declarations
             List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
@@ -3413,11 +3425,11 @@ namespace FintrakBanking.Repositories.Credit
             var staffs = general.GetStaffRlieved(staffId);
             //var currentStaff = context.TBL_STAFF.Find(staffs[0]);
 
-            IQueryable<LoanApplicationViewModel> applications = null;
+             IQueryable<LoanApplicationViewModel> applications = null;
 
             var query = new List<LoanApplicationViewModel>();
 
-            query = context.TBL_LOAN_APPLICATION.Where(x =>
+            query = await context.TBL_LOAN_APPLICATION.Where(x =>
                 x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.COMPANYID == companyId
@@ -3518,7 +3530,7 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID
-        }).ToList();
+        }).ToListAsync();
 
             if (isSpecific)
             {
@@ -3535,6 +3547,55 @@ namespace FintrakBanking.Repositories.Credit
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
+        public async Task<IEnumerable<LoanApplicationViewModel>> GetSubsidiaryPendingLoanApplications()
+        {
+            var data = await (from a in stgContext.STG_SUB_BASICTRANSACTION
+                              select new LoanApplicationViewModel
+                              {
+                                  loanApplicationId = a.LOANAPPLICATIONID,
+                                  loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                  applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                  relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
+                                  customerId = a.CUSTOMERID,
+                                  customerGlobalId = a.CUSTOMERGLOBALID,
+                                  countryCode = a.COUNTRYCODE,
+                                  productClassName = a.PRODUCTCLASSNAME,
+                                  productClassProcess = a.PRODUCT_CLASS_PROCESS,
+                                  subsidiaryId = a.SUBSIDIARYID,
+                                  applicationDate = a.APPLICATIONDATE,
+                                  systemDateTime = (DateTime)a.SYSTEMDATETIME,
+                                  applicationAmount = a.APPLICATIONAMOUNT,
+                                  totalExposureAmount = a.TOTALEXPOSUREAMOUNT,
+                                  interestRate = a.INTERESTRATE,
+                                  applicationTenor = a.APPLICATIONTENOR,
+                                  currentApprovalLevelId = a.APPROVALLEVELID,
+                                  currentApprovalLevelTypeId = a.APPROVALLEVELGLOBALCODE,
+                                  toStaffId = a.TOSTAFFID,
+                                  divisionCode = a.BUSINESSUNITSHORTCODE,
+                                  timeIn = a.SYSTEMARRIVALDATETIME,
+                                  approvalStatusId = (short)a.APPROVALSTATUSID,
+                                  applicationStatusId = (short)a.APPLICATIONSTATUSID,
+                                  operationName = a.OPERATIONNAME,
+                                  customerName = a.CUSTOMERID.HasValue ? a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME : "",
+                                  dateTimeCreated = a.DATETIMECREATED,
+                                  createdBy = a.CREATEDBY,
+                                  createdByName = a.CREATEDBYNAME
+                              }).ToListAsync();
+
+            return data;
+        }
+
+        public async Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaries()
+        {
+            var data = await (from a in stgContext.STG_SUBSIDIARIES
+                              select new SubsidiaryViewModel
+                              {
+                                  subsidiaryId = a.SUBSIDIARYID,
+                                  subsidiaryName = a.SUBSIDIARYNAME,
+                                  countryId = a.COUNTRYID
+                              }).ToListAsync();
+            return data;
+        }
         public List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps)
         {
             foreach(var app in apps)
@@ -4355,6 +4416,13 @@ namespace FintrakBanking.Repositories.Credit
                     repaymentScheduleId = t.REPAYMENTSCHEDULEID,
                     repaymentScheduleDetail = t.REPAYMENTTERMDETAIL,
                 }).ToList();
+            // todo code
+            return terms;
+        }
+
+        public string GetAllOldApplicationReference(string data)
+        {
+            var terms = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == data).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault();
             // todo code
             return terms;
         }

@@ -1670,16 +1670,10 @@ namespace FintrakBanking.APICore.Controllers
             user.createdBy = token.GetStaffId;
             user.companyId = token.GetCompanyId;
 
-            var data = repo.saveBulkInsurancePolicyEntries(models, user);
-            if (data)
-            {
+            WorkflowResponse response = repo.saveBulkInsurancePolicyEntries(models, user);
+            
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Bulk Insurance Policy was successfully saved" });
-            }
-            return Request.CreateResponse(HttpStatusCode.OK,
-
-                new { success = false, message = "saving bulk Insurance Policy was unsuccessfully" });
-
+                    new { success = true, data = response.responseMessage, message = response.responseMessage });
         }
 
 
@@ -2151,12 +2145,12 @@ namespace FintrakBanking.APICore.Controllers
             {
                 bool success = true;
                 if (data.Item2 == false && isFinal) { success = false; }
-                if (!success) { return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Bulk insurance failed to upload." }); }
+                if (!success) { return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Pre Bulk insurance failed to upload." }); }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Bulk Insurance data was successfully uploaded" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Pre Bulk Insurance data was successfully uploaded" });
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Bulk Insurance data" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Pre Bulk Insurance data" });
         }
 
         [HttpGet]

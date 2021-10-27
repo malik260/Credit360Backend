@@ -1120,6 +1120,32 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("collateral-adequacy")]
+        public HttpResponseMessage GetCollateralAdequacy([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetCollateralAdequacy(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost] [ClaimsAuthorization]
         [Route("stakeholders-on-experation-ftp")]
         public HttpResponseMessage GetStakeHolderOnExperationOfFfp(ReportSearchEntity reportSearchEntity)
@@ -3881,7 +3907,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
+        
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -3892,6 +3918,30 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetComputationForInternalAgentsReport(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("outstanding-document-deferred-list-report")]
+        public HttpResponseMessage GetOutstandingDocumentDeferralList()
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetOutstandingDocumentDeferredList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

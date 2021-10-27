@@ -4758,6 +4758,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columncustomerCode;
             
+            private global::System.Data.DataColumn columncurrency;
+            
+            private global::System.Data.DataColumn columnfinalApprovalDate;
+            
+            private global::System.Data.DataColumn columnreasonForDeferral;
+            
+            private global::System.Data.DataColumn columnperfectionRelated;
+            
+            private global::System.Data.DataColumn columnaccountOfficer;
+            
+            private global::System.Data.DataColumn columngroupHead;
+            
+            private global::System.Data.DataColumn columnsbu;
+            
+            private global::System.Data.DataColumn columnrelationshipManager;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public LoanDocumentDefferalsDataTable() {
@@ -4961,6 +4977,70 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn currencyColumn {
+                get {
+                    return this.columncurrency;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn finalApprovalDateColumn {
+                get {
+                    return this.columnfinalApprovalDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn reasonForDeferralColumn {
+                get {
+                    return this.columnreasonForDeferral;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn perfectionRelatedColumn {
+                get {
+                    return this.columnperfectionRelated;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn accountOfficerColumn {
+                get {
+                    return this.columnaccountOfficer;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn groupHeadColumn {
+                get {
+                    return this.columngroupHead;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn sbuColumn {
+                get {
+                    return this.columnsbu;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn relationshipManagerColumn {
+                get {
+                    return this.columnrelationshipManager;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -5017,7 +5097,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string cumulativeDays, 
                         string defferalExpiryDate, 
                         string nameOfBM, 
-                        string customerCode) {
+                        string customerCode, 
+                        string currency, 
+                        string finalApprovalDate, 
+                        string reasonForDeferral, 
+                        string perfectionRelated, 
+                        string accountOfficer, 
+                        string groupHead, 
+                        string sbu, 
+                        string relationshipManager) {
                 LoanDocumentDefferalsRow rowLoanDocumentDefferalsRow = ((LoanDocumentDefferalsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         name,
@@ -5040,7 +5128,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         cumulativeDays,
                         defferalExpiryDate,
                         nameOfBM,
-                        customerCode};
+                        customerCode,
+                        currency,
+                        finalApprovalDate,
+                        reasonForDeferral,
+                        perfectionRelated,
+                        accountOfficer,
+                        groupHead,
+                        sbu,
+                        relationshipManager};
                 rowLoanDocumentDefferalsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowLoanDocumentDefferalsRow);
                 return rowLoanDocumentDefferalsRow;
@@ -5084,6 +5180,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columndefferalExpiryDate = base.Columns["defferalExpiryDate"];
                 this.columnnameOfBM = base.Columns["nameOfBM"];
                 this.columncustomerCode = base.Columns["customerCode"];
+                this.columncurrency = base.Columns["currency"];
+                this.columnfinalApprovalDate = base.Columns["finalApprovalDate"];
+                this.columnreasonForDeferral = base.Columns["reasonForDeferral"];
+                this.columnperfectionRelated = base.Columns["perfectionRelated"];
+                this.columnaccountOfficer = base.Columns["accountOfficer"];
+                this.columngroupHead = base.Columns["groupHead"];
+                this.columnsbu = base.Columns["sbu"];
+                this.columnrelationshipManager = base.Columns["relationshipManager"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5131,6 +5235,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnnameOfBM);
                 this.columncustomerCode = new global::System.Data.DataColumn("customerCode", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncustomerCode);
+                this.columncurrency = new global::System.Data.DataColumn("currency", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncurrency);
+                this.columnfinalApprovalDate = new global::System.Data.DataColumn("finalApprovalDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfinalApprovalDate);
+                this.columnreasonForDeferral = new global::System.Data.DataColumn("reasonForDeferral", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnreasonForDeferral);
+                this.columnperfectionRelated = new global::System.Data.DataColumn("perfectionRelated", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnperfectionRelated);
+                this.columnaccountOfficer = new global::System.Data.DataColumn("accountOfficer", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnaccountOfficer);
+                this.columngroupHead = new global::System.Data.DataColumn("groupHead", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columngroupHead);
+                this.columnsbu = new global::System.Data.DataColumn("sbu", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsbu);
+                this.columnrelationshipManager = new global::System.Data.DataColumn("relationshipManager", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrelationshipManager);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -11814,6 +11934,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columncustomerCode;
             
+            private global::System.Data.DataColumn columntotalAsset;
+            
+            private global::System.Data.DataColumn columnfield1;
+            
+            private global::System.Data.DataColumn columnfield2;
+            
+            private global::System.Data.DataColumn columnfield3;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public CorporateCustomerCreationDataTable() {
@@ -12121,6 +12249,38 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn totalAssetColumn {
+                get {
+                    return this.columntotalAsset;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn field1Column {
+                get {
+                    return this.columnfield1;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn field2Column {
+                get {
+                    return this.columnfield2;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn field3Column {
+                get {
+                    return this.columnfield3;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -12190,7 +12350,11 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string wpower, 
                         string facilityType, 
                         string refNo, 
-                        string customerCode) {
+                        string customerCode, 
+                        string totalAsset, 
+                        string field1, 
+                        string field2, 
+                        string field3) {
                 CorporateCustomerCreationRow rowCorporateCustomerCreationRow = ((CorporateCustomerCreationRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         companyName,
@@ -12226,7 +12390,11 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         wpower,
                         facilityType,
                         refNo,
-                        customerCode};
+                        customerCode,
+                        totalAsset,
+                        field1,
+                        field2,
+                        field3};
                 rowCorporateCustomerCreationRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowCorporateCustomerCreationRow);
                 return rowCorporateCustomerCreationRow;
@@ -12283,6 +12451,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnfacilityType = base.Columns["facilityType"];
                 this.columnrefNo = base.Columns["refNo"];
                 this.columncustomerCode = base.Columns["customerCode"];
+                this.columntotalAsset = base.Columns["totalAsset"];
+                this.columnfield1 = base.Columns["field1"];
+                this.columnfield2 = base.Columns["field2"];
+                this.columnfield3 = base.Columns["field3"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -12356,6 +12528,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnrefNo);
                 this.columncustomerCode = new global::System.Data.DataColumn("customerCode", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncustomerCode);
+                this.columntotalAsset = new global::System.Data.DataColumn("totalAsset", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntotalAsset);
+                this.columnfield1 = new global::System.Data.DataColumn("field1", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfield1);
+                this.columnfield2 = new global::System.Data.DataColumn("field2", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfield2);
+                this.columnfield3 = new global::System.Data.DataColumn("field3", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfield3);
                 this.columncompanyName.Caption = "customerID";
                 this.columnfullName.Caption = "fintrakReferenceId";
                 this.columnbirthDate.Caption = "customerName";
@@ -16753,6 +16933,139 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string currency {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDefferals.currencyColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'currency\' in table \'LoanDocumentDefferals\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDefferals.currencyColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string finalApprovalDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDefferals.finalApprovalDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'finalApprovalDate\' in table \'LoanDocumentDefferals\' is DBNu" +
+                                "ll.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDefferals.finalApprovalDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string reasonForDeferral {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDefferals.reasonForDeferralColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'reasonForDeferral\' in table \'LoanDocumentDefferals\' is DBNu" +
+                                "ll.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDefferals.reasonForDeferralColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string perfectionRelated {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDefferals.perfectionRelatedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'perfectionRelated\' in table \'LoanDocumentDefferals\' is DBNu" +
+                                "ll.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDefferals.perfectionRelatedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string accountOfficer {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDefferals.accountOfficerColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'accountOfficer\' in table \'LoanDocumentDefferals\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDefferals.accountOfficerColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string groupHead {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDefferals.groupHeadColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'groupHead\' in table \'LoanDocumentDefferals\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDefferals.groupHeadColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string sbu {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDefferals.sbuColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'sbu\' in table \'LoanDocumentDefferals\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDefferals.sbuColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string relationshipManager {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDefferals.relationshipManagerColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'relationshipManager\' in table \'LoanDocumentDefferals\' is DB" +
+                                "Null.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDefferals.relationshipManagerColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public bool IsnameNull() {
                 return this.IsNull(this.tableLoanDocumentDefferals.nameColumn);
             }
@@ -17001,6 +17314,102 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void SetcustomerCodeNull() {
                 this[this.tableLoanDocumentDefferals.customerCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IscurrencyNull() {
+                return this.IsNull(this.tableLoanDocumentDefferals.currencyColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetcurrencyNull() {
+                this[this.tableLoanDocumentDefferals.currencyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsfinalApprovalDateNull() {
+                return this.IsNull(this.tableLoanDocumentDefferals.finalApprovalDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetfinalApprovalDateNull() {
+                this[this.tableLoanDocumentDefferals.finalApprovalDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsreasonForDeferralNull() {
+                return this.IsNull(this.tableLoanDocumentDefferals.reasonForDeferralColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetreasonForDeferralNull() {
+                this[this.tableLoanDocumentDefferals.reasonForDeferralColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsperfectionRelatedNull() {
+                return this.IsNull(this.tableLoanDocumentDefferals.perfectionRelatedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetperfectionRelatedNull() {
+                this[this.tableLoanDocumentDefferals.perfectionRelatedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsaccountOfficerNull() {
+                return this.IsNull(this.tableLoanDocumentDefferals.accountOfficerColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetaccountOfficerNull() {
+                this[this.tableLoanDocumentDefferals.accountOfficerColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsgroupHeadNull() {
+                return this.IsNull(this.tableLoanDocumentDefferals.groupHeadColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetgroupHeadNull() {
+                this[this.tableLoanDocumentDefferals.groupHeadColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IssbuNull() {
+                return this.IsNull(this.tableLoanDocumentDefferals.sbuColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetsbuNull() {
+                this[this.tableLoanDocumentDefferals.sbuColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsrelationshipManagerNull() {
+                return this.IsNull(this.tableLoanDocumentDefferals.relationshipManagerColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetrelationshipManagerNull() {
+                this[this.tableLoanDocumentDefferals.relationshipManagerColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -23237,6 +23646,71 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string totalAsset {
+                get {
+                    try {
+                        return ((string)(this[this.tableCorporateCustomerCreation.totalAssetColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'totalAsset\' in table \'CorporateCustomerCreation\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableCorporateCustomerCreation.totalAssetColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string field1 {
+                get {
+                    try {
+                        return ((string)(this[this.tableCorporateCustomerCreation.field1Column]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'field1\' in table \'CorporateCustomerCreation\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCorporateCustomerCreation.field1Column] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string field2 {
+                get {
+                    try {
+                        return ((string)(this[this.tableCorporateCustomerCreation.field2Column]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'field2\' in table \'CorporateCustomerCreation\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCorporateCustomerCreation.field2Column] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string field3 {
+                get {
+                    try {
+                        return ((string)(this[this.tableCorporateCustomerCreation.field3Column]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'field3\' in table \'CorporateCustomerCreation\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCorporateCustomerCreation.field3Column] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public bool IscompanyNameNull() {
                 return this.IsNull(this.tableCorporateCustomerCreation.companyNameColumn);
             }
@@ -23641,6 +24115,54 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void SetcustomerCodeNull() {
                 this[this.tableCorporateCustomerCreation.customerCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IstotalAssetNull() {
+                return this.IsNull(this.tableCorporateCustomerCreation.totalAssetColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SettotalAssetNull() {
+                this[this.tableCorporateCustomerCreation.totalAssetColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool Isfield1Null() {
+                return this.IsNull(this.tableCorporateCustomerCreation.field1Column);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void Setfield1Null() {
+                this[this.tableCorporateCustomerCreation.field1Column] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool Isfield2Null() {
+                return this.IsNull(this.tableCorporateCustomerCreation.field2Column);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void Setfield2Null() {
+                this[this.tableCorporateCustomerCreation.field2Column] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool Isfield3Null() {
+                return this.IsNull(this.tableCorporateCustomerCreation.field3Column);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void Setfield3Null() {
+                this[this.tableCorporateCustomerCreation.field3Column] = global::System.Convert.DBNull;
             }
         }
         

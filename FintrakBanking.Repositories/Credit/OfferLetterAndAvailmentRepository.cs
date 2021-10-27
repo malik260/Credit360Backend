@@ -2418,8 +2418,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = operationId;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = null;// appl.PRODUCTCLASSID; <--- reserved for product programs!
-            workflow.ProductId = null;
+            workflow.ProductClassId = appl.PRODUCTCLASSID; //  model.productClassId; <--- reserved for product programs!
+            workflow.ProductId = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID; //model.productId;
             workflow.StatusId = model.approvalStatusId;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;

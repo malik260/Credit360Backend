@@ -82,8 +82,6 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
-
-
         [HttpPost]
         [ClaimsAuthorization]
         [Route("document-uploads")]

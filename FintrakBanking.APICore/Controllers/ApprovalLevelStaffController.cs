@@ -30,7 +30,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Approval Level Staff
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("approval-level-staff")]
         public HttpResponseMessage AddApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model)
         {
@@ -54,7 +54,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("go-for-level-staff-approval")]
         public HttpResponseMessage GoForWorkflowGroupApproval([FromBody]ApprovalLevelStaffViewModel model)
         {
@@ -99,7 +99,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("temp-approval-level-staff")]
         public HttpResponseMessage GetTempAllApprovalLevelStaff()
         {
@@ -133,7 +133,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("approval-level-staff/{id}")]
         public HttpResponseMessage UpdateApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model, int id)
         {
@@ -158,7 +158,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete] [AdminClaimsAuthorization]
         [Route("approval-level-staff/{StaffLevelId}")]
         public async Task<HttpResponseMessage> DeleteApprovalLevelStaffAsync(int StaffLevelId)
         {
@@ -283,7 +283,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             
         }
 

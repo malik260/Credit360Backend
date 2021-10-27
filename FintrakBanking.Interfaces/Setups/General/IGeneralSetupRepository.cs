@@ -4,6 +4,7 @@ using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 
+
 namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IGeneralSetupRepository
@@ -45,6 +46,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetOperations(short operationTypeId);
 
         IEnumerable<SectorViewModel> GetAllSectors();
+        IEnumerable<GlobalSectorViewModel> GetAllGlobalSectors();
+        bool UpdateGlobalSector(GlobalSectorViewModel model, int id);
 
         IEnumerable<SectorViewModel> GetSectorsBySubSectorId(short ssId);
 

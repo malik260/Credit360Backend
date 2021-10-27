@@ -23,6 +23,7 @@ namespace FintrakBanking.Entities.Models
         public string BINDINGMETHOD { get; set; }
         public DateTime? LASTSENTDATE { get; set; }
         public int? ACTIONSTATUS { get; set; }
+        public bool ISACTIVE { get; set; }
 
 
 

@@ -256,6 +256,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string employer { get; set; }
         public int creditAppraisalOperationId { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
+        public int subsidiaryId { get; set; }
+        public int? customerGlobalId { get; set; }
+        public string productClassProcess { get; set; }
+        public decimal totalExposureAmount { get; set; }
+        public string countryCode { get; set; }
+        public string createdByName { get; set; }
     }
 
     public class InterestIncomeViewModel
@@ -596,6 +602,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? currentApprovalLevelId { get; set; }
         public string currentApprovalLevel { get; set; }
         public bool isTemplateUploaded { get; set; }
+        public string oldApplicationRefForRenewal { get; set; }
 
         // public int? loanreViewApplicationId { get; set; }
     }
@@ -1569,6 +1576,11 @@ namespace FintrakBanking.ViewModels.Credit
         public double proposedRate { get; set; }
         public double approvedRate { get; set; }
     }
-
+    public class SubsidiaryViewModel : GeneralEntity
+    {
+        public int subsidiaryId { get; set; }
+        public string subsidiaryName { get; set; }
+        public int countryId { get; set; }
+    }
 }
 

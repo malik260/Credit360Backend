@@ -12,6 +12,7 @@ namespace FintrakBanking.Interfaces.Reports
 {
     public interface IReportRoutes
     {
+        string GetOutstandingDocumentDeferredList();
         string GetAllContingentsReport(DateRange dateRange, int companyId, int staffId);
         string GetBondsAndGuaranteeReport(DateRange dateRange, int companyId, int staffId);
         string GetComputationForInternalAgentsReport(DateTime startDate, DateTime endDate);
@@ -173,6 +174,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCollateralPerfection(DateRange dateRange);
         string CorporateLoansReport(DateRange dateRange);
         string GetCollateralRegister(DateRange dateRange);
+        string GetCollateralAdequacy(DateRange dateRange);
         string GetFixedDepositCollaterals(int companyId, string collateralCode, int staffId);
         string GetValidCollaterals(DateTime startDate, DateTime endDate);
         string GetJobRequestReport(DateRange dateRange, int companyId, int staffId);

@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_NEXT_INTEREST_REPAYMENT
     {
         [Key]
-        public int id { get; set; }
+        public int ID { get; set; }
         public string CUSTOMERNAME { get; set; }
         public string ACCOUNTNUMBER { get; set; }
         public string COMPONENTNAME { get; set; }

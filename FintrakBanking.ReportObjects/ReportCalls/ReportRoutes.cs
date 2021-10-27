@@ -1622,14 +1622,30 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-
-        public string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate, int dpd, decimal amount)
+        public string GetCollateralAdequacy(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/DelinquentAccounts.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue+"&dpd="+dpd + "&amount=" + amount;
+            path = reportPath + "ReportViews/CollateralAdequacy.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&branchId=" + dateRange.branchId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
+        }
+
+
+        public string GetRecoveryDelinquentAccountsReport(DateTime startDate, DateTime endDate, int dpd, decimal amount)
+        {
+            try
+            {
+                HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+                string path = string.Empty;
+                path = reportPath + "ReportViews/DelinquentAccounts.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue + "&dpd=" + dpd + "&amount=" + amount;
+                return path;
+            }
+            catch( Exception en)
+            {
+                throw en;
+            }
         }
 
         public string GetPaydayLoanRecoveryCollectionReport(DateTime startDate, DateTime endDate)
@@ -1658,13 +1674,22 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/RecoveryCollectionReport.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
             return path;
         }
-
+        
         public string GetComputationForInternalAgentsReport(DateTime startDate, DateTime endDate)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
             path = reportPath + "ReportViews/ComputationForInternalAgents.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetOutstandingDocumentDeferredList()
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/OutstandingDocumentDeferredList.aspx?hashValue=" + hashValue;
             return path;
         }
 

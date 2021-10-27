@@ -15,7 +15,6 @@ namespace FintrakBanking.Entities.Models
             TBL_TEMP_PRODUCT_COLLATERALTYP = new HashSet<TBL_TEMP_PRODUCT_COLLATERALTYP>();
             TBL_TEMP_PRODUCT_CURRENCY = new HashSet<TBL_TEMP_PRODUCT_CURRENCY>();
             TBL_TEMP_PRODUCT_CHARGE_FEE = new HashSet<TBL_TEMP_PRODUCT_CHARGE_FEE>();
-            //TBL_TEMP_PRODUCT_BEHAVIOUR = new HashSet<TBL_TEMP_PRODUCT_BEHAVIOUR>();
         }
 
         [Key]

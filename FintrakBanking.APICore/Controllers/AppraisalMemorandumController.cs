@@ -452,10 +452,10 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("loan-application-approval-process")]
-        public HttpResponseMessage GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
+        public async Task<HttpResponseMessage> GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
         {
             IQueryable<LoanApplicationViewModel> items;
-            items = repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
+            items = await repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
 
 
             if (!String.IsNullOrEmpty(searchString))
@@ -512,6 +512,33 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 
+        [HttpGet, Route("subsidiaries-loan-applications")]
+        public async Task<HttpResponseMessage> GetSubsidiaryPendingLoanApplications()
+        {
+            var data = await repo.GetSubsidiaryPendingLoanApplications();
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+        }
+
+        [HttpGet, Route("subsidiaries")]
+        public async Task<HttpResponseMessage> GetSubsidiaries()
+        {
+            var data = await repo.GetSubsidiaries();
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+        }
         [HttpPut, Route("reassign-application/owner/{staffId}")]
         public HttpResponseMessage ChangeApplicationOwner([FromBody] int loanApplicationId, int staffId)
         {
@@ -786,6 +813,14 @@ namespace FintrakBanking.APICore.Controllers
             //{
             //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             //}
+        }
+
+        [HttpGet]
+        [Route("get-old-application-reference/{data}")]
+        public HttpResponseMessage GetAllOldApplicationReference(string data)
+        {
+            var response = repo.GetAllOldApplicationReference(data);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpPost]

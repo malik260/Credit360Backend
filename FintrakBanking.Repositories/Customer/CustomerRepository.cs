@@ -406,8 +406,7 @@ namespace FintrakBanking.Repositories.Customer
                     currentCustomer.DATETIMEUPDATED = DateTime.Now;
                     currentCustomer.LASTUPDATEDBY = createdBy;
 
-                    context.SaveChanges();
-                    return true;
+                    return context.SaveChanges() > 0;
 
                 }
 
@@ -1455,12 +1454,15 @@ namespace FintrakBanking.Repositories.Customer
             {
                 if (entity.companyDirectorTypeId == (int)CompanyDirectorTypeEnum.BoardMember)
                 {
-                    var promoterExistsForCompany = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Any(p => p.CUSTOMERID == entity.customerId && p.ISTHEPROMOTER);
-                    if (!promoterExistsForCompany && !entity.isThePromoter)
+                    var promoterExistsForCompany = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(p => p.CUSTOMERID == entity.customerId && p.ISTHEPROMOTER == true).ToList();
+                    if (promoterExistsForCompany.Count() == 0 && !entity.isThePromoter)
                     {
-                        throw new SecureException("A promoter must be profiled for this company first!");
+                        throw new SecureException("A Director must be profiled as a promoter for this company!");
                     }
-
+                    if (promoterExistsForCompany.Count() == 1 && !entity.isThePromoter)
+                    {
+                        throw new SecureException("Only this Director is profiled as a promoter for this company");
+                    }
                 }
                 try
                 {
@@ -6255,7 +6257,7 @@ namespace FintrakBanking.Repositories.Customer
                             finacle.AddCustomerAccounts(customerId, entity.customerCode);
                         }
                     }
-                    //customerMain.ISPROSPECT = false;
+                    customerMain.ISPROSPECT = false;
                     //context.TBL_CUSTOMER_MODIFICATION.Add(modified);
                     this.auditTrail.AddAuditTrail(audit);
                     //end of Audit section -------------------------------
