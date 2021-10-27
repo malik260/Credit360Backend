@@ -80,6 +80,14 @@ namespace FintrakBanking.AccessSubsediary
                     string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
                     var responseString = await httpClient.PutAsync(remoteURL, content);
                     var result = await responseString.Content.ReadAsAsync<object>();
+                    context.Response.Clear();
+                    context.Response.ClearHeaders();
+
+                    context.Response.StatusCode = 200;
+                    context.Response.StatusDescription = "OK";
+                    context.Response.Write(result);
+                    context.Response.Flush();
+                    HttpContext.Current.ApplicationInstance.CompleteRequest();
                 }
                 else
                 {

@@ -55,7 +55,7 @@ namespace FintrakBanking.APICore
                     {
                         res.StatusCode = 200;
                         res.Headers.AppendCommaSeparatedValues("Access-Control-Allow-Methods", "GET", "POST");
-                        res.Headers.AppendCommaSeparatedValues("Access-Control-Allow-Headers", "authorization", "content-type");
+                        res.Headers.AppendCommaSeparatedValues("Access-Control-Allow-Headers", "authorization", "content-type", "X-COUNTRYCODE", "X-LANG");
 
                         return;
 

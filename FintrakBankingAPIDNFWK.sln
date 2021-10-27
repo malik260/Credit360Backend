@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.3
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{FFFC697E-F2BE-4D13-BA78-96985F3549EB}"
 EndProject
@@ -54,6 +54,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.LoanRepaymentBackgroundService", "FintrakBanking.LoanRepaymentBackgroundService\FintrakBanking.LoanRepaymentBackgroundService.csproj", "{BFAEEB68-C7AC-4B1D-A5B4-119516641323}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.MonitoringMessageLogger", "FintrakBanking.MonitoringMessageLogger\FintrakBanking.MonitoringMessageLogger.csproj", "{CEF982E6-22ED-4DEF-840F-358D3D177E8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.AccessSubsediaryRepo", "FintrakBanking.AccessSubsediary\FintrakBanking.AccessSubsediaryRepo.csproj", "{E018722D-75BA-41DE-9812-8F3AA3FF10DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -245,6 +247,18 @@ Global
 		{CEF982E6-22ED-4DEF-840F-358D3D177E8F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEF982E6-22ED-4DEF-840F-358D3D177E8F}.Release|x86.ActiveCfg = Release|Any CPU
 		{CEF982E6-22ED-4DEF-840F-358D3D177E8F}.Release|x86.Build.0 = Release|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.Debug|x86.Build.0 = Debug|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.DebugLocal|x86.ActiveCfg = Debug|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.DebugLocal|x86.Build.0 = Debug|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.Release|x86.ActiveCfg = Release|Any CPU
+		{E018722D-75BA-41DE-9812-8F3AA3FF10DC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

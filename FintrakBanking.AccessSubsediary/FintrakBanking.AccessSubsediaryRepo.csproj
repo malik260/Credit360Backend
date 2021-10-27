@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ISubsediaryParentController.cs" />
+    <Compile Include="SubsediaryHttpHandler.cs" />
     <Compile Include="SubsediaryInterceptor.cs" />
     <Compile Include="SubsediaryParentController.cs" />
   </ItemGroup>
