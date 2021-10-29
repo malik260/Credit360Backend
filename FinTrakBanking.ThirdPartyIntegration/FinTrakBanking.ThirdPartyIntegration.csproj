@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="Flexcube\CWGAPI\LoanPrepayment.cs" />
     <Compile Include="Flexcube\CWGAPI\StaffDetails.cs" />
+    <Compile Include="HeadOfficeToSub\HeadOfficeToSubIntegration.cs" />
     <Compile Include="StagingDatabase\Finacle\StaffMIS.cs" />
     <Compile Include="TwoFactorAuthIntegration\TwoFactorAuthIntegrationService.cs" />
     <Compile Include="Connected Services\CRCWebService\Reference.cs">
@@ -518,6 +519,7 @@
       <Name>FintrakBanking.ViewModels</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

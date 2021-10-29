@@ -79,6 +79,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.credit;
     using FintrakBanking.APICore.Controllers;
     using FintrakBanking.Entities.AlertReportingModels;
+    using FinTrakBanking.ThirdPartyIntegration.HeadOfficeToSub;
 
     public static class NinjectWebCommon
     {
@@ -131,6 +132,7 @@ namespace FintrakBanking.APICore.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
+            kernel.Bind<IHeadOfficeToSubIntegration>().To<HeadOfficeToSubIntegration>();
             kernel.Bind<FinTrakBankingContext>().To<FinTrakBankingContext>();
             kernel.Bind<FinTrakBankingDocumentsContext>().To<FinTrakBankingDocumentsContext>();
             kernel.Bind<FinTrakBankingStagingContext>().To<FinTrakBankingStagingContext>();

@@ -436,4 +436,13 @@ public class LienProcessViewModel //: GeneralEntity
         public List<SubResponseLoanPrepaymentViewModel> getrepaymentdetailsresp { get; set; }
        
     }
+
+    public class ApprovalPostingResult
+    {
+        public bool posted { get; set; }
+        public string responseMessage { get; set; }
+        public string responseCode { get; set; }
+        public HeadOfficeFacilityApprovalViewModel responseObject { get; set; }
+    }
+
 }
