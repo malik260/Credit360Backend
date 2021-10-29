@@ -3561,10 +3561,10 @@ namespace FintrakBanking.Repositories.Credit
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
-        public async Task<IEnumerable<LoanApplicationViewModel>> GetSubsidiaryPendingLoanApplications()
+        public async Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaryPendingLoanApplications()
         {
             var data = await (from a in stgContext.STG_SUB_BASICTRANSACTION
-                              select new LoanApplicationViewModel
+                              select new SubsidiaryViewModel
                               {
                                   loanApplicationId = a.LOANAPPLICATIONID,
                                   loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
