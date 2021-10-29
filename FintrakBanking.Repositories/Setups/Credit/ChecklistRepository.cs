@@ -2584,10 +2584,13 @@ namespace FintrakBanking.Repositories.Credit
                         bool response = false;
 
                         if (entity.isLms)
+                        {
                             response = ApproveChecklistDeferralLms(entity.targetId, entity);
+                        }
                         else
+                        {
                             response = ApproveChecklistDeferral(entity.targetId, entity);
-
+                        }
                         if (response)
                         {
                             trans.Commit();
@@ -2640,9 +2643,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-
-                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     checklistRecord.DEFEREDDATE = DateTime.Now.AddDays(checklistRecord.DEFEREDDAYS ?? 0);
                 }
                 else
@@ -2650,14 +2650,10 @@ namespace FintrakBanking.Repositories.Credit
                     checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
-                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     deferredRecord.DATEAPPROVED = DateTime.Now;
                     deferredRecord.DEFEREDDATEONFINALAPPROVAL = DateTime.Now.AddDays(deferredRecord.DEFEREDDAYS ?? 0);
                     checklistRecord.DEFEREDDATE = DateTime.Now.AddDays(checklistRecord.DEFEREDDAYS ?? 0);
                 }
-
-                
 
                 var deferredCondition = context.TBL_LOAN_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
                 deferredCondition.ISSUBSEQUENT = true;
@@ -2669,7 +2665,7 @@ namespace FintrakBanking.Repositories.Credit
                 var loan = context.TBL_LOAN_APPLICATION.Find(lmsrApplication.LOANAPPLICATIONID);
                 var staffEmail = context.TBL_STAFF.Find(loan.CREATEDBY);
                 var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetCreditFileChecklistReminder").FirstOrDefault();
-                if (alertDetail != null && staffEmail.MISCODE != "n/a")
+                if (alertDetail != null && staffEmail.MISCODE != "n/a" && staffEmail.MISCODE != null)
                 {
                     var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL + ";" + GetAllCreditPortfolioStaffEmails();
                     alert.receiverEmailList.Add(emailList);
@@ -2733,10 +2729,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-
-                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-
                     checklistRecord.DEFEREDDATE = DateTime.Now.AddDays(checklistRecord.DEFEREDDAYS ?? 0);
                 }
                 else
@@ -2744,12 +2736,11 @@ namespace FintrakBanking.Repositories.Credit
                     checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
-                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     deferredRecord.DATEAPPROVED = DateTime.Now;
                     deferredRecord.DEFEREDDATEONFINALAPPROVAL = DateTime.Now.AddDays(deferredRecord.DEFEREDDAYS ?? 0);
                     checklistRecord.DEFEREDDATE = DateTime.Now.AddDays(checklistRecord.DEFEREDDAYS ?? 0);
                 }
+
                 var deferredCondition = context.TBL_LMSR_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
                 deferredCondition.ISSUBSEQUENT = true;
                 context.Entry(deferredCondition).State = System.Data.Entity.EntityState.Modified;
@@ -2758,13 +2749,17 @@ namespace FintrakBanking.Repositories.Credit
                 var loan = context.TBL_LMSR_APPLICATION.Find(lmsrApplication.LOANAPPLICATIONID);
                 var staffEmail = context.TBL_STAFF.Find(loan.CREATEDBY);
                 var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetCreditFileChecklistReminder").FirstOrDefault();
-                var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL +";"+ GetAllCreditPortfolioStaffEmails();
-                alert.receiverEmailList.Add(emailList);
-                var alertTemplate = alertDetail.TEMPLATE;
-                var accountOfficer = staffEmail.FIRSTNAME + " " + staffEmail.LASTNAME + " " + staffEmail.MIDDLENAME;
-                alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
-                alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", loan.APPLICATIONREFERENCENUMBER);
-                LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetCreditFileChecklistReminder");
+
+                if (alertDetail != null && staffEmail.MISCODE != "n/a" && staffEmail.MISCODE != null)
+                {
+                    var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL + ";" + GetAllCreditPortfolioStaffEmails();
+                    alert.receiverEmailList.Add(emailList);
+                    var alertTemplate = alertDetail.TEMPLATE;
+                    var accountOfficer = staffEmail.FIRSTNAME + " " + staffEmail.LASTNAME + " " + staffEmail.MIDDLENAME;
+                    alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
+                    alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", loan.APPLICATIONREFERENCENUMBER);
+                    LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetCreditFileChecklistReminder");
+                }
             }
 
             // Audit Section ---------------------------
@@ -2835,7 +2830,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationRefNo = c.APPLICATIONREFERENCENUMBER,
                             loanApplicationId = c.LOANAPPLICATIONID,
                             toApprovalLevelName = atrail.LOOPEDSTAFFID > 0 ? staff.FirstOrDefault(r => r.STAFFID == atrail.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : atrail.TOSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.TOSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
-                            fromApprovalLevelName = atrail.REQUESTSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                            fromApprovalLevelName = atrail.REQUESTSTAFFID != 0 ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                         }).ToList();
 
             foreach (var d in data)

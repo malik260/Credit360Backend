@@ -20,7 +20,6 @@ using System.Web;
 using FintrakBanking.Common.CustomException;
 using System.Text;
 using Microsoft.AspNet.Identity;
-using System.Web.Security;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -348,9 +347,7 @@ namespace FintrakBanking.APICore.Controllers
             //Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
             var authTypes = new string[] { DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.ExternalBearer, DefaultAuthenticationTypes.TwoFactorCookie, CookieAuthenticationDefaults.AuthenticationType, "Bearer" };
             Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-            Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
-            FormsAuthentication.SignOut();
-            
+
             var audit = new TBL_AUDIT()
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoggedOut,
@@ -368,7 +365,7 @@ namespace FintrakBanking.APICore.Controllers
             _auditTrail.AddAuditTrail(audit);
 
             _context.SaveChanges();
-
+            
             return this.Ok(new { success = true, message = "User Logged Off" });
 
             //}
@@ -391,7 +388,6 @@ namespace FintrakBanking.APICore.Controllers
             //{
             //    return this.Ok(new { success = true, message = "User Logged Off" });
             //}
-            FormsAuthentication.SignOut();
             var staffDetails = _repo.GetSingleUserByUserName(token.GetUsername);
 
             if (staffDetails == null || staffDetails.username == "")
@@ -401,7 +397,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
-            FormsAuthentication.SignOut();
+
 
             var audit = new TBL_AUDIT
             {
@@ -420,7 +416,7 @@ namespace FintrakBanking.APICore.Controllers
             _auditTrail.AddAuditTrail(audit);
 
             _context.SaveChanges();
-
+            
             return this.Ok(new { success = true, message = "User Logged Off" });
 
             //}

@@ -47,6 +47,7 @@ namespace FintrakBanking.Repositories.Credit
                 condition = c.CONDITION,
                 isExternal = c.ISEXTERNAL,
                 isSubsequent = c.ISSUBSEQUENT,
+                isDocument = c.ISDOCUMENT,
                 corporate = c.CORPORATE,
                 retail = c.RETAIL,
                 productId = c.PRODUCTID,
@@ -72,6 +73,7 @@ namespace FintrakBanking.Repositories.Credit
                 condition = c.CONDITION,
                 isExternal = c.ISEXTERNAL,
                 isSubsequent = c.ISSUBSEQUENT,
+                isDocument = c.ISDOCUMENT,
                 corporate = c.CORPORATE,
                 retail = c.RETAIL,
                 productId = c.PRODUCTID,
@@ -96,6 +98,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISEXTERNAL = (bool)model.isExternal,
                 ISSUBSEQUENT = model.isSubsequent,
                 CREATEDBY = model.createdBy,
+                ISDOCUMENT = model.isDocument,
                 //LOANAPPLICATIONID = model.loanApplicationId,
                 TIMELINEID = model.timelineId,
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
@@ -145,6 +148,7 @@ namespace FintrakBanking.Repositories.Credit
                         ISSUBSEQUENT = c.ISSUBSEQUENT,
                         CREATEDBY = c.CREATEDBY,
                         //CHECKLISTVALIDATED=false,
+                        ISDOCUMENT = c.ISDOCUMENT,
                         TIMELINEID = c.TIMELINEID,
                         LOANAPPLICATIONDETAILID = entity.detailId,
                         RESPONSE_TYPEID = c.RESPONSE_TYPEID,
@@ -182,6 +186,7 @@ namespace FintrakBanking.Repositories.Credit
             data.TIMELINEID = model.timelineId;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.ISDOCUMENT = model.isDocument;
 
             context.Entry(data).State = System.Data.Entity.EntityState.Modified;
 
@@ -219,6 +224,7 @@ namespace FintrakBanking.Repositories.Credit
                         conditionId = c.CONDITIONID == null ? 0 : (int)c.CONDITIONID,
                         isExternal = c.ISEXTERNAL,
                         isSubsequent = c.ISSUBSEQUENT,
+                        isDocument = c.ISDOCUMENT,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
                         loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                         loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
@@ -275,6 +281,7 @@ namespace FintrakBanking.Repositories.Credit
                 condition = c.CONDITION,
                 isExternal = c.ISEXTERNAL,
                 isSubsequent = c.ISSUBSEQUENT,
+                isDocument = c.ISDOCUMENT,
                 corporate = c.CORPORATE,
                 retail = c.RETAIL,
                 productId = c.PRODUCTID,
@@ -292,6 +299,7 @@ namespace FintrakBanking.Repositories.Credit
                 CONDITION = model.condition,
                 ISEXTERNAL = model.isExternal,
                 ISSUBSEQUENT = model.isSubsequent,
+                ISDOCUMENT = model.isDocument,
                 PRODUCTID = model.productId,
                 TIMELINEID = model.timelineId,
                 SECTORID = model.sectorId,
@@ -338,6 +346,7 @@ namespace FintrakBanking.Repositories.Credit
             data.ISSUBSEQUENT = model.isSubsequent;
             data.PRODUCTID = (short)model.productId;
             data.TIMELINEID = model.timelineId;
+            data.ISDOCUMENT = model.isDocument;
             //data.CORPORATE = model.corporate;
             //data.RETAIL = model.retail;
             data.RESPONSE_TYPEID = model.responseTypeId;
@@ -593,7 +602,7 @@ namespace FintrakBanking.Repositories.Credit
             data.TIMELINEID = model.timelineId;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
-
+            data.ISDOCUMENT = model.isDocument;
             context.Entry(data).State = System.Data.Entity.EntityState.Modified;
 
             // Audit Section ---------------------------
@@ -633,6 +642,7 @@ namespace FintrakBanking.Repositories.Credit
                         CONDITIONID = c.CONDITIONID,
                         ISEXTERNAL = (bool)c.ISEXTERNAL,
                         ISSUBSEQUENT = c.ISSUBSEQUENT,
+                        ISDOCUMENT = c.ISDOCUMENT,
                         CREATEDBY = c.CREATEDBY,
                         TIMELINEID = c.TIMELINEID,
                         LOANREVIEWAPPLICATIONID = entity.detailId,
@@ -663,6 +673,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISEXTERNAL = (bool)model.isExternal,
                 ISSUBSEQUENT = model.isSubsequent,
                 CREATEDBY = model.createdBy,
+                ISDOCUMENT = model.isDocument,
                 //LOANAPPLICATIONID = model.loanApplicationId,
                 TIMELINEID = model.timelineId,
                 LOANREVIEWAPPLICATIONID = model.loanApplicationDetailId,
@@ -711,6 +722,7 @@ namespace FintrakBanking.Repositories.Credit
                         conditionId = c.CONDITIONID == null ? 0 : (int)c.CONDITIONID,
                         isExternal = c.ISEXTERNAL,
                         isSubsequent = c.ISSUBSEQUENT,
+                        isDocument = c.ISDOCUMENT,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
                         loanApplicationId = c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID,
                         loanApplicationDetailId = c.LOANREVIEWAPPLICATIONID,

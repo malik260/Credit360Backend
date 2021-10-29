@@ -45,6 +45,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isCheckListSpecific { get; set; }
         public string comment { get; set; }
         public bool? excludeLegal { get; set; }
+        public bool isDocument { get; set; }
     }
 
     public class TransactionDynamicsViewModel : GeneralEntity

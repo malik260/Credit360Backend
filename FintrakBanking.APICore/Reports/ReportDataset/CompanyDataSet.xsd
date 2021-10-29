@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="CompanyDataSet" targetNamespace="http://tempuri.org/CompanyDataSet.xsd" xmlns:mstns="http://tempuri.org/CompanyDataSet.xsd" xmlns="http://tempuri.org/CompanyDataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="CompanyDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="CompanyDataSet" msprop:Generator_UserDSName="CompanyDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="CompanyDetail" msprop:Generator_TableClassName="CompanyDetailDataTable" msprop:Generator_TableVarName="tableCompanyDetail" msprop:Generator_TablePropName="CompanyDetail" msprop:Generator_RowDeletingName="CompanyDetailRowDeleting" msprop:Generator_RowChangingName="CompanyDetailRowChanging" msprop:Generator_RowEvHandlerName="CompanyDetailRowChangeEventHandler" msprop:Generator_RowDeletedName="CompanyDetailRowDeleted" msprop:Generator_UserTableName="CompanyDetail" msprop:Generator_RowChangedName="CompanyDetailRowChanged" msprop:Generator_RowEvArgName="CompanyDetailRowChangeEvent" msprop:Generator_RowClassName="CompanyDetailRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="companyName" msprop:Generator_ColumnVarNameInTable="columncompanyName" msprop:Generator_ColumnPropNameInRow="companyName" msprop:Generator_ColumnPropNameInTable="companyNameColumn" msprop:Generator_UserColumnName="companyName" type="xs:string" minOccurs="0" />
+              <xs:element name="companyAddress" msprop:Generator_ColumnVarNameInTable="columncompanyAddress" msprop:Generator_ColumnPropNameInRow="companyAddress" msprop:Generator_ColumnPropNameInTable="companyAddressColumn" msprop:Generator_UserColumnName="companyAddress" type="xs:string" minOccurs="0" />
+              <xs:element name="companyLogo" msprop:Generator_ColumnVarNameInTable="columncompanyLogo" msprop:Generator_ColumnPropNameInRow="companyLogo" msprop:Generator_ColumnPropNameInTable="companyLogoColumn" msprop:Generator_UserColumnName="companyLogo" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

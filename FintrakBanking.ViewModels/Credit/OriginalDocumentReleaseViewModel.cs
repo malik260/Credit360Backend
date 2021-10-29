@@ -67,4 +67,23 @@ namespace FintrakBanking.ViewModels.Credit
         public string fileName { get; set; }
         public DateTime drawdownInitiationDate { get; set; }
     }
+
+    public class OutStandingDocumentViewModel
+    {
+        public string customerCode { get; set; }
+        public string customerName { get; set; }
+        public string facilityType { get; set; }
+        public decimal facilityAmount { get; set; }
+        public string reference { get; set; }
+        public string accountOfficerName { get; set; }
+        public string relationshipManager { get; set; }
+        public string groupHead { get; set; }
+        public string sbu { get; set; }
+        public string condition { get; set; }
+        public int numberOfDays { get; set; }
+        public int createdBy { get; set; }
+        public int customerId { get; set; }
+        public DateTime? dateOnFinalApproval { get; set; }
+        public DateTime? deferredDate { get; set; }
+    }
 }

@@ -1674,13 +1674,22 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/RecoveryCollectionReport.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
             return path;
         }
-
+        
         public string GetComputationForInternalAgentsReport(DateTime startDate, DateTime endDate)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
             path = reportPath + "ReportViews/ComputationForInternalAgents.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetOutstandingDocumentDeferredList()
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/OutstandingDocumentDeferredList.aspx?hashValue=" + hashValue;
             return path;
         }
 
