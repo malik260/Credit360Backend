@@ -180,7 +180,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("product-group")]
         public HttpResponseMessage AddProductGroup([FromBody] ProductGroupViewModel model)
         {
@@ -209,7 +209,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("product-group/{productGroupId}")]
         public HttpResponseMessage UpdateProductGroup(short productGroupId, [FromBody] ProductGroupViewModel model)
         {
@@ -246,7 +246,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete] [AdminClaimsAuthorization]
         [Route("product-group/{productGroupId}")]
         public HttpResponseMessage DeleteProductGroup(short productGroupId)
         {
@@ -487,7 +487,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         // POST api/values
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("product-type")]
         public HttpResponseMessage AddProductType([FromBody] ProductTypeViewModel model)
         {
@@ -517,7 +517,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("product-type/{productTypeId}")]
         public HttpResponseMessage UpdateProductType(short productTypeId, [FromBody] ProductTypeViewModel model)
         {
@@ -553,7 +553,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete] [AdminClaimsAuthorization]
         [Route("product-type/{productTypeId}")]
         public HttpResponseMessage DeleteProductType(short productTypeId)
         {
@@ -951,7 +951,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("product")]
         public async Task<HttpResponseMessage> AddTempProduct([FromBody] ProductViewModel model)
         {
@@ -1050,7 +1050,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //}
 
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("product/{productId}")]
         public async Task<HttpResponseMessage> UpdateProduct(int productId, [FromBody] ProductViewModel model)
         {
@@ -1105,7 +1105,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("product/approval")]
         public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
@@ -1282,7 +1282,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [AdminClaimsAuthorization]
         [Route("product-price-index")]
         public HttpResponseMessage AddProductPriceIndex([FromBody] ProductPriceIndexViewModel model)
         {
@@ -1311,7 +1311,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("product-price-index/{productPriceIndexId}")]
         public HttpResponseMessage UpdateProductPriceIndex(int productPriceIndexId, [FromBody] ProductPriceIndexViewModel model)
         {
@@ -1340,7 +1340,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete] [AdminClaimsAuthorization]
         [Route("product-price-index/{id}")]
         public HttpResponseMessage DeleteProductPriceIndex(int id)
         {
@@ -1382,7 +1382,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("product-price-index-global-approval")]
         public HttpResponseMessage GoForApprovalGlobalPriceIndex([FromBody]ApprovalViewModel entity)
         {
@@ -1456,7 +1456,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("product-price-index-global")]
         public HttpResponseMessage AddProductPriceIndexGlobal([FromBody] ProductPriceIndexGlobalViewModel model)
         {
@@ -1481,7 +1481,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("product-price-index-global/{productPriceIndexGlobalId}")]
         public HttpResponseMessage UpdateProductPriceIndexGlobal(int productPriceIndexGlobalId, [FromBody] ProductPriceIndexGlobalViewModel model)
         {
@@ -1686,7 +1686,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("product-process")]
         public HttpResponseMessage AddProductClassProcess([FromBody] ProductClassProcessViewModel model)
         {
@@ -1708,7 +1708,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("product-process/{productProcessId}")]
         public HttpResponseMessage UpdateProductClassProcess(int productProcessId, [FromBody] ProductClassProcessViewModel model)
         {
@@ -1864,7 +1864,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("add-product-document-definition")]
         public HttpResponseMessage AddProductDocumentDefinition([FromBody] DocumentDefinitionViewModel model)
         {
@@ -1916,7 +1916,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("product-document-mapping")]
         public HttpResponseMessage AddProductDocumentMapping([FromBody] ProductDocumentMappingViewModel model)
         {
@@ -1946,7 +1946,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("product-document-mapping/{id}")]
         public HttpResponseMessage DeleteProductDocumentMapping(int id)
         {
@@ -1963,7 +1963,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("product-document-mapping/{id}")]
         public HttpResponseMessage UpdateProductDocumentMapping ([FromBody] ProductDocumentMappingViewModel model, int id)
         {
