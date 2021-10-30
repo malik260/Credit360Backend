@@ -184,7 +184,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("charge-fee")]
         public HttpResponseMessage AddChargeFee([FromBody] ChargeFeeViewModel entity)
         {
@@ -211,7 +211,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("charge-fee/{chargeFeeId}")]
         public HttpResponseMessage UpdateChargeFee([FromBody] ChargeFeeViewModel entity, int chargeFeeId)
         {
@@ -284,7 +284,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("charge-fee-approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {
