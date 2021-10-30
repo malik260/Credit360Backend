@@ -256,6 +256,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string employer { get; set; }
         public int creditAppraisalOperationId { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
+        public int subsidiaryId { get; set; }
+        public int? customerGlobalId { get; set; }
+        public string productClassProcess { get; set; }
+        public decimal totalExposureAmount { get; set; }
+        public string countryCode { get; set; }
+        public string createdByName { get; set; }
     }
 
     public class InterestIncomeViewModel
@@ -1570,6 +1576,38 @@ namespace FintrakBanking.ViewModels.Credit
         public double proposedRate { get; set; }
         public double approvedRate { get; set; }
     }
-
+    public class SubsidiaryViewModel
+    {
+        public int subsidiaryId { get; set; }
+        public string subsidiaryName { get; set; }
+        public int countryId { get; set; }
+        public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string relatedReferenceNumber { get; set; }
+        public int? customerId { get; set; }
+        public long? customerGlobalId { get; set; }
+        public string countryCode { get; set; }
+        public string productClassName { get; set; }
+        public string productClassProcess { get; set; }
+        public DateTime applicationDate { get; set; }
+        public DateTime? systemDateTime { get; set; }
+        public decimal applicationAmount { get; set; }
+        public decimal totalExposureAmount { get; set; }
+        public double interestRate { get; set; }
+        public int applicationTenor { get; set; }
+        public int currentApprovalLevelId { get; set; }
+        public int currentApprovalLevelTypeId { get; set; }
+        public int? toStaffId { get; set; }
+        public string divisionCode { get; set; }
+        public DateTime? timeIn { get; set; }
+        public short approvalStatusId { get; set; }
+        public short applicationStatusId { get; set; }
+        public string operationName { get; set; }
+        public string customerName { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public int createdBy { get; set; }
+        public string createdByName { get; set; }
+    }
 }
 

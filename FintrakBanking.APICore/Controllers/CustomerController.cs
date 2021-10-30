@@ -2331,7 +2331,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         [HttpGet]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("customer/approvals/temp")]
         public HttpResponseMessage GetAllCustomerInformationAwaitingApproval()
         {
@@ -2351,7 +2351,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {

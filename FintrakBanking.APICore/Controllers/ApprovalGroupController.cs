@@ -30,7 +30,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Approval Group Mapping
-        [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [AdminClaimsAuthorization]
         [Route("approval-group-mapping")]
         public HttpResponseMessage AddApprovalGroupMapping(  [FromBody] ApprovalGroupMappingViewModel model)
         { 
@@ -102,7 +102,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-       [HttpPut] [ClaimsAuthorization] [Route("approval-group-mapping/{operationMappingId}")]
+       [HttpPut] [AdminClaimsAuthorization] [Route("approval-group-mapping/{operationMappingId}")]
         public HttpResponseMessage UpdateApprovalGroupMapping( 
             int operationMappingId, [FromBody] ApprovalGroupMappingViewModel model)
         { 
@@ -131,7 +131,8 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpDelete] [ClaimsAuthorization][Route("approval-group-mapping/{operationMappingId}")]
+        [HttpDelete] [AdminClaimsAuthorization]
+        [Route("approval-group-mapping/{operationMappingId}")]
         public HttpResponseMessage DeleteApprovalGroupMapping(int operationMappingId)
         { 
                 try
@@ -158,7 +159,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Approval Group
-         [HttpPost] [ClaimsAuthorization][Route("approval-group")]
+         [HttpPost] [AdminClaimsAuthorization]
+        [Route("approval-group")]
         public HttpResponseMessage AddApprovalGroup(  [FromBody] ApprovalGroupViewModel model)
         { 
                 try
@@ -236,7 +238,7 @@ namespace FintrakBanking.APICore.Controllers
             
         }
         [HttpGet]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("approval-group-list-for-approval")]
         public HttpResponseMessage GetApprovalGroupForApproval()
         {
@@ -257,7 +259,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("go-for-workflow-group-approval")]
         public HttpResponseMessage GoForWorkflowGroupApproval([FromBody]ApprovalGroupMappingViewModel model)
         {
@@ -281,7 +283,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
         }
-        [HttpPut] [ClaimsAuthorization][Route("approval-group/{GroupId}")]
+        [HttpPut] [AdminClaimsAuthorization]
+        [Route("approval-group/{GroupId}")]
         public HttpResponseMessage UpdateApprovalGroup( int GroupId, [FromBody] ApprovalGroupViewModel model)
         { 
                 try
@@ -311,7 +314,8 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-        [HttpDelete] [ClaimsAuthorization][Route("approval-group/{GroupId}")]
+        [HttpDelete] [AdminClaimsAuthorization]
+        [Route("approval-group/{GroupId}")]
         public HttpResponseMessage DeleteApprovalGroup(  int GroupId)
         { 
                 try

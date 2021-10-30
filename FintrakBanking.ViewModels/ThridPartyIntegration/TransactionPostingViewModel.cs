@@ -280,6 +280,49 @@ public class LienProcessViewModel //: GeneralEntity
 
     }
 
+    public class HeadOfficeFacilityApprovalViewModel
+    {
+        public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string relatedReferenceNumber { get; set; }
+        public int subsidiaryId { get; set; }
+        public int customerId { get; set; }
+        public long customerGlobalId { get; set; }
+        public DateTime applicationDate { get; set; }
+        public double interestRate { get; set; }
+        public int applicationTenor { get; set; }
+        public int approvalStatusId { get; set; }
+        public int approvalLevelId { get; set; }
+        public int approvalLevelGlobalCode { get; set; }
+        public int? toStaffId { get; set; }
+        public short applicationStatusId { get; set; }
+        public string operationName { get; set; }
+        public string productClassName { get; set; }
+        public string productName { get; set; }
+        public string productClassProcess { get; set; }
+        public string loanApplicationTypeName { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string middleName { get; set; }
+        public string businessUnitShortCode { get; set; }
+        public decimal applicationAmount { get; set; }
+        public decimal totalExposureAmount { get; set; }
+        public DateTime systemDateTime { get; set; }
+        public DateTime systemArrivalDateTime { get; set; }
+        public int createdBy { get; set; }
+        public int lastUpdatedBy { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public DateTime? dateTimeUpdated { get; set; }
+        public bool deleted { get; set; }
+        public int? deletedBy { get; set; }
+        public DateTime? dateTimeDeleted { get; set; }
+        public string responseMessage { get; set; }
+        public string responseCode { get; set; }
+
+
+    }
+
 
     public class PostingResult
     {
@@ -393,4 +436,13 @@ public class LienProcessViewModel //: GeneralEntity
         public List<SubResponseLoanPrepaymentViewModel> getrepaymentdetailsresp { get; set; }
        
     }
+
+    public class ApprovalPostingResult
+    {
+        public bool posted { get; set; }
+        public string responseMessage { get; set; }
+        public string responseCode { get; set; }
+        public HeadOfficeFacilityApprovalViewModel responseObject { get; set; }
+    }
+
 }

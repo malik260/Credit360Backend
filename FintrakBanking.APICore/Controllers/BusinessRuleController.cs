@@ -29,7 +29,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("level-business-rule")]
         public HttpResponseMessage AddBusinessRule([FromBody] BusinessRuleViewModel model)
         {
@@ -64,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("level-business-rule/{id}")]
         public HttpResponseMessage UpdateBusinessRule([FromBody] BusinessRuleViewModel model, int id)
         {

@@ -998,7 +998,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("job-request-feedback")]
         public HttpResponseMessage AddUpdateCompanyDirector([FromBody]JobRequestStatusFeedbackViewModel entity)
         {

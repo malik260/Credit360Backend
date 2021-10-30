@@ -28,7 +28,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region employer
 
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [AdminClaimsAuthorization]  
         [Route("employers")]
         public HttpResponseMessage getEmployer()
         {
@@ -44,7 +44,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("get-all-pending-employers")]
         public HttpResponseMessage getAllPendingEmployers()
         {
@@ -76,6 +76,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
+        [AdminClaimsAuthorization]
         [Route("forward-for-related-employer-approval")]
         public HttpResponseMessage ForwardRelatedEmployerForApproval([FromBody] EmployerViewModel entity)
         {
@@ -90,7 +91,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("get-related-employer-waiting-for-approval")]
         public HttpResponseMessage GetRelatedEmployersWaitingForApproval()
         {
@@ -98,7 +99,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [AdminClaimsAuthorization]  
         [Route("employer")]
         public HttpResponseMessage getEmployer(int employerId)
         {
@@ -113,7 +114,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("add-employer")]
         public HttpResponseMessage addEmployer(EmployerViewModel employer)
         {
@@ -132,7 +133,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("update-employer/{employerId}")]
         public HttpResponseMessage updateEmployer(int employerId,EmployerViewModel employer)
         {
@@ -150,7 +151,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             } 
         }
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete] [AdminClaimsAuthorization]
         [Route("delete-employer/{employerId}")]
         public HttpResponseMessage deleteEmployer(int employerId, EmployerViewModel employer)
         {
@@ -180,7 +181,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+      [HttpGet] [AdminClaimsAuthorization]  
         [Route("employer-sub-type/{EmployerTypeId}")]
         public HttpResponseMessage getEmployerSubType(int employerTypeId)
         {
@@ -196,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("get-all-employer-sub-types")]
         public HttpResponseMessage getAllEmployerSubTypes()
         {
@@ -216,7 +217,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("add-employer-type")]
         public HttpResponseMessage addEmployerType(EmployerViewModel employerType)
         {
@@ -236,7 +237,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("update-employer-type/{employerTypeId}")]
         public HttpResponseMessage updateEmployerType(int employerTypeId, EmployerViewModel employer)
         {
@@ -256,7 +257,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("delete-employer-type/{employerTypeId}")]
 
         public HttpResponseMessage deleteEmployerType(int employerTypeId, EmployerViewModel employer)
@@ -277,7 +278,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region employer sub type
         [HttpGet]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("all-employer-sub-type")]
         public HttpResponseMessage getEmployerSubTypes()
         {
@@ -293,7 +294,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("add-employer-sub-type")]
         public HttpResponseMessage addEmployerSubType(EmployerViewModel employerSubType)
         {
@@ -313,7 +314,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("update-employer-sub-type/{employerSubTypeId}")]
         public HttpResponseMessage updateEmployerSubType(int employerSubTypeId, EmployerViewModel employer)
         {
@@ -333,7 +334,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("delete-employer-type/{employerTypeId}")]
 
         public HttpResponseMessage deleteEmployerSubType(int employerSubTypeId, EmployerViewModel employer)
