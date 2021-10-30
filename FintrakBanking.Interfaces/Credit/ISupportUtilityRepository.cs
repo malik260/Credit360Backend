@@ -26,6 +26,7 @@ namespace FintrakBanking.Interfaces.Credit
       List<CustomerViewModels> GetSingleCustomerGeneralInfo(string searchString);
       CustomerViewModels GetTempCustomerRecord(int customerId);
       ApprovalTrailViewModel GetSingleTrail(int approvalTrailId);
+      bool UpdateCustomerRecord(int customerId, CustomerViewModels entity);
     }
 
 }

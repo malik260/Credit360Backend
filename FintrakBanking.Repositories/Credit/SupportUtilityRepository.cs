@@ -1,6 +1,9 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.General;
@@ -17,7 +20,10 @@ namespace FintrakBanking.Repositories.Credit
     public class SupportUtilityRepository : ISupportUtilityRepository
     {
         private FinTrakBankingContext context;
-        public SupportUtilityRepository(FinTrakBankingContext _context)
+        private IAuditTrailRepository auditTrail;
+        private IGeneralSetupRepository _genSetup;
+        public SupportUtilityRepository(FinTrakBankingContext _context, IAuditTrailRepository _auditTrail,
+            IGeneralSetupRepository genSetup)
         {
             context = _context;
         }
@@ -537,5 +543,97 @@ namespace FintrakBanking.Repositories.Credit
 
             return tempCustomer;
         }
+
+        public bool UpdateCustomerRecord(int customerId, CustomerViewModels entity)
+        {
+            try
+            {
+                var customerMain = context.TBL_CUSTOMER.Find(customerId);
+                var customerTemp = context.TBL_TEMP_CUSTOMER.Find(customerId);
+                if (customerMain != null && customerTemp !=null)
+                {
+                    TBL_TEMP_CUSTOMER customer = new TBL_TEMP_CUSTOMER();
+                    //customer.CUSTOMERCODE = entity.customerCode;
+                    //customer.CUSTOMERTYPEID = entity.customerTypeId;
+                    //customer.FIRSTNAME = entity.firstName;
+                    //customer.MIDDLENAME = entity.middleName;
+                    //customer.LASTNAME = entity.lastName;
+                    customer.CUSTOMERID = customerTemp.CUSTOMERID;
+                    customer.BRANCHID = customerTemp.BRANCHID;
+                    customer.COMPANYID = customerTemp.COMPANYID;
+                    customer.CUSTOMERSENSITIVITYLEVELID = customerTemp.CUSTOMERSENSITIVITYLEVELID;
+                    customer.DATEOFBIRTH = customerTemp.DATEOFBIRTH;
+                    customer.EMAILADDRESS = customerTemp.EMAILADDRESS;
+                    customer.GENDER = customerTemp.GENDER;
+                    customer.MAIDENNAME = customerTemp.MAIDENNAME;
+                    customer.MARITALSTATUS = customerTemp.MARITALSTATUS;
+                    customer.TITLE = customerTemp.TITLE;
+                    customer.MISCODE = customerTemp.MISCODE;
+                    customer.MISSTAFF = customerTemp.MISSTAFF;
+                    customer.NATIONALITYID = customerTemp.NATIONALITYID;
+                    customer.OCCUPATION = customerTemp.OCCUPATION;
+                    customer.PLACEOFBIRTH = customerTemp.PLACEOFBIRTH;
+                    customer.ISPOLITICALLYEXPOSED = customerTemp.ISPOLITICALLYEXPOSED;
+                    customer.ISINVESTMENTGRADE = customerTemp.ISINVESTMENTGRADE;
+                    customer.ISREALATEDPARTY = customerTemp.ISREALATEDPARTY;
+                    customer.RELATIONSHIPOFFICERID = customerTemp.RELATIONSHIPOFFICERID;
+                    customer.SPOUSE = customerTemp.SPOUSE;
+                    customer.SUBSECTORID = customerTemp.SUBSECTORID;
+                    customer.TAXNUMBER = customerTemp.TAXNUMBER;
+                    customer.RISKRATINGID = customerTemp.RISKRATINGID;
+                    customer.CUSTOMERBVN = customerTemp.CUSTOMERBVN;
+                    customer.CREATEDBY = customerTemp.CREATEDBY;
+                    customer.DATETIMECREATED = customerTemp.DATETIMECREATED;
+                    customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    customer.ISCURRENT = false;
+                    customer.ACCOUNTCREATIONCOMPLETE = true;
+                    customer.COUNTRYOFRESIDENTID = customerTemp.COUNTRYOFRESIDENTID;
+                    customer.NUMBEROFDEPENDENTS = customerTemp.NUMBEROFDEPENDENTS;
+                    customer.NUMBEROFLOANSTAKEN = customerTemp.NUMBEROFLOANSTAKEN;
+                    customer.MONTHLYLOANREPAYMENT = customerTemp.MONTHLYLOANREPAYMENT;
+                    customer.DATEOFRELATIONSHIPWITHBANK = customerTemp.DATEOFRELATIONSHIPWITHBANK;
+                    customer.RELATIONSHIPTYPEID = customerTemp.RELATIONSHIPTYPEID;
+                    customer.TEAMLDR = customerTemp.TEAMLDR;
+                    customer.TEAMNPL = customerTemp.TEAMNPL;
+                    customer.CORR = customerTemp.CORR;
+                    customer.BUSINESSUNTID = customerTemp.BUSINESSUNTID;
+                    customer.PASTDUEOBLIGATIONS = customerTemp.PASTDUEOBLIGATIONS;
+                    context.TBL_TEMP_CUSTOMER.Add(customer);
+                }
+
+             
+                // Audit Section ----------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = "Updated TBL_CUSTOMER from support Utility: " + customerMain.FIRSTNAME + " with code: " + customerMain.CUSTOMERCODE +
+                             " on" + " (" + entity.customerId + ") ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+                
+                {
+                   
+                    customerMain.ISPROSPECT = false;
+                    customerMain.ACCOUNTCREATIONCOMPLETE = true;
+                    this.auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------
+
+                    var output = context.SaveChanges() > 0;
+
+                    return output;
+                }
+            }catch(Exception e)
+            {
+                throw e;
+            }
+        }
+
     }
 }

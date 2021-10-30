@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.SupportUtility;
@@ -139,6 +140,43 @@ namespace FintrakBanking.APICore.Controllers
         {
             var response = repo.GetTempCustomerRecord(customerId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "customer record for " + customerId, result = response });
+
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("update-customer-record/{customerId}")]
+        public HttpResponseMessage UpdateCustomerRecord(int customerId, CustomerViewModels entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = (short)token.GetCompanyId;
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.customerSensitivityLevelId = 1;
+
+                var data = repo.UpdateCustomerRecord(customerId, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been updated successfully." });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = ce.Message });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
 
         }
     }
