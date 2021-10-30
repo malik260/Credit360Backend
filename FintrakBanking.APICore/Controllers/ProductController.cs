@@ -1796,7 +1796,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("product-classification")]
         public HttpResponseMessage AddProductClassification([FromBody] ProductClassificationViewModel model)
         {

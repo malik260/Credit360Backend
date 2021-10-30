@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Controllers
             repo = _repo;
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("department")]
         public HttpResponseMessage AddDepartment(DepartmentViewModel entity)
         {
@@ -105,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [AdminClaimsAuthorization]  
+      [HttpGet] [ClaimsAuthorization]  
         [Route("units")]
         public HttpResponseMessage GetAllUnits()
         {
@@ -127,7 +127,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("unit")]
         public HttpResponseMessage AddUnit(DepartmentViewModel entity)
         {
@@ -151,7 +151,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("unit/{unitId}")]
         public HttpResponseMessage UpdateUnit(short unitId, DepartmentViewModel entity)
         {
@@ -286,7 +286,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("department/{departmentId}")]
         public HttpResponseMessage UpdateDepartment(int departmentId, DepartmentViewModel entity)
         {

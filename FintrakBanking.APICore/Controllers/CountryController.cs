@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("city")]
         public HttpResponseMessage AddCity([FromBody] CityViewModel entity)
         {
@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-         [HttpPost] [ClaimsAuthorization]
+         [HttpPost] [AdminClaimsAuthorization]
         [Route("post-local-govt")]
         public HttpResponseMessage AddLocalGovt([FromBody] LocalGovtViewModel entity)
         {
@@ -67,7 +67,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("update-local-govt/{localGovernmentId}")]
         public HttpResponseMessage UpdateLocalGovt([FromBody] LocalGovtViewModel entity, int localGovernmentId)
         {
@@ -130,7 +130,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("city/{id}")]
         public HttpResponseMessage UpdateCity([FromBody] CityViewModel entity, int id)
         {
@@ -343,7 +343,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-       [HttpPut] [ClaimsAuthorization]
+       [HttpPut] [AdminClaimsAuthorization]
         [Route("state/{id}")]
         public HttpResponseMessage UpdateStates([FromBody] StateViewModel entity, int id)
         {
