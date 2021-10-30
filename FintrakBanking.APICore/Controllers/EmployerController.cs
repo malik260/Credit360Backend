@@ -28,7 +28,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region employer
 
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [AdminClaimsAuthorization]  
         [Route("employers")]
         public HttpResponseMessage getEmployer()
         {
@@ -167,7 +167,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet] [AdminClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("employer-type")]
         public HttpResponseMessage getEmployerType()
         {

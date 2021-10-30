@@ -422,6 +422,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         #region Obligor Limit 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("obligor-limit")]
         public HttpResponseMessage GetAllObligorLimit()
         {
@@ -436,6 +437,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
+        [AdminClaimsAuthorization]
         [Route("obligor-limit")]
         public HttpResponseMessage AddUpdateObligorLimit([FromBody] ObligorLimitViewModel entity)
         {
@@ -571,6 +573,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region currency & group limits
         [HttpGet]
+        [AdminClaimsAuthorization]
         [Route("currency-limit")]
         public HttpResponseMessage GetAllCurrencyLimit()
         {
@@ -586,6 +589,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
+        [AdminClaimsAuthorization]
         [Route("currency-limit")]
         public HttpResponseMessage AddCurrencyLimit([FromBody] CurrencyLimitViewModel entity)
         {
@@ -608,6 +612,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
+        [AdminClaimsAuthorization]
         [Route("currency-limit/{currencyLimitId}")]
         public HttpResponseMessage UpdateCurrencyLimit(int currencyLimitId, [FromBody] CurrencyLimitViewModel entity)
         {
@@ -630,6 +635,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
+        [AdminClaimsAuthorization]
         [Route("currency-limit/{currencyLimitId}")]
         public HttpResponseMessage DeleteCurrencyLimit(int currencyLimitId)
         {
@@ -665,6 +671,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
+        [AdminClaimsAuthorization]
         [Route("group-limit")]
         public HttpResponseMessage AddGroupLimit([FromBody] GroupLimitViewModel entity)
         {
@@ -687,6 +694,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
+        [AdminClaimsAuthorization]
         [Route("group-limit/{groupLimitId}")]
         public HttpResponseMessage UpdateGroupLimit(int groupLimitId, [FromBody] GroupLimitViewModel entity)
         {
@@ -710,6 +718,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
+        [AdminClaimsAuthorization]
         [Route("group-limit/{groupLimitId}")]
         public HttpResponseMessage DeleteGroupLimit(int groupLimitId)
         {
