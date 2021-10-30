@@ -288,7 +288,7 @@ public class LienProcessViewModel //: GeneralEntity
         public string relatedReferenceNumber { get; set; }
         public int subsidiaryId { get; set; }
         public int customerId { get; set; }
-        public int customerGlobalId { get; set; }
+        public long customerGlobalId { get; set; }
         public DateTime applicationDate { get; set; }
         public double interestRate { get; set; }
         public int applicationTenor { get; set; }
@@ -296,7 +296,7 @@ public class LienProcessViewModel //: GeneralEntity
         public int approvalLevelId { get; set; }
         public int approvalLevelGlobalCode { get; set; }
         public int? toStaffId { get; set; }
-        public int applicationStatusId { get; set; }
+        public short applicationStatusId { get; set; }
         public string operationName { get; set; }
         public string productClassName { get; set; }
         public string productName { get; set; }
@@ -436,4 +436,13 @@ public class LienProcessViewModel //: GeneralEntity
         public List<SubResponseLoanPrepaymentViewModel> getrepaymentdetailsresp { get; set; }
        
     }
+
+    public class ApprovalPostingResult
+    {
+        public bool posted { get; set; }
+        public string responseMessage { get; set; }
+        public string responseCode { get; set; }
+        public HeadOfficeFacilityApprovalViewModel responseObject { get; set; }
+    }
+
 }

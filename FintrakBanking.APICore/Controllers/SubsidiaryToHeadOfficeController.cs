@@ -51,7 +51,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     APIResponse response = new APIResponse();
                     response.responseMessage = $"Record submitted successfully";
-                    response.responseCode = 200;
+                    response.responseCode = 00;
                     return Request.CreateResponse(HttpStatusCode.OK, response);
                 }
                 else

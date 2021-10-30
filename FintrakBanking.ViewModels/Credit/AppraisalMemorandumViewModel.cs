@@ -25,6 +25,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ForwardViewModel : GeneralEntity
     {
+        public bool isExternalSystemApprover;
+
         public int? destinationOperationId { get; set; }
 
         public bool isFlowTest { get; set; }
@@ -60,7 +62,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isFromPc { get; set; }
         public int toStaffId { get; set; }
         public int ownerId { get; set; }
-
+        public string responseMessage { get; set; }
+        public string responseCode { get; set; }
     }
 
     public class LcForwardViewModel : GeneralEntity

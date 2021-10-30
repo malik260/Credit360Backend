@@ -105,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+      [HttpGet] [AdminClaimsAuthorization]  
         [Route("units")]
         public HttpResponseMessage GetAllUnits()
         {

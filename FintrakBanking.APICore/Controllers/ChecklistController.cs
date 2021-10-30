@@ -1937,7 +1937,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("green-rating-definition")]
         public HttpResponseMessage AddGreenRatingChecklistDefinition([FromBody] List<ESGChecklistDefinitionViewModel> model)
         {
