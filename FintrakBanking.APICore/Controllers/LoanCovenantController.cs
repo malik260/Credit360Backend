@@ -158,7 +158,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-         [HttpPost] [ClaimsAuthorization][Route("covenant-type")]
+         [HttpPost] [AdminClaimsAuthorization][Route("covenant-type")]
         public async Task<HttpResponseMessage> AddLoanCovenantType([FromBody] LoanCovenantTypeViewModel entity)
         {
             try

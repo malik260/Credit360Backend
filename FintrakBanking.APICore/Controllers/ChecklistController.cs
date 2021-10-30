@@ -35,7 +35,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Checklist Definition
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("checklist-definition")]
         public HttpResponseMessage AddChecklistDefinition([FromBody] ChecklistDefinitionViewModel model)
         {
