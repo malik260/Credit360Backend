@@ -48,20 +48,21 @@ namespace FintrakBanking.APICore
             var _context = new FinTrakBankingContext();
 
             var user = _context.TBL_PROFILE_USER.Where(p => p.USERNAME == Username).FirstOrDefault();
-            /*var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "logincode").Value;
+            
             var claim2 = token.GetUserActivities.ToLower();
-
+            /*
+             * var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "logincode").Value;
             if (!(claim == user.LOGINCODE))
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
                 return Task.FromResult<object>(null);
-            }
+            }*/
 
             if (!claim2.Contains("admin"))
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
                 return Task.FromResult<object>(null);
-            }*/
+            }
 
             /*var tokenIsValid   =  _context.TBL_USER_CLAIMS.Where(x => x.TOKEN == tokens && x.ISACTIVE == true).FirstOrDefault();
             if ( tokenIsValid == null)
