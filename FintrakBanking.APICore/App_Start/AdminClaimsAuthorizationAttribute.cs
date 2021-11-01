@@ -22,6 +22,7 @@ namespace FintrakBanking.APICore
         {
 
         }
+
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         //public FinTrakBankingContext _bankingContext { get; private set; }
@@ -50,13 +51,13 @@ namespace FintrakBanking.APICore
             var user = _context.TBL_PROFILE_USER.Where(p => p.USERNAME == Username).FirstOrDefault();
             
             var claim2 = token.GetUserActivities.ToLower();
-            /*
-             * var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "logincode").Value;
+            
+            var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "logincode").Value;
             if (!(claim == user.LOGINCODE))
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
                 return Task.FromResult<object>(null);
-            }*/
+            }
 
             if (!claim2.Contains("admin"))
             {

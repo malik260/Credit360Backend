@@ -99,7 +99,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
-        [AdminClaimsAuthorization]
         [Route("temp-approval-level-staff")]
         public HttpResponseMessage GetTempAllApprovalLevelStaff()
         {

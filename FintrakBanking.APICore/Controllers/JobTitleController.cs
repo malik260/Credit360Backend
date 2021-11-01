@@ -44,7 +44,7 @@ namespace FintrakBanking.APICore.Controllers
                 } 
         }
 
-      [HttpGet] [AdminClaimsAuthorization]  
+      [HttpGet] [ClaimsAuthorization]  
         [Route("jobtitle/company")]
         public HttpResponseMessage GetJobTitleByCompanyId(HttpRequestMessage request)
         { 

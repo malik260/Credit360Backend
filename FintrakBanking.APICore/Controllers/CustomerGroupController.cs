@@ -153,7 +153,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet] [AdminClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/awaiting-approval")]
         public HttpResponseMessage GetCustomerGroupAwaitingApproval()
         {
@@ -308,7 +308,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("customer-group-mapping/awaiting-approval")]
         public HttpResponseMessage GetCustomerGroupMapsAwaitingApprovals()
         {
