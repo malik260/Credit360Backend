@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("signatory")]
         public HttpResponseMessage AddSignatory([FromBody] AuthorisedSignatoryViewModel model)
         {

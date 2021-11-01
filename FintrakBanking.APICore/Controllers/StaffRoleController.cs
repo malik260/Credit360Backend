@@ -109,7 +109,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+      [HttpGet] [AdminClaimsAuthorization]  
         [Route("default-staff-role")]
         public HttpResponseMessage GetStaffRoles()
         {

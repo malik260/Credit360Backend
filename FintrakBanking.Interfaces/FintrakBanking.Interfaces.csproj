@@ -133,6 +133,7 @@
     <Compile Include="Setups\General\IStaffMIS.cs" />
     <Compile Include="Setups\General\IStaffRoleRepository.cs" />
     <Compile Include="ThridPartyIntegration\IFinacleIntegrationRepository.cs" />
+    <Compile Include="ThridPartyIntegration\IHeadOfficeToSubIntegration.cs" />
     <Compile Include="Validation\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IIntegrationWithFinacle.cs" />
     <Compile Include="Credit\ILoanPerformanceRepository.cs" />

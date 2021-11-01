@@ -35,7 +35,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Checklist Definition
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("checklist-definition")]
         public HttpResponseMessage AddChecklistDefinition([FromBody] ChecklistDefinitionViewModel model)
         {
@@ -1937,7 +1937,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [ClaimsAuthorization]
+        [AdminClaimsAuthorization]
         [Route("green-rating-definition")]
         public HttpResponseMessage AddGreenRatingChecklistDefinition([FromBody] List<ESGChecklistDefinitionViewModel> model)
         {

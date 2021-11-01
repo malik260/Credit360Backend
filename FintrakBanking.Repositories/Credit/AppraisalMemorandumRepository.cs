@@ -31,6 +31,7 @@ using System.Web.Script.Serialization;
 using System.Text;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.Entities.StagingModels;
+using FintrakBanking.Interfaces.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -50,6 +51,7 @@ namespace FintrakBanking.Repositories.Credit
         private IMemorandumRepository memo;
         private TransactionPosting transaction;
         FinTrakBankingStagingContext stgContext;
+        IHeadOfficeToSubIntegration headOfficeToSub;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -62,7 +64,8 @@ namespace FintrakBanking.Repositories.Credit
             ILoanApplicationRepository _loanApp,
             IMemorandumRepository _memo,
             TransactionPosting _transaction,
-            FinTrakBankingStagingContext _stgContext
+            FinTrakBankingStagingContext _stgContext,
+            IHeadOfficeToSubIntegration _headOfficeToSub
             )
         {
             this.context = context;
@@ -76,6 +79,7 @@ namespace FintrakBanking.Repositories.Credit
             this.memo = _memo;
             this.transaction = _transaction;
             this.stgContext = _stgContext;
+            this.headOfficeToSub = _headOfficeToSub;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -339,8 +343,19 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse ForwardAppraisalMemorandum(ForwardViewModel model)
         {
-            //   Task.Run(() => CreateOutPutDocument(model.applicationId));
-           
+                //Task.Run(() => CreateOutPutDocument(model.applicationId));
+
+                if (model.isExternalSystemApprover)
+                {
+                    var response = headOfficeToSub.PostFacilityApprovalToSubnputs(model);
+                    if(response != null)
+                    {
+                    var update =  stgContext.STG_SUB_BASICTRANSACTION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPROVALLEVELID == model.nextApprovalLevelId && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved).FirstOrDefault();
+                    update.APPROVALSTATUSID = model.applicationStatusId;
+                    stgContext.SaveChanges();
+                    }
+                }
+
                 bool updateApprovedAmount = false;
                 bool generateOutPutDocument = false;
                 int operationId = (int)OperationsEnum.CreditAppraisal;
@@ -3546,10 +3561,10 @@ namespace FintrakBanking.Repositories.Credit
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
-        public async Task<IEnumerable<LoanApplicationViewModel>> GetSubsidiaryPendingLoanApplications()
+        public async Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaryPendingLoanApplications()
         {
             var data = await (from a in stgContext.STG_SUB_BASICTRANSACTION
-                              select new LoanApplicationViewModel
+                              select new SubsidiaryViewModel
                               {
                                   loanApplicationId = a.LOANAPPLICATIONID,
                                   loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,

@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.StagingModels
         public int SUBSIDIARYID { get; set; }
         public int? CUSTOMERID { get; set; }
         public string COUNTRYCODE { get; set; }
-        public int? CUSTOMERGLOBALID { get; set; }
+        public long? CUSTOMERGLOBALID { get; set; }
         public DateTime APPLICATIONDATE { get; set; }
         public double INTERESTRATE { get; set; }
         public int APPLICATIONTENOR { get; set; }
@@ -28,7 +28,7 @@ namespace FintrakBanking.Entities.StagingModels
         public int APPROVALLEVELID { get; set; }
         public int APPROVALLEVELGLOBALCODE { get; set; }
         public int? TOSTAFFID { get; set; }
-        public int APPLICATIONSTATUSID { get; set; }
+        public short APPLICATIONSTATUSID { get; set; }
         public string OPERATIONNAME { get; set; }
         public string PRODUCTCLASSNAME { get; set; }
         public string PRODUCTNAME { get; set; }
