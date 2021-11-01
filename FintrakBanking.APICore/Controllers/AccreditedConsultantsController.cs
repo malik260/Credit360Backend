@@ -197,8 +197,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete, Route("accredited-solicitors/{id}")]
-        [AdminClaimsAuthorization]
+        [HttpDelete, AdminClaimsAuthorization, Route("accredited-solicitors/{id}")]
+        
         public async Task<HttpResponseMessage> DeleteAccreditedSolicitors(int id)
         {
             try
