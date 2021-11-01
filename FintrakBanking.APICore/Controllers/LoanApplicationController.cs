@@ -538,7 +538,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
         {
@@ -695,7 +695,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("update-loan-application")]
         public HttpResponseMessage UpdateLoanApplicationDetails([FromBody]LoanApplicationDatailViewModel entity)
         {
@@ -878,7 +878,7 @@ namespace FintrakBanking.APICore.Controllers
         #region Loan Preliminary Evaluation
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan/preliminary-evaluation")]
         public async Task<HttpResponseMessage> AddPreliminaryEvaluation(LoanPreliminaryEvaluationViewModel model)
         {
@@ -1155,7 +1155,7 @@ namespace FintrakBanking.APICore.Controllers
         #region Loan Collateral
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application/collateral")]
         public HttpResponseMessage SaveLoanApplicationCollateral([FromBody] List<LoanApplicationCollateralViewModel> entity)
         {
@@ -1244,7 +1244,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-validate-document-date")]
         public HttpResponseMessage ValidateDocumentDate([FromBody] ValidateDataViewModel data)
         {
@@ -1262,7 +1262,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-validate-document-number")]
         public HttpResponseMessage ValidateDocumentNumber([FromBody] ValidateNumberViewModel data)
         {
@@ -1281,7 +1281,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("validate-invoice-details")]
         public HttpResponseMessage ValidateInvoiceDetails([FromBody] ValidateNumberViewModel data)
         {
@@ -1404,7 +1404,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application/review-request")]
         public HttpResponseMessage ReviewRequest([FromBody] ForwardViewModel model)
         {
@@ -1440,7 +1440,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("fee-concession-request")]
         public HttpResponseMessage ProductFeesConcession([FromBody]ProductFeesViewModel entity)
         {
@@ -1461,7 +1461,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application-detail-search")]
         public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
         {
@@ -1471,7 +1471,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("drawdown-application-detail-search")]
         public HttpResponseMessage DrawDownApplicationSearch([FromBody] SearchViewModel model)
         {
@@ -1517,7 +1517,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("approved-loan-application-details/search")]
         public HttpResponseMessage SearchApprovedLoanApplicationDetails([FromBody] SearchViewModel model)
         {
@@ -1541,7 +1541,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("modify-facility/{loanApplicationDetailId}")]
         public HttpResponseMessage ModifyFacility([FromBody] FacilityModificationViewModel model, int loanApplicationDetailId)
         {
@@ -1579,7 +1579,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application/loan-cancellation")]
         public HttpResponseMessage LoanApplicationCancellationRequest([FromBody] LoanApplicationViewModel data)
         {
@@ -1620,7 +1620,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application/lms-loan-cancellation")]
         public HttpResponseMessage LmsLoanApplicationCancellationRequest([FromBody] LoanReviewApplicationViewModel data)
         {
@@ -1762,7 +1762,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application-cancellation")]
         public HttpResponseMessage ViewLaonApplicationCancellationDetails([FromBody] LoanApplicationViewModel data)
         {
@@ -1774,7 +1774,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("lms-loan-application-cancellation")]
         public HttpResponseMessage ViewLmsLaonApplicationCancellationDetails([FromBody] LoanReviewApplicationViewModel data)
         {
@@ -1786,7 +1786,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application-cancellation-approval")]
         public HttpResponseMessage GoForLoanApplicationCancellationApproval([FromBody] LoanApplicationViewModel data)
         {
@@ -1802,7 +1802,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("lms-loan-application-cancellation-approval")]
         public HttpResponseMessage GoForLmsLoanApplicationCancellationApproval([FromBody] LoanReviewApplicationViewModel data)
         {
@@ -1863,7 +1863,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application-detail-suggestion")]
         public HttpResponseMessage updateSuggestionsLoanApplicationdetail([FromBody] LoanApplicationDetailViewModel entity)
         {
@@ -2068,7 +2068,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //RevisedProcessFlowModel
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application-tags/{id}")]
         public HttpResponseMessage UpdateLoanApplicationTags([FromBody] LoanApplicationTagsViewModel model, int id)
         {
@@ -2085,7 +2085,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application-tags-lms/{id}")]
         public HttpResponseMessage UpdateLoanApplicationTagsLMS([FromBody] LoanApplicationTagsLMSViewModel model, int id)
         {
@@ -2178,7 +2178,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application-flow-change")]
         public HttpResponseMessage AddLoanApplicationFlowChange([FromBody] LoanApplicationFlowChangeViewModel model)
         {
@@ -2193,7 +2193,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("loan-application-flow-change/{id}")]
         public HttpResponseMessage UpdateLoanApplicationFlowChange([FromUri] int id, [FromBody] LoanApplicationFlowChangeViewModel model)
         {
@@ -2228,7 +2228,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("multiple-invoice")]
         public async Task<HttpResponseMessage> GetBulkLoanInvoice()
         {
