@@ -573,7 +573,6 @@ namespace FintrakBanking.APICore.Controllers
 
         #region currency & group limits
         [HttpGet]
-        [AdminClaimsAuthorization]
         [Route("currency-limit")]
         public HttpResponseMessage GetAllCurrencyLimit()
         {

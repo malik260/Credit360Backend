@@ -833,7 +833,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("product/approvals/temp")]
         public HttpResponseMessage GetProductAwaitingApproval()
         {
@@ -855,7 +855,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("product/approvals/temp/{productId}")]
         public HttpResponseMessage GetTempProductDetailsById(int productId)
         {

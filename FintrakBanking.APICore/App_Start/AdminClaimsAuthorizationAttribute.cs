@@ -22,6 +22,7 @@ namespace FintrakBanking.APICore
         {
 
         }
+
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         //public FinTrakBankingContext _bankingContext { get; private set; }

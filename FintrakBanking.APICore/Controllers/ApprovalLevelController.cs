@@ -58,7 +58,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [AdminClaimsAuthorization]  
+      [HttpGet]  
         [Route("approval-level/all")]
         public HttpResponseMessage GetAllApprovalLevel()
         {
@@ -79,7 +79,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [AdminClaimsAuthorization]
         [Route("approval-levels/operation/{operationId}/product-class/{classId}")]
         public HttpResponseMessage GetApprovalLevelByOperationIdAndProductClassId(int operationId, int? classId)
         {
@@ -110,7 +109,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet] [AdminClaimsAuthorization]  
+        [HttpGet] 
         [Route("approval-level-detailed/all")]
         public HttpResponseMessage GetAllDetailedApprovalLevel()
         {
@@ -330,7 +329,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [AdminClaimsAuthorization]
         [Route("approval-level-list-for-approval")]
         public HttpResponseMessage GetApprovalLevelForApproval()
         {
