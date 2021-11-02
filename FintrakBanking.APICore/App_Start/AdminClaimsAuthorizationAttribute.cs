@@ -52,12 +52,12 @@ namespace FintrakBanking.APICore
             
             var claim2 = token.GetUserActivities.ToLower();
             
-            var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "logincode").Value;
+            /*var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "logincode").Value;
             if (!(claim == user.LOGINCODE))
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
                 return Task.FromResult<object>(null);
-            }
+            }*/
 
             if (!claim2.Contains("admin"))
             {
