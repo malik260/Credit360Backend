@@ -21887,5 +21887,38 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+
+
+        public CloseMannualBookingResponseViewModel GetLoanBookingDetailsFromFlexcube(CloseMannualBookingViewModel model)
+        {
+            
+            if (model.loan_accountno == null)
+            {
+                throw new ConditionNotMetException("Flexcube reference number is null");
+            }
+
+            model.channel_code = "FINTRAK";
+
+            CloseMannualBookingResponseViewModel result = null;
+            Task.Run(async () => result = await transaction.ValidateMannualBookingClosure(model)).GetAwaiter().GetResult();
+
+            if (result.response_code == "00")
+            {
+                if (result.response_message.ToLower() == "successful")
+                {
+                    return new CloseMannualBookingResponseViewModel { response_code = result.response_code, response_message = result.response_message.ToLower(), loandetailsresp = result.loandetailsresp };
+                }
+                else
+                {
+                    throw new ConditionNotMetException("Core Banking API Error - Kindly Contact System Administrator!");
+                }
+            }
+            else
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly Contact System Administrator!");
+            }
+        }
+
+
     }
 }

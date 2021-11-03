@@ -238,7 +238,6 @@ namespace FintrakBanking.APICore.Controllers
             
         }
         [HttpGet]
-        [AdminClaimsAuthorization]
         [Route("approval-group-list-for-approval")]
         public HttpResponseMessage GetApprovalGroupForApproval()
         {

@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
         #region Solicitors
-        [HttpGet,Route("accreditedConsultantType")]
+        [HttpGet, Route("accreditedConsultantType")]
         [ClaimsAuthorization]
         public HttpResponseMessage GetAccreditedConsultantType()
         {
@@ -36,7 +36,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response = repo.GetAccreditedConsultantType();
                 if (response != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response});
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -71,7 +71,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetAccreditedStateConsultantsByStateId(token.GetCompanyId,stateId);
+                var response = repo.GetAccreditedStateConsultantsByStateId(token.GetCompanyId, stateId);
                 if (response != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
@@ -110,9 +110,9 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "No record found" });
-            }else
-            return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, result = data });
+            } else
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
 
         }
 
@@ -197,8 +197,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete, Route("accredited-solicitors/{id}")]
+        [HttpDelete]
         [AdminClaimsAuthorization]
+        [Route("accredited-solicitors/{id}")]
+       
         public async Task<HttpResponseMessage> DeleteAccreditedSolicitors(int id)
         {
             try

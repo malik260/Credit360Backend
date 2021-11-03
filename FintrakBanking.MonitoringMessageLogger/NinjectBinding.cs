@@ -56,6 +56,7 @@ using FintrakBanking.Repositories.ThirdPartyIntegration;
 using FintrakBanking.Repositories.Validetion;
 using FintrakBanking.Repositories.WorkFlow;
 using FinTrakBanking.ThirdPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.HeadOfficeToSub;
 using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
 using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration;
 using Ninject.Modules;
@@ -181,7 +182,6 @@ namespace FintrakBanking.MonitoringMessageLogger
             //Bind<ApplicationOAuthProvider>().To<ApplicationOAuthProvider>();
             Bind<CreditCommonRepository>().To<CreditCommonRepository>();
             Bind<ILoanFeeChargeRepository>().To<LoanFeeChargeRepository>();
-
             Bind<IFinacleIntegrationRepository>().To<FinacleIntegrationRepository>();
             Bind<IEmailAlertLogger>().To<EmailAlertLogger>();
             Bind<IBusinessRuleRepository>().To<BusinessRuleRepository>();
@@ -199,7 +199,6 @@ namespace FintrakBanking.MonitoringMessageLogger
             Bind<ILcShippingRepository>().To<LcShippingRepository>();
             Bind<ILcConditionRepository>().To<LcConditionRepository>();
             Bind<ICustomerCollateralRepository>().To<CustomerCollateralRepository>();
-
             Bind<IAtcLodgmentRepository>().To<AtcLodgmentRepository>();
             Bind<IAtcLodgmentDetailRepository>().To<AtcLodgmentDetailRepository>();
             Bind<IProjectSiteReportRepository>().To<ProjectSiteReportRepository>();
@@ -213,7 +212,8 @@ namespace FintrakBanking.MonitoringMessageLogger
             Bind<IAuthourisedSignatoryRepository>().To<AuthourisedSignatoryRepository>();
             Bind<IAlertRepository>().To<AlertRepository>();
             Bind<ICashFlowLendingRepository>().To<CashFlowLendingRepository>();
-            
+            Bind<IHeadOfficeToSubIntegration>().To<HeadOfficeToSubIntegration>();
+
             //Bind<ILoanArchiveRepository>().To<LoanArchiveRepository>();
 
 

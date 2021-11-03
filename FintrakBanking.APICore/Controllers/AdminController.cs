@@ -61,7 +61,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("users")]
         public HttpResponseMessage GetAllUsers()
         {
@@ -85,7 +85,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //  [ClaimsAuthorizationAttribute(ClaimType = "logincode", ClaimValue =   username )]
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("users-by-staffId/")]
         public HttpResponseMessage GetUsersByStaffId(int staffId)
         {
@@ -173,7 +173,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("user/approvals/temp")]
         public HttpResponseMessage GetUsersAwaitingApproval()
         {
@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("user/account-status/approvals/temp")]
         public HttpResponseMessage GetUsersWithAccountStatusChangeAwaitingApproval()
         {
@@ -392,7 +392,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("global-settings")]
         public HttpResponseMessage GetAllGlobalSettings()
         {
@@ -450,7 +450,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("groups")]
         public HttpResponseMessage GetAllGroups()
         {
@@ -470,7 +470,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("group/{id}")]
         public HttpResponseMessage GetGroupById(int id)
         {
@@ -492,7 +492,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Activities
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("activities/parents")]
         public HttpResponseMessage GetAllActivities()
         {
@@ -512,7 +512,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("activities/parents/details/{parentId}")]
         public HttpResponseMessage GetAllActivityDetails(int parentId)
         {
@@ -553,7 +553,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("group/activities/mapped")]
         public HttpResponseMessage GetGroupActivities()
         {
@@ -631,7 +631,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("audit/deleted-staff-log")]
         public HttpResponseMessage GetAuditDeletedStaffLog()
         {
@@ -654,7 +654,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("audit/deleted-staff-log/search")]
         public HttpResponseMessage FilterDeletedStaffLog([FromUri] int page, string searchQuery)
         {
@@ -736,7 +736,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Administration
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("accountmanagement")]
         public IHttpActionResult GetAllApplicationUsers([FromUri] int page, [FromUri] int itemsPerPage)
         {
@@ -803,7 +803,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("profilesettings")]
         public HttpResponseMessage GetAllApplicationProfileSettings()
         {
@@ -986,7 +986,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("getStaffactiveDirectoryDetails/{staffCode}/{passCode}")]
         public HttpResponseMessage GetStaffADDetails(string staffCode, string passCode)
         {
