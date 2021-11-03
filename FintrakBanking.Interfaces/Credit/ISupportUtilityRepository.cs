@@ -17,7 +17,7 @@ namespace FintrakBanking.Interfaces.Credit
       SupportUtilityViewModel GetSupportIssueType(int supportIssueTypeId);
       IEnumerable<SupportUtilityViewModel> GetAllSupportIssueType();
       IEnumerable<CustomerViewModels> GetCustomersIssuesByParams(string searchParam, short? IssueTypeId);
-      List<WorkflowSupportUtilityViewModel> GetApprovalTrail(string searchString);
+      IEnumerable<WorkflowSupportUtilityViewModel> GetApprovalTrail(string searchString);
       List<WorkflowSupportUtilityViewModel> GetDistinctOperations(string searchString);
       List<ExpectedWorkflowViewModel> GetExpectedWorkFlow(int searchString);
       BusinessRuleViewModel GetBusinessRule(int approvalLevelId);

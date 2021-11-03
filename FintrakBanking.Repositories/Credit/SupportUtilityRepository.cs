@@ -171,29 +171,89 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public List<WorkflowSupportUtilityViewModel> GetApprovalTrail(string searchString)
+        public IEnumerable<WorkflowSupportUtilityViewModel> GetApprovalTrail(string searchString)
         {
-            using (FinTrakBankingContext context = new FinTrakBankingContext())
-            {
-              
+            IEnumerable<WorkflowSupportUtilityViewModel> data = null;
+
+          
+                var allstaff = this.GetAllStaffNames();
+                var staffs = from s in context.TBL_STAFF select s;
+
                 searchString = searchString.Trim().ToLower();
 
-                var approvalLevelIds = (from x in context.TBL_LOAN_APPLICATION
-                                        join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                                        join p in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals p.LOANAPPLICATIONDETAILID
-                                        join c in context.TBL_APPROVAL_TRAIL on p.LOAN_BOOKING_REQUESTID equals c.TARGETID
+                var loanApplicationId = (from x in context.TBL_LOAN_APPLICATION
+                                        
                                         where
                                         x.APPLICATIONREFERENCENUMBER.Trim() == searchString
-                                        select c.APPROVALTRAILID).ToList();
+                                        select x.LOANAPPLICATIONID).ToList();
+
+                var bookingId = (from x in context.TBL_LOAN_APPLICATION
+                                        join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                        join p in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals p.LOANAPPLICATIONDETAILID
+                                        
+                                        where
+                                        x.APPLICATIONREFERENCENUMBER.Trim() == searchString
+                                        select p.LOAN_BOOKING_REQUESTID).ToList();
+
+                
 
                 var applications = (from x in context.TBL_LOAN_APPLICATION
+                                    join c in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals c.TARGETID
+                                    where
+                                    loanApplicationId.Contains(c.TARGETID)
+                                   
+                                    select new WorkflowSupportUtilityViewModel
+                                    {
+                                        applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                        loanApplicationId = x.LOANAPPLICATIONID,
+                                        
+                                        customerGroupId = x.CUSTOMERGROUPID,
+                                        loanTypeId = x.LOANAPPLICATIONTYPEID,
+                                        transactionDate = c.SYSTEMARRIVALDATETIME,
+                                        applicationAmount = x.APPLICATIONAMOUNT,
+                                        approvedAmount = x.APPROVEDAMOUNT,
+                                        productClassId = x.PRODUCTCLASSID,
+                                        productId = (short)(x.PRODUCTID ?? 0),
+                                        customerInfoValidated = x.CUSTOMERINFOVALIDATED,
+                                        isRelatedParty = x.ISRELATEDPARTY,
+                                        responsestaffName = c.RESPONSESTAFFID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == c.RESPONSESTAFFID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                        toStaffName = c.TOSTAFFID == null ? "N/A" : context.TBL_STAFF.Where(a => a.STAFFID == c.TOSTAFFID).Select(a => a.FIRSTNAME + " " + a.LASTNAME).FirstOrDefault(),
+                                        fromStaffName = c.REQUESTSTAFFID == 0 ? "N/A" : context.TBL_STAFF.Where(a => a.STAFFID == c.REQUESTSTAFFID).Select(a => a.FIRSTNAME + " " + a.LASTNAME).FirstOrDefault(),
+                                        toApprovalLevelName = c.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == c.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                        isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
+                                        isInvestmentGrade = x.ISINVESTMENTGRADE,
+                                        approvalTrailId = c.APPROVALTRAILID,
+                                        approvalStatusId = (short)x.APPROVALSTATUSID,
+                                        approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == c.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                        applicationStatusId = x.APPLICATIONSTATUSID,
+                                        applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o => o.APPLICATIONSTATUSID == x.APPLICATIONSTATUSID).Select(o => o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
+                                        customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                                        loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(o => o.LOANAPPLICATIONTYPEID == x.LOANAPPLICATIONTYPEID).Select(o => o.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
+                                        createdBy = x.OWNEDBY,
+                                        operationId = c.OPERATIONID,
+                                        oprationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == c.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
+                                    }).OrderBy(x => x.oprationName).ThenBy(x => x.toApprovalLevelName).ToList();
+
+            foreach(var i in applications)
+            {
+                    var loanDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == i.loanApplicationId).FirstOrDefault();
+                    var product = context.TBL_PRODUCT.Where(x => x.PRODUCTID == loanDetail.APPROVEDPRODUCTID).FirstOrDefault();
+
+                i.loanApplicationDetailId = loanDetail.LOANAPPLICATIONDETAILID;
+                i.productName = product.PRODUCTNAME;
+                i.customerName = context.TBL_CUSTOMER.Where(z => z.CUSTOMERID == loanDetail.CUSTOMERID).Select(z => z.LASTNAME + " " + z.FIRSTNAME + " " + z.MIDDLENAME).FirstOrDefault();
+
+            }
+
+            var applications2 = (from x in context.TBL_LOAN_APPLICATION
                                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                     join p in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals p.LOANAPPLICATIONDETAILID
                                     join c in context.TBL_APPROVAL_TRAIL on p.LOAN_BOOKING_REQUESTID equals c.TARGETID
                                     join cu in context.TBL_CUSTOMER on a.CUSTOMERID equals cu.CUSTOMERID
-                                    join pr in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals pr.PRODUCTID
+                                    join pr in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals pr.PRODUCTID 
+
                                     where
-                                    approvalLevelIds.Contains(c.APPROVALTRAILID)
+                                    bookingId.Contains(c.TARGETID)
                                     select new WorkflowSupportUtilityViewModel
                                     {
                                         customerName = context.TBL_CUSTOMER.Where(z => z.CUSTOMERID == a.CUSTOMERID).Select(z => z.LASTNAME + " " + z.FIRSTNAME + " " + z.MIDDLENAME).FirstOrDefault(),
@@ -210,11 +270,15 @@ namespace FintrakBanking.Repositories.Credit
                                         productId = (short)(x.PRODUCTID ?? 0),
                                         customerInfoValidated = x.CUSTOMERINFOVALIDATED,
                                         isRelatedParty = x.ISRELATEDPARTY,
+                                        responsestaffName = c.RESPONSESTAFFID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == c.RESPONSESTAFFID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                        toStaffName = c.TOSTAFFID == null ? "N/A" : context.TBL_STAFF.Where(a => a.STAFFID == c.TOSTAFFID).Select(a => a.FIRSTNAME + " " + a.LASTNAME).FirstOrDefault(),
+                                        fromStaffName = c.REQUESTSTAFFID == 0 ? "N/A" : context.TBL_STAFF.Where(a => a.STAFFID == c.REQUESTSTAFFID).Select(a => a.FIRSTNAME + " " + a.LASTNAME).FirstOrDefault(),
+                                        toApprovalLevelName = c.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == c.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                         isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
                                         isInvestmentGrade = x.ISINVESTMENTGRADE,
                                         approvalTrailId = c.APPROVALTRAILID,
                                         approvalStatusId = (short)x.APPROVALSTATUSID,
-                                        approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                        approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == c.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                         applicationStatusId = x.APPLICATIONSTATUSID,
                                         applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o => o.APPLICATIONSTATUSID == x.APPLICATIONSTATUSID).Select(o => o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
                                         customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
@@ -222,11 +286,12 @@ namespace FintrakBanking.Repositories.Credit
                                         createdBy = x.OWNEDBY,
                                         operationId = c.OPERATIONID,
                                         oprationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == c.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
-                                    }).ToList();
+                                    }).OrderBy(x => x.oprationName).ThenBy(x => x.toApprovalLevelName).ToList();
 
+                         data =  applications.Union(applications2);
+                        var totalRecords = data.ToList();
 
-                return applications;
-            }
+                        return totalRecords;
         }
 
 
@@ -635,5 +700,103 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+
+        public bool UpdateStaff(int staffid, StaffInfoViewModel staffModel)
+        {
+
+            bool isUpdate = false;
+            TBL_TEMP_PROFILE_USER user = null;
+            var staffMain = context.TBL_STAFF.Find(staffid);
+            var staffTemp = context.TBL_TEMP_STAFF.Find(staffid);
+            //var existingTempStaff = context.TBL_TEMP_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower() && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
+
+            if (staffTemp != null && staffMain !=null)
+            {
+                TBL_TEMP_STAFF tempStaff = new TBL_TEMP_STAFF();
+                tempStaff.FIRSTNAME = staffTemp.FIRSTNAME;
+                tempStaff.MIDDLENAME = staffTemp.MIDDLENAME;
+                tempStaff.LASTNAME = staffTemp.LASTNAME;
+                tempStaff.STAFFCODE = staffTemp.STAFFCODE.ToLower().Trim();
+                tempStaff.COMPANYID = staffTemp.COMPANYID;
+                tempStaff.STAFFROLEID = staffTemp.STAFFROLEID;
+                tempStaff.SUPERVISOR_STAFFID = staffTemp.SUPERVISOR_STAFFID;
+                tempStaff.ADDRESS = staffTemp.ADDRESS;
+                tempStaff.ADDRESSOFNOK = staffTemp.ADDRESSOFNOK;
+                tempStaff.BRANCHID = staffTemp.BRANCHID;
+                tempStaff.COMMENT_ = staffTemp.COMMENT_;
+                tempStaff.CREATEDBY = staffTemp.CREATEDBY;
+                tempStaff.CUSTOMERSENSITIVITYLEVELID = staffTemp.CUSTOMERSENSITIVITYLEVELID;
+                tempStaff.DATEOFBIRTH = staffTemp.DATEOFBIRTH;
+                tempStaff.DATETIMEUPDATED = DateTime.Now;
+                tempStaff.EMAIL = staffTemp.EMAIL;
+                tempStaff.EMAILOFNOK = staffTemp.EMAILOFNOK;
+                tempStaff.GENDER = staffTemp.GENDER;
+                tempStaff.GENDEROFNOK = staffTemp.GENDEROFNOK;
+                tempStaff.MISINFOID = staffTemp.MISINFOID;
+                tempStaff.NAMEOFNOK = staffTemp.NAMEOFNOK;
+                tempStaff.NOKRELATIONSHIP = staffTemp.NOKRELATIONSHIP;
+                tempStaff.PHONE = staffTemp.PHONE;
+                tempStaff.PHONEOFNOK = staffTemp.PHONEOFNOK;
+                tempStaff.STATEID = staffTemp.STATEID;
+                tempStaff.CITYID = staffTemp.CITYID;
+                tempStaff.STAFFSIGNATURE = staffTemp.STAFFSIGNATURE;
+                tempStaff.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                tempStaff.ISCURRENT = false;
+                tempStaff.LOAN_LIMIT = staffTemp.LOAN_LIMIT;
+                tempStaff.WORKSTARTDURATION = staffTemp.WORKSTARTDURATION;
+                tempStaff.WORKENDDURATION = staffTemp.WORKENDDURATION;
+                tempStaff.BUSINESSUNITID = staffTemp.BUSINESSUNITID;
+                tempStaff.MISCODE = staffTemp.MISCODE;
+                context.TBL_TEMP_STAFF.Add(tempStaff);
+            }
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffUpdated,
+                STAFFID = staffModel.createdBy,
+                BRANCHID = (short)staffModel.BranchId,
+                DETAIL = $"Updated Staff '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = staffModel.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = staffid,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            };
+
+         
+                try
+                {
+                    this.auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------
+
+                    var output = context.SaveChanges() > 0;
+
+                   
+
+                    if (isUpdate != true)
+                    {
+                        context.TBL_TEMP_PROFILE_USER.Add(user);
+                        context.SaveChanges();
+                    }
+
+
+
+                {
+
+                    //end of Audit section -------------------------------
+
+                    
+
+                    return output;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
+
 }

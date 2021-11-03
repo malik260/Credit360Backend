@@ -59,6 +59,10 @@ namespace FintrakBanking.ViewModels.SupportUtility
         public string loanTypeName { get; set; }
         public string oprationName { get; set; }
         public DateTime transactionDate { get; set; }
+        public object responsestaffName { get; set; }
+        public object toStaffName { get; set; }
+        public object toApprovalLevelName { get; set; }
+        public object fromStaffName { get; set; }
     }
 
     public class ExpectedWorkflowViewModel : GeneralEntity
