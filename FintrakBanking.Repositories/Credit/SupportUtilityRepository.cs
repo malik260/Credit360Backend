@@ -421,6 +421,7 @@ namespace FintrakBanking.Repositories.Credit
                          {
                              staffId = c.STAFFID,
                              BranchId = c.BRANCHID,
+                             BranchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                              //customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                             // DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
                              email = c.EMAIL,
@@ -439,11 +440,11 @@ namespace FintrakBanking.Repositories.Credit
                              staffRoleId = c.STAFFROLEID,
                              staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
                              supervisorStaffId = c.SUPERVISOR_STAFFID,
-                             supervisorStaffName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                             supervisorStaffName = context.TBL_STAFF.Where(o => o.STAFFID == c.SUPERVISOR_STAFFID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                              businessUnitId = c.BUSINESSUNITID,
                              misCode = c.MISCODE,
-                            businessUnitName = c.BUSINESSUNITID != null ? c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
+                             businessUnitName = context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == c.BUSINESSUNITID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
                          }).ToList();
     
             return staff;
@@ -462,11 +463,13 @@ namespace FintrakBanking.Repositories.Credit
                                  FirstName = c.FIRSTNAME,
                                  MiddleName = c.MIDDLENAME,
                                  LastName = c.LASTNAME,
+                                 supervisorStaffName = context.TBL_STAFF.Where(o => o.STAFFID == c.SUPERVISOR_STAFFID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                                  StaffCode = c.STAFFCODE, 
                                  staffRoleId = c.STAFFROLEID,
-                                   staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
-                                   supervisorStaffId = c.SUPERVISOR_STAFFID,
+                                 staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                                 supervisorStaffId = c.SUPERVISOR_STAFFID,
                                  BranchId = c.BRANCHID,
+                                 BranchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                                  customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                                  Email = c.EMAIL,
                                  Gender = c.GENDER,
@@ -478,7 +481,8 @@ namespace FintrakBanking.Repositories.Credit
                                  workStartDuration = c.WORKSTARTDURATION,
                                  workEndDuration = c.WORKENDDURATION,
                                  businessUnitId = c.BUSINESSUNITID,
-                                misCode  = c.MISCODE,
+                                 businessUnitName = context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == c.BUSINESSUNITID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
+                                   misCode  = c.MISCODE,
                                }).FirstOrDefault();
         return tempStaffRecord;
         }
@@ -593,6 +597,7 @@ namespace FintrakBanking.Repositories.Credit
                             isInvestmentGrade = a.ISINVESTMENTGRADE,
                             isRealatedParty = a.ISREALATEDPARTY,
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                            isCurrent = a.ISCURRENT,
                             spouse = a.SPOUSE,
                             subSectorId = (short)a.SUBSECTORID,
                             taxNumber = a.TAXNUMBER,

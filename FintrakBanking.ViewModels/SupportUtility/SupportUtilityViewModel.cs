@@ -112,6 +112,7 @@ namespace FintrakBanking.ViewModels.SupportUtility
         public bool deleted { get; set; }
         public int? updatedById { get; set; }
         public string updatedBy { get; set; }
+        public string BranchName { get; set; }
     }
 
 }
