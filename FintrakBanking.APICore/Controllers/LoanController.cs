@@ -21,6 +21,7 @@ using FintrakBanking.ViewModels;
 using System.Globalization;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Reports;
+using FintrakBanking.ViewModels.Finance;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -2333,6 +2334,21 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK,
 
                 new { success = false, message = "Error occur saving record" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("close-manual-booking-validation")]
+        public HttpResponseMessage GetLoanBookingDetailsFromFlexcube([FromBody] CloseMannualBookingViewModel model)
+        {
+            var data = repo.GetLoanBookingDetailsFromFlexcube(model);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
         }
     }
 }
