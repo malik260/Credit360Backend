@@ -1616,7 +1616,7 @@
                     {
                         APIURL = $"{API_URL}GetLoanDetails",
                         LOGTYPEID = 8,
-                        REFERENCENUMBER = model.loanAccountno,
+                        REFERENCENUMBER = model.loan_accountno,
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = new JavaScriptSerializer().Serialize(model),
                         RESPONSEDATETIME = responseDateTime,
