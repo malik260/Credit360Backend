@@ -620,8 +620,28 @@ namespace FintrakBanking.Repositories.Credit
             return tempCustomer;
         }
 
+        public List <CasaViewModel> GetCasaCustomerRecord(int customerId)
+        {
+            var casaCustomer = (from a in context.TBL_CASA
+                                join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                where a.CUSTOMERID == customerId
+                                select new CasaViewModel
+                                {
+                                    productAccountNumber = a.PRODUCTACCOUNTNUMBER,
+                                    productAccountName = a.PRODUCTACCOUNTNAME,
+                                    customerName = b.FIRSTNAME + " " + b.MIDDLENAME + " " + b.LASTNAME,
+                                    customerId = a.CUSTOMERID,
+                                    productId = a.PRODUCTID,
+                                    productName = context.TBL_PRODUCT.Where(p => p.PRODUCTID == a.PRODUCTID).Select(p => p.PRODUCTNAME).FirstOrDefault(),
 
-        
+
+                                }).ToList();
+
+            return casaCustomer;
+        }
+
+
+
 
         public bool UpdateCustomerRecord(int customerId, CustomerViewModels entity)
         {

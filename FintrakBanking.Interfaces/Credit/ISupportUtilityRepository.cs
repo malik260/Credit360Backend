@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Credit;
+﻿using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.SupportUtility;
@@ -27,6 +28,7 @@ namespace FintrakBanking.Interfaces.Credit
       CustomerViewModels GetTempCustomerRecord(int customerId);
       ApprovalTrailViewModel GetSingleTrail(int approvalTrailId);
       bool UpdateCustomerRecord(int customerId, CustomerViewModels entity);
+      List<CasaViewModel> GetCasaCustomerRecord(int customerId);
     }
 
 }

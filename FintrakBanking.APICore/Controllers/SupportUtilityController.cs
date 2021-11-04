@@ -143,6 +143,16 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-casa-customer-record/{customerId}")]
+        public HttpResponseMessage GetCasaCustomerRecord(int customerId)
+        {
+            var response = repo.GetCasaCustomerRecord(customerId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "customer record for " + customerId, result = response });
+
+        }
+
         [HttpPut]
         [ClaimsAuthorization]
         [Route("update-customer-record/{customerId}")]
