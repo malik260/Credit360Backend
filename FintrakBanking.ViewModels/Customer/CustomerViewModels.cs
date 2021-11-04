@@ -171,6 +171,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string businessUnitName { get; set; }
         public string approvalStatusName { get; set; }
         public bool isCurrent { get; set; }
+        public string lastUpdatedByName { get; set; }
     }
 
     public class CustomerViewModels2 : GeneralEntity

@@ -4,6 +4,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.General;
@@ -433,8 +434,9 @@ namespace FintrakBanking.Repositories.Credit
                              FirstName = c.FIRSTNAME,
                              MiddleName = c.MIDDLENAME,
                              deleted = c.DELETED,
+                             deletedby = c.DELETEDBY == null? "N/A" : context.TBL_STAFF.Where(o => o.DELETEDBY == c.STAFFID).Select(o => o.FIRSTNAME).FirstOrDefault(),
                              updatedById = c.LASTUPDATEDBY,
-                             updatedBy = context.TBL_STAFF.Where(o => o.LASTUPDATEDBY == c.STAFFID).Select(o => o.FIRSTNAME).FirstOrDefault(),
+                             updatedBy = c.LASTUPDATEDBY == null? "N/A" : context.TBL_STAFF.Where(o => o.LASTUPDATEDBY == c.STAFFID).Select(o => o.FIRSTNAME).FirstOrDefault(),
                              LastName = c.LASTNAME,
                              StaffCode = c.STAFFCODE,
                              staffRoleId = c.STAFFROLEID,
@@ -444,7 +446,9 @@ namespace FintrakBanking.Repositories.Credit
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                              businessUnitId = c.BUSINESSUNITID,
                              misCode = c.MISCODE,
-                             businessUnitName = context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == c.BUSINESSUNITID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
+                             timeUpdated = c.DATETIMEUPDATED,
+                             businessUnitName = c.BUSINESSUNITID == null ? "N/A" : context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == c.BUSINESSUNITID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
+                             timeDeleted = c.DATETIMEDELETED
                          }).ToList();
     
             return staff;
@@ -476,13 +480,15 @@ namespace FintrakBanking.Repositories.Credit
                                  Phone = c.PHONE,
                                  StateId = c.STATEID,
                                  CityId = c.CITYID,
+                                 createdByName = context.TBL_STAFF.Where(o => o.STAFFID == c.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                                  ApprovalStatusId = c.APPROVALSTATUSID,
                                  loanLimit = c.LOAN_LIMIT,
                                  workStartDuration = c.WORKSTARTDURATION,
                                  workEndDuration = c.WORKENDDURATION,
                                  businessUnitId = c.BUSINESSUNITID,
+                                 approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == c.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                                  businessUnitName = context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == c.BUSINESSUNITID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
-                                   misCode  = c.MISCODE,
+                                 misCode  = c.MISCODE,
                                }).FirstOrDefault();
         return tempStaffRecord;
         }
@@ -506,7 +512,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchName = a.TBL_BRANCH.BRANCHNAME,
                             companyMainId = a.COMPANYID,
                             createdBy = a.CREATEDBY,
-                            //lastUpdatedBy = (int)a.LASTUPDATEDBY,
+                            lastUpdatedByName = a.LASTUPDATEDBY == null ? "N/A" : context.TBL_STAFF.Where(o => o.STAFFID == a.LASTUPDATEDBY).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                             creationMailSent = a.CREATIONMAILSENT,
                             customerCode = a.CUSTOMERCODE,
                             customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
@@ -516,6 +522,7 @@ namespace FintrakBanking.Repositories.Credit
                             emailAddress = a.EMAILADDRESS,
                             firstName = a.FIRSTNAME,
                             gender = a.GENDER,
+                            dateTimeCreated = a.DATETIMECREATED,
                             lastName = a.LASTNAME,
                             maidenName = a.MAIDENNAME,
                             maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : a.MARITALSTATUS.Value == 2 ? "F" : null,
@@ -544,8 +551,7 @@ namespace FintrakBanking.Repositories.Credit
                             businessUnitId = a.BUSINESSUNTID,
                             businessUnitName = context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == a.BUSINESSUNTID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
                             ownership = a.OWNERSHIP,
-                            relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
-                                .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
+                            relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID).Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
                             nameofSignatories = a.NAMEOFSIGNATORY,
@@ -603,7 +609,7 @@ namespace FintrakBanking.Repositories.Credit
                             taxNumber = a.TAXNUMBER,
                             relationshipTypeId = a.RELATIONSHIPTYPEID,
                             businessUnitId = a.BUSINESSUNTID,
-                            businessUnitName = context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == a.BUSINESSUNTID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
+                            businessUnitName = a.BUSINESSUNTID == null ? "N/A" : context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == a.BUSINESSUNTID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
                             ownership = a.OWNERSHIP,
                             relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
@@ -613,6 +619,9 @@ namespace FintrakBanking.Repositories.Credit
 
             return tempCustomer;
         }
+
+
+        
 
         public bool UpdateCustomerRecord(int customerId, CustomerViewModels entity)
         {
