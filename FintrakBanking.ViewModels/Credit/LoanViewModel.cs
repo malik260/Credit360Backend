@@ -1917,6 +1917,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string batchCode { get; set; }
         public int? approvalStatusId { get; set; }
         public string validityStatus { get; set; }
+        public string collateralDescription { get; set; }
     }
 
 
