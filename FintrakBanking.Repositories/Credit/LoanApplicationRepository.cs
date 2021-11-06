@@ -7801,6 +7801,7 @@ namespace FintrakBanking.Repositories.Credit
             if (ApprovalStaffCount == 0 || (staffRecord != null && staffRecord.STAFFROLEID == userAdminRole?.STAFFROLEID))
             {
                 LaonApplcationCancelllationCompelted(data);
+                UpdateLoanApplicationCollateralTable(data.loanApplicationId, (int)ApprovalStatusEnum.Approved, data.createdBy);
 
                 if (context.SaveChanges() > 0)
                 {
@@ -8083,6 +8084,7 @@ namespace FintrakBanking.Repositories.Credit
                         else
                         {
                             UpdateLoanApplicationCancellationTempTable(data, (short)workflow.StatusId);
+                            UpdateLoanApplicationCollateralTable(data.loanApplicationId, (short)workflow.StatusId, data.createdBy);
                             LaonApplcationCancelllationCompelted(data);
 
                             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
@@ -8148,6 +8150,7 @@ namespace FintrakBanking.Repositories.Credit
                         else
                         {
                             UpdateLmsLoanApplicationCancellationTempTable(data, (short)workflow.StatusId);
+                            UpdateLoanApplicationCollateralTable(data.loanApplicationId, (short)workflow.StatusId, data.createdBy);
                             LmsLaonApplcationCancelllationCompelted(data);
 
                             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
@@ -8186,7 +8189,28 @@ namespace FintrakBanking.Repositories.Credit
             val.APPROVALSTATUSID = statusId;
             val.LASTUPDATEDBY = data.createdBy;
             val.DATETIMEUPDATED = genSetup.GetApplicationDate();
-            // val.APPLICATIONSTATUSID = data.applicationStatusId;
+            //val.APPLICATIONSTATUSID = data.applicationStatusId;
+
+            
+        }
+
+        private void UpdateLoanApplicationCollateralTable(int loanApplicationId, short statusId, int user)
+        {
+            var val = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x => x).ToList();
+            if (val.Count() > 0)
+            {
+                foreach(var i in val)
+                {
+                    i.APPROVALSTATUSID = statusId;
+                    i.LASTUPDATEDBY = user;
+                    i.DATETIMEUPDATED = genSetup.GetApplicationDate();
+                    i.DELETED = true;
+                    i.DELETEDBY = user;
+                    i.DATETIMEDELETED = DateTime.Now;
+                }
+                
+            }
+            
         }
 
         private void UpdateLmsLoanApplicationCancellationTempTable(LoanReviewApplicationViewModel data, short statusId)

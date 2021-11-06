@@ -39812,7 +39812,8 @@ namespace FintrakBanking.Repositories.Credit
                 INSURABLEVALUE = insurancePolicy.INSURABLEVALUE,
                 COMMENT = insurancePolicy.COMMENT,
                 DATETIMECREATED = DateTime.Now,
-                CREATEDBY = insurancePolicy.CREATEDBY
+                CREATEDBY = insurancePolicy.CREATEDBY,
+                COLLATERALDESCRIPTION = insurancePolicy.COLLATERALDESCRIPTION
             });
         }
 
