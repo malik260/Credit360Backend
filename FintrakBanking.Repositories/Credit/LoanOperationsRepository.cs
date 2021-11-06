@@ -33602,6 +33602,7 @@ namespace FintrakBanking.Repositories.Credit
                                  orderby b.REQUESTDATE descending
                                  select new MultipleInsuranceOutputApprovalViewModel()
                                  {
+                                     collateralDescription = a.COLLATERALDESCRIPTION,
                                      bulkInsuranceUploadApprovalId = b.BULKINSURANCEUPLOADAPPROVALID,
                                      systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                      operationId = b.OPERATIONID,
