@@ -74,13 +74,11 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
 
-        //  [ClaimsAuthorizationAttribute(ClaimType = "logincode", ClaimValue =   username )]
         [HttpGet]
         [ClaimsAuthorization]
         [Route("users-by-staffId/")]
@@ -572,7 +570,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("group/activity/access/{id}")]
         public HttpResponseMessage AddAccessToActivity(int id, [FromBody] ActivitiesUpdateVm model)
         {
