@@ -1095,7 +1095,6 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
-
         public bool LogDeleteRequestStaff(int staffId, UserInfo user)
         {
             var targetStaff = context.TBL_STAFF.Find(staffId);
