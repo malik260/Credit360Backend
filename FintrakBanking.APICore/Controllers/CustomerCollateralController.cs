@@ -1648,7 +1648,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("collateral-type")]
         public HttpResponseMessage GetCollateralType()
         {
@@ -1680,7 +1680,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("collateral-sub-type")]
         public HttpResponseMessage GetCollateralSubTypes()
         {

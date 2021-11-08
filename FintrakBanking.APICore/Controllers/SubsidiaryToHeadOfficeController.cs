@@ -1,30 +1,18 @@
-﻿using FintrakBanking.APICore.CFLAuthentication;
-using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.Common;
-using FintrakBanking.Common.CustomException;
-using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.APICore.core;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.ViewModels.Authentication;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-   
-    [RoutePrefix("api/v1/fintrak")]
-    public class SubsidiaryToHeadOfficeController : ApiController
+
+    [RoutePrefix("api/v1/subsidiary")]
+    public class SubsidiaryToHeadOfficeController : ApiControllerBase
     {
        
         private ILoanApplicationRepository repo;
@@ -66,7 +54,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex)
             {
                 APIResponse response = new APIResponse();
-                response.Message = $"There was an error creating this record, confirm all requested parameters are captured";
+                response.Message = $"There was an error creating this record, confirm all requested parameters are captured "+ex.Message;
                 response.requestId = null;
                 response.StatusCode = "99";
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);

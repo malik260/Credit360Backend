@@ -41,7 +41,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Customer FS Caption Group
 
-         [HttpPost] [AdminClaimsAuthorization]
+         [HttpPost] [ClaimsAuthorization]
         [Route("customer-fs-caption-group")]
         public HttpResponseMessage AddCustomerFsCaptionGroup([FromBody] CustomerFSCaptionGroupViewModel entity)
         {

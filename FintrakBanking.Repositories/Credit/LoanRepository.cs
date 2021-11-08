@@ -19529,15 +19529,21 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Kindly select an accredited consultant/expected completion date is empty.");
             }
             
-                var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
-                                                              && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                                              && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
-                                                              && x.DELETED == false
-                                                              ).ToList();
-                if (validate != null && validate.Count() > 0)
-                {
-                    throw new SecureException("Request already exist and undergoing approval");
-                }
+                    foreach(var i in models)
+                    {
+                        var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
+                                                                      && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                                                      && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                                                                      && x.DELETED == false
+                                                                      && x.APPLICATIONREFERENCENUMBER == i.applicationReferenceNumber
+                                                                      ).ToList();
+                        if (validate != null && validate.Count() > 0)
+                        {
+                            throw new SecureException("Request already exist and undergoing approval");
+                        }
+
+                    }
+                
 
                 GlobalExposureApplicationViewModel assignOperations = new GlobalExposureApplicationViewModel();
 
@@ -20955,7 +20961,15 @@ namespace FintrakBanking.Repositories.Credit
                                     currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
                                 }
                                 break;
-                        }
+                            case "K":
+                            currentLine.passed = true;
+                            try { currentLine.collateralDescription = cell.Value.ToString(); }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; 
+                            }
+                            break;
+                    }
 
                     }
 
@@ -20991,6 +21005,12 @@ namespace FintrakBanking.Repositories.Credit
                         else
                         {
                             customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode.ToString()).FirstOrDefault();
+
+                            if (currentLine.collateralDescription == null)
+                            {
+                                currentLine.passed = false;
+                                currentLine.errorMessages.Add("<br/>Collateral Description column is null ");
+                            }
 
                             if (customerCollateral == null)
                             {
@@ -21285,6 +21305,7 @@ namespace FintrakBanking.Repositories.Credit
                 BATCHCODE = insurancePolicy.batchCode,
                 VALIDITYSTATUS = insurancePolicy.passed,
                 ISCOLLATERAL = (insurancePolicy.isCollateral.ToLower() == "n" || insurancePolicy.isCollateral.ToLower() == "no") ? false : true,
+                COLLATERALDESCRIPTION = insurancePolicy.collateralDescription,
             });
         
             return insuranceTracking;
@@ -21765,7 +21786,6 @@ namespace FintrakBanking.Repositories.Credit
                     context.SaveChanges();
                 }
 
-
                 var record = new TBL_LOAN_RECOVERY_COMMISSION_RETAIL
                 {
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
@@ -21887,5 +21907,38 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+
+
+        public CloseMannualBookingResponseViewModel GetLoanBookingDetailsFromFlexcube(CloseMannualBookingViewModel model)
+        {
+            
+            if (model.loan_accountno == null)
+            {
+                throw new ConditionNotMetException("Flexcube reference number is null");
+            }
+
+            model.channel_code = "FINTRAK";
+
+            CloseMannualBookingResponseViewModel result = null;
+            Task.Run(async () => result = await transaction.ValidateMannualBookingClosure(model)).GetAwaiter().GetResult();
+
+            if (result.response_code == "00")
+            {
+                if (result.response_message.ToLower() == "successful")
+                {
+                    return new CloseMannualBookingResponseViewModel { response_code = result.response_code, response_message = result.response_message.ToLower(), loandetailsresp = result.loandetailsresp };
+                }
+                else
+                {
+                    throw new ConditionNotMetException("Core Banking API Error - Kindly Contact System Administrator!");
+                }
+            }
+            else
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly Contact System Administrator!");
+            }
+        }
+
+
     }
 }

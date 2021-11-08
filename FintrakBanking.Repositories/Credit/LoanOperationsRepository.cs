@@ -33602,6 +33602,7 @@ namespace FintrakBanking.Repositories.Credit
                                  orderby b.REQUESTDATE descending
                                  select new MultipleInsuranceOutputApprovalViewModel()
                                  {
+                                     collateralDescription = a.COLLATERALDESCRIPTION,
                                      bulkInsuranceUploadApprovalId = b.BULKINSURANCEUPLOADAPPROVALID,
                                      systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                      operationId = b.OPERATIONID,
@@ -39812,7 +39813,8 @@ namespace FintrakBanking.Repositories.Credit
                 INSURABLEVALUE = insurancePolicy.INSURABLEVALUE,
                 COMMENT = insurancePolicy.COMMENT,
                 DATETIMECREATED = DateTime.Now,
-                CREATEDBY = insurancePolicy.CREATEDBY
+                CREATEDBY = insurancePolicy.CREATEDBY,
+                COLLATERALDESCRIPTION = insurancePolicy.COLLATERALDESCRIPTION
             });
         }
 

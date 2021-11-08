@@ -8944,7 +8944,8 @@ namespace FintrakBanking.Repositories.Credit
                     INSURABLEVALUE = model.insurableValue,
                     COMMENT = model.comment,
                     CREATEDBY = accountOfficer,
-                    DATETIMECREATED = DateTime.Now
+                    DATETIMECREATED = DateTime.Now,
+                    COLLATERALDESCRIPTION = model.collateralDetails,
                 });
 
                if (context.SaveChanges() > 0)
