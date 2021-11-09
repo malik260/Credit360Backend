@@ -656,7 +656,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("saved-rac-for-a-loan")]
         public HttpResponseMessage GetSavedRiskAcceptanceCriteria(RiskAcceptanceCriteriaViewModel model)
         {
