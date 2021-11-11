@@ -448,7 +448,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("sectors")]
         public HttpResponseMessage AddSector([FromBody] SectorViewModel model)
         {
@@ -474,7 +474,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut] [AdminClaimsAuthorization]
+        [HttpPut] [ClaimsAuthorization]
         [Route("sectors/{id}")]
         public HttpResponseMessage UpdateSector([FromBody] SectorViewModel model ,short id)
         {
@@ -502,7 +502,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("global-sectors/{id}")]
         public HttpResponseMessage UpdateGlobalSector([FromBody] GlobalSectorViewModel model, int id)
         {
