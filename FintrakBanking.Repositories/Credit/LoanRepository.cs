@@ -21826,6 +21826,17 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
             }
 
+
+            if (models != null)
+            {
+                bool validate = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(x => x.AMOUNTRECOVERED == models.amountRecovered && x.TOTALRECOVERYAMOUNT == models.totalAmountRecovery && x.DATETIMECREATED.Month == DateTime.Now.Month && x.CREATEDBY == user.createdBy && x.ACCREDITEDCONSULTANT == models.accreditedConsultant).Any();
+                if (validate)
+                {
+                    throw new ConditionNotMetException("It looks like same commission has already been captured for this Agent");
+                }
+                
+            }
+
             try
             {
                 var record = new TBL_LOAN_RECOVERY_COMMISSION_INTERNAL
@@ -21869,8 +21880,7 @@ namespace FintrakBanking.Repositories.Credit
                         updateRecord.TOTALAMOUNTRECOVERY = 0;
                         updateRecord.ISFULLYRECOVERED = true;
                         updateRecord.OPERATIONCOMPLETED = true;
-                    }
-                    if (updateRecord.TOTALAMOUNTRECOVERY != models.amountRecovered)
+                    }else
                     {
                         updateRecord.TOTALAMOUNTRECOVERY = (updateRecord.TOTALAMOUNTRECOVERY - models.amountRecovered);
                     }
