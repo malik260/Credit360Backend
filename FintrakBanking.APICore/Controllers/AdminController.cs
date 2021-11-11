@@ -438,11 +438,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
             }
-
-
         }
-
-
 
         [HttpGet]
         [ClaimsAuthorization]
