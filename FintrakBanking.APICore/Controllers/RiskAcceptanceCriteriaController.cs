@@ -293,7 +293,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("detail")]
         public HttpResponseMessage AddRacDetail([FromBody] RacDetailViewModel model)
         {

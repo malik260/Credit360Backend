@@ -49,7 +49,7 @@ namespace FintrakBanking.APICore
             var _context = new FinTrakBankingContext();
 
             var user = _context.TBL_PROFILE_USER.Where(p => p.USERNAME == Username).FirstOrDefault();
-            var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "useractivities").Value;
+            //var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "useractivities").Value;
             //var claim2 = token.GetUserActivities.ToLower();
 
             //if (!(claim == user.LOGINCODE))
@@ -58,11 +58,11 @@ namespace FintrakBanking.APICore
             //    return Task.FromResult<object>(null);
             //}
 
-            if (!claim.ToLower().Contains("admin"))
+            /*if (!claim.ToLower().Contains("admin"))
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
                 return Task.FromResult<object>(null);
-            }
+            }*/
 
             /*var tokenIsValid   =  _context.TBL_USER_CLAIMS.Where(x => x.TOKEN == tokens && x.ISACTIVE == true).FirstOrDefault();
             if ( tokenIsValid == null)
