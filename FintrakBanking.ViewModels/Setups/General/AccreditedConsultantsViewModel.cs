@@ -44,6 +44,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public decimal? amountRecovered { get; set; }
         public string staffCode { get; set; }
         public string agentCategory { get; set; }
+        public decimal? totalRecoveryAssigned { get; set; }
+        public decimal?  allAmountRecovered { get; set; }
+        public string currentDate { get; set; }
+        public decimal? totalRecoveryAssign { get; set; }
     }
     public class AccreditedPrincipalsViewModel : GeneralEntity
     {
