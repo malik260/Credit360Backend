@@ -293,7 +293,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("detail")]
         public HttpResponseMessage AddRacDetail([FromBody] RacDetailViewModel model)
         {
@@ -308,7 +308,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("detail/{id}")]
         public HttpResponseMessage UpdateRacDetail([FromBody] RacDetailViewModel model, int id)
         {
@@ -325,7 +325,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("detail/{id}")]
         public HttpResponseMessage DeleteRacDetail(int id)
         {
