@@ -428,7 +428,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("company-director")]
         public HttpResponseMessage AddUpdateCompanyDirector([FromBody]CompanyDirectorsViewModel entity)
         {

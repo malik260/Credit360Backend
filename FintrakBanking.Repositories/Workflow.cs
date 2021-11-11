@@ -2305,7 +2305,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 else
                 {
                     var trails = trailLog.OrderBy(x => x.APPROVALTRAILID);
-                    owner = context.TBL_STAFF.Where(x => x.STAFFID == trails.First().REQUESTSTAFFID && x.DELETED == false).FirstOrDefault();
+                    owner = context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
+                    //owner = context.TBL_STAFF.Where(x => x.STAFFID == trails.First().REQUESTSTAFFID && x.DELETED == false).FirstOrDefault();
                 }
 
                 int targetId = this.targetId;

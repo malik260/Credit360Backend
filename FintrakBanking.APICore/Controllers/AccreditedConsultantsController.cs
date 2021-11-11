@@ -117,7 +117,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("consultant-type-add")]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         public HttpResponseMessage AddConsultantType([FromBody] AccreditedConsultantTypeViewModel entity)
         {
             try
@@ -144,7 +144,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("accredited-solicitors")]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         public async Task<HttpResponseMessage> AddAccreditedSolicitors([FromBody] AccreditedConsultantsViewModel entity)
         {
             try
@@ -171,7 +171,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut, Route("accredited-solicitors/{id}")]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         public async Task<HttpResponseMessage> UpdateAccreditedSolicitors([FromBody] AccreditedConsultantsViewModel entity, int id)
         {
             try
@@ -198,7 +198,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("accredited-solicitors/{id}")]
        
         public async Task<HttpResponseMessage> DeleteAccreditedSolicitors(int id)
@@ -239,7 +239,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("accredited-solicitors-approval")]
         public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
@@ -309,7 +309,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost, Route("accredited-principals")]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         public async Task<HttpResponseMessage> AddAccreditedPrincipals([FromBody] AccreditedPrincipalsViewModel entity)
         {
             try
@@ -333,7 +333,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPut, Route("accredited-principals/{id}")]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         public async Task<HttpResponseMessage> UpdateAccreditedPrincipals([FromBody] AccreditedPrincipalsViewModel entity, int id)
         {
             try
