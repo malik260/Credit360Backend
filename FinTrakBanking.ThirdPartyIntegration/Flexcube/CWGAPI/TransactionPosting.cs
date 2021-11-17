@@ -1585,9 +1585,9 @@
                     {
                         var rep = await response.Content.ReadAsAsync<CloseMannualBookingResponseViewModel>();
 
-                        if (!rep.response_message.ToLower().Contains("Successful"))
+                        if (!rep.response_message.ToLower().Contains("successful"))
                         {
-                            throw new APIErrorException("Core Banking API error - " + response.RequestMessage + " " + DateTime.Now);
+                            throw new APIErrorException("Core Banking API error - " + rep.response_message + " " + DateTime.Now);
                         }
 
                         records.response_code = rep.response_code;
