@@ -180,7 +180,7 @@ namespace FintrakBanking.APICore.Controllers
             entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
             entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
             entity.overwrite = provider.FormData["overwrite"] == "true";
-            entity.source = (int) DocUploadSourceEnum.EDMS;
+            entity.source = (int) DocUploadSourceEnum.InApp;
             entity.edmsDocumentId = Convert.ToInt32(provider.FormData["edmsDocumentId"]);
 
             var a = provider.FormData["targetId"];
