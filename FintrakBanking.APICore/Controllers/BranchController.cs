@@ -44,7 +44,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-         [HttpPost] [AdminClaimsAuthorization]
+         [HttpPost] [ClaimsAuthorization]
         [Route("region")]
         public HttpResponseMessage AddBranchRegion([FromBody]BranchRegionViewModel entity)
         {
@@ -104,7 +104,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("region-staff")]
         public HttpResponseMessage AddUpdateBranchRegionStaff([FromBody]BranchRegionStaffViewModel entity)
         {
@@ -246,7 +246,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [AdminClaimsAuthorization]
+         [HttpPost] [ClaimsAuthorization]
         [Route("branch")]
         public async Task<HttpResponseMessage> AddBranchAsync([FromBody]AddBranchViewModel model)
         {
@@ -271,7 +271,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [AdminClaimsAuthorization]
+       [HttpPut] [ClaimsAuthorization]
         [Route("branch/{id}")]
         public async Task<HttpResponseMessage> UpdateBranchAsync([FromBody] BranchViewModel model, short id)
         {
@@ -297,7 +297,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-       [HttpPut] [AdminClaimsAuthorization]
+       [HttpPut] [ClaimsAuthorization]
         [Route("branches/{id}")]
         public HttpResponseMessage UpdateBranch([FromBody] BranchViewModel model, short id)
         {
@@ -428,7 +428,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("add-collection-retail-computation-variable-setup")]
         public async Task<HttpResponseMessage> AddRetailCollectionComputationVariableAsync([FromBody]CollectionsRetailComputationVariableSetupViewModel model)
         {
@@ -454,7 +454,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("collection-retail-cron-setup/{id}")]
         public HttpResponseMessage UpdateCollectionRetailCronJob([FromBody] CollectionsRetailCronSetupViewModel model, short id)
         {
@@ -481,7 +481,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("collection-retail-computation-variable-setup/{id}")]
         public HttpResponseMessage UpdateCollectionRetailComputationVariables([FromBody] CollectionsRetailComputationVariableSetupViewModel model, short id)
         {

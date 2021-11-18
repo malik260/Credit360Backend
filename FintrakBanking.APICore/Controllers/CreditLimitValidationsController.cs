@@ -437,7 +437,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("obligor-limit")]
         public HttpResponseMessage AddUpdateObligorLimit([FromBody] ObligorLimitViewModel entity)
         {
@@ -588,7 +588,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("currency-limit")]
         public HttpResponseMessage AddCurrencyLimit([FromBody] CurrencyLimitViewModel entity)
         {
@@ -611,7 +611,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("currency-limit/{currencyLimitId}")]
         public HttpResponseMessage UpdateCurrencyLimit(int currencyLimitId, [FromBody] CurrencyLimitViewModel entity)
         {
@@ -634,7 +634,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("currency-limit/{currencyLimitId}")]
         public HttpResponseMessage DeleteCurrencyLimit(int currencyLimitId)
         {
@@ -670,7 +670,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("group-limit")]
         public HttpResponseMessage AddGroupLimit([FromBody] GroupLimitViewModel entity)
         {
@@ -693,7 +693,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("group-limit/{groupLimitId}")]
         public HttpResponseMessage UpdateGroupLimit(int groupLimitId, [FromBody] GroupLimitViewModel entity)
         {
@@ -717,7 +717,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("group-limit/{groupLimitId}")]
         public HttpResponseMessage DeleteGroupLimit(int groupLimitId)
         {
