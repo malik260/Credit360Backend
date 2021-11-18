@@ -2028,6 +2028,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? bulkInsuranceUploadApprovalId { get; set; }
         public string validityStatus { get; set; }
         public string collateralDescription { get; set; }
+        public bool? isCollaterals { get; set; }
+        
     }
 
     //public class MaturityIntructionViewModel : GeneralEntity

@@ -17071,7 +17071,7 @@ namespace FintrakBanking.Repositories.Credit
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
-            var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.OPERATIONTYPEID == (int)LoanSystemTypeEnum.LineFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
+            var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.LineFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
             var applicationDate = generalSetup.GetApplicationDate();
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join l in context.TBL_LMSR_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals l.LOANID
@@ -17080,7 +17080,7 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                         where 
                           l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
-                          && !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID)
+                          && !operationsRecords.Contains(l.LOANREVIEWAPPLICATIONID)
                           && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                           && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                           && l.OPERATIONPERFORMED == false
@@ -17412,7 +17412,7 @@ namespace FintrakBanking.Repositories.Credit
             //    ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
             //}
 
-            var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.OPERATIONTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
+            var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
                                    //join atrail in context.TBL_APPROVAL_TRAIL on b.LOANREVIEWAPPLICATIONID equals atrail.TARGETID
@@ -19458,7 +19458,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var policyRequest in models)
                 {
                     policyRequest.batchCode = batchCode;
-                    if (policyRequest.isCollateral.ToLower() != "")
+                    if (policyRequest.isCollateral.ToLower() != "" && (policyRequest.isCollateral.ToLower() == "n" || policyRequest.isCollateral.ToLower() == "yes"))
                     {
                         var collateralDetail = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == policyRequest.collateralCode).FirstOrDefault();
                         if (collateralDetail != null)
@@ -19491,6 +19491,24 @@ namespace FintrakBanking.Repositories.Credit
                             bulkPolicyTable.Add(policyData);
                             
                         }
+                    }
+                    else
+                    {
+                         policyRequest.collateralCustomerId = null;
+                         policyRequest.collateralDetails = policyRequest.collateralDescription;
+                         policyRequest.collateralSubTypeId = null;
+                         policyRequest.collateralTypeId = (int)CollateralTypeEnum.InsurancePolicy;
+                         policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Active;
+                        var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => policyRequest.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
+                        if (insurancePolicyTypeDetail != null)
+                        {
+                            policyRequest.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
+                        }
+
+                        policyRequest.dateTimeCreated = DateTime.Now;
+                        policyRequest.createdBy = user.createdBy;
+                        var policyData = addBulkPolicy(policyRequest);
+                        bulkPolicyTable.Add(policyData);
                     }
                 }
                     context.TEMP_COLLATERAL_INSURANCE_TRACKING.AddRange(bulkPolicyTable);
@@ -20881,8 +20899,8 @@ namespace FintrakBanking.Repositories.Credit
             
                 List<MultipleInsuranceOutputViewModel> bulkEntries = new List<MultipleInsuranceOutputViewModel>();
                 TBL_COLLATERAL_CUSTOMER customerCollateral = null;
-
-                //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+                
+                 //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
                 SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
                 MemoryStream ms = new MemoryStream(file);
                 ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
@@ -20898,7 +20916,7 @@ namespace FintrakBanking.Repositories.Credit
                     for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
                     {
                         ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
-
+                        
                         string cellName = CellRange.RowColumnToPosition(j, i);
                         string cellRow = ExcelRowCollection.RowIndexToName(j);
                         string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
@@ -20920,7 +20938,14 @@ namespace FintrakBanking.Repositories.Credit
                                 break;
                             case "C":
                                 currentLine.passed = true;
-                                try { currentLine.collateralCode = cell.Value.ToString(); }
+                                try {
+                                if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
+                                {
+                                    currentLine.collateralCode = null;
+                                }
+                                else { currentLine.collateralCode = cell.Value.ToString(); }
+                                
+                                }
                                 catch (Exception e)
                                 {
                                     currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
@@ -21006,7 +21031,12 @@ namespace FintrakBanking.Repositories.Credit
                 try
                 {
                     var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+                    var newCollateralCode = CommonHelpers.GenerateRandomDigitCode(7);
                     //========================================== other valiadation =============================
+                    if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
+                    {
+                        currentLine.collateralCode = newCollateralCode;
+                    }
 
                     if (currentLine.referenceNumber == "0" || currentLine.referenceNumber == "")
                     {
@@ -21023,8 +21053,10 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
                         {
-                            currentLine.passed = false;
-                            currentLine.errorMessages.Add("<br/>Only collateral insurance policy is allowed to be uploaded. Collateral with collateralcode " + currentLine.collateralCode.ToString() + " is not an insurance policy");
+                            currentLine.collateralCustomerId = null;
+                            currentLine.collateralDetails = currentLine.collateralDescription;
+                            //currentLine.passed = false;
+                            //currentLine.errorMessages.Add("<br/>Only collateral insurance policy is allowed to be uploaded. Collateral with collateralcode " + currentLine.collateralCode.ToString() + " is not an insurance policy");
                         }
                         else
                         {
@@ -21297,6 +21329,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var insuranceTracking = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Add(new TEMP_COLLATERAL_INSURANCE_TRACKING
             {
+                CUSTOMERCODE = insurancePolicy.customerId,
+                COLLATERALCODE = insurancePolicy.collateralCode,
                 INSURANCECOMPANYID = insurancePolicy.insuranceCompanyId,
                 ISURANCECOMPANYADDRESS = insurancePolicy.companyAddress,
                 POLICYNUMBER = insurancePolicy.referenceNumber,

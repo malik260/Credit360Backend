@@ -33596,12 +33596,16 @@ namespace FintrakBanking.Repositories.Credit
                                  where
                                  b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                  && b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
-                                 && a.ISCOLLATERAL == false
+                                 //&& a.ISCOLLATERAL == false
                                  && a.VALIDITYSTATUS == true
 
                                  orderby b.REQUESTDATE descending
                                  select new MultipleInsuranceOutputApprovalViewModel()
                                  {
+                                     customerCode = a.CUSTOMERCODE,
+                                     collateralCode = a.COLLATERALCODE,
+                                     customerId = a.CUSTOMERCODE,
+                                     isCollaterals = a.ISCOLLATERAL,
                                      collateralDescription = a.COLLATERALDESCRIPTION,
                                      bulkInsuranceUploadApprovalId = b.BULKINSURANCEUPLOADAPPROVALID,
                                      systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
@@ -33645,11 +33649,18 @@ namespace FintrakBanking.Repositories.Credit
                                  }).ToList();
             foreach(var i in records)
             {
-                i.insuranceCompany = i.insuranceCompanyId > 0 ? context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == i.insuranceCompanyId).Select(x => x.COMPANYNAME).FirstOrDefault() : i.otherInsuranceCompany;
-                i.policyType = i.insurancePolicyTypeId > 0 ? context.TBL_INSURANCE_POLICY_TYPE.Where(x => x.POLICYTYPEID == i.insurancePolicyTypeId).Select(x => x.DESCRIPTION).FirstOrDefault() : i.otherInsurancePolicyType;
-                i.collateralCode = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.COLLATERALCODE).FirstOrDefault();
-                i.iCustomerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.CUSTOMERID).FirstOrDefault();
-                i.customerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+                if (i.isCollaterals == false)
+                {
+                    i.insuranceCompany = i.insuranceCompanyId > 0 ? context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == i.insuranceCompanyId).Select(x => x.COMPANYNAME).FirstOrDefault() : i.otherInsuranceCompany;
+                    i.policyType = i.insurancePolicyTypeId > 0 ? context.TBL_INSURANCE_POLICY_TYPE.Where(x => x.POLICYTYPEID == i.insurancePolicyTypeId).Select(x => x.DESCRIPTION).FirstOrDefault() : i.otherInsurancePolicyType;
+                    i.iCustomerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.CUSTOMERID).FirstOrDefault();
+                }
+                else
+                {
+                    i.insuranceCompany = i.insuranceCompanyId > 0 ? context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == i.insuranceCompanyId).Select(x => x.COMPANYNAME).FirstOrDefault() : i.otherInsuranceCompany;
+                    i.policyType = i.insurancePolicyTypeId > 0 ? context.TBL_INSURANCE_POLICY_TYPE.Where(x => x.POLICYTYPEID == i.insurancePolicyTypeId).Select(x => x.DESCRIPTION).FirstOrDefault() : i.otherInsurancePolicyType;
+                    i.iCustomerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == i.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                }
             }
 
             var data = records.GroupBy(x => x.referenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.systemArrivalDateTime);
@@ -39676,14 +39687,89 @@ namespace FintrakBanking.Repositories.Credit
                         var policyRecords = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.ISCOLLATERAL == false && x.VALIDITYSTATUS == true).ToList();
                         foreach (var policyRecord in policyRecords)
                         {
-                            var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x=>x.COLLATERALCUSTOMERID == policyRecord.COLLATERALCUSTOMERID).FirstOrDefault();
-                            if (doseRecordExist == null)
+                            if (policyRecord.ISCOLLATERAL == false)
                             {
-                                var record = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(policyRecord.COLLATERALINSURANCETRACKINGID);
-                                bulkInsuranceUploads(record);
-                                record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                                context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(record);
-                                output = context.SaveChanges() > 0;
+                                var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == policyRecord.COLLATERALCUSTOMERID).FirstOrDefault();
+                                if (doseRecordExist == null)
+                                {
+                                    var record = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(policyRecord.COLLATERALINSURANCETRACKINGID);
+                                    bulkInsuranceUploads(record);
+                                    record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                    context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(record);
+                                    output = context.SaveChanges() > 0;
+                                }
+                            }
+                            else
+                            {
+                                var doseRecordExist = context.TBL_COLLATERAL_POLICY.Where(x => x.COLLATERALCUSTOMERID == policyRecord.COLLATERALCUSTOMERID).FirstOrDefault();
+                                if (doseRecordExist == null)
+                                {
+                                    var insurnceName = "";
+                                    var model = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(policyRecord.COLLATERALINSURANCETRACKINGID);
+                                    var verifyCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x=>x.CUSTOMERCODE == policyRecord.CUSTOMERCODE).FirstOrDefault();
+                                    if (verifyCollateral != null)
+                                    {
+                                        
+                                        var collateral = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
+                                        {
+                                            COLLATERALTYPEID = model.COLLATERALTYPE ?? 0,
+                                            COLLATERALSUBTYPEID = 0,
+                                            COLLATERALCODE = model.COLLATERALCODE,
+                                            COLLATERALVALUE = (decimal)0m,
+                                            COMPANYID = 1,
+                                            ALLOWSHARING = true,
+                                            ISLOCATIONBASED = true,
+                                            VALUATIONCYCLE = null,
+                                            HAIRCUT = 0,
+                                            CURRENCYID = 0,
+                                            EXCHANGERATE = 0,
+                                            CUSTOMERID = verifyCollateral.CUSTOMERID,
+                                            CAMREFNUMBER = null,
+                                            CREATEDBY = model.CREATEDBY,
+                                            DATETIMECREATED = DateTime.Now,
+                                            ACTEDONBY = null,
+                                            RELATEDCOLLATERALCODE = null,
+                                            LOANAPPLICATIONID = null,
+                                            COLLATERALSUMMARY = model.COLLATERALDESCRIPTION,
+                                            COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.InUse,
+                                            VALIDTILL = null,
+                                        });
+
+                                        context.SaveChanges();
+
+                                        if(model.INSURANCECOMPANYID != null)
+                                        {
+                                             insurnceName = context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == model.INSURANCECOMPANYID).Select(x=>x.COMPANYNAME).FirstOrDefault();
+                                        }
+                                        else
+                                        {
+                                            insurnceName = model.OTHERINSURANCECOMPANY;
+                                        }
+
+                                        var insuranceTracking = context.TBL_COLLATERAL_POLICY.Add(new TBL_COLLATERAL_POLICY
+                                        {
+                                            COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
+                                            ISOWNEDBYCUSTOMER = true,
+                                            PREMIUMAMOUNT = (decimal)model.PREMIUMPAID,
+                                            POLICYAMOUNT = (decimal)model.INSURABLEVALUE,
+                                            INSURANCECOMPANYNAME = insurnceName,
+                                            INSURANCETYPE = null,
+                                            INSURERADDRESS = model.ISURANCECOMPANYADDRESS,
+                                            POLICYSTARTDATE = (DateTime)model.INSURANCESTARTDATE,
+                                            ASSIGNDATE = (DateTime)model.INSURANCESTARTDATE,
+                                            RENEWALFREQUENCYTYPEID = 0,
+                                            INSURERDETAILS = model.COLLATERALDESCRIPTION,
+                                            INSURANCEPOLICYNUMBER = model.POLICYNUMBER,
+                                            POLICYRENEWALDATE = (DateTime)model.INSURANCEENDDATE,
+                                            REMARK = null,
+                                            INSURANCETYPEID = (int)model.INSURANCEPOLICYTYPEID,
+                                        });
+
+                                        model.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                        context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(model);
+                                        output = context.SaveChanges() > 0;
+                                    }
+                                }
                             }
                         }
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
@@ -39759,13 +39845,88 @@ namespace FintrakBanking.Repositories.Credit
                                 var validRecords = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.ISCOLLATERAL == false).ToList();
                                 foreach (var validRecord in validRecords)
                                 {
-                                    var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == validRecord.COLLATERALCUSTOMERID).FirstOrDefault();
-                                    if (doseRecordExist == null)
+                                    if (validRecord.ISCOLLATERAL == false)
                                     {
-                                        var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
-                                        bulkInsuranceUploads(rec);
-                                        rec.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                                        context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(rec);
+                                        var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == validRecord.COLLATERALCUSTOMERID).FirstOrDefault();
+                                        if (doseRecordExist == null)
+                                        {
+                                            var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
+                                            bulkInsuranceUploads(rec);
+                                            rec.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                            context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(rec);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var doseRecordExist = context.TBL_COLLATERAL_POLICY.Where(x => x.COLLATERALCUSTOMERID == validRecord.COLLATERALCUSTOMERID).FirstOrDefault();
+                                        if (doseRecordExist == null)
+                                        {
+                                            var insurnceName = "";
+                                            var model = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
+                                            var verifyCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.CUSTOMERCODE == validRecord.CUSTOMERCODE).FirstOrDefault();
+                                            if (verifyCollateral != null)
+                                            {
+
+                                                var collateral = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
+                                                {
+                                                    COLLATERALTYPEID = model.COLLATERALTYPE ?? 0,
+                                                    COLLATERALSUBTYPEID = 0,
+                                                    COLLATERALCODE = model.COLLATERALCODE,
+                                                    COLLATERALVALUE = (decimal)0m,
+                                                    COMPANYID = 1,
+                                                    ALLOWSHARING = true,
+                                                    ISLOCATIONBASED = true,
+                                                    VALUATIONCYCLE = null,
+                                                    HAIRCUT = 0,
+                                                    CURRENCYID = 0,
+                                                    EXCHANGERATE = 0,
+                                                    CUSTOMERID = verifyCollateral.CUSTOMERID,
+                                                    CAMREFNUMBER = null,
+                                                    CREATEDBY = model.CREATEDBY,
+                                                    DATETIMECREATED = DateTime.Now,
+                                                    ACTEDONBY = null,
+                                                    RELATEDCOLLATERALCODE = null,
+                                                    LOANAPPLICATIONID = null,
+                                                    COLLATERALSUMMARY = model.COLLATERALDESCRIPTION,
+                                                    COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.InUse,
+                                                    VALIDTILL = null,
+                                                });
+
+                                                context.SaveChanges();
+
+                                                if (model.INSURANCECOMPANYID != null)
+                                                {
+                                                    insurnceName = context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == model.INSURANCECOMPANYID).Select(x => x.COMPANYNAME).FirstOrDefault();
+                                                }
+                                                else
+                                                {
+                                                    insurnceName = model.OTHERINSURANCECOMPANY;
+                                                }
+
+                                                var insuranceTracking = context.TBL_COLLATERAL_POLICY.Add(new TBL_COLLATERAL_POLICY
+                                                {
+                                                    COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
+                                                    ISOWNEDBYCUSTOMER = true,
+                                                    PREMIUMAMOUNT = (decimal)model.PREMIUMPAID,
+                                                    POLICYAMOUNT = (decimal)model.INSURABLEVALUE,
+                                                    INSURANCECOMPANYNAME = insurnceName,
+                                                    INSURANCETYPE = null,
+                                                    INSURERADDRESS = model.ISURANCECOMPANYADDRESS,
+                                                    POLICYSTARTDATE = (DateTime)model.INSURANCESTARTDATE,
+                                                    ASSIGNDATE = (DateTime)model.INSURANCESTARTDATE,
+                                                    RENEWALFREQUENCYTYPEID = 0,
+                                                    INSURERDETAILS = model.COLLATERALDESCRIPTION,
+                                                    INSURANCEPOLICYNUMBER = model.POLICYNUMBER,
+                                                    POLICYRENEWALDATE = (DateTime)model.INSURANCEENDDATE,
+                                                    REMARK = null,
+                                                    INSURANCETYPEID = (int)model.INSURANCEPOLICYTYPEID,
+                                                });
+
+                                                model.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                                context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(model);
+                                                context.SaveChanges();
+                                            }
+                                        }
                                     }
                                 }
                                 reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
@@ -39815,6 +39976,28 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = insurancePolicy.CREATEDBY,
                 COLLATERALDESCRIPTION = insurancePolicy.COLLATERALDESCRIPTION
+            });
+        }
+
+        private void bulkInsuranceCollateralUploads(TBL_COLLATERAL_POLICY collateralPolicy)
+        {
+            var insuranceTracking = context.TBL_COLLATERAL_POLICY.Add(new TBL_COLLATERAL_POLICY
+            {
+                COLLATERALCUSTOMERID = collateralPolicy.COLLATERALCUSTOMERID,
+                ISOWNEDBYCUSTOMER = collateralPolicy.ISOWNEDBYCUSTOMER,
+                PREMIUMAMOUNT = collateralPolicy.PREMIUMAMOUNT,
+                POLICYAMOUNT = collateralPolicy.POLICYAMOUNT,
+                INSURANCECOMPANYNAME = collateralPolicy.INSURANCECOMPANYNAME,
+                INSURANCETYPE = collateralPolicy.INSURANCETYPE,
+                INSURERADDRESS = collateralPolicy.INSURERADDRESS,
+                POLICYSTARTDATE = collateralPolicy.POLICYSTARTDATE,
+                ASSIGNDATE = collateralPolicy.ASSIGNDATE,
+                RENEWALFREQUENCYTYPEID = collateralPolicy.RENEWALFREQUENCYTYPEID,
+                INSURERDETAILS = collateralPolicy.INSURERDETAILS,
+                INSURANCEPOLICYNUMBER = collateralPolicy.INSURANCEPOLICYNUMBER,
+                POLICYRENEWALDATE = collateralPolicy.POLICYRENEWALDATE,
+                REMARK = collateralPolicy.REMARK,
+                INSURANCETYPEID = collateralPolicy.INSURANCETYPEID,
             });
         }
 
