@@ -33602,6 +33602,7 @@ namespace FintrakBanking.Repositories.Credit
                                  orderby b.REQUESTDATE descending
                                  select new MultipleInsuranceOutputApprovalViewModel()
                                  {
+                                     collateralDescription = a.COLLATERALDESCRIPTION,
                                      bulkInsuranceUploadApprovalId = b.BULKINSURANCEUPLOADAPPROVALID,
                                      systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                      operationId = b.OPERATIONID,
@@ -35507,7 +35508,7 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryBand = ln.EXPIRINGBAND,
                                     divisionName = ln.DIVISIONNAME,
                                     totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
-                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                    totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                     dpdExposure = ln.UNPODAYSOVERDUE,
                                     loanCategory = ln.CBNCLASSIFICATION,
                                     casaAccount = ln.ACCOUNTNUMBER,
@@ -35558,7 +35559,7 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryBand = ln.EXPIRINGBAND,
                                     divisionName = ln.DIVISIONNAME,
                                     totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
-                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                    totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY, //ln.TOTALUNSETTLEDAMOUNT,
                                     dpdExposure = ln.UNPODAYSOVERDUE,
                                     loanCategory = ln.CBNCLASSIFICATION,
                                     casaAccount = ln.ACCOUNTNUMBER,
@@ -37027,7 +37028,7 @@ namespace FintrakBanking.Repositories.Credit
                                     collectionDate = lr.COLLECTIONDATE,
                                     amountRecovered = lr.AMOUNTRECOVERED,
                                     totalRecoveryAmount = (decimal?)lr.TOTALRECOVERYAMOUNT ?? 0,
-                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                    totalUnsettledAmount = l.TOTALAMOUNTRECOVERY,//ln.TOTALUNSETTLEDAMOUNT,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     productId = (short)l.PRODUCTID,
                                     productClassId = l.PRODUCTCLASSID,
@@ -37072,7 +37073,7 @@ namespace FintrakBanking.Repositories.Credit
                                     collectionDate = lr.COLLECTIONDATE,
                                     amountRecovered = lr.AMOUNTRECOVERED,
                                     totalRecoveryAmount = (decimal?)lr.TOTALRECOVERYAMOUNT ?? 0,
-                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                    totalUnsettledAmount = l.TOTALAMOUNTRECOVERY, //ln.TOTALUNSETTLEDAMOUNT,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     productId = (short)l.PRODUCTID,
                                     productClassId = l.PRODUCTCLASSID,
@@ -41012,6 +41013,56 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<AccreditedConsultantsViewModel> GetAllInternalRecoveryAgents(int staffId, int companyId, DateTime month)
         {
+            var monthInWord = "";
+            if(month.Month == 1)
+            {
+                monthInWord = "January, " +month.Year;
+            }
+            if (month.Month == 2)
+            {
+                monthInWord = "February, " + month.Year;
+            }
+            if (month.Month == 3)
+            {
+                monthInWord = "March, " + month.Year;
+            }
+            if (month.Month == 4)
+            {
+                monthInWord = "April, " + month.Year;
+            }
+            if (month.Month == 5)
+            {
+                monthInWord = "May, " + month.Year;
+            }
+            if (month.Month == 6)
+            {
+                monthInWord = "February, " + month.Year;
+            }
+            if (month.Month == 7)
+            {
+                monthInWord = "July, " + month.Year;
+            }
+            if (month.Month == 8)
+            {
+                monthInWord = "August, " + month.Year;
+            }
+            if (month.Month == 9)
+            {
+                monthInWord = "September, " + month.Year;
+            }
+            if (month.Month == 10)
+            {
+                monthInWord = "October, " + month.Year;
+            }
+            if (month.Month == 11)
+            {
+                monthInWord = "November, " + month.Year;
+            }
+            if (month.Month == 12)
+            {
+                monthInWord = "December, " + month.Year;
+            }
+
             var data = (from ln in context.TBL_ACCREDITEDCONSULTANT
                         join a in context.TBL_LOAN_RECOVERY_REPORT_COLLECTION on ln.ACCREDITEDCONSULTANTID equals a.ACCREDITEDCONSULTANT
                         where
@@ -41027,12 +41078,26 @@ namespace FintrakBanking.Repositories.Credit
                             emailAddress = ln.EMAILADDRESS,
                             accountNumber = ln.ACCOUNTNUMBER,
                             address = ln.ADDRESS,
-                            totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY),
-                            amountRecovered = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && (DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Month == DbFunctions.TruncateTime(month).Value.Month && DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Year == DbFunctions.TruncateTime(month).Value.Year)).Sum(x => x.AMOUNTRECOVERED)
+                            totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m),
+                            amountRecovered = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && (DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Month == DbFunctions.TruncateTime(month).Value.Month && DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Year == DbFunctions.TruncateTime(month).Value.Year)).Sum(x => x.AMOUNTRECOVERED ?? 0m),
+                            totalRecoveryAssign = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID).Sum(x => x.AMOUNTRECOVERED ?? 0m),
+                            allAmountRecovered = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID).Sum(x => x.AMOUNTRECOVERED ?? 0m)
                         }).ToList();
 
             var records = data.GroupBy(x => x.accreditedConsultantId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.accreditedConsultantId);
-
+            foreach(var i in records)
+            {
+                i.currentDate = monthInWord;
+                if (i.totalRecoveryAmount == null || i.totalRecoveryAmount == 0)
+                {
+                    i.totalRecoveryAssigned = i.totalRecoveryAssign;
+                    i.totalRecoveryAmount = 0m;
+                }
+                else
+                {
+                    i.totalRecoveryAssigned = i.totalRecoveryAssign + i.totalRecoveryAmount;
+                }
+            }
             return records;
         }
 

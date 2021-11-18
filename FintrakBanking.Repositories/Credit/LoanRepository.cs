@@ -12221,17 +12221,21 @@ namespace FintrakBanking.Repositories.Credit
                 var activities = admin.GetUserActivitiesByUser(staffId);
                 var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
+                var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
+
                 var currentDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals b.LOANID
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                        where a.ISDISBURSED == true
-                                       //  && operationIds.Contains(b.OPERATIONID) 
+                                       && !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID) 
                                        //b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft 
                                        && b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
                                        && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                        && b.OPERATIONPERFORMED == false
+                                       && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                       && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
@@ -12311,6 +12315,8 @@ namespace FintrakBanking.Repositories.Credit
                                 && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                                 && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                 && op.OPERATIONCOMPLETED == false
+                                && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                 && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
                                 select new LoanViewModel
                                 {
@@ -13947,6 +13953,7 @@ namespace FintrakBanking.Repositories.Credit
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
+            var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
             var currentDate = generalSetup.GetApplicationDate();
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals b.LOANID
@@ -13955,10 +13962,14 @@ namespace FintrakBanking.Repositories.Credit
                                    where a.ISDISBURSED == true
                                    //&& (b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook) 
                                    && b.OPERATIONID != (int)OperationsEnum.APSReleaseApproval
-                                   && b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
+                                   && b.LOANSYSTEMTYPEID == (int)OperationsEnum.ContigentLoanBooking
                                    && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                    && b.OPERATIONPERFORMED == false
                                    && a.LOANSTATUSID != (short)LoanStatusEnum.Terminated
+                                   && !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID)
+                                   && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                   && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+
                                    orderby b.DATETIMECREATED descending
                                    select new LoanViewModel
                                    {
@@ -14059,6 +14070,8 @@ namespace FintrakBanking.Repositories.Credit
                             && atrail.OPERATIONID == op.OPERATIONTYPEID
                             && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                             && staffs.Contains(atrail.LOOPEDSTAFFID ?? 0)
+                            && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                            && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
 
                             orderby b.DATETIMECREATED descending
                             select new LoanViewModel
@@ -17058,7 +17071,7 @@ namespace FintrakBanking.Repositories.Credit
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
-
+            var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.OPERATIONTYPEID == (int)LoanSystemTypeEnum.LineFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
             var applicationDate = generalSetup.GetApplicationDate();
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join l in context.TBL_LMSR_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals l.LOANID
@@ -17067,6 +17080,9 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                         where 
                           l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
+                          && !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID)
+                          && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                          && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                           && l.OPERATIONPERFORMED == false
                           && e.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                           && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
@@ -17163,6 +17179,8 @@ namespace FintrakBanking.Repositories.Credit
                            && op.OPERATIONCOMPLETED == false
                            && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
                            && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
+                           && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                           && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                             select new CamProcessedLoanViewModel
                             {
                                 divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
@@ -17394,6 +17412,7 @@ namespace FintrakBanking.Repositories.Credit
             //    ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
             //}
 
+            var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.OPERATIONTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
                                    //join atrail in context.TBL_APPROVAL_TRAIL on b.LOANREVIEWAPPLICATIONID equals atrail.TARGETID
@@ -17405,6 +17424,9 @@ namespace FintrakBanking.Repositories.Credit
                                   //&& (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
                                   // && ids.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)
                                   //  && atrail.RESPONSESTAFFID == null
+                                  && !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID)
+                                  && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                  && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                   && b.OPERATIONPERFORMED == false
                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
@@ -17558,6 +17580,8 @@ namespace FintrakBanking.Repositories.Credit
                             && op.OPERATIONCOMPLETED == false
                             && ((cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId))
                             && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
+                            && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                            && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                             select new LoanViewModel
                             {
                                 lmsdatecreated = b.DATETIMECREATED,
@@ -21826,6 +21850,17 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
             }
 
+
+            if (models != null)
+            {
+                bool validate = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(x => x.AMOUNTRECOVERED == models.amountRecovered && x.TOTALRECOVERYAMOUNT == models.totalAmountRecovery && x.DATETIMECREATED.Month == DateTime.Now.Month && x.CREATEDBY == user.createdBy && x.ACCREDITEDCONSULTANT == models.accreditedConsultant).Any();
+                if (validate)
+                {
+                    throw new ConditionNotMetException("It looks like same commission has already been captured for this Agent");
+                }
+                
+            }
+
             try
             {
                 var record = new TBL_LOAN_RECOVERY_COMMISSION_INTERNAL
@@ -21869,8 +21904,7 @@ namespace FintrakBanking.Repositories.Credit
                         updateRecord.TOTALAMOUNTRECOVERY = 0;
                         updateRecord.ISFULLYRECOVERED = true;
                         updateRecord.OPERATIONCOMPLETED = true;
-                    }
-                    if (updateRecord.TOTALAMOUNTRECOVERY != models.amountRecovered)
+                    }else
                     {
                         updateRecord.TOTALAMOUNTRECOVERY = (updateRecord.TOTALAMOUNTRECOVERY - models.amountRecovered);
                     }

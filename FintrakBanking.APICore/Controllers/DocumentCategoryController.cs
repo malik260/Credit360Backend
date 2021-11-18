@@ -51,7 +51,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("document-category")]
         public HttpResponseMessage AddDocumentCategory([FromBody] DocumentCategoryViewModel model)
         {
@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("document-category/{id}")]
         public HttpResponseMessage UpdateDocumentCategory([FromBody] DocumentCategoryViewModel model, int id)
         {
@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("document-category/{id}")]
         public HttpResponseMessage DeleteDocumentCategory(int id)
         {

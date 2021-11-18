@@ -53,13 +53,13 @@ namespace FintrakBanking.APICore
                 return Task.FromResult<object>(null);
             }*/
 
-            
+            /*
             var claim = principal.Claims.FirstOrDefault(x => x.Type.ToLower() == "logincode").Value;
             if (!(claim == user.LOGINCODE))
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized);
                 return Task.FromResult<object>(null);
-            }
+            }*/
             
             //User is Authorized, complete execution
             return Task.FromResult<object>(null);

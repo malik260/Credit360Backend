@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("category")]
         public HttpResponseMessage AddRacCategory([FromBody] RacCategoryViewModel model)
         {
@@ -98,7 +98,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("category/{id}")]
         public HttpResponseMessage UpdateRacCategory([FromBody] RacCategoryViewModel model, int id)
         {
@@ -115,7 +115,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("category/{id}")]
         public HttpResponseMessage DeleteRacCategory(int id)
         {
@@ -153,7 +153,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("definition")]
         public HttpResponseMessage AddRacDefinition([FromBody] RacDefinitionViewModel model)
         {
@@ -168,7 +168,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("definition/{id}")]
         public HttpResponseMessage UpdateRacDefinition([FromBody] RacDefinitionViewModel model, int id)
         {
@@ -185,7 +185,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("definition/{id}")]
         public HttpResponseMessage DeleteRacDefinition(int id)
         {
@@ -223,7 +223,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("input-type")]
         public HttpResponseMessage AddRacInputType([FromBody] RacInputTypeViewModel model)
         {
@@ -238,7 +238,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("input-type/{id}")]
         public HttpResponseMessage UpdateRacInputType([FromBody] RacInputTypeViewModel model, int id)
         {
@@ -255,7 +255,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("input-type/{id}")]
         public HttpResponseMessage DeleteRacInputType(int id)
         {
@@ -293,7 +293,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("detail")]
         public HttpResponseMessage AddRacDetail([FromBody] RacDetailViewModel model)
         {
@@ -308,7 +308,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("detail/{id}")]
         public HttpResponseMessage UpdateRacDetail([FromBody] RacDetailViewModel model, int id)
         {
@@ -325,7 +325,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("detail/{id}")]
         public HttpResponseMessage DeleteRacDetail(int id)
         {
@@ -383,7 +383,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("item")]
         public HttpResponseMessage AddRacItem([FromBody] RacItemViewModel model)
         {
@@ -398,7 +398,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("item/{id}")]
         public HttpResponseMessage UpdateRacItem([FromBody] RacItemViewModel model, int id)
         {
@@ -415,7 +415,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("item/{id}")]
         public HttpResponseMessage DeleteRacItem(int id)
         {
@@ -453,7 +453,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("option")]
         public HttpResponseMessage AddRacOption([FromBody] RacOptionViewModel model)
         {
@@ -468,7 +468,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("option/{id}")]
         public HttpResponseMessage UpdateRacOption([FromBody] RacOptionViewModel model, int id)
         {
@@ -485,7 +485,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("option/{id}")]
         public HttpResponseMessage DeleteRacOption(int id)
         {
@@ -523,7 +523,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("option-item")]
         public HttpResponseMessage AddRacOptionItem([FromBody] RacOptionItemViewModel model)
         {
@@ -538,7 +538,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("option-item/{id}")]
         public HttpResponseMessage UpdateRacOptionItem([FromBody] RacOptionItemViewModel model, int id)
         {
@@ -555,7 +555,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("option-item/{id}")]
         public HttpResponseMessage DeleteRacOptionItem(int id)
         {
@@ -593,7 +593,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("category-type")]
         public HttpResponseMessage AddRacCategoryType([FromBody] RacCategoryTypeViewModel model)
         {
@@ -603,7 +603,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("category-type/{id}")]
         public HttpResponseMessage UpdateRacCategoryType([FromBody] RacCategoryTypeViewModel model, int id)
         {
@@ -613,7 +613,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("category-type/{id}")]
         public HttpResponseMessage DeleteRacCategoryType(int id)
         {

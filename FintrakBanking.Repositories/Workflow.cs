@@ -403,7 +403,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                     var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId).ToList();
                     var roles = approvalLevel.Select(c => c.STAFFROLEID).ToList();
-                    var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID)).ToList();
+                    var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID) && x.DELETED == false).ToList();
 
                     var approvalStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevelId).Select(d => d.STAFFID).ToList();
                     approvalStaff.AddRange(staffInrole.Select(d => d.STAFFID).ToList());
@@ -455,7 +455,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var businessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(this.businessUnitId);
                 var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId).ToList();
                 var roles = approvalLevel.Select(c => c.STAFFROLEID).ToList();
-                var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID) && ((x.BUSINESSUNITID == this.businessUnitId && x.BUSINESSUNITID != null) || x.MISCODE.Trim() == businessUnit.BUSINESSUNITINITIALS)).ToList();
+                var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID) && ((x.BUSINESSUNITID == this.businessUnitId && x.BUSINESSUNITID != null) || x.MISCODE.Trim() == businessUnit.BUSINESSUNITINITIALS) && x.DELETED == false).ToList();
 
                 var approvalStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevelId).Select(d => d.STAFFID).ToList();
                 approvalStaff.AddRange(staffInrole.Select(d => d.STAFFID).ToList());
@@ -503,7 +503,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             foreach(var level in grid)
             {
                 var levelRole = context.TBL_APPROVAL_LEVEL.Find(level.ApprovalLevelId).STAFFROLEID;
-                var staff = context.TBL_STAFF.Find(staffId);
+                var staff = context.TBL_STAFF.Where(x=>x.STAFFID == staffId && x.DELETED == false).FirstOrDefault();
                 var levelRoleIsStaffRole = levelRole == staff.STAFFROLEID;
                 var staffInLevelStaffs = context.TBL_APPROVAL_LEVEL_STAFF.Any(l => l.STAFFID == staffId && l.APPROVALLEVELID == level.ApprovalLevelId);
                 if (!levelRoleIsStaffRole && !staffInLevelStaffs)
@@ -658,7 +658,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? ResolveReroute(int? toStaffId)
         {
             if (toStaffId == this.toStaffId) throw new SecureException("Already with staff!");
-            var user = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == this.staffId);
+            var user = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == this.staffId && x.DELETED == false);
             var level = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false && x.LEVELTYPEID == 2 && x.STAFFROLEID == user.STAFFROLEID), mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new ApprovalLevelInfo
@@ -727,13 +727,13 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.toStaffId != null)
             {
-                var p = context.TBL_STAFF.Find(this.toStaffId);
+                var p = context.TBL_STAFF.Where(x=>x.STAFFID == this.toStaffId && x.DELETED == false).FirstOrDefault();
                 response.nextPersonName = p?.STAFFCODE + " -- " + p?.FIRSTNAME + " " + p?.MIDDLENAME + " " + p?.LASTNAME;
             }
 
             if (this.loopedStaffId != null && this.loopedStaffId > 0)
             {
-                var p = context.TBL_STAFF.Find(this.loopedStaffId);
+                var p = context.TBL_STAFF.Where(x=>x.STAFFID == this.loopedStaffId && x.DELETED == false).FirstOrDefault();
                 response.nextPersonId = this.loopedStaffId;
                 response.nextLevelName = p.TBL_STAFF_ROLE.STAFFROLENAME;
                 response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;
@@ -1029,7 +1029,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (sameDesk) 
             {
-                var user = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == this.staffId);
+                var user = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == this.staffId && x.DELETED == false);
                 next = approvalLevels.FirstOrDefault(x => x.DefaultRoleId == user.STAFFROLEID);
             }
 
@@ -1073,7 +1073,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 TBL_STAFF defaultRole = null;
                 if (staff.Any() == false)
                 {
-                    defaultRole = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == this.staffId && x.STAFFROLEID == level.DefaultRoleId);
+                    defaultRole = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == this.staffId && x.STAFFROLEID == level.DefaultRoleId && x.DELETED == false);
                 }
 
                 TBL_STAFF_RELIEF relieverStaff = null;
@@ -1358,7 +1358,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public void GetReportingLine(int staffId)
         {
-            var s = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+            var s = context.TBL_STAFF.Where(x => x.STAFFID == staffId && x.DELETED == false).FirstOrDefault();
             line.Add(new ReportingLine
             {
                 staffId = (int)s.STAFFID,
@@ -1376,12 +1376,12 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? GetReportingLineStaffId() // if workflow is forced to use organogram
         {
             var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
-            var fromStaff = context.TBL_STAFF.Find(this.staffId);
+            var fromStaff = context.TBL_STAFF.Where(x=>x.STAFFID == this.staffId && x.DELETED == false).FirstOrDefault();
             if (next == null) { return null; }
             if (this.toStaffId != null) { return toStaffId; }
             //if (this.toStaffId != null) { return null; }
             //if (this.externalInitialization == true && !businessRoleIds.Contains(fromStaff.STAFFROLEID)) { return null; }
-            var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId && x.DELETED == false).FirstOrDefault();
             if (staff == null) { return null; }
             GetReportingLine(staffId);
             //if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || (this.fromLevelId == null && !businessRoleIds.Contains(fromStaff.STAFFROLEID)))
@@ -1809,7 +1809,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         if(this.staffId > 0)
                         {
-                            var currentRequestStaff = context.TBL_STAFF.Find(this.staffId);
+                            var currentRequestStaff = context.TBL_STAFF.Where(x=>x.STAFFID == this.staffId && x.DELETED == false).FirstOrDefault();
                             if (currentRequestStaff != null && level.ROLEIDTOROUTE != currentRequestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
                             {
                                 continue;
@@ -2171,7 +2171,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private IQueryable<OperationStaffViewModel> GetAllStaffNames()
         {
-            return this.context.TBL_STAFF.Select(s => new OperationStaffViewModel
+            return this.context.TBL_STAFF.Where(s=>s.DELETED == false).Select(s => new OperationStaffViewModel
             {
                 id = s.STAFFID,
                 name = s.FIRSTNAME + " " + s.LASTNAME
@@ -2300,12 +2300,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 TBL_STAFF owner;
                 if (trailLog.Count() == 0)
                 {
-                    owner = context.TBL_STAFF.Find(this.staffId);
+                    owner = context.TBL_STAFF.Where(x=>x.STAFFID == this.staffId && x.DELETED == false).FirstOrDefault();
                 }
                 else
                 {
                     var trails = trailLog.OrderBy(x => x.APPROVALTRAILID);
                     owner = context.TBL_STAFF.Find(trails.First().REQUESTSTAFFID);
+                    //owner = context.TBL_STAFF.Where(x => x.STAFFID == trails.First().REQUESTSTAFFID && x.DELETED == false).FirstOrDefault();
                 }
 
                 int targetId = this.targetId;
@@ -2334,7 +2335,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 if (this.nextLevelId == this.fromLevelId && this.toStaffId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred)
                 {
-                    fromLevelName = context.TBL_STAFF.Find(this.staffId)?.TBL_STAFF_ROLE?.STAFFROLENAME;
+                    fromLevelName = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId && x.DELETED == false).FirstOrDefault()?.TBL_STAFF_ROLE?.STAFFROLENAME;
                 }
 
                 if (this.nextLevelId > 0)
@@ -2344,18 +2345,18 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var levelWorkflowNotification = worflowNotificationSetups?.FirstOrDefault(n => n.GROUPOPERATIONMAPPINGID == nextLevel?.Mapping.GROUPOPERATIONMAPPINGID && n.APPROVALLEVELID == nextLevel?.ApprovalLevelId);
                     if (levelWorkflowNotification?.NOTIFYOFPENDINGAPPROVALS ?? false)
                     {
-                        var alert = context.TBL_ALERT_TITLE.FirstOrDefault(a => a.ALERTTITLEID == levelWorkflowNotification.PENDINGAPPROVALALERTTITLEID);
+                        var alert = context.TBL_ALERT_TITLE.FirstOrDefault(a => a.ALERTTITLEID == levelWorkflowNotification.PENDINGAPPROVALALERTTITLEID && a.ISACTIVE );
                         if (alert != null)
                         {
                             if (this.toStaffId != null)
                             {
-                                reciever = context.TBL_STAFF.Find(this.toStaffId);
+                                reciever = context.TBL_STAFF.Where(x => x.STAFFID == this.toStaffId && x.DELETED == false).FirstOrDefault();
                                 recipientName = reciever?.FIRSTNAME;
                                 this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
                             }
                             else if (this.loopedStaffId != null)
                             {
-                                reciever = context.TBL_STAFF.Find(this.loopedStaffId);
+                                reciever = context.TBL_STAFF.Where(x => x.STAFFID == this.loopedStaffId && x.DELETED == false).FirstOrDefault();
                                 recipientName = reciever.FIRSTNAME;
                                 this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
                             }
@@ -2373,12 +2374,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 .Select(x => x.TBL_STAFF.EMAIL)
                                 .Distinct().ToList();
 
-                                var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.DefaultRoleId && s.STAFFID != reciever.STAFFID).Select(x => x.EMAIL).ToList();//exempt the tostaff already sent
+                                var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.DefaultRoleId && s.STAFFID != reciever.STAFFID && s.DELETED == false).Select(x => x.EMAIL).ToList();//exempt the tostaff already sent
                                 emails = levelStaffEmails.Union(nextLevelStaffEmails).ToList();
 
                                 if (this.reliefStaffId > 0)
                                 {
-                                    var reliefRecord = context.TBL_STAFF.Find(this.reliefStaffId);
+                                    var reliefRecord = context.TBL_STAFF.Where(x=>x.STAFFID == this.reliefStaffId && x.DELETED == false).FirstOrDefault();
                                     if (!(String.IsNullOrEmpty(reliefRecord.EMAIL)) && !(String.IsNullOrWhiteSpace(reliefRecord.EMAIL)))
                                     {
                                         emails.Add(reliefRecord.EMAIL);
@@ -2416,7 +2417,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if (level.requestStaffId > 0)
                         {
                             ///reciever = context.TBL_STAFF.Find(level.requestStaffId);
-                            recieverInCopy = context.TBL_STAFF.Find(level.requestStaffId); //just added
+                            recieverInCopy = context.TBL_STAFF.Where(x=>x.STAFFID == level.requestStaffId && x.DELETED == false).FirstOrDefault(); //just added
                             userInCopyFirstName = recieverInCopy?.FIRSTNAME; //just added
                             recipientName = reciever?.FIRSTNAME;
                             //this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
@@ -2441,7 +2442,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 if (ownerId > 0)
                                 {
                                     ///reciever = context.TBL_STAFF.Find(ownerId);
-                                    recieverInCopy = context.TBL_STAFF.Find(ownerId); //just added
+                                    recieverInCopy = context.TBL_STAFF.Where(x=>x.STAFFID == ownerId && x.DELETED == false).FirstOrDefault(); //just added
                                     userInCopyFirstName = recieverInCopy?.FIRSTNAME; //just added
                                     recipientName = reciever?.FIRSTNAME;
                                     messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, reciever?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString(), userInCopyFirstName);
@@ -2451,10 +2452,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 var initiatorId = trailLevels.FirstOrDefault()?.requestStaffId;
                                 if (initiatorId > 0)
                                 {
-                                    reciever = context.TBL_STAFF.Find(initiatorId);
+                                    reciever = context.TBL_STAFF.Where(x=>x.STAFFID == initiatorId && x.DELETED == false).FirstOrDefault();
                                     recipientName = reciever?.FIRSTNAME;
 
-                                    recieverInCopy = context.TBL_STAFF.Find(initiatorId); //just added
+                                    recieverInCopy = context.TBL_STAFF.Where(x=>x.STAFFID == initiatorId && x.DELETED == false).FirstOrDefault(); //just added
                                     userInCopyFirstName = recieverInCopy?.FIRSTNAME; //just added
 
                                     messageBody = ReplaceNotificationPlaceholders(alert.TEMPLATE, reciever?.FIRSTNAME, recipientName, fromLevelName, operationName, status, time, tat.ToString(), userInCopyFirstName);
