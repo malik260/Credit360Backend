@@ -33602,6 +33602,8 @@ namespace FintrakBanking.Repositories.Credit
                                  orderby b.REQUESTDATE descending
                                  select new MultipleInsuranceOutputApprovalViewModel()
                                  {
+                                     targetId = atrail.TARGETID,
+                                     collateralInsuranceTrackingId = a.COLLATERALINSURANCETRACKINGID,
                                      customerCode = a.CUSTOMERCODE,
                                      collateralCode = a.COLLATERALCODE,
                                      customerId = a.CUSTOMERCODE,
@@ -39796,11 +39798,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 using (var trans = context.Database.BeginTransaction())
                 {
-                    foreach (var record in entity)
-                    {
-
+                    //foreach (var record in entity)
+                    //{
+                    var batchCode = entity[0].batchCode;
                         var reviewRecord = (from s in context.TBL_BULK_INSURANCE_UPLOAD_APPROVAL
-                                            where s.BULKINSURANCEUPLOADAPPROVALID == record.targetId
+                                            where s.BATCHCODE == batchCode
                                             && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                             select s).FirstOrDefault();
 
@@ -39810,7 +39812,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = user.companyId,
                             approvalStatusId = ((short)approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)approvalStatusId,
                             comment = comment,
-                            targetId = record.collateralInsuranceTrackingId,
+                            targetId = reviewRecord.BULKINSURANCEUPLOADAPPROVALID,
                             operationId = reviewRecord.OPERATIONID,
                             BranchId = user.BranchId,
                             deferredExecution = false
@@ -39842,13 +39844,23 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
                             {
-                                var validRecords = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.ISCOLLATERAL == false).ToList();
+                                var validRecords = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.VALIDITYSTATUS == true).ToList();
                                 foreach (var validRecord in validRecords)
                                 {
                                     if (validRecord.ISCOLLATERAL == false)
                                     {
-                                        var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == validRecord.COLLATERALCUSTOMERID).FirstOrDefault();
-                                        if (doseRecordExist == null)
+                                        if (validRecord.COLLATERALCUSTOMERID != null)
+                                        {
+                                            var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == validRecord.COLLATERALCUSTOMERID).FirstOrDefault();
+                                            if (doseRecordExist != null)
+                                            {
+                                                var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
+                                                bulkInsuranceUploads(rec);
+                                                rec.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                                context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(rec);
+                                            }
+                                        }
+                                        else
                                         {
                                             var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
                                             bulkInsuranceUploads(rec);
@@ -39863,24 +39875,26 @@ namespace FintrakBanking.Repositories.Credit
                                         {
                                             var insurnceName = "";
                                             var model = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
-                                            var verifyCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.CUSTOMERCODE == validRecord.CUSTOMERCODE).FirstOrDefault();
-                                            if (verifyCollateral != null)
+                                            var verifyCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == validRecord.COLLATERALCODE).FirstOrDefault();
+                                            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == validRecord.CUSTOMERCODE).FirstOrDefault();
+                                            if (verifyCollateral == null)
                                             {
 
                                                 var collateral = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
                                                 {
-                                                    COLLATERALTYPEID = model.COLLATERALTYPE ?? 0,
-                                                    COLLATERALSUBTYPEID = 0,
+                                                    COLLATERALTYPEID = model.COLLATERALTYPE ?? 4,
+                                                    COLLATERALSUBTYPEID = 23,
                                                     COLLATERALCODE = model.COLLATERALCODE,
+                                                    CUSTOMERCODE = model.CUSTOMERCODE,
                                                     COLLATERALVALUE = (decimal)0m,
                                                     COMPANYID = 1,
                                                     ALLOWSHARING = true,
                                                     ISLOCATIONBASED = true,
                                                     VALUATIONCYCLE = null,
                                                     HAIRCUT = 0,
-                                                    CURRENCYID = 0,
+                                                    CURRENCYID = 1,
                                                     EXCHANGERATE = 0,
-                                                    CUSTOMERID = verifyCollateral.CUSTOMERID,
+                                                    CUSTOMERID = customer.CUSTOMERID,
                                                     CAMREFNUMBER = null,
                                                     CREATEDBY = model.CREATEDBY,
                                                     DATETIMECREATED = DateTime.Now,
@@ -39914,7 +39928,7 @@ namespace FintrakBanking.Repositories.Credit
                                                     INSURERADDRESS = model.ISURANCECOMPANYADDRESS,
                                                     POLICYSTARTDATE = (DateTime)model.INSURANCESTARTDATE,
                                                     ASSIGNDATE = (DateTime)model.INSURANCESTARTDATE,
-                                                    RENEWALFREQUENCYTYPEID = 0,
+                                                    RENEWALFREQUENCYTYPEID = 1,
                                                     INSURERDETAILS = model.COLLATERALDESCRIPTION,
                                                     INSURANCEPOLICYNUMBER = model.POLICYNUMBER,
                                                     POLICYRENEWALDATE = (DateTime)model.INSURANCEENDDATE,
@@ -39931,7 +39945,7 @@ namespace FintrakBanking.Repositories.Credit
                                 }
                                 reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                             }
-                        }
+                        //}
 
                     }
                     context.SaveChanges();
