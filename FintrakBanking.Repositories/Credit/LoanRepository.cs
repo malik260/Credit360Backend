@@ -19458,17 +19458,19 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var policyRequest in models)
                 {
                     policyRequest.batchCode = batchCode;
-                    if (policyRequest.isCollateral.ToLower() != "" && (policyRequest.isCollateral.ToLower() == "n" || policyRequest.isCollateral.ToLower() == "yes"))
+                    if (policyRequest.isCollateral.ToLower() != "" && (policyRequest.isCollateral.ToLower() == "n" || policyRequest.isCollateral.ToLower() == "yes") )
                     {
-                        var collateralDetail = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == policyRequest.collateralCode).FirstOrDefault();
-                        if (collateralDetail != null)
+                        if (policyRequest.passed == true)
                         {
-                            policyRequest.collateralCustomerId = collateralDetail.COLLATERALCUSTOMERID;
-                            policyRequest.collateralDetails = collateralDetail.COLLATERALSUMMARY;
-                            policyRequest.collateralSubTypeId = collateralDetail.COLLATERALSUBTYPEID;
-                            policyRequest.collateralTypeId = collateralDetail.COLLATERALTYPEID;
+                            var collateralDetail = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == policyRequest.collateralCode).FirstOrDefault();
+                            if (collateralDetail != null)
+                            {
+                                policyRequest.collateralCustomerId = collateralDetail.COLLATERALCUSTOMERID;
+                                policyRequest.collateralDetails = collateralDetail.COLLATERALSUMMARY;
+                                policyRequest.collateralSubTypeId = collateralDetail.COLLATERALSUBTYPEID;
+                                policyRequest.collateralTypeId = collateralDetail.COLLATERALTYPEID;
+                            }
                         }
-
                         var confirmIfRecordAlreadyExist = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(t => t.COLLATERALCUSTOMERID == policyRequest.collateralCustomerId).FirstOrDefault();
                         if (confirmIfRecordAlreadyExist == null)
                         {
@@ -21060,7 +21062,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else
                         {
-                            customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode.ToString()).FirstOrDefault();
+                            customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode.Trim().ToString()).FirstOrDefault();
 
                             if (currentLine.collateralDescription == null)
                             {
@@ -21075,6 +21077,10 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             else
                             {
+                                currentLine.collateralCustomerId = customerCollateral.COLLATERALCUSTOMERID;
+                                currentLine.collateralDetails = customerCollateral.COLLATERALSUMMARY;
+                                currentLine.collateralCode = customerCollateral.COLLATERALCODE;
+
                                 var customerExistingCollateralPolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).FirstOrDefault();
                                 if (customerExistingCollateralPolicy != null)
                                 {
