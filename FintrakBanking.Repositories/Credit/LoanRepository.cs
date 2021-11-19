@@ -17080,7 +17080,7 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                         where 
                           l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
-                          && !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID)
+                          && !operationsRecords.Contains(l.LOANREVIEWAPPLICATIONID)
                           && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                           && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                           && l.OPERATIONPERFORMED == false
