@@ -113,7 +113,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+<<<<<<< HEAD
       <HintPath>..\..\..\Users\benjamin.gbaaikye\Documents\LIVE\Mazino\XLeratorDLL-financial.dll</HintPath>
+=======
+      <HintPath>..\FintrakBanking.APICore\bin\XLeratorDLL-financial.dll</HintPath>
+>>>>>>> 92b11e5c3e71a43f46f1405715900f861fded8d6
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +158,7 @@
     <Compile Include="Credit\LoanArchiveRepository.cs" />
     <Compile Include="Credit\OriginalDocumentReleaseRepository.cs" />
     <Compile Include="Credit\ProjectSiteReportRepository.cs" />
+    <Compile Include="Credit\SupportUtilityRepository.cs" />
     <Compile Include="Credit\TestCollateralRepository.cs" />
     <Compile Include="Credit\ValuationReportRepository.cs" />
     <Compile Include="Credit\ValuationRequestTypeRepository.cs" />
