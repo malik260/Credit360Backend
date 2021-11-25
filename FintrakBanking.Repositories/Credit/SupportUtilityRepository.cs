@@ -647,8 +647,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var customerMain = context.TBL_CUSTOMER.Find(customerId);
                 var customerTemp = context.TBL_TEMP_CUSTOMER.Find(customerId);
+                var customerMain = context.TBL_CUSTOMER.Find(customerId);
+                
                 if (customerMain != null && customerTemp !=null)
                 {
                     TBL_TEMP_CUSTOMER customer = new TBL_TEMP_CUSTOMER();
@@ -735,13 +736,13 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public bool UpdateStaff(int staffid, StaffInfoViewModel staffModel)
+        public bool UpdateStaffRecord(int staffId, StaffInfoViewModel staffModel)
         {
 
             bool isUpdate = false;
             TBL_TEMP_PROFILE_USER user = null;
-            var staffMain = context.TBL_STAFF.Find(staffid);
-            var staffTemp = context.TBL_TEMP_STAFF.Find(staffid);
+            var staffMain = context.TBL_STAFF.Find(staffId);
+            var staffTemp = context.TBL_TEMP_STAFF.Find(staffId);
             //var existingTempStaff = context.TBL_TEMP_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower() && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
 
             if (staffTemp != null && staffMain !=null)
@@ -774,8 +775,8 @@ namespace FintrakBanking.Repositories.Credit
                 tempStaff.STATEID = staffTemp.STATEID;
                 tempStaff.CITYID = staffTemp.CITYID;
                 tempStaff.STAFFSIGNATURE = staffTemp.STAFFSIGNATURE;
-                tempStaff.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                tempStaff.ISCURRENT = false;
+                tempStaff.APPROVALSTATUSID = staffModel.ApprovalStatusId;
+                tempStaff.ISCURRENT = staffModel.isCurrent;
                 tempStaff.LOAN_LIMIT = staffTemp.LOAN_LIMIT;
                 tempStaff.WORKSTARTDURATION = staffTemp.WORKSTARTDURATION;
                 tempStaff.WORKENDDURATION = staffTemp.WORKENDDURATION;
@@ -794,7 +795,7 @@ namespace FintrakBanking.Repositories.Credit
                 URL = staffModel.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = staffid,
+                TARGETID = staffId,
                 DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
             };

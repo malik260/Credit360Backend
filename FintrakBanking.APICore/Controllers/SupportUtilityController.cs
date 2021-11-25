@@ -3,6 +3,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.SupportUtility;
 using System;
 using System.Collections.Generic;
@@ -168,6 +169,43 @@ namespace FintrakBanking.APICore.Controllers
                 entity.customerSensitivityLevelId = 1;
 
                 var data = repo.UpdateCustomerRecord(customerId, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been updated successfully." });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = ce.Message });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("update-staff-record/{staffId}")]
+        public HttpResponseMessage UpdateStaffRecord(int staffId, StaffInfoViewModel staffModel)
+        {
+            try
+            {
+                staffModel.userBranchId = (short)token.GetBranchId;
+                staffModel.companyId = (short)token.GetCompanyId;
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                staffModel.applicationUrl = HttpContext.Current.Request.Path;
+                staffModel.createdBy = token.GetStaffId;
+                staffModel.customerSensitivityLevelId = 1;
+
+                var data = repo.UpdateStaffRecord(staffId, staffModel);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

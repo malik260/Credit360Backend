@@ -28,6 +28,7 @@ namespace FintrakBanking.Interfaces.Credit
       CustomerViewModels GetTempCustomerRecord(int customerId);
       ApprovalTrailViewModel GetSingleTrail(int approvalTrailId);
       bool UpdateCustomerRecord(int customerId, CustomerViewModels entity);
+      bool UpdateStaffRecord(int staffId, StaffInfoViewModel staffModel);
       List<CasaViewModel> GetCasaCustomerRecord(int customerId);
     }
 
