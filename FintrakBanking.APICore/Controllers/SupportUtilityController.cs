@@ -193,8 +193,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [ClaimsAuthorization]
-        [Route("update-staff-record/{staffId}")]
-        public HttpResponseMessage UpdateStaffRecord(int staffId, StaffInfoViewModel staffModel)
+        [Route("update-staff-record/{staffId}/{staffCode}")]
+        public HttpResponseMessage UpdateStaffRecord( int staffId, string staffCode, StaffInfoViewModel staffModel)
         {
             try
             {
@@ -205,7 +205,7 @@ namespace FintrakBanking.APICore.Controllers
                 staffModel.createdBy = token.GetStaffId;
                 staffModel.customerSensitivityLevelId = 1;
 
-                var data = repo.UpdateStaffRecord(staffId, staffModel);
+                var data = repo.UpdateStaffRecord( staffId, staffCode, staffModel);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

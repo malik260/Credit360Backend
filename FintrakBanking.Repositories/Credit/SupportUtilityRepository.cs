@@ -647,17 +647,17 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var customerTemp = context.TBL_TEMP_CUSTOMER.Find(customerId);
+                var customerTemp = context.TBL_TEMP_CUSTOMER.Where(x=> x.CUSTOMERID == customerId).FirstOrDefault();
                 var customerMain = context.TBL_CUSTOMER.Find(customerId);
                 
                 if (customerMain != null && customerTemp !=null)
                 {
                     TBL_TEMP_CUSTOMER customer = new TBL_TEMP_CUSTOMER();
-                    //customer.CUSTOMERCODE = entity.customerCode;
-                    //customer.CUSTOMERTYPEID = entity.customerTypeId;
-                    //customer.FIRSTNAME = entity.firstName;
-                    //customer.MIDDLENAME = entity.middleName;
-                    //customer.LASTNAME = entity.lastName;
+                    customer.CUSTOMERCODE = customerTemp.CUSTOMERCODE;
+                    customer.CUSTOMERTYPEID = customerTemp.CUSTOMERTYPEID;
+                    customer.FIRSTNAME = customerTemp.FIRSTNAME;
+                    customer.MIDDLENAME = customerTemp.MIDDLENAME;
+                    customer.LASTNAME = customerTemp.LASTNAME;
                     customer.CUSTOMERID = customerTemp.CUSTOMERID;
                     customer.BRANCHID = customerTemp.BRANCHID;
                     customer.COMPANYID = customerTemp.COMPANYID;
@@ -685,8 +685,8 @@ namespace FintrakBanking.Repositories.Credit
                     customer.CREATEDBY = customerTemp.CREATEDBY;
                     customer.DATETIMECREATED = customerTemp.DATETIMECREATED;
                     customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                    customer.ISCURRENT = false;
-                    customer.ACCOUNTCREATIONCOMPLETE = true;
+                    customer.ISCURRENT = entity.isCurrent;
+                    customer.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
                     customer.COUNTRYOFRESIDENTID = customerTemp.COUNTRYOFRESIDENTID;
                     customer.NUMBEROFDEPENDENTS = customerTemp.NUMBEROFDEPENDENTS;
                     customer.NUMBEROFLOANSTAKEN = customerTemp.NUMBEROFLOANSTAKEN;
@@ -702,27 +702,27 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
              
-                // Audit Section ----------------------------
-                var audit = new TBL_AUDIT
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
-                    STAFFID = entity.createdBy,
-                    BRANCHID = (short)entity.userBranchId,
-                    DETAIL = "Updated TBL_CUSTOMER from support Utility: " + customerMain.FIRSTNAME + " with code: " + customerMain.CUSTOMERCODE +
-                             " on" + " (" + entity.customerId + ") ",
-                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                    URL = entity.applicationUrl,
-                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now,
-                    DEVICENAME = CommonHelpers.GetDeviceName(),
-                    OSNAME = CommonHelpers.FriendlyName()
-                };
+                //// Audit Section ----------------------------
+                //var audit = new TBL_AUDIT
+                //{
+                //    AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                //    STAFFID = entity.createdBy,
+                //    BRANCHID = (short)entity.userBranchId,
+                //    DETAIL = "Updated TBL_CUSTOMER from support Utility: " + customerMain.FIRSTNAME + " with code: " + customerMain.CUSTOMERCODE +
+                //             " on" + " (" + entity.customerId + ") ",
+                //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                //    URL = entity.applicationUrl,
+                //    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                //    SYSTEMDATETIME = DateTime.Now,
+                //    DEVICENAME = CommonHelpers.GetDeviceName(),
+                //    OSNAME = CommonHelpers.FriendlyName()
+                //};
                 
                 {
                    
-                    customerMain.ISPROSPECT = false;
-                    customerMain.ACCOUNTCREATIONCOMPLETE = true;
-                    this.auditTrail.AddAuditTrail(audit);
+                    customerMain.ISPROSPECT = entity.isProspect;
+                    customerMain.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
+                   // this.auditTrail.AddAuditTrail(audit);
                     //end of Audit section -------------------------------
 
                     var output = context.SaveChanges() > 0;
@@ -736,13 +736,12 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public bool UpdateStaffRecord(int staffId, StaffInfoViewModel staffModel)
+        public bool UpdateStaffRecord( int staffId, string staffCode, StaffInfoViewModel staffModel)
         {
 
-            bool isUpdate = false;
-            TBL_TEMP_PROFILE_USER user = null;
+           
             var staffMain = context.TBL_STAFF.Find(staffId);
-            var staffTemp = context.TBL_TEMP_STAFF.Find(staffId);
+            var staffTemp = context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffMain.STAFFCODE).FirstOrDefault();
             //var existingTempStaff = context.TBL_TEMP_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower() && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
 
             if (staffTemp != null && staffMain !=null)
@@ -785,53 +784,31 @@ namespace FintrakBanking.Repositories.Credit
                 context.TBL_TEMP_STAFF.Add(tempStaff);
             }
 
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.StaffUpdated,
-                STAFFID = staffModel.createdBy,
-                BRANCHID = (short)staffModel.BranchId,
-                DETAIL = $"Updated Staff '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = staffModel.applicationUrl,
-                APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = staffId,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName(),
-            };
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.StaffUpdated,
+            //    STAFFID = staffModel.createdBy,
+            //    BRANCHID = (short)staffModel.BranchId,
+            //    DETAIL = $"Updated Staff '{staffModel.StaffFullName}' with code '{staffModel.StaffCode}' from support utility",
+            //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+            //    URL = staffModel.applicationUrl,
+            //    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    DEVICENAME = CommonHelpers.GetDeviceName(),
+            //    OSNAME = CommonHelpers.FriendlyName(),
+            //};
 
-         
-                try
-                {
-                    this.auditTrail.AddAuditTrail(audit);
-                    //end of Audit section -------------------------------
 
                     var output = context.SaveChanges() > 0;
-
-                   
-
-                    if (isUpdate != true)
-                    {
-                        context.TBL_TEMP_PROFILE_USER.Add(user);
+                       
                         context.SaveChanges();
-                    }
-
-
 
                 {
-
-                    //end of Audit section -------------------------------
-
-                    
-
                     return output;
                 }
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
+          
         }
     }
 
-}
+
