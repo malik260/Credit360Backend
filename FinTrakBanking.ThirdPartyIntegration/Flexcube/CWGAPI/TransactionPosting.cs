@@ -1571,7 +1571,6 @@
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                    
-
                     CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
