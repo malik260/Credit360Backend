@@ -1285,8 +1285,17 @@ namespace FintrakBanking.Repositories.Credit
                     NOTE = entity.note,
                 });
 
-                context.SaveChanges();
-                //if (context.SaveChanges() > 0) // EF will take care of this
+               var comment = $"New temp miscellaneous collateral type has been created by {entity.createdBy} staffid";
+                workflow.StaffId = entity.createdBy;
+                workflow.CompanyId = entity.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = collateralId;
+                workflow.Comment = comment;
+                workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+               
                 AddMiscellaneousNotes(entity, collateral.TEMPCOLLATERALMISCELLANEOUSID);
             }
         }
@@ -8651,9 +8660,11 @@ namespace FintrakBanking.Repositories.Credit
                                join atrail in context.TBL_APPROVAL_TRAIL on x.TEMPCOLLATERALCUSTOMERID equals atrail.TARGETID
                                join a in context.TBL_CUSTOMER on x.CUSTOMERID equals a.CUSTOMERID
                                let ColSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(c => c.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID).Select(c => c.COLLATERALSUBTYPENAME).FirstOrDefault()
-                               where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
-                                     || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.ISCURRENT == true //|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
-                                                                                                                         //  && x.ISCURRENT == true
+                               where atrail.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved 
+                                     && atrail.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                                     && x.ISCURRENT == true 
+                                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved 
                                      && atrail.RESPONSESTAFFID == null
                                      && atrail.OPERATIONID == (int)OperationsEnum.CollateralApproval
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
@@ -8838,7 +8849,7 @@ namespace FintrakBanking.Repositories.Credit
                     model.collateralCode = refNo;
                 }
 
-                if (model.validTill.Value == null)
+                if (model.validTill == null)
                 {
                     model.validTill = null;
                 }
@@ -8944,7 +8955,8 @@ namespace FintrakBanking.Repositories.Credit
                     INSURABLEVALUE = model.insurableValue,
                     COMMENT = model.comment,
                     CREATEDBY = accountOfficer,
-                    DATETIMECREATED = DateTime.Now
+                    DATETIMECREATED = DateTime.Now,
+                    COLLATERALDESCRIPTION = model.collateralDetails,
                 });
 
                if (context.SaveChanges() > 0)

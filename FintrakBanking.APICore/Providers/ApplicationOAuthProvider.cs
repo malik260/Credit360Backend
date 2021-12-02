@@ -9,6 +9,7 @@ using FintrakBanking.ViewModels.Admin;
 using FintrakBanking.ViewModels.Setups.General;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -31,6 +32,7 @@ namespace FintrakBanking.APICore.Providers
     {
         private readonly string _publicClientId;
         private IAuditTrailRepository auditTrail;
+        
         //private readonly FinTrakBankingContext _bankingContext;
         private TBL_SETUP_GLOBAL appSetup;
         private const string HttpContext = "MS_HttpContext";
@@ -408,6 +410,9 @@ namespace FintrakBanking.APICore.Providers
                 //}
 
                 //appSetup.USE_ACTIVE_DIRECTORY = false;
+
+                
+
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY && record.STAFFROLECODE != "SYSADM")
                 {
                     if (Task.FromResult(
@@ -471,19 +476,22 @@ namespace FintrakBanking.APICore.Providers
                 //    isUserAccountValid = false;
                 //}
 
-                
-                //if (user.logincode == null)
-                //{
-                //    //ify, to eliminate multiple sources of truth for the logincode
-                //    var profile = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME == user.username);
-                //    var loginCode = Guid.NewGuid().ToString() + "@" + ipAddress;
-                //    profile.LOGINCODE = loginCode;
-                //    user.logincode = loginCode;
-                //    _bankingContext.SaveChanges();
-                //}
+
+                if (user.logincode == null)
+                {
+                    //ify, to eliminate multiple sources of truth for the logincode
+                    var profile = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME == user.username);
+                    var loginCode = Guid.NewGuid().ToString() + "@" + ipAddress;
+                    profile.LOGINCODE = loginCode;
+                    user.logincode = loginCode;
+                    _bankingContext.SaveChanges();
+                }
+
+                var userActivities = authRepo.GetUserActivitiesByUser(user.user_id);
+                string userActivitiesJson = JsonConvert.SerializeObject(userActivities);
 
                 var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
-
+                
                 currIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
                 currIdentity.AddClaim(new Claim("username", user.username));
                 currIdentity.AddClaim(new Claim("companyId", user.companyId.ToString()));
@@ -495,6 +503,7 @@ namespace FintrakBanking.APICore.Providers
                 currIdentity.AddClaim(new Claim("userGroupId", user.userGroupId.ToString()));
                 currIdentity.AddClaim(new Claim("usersRole", record.STAFFROLECODE.ToString()));
                 currIdentity.AddClaim(new Claim("logincode", user.logincode == null ? Guid.NewGuid().ToString() + "@" + ipAddress : user.logincode));
+                currIdentity.AddClaim(new Claim("userActivities", userActivitiesJson));
                 var today = DateTime.Now;
 
                 var exipredMin = int.Parse(ConfigurationManager.AppSettings["tokenExpiryMinute"]);
@@ -509,7 +518,6 @@ namespace FintrakBanking.APICore.Providers
 
 
                 var ticket = new AuthenticationTicket(currIdentity, props);
-
                 context.Validated(ticket);
 
                 context.Request.Context.Authentication.SignIn(currIdentity);

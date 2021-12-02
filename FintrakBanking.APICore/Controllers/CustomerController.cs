@@ -280,14 +280,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
-
-
-
-
-
-
         [HttpGet]
         [ClaimsAuthorization]
         [Route("{customerId}")]

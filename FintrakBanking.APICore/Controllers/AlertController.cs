@@ -30,7 +30,6 @@ namespace FintrakBanking.APICore.Controllers
        
         #region title Setup
         [HttpGet]
-        [ClaimsAuthorization]
         [Route("alert-title")]
         public HttpResponseMessage GetAlertTitle()
         {
@@ -200,7 +199,13 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)_token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = _token.GetStaffId;
+                //entity.userActivities = _token.GetUserActivities.ToLower();
 
+                //if(!_token.GetUserActivities.ToLower().Contains(entity.userActivities.ToLower()))
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK,
+                //   new { success = false, message = $"Unauthorize api access" });
+                //}
                 var data = _repo.UpdateAlertTitleStatus(entity);
                 if (data)
                 {

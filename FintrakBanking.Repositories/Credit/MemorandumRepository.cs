@@ -1169,25 +1169,28 @@ namespace FintrakBanking.Repositories.Credit
             var result = new List<DropDownSelect>();
             if (lmsCamOperationIds.Contains(operationId))
             {
-                var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId);
-                foreach (var d in details)
+                var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
+                if (details != null && details.Count() > 0)
                 {
-                    foreach (var t in d.TBL_LMSR_TRANSACTION_DYNAMICS)
+                    foreach (var d in details)
                     {
-                        result.Add(new DropDownSelect { id = d.LOANREVIEWAPPLICATIONID, name = "TRANSACTION DYNAMICS: " + t.DYNAMICS });
-                    }
-                    foreach (var t in d.TBL_LMSR_CONDITION_PRECEDENT)
-                    {
-                        if (!t.ISSUBSEQUENT)
+                        foreach (var t in d.TBL_LMSR_TRANSACTION_DYNAMICS)
                         {
-                            result.Add(new DropDownSelect { id = d.LOANREVIEWAPPLICATIONID, name = "CONDITION SUBSEQUENT: " + t.CONDITION });
+                            result.Add(new DropDownSelect { id = d.LOANREVIEWAPPLICATIONID, name = "TRANSACTION DYNAMICS: " + t.DYNAMICS });
                         }
-                    }
-                    foreach (var t in d.TBL_LMSR_CONDITION_PRECEDENT)
-                    {
-                        if (t.ISSUBSEQUENT)
+                        foreach (var t in d.TBL_LMSR_CONDITION_PRECEDENT)
                         {
-                            result.Add(new DropDownSelect { id = d.LOANREVIEWAPPLICATIONID, name = "CONDITION SUBSEQUENT: " + t.CONDITION });
+                            if (!t.ISSUBSEQUENT)
+                            {
+                                result.Add(new DropDownSelect { id = d.LOANREVIEWAPPLICATIONID, name = "CONDITION SUBSEQUENT: " + t.CONDITION });
+                            }
+                        }
+                        foreach (var t in d.TBL_LMSR_CONDITION_PRECEDENT)
+                        {
+                            if (t.ISSUBSEQUENT)
+                            {
+                                result.Add(new DropDownSelect { id = d.LOANREVIEWAPPLICATIONID, name = "CONDITION SUBSEQUENT: " + t.CONDITION });
+                            }
                         }
                     }
                 }
@@ -1196,12 +1199,15 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (operationId == (int)OperationsEnum.CreditAppraisal)
                 {
-                    var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId);
-                    foreach (var d in details)
+                    var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
+                    if (details != null && details.Count() > 0)
                     {
-                        result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "TRANSACTION DYNAMICS: " + d.TRANSACTIONDYNAMICS });
-                        result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "CONDITION PRECEDENT: " + d.CONDITIONPRECIDENT });
-                        result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "CONDITION SUBSEQUENT: " + d.CONDITIONSUBSEQUENT });
+                        foreach (var d in details)
+                        {
+                            result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "TRANSACTION DYNAMICS: " + d.TRANSACTIONDYNAMICS });
+                            result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "CONDITION PRECEDENT: " + d.CONDITIONPRECIDENT });
+                            result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "CONDITION SUBSEQUENT: " + d.CONDITIONSUBSEQUENT });
+                        }
                     }
                 }
             }

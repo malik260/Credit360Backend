@@ -76,6 +76,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
+        [ClaimsAuthorization]
         [Route("forward-for-related-employer-approval")]
         public HttpResponseMessage ForwardRelatedEmployerForApproval([FromBody] EmployerViewModel entity)
         {

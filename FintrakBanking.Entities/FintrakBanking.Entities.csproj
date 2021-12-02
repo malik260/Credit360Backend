@@ -721,6 +721,7 @@
     <Compile Include="Models\TBL_TERM_SHEET.cs" />
     <Compile Include="Models\TBL_THIRDPARTY_LOAN_MAPPING.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
+    <Compile Include="Models\TBL_USER_CLAIMS.cs" />
     <Compile Include="Models\TBL_VALUATION_REPORT.cs" />
     <Compile Include="Models\TBL_VALUATION_REQUEST_TYPE.cs" />
     <Compile Include="Models\TBL_WORKFLOW_NOTIFICATION.cs" />
@@ -1163,6 +1164,8 @@
     <Compile Include="StagingModels\STG_STAFF.cs" />
     <Compile Include="StagingModels\STG_STAFFMIS.cs" />
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
+    <Compile Include="StagingModels\STG_SUBSIDIARIES.cs" />
+    <Compile Include="StagingModels\STG_SUB_BASICTRANSACTION.cs" />
     <Compile Include="StagingModels\STG_SUB_SECTOR.cs" />
     <Compile Include="StagingModels\STG_TEAM.cs" />
     <Compile Include="StagingModels\STG_TREASURY_RATE_TBL.cs" />

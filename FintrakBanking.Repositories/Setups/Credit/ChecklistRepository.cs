@@ -2271,7 +2271,6 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             if (precedent != null)
                                 precedent.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                              
 
                             if (precedent.CHECKLISTSTATUSID != null)
                                 precedent.CHECKLISTSTATUSID = (int)CheckListStatusEnum.Provided;

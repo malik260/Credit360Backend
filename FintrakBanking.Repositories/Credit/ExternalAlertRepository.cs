@@ -67,11 +67,14 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturities() //done
         {
             List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
-            //var immenentMaturities = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value)).Select(d => d.ACCOUNTOFFICERCODE).ToList();
-            var immenentMaturities = context.TBL_GLOBAL_EXPOSURE.Where(d => d.PRINCIPALOUTSTANDINGBALLCY > 0).Select(d => d.ACCOUNTOFFICERCODE).ToList();
+            var immenentMaturities = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value)).Select(d => d.ACCOUNTOFFICERCODE).ToList();
+            //var immenentMaturities = context.TBL_GLOBAL_EXPOSURE.Where(d => d.PRINCIPALOUTSTANDINGBALLCY > 0).Select(d => d.ACCOUNTOFFICERCODE).ToList();
 
             var staffList = (from s in context.TBL_STAFF
                              where immenentMaturities.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -92,6 +95,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where immenentMaturities.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -106,12 +112,15 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<StaffInfoViewModel> GetImminentMaturitiesGroupHeads()
         {
-            //List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
-            //var groupHeadsEmails = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value)).Select(d => d.GROUPCODE).ToList();
-            var groupHeadsEmails = context.TBL_GLOBAL_EXPOSURE.Where(d => d.PRINCIPALOUTSTANDINGBALLCY > 0).Select(d => d.GROUPCODE).ToList();
+            List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
+            var groupHeadsEmails = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value)).Select(d => d.GROUPCODE).ToList();
+            //var groupHeadsEmails = context.TBL_GLOBAL_EXPOSURE.Where(d => d.PRINCIPALOUTSTANDINGBALLCY > 0).Select(d => d.GROUPCODE).ToList();
 
             var staffList = (from s in context.TBL_STAFF
                              where groupHeadsEmails.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -133,6 +142,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where accountOfficers.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -151,6 +163,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where accountOfficers.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com" 
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -169,6 +184,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where regionOfficers.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -190,6 +208,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where immenentMaturities.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -209,6 +230,9 @@ namespace FintrakBanking.Repositories.Credit
             .Select(d => d.ACCOUNTOFFICERCODE).ToList();
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -245,6 +269,9 @@ namespace FintrakBanking.Repositories.Credit
             .Select(d => d.ACCOUNTOFFICERCODE).ToList();
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -282,6 +309,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -300,6 +330,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -318,6 +351,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -336,6 +372,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -541,6 +580,9 @@ namespace FintrakBanking.Repositories.Credit
              .Select(d => d.ACCOUNTOFFICERCODE).ToList();
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -559,6 +601,9 @@ namespace FintrakBanking.Repositories.Credit
              .Select(d => d.ACCOUNTOFFICERCODE).ToList();
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -4509,6 +4554,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -4840,6 +4886,7 @@ namespace FintrakBanking.Repositories.Credit
                       .Select(d => d.ACCOUNTOFFICERCODE).ToList();
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -4858,6 +4905,7 @@ namespace FintrakBanking.Repositories.Credit
                         .Select(d => d.ACCOUNTOFFICERCODE).ToList();
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -4877,6 +4925,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -4922,6 +4971,7 @@ namespace FintrakBanking.Repositories.Credit
              .Select(d => d.ACCOUNTOFFICERCODE).ToList();
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -4939,6 +4989,7 @@ namespace FintrakBanking.Repositories.Credit
              .Select(d => d.ACCOUNTOFFICERCODE).ToList();
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -4959,6 +5010,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -5063,6 +5115,7 @@ namespace FintrakBanking.Repositories.Credit
            .Select(d => d.ACCOUNTOFFICERCODE).ToList();
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,
@@ -5083,6 +5136,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffList = (from s in context.TBL_STAFF
                              where staffLoanPortfolio.Contains(s.MISCODE)
+                             && s.DELETED == false
                              select new StaffInfoViewModel
                              {
                                  staffId = s.STAFFID,

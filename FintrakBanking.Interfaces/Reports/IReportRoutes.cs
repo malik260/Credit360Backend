@@ -12,6 +12,7 @@ namespace FintrakBanking.Interfaces.Reports
 {
     public interface IReportRoutes
     {
+        string GetOutstandingDocumentDeferredList();
         string GetAllContingentsReport(DateRange dateRange, int companyId, int staffId);
         string GetBondsAndGuaranteeReport(DateRange dateRange, int companyId, int staffId);
         string GetComputationForInternalAgentsReport(DateTime startDate, DateTime endDate);

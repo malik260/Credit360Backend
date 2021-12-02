@@ -30,6 +30,8 @@ using System.Net;
 using System.Web.Script.Serialization;
 using System.Text;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
+using FintrakBanking.Entities.StagingModels;
+using FintrakBanking.Interfaces.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -48,7 +50,8 @@ namespace FintrakBanking.Repositories.Credit
         private ILoanApplicationRepository loanApp;
         private IMemorandumRepository memo;
         private TransactionPosting transaction;
-
+        FinTrakBankingStagingContext stgContext;
+        IHeadOfficeToSubIntegration headOfficeToSub;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -60,7 +63,9 @@ namespace FintrakBanking.Repositories.Credit
             IOfferLetterAndAvailmentRepository _offerLetter,
             ILoanApplicationRepository _loanApp,
             IMemorandumRepository _memo,
-            TransactionPosting _transaction
+            TransactionPosting _transaction,
+            FinTrakBankingStagingContext _stgContext,
+            IHeadOfficeToSubIntegration _headOfficeToSub
             )
         {
             this.context = context;
@@ -73,6 +78,8 @@ namespace FintrakBanking.Repositories.Credit
             this.loanApp = _loanApp;
             this.memo = _memo;
             this.transaction = _transaction;
+            this.stgContext = _stgContext;
+            this.headOfficeToSub = _headOfficeToSub;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -336,8 +343,19 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse ForwardAppraisalMemorandum(ForwardViewModel model)
         {
-            //   Task.Run(() => CreateOutPutDocument(model.applicationId));
-           
+                //Task.Run(() => CreateOutPutDocument(model.applicationId));
+
+                if (model.isExternalSystemApprover)
+                {
+                    var response = headOfficeToSub.PostFacilityApprovalToSubnputs(model);
+                    if(response != null)
+                    {
+                    var update =  stgContext.STG_SUB_BASICTRANSACTION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPROVALLEVELID == model.nextApprovalLevelId && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved).FirstOrDefault();
+                    update.APPROVALSTATUSID = model.applicationStatusId;
+                    stgContext.SaveChanges();
+                    }
+                }
+
                 bool updateApprovedAmount = false;
                 bool generateOutPutDocument = false;
                 int operationId = (int)OperationsEnum.CreditAppraisal;
@@ -3405,7 +3423,7 @@ namespace FintrakBanking.Repositories.Credit
 
         #region FAM Pending Applications
 
-        public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId, bool isSpecific)
+        public async Task<IQueryable<LoanApplicationViewModel>> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId, bool isSpecific)
         {
             // var declarations
             List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
@@ -3421,11 +3439,11 @@ namespace FintrakBanking.Repositories.Credit
             var staffs = general.GetStaffRlieved(staffId);
             //var currentStaff = context.TBL_STAFF.Find(staffs[0]);
 
-            IQueryable<LoanApplicationViewModel> applications = null;
+             IQueryable<LoanApplicationViewModel> applications = null;
 
             var query = new List<LoanApplicationViewModel>();
 
-            query = context.TBL_LOAN_APPLICATION.Where(x =>
+            query = await context.TBL_LOAN_APPLICATION.Where(x =>
                 x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.COMPANYID == companyId
@@ -3526,7 +3544,7 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID
-        }).ToList();
+        }).ToListAsync();
 
             if (isSpecific)
             {
@@ -3543,6 +3561,55 @@ namespace FintrakBanking.Repositories.Credit
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
+        public async Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaryPendingLoanApplications()
+        {
+            var data = await (from a in stgContext.STG_SUB_BASICTRANSACTION
+                              select new SubsidiaryViewModel
+                              {
+                                  loanApplicationId = a.LOANAPPLICATIONID,
+                                  loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                  applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                  relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
+                                  customerId = a.CUSTOMERID,
+                                  customerGlobalId = a.CUSTOMERGLOBALID,
+                                  countryCode = a.COUNTRYCODE,
+                                  productClassName = a.PRODUCTCLASSNAME,
+                                  productClassProcess = a.PRODUCT_CLASS_PROCESS,
+                                  subsidiaryId = a.SUBSIDIARYID,
+                                  applicationDate = a.APPLICATIONDATE,
+                                  systemDateTime = (DateTime)a.SYSTEMDATETIME,
+                                  applicationAmount = a.APPLICATIONAMOUNT,
+                                  totalExposureAmount = a.TOTALEXPOSUREAMOUNT,
+                                  interestRate = a.INTERESTRATE,
+                                  applicationTenor = a.APPLICATIONTENOR,
+                                  currentApprovalLevelId = a.APPROVALLEVELID,
+                                  currentApprovalLevelTypeId = a.APPROVALLEVELGLOBALCODE,
+                                  toStaffId = a.TOSTAFFID,
+                                  divisionCode = a.BUSINESSUNITSHORTCODE,
+                                  timeIn = a.SYSTEMARRIVALDATETIME,
+                                  approvalStatusId = (short)a.APPROVALSTATUSID,
+                                  applicationStatusId = (short)a.APPLICATIONSTATUSID,
+                                  operationName = a.OPERATIONNAME,
+                                  customerName = a.CUSTOMERID.HasValue ? a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME : "",
+                                  dateTimeCreated = a.DATETIMECREATED,
+                                  createdBy = a.CREATEDBY,
+                                  createdByName = a.CREATEDBYNAME
+                              }).ToListAsync();
+
+            return data;
+        }
+
+        public async Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaries()
+        {
+            var data = await (from a in stgContext.STG_SUBSIDIARIES
+                              select new SubsidiaryViewModel
+                              {
+                                  subsidiaryId = a.SUBSIDIARYID,
+                                  subsidiaryName = a.SUBSIDIARYNAME,
+                                  countryId = a.COUNTRYID
+                              }).ToListAsync();
+            return data;
+        }
         public List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps)
         {
             foreach(var app in apps)
