@@ -20905,274 +20905,282 @@ namespace FintrakBanking.Repositories.Credit
 
         private List<MultipleInsuranceOutputViewModel> GetBulkInsuranceInputs(byte[] file)
         {
-            
-                List<MultipleInsuranceOutputViewModel> bulkEntries = new List<MultipleInsuranceOutputViewModel>();
-                TBL_COLLATERAL_CUSTOMER customerCollateral = null;
-                
-                 //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
-                SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
-                MemoryStream ms = new MemoryStream(file);
-                ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
-                //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
-                ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
-                CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
 
-                for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
+            List<MultipleInsuranceOutputViewModel> bulkEntries = new List<MultipleInsuranceOutputViewModel>();
+            TBL_COLLATERAL_CUSTOMER customerCollateral = null;
+
+            //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
+            MemoryStream ms = new MemoryStream(file);
+            ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
+            //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+            ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
+            CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+
+            for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
+            {
+                MultipleInsuranceOutputViewModel currentLine = new MultipleInsuranceOutputViewModel();
+                int ctr = 0;
+                currentLine.errorMessages = new List<string>();
+                for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
                 {
-                    MultipleInsuranceOutputViewModel currentLine = new MultipleInsuranceOutputViewModel();
-                    int ctr = 0;
-                    currentLine.errorMessages = new List<string>();
-                    for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
+                    ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
+
+                    string cellName = CellRange.RowColumnToPosition(j, i);
+                    string cellRow = ExcelRowCollection.RowIndexToName(j);
+                    string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
+                    if (Convert.ToInt32(cellRow) == 1) continue;
+                    ctr = Convert.ToInt32(cellRow);
+                    switch (cellColumn)
                     {
-                        ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
-                        
-                        string cellName = CellRange.RowColumnToPosition(j, i);
-                        string cellRow = ExcelRowCollection.RowIndexToName(j);
-                        string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
-                        if (Convert.ToInt32(cellRow) == 1) continue;
-                        ctr = Convert.ToInt32(cellRow);
-                        switch (cellColumn)
-                        {
-                            case "A":
-                                currentLine.passed = true;
-                                try { currentLine.isCollateral = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
-                                break;
-                            case "B":
-                                currentLine.passed = true;
-                                try { currentLine.customerId = cell.Value.ToString(); }
-                                catch (Exception e)
-                                {
-                                    currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
-                                }
-                                break;
-                            case "C":
-                                currentLine.passed = true;
-                                try {
+                        case "A":
+                            currentLine.passed = true;
+                            try { currentLine.isCollateral = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            break;
+                        case "B":
+                            currentLine.passed = true;
+                            try { currentLine.customerId = cell.Value.ToString(); }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "C":
+                            currentLine.passed = true;
+                            try
+                            {
                                 if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
                                 {
                                     currentLine.collateralCode = null;
                                 }
                                 else { currentLine.collateralCode = cell.Value.ToString(); }
-                                
-                                }
-                                catch (Exception e)
-                                {
-                                    currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
-                                }
-                                break;
-                            case "D":
-                                currentLine.passed = true;
-                                try {
-                                    currentLine.referenceNumber = cell.Value.ToString();
-                                    
-                                }
-                                catch (Exception e)
-                                {
-                                    currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
-                                }
-                                break;
-                            case "E":
-                                currentLine.passed = true;
-                                try { currentLine.policyType = cell.Value.ToString(); }
-                                catch (Exception e)
-                                {
-                                    currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
-                                }
-                                break;
-                            case "F":
-                                currentLine.passed = true;
-                                try { currentLine.insuranceCompany = cell.Value.ToString(); }
-                                catch (Exception e)
-                                {
-                                    currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
-                                }
-                                break;
-                            case "G":
-                                currentLine.passed = true;
-                                try { currentLine.startDate = Convert.ToDateTime(cell.Value); }
-                                catch (Exception e)
-                                {
-                                    currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
-                                }
-                                break;
-                            case "H":
-                                currentLine.passed = true;
-                                try { currentLine.expiryDate = Convert.ToDateTime(cell.Value); }
-                                catch (Exception e)
-                                {
-                                    currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
-                                }
-                                break;
-                            case "I":
-                                currentLine.passed = true;
-                                try { currentLine.sumInsured = Convert.ToDecimal(cell.Value); }
-                                catch (Exception e)
-                                {
-                                    currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
-                                }
-                                break;
-                            case "J":
-                                currentLine.passed = true;
-                                try { currentLine.premiumAmount = Convert.ToDecimal(cell.Value); }
-                                catch (Exception e)
-                                {
-                                    currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
-                                }
-                                break;
-                            case "K":
+
+                            }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "D":
+                            currentLine.passed = true;
+                            try
+                            {
+                                currentLine.referenceNumber = cell.Value.ToString();
+
+                            }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "E":
+                            currentLine.passed = true;
+                            try { currentLine.policyType = cell.Value.ToString(); }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "F":
+                            currentLine.passed = true;
+                            try { currentLine.insuranceCompany = cell.Value.ToString(); }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "G":
+                            currentLine.passed = true;
+                            try { currentLine.startDate = Convert.ToDateTime(cell.Value); }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "H":
+                            currentLine.passed = true;
+                            try { currentLine.expiryDate = Convert.ToDateTime(cell.Value); }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "I":
+                            currentLine.passed = true;
+                            try { currentLine.sumInsured = Convert.ToDecimal(cell.Value); }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "J":
+                            currentLine.passed = true;
+                            try { currentLine.premiumAmount = Convert.ToDecimal(cell.Value); }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; //currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "K":
                             currentLine.passed = true;
                             try { currentLine.collateralDescription = cell.Value.ToString(); }
                             catch (Exception e)
                             {
-                                currentLine.passed = false; 
+                                currentLine.passed = false;
                             }
                             break;
                     }
 
-                    }
+                }
 
-                    if (ctr > 1) bulkEntries.Add(currentLine);
+                if (ctr > 1) bulkEntries.Add(currentLine);
 
-                };
+            };
 
-                foreach (var currentLine in bulkEntries)
-                {
+            foreach (var bulkEntry in bulkEntries)
+            {
                 try
                 {
                     var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
                     var newCollateralCode = CommonHelpers.GenerateRandomDigitCode(7);
                     //========================================== other valiadation =============================
-                    if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
+
+                    if (bulkEntry.referenceNumber == "0" || bulkEntry.referenceNumber == "")
                     {
-                        currentLine.collateralCode = newCollateralCode;
+                        bulkEntry.referenceNumber = referenceNumber;
                     }
 
-                    if (currentLine.referenceNumber == "0" || currentLine.referenceNumber == "")
-                    {
-                        currentLine.referenceNumber = referenceNumber;
-                    }
-                    var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == currentLine.customerId).FirstOrDefault();
+                    var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == bulkEntry.customerId).FirstOrDefault();
                     if (customer == null)
                     {
-                        currentLine.passed = false;
-                        currentLine.errorMessages.Add("Customer with customercode " + currentLine.customerId.ToString() + " does not exist on Credit360");
+                        bulkEntry.passed = false;
+                        bulkEntry.errorMessages.Add("Customer with customer ID " + bulkEntry.customerId.ToString() + " does not exist on Credit360");
                     }
-
-                    if (currentLine.isCollateral.ToLower() != "")
+                    else
                     {
-                        if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
-                        {
-                            currentLine.collateralCustomerId = null;
-                            currentLine.collateralDetails = currentLine.collateralDescription;
-                            //currentLine.passed = false;
-                            //currentLine.errorMessages.Add("<br/>Only collateral insurance policy is allowed to be uploaded. Collateral with collateralcode " + currentLine.collateralCode.ToString() + " is not an insurance policy");
-                        }
-                        else
-                        {
-                            customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode.Trim().ToString()).FirstOrDefault();
 
-                            if (currentLine.collateralDescription == null)
+                        if (bulkEntry.isCollateral.ToLower() != "")
+                        {
+                            if (bulkEntry.isCollateral.ToLower() == "y" || bulkEntry.isCollateral.ToLower() == "yes" && bulkEntry.collateralCode == null)
                             {
-                                currentLine.passed = false;
-                                currentLine.errorMessages.Add("<br/>Collateral Description column is null ");
-                            }
+                                bulkEntry.collateralCode = newCollateralCode;
+                                bulkEntry.collateralCustomerId = null;
+                                bulkEntry.collateralDetails = bulkEntry.collateralDescription;
 
-                            if (customerCollateral == null)
-                            {
-                                currentLine.passed = false;
-                                currentLine.errorMessages.Add("<br/>Collateral with collateralcode " + currentLine.collateralCode.ToString() + " does not exist on Credit360");
                             }
                             else
                             {
-                                currentLine.collateralCustomerId = customerCollateral.COLLATERALCUSTOMERID;
-                                currentLine.collateralDetails = customerCollateral.COLLATERALSUMMARY;
-                                currentLine.collateralCode = customerCollateral.COLLATERALCODE;
-
-                                var customerExistingCollateralPolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).FirstOrDefault();
-                                if (customerExistingCollateralPolicy != null)
+                                customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == bulkEntry.collateralCode.Trim().ToString()).FirstOrDefault();
+                                if (customerCollateral != null)
                                 {
-                                    currentLine.passed = false;
-                                    currentLine.errorMessages.Add("<br/>Policy with collateralcode " + currentLine.collateralCode.ToString() + " already exist on Credit360");
-                                }
-                                else
-                                {
-                                    var customerCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.COLLATERALCODE == currentLine.collateralCode).ToList();
-                                    if (customerCollaterals.Count() > 0 && customerCollaterals.Count() == 1)
+                                    if (bulkEntry.collateralDescription == null)
                                     {
-                                        currentLine.collateralCustomerId = customerCollateral.COLLATERALCUSTOMERID;
-                                        currentLine.collateralDetails = customerCollateral.COLLATERALSUMMARY;
-                                        currentLine.collateralCode = customerCollateral.COLLATERALCODE;
+                                        bulkEntry.passed = false;
+                                        bulkEntry.errorMessages.Add("<br/>Collateral Description column is null ");
                                     }
                                     else
                                     {
-                                        currentLine.passed = false;
-                                        currentLine.errorMessages.Add("<br/>Customer must have only single collateral for bulk upload on credit360");
+
+                                        bulkEntry.collateralCustomerId = customerCollateral.COLLATERALCUSTOMERID;
+                                        bulkEntry.collateralDetails = customerCollateral.COLLATERALSUMMARY;
+                                        bulkEntry.collateralCode = customerCollateral.COLLATERALCODE;
+
+                                        var customerExistingCollateralPolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).FirstOrDefault();
+                                        if (customerExistingCollateralPolicy != null)
+                                        {
+                                            bulkEntry.passed = false;
+                                            bulkEntry.errorMessages.Add("<br/>Policy with collateralcode " + bulkEntry.collateralCode.ToString() + " already exist on Credit360");
+                                        }
+                                        else
+                                        {
+                                            var customerCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.COLLATERALCODE == bulkEntry.collateralCode).ToList();
+                                            if (customerCollaterals.Count() > 0 && customerCollaterals.Count() == 1)
+                                            {
+                                                bulkEntry.collateralCustomerId = customerCollateral.COLLATERALCUSTOMERID;
+                                                bulkEntry.collateralDetails = customerCollateral.COLLATERALSUMMARY;
+                                                bulkEntry.collateralCode = customerCollateral.COLLATERALCODE;
+                                            }
+                                            else
+                                            {
+                                                bulkEntry.passed = false;
+                                                bulkEntry.errorMessages.Add("<br/>Customer must have only single collateral for bulk upload on credit360");
+                                            }
+                                            var validateCollateralInsurance = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).ToList();
+                                            if (validateCollateralInsurance.Any())
+                                            {
+                                                bulkEntry.passed = false;
+                                                bulkEntry.errorMessages.Add("<br/>Insurance already exist on Credit360");
+                                            }
+                                        }
                                     }
-                                    var validateCollateralInsurance = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).ToList();
-                                    if (validateCollateralInsurance.Any())
-                                    {
-                                        currentLine.passed = false;
-                                        currentLine.errorMessages.Add("<br/>Insurance already exist on Credit360");
-                                    }
+
+                                }
+                                else
+                                {
+                                    bulkEntry.passed = false;
+                                    bulkEntry.errorMessages.Add("<br/>Collateral with collateralcode " + bulkEntry.collateralCode.ToString() + " does not exist on Credit360");
                                 }
                             }
                         }
                     }
 
-                    var validateInsurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == currentLine.referenceNumber.ToString()).ToList();
+                    var validateInsurancePolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.POLICYNUMBER.Trim() == bulkEntry.referenceNumber.ToString()).ToList();
                     if (validateInsurancePolicy.Any())
                     {
-                        currentLine.passed = false;
-                        currentLine.errorMessages.Add("<br/>Policy number " + currentLine.referenceNumber.ToString() + " already exist on Credit360");
-                    }
-
-                    var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => currentLine.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
-                    if (insurancePolicyTypeDetail == null)
-                    {
-                        currentLine.passed = false;
-                        currentLine.errorMessages.Add("<br/>Policy type " + currentLine.policyType.ToString() + " does not exist on Credit360");
+                        bulkEntry.passed = false;
+                        bulkEntry.errorMessages.Add("<br/>Policy number " + bulkEntry.referenceNumber.ToString() + " already exist on Credit360");
                     }
                     else
                     {
-                        currentLine.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
-                    }
 
-                    var insuranceCompanyDetail = context.TBL_INSURANCE_COMPANY.Where(x => currentLine.insuranceCompany.ToString().Contains(x.COMPANYNAME)).FirstOrDefault();
-                    if (insuranceCompanyDetail == null)
+                        var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => bulkEntry.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
+                        if (insurancePolicyTypeDetail == null)
+                        {
+                            bulkEntry.passed = false;
+                            bulkEntry.errorMessages.Add("<br/>Policy type " + bulkEntry.policyType.ToString() + " does not exist on Credit360");
+                        }
+                        else
+                        {
+                            bulkEntry.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
+                        }
+
+                        var insuranceCompanyDetail = context.TBL_INSURANCE_COMPANY.Where(x => bulkEntry.insuranceCompany.ToString().Contains(x.COMPANYNAME)).FirstOrDefault();
+                        if (insuranceCompanyDetail == null)
+                        {
+                            bulkEntry.passed = false;
+                            bulkEntry.errorMessages.Add("<br/>Insurance company " + bulkEntry.insuranceCompany.ToString() + " does not exist on Credit360");
+                        }
+                        else
+                        {
+                            bulkEntry.insuranceCompanyId = insuranceCompanyDetail.INSURANCECOMPANYID;
+                            bulkEntry.companyAddress = insuranceCompanyDetail.ADDRESS;
+                        }
+                    }
+                    if (bulkEntry.passed == true)
                     {
-                        currentLine.passed = false;
-                        currentLine.errorMessages.Add("<br/>Insurance company " + currentLine.insuranceCompany.ToString() + " does not exist on Credit360");
+                        bulkEntry.validityStatus = "Passed";
                     }
                     else
                     {
-                        currentLine.insuranceCompanyId = insuranceCompanyDetail.INSURANCECOMPANYID;
-                        currentLine.companyAddress = insuranceCompanyDetail.ADDRESS;
+                        bulkEntry.validityStatus = "Failed";
                     }
 
-                    if (currentLine.passed == true)
+                    if (bulkEntry.isCollateral.ToLower() == "n" || bulkEntry.isCollateral.ToLower() == "no")
                     {
-                        currentLine.validityStatus = "Passed";
+                        bulkEntry.isCollateral = "No";
                     }
                     else
                     {
-                        currentLine.validityStatus = "Failed";
+                        bulkEntry.isCollateral = "Yes";
                     }
-
-                    if (currentLine.isCollateral.ToLower() == "n" || currentLine.isCollateral.ToLower() == "no")
-                    {
-                        currentLine.isCollateral = "No";
-                    }
-                    else
-                    {
-                        currentLine.isCollateral = "Yes";
-                    }
-                }catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     throw e;
                 }
-                }
-                return bulkEntries;
-            
+            }
+            return bulkEntries;
+
         }
 
         private CollateralInsuranceTrackingViewModel buildInsuranceModel(MultipleInsuranceOutputViewModel input, UserInfo user)
