@@ -39866,9 +39866,13 @@ namespace FintrakBanking.Repositories.Credit
                                             var doseRecordExist = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == validRecord.COLLATERALCODE).FirstOrDefault();
                                             if (doseRecordExist != null)
                                             {
-                                                rec.COLLATERALCUSTOMERID = doseRecordExist.COLLATERALCUSTOMERID;
-                                                bulkInsuranceUploads(rec);
-                                                rec.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                                var recordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == doseRecordExist.COLLATERALCUSTOMERID).FirstOrDefault();
+                                                if (recordExist == null || (recordExist != null && recordExist.INSURANCEENDDATE.Value.Date < DateTime.Now.Date))
+                                                {
+                                                    rec.COLLATERALCUSTOMERID = doseRecordExist.COLLATERALCUSTOMERID;
+                                                    bulkInsuranceUploads(rec);
+                                                    rec.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                                }
                                             }
                                               context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(rec);
                                     }
