@@ -422,6 +422,7 @@ namespace FintrakBanking.Repositories.Credit
 
                          select new StaffSupportUtilityViewModel
                          {
+                             mainStaff = 1,
                              staffId = c.STAFFID,
                              BranchId = c.BRANCHID,
                              BranchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
@@ -465,6 +466,7 @@ namespace FintrakBanking.Repositories.Credit
 
                              select new StaffSupportUtilityViewModel
                              {
+                                 mainStaff = 2,
                                  BranchId = c.BRANCHID,
                                  BranchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                                  //customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
