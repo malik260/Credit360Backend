@@ -39863,10 +39863,15 @@ namespace FintrakBanking.Repositories.Credit
                                         else
                                         {
                                             var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
-                                            bulkInsuranceUploads(rec);
-                                            rec.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                                            context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(rec);
-                                        }
+                                            var doseRecordExist = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == validRecord.COLLATERALCODE).FirstOrDefault();
+                                            if (doseRecordExist != null)
+                                            {
+                                                rec.COLLATERALCUSTOMERID = doseRecordExist.COLLATERALCUSTOMERID;
+                                                bulkInsuranceUploads(rec);
+                                                rec.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                            }
+                                              context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(rec);
+                                    }
                                     }
                                     else
                                     {

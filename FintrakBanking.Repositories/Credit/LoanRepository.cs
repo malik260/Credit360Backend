@@ -19451,35 +19451,58 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse saveBulkInsurancePolicyEntries(List<MultipleInsuranceOutputViewModel> models, UserInfo user)
         {
-            List<TEMP_COLLATERAL_INSURANCE_TRACKING> bulkPolicyTable = new List<TEMP_COLLATERAL_INSURANCE_TRACKING>();
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-            using (TransactionScope transactionScope = new TransactionScope())
+            try
             {
-                foreach (var policyRequest in models)
+                List<TEMP_COLLATERAL_INSURANCE_TRACKING> bulkPolicyTable = new List<TEMP_COLLATERAL_INSURANCE_TRACKING>();
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                using (TransactionScope transactionScope = new TransactionScope())
                 {
-                    policyRequest.batchCode = batchCode;
-                    if (policyRequest.isCollateral.ToLower() != "" && (policyRequest.isCollateral.ToLower() == "n" || policyRequest.isCollateral.ToLower() == "yes") )
+                    foreach (var policyRequest in models)
                     {
-                        if (policyRequest.passed == true)
+                        policyRequest.batchCode = batchCode;
+                        if (policyRequest.isCollateral.ToLower() != "" && (policyRequest.isCollateral.ToLower() == "n" || policyRequest.isCollateral.ToLower() == "yes"))
                         {
-                            var collateralDetail = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == policyRequest.collateralCode).FirstOrDefault();
-                            if (collateralDetail != null)
+                            if (policyRequest.passed == true)
                             {
-                                policyRequest.collateralCustomerId = collateralDetail.COLLATERALCUSTOMERID;
-                                policyRequest.collateralDetails = collateralDetail.COLLATERALSUMMARY;
-                                policyRequest.collateralSubTypeId = collateralDetail.COLLATERALSUBTYPEID;
-                                policyRequest.collateralTypeId = collateralDetail.COLLATERALTYPEID;
+                                var collateralDetail = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == policyRequest.collateralCode).FirstOrDefault();
+                                if (collateralDetail != null)
+                                {
+                                    policyRequest.collateralCustomerId = collateralDetail.COLLATERALCUSTOMERID;
+                                    policyRequest.collateralDetails = collateralDetail.COLLATERALSUMMARY;
+                                    policyRequest.collateralSubTypeId = collateralDetail.COLLATERALSUBTYPEID;
+                                    policyRequest.collateralTypeId = collateralDetail.COLLATERALTYPEID;
+                                }
+                            }
+                            var confirmIfRecordAlreadyExist = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(t => t.COLLATERALCUSTOMERID == policyRequest.collateralCustomerId).FirstOrDefault();
+                            if (confirmIfRecordAlreadyExist == null)
+                            {
+                                if (policyRequest.expiryDate.Value.Date > DateTime.Now.Date)
+                                {
+                                    policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Active;
+                                }
+                                else { policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Expired; }
+
+                                var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => policyRequest.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
+                                if (insurancePolicyTypeDetail != null)
+                                {
+                                    policyRequest.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
+                                }
+
+                                policyRequest.dateTimeCreated = DateTime.Now;
+                                policyRequest.createdBy = user.createdBy;
+
+                                var policyData = addBulkPolicy(policyRequest);
+                                bulkPolicyTable.Add(policyData);
+
                             }
                         }
-                        var confirmIfRecordAlreadyExist = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(t => t.COLLATERALCUSTOMERID == policyRequest.collateralCustomerId).FirstOrDefault();
-                        if (confirmIfRecordAlreadyExist == null)
+                        else
                         {
-                            if (policyRequest.expiryDate.Value.Date > DateTime.Now.Date)
-                            {
-                                policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Active;
-                            }
-                            else { policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Expired; }
-
+                            policyRequest.collateralCustomerId = null;
+                            policyRequest.collateralDetails = policyRequest.collateralDescription;
+                            policyRequest.collateralSubTypeId = null;
+                            policyRequest.collateralTypeId = (int)CollateralTypeEnum.InsurancePolicy;
+                            policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Active;
                             var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => policyRequest.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
                             if (insurancePolicyTypeDetail != null)
                             {
@@ -19488,31 +19511,10 @@ namespace FintrakBanking.Repositories.Credit
 
                             policyRequest.dateTimeCreated = DateTime.Now;
                             policyRequest.createdBy = user.createdBy;
-                            
                             var policyData = addBulkPolicy(policyRequest);
                             bulkPolicyTable.Add(policyData);
-                            
                         }
                     }
-                    else
-                    {
-                         policyRequest.collateralCustomerId = null;
-                         policyRequest.collateralDetails = policyRequest.collateralDescription;
-                         policyRequest.collateralSubTypeId = null;
-                         policyRequest.collateralTypeId = (int)CollateralTypeEnum.InsurancePolicy;
-                         policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Active;
-                        var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => policyRequest.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
-                        if (insurancePolicyTypeDetail != null)
-                        {
-                            policyRequest.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
-                        }
-
-                        policyRequest.dateTimeCreated = DateTime.Now;
-                        policyRequest.createdBy = user.createdBy;
-                        var policyData = addBulkPolicy(policyRequest);
-                        bulkPolicyTable.Add(policyData);
-                    }
-                }
                     context.TEMP_COLLATERAL_INSURANCE_TRACKING.AddRange(bulkPolicyTable);
                     if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
 
@@ -19526,7 +19528,7 @@ namespace FintrakBanking.Repositories.Credit
                         REQUESTDATE = DateTime.Now
                     });
                     if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
-           
+
 
                     workflow.StaffId = user.createdBy;
                     workflow.CompanyId = user.companyId;
@@ -19542,24 +19544,29 @@ namespace FintrakBanking.Repositories.Credit
 
                     transactionScope.Complete();
                     transactionScope.Dispose();
-            }
+                }
 
-            auditTrail.AddAuditTrail(new TBL_AUDIT
+                auditTrail.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.InsuranceBulkUpload,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ batchCode}' ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                });
+
+                context.SaveChanges();
+                return workflow.Response;
+
+            }catch(Exception ex)
             {
-                AUDITTYPEID = (short)AuditTypeEnum.InsuranceBulkUpload,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ batchCode}' ",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = user.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName()
-            });
-
-            context.SaveChanges();
-            return workflow.Response;
+                throw ex;
+            }
         }
 
         public bool saveBulkLoanAssignmentToAgent(List<GlobalExposureApplicationViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user)
