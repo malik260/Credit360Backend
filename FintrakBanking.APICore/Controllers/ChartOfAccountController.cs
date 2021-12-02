@@ -172,7 +172,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //}
 
-         [HttpPost] [AdminClaimsAuthorization]
+         [HttpPost] [ClaimsAuthorization]
         [Route("")]
         public HttpResponseMessage AddTempAccount([FromBody] ChartOfAccountViewModel model)
         {
@@ -215,7 +215,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [AdminClaimsAuthorization]
+       [HttpPut] [ClaimsAuthorization]
         [Route("{accountId}")]
         public HttpResponseMessage UpdateAccount(short accountId, [FromBody] ChartOfAccountViewModel model)
         {

@@ -51,7 +51,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("document-type")]
         public HttpResponseMessage AddDocumentType([FromBody] DocumentTypeViewModel model)
         {
@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("document-type/{id}")]
         public HttpResponseMessage UpdateDocumentType([FromBody] DocumentTypeViewModel model, int id)
         {
@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("document-type/{id}")]
         public HttpResponseMessage DeleteDocumentType(int id)
         {

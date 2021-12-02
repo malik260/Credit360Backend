@@ -12221,17 +12221,21 @@ namespace FintrakBanking.Repositories.Credit
                 var activities = admin.GetUserActivitiesByUser(staffId);
                 var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
+                var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
+
                 var currentDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals b.LOANID
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                        where a.ISDISBURSED == true
-                                       //  && operationIds.Contains(b.OPERATIONID) 
+                                       && !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID) 
                                        //b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft 
                                        && b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
                                        && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                        && b.OPERATIONPERFORMED == false
+                                       && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                       && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
@@ -12311,6 +12315,8 @@ namespace FintrakBanking.Repositories.Credit
                                 && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                                 && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                 && op.OPERATIONCOMPLETED == false
+                                && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                 && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
                                 select new LoanViewModel
                                 {
@@ -13947,6 +13953,7 @@ namespace FintrakBanking.Repositories.Credit
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
+            var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
             var currentDate = generalSetup.GetApplicationDate();
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals b.LOANID
@@ -13955,10 +13962,14 @@ namespace FintrakBanking.Repositories.Credit
                                    where a.ISDISBURSED == true
                                    //&& (b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook) 
                                    && b.OPERATIONID != (int)OperationsEnum.APSReleaseApproval
-                                   && b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
+                                   && b.LOANSYSTEMTYPEID == (int)OperationsEnum.ContigentLoanBooking
                                    && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                    && b.OPERATIONPERFORMED == false
                                    && a.LOANSTATUSID != (short)LoanStatusEnum.Terminated
+                                   && !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID)
+                                   && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                   && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+
                                    orderby b.DATETIMECREATED descending
                                    select new LoanViewModel
                                    {
@@ -14059,6 +14070,8 @@ namespace FintrakBanking.Repositories.Credit
                             && atrail.OPERATIONID == op.OPERATIONTYPEID
                             && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
                             && staffs.Contains(atrail.LOOPEDSTAFFID ?? 0)
+                            && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                            && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
 
                             orderby b.DATETIMECREATED descending
                             select new LoanViewModel
@@ -17058,7 +17071,7 @@ namespace FintrakBanking.Repositories.Credit
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
-
+            var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.LineFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
             var applicationDate = generalSetup.GetApplicationDate();
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join l in context.TBL_LMSR_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals l.LOANID
@@ -17067,6 +17080,9 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                         where 
                           l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
+                          && !operationsRecords.Contains(l.LOANREVIEWAPPLICATIONID)
+                          && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                          && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                           && l.OPERATIONPERFORMED == false
                           && e.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                           && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
@@ -17163,6 +17179,8 @@ namespace FintrakBanking.Repositories.Credit
                            && op.OPERATIONCOMPLETED == false
                            && e.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
                            && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
+                           && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                           && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                             select new CamProcessedLoanViewModel
                             {
                                 divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
@@ -17394,6 +17412,7 @@ namespace FintrakBanking.Repositories.Credit
             //    ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
             //}
 
+            var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
                                    //join atrail in context.TBL_APPROVAL_TRAIL on b.LOANREVIEWAPPLICATIONID equals atrail.TARGETID
@@ -17405,6 +17424,9 @@ namespace FintrakBanking.Repositories.Credit
                                   //&& (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
                                   // && ids.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)
                                   //  && atrail.RESPONSESTAFFID == null
+                                  && !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID)
+                                  && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                  && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                   && b.OPERATIONPERFORMED == false
                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
@@ -17558,6 +17580,8 @@ namespace FintrakBanking.Repositories.Credit
                             && op.OPERATIONCOMPLETED == false
                             && ((cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId))
                             && (staffs.Contains(atrail.LOOPEDSTAFFID ?? 0))
+                            && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                            && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                             select new LoanViewModel
                             {
                                 lmsdatecreated = b.DATETIMECREATED,
@@ -19427,33 +19451,58 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse saveBulkInsurancePolicyEntries(List<MultipleInsuranceOutputViewModel> models, UserInfo user)
         {
-            List<TEMP_COLLATERAL_INSURANCE_TRACKING> bulkPolicyTable = new List<TEMP_COLLATERAL_INSURANCE_TRACKING>();
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-            using (TransactionScope transactionScope = new TransactionScope())
+            try
             {
-                foreach (var policyRequest in models)
+                List<TEMP_COLLATERAL_INSURANCE_TRACKING> bulkPolicyTable = new List<TEMP_COLLATERAL_INSURANCE_TRACKING>();
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                using (TransactionScope transactionScope = new TransactionScope())
                 {
-                    policyRequest.batchCode = batchCode;
-                    if (policyRequest.isCollateral.ToLower() != "")
+                    foreach (var policyRequest in models)
                     {
-                        var collateralDetail = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == policyRequest.collateralCode).FirstOrDefault();
-                        if (collateralDetail != null)
+                        policyRequest.batchCode = batchCode;
+                        if (policyRequest.isCollateral.ToLower() != "" && (policyRequest.isCollateral.ToLower() == "n" || policyRequest.isCollateral.ToLower() == "yes"))
                         {
-                            policyRequest.collateralCustomerId = collateralDetail.COLLATERALCUSTOMERID;
-                            policyRequest.collateralDetails = collateralDetail.COLLATERALSUMMARY;
-                            policyRequest.collateralSubTypeId = collateralDetail.COLLATERALSUBTYPEID;
-                            policyRequest.collateralTypeId = collateralDetail.COLLATERALTYPEID;
-                        }
-
-                        var confirmIfRecordAlreadyExist = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(t => t.COLLATERALCUSTOMERID == policyRequest.collateralCustomerId).FirstOrDefault();
-                        if (confirmIfRecordAlreadyExist == null)
-                        {
-                            if (policyRequest.expiryDate.Value.Date > DateTime.Now.Date)
+                            if (policyRequest.passed == true)
                             {
-                                policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Active;
+                                var collateralDetail = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == policyRequest.collateralCode).FirstOrDefault();
+                                if (collateralDetail != null)
+                                {
+                                    policyRequest.collateralCustomerId = collateralDetail.COLLATERALCUSTOMERID;
+                                    policyRequest.collateralDetails = collateralDetail.COLLATERALSUMMARY;
+                                    policyRequest.collateralSubTypeId = collateralDetail.COLLATERALSUBTYPEID;
+                                    policyRequest.collateralTypeId = collateralDetail.COLLATERALTYPEID;
+                                }
                             }
-                            else { policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Expired; }
+                            var confirmIfRecordAlreadyExist = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(t => t.COLLATERALCUSTOMERID == policyRequest.collateralCustomerId).FirstOrDefault();
+                            if (confirmIfRecordAlreadyExist == null)
+                            {
+                                if (policyRequest.expiryDate.Value.Date > DateTime.Now.Date)
+                                {
+                                    policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Active;
+                                }
+                                else { policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Expired; }
 
+                                var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => policyRequest.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
+                                if (insurancePolicyTypeDetail != null)
+                                {
+                                    policyRequest.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
+                                }
+
+                                policyRequest.dateTimeCreated = DateTime.Now;
+                                policyRequest.createdBy = user.createdBy;
+
+                                var policyData = addBulkPolicy(policyRequest);
+                                bulkPolicyTable.Add(policyData);
+
+                            }
+                        }
+                        else
+                        {
+                            policyRequest.collateralCustomerId = null;
+                            policyRequest.collateralDetails = policyRequest.collateralDescription;
+                            policyRequest.collateralSubTypeId = null;
+                            policyRequest.collateralTypeId = (int)CollateralTypeEnum.InsurancePolicy;
+                            policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Active;
                             var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => policyRequest.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
                             if (insurancePolicyTypeDetail != null)
                             {
@@ -19462,13 +19511,10 @@ namespace FintrakBanking.Repositories.Credit
 
                             policyRequest.dateTimeCreated = DateTime.Now;
                             policyRequest.createdBy = user.createdBy;
-                            
                             var policyData = addBulkPolicy(policyRequest);
                             bulkPolicyTable.Add(policyData);
-                            
                         }
                     }
-                }
                     context.TEMP_COLLATERAL_INSURANCE_TRACKING.AddRange(bulkPolicyTable);
                     if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
 
@@ -19482,7 +19528,7 @@ namespace FintrakBanking.Repositories.Credit
                         REQUESTDATE = DateTime.Now
                     });
                     if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
-           
+
 
                     workflow.StaffId = user.createdBy;
                     workflow.CompanyId = user.companyId;
@@ -19498,24 +19544,29 @@ namespace FintrakBanking.Repositories.Credit
 
                     transactionScope.Complete();
                     transactionScope.Dispose();
-            }
+                }
 
-            auditTrail.AddAuditTrail(new TBL_AUDIT
+                auditTrail.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.InsuranceBulkUpload,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ batchCode}' ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                });
+
+                context.SaveChanges();
+                return workflow.Response;
+
+            }catch(Exception ex)
             {
-                AUDITTYPEID = (short)AuditTypeEnum.InsuranceBulkUpload,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ batchCode}' ",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = user.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName()
-            });
-
-            context.SaveChanges();
-            return workflow.Response;
+                throw ex;
+            }
         }
 
         public bool saveBulkLoanAssignmentToAgent(List<GlobalExposureApplicationViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, string source, string assignmentType, UserInfo user)
@@ -20857,8 +20908,8 @@ namespace FintrakBanking.Repositories.Credit
             
                 List<MultipleInsuranceOutputViewModel> bulkEntries = new List<MultipleInsuranceOutputViewModel>();
                 TBL_COLLATERAL_CUSTOMER customerCollateral = null;
-
-                //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+                
+                 //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
                 SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
                 MemoryStream ms = new MemoryStream(file);
                 ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
@@ -20874,7 +20925,7 @@ namespace FintrakBanking.Repositories.Credit
                     for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
                     {
                         ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
-
+                        
                         string cellName = CellRange.RowColumnToPosition(j, i);
                         string cellRow = ExcelRowCollection.RowIndexToName(j);
                         string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
@@ -20896,7 +20947,14 @@ namespace FintrakBanking.Repositories.Credit
                                 break;
                             case "C":
                                 currentLine.passed = true;
-                                try { currentLine.collateralCode = cell.Value.ToString(); }
+                                try {
+                                if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
+                                {
+                                    currentLine.collateralCode = null;
+                                }
+                                else { currentLine.collateralCode = cell.Value.ToString(); }
+                                
+                                }
                                 catch (Exception e)
                                 {
                                     currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
@@ -20982,7 +21040,12 @@ namespace FintrakBanking.Repositories.Credit
                 try
                 {
                     var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+                    var newCollateralCode = CommonHelpers.GenerateRandomDigitCode(7);
                     //========================================== other valiadation =============================
+                    if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
+                    {
+                        currentLine.collateralCode = newCollateralCode;
+                    }
 
                     if (currentLine.referenceNumber == "0" || currentLine.referenceNumber == "")
                     {
@@ -20999,12 +21062,14 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
                         {
-                            currentLine.passed = false;
-                            currentLine.errorMessages.Add("<br/>Only collateral insurance policy is allowed to be uploaded. Collateral with collateralcode " + currentLine.collateralCode.ToString() + " is not an insurance policy");
+                            currentLine.collateralCustomerId = null;
+                            currentLine.collateralDetails = currentLine.collateralDescription;
+                            //currentLine.passed = false;
+                            //currentLine.errorMessages.Add("<br/>Only collateral insurance policy is allowed to be uploaded. Collateral with collateralcode " + currentLine.collateralCode.ToString() + " is not an insurance policy");
                         }
                         else
                         {
-                            customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode.ToString()).FirstOrDefault();
+                            customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode.Trim().ToString()).FirstOrDefault();
 
                             if (currentLine.collateralDescription == null)
                             {
@@ -21019,6 +21084,10 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             else
                             {
+                                currentLine.collateralCustomerId = customerCollateral.COLLATERALCUSTOMERID;
+                                currentLine.collateralDetails = customerCollateral.COLLATERALSUMMARY;
+                                currentLine.collateralCode = customerCollateral.COLLATERALCODE;
+
                                 var customerExistingCollateralPolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).FirstOrDefault();
                                 if (customerExistingCollateralPolicy != null)
                                 {
@@ -21273,6 +21342,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var insuranceTracking = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Add(new TEMP_COLLATERAL_INSURANCE_TRACKING
             {
+                CUSTOMERCODE = insurancePolicy.customerId,
+                COLLATERALCODE = insurancePolicy.collateralCode,
                 INSURANCECOMPANYID = insurancePolicy.insuranceCompanyId,
                 ISURANCECOMPANYADDRESS = insurancePolicy.companyAddress,
                 POLICYNUMBER = insurancePolicy.referenceNumber,
@@ -21826,6 +21897,17 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
             }
 
+
+            if (models != null)
+            {
+                bool validate = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(x => x.AMOUNTRECOVERED == models.amountRecovered && x.TOTALRECOVERYAMOUNT == models.totalAmountRecovery && x.DATETIMECREATED.Month == DateTime.Now.Month && x.CREATEDBY == user.createdBy && x.ACCREDITEDCONSULTANT == models.accreditedConsultant).Any();
+                if (validate)
+                {
+                    throw new ConditionNotMetException("It looks like same commission has already been captured for this Agent");
+                }
+                
+            }
+
             try
             {
                 var record = new TBL_LOAN_RECOVERY_COMMISSION_INTERNAL
@@ -21869,8 +21951,7 @@ namespace FintrakBanking.Repositories.Credit
                         updateRecord.TOTALAMOUNTRECOVERY = 0;
                         updateRecord.ISFULLYRECOVERED = true;
                         updateRecord.OPERATIONCOMPLETED = true;
-                    }
-                    if (updateRecord.TOTALAMOUNTRECOVERY != models.amountRecovered)
+                    }else
                     {
                         updateRecord.TOTALAMOUNTRECOVERY = (updateRecord.TOTALAMOUNTRECOVERY - models.amountRecovered);
                     }

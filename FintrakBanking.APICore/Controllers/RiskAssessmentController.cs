@@ -100,7 +100,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("rating-period")]
         public HttpResponseMessage AddRatingPeriod([FromBody] RatingPeriodViewModel model)
         {

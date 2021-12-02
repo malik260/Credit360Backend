@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Approval Level
 
-         [HttpPost] [AdminClaimsAuthorization]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approval-level")]
         public HttpResponseMessage AddApprovalLevel([FromBody] ApprovalLevelViewModel model)
         {
@@ -182,7 +182,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [AdminClaimsAuthorization]
+       [HttpPut] [ClaimsAuthorization]
         [Route("approval-level/{id}")]
         public HttpResponseMessage UpdateApprovalLevel(int id, [FromBody] ApprovalLevelViewModel model)
         {
@@ -214,7 +214,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpDelete] [AdminClaimsAuthorization]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("approval-level/{id}")]
         public async Task<HttpResponseMessage> DeleteApprovalLevelAsync(int id)
         {

@@ -1567,10 +1567,10 @@
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(
-                        new MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Authorization = token;
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                   
 
                     CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
                     ServicePointManager.ServerCertificateValidationCallback +=
@@ -1585,9 +1585,9 @@
                     {
                         var rep = await response.Content.ReadAsAsync<CloseMannualBookingResponseViewModel>();
 
-                        if (!rep.response_message.ToLower().Contains("Successful"))
+                        if (!rep.response_message.ToLower().Contains("successful"))
                         {
-                            throw new APIErrorException("Core Banking API error - " + response.RequestMessage + " " + DateTime.Now);
+                            throw new APIErrorException("Core Banking API error - " + rep.response_message + " " + DateTime.Now);
                         }
 
                         records.response_code = rep.response_code;
