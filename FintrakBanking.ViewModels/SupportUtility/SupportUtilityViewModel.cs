@@ -116,6 +116,8 @@ namespace FintrakBanking.ViewModels.SupportUtility
         public string deletedby { get; set; }
         public DateTime? timeUpdated { get; set; }
         public DateTime? timeDeleted { get; set; }
+        public int? mainStaff { get; set; }
+        public int? tempStaff { get; set; }
     }
 
 }
