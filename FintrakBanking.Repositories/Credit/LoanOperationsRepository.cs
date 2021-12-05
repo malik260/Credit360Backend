@@ -39875,13 +39875,15 @@ namespace FintrakBanking.Repositories.Credit
                                             var model = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
                                             var verifyCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == validRecord.COLLATERALCODE).FirstOrDefault();
                                             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == validRecord.CUSTOMERCODE).FirstOrDefault();
-                                            if (verifyCollateral == null)
+                                            var collateralType = context.TBL_COLLATERAL_TYPE.Where(x => x.COLLATERALTYPENAME.Contains("Insurance")).FirstOrDefault();
+                                            
+                                            if (verifyCollateral == null && collateralType != null)
                                             {
-
+                                                var collateralTypeSub = context.TBL_COLLATERAL_TYPE_SUB.Where(x => x.COLLATERALTYPEID == collateralType.COLLATERALTYPEID).FirstOrDefault();
                                                 var collateral = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
                                                 {
-                                                    COLLATERALTYPEID = model.COLLATERALTYPE ?? 4,
-                                                    COLLATERALSUBTYPEID = 23,
+                                                    COLLATERALTYPEID = model.COLLATERALTYPE ?? collateralType.COLLATERALTYPEID,
+                                                    COLLATERALSUBTYPEID = collateralTypeSub.COLLATERALSUBTYPEID,
                                                     COLLATERALCODE = model.COLLATERALCODE,
                                                     CUSTOMERCODE = model.CUSTOMERCODE,
                                                     COLLATERALVALUE = (decimal)0m,
