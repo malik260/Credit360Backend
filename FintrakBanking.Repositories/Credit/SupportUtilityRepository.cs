@@ -609,8 +609,56 @@ namespace FintrakBanking.Repositories.Credit
 
             
 
-             if (data == null)
+             if (data.Count == 0)
             {
+                data = (from a in context.TBL_TEMP_CUSTOMER
+                                    where a.CUSTOMERCODE == searchString
+                                    select new CustomerViewModels
+                                    {
+                                        crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
+                                        crmsLegalStatusId = a.CRMSLEGALSTATUSID,
+                                        crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
+                                        accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
+                                        branchId = a.BRANCHID,
+                                        companyMainId = a.COMPANYID,
+                                        createdBy = a.CREATEDBY,
+                                        creationMailSent = a.CREATIONMAILSENT,
+                                        customerCode = a.CUSTOMERCODE,
+                                        customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                                        customerTypeId = (short)a.CUSTOMERTYPEID,
+                                        dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                                        customerId = a.CUSTOMERID,
+                                        emailAddress = a.EMAILADDRESS,
+                                        firstName = a.FIRSTNAME,
+                                        gender = a.GENDER,
+                                        customerTypeName = context.TBL_CUSTOMER_TYPE.Where(o => o.CUSTOMERTYPEID == a.CUSTOMERTYPEID).Select(o => o.NAME).FirstOrDefault(),
+                                        lastName = a.LASTNAME,
+                                        maidenName = a.MAIDENNAME,
+                                        maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : a.MARITALSTATUS.Value == 2 ? "F" : null,
+                                        title = a.TITLE,
+                                        middleName = a.MIDDLENAME,
+                                        misCode = a.MISCODE,
+                                        misStaff = a.MISSTAFF,
+                                        nationalityId = a.NATIONALITYID,
+                                        occupation = a.OCCUPATION,
+                                        placeOfBirth = a.PLACEOFBIRTH,
+                                        isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                                        isInvestmentGrade = a.ISINVESTMENTGRADE,
+                                        isRealatedParty = a.ISREALATEDPARTY,
+                                        relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                                        isCurrent = a.ISCURRENT,
+                                        spouse = a.SPOUSE,
+                                        subSectorId = (short)a.SUBSECTORID,
+                                        taxNumber = a.TAXNUMBER,
+                                        relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                        businessUnitId = a.BUSINESSUNTID,
+                                        businessUnitName = a.BUSINESSUNTID == null ? "N/A" : context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == a.BUSINESSUNTID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
+                                        ownership = a.OWNERSHIP,
+                                        relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
+                                            .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
+                                        approvalStatus = a.APPROVALSTATUSID,
+                                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                                    }).ToList();
 
             }
             return data;
@@ -704,35 +752,34 @@ namespace FintrakBanking.Repositories.Credit
                 if (customerMain != null && customerTemp != null)
                 {
                     var customer = context.TBL_TEMP_CUSTOMER.Find(customerTemp.TEMPCUSTOMERID);
-                    customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    customer.APPROVALSTATUSID = (short)entity.approvalStatus;//(int)ApprovalStatusEnum.Approved;
                     customer.ISCURRENT = entity.isCurrent;
                     customer.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
                     
                 }
 
 
-                //// Audit Section ----------------------------
-                //var audit = new TBL_AUDIT
-                //{
-                //    AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
-                //    STAFFID = entity.createdBy,
-                //    BRANCHID = (short)entity.userBranchId,
-                //    DETAIL = "Updated TBL_CUSTOMER from support Utility: " + customerMain.FIRSTNAME + " with code: " + customerMain.CUSTOMERCODE +
-                //             " on" + " (" + entity.customerId + ") ",
-                //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                //    URL = entity.applicationUrl,
-                //    APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                //    SYSTEMDATETIME = DateTime.Now,
-                //    DEVICENAME = CommonHelpers.GetDeviceName(),
-                //    OSNAME = CommonHelpers.FriendlyName()
-                //};
+                // Audit Section ----------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = "Updated TBL_CUSTOMER from support Utility: " + customerMain.FIRSTNAME + " with code: " + customerMain.CUSTOMERCODE +
+                             " on" + " (" + customerMain.CUSTOMERID + ") ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = DateTime.Now,
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
 
                 {
-
-                    customerMain.ISPROSPECT = entity.isProspect;
-                    customerMain.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
-                    // this.auditTrail.AddAuditTrail(audit);
-                    //end of Audit section -------------------------------
+                    var customerM = context.TBL_CUSTOMER.Find(customerMain.CUSTOMERID);
+                    customerM.ISPROSPECT = entity.isProspect;
+                    customerM.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
+                    
 
                     var output = context.SaveChanges() > 0;
 
