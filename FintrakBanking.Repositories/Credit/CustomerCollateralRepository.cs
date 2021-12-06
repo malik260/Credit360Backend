@@ -5303,7 +5303,7 @@ namespace FintrakBanking.Repositories.Credit
                 lastValuationDate = x.LASTVALUATIONDATE,
                 //nextValuationDate = x.NEXTVALUATIONDATE,
                 valuerId = x.VALUERID,
-                collateralValuer = context.TBL_COLLATERAL_VALUER.Where(t => t.COLLATERALVALUERID == x.VALUERID).Select(q => q.NAME).FirstOrDefault(),
+                collateralValuer = context.TBL_ACCREDITEDCONSULTANT.Where(t => t.ACCREDITEDCONSULTANTID == x.VALUERID).Select(t => t.FIRMNAME).FirstOrDefault(),
                 valuerReferenceNumber = x.VALUERREFERENCENUMBER,
                 propertyValueBaseTypeId = x.PROPERTYVALUEBASETYPEID,
                 propertyValueBaseTypeName = context.TBL_COLLATERAL_VALUEBASE_TYPE.Where(t => t.COLLATERALVALUEBASETYPEID == x.PROPERTYVALUEBASETYPEID).Select(q => q.VALUEBASETYPENAME).FirstOrDefault(),
