@@ -176,6 +176,7 @@
     <Compile Include="Enum\ProcessViewScopeEnum.cs" />
     <Compile Include="Enum\GLClassEnum.cs" />
     <Compile Include="Enum\StaffAccountHistoryTypeEnum.cs" />
+    <Compile Include="Enum\SupportUtilityTypeEnum.cs" />
     <Compile Include="Enum\SystemStaff.cs" />
     <Compile Include="Enum\MaturityInstructionTypeEnum.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />
