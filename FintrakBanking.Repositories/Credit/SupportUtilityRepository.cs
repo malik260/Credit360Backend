@@ -540,6 +540,7 @@ namespace FintrakBanking.Repositories.Credit
                                        misCode = c.MISCODE,
                                        dateTimeCreated = (DateTime)c.DATETIMECREATED,
                                        dateTimeUpdated = c.DATETIMEUPDATED,
+                                       isCurrent = c.ISCURRENT
                                    }).FirstOrDefault();
             return tempStaffRecord;
         }
