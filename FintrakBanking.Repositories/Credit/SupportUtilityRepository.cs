@@ -185,7 +185,6 @@ namespace FintrakBanking.Repositories.Credit
             searchString = searchString.Trim().ToLower();
 
             var loanApplicationId = (from x in context.TBL_LOAN_APPLICATION
-
                                      where
                                      x.APPLICATIONREFERENCENUMBER.Trim() == searchString
                                      select x.LOANAPPLICATIONID).ToList();
