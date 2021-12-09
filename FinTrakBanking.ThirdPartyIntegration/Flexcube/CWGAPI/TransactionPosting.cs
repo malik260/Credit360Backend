@@ -1556,29 +1556,26 @@
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
                 string responseMessage = "";
-
-                getAPIURLSettings("MannualBookingClose");
                 try
                 {
                     handler.UseDefaultCredentials = true;
-
-                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    getAPIURLSettings("MannualBookingClose");
+                    var token = new AuthenticationHeaderValue("Basic", API_KEY);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Authorization = token;
-                    client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                   
+
                     CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
-                    ServicePointManager.ServerCertificateValidationCallback +=
-                        (sender, cert, chain, sslPolicyErrors) => true;
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
                     responseDateTime = DateTime.Now;
 
-                    response = client.PostAsync("GetLoanDetails", new StringContent(
-                           new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                    string apiModel = new JavaScriptSerializer().Serialize(model);
+                    response = client.PostAsync("GetLoanDetails", new StringContent(apiModel, Encoding.UTF8, "application/json")).Result;
 
                     if (response.IsSuccessStatusCode)
                     {
