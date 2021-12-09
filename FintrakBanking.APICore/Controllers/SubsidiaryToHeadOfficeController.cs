@@ -11,7 +11,7 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
 
-    [RoutePrefix("api/v1/subsidiary")]
+    [RoutePrefix("api/v1/fintrak")]
     public class SubsidiaryToHeadOfficeController : ApiControllerBase
     {
        
