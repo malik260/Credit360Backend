@@ -291,6 +291,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_FEE_AMORTISATION_TYPE> TBL_FEE_AMORTISATION_TYPE { get; set; }
         public virtual DbSet<TBL_FEE_INTERVAL> TBL_FEE_INTERVAL { get; set; }
         public virtual DbSet<TBL_FEE_TARGET> TBL_FEE_TARGET { get; set; }
+        public virtual DbSet<TBL_SUPPORTISSUETYPE> TBL_SUPPORTISSUETYPE { get; set; }
 
         public virtual DbSet<TBL_EOD_OPERATION> TBL_EOD_OPERATION { get; set; }
         public virtual DbSet<TBL_EOD_OPERATION_LOG> TBL_EOD_OPERATION_LOG { get; set; }
