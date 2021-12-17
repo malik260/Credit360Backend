@@ -1550,7 +1550,7 @@
             public async Task<CloseMannualBookingResponseViewModel> ValidateMannualBookingClosure(CloseMannualBookingViewModel model)
             {
                 HttpClientHandler handler = new HttpClientHandler();
-                HttpClient httpClientInstance;
+                //HttpClient httpClientInstance;
 
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
@@ -1559,14 +1559,12 @@
                 try
                 {
                     handler.UseDefaultCredentials = true;
-                    httpClientInstance = new HttpClient();
-                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(180);
                     client.DefaultRequestHeaders.Accept.Clear();
                     getAPIURLSettings("MannualBookingClose");
-                    var token = new AuthenticationHeaderValue("Basic", API_KEY);
                     client.BaseAddress = new Uri(API_URL);
-                    client.DefaultRequestHeaders.Authorization = token;
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", API_KEY);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
@@ -1574,8 +1572,7 @@
                     requestDatetime = DateTime.Now;
                     responseDateTime = DateTime.Now;
 
-                    string apiModel = new JavaScriptSerializer().Serialize(model);
-                    response = client.PostAsync("GetLoanDetails", new StringContent(apiModel, Encoding.UTF8, "application/json")).Result;
+                    response = client.PostAsync("GetLoanDetails", new StringContent(new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
                     if (response.IsSuccessStatusCode)
                     {

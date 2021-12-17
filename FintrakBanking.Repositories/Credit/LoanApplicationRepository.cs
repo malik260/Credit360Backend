@@ -10312,6 +10312,8 @@ namespace FintrakBanking.Repositories.Credit
                     DELETEDBY = model.deletedBy,
                     DATETIMEDELETED = model.dateTimeDeleted,
                     SYSTEMDATETIME = model.systemDateTime,
+                    CREATEDBYNAME = model.createdByName,
+                    COUNTRYCODE = model.countryCode
                 };
 
                 scontext.STG_SUB_BASICTRANSACTION.Add(inputRecords);
