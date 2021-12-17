@@ -11,9 +11,9 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    //[MyBasicAuthenticationFilter]
+    [MyBasicAuthenticationFilter]
     [RoutePrefix("api/v1/subsidiary")]
-    public class SubsidiaryToHeadOfficeController : ApiControllerBase
+    public class SubsidiaryToHeadOfficeController : ApiController
     {
        
         private ILoanApplicationRepository repo;
