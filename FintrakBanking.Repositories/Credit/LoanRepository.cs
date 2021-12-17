@@ -12252,6 +12252,7 @@ namespace FintrakBanking.Repositories.Credit
                                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                            loanReviewApplicationId = e.LOANAPPLICATIONID,
+                                           lmsOperationId = e.OPERATIONID,
                                            loanId = a.REVOLVINGLOANID,
                                            customerId = a.CUSTOMERID,
                                            customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
@@ -12329,6 +12330,7 @@ namespace FintrakBanking.Repositories.Credit
                                     divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == c.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                                     divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == a.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                     loanReviewApplicationId = e.LOANAPPLICATIONID,
+                                    lmsOperationId = e.OPERATIONID,
                                     loanId = a.REVOLVINGLOANID,
                                     customerId = a.CUSTOMERID,
                                     customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
@@ -14772,7 +14774,8 @@ namespace FintrakBanking.Repositories.Credit
                                      writtenOff = a.LOANSTATUSID == 7,
                                      loanStatusId = a.LOANSTATUSID,
                                      loanSystemTypeId = a.LOANSYSTEMTYPEID,
-
+                                     operationId = a.OPERATIONID,
+                                     operationTypeId = context.TBL_OPERATIONS.Where(x=>x.OPERATIONID == a.OPERATIONID).Select(x=>x.OPERATIONTYPEID).FirstOrDefault(),
                                      productClassId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.PRODUCTCLASSID ?? 0,
                                      productId = a.PRODUCTID,
                                      productClassProcessId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
@@ -14937,7 +14940,8 @@ namespace FintrakBanking.Repositories.Credit
                                        writtenOff = a.LOANSTATUSID == (short)LoanStatusEnum.WriteOff,
                                        loanStatusId = a.LOANSTATUSID,
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
-
+                                       operationId = a.OPERATIONID,
+                                       operationTypeId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == a.OPERATIONID).Select(x => x.OPERATIONTYPEID).FirstOrDefault(),
                                        productClassId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.PRODUCTCLASSID ?? 0,
                                        productId = a.PRODUCTID,
                                        productClassProcessId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
@@ -14977,6 +14981,8 @@ namespace FintrakBanking.Repositories.Credit
                                  && !loanStatus.Contains(a.LOANSTATUSID)
                                  select new LoanViewModel
                                  {
+                                     operationId = a.OPERATIONID,
+                                     operationTypeId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == a.OPERATIONID).Select(x => x.OPERATIONTYPEID).FirstOrDefault(),
                                      loanId = a.EXTERNALLOANID,
                                      customerId = a.CUSTOMERID,
                                      currencyId = a.CURRENCYID,
@@ -15044,7 +15050,7 @@ namespace FintrakBanking.Repositories.Credit
                                      writtenOff = false,
                                      //loanStatusId = a.LOANSTATUSID,
                                      loanSystemTypeId = (short)LoanSystemTypeEnum.ExternalFacility,
-
+                                     operationId = 0,
                                      productClassId = p.PRODUCTCLASSID,
                                      productId = p.PRODUCTID,
                                      productClassProcessId = p.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
@@ -15550,7 +15556,8 @@ namespace FintrakBanking.Repositories.Credit
                                        writtenOff = a.LOANSTATUSID == 7,
                                        loanStatusId = a.LOANSTATUSID,
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
-
+                                       operationId = a.OPERATIONID,
+                                       operationTypeId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == a.OPERATIONID).Select(x => x.OPERATIONTYPEID).FirstOrDefault(),
                                        productClassId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.PRODUCTCLASSID ?? 0,
                                        productId = a.PRODUCTID,
                                        productClassProcessId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,

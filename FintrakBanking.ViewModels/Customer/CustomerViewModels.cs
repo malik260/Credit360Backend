@@ -725,7 +725,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string Message { get; set; }
         public string requestId { get; set; }
     	public string applicationReferenceNumber { get; set; }
-        public int responseCode { get; set; }
+        public string responseCode { get; set; }
         public string responseMessage { get; set; }
     }
 

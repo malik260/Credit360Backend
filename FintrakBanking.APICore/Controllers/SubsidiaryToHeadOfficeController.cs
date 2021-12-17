@@ -1,4 +1,5 @@
-﻿using FintrakBanking.APICore.core;
+﻿using FintrakBanking.APICore.CFLAuthentication;
+using FintrakBanking.APICore.core;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Customer;
@@ -10,8 +11,8 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-
-    [RoutePrefix("api/v1/fintrak")]
+    //[MyBasicAuthenticationFilter]
+    [RoutePrefix("api/v1/subsidiary")]
     public class SubsidiaryToHeadOfficeController : ApiControllerBase
     {
        
@@ -39,14 +40,14 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     APIResponse response = new APIResponse();
                     response.responseMessage = $"Record submitted successfully";
-                    response.responseCode = 00;
+                    response.responseCode = "00";
                     return Request.CreateResponse(HttpStatusCode.OK, response);
                 }
                 else
                 {
                     APIResponse response = new APIResponse();
                     response.responseMessage = $"There was an error creating this record, confirm all requested parameters are captured";
-                    response.responseCode = 400;
+                    response.responseCode = "400";
                     return Request.CreateResponse(HttpStatusCode.BadRequest, response);
                 }
                 
