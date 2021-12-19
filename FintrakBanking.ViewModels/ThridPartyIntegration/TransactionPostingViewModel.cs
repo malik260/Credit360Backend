@@ -319,8 +319,8 @@ public class LienProcessViewModel //: GeneralEntity
         public DateTime? dateTimeDeleted { get; set; }
         public string responseMessage { get; set; }
         public string responseCode { get; set; }
-
-
+        public string createdByName { get; set; }
+        public string countryCode { get; set; }
     }
 
 
