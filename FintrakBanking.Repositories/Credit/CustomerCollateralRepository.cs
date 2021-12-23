@@ -8763,13 +8763,14 @@ namespace FintrakBanking.Repositories.Credit
                 var refNo = CommonHelpers.GenerateRandomDigitCode(7);
                 model.collateralCode = refNo;
             }
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerId).Select(x => x).FirstOrDefault();
             int collateralId = 0;
             DateTime date = DateTime.Now;
             var xchRate = repo.GetExchangeRate(date, model.currencyId, model.companyId);
             if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
                 var mainCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE.Trim() == model.collateralCode.Trim()).Select(x => x).FirstOrDefault();
-
+                
                 if (mainCollateral != null)
                 {
 
@@ -8793,7 +8794,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainCollateral.CURRENCYID = model.currencyId;
                     mainCollateral.VALIDTILL = model.validTill;
                     mainCollateral.EXCHANGERATE = repo.GetExchangeRate(DateTime.Now, model.currencyId, model.companyId).sellingRate;
-
+                    mainCollateral.CUSTOMERCODE = customer.CUSTOMERCODE;
                     mainCollateral.CAMREFNUMBER = model.camRefNumber;
                     mainCollateral.LASTUPDATEDBY = model.createdBy;
                     mainCollateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
@@ -8823,6 +8824,7 @@ namespace FintrakBanking.Repositories.Credit
                         ISLOCATIONBASED = model.isLocationBased,
                         VALUATIONCYCLE = model.valuationCycle,
                         HAIRCUT = model.haircut,
+                        CUSTOMERCODE = customer.CUSTOMERCODE,
                         CURRENCYID = model.currencyId,
                         EXCHANGERATE = repo.GetExchangeRate(date, model.currencyId, model.companyId).sellingRate,
                         CUSTOMERID = model.customerId,

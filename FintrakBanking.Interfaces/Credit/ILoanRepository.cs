@@ -294,6 +294,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool CancelFullAndFinal(int loanId, int statusId);
         List<LoanViewModel> GetApprovedLoanReviewAwaitingOperation(int staffId, int companyId);
         WorkflowResponse saveBulkInsurancePolicyEntries(List<MultipleInsuranceOutputViewModel> models, UserInfo user);
-
+        IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReviewSearch(int staffId, int companyId, string searchString);
+        IEnumerable<LoanViewModel> GetLoanReviewApplicationOverDraftSearch(int staffId, int companyId, string searchString);
+        IEnumerable<LoanViewModel> GetApprovedLoanReviewSearch(int companyId, int staffId, string searchString);
+        IEnumerable<LoanViewModel> GetContingentApprovedApplicationSearch(int staffId, int companyId, string searchString);
     }
 }

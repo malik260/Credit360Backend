@@ -1569,9 +1569,13 @@ namespace FintrakBanking.APICore.Controllers
             entity.companyId = token.GetCompanyId;
 
             var response = repo.AddCollateral(entity);
-            if (response > 0)
+            if (response > 0 && entity.isRegistrationDoneViaLoanApplication != (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully and sent for approval" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record Created successfully and sent for approval" });
+            }
+            if (response > 0 && entity.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record Created successfully" });
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
