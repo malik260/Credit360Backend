@@ -1947,8 +1947,76 @@ namespace FintrakBanking.Repositories.Credit
             {
                 app.slaGlobalStatus = GetSlaGlobalStatus(app);
                 app.slaInduvidualStatus = GetSlaInduvidualStatus(app);
+                if (app.slaGlobalStatus.ToLower() == "danger" || app.slaInduvidualStatus.ToLower() == "danger")
+                {
+                    SlaNotification(app);
+                }
             }
             return apps;
+        }
+
+        private void SlaNotification(LoanApplicationViewModel app)
+        {
+
+            AlertsViewModel alert = new AlertsViewModel();
+            var ownerRecord = context.TBL_STAFF.Where(s => s.STAFFID == app.responseStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME).FirstOrDefault();
+            var alertTitle = "SLA/TRT BREACH ON LOAN APPLICATION NUMBER " + app.applicationReferenceNumber;
+            var alertTemplate = "The transaction with reference number " + app.applicationReferenceNumber + " and product name " + app.proposedProductName + " which is currently with " + app.currentApprovalLevel + "(" + ownerRecord + ") SLA/TRT has been breach";
+            string emailList = GetBusinessUsersEmailsToGroupHead(app.createdBy);
+
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = alertTitle,
+                MESSAGEBODY = alertTemplate,
+                MESSAGESTATUSID = 1,
+                MESSAGETYPEID = 1,
+                FROMADDRESS = "fintrakdevops@gmail.com",
+                TOADDRESS = emailList,
+                DATETIMERECEIVED = DateTime.Now,
+                SENDONDATETIME = DateTime.Now,
+                OPERATIONMETHOD = "SLABREACH"
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+            context.SaveChanges();
+        }
+
+        private string GetBusinessUsersEmailsToGroupHead(int accountOfficerId)
+        {
+            string emailList = "";
+
+            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficerId && x.DELETED == false).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
+
+                                if (groupHead != null)
+                                {
+                                    emailList = emailList + ";" + groupHead.EMAIL;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
         }
         public string GetSlaInduvidualStatus(LoanApplicationViewModel app)
         {
