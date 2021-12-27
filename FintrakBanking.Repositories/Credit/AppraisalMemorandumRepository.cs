@@ -3479,7 +3479,10 @@ namespace FintrakBanking.Repositories.Credit
                                         .FirstOrDefault(),
             productClassId = x.a.PRODUCTCLASSID,
             productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-            proposedProductName = context.TBL_PRODUCT.Where(p=>p.PRODUCTID == x.a.PRODUCTID).Select(p=>p.PRODUCTNAME).FirstOrDefault(),
+            proposedProductName = context.TBL_LOAN_APPLICATION_DETAIL
+                                        .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
+                                        .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+                                        .FirstOrDefault(),
             customerGroupId = x.a.CUSTOMERGROUPID,
             loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
             relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
@@ -3658,7 +3661,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var staffRole = context.TBL_APPROVAL_LEVEL.Where(r => r.APPROVALLEVELID == app.currentApprovalLevelId).Select(r => r.STAFFROLEID).FirstOrDefault();
                     var roleName = context.TBL_STAFF_ROLE.Where(n => n.STAFFROLEID == staffRole).Select(n => n.STAFFROLENAME).FirstOrDefault();
-                    var ownerRecord = context.TBL_STAFF.Where(s => s.STAFFID == app.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME).FirstOrDefault();
                     var alertTitle = "SLA/TRT BREACH ON LOAN APPLICATION NUMBER " + app.applicationReferenceNumber;
                     var alertTemplate = "The transaction with reference number " + app.applicationReferenceNumber + " and product name " + app.proposedProductName.ToUpper() + " which is currently with " + app.currentApprovalLevel + "(" + roleName + ") SLA/TRT has been breach";
                     
