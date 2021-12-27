@@ -34266,7 +34266,7 @@ namespace FintrakBanking.Repositories.Credit
                     xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                 }
 
-            var dataLoan = (from ln in context.TBL_LOAN
+            /*var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
                             join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID into atraila
@@ -34796,7 +34796,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 var unionAll = termLoanData.Union(revolvingLoanData);
                 var unionAll2 = termLoanDataNon.Union(revolvingLoanDataNon);
-                var allData = unionAll.Union(unionAll2).Union(exposureData).Union(exposureDigitalData);
+                var allData = unionAll.Union(unionAll2).Union(exposureData).Union(exposureDigitalData);*/
+                var allData = exposureData.Union(exposureDigitalData);
                 var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
 
                 return data;
