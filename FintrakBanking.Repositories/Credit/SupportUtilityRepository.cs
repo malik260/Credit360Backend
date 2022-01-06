@@ -185,7 +185,6 @@ namespace FintrakBanking.Repositories.Credit
             searchString = searchString.Trim().ToLower();
 
             var loanApplicationId = (from x in context.TBL_LOAN_APPLICATION
-
                                      where
                                      x.APPLICATIONREFERENCENUMBER.Trim() == searchString
                                      select x.LOANAPPLICATIONID).ToList();
@@ -491,7 +490,12 @@ namespace FintrakBanking.Repositories.Credit
                                  misCode = c.MISCODE,
                                  timeUpdated = c.DATETIMEUPDATED,
                                  businessUnitName = c.BUSINESSUNITID == null ? "N/A" : context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == c.BUSINESSUNITID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
-                                
+                                 ApprovalStatusId = c.APPROVALSTATUSID,
+                                 approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == c.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                                 dateTimeCreated = c.DATETIMECREATED,
+                                 dateTimeUpdated = c.DATETIMEUPDATED,
+                                 createdByName = context.TBL_STAFF.Where(o => o.STAFFID == c.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                 isCurrent = c.ISCURRENT,
                              }).ToList();
             }
 
@@ -533,6 +537,9 @@ namespace FintrakBanking.Repositories.Credit
                                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == c.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                                        businessUnitName = context.TBL_PROFILE_BUSINESS_UNIT.Where(o => o.BUSINESSUNITID == c.BUSINESSUNITID).Select(o => o.BUSINESSUNITNAME).FirstOrDefault(),
                                        misCode = c.MISCODE,
+                                       dateTimeCreated = (DateTime)c.DATETIMECREATED,
+                                       dateTimeUpdated = c.DATETIMEUPDATED,
+                                       isCurrent = c.ISCURRENT
                                    }).FirstOrDefault();
             return tempStaffRecord;
         }
