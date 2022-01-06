@@ -714,6 +714,24 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approved-line-review-search/{searchString}")]
+        public HttpResponseMessage GetApprovedLineReviewSerach(string searchString)
+        {
+
+            var data = loanRepo.GetApprovedLineReviewSearch(token.GetStaffId, token.GetCompanyId, searchString);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+
+        }
+
         //[HttpGet]
         //[ClaimsAuthorization]
         //[Route("approved-line-review")]
@@ -2642,6 +2660,55 @@ namespace FintrakBanking.APICore.Controllers
             else
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approved-overdraft-review-application-search/{searchString}")]
+        public HttpResponseMessage GetLoanReviewApplicationOverDraftSearch(string searchString)
+        {
+
+            var data = loanRepo.GetLoanReviewApplicationOverDraftSearch(token.GetStaffId, token.GetCompanyId, searchString);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approved-loan-review-search/{searchString}")]
+        public HttpResponseMessage GetApprovedLoanReviewSearch(string searchString)
+        {
+            var data = loanRepo.GetApprovedLoanReviewSearch(token.GetCompanyId, token.GetStaffId, searchString);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approved-contingent-application-search/{searchString}")]
+        public HttpResponseMessage GetContingentApprovedApplicationSearch(string searchString)
+        {
+            var data = loanRepo.GetContingentApprovedApplication(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
         }
 
     }
