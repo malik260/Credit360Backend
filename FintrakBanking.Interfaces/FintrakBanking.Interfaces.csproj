@@ -103,6 +103,7 @@
     <Compile Include="Credit\ILoanPrepayment.cs" />
     <Compile Include="Credit\IOriginalDocumentReleaseRepository.cs" />
     <Compile Include="Credit\IProjectSiteReportRepository.cs" />
+    <Compile Include="Credit\ISupportUtilityRepository.cs" />
     <Compile Include="Credit\ITestCollateralRepository.cs" />
     <Compile Include="Credit\IValuationReportRepository.cs" />
     <Compile Include="Credit\IValuationRequestTypeRepository.cs" />

@@ -1473,20 +1473,20 @@
                     handler.UseDefaultCredentials = true;
                     getAPIURLSettings("ApprovalPostingToSub");
                     httpClientInstance = new HttpClient();
-                    //var token = new AuthenticationHeaderValue("Basic", API_KEY);
+                    var token = new AuthenticationHeaderValue("Basic", API_KEY);
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    //client.DefaultRequestHeaders.Authorization = token;
+                    client.DefaultRequestHeaders.Authorization = token;
 
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
                     responseDateTime = DateTime.Now;
 
-                    response = client.PostAsync("credit/appraisal-memorandum/forward", new StringContent(
+                    response = client.PostAsync("credit/subsidiary/appraisal-memorandum/forward", new StringContent(
                            new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
                     if (response.IsSuccessStatusCode)
@@ -1550,36 +1550,29 @@
             public async Task<CloseMannualBookingResponseViewModel> ValidateMannualBookingClosure(CloseMannualBookingViewModel model)
             {
                 HttpClientHandler handler = new HttpClientHandler();
-                HttpClient httpClientInstance;
+                //HttpClient httpClientInstance;
 
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
                 string responseMessage = "";
-
-                getAPIURLSettings("MannualBookingClose");
                 try
                 {
                     handler.UseDefaultCredentials = true;
-
-                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-                    httpClientInstance = new HttpClient();
-                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(180);
-                    client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(
-                        new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Authorization = token;
+                    getAPIURLSettings("MannualBookingClose");
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", API_KEY);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
-                    ServicePointManager.ServerCertificateValidationCallback +=
-                        (sender, cert, chain, sslPolicyErrors) => true;
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
                     responseDateTime = DateTime.Now;
 
-                    response = client.PostAsync("GetLoanDetails", new StringContent(
-                           new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                    response = client.PostAsync("GetLoanDetails", new StringContent(new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
                     if (response.IsSuccessStatusCode)
                     {
