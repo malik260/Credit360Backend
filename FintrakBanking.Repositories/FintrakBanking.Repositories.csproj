@@ -112,7 +112,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial">
-      <HintPath>..\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\FintrakBanking.APICore\bin\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
