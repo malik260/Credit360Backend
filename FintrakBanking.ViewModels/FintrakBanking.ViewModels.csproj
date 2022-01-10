@@ -299,6 +299,7 @@
     <Compile Include="Setups\General\UserViewModel.cs" />
     <Compile Include="Setups\Risk\RiskAssessmentIndexViewModels.cs" />
     <Compile Include="Setups\Risk\RiskRatingViewModel.cs" />
+    <Compile Include="SupportUtility\SupportUtilityViewModel.cs" />
     <Compile Include="ThridPartyIntegration\FlexcubeViewModel.cs" />
     <Compile Include="ThridPartyIntegration\RatingAndRatioViewModel.cs" />
     <Compile Include="ThridPartyIntegration\TransactionPostingViewModel.cs" />
