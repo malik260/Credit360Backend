@@ -1551,6 +1551,7 @@
             {
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
+                HttpRequestMessage rrm = new HttpRequestMessage();
 
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
@@ -1566,14 +1567,15 @@
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Add("Authorization","Basic"+ API_KEY);
+                   // client.DefaultRequestHeaders.Authorization = token;
+
                     client.BaseAddress = new Uri(API_URL);
-                    client.DefaultRequestHeaders.Authorization = token;
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                    
                     CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
-                    ServicePointManager.ServerCertificateValidationCallback +=
-                        (sender, cert, chain, sslPolicyErrors) => true;
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
                     responseDateTime = DateTime.Now;
 
