@@ -30,7 +30,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Approval Level Staff
 
-         [HttpPost] [AdminClaimsAuthorization]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approval-level-staff")]
         public HttpResponseMessage AddApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model)
         {
@@ -54,7 +54,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("go-for-level-staff-approval")]
         public HttpResponseMessage GoForWorkflowGroupApproval([FromBody]ApprovalLevelStaffViewModel model)
         {
@@ -99,7 +99,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
-        [AdminClaimsAuthorization]
         [Route("temp-approval-level-staff")]
         public HttpResponseMessage GetTempAllApprovalLevelStaff()
         {
@@ -133,7 +132,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [AdminClaimsAuthorization]
+       [HttpPut] [ClaimsAuthorization]
         [Route("approval-level-staff/{id}")]
         public HttpResponseMessage UpdateApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model, int id)
         {
@@ -158,7 +157,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete] [AdminClaimsAuthorization]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("approval-level-staff/{StaffLevelId}")]
         public async Task<HttpResponseMessage> DeleteApprovalLevelStaffAsync(int StaffLevelId)
         {

@@ -1620,19 +1620,19 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             string emailList = "";
 
-            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower() && x.DELETED == false).FirstOrDefault();
             if (accountOfficer != null)
             {
                 emailList = accountOfficer.EMAIL;
                 if (accountOfficer.SUPERVISOR_STAFFID != null)
                 {
-                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
                     if (relationshipManager != null)
                     {
                         emailList = emailList + ";" + relationshipManager.EMAIL;
                         if (relationshipManager.SUPERVISOR_STAFFID != null)
                         {
-                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
                             if (zonalHead != null)
                             {
                                 emailList = emailList + ";" + zonalHead.EMAIL;
@@ -1656,24 +1656,24 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             string emailList = "";
 
-            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower() && x.DELETED == false).FirstOrDefault();
             if (accountOfficer != null)
             {
                 emailList = accountOfficer.EMAIL;
                 if (accountOfficer.SUPERVISOR_STAFFID != null)
                 {
-                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
                     if (relationshipManager != null)
                     {
                         emailList = emailList + ";" + relationshipManager.EMAIL;
                         if (relationshipManager.SUPERVISOR_STAFFID != null)
                         {
-                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
                             if (zonalHead != null)
                             {
                                 emailList = emailList + ";" + zonalHead.EMAIL;
 
-                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
 
                                 if (groupHead != null)
                                 {
@@ -1692,24 +1692,24 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             string emailList = "";
 
-            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower() && x.DELETED == false).FirstOrDefault();
             if (accountOfficer != null)
             {
                 emailList = accountOfficer.EMAIL;
                 if (accountOfficer.SUPERVISOR_STAFFID != null)
                 {
-                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
                     if (relationshipManager != null)
                     {
                         emailList = emailList + ";" + relationshipManager.EMAIL;
                         if (relationshipManager.SUPERVISOR_STAFFID != null)
                         {
-                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
                             if (zonalHead != null)
                             {
                                 emailList = emailList + ";" + zonalHead.EMAIL;
 
-                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
 
                                 if (groupHead != null)
                                 {
@@ -1747,7 +1747,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var alertTitle = alertTitleInfo.TITLE;
                     var alertTemplate = alertTitleInfo.TEMPLATE;
                     string emailList = "";
-                    var groupHeadDetail = context.TBL_STAFF.Where(b => b.MISCODE == groupHead.misCode).FirstOrDefault();
+                    var groupHeadDetail = context.TBL_STAFF.Where(b => b.MISCODE == groupHead.misCode && b.DELETED == false).FirstOrDefault();
                     var accountOfficers = externalAlertRepository.GetAccountOfficersByGroupHeads(groupHead.misCode).Where(x=>x.Email.ToLower() != "herbert.wigwe@accessbankplc.com" && x.Email.ToLower() != "wigweh@accessbankplc.com").ToList();
                     var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
 
@@ -1758,7 +1758,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         var accountOfficerFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == accountOfficer.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
                         if (accountOfficerFullName.ToLower() == "vacant" || accountOfficerFullName == "")
                         {
-                            accountOfficerFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == accountOfficer.misCode).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
+                            accountOfficerFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == accountOfficer.misCode && b.DELETED == false).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
                         }
                         if (accountOfficerFullName == null)
                         {
@@ -1856,7 +1856,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var alertTitle = alertTitleInfo.TITLE;
                     var alertTemplate = alertTitleInfo.TEMPLATE;
                     string emailList = "";
-                    var groupHeadDetail = context.TBL_STAFF.Where(b => b.MISCODE == groupHead.misCode).FirstOrDefault();
+                    var groupHeadDetail = context.TBL_STAFF.Where(b => b.MISCODE == groupHead.misCode && b.DELETED == false).FirstOrDefault();
                     var accountOfficers = externalAlertRepository.GetPasDueObligationsAccountOfficersByGroupHeads(groupHeadDetail.MISCODE).Where(x=> x.Email.ToLower() != "herbert.wigwe@accessbankplc.com" && x.Email.ToLower() != "wigweh@accessbankplc.com").ToList();
                     var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
 
@@ -1867,7 +1867,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         var accountOfficerFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == accountOfficer.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
                         if (accountOfficerFullName.ToLower() == "vacant" || accountOfficerFullName == "")
                         {
-                            accountOfficerFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == accountOfficer.misCode).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
+                            accountOfficerFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == accountOfficer.misCode && b.DELETED == false).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
                         }
                         if (accountOfficerFullName == null)
                         {
@@ -1959,7 +1959,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var staffFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == staff.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
                     if (staffFullName == "vacant" || staffFullName == "")
                     {
-                        staffFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == staff.misCode).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
+                        staffFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == staff.misCode && b.DELETED == false).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
                     }
                     emailList = GetBusinessUsersEmails(staff.misCode);
 

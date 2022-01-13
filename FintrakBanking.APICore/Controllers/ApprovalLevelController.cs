@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Approval Level
 
-         [HttpPost] [AdminClaimsAuthorization]
+         [HttpPost] [ClaimsAuthorization]
         [Route("approval-level")]
         public HttpResponseMessage AddApprovalLevel([FromBody] ApprovalLevelViewModel model)
         {
@@ -58,7 +58,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [AdminClaimsAuthorization]  
+      [HttpGet]  
         [Route("approval-level/all")]
         public HttpResponseMessage GetAllApprovalLevel()
         {
@@ -79,7 +79,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [AdminClaimsAuthorization]
         [Route("approval-levels/operation/{operationId}/product-class/{classId}")]
         public HttpResponseMessage GetApprovalLevelByOperationIdAndProductClassId(int operationId, int? classId)
         {
@@ -110,7 +109,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet] [AdminClaimsAuthorization]  
+        [HttpGet] 
         [Route("approval-level-detailed/all")]
         public HttpResponseMessage GetAllDetailedApprovalLevel()
         {
@@ -183,7 +182,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [AdminClaimsAuthorization]
+       [HttpPut] [ClaimsAuthorization]
         [Route("approval-level/{id}")]
         public HttpResponseMessage UpdateApprovalLevel(int id, [FromBody] ApprovalLevelViewModel model)
         {
@@ -215,7 +214,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpDelete] [AdminClaimsAuthorization]
+        [HttpDelete] [ClaimsAuthorization]
         [Route("approval-level/{id}")]
         public async Task<HttpResponseMessage> DeleteApprovalLevelAsync(int id)
         {
@@ -330,7 +329,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [AdminClaimsAuthorization]
         [Route("approval-level-list-for-approval")]
         public HttpResponseMessage GetApprovalLevelForApproval()
         {

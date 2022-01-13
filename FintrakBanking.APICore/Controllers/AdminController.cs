@@ -17,6 +17,8 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces;
 using FintrakBanking.ViewModels.Reports;
 using System.Text;
+using FintrakBanking.ViewModels.SupportUtility;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -36,7 +38,8 @@ namespace FintrakBanking.APICore.Controllers
                                 IErrorLogRepository _errorLogger,
                                 ICanAuthorizationRepository _canAuthorization,
                                 IAuditTrailRepository _audit, IProfileSetupRepository _profileSetup,
-                                IAPIErrorLog log)
+                                IAPIErrorLog log
+                    )
         {
             this.repo = _repo;
             this.errorLogger = _errorLogger;
@@ -74,13 +77,11 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
 
-        //  [ClaimsAuthorizationAttribute(ClaimType = "logincode", ClaimValue =   username )]
         [HttpGet]
         [ClaimsAuthorization]
         [Route("users-by-staffId/")]
@@ -440,11 +441,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
             }
-
-
         }
-
-
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -1014,6 +1011,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
+       
 
     }
 }

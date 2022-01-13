@@ -1457,6 +1457,172 @@
 
             }
 
+            public async Task<ResponseMessage> ApprovalPostingToSubOffice(ForwardViewModel model)
+            {
+
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+                ResponseMessage responseMsg = null;
+                HttpClient client = new HttpClient(handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                string responseMessage = "";
+
+                try
+                {
+                    handler.UseDefaultCredentials = true;
+                    getAPIURLSettings("ApprovalPostingToSub");
+                    httpClientInstance = new HttpClient();
+                    var token = new AuthenticationHeaderValue("Basic", API_KEY);
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = token;
+
+                    ServicePointManager.ServerCertificateValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+                    responseDateTime = DateTime.Now;
+
+                    response = client.PostAsync("credit/subsidiary/appraisal-memorandum/forward", new StringContent(
+                           new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rep = await response.Content.ReadAsAsync<ForwardViewModel>();
+
+                        if (!rep.responseMessage.ToLower().Contains("success"))
+                        {
+                            throw new APIErrorException("API call error - " + rep.responseMessage + " " + rep.responseCode + " " + DateTime.Now);
+                        }
+
+                        var res = new ApprovalPostingResult
+                        {
+                            responseMessage = rep.responseMessage,
+                            responseCode = rep.responseCode
+                        };
+
+                        responseMsg = new ResponseMessage
+                        {
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                        return responseMsg;
+                    }
+
+                    responseMessage = await response.Content.ReadAsStringAsync();
+
+                    return responseMsg;
+                }
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    throw new APIErrorException($"Error" + ex.Message);
+                }
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = $"{API_URL}credit/appraisal-memorandum/forward",
+                        LOGTYPEID = 3,
+                        REFERENCENUMBER = logContext.TBL_LOAN_APPLICATION.Where(x=>x.LOANAPPLICATIONID ==  model.applicationId).Select(x=>x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = new JavaScriptSerializer().Serialize(model),
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+
+                   
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    logContext.SaveChanges();
+                }
+            }
+
+            public async Task<CloseMannualBookingResponseViewModel> ValidateMannualBookingClosure(CloseMannualBookingViewModel model)
+            {
+                HttpClientHandler handler = new HttpClientHandler();
+                //HttpClient httpClientInstance;
+
+                HttpClient client = new HttpClient(handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                string responseMessage = "";
+                try
+                {
+                    handler.UseDefaultCredentials = true;
+                    client.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    getAPIURLSettings("MannualBookingClose");
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", API_KEY);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+                    responseDateTime = DateTime.Now;
+
+                    response = client.PostAsync("GetLoanDetails", new StringContent(new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rep = await response.Content.ReadAsAsync<CloseMannualBookingResponseViewModel>();
+
+                        if (!rep.response_message.ToLower().Contains("successful"))
+                        {
+                            throw new APIErrorException("Core Banking API error - " + rep.response_message + " " + DateTime.Now);
+                        }
+
+                        records.response_code = rep.response_code;
+                        records.response_message = rep.response_message;
+                        records.loandetailsresp = rep.loandetailsresp;
+                    }
+
+                    responseMessage = await response.Content.ReadAsStringAsync();
+
+                    return records;
+                }
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    throw new APIErrorException($"Error" + ex.Message);
+                }
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = $"{API_URL}GetLoanDetails",
+                        LOGTYPEID = 8,
+                        REFERENCENUMBER = model.loan_accountno,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = new JavaScriptSerializer().Serialize(model),
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    logContext.SaveChanges();
+                }
+            }
+
+
 
         }
     }

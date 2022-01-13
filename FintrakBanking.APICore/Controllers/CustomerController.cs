@@ -280,14 +280,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
-
-
-
-
-
-
         [HttpGet]
         [ClaimsAuthorization]
         [Route("{customerId}")]
@@ -2331,7 +2323,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         [HttpGet]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("customer/approvals/temp")]
         public HttpResponseMessage GetAllCustomerInformationAwaitingApproval()
         {
@@ -2351,7 +2343,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [AdminClaimsAuthorization]
+        [ClaimsAuthorization]
         [Route("approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {

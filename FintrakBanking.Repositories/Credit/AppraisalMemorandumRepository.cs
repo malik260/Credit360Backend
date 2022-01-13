@@ -31,6 +31,7 @@ using System.Web.Script.Serialization;
 using System.Text;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.Entities.StagingModels;
+using FintrakBanking.Interfaces.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -50,6 +51,7 @@ namespace FintrakBanking.Repositories.Credit
         private IMemorandumRepository memo;
         private TransactionPosting transaction;
         FinTrakBankingStagingContext stgContext;
+        IHeadOfficeToSubIntegration headOfficeToSub;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -62,7 +64,8 @@ namespace FintrakBanking.Repositories.Credit
             ILoanApplicationRepository _loanApp,
             IMemorandumRepository _memo,
             TransactionPosting _transaction,
-            FinTrakBankingStagingContext _stgContext
+            FinTrakBankingStagingContext _stgContext,
+            IHeadOfficeToSubIntegration _headOfficeToSub
             )
         {
             this.context = context;
@@ -76,6 +79,7 @@ namespace FintrakBanking.Repositories.Credit
             this.memo = _memo;
             this.transaction = _transaction;
             this.stgContext = _stgContext;
+            this.headOfficeToSub = _headOfficeToSub;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -339,8 +343,19 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse ForwardAppraisalMemorandum(ForwardViewModel model)
         {
-            //   Task.Run(() => CreateOutPutDocument(model.applicationId));
-           
+                //Task.Run(() => CreateOutPutDocument(model.applicationId));
+
+                if (model.isExternalSystemApprover)
+                {
+                    var response = headOfficeToSub.PostFacilityApprovalToSubnputs(model);
+                    if(response != null)
+                    {
+                    var update =  stgContext.STG_SUB_BASICTRANSACTION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPROVALLEVELID == model.nextApprovalLevelId && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved).FirstOrDefault();
+                    update.APPROVALSTATUSID = model.applicationStatusId;
+                    stgContext.SaveChanges();
+                    }
+                }
+
                 bool updateApprovedAmount = false;
                 bool generateOutPutDocument = false;
                 int operationId = (int)OperationsEnum.CreditAppraisal;
@@ -3465,7 +3480,10 @@ namespace FintrakBanking.Repositories.Credit
                                         .FirstOrDefault(),
             productClassId = x.a.PRODUCTCLASSID,
             productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-
+            proposedProductName = context.TBL_LOAN_APPLICATION_DETAIL
+                                        .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
+                                        .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+                                        .FirstOrDefault(),
             customerGroupId = x.a.CUSTOMERGROUPID,
             loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
             relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
@@ -3547,10 +3565,10 @@ namespace FintrakBanking.Repositories.Credit
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
-        public async Task<IEnumerable<LoanApplicationViewModel>> GetSubsidiaryPendingLoanApplications()
+        public async Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaryPendingLoanApplications()
         {
             var data = await (from a in stgContext.STG_SUB_BASICTRANSACTION
-                              select new LoanApplicationViewModel
+                              select new SubsidiaryViewModel
                               {
                                   loanApplicationId = a.LOANAPPLICATIONID,
                                   loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
@@ -3602,8 +3620,112 @@ namespace FintrakBanking.Repositories.Credit
             {
                 app.slaGlobalStatus = GetSlaGlobalStatus(app);
                 app.slaInduvidualStatus = GetSlaInduvidualStatus(app);
+                if(app.slaGlobalStatus.ToLower() == "danger" || app.slaInduvidualStatus.ToLower() == "danger")
+                {
+                    SlaNotification(app);
+                }
+                
             }
             return apps;
+        }
+
+
+        private void SlaNotification(LoanApplicationViewModel app)
+        {
+            AlertsViewModel alert = new AlertsViewModel();
+            if (app.toStaffId != null)
+            {
+                var ownerRecord = context.TBL_STAFF.Where(s => s.STAFFID == app.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME).FirstOrDefault();
+                var alertTitle = "SLA/TRT BREACH ON LOAN APPLICATION NUMBER " + app.applicationReferenceNumber;
+                var alertTemplate = "The transaction with reference number " + app.applicationReferenceNumber + " and product name " + app.proposedProductName.ToUpper() + " which is currently with " + app.currentApprovalLevel + "(" + ownerRecord + ") SLA/TRT has been breach";
+                string emailList = GetBusinessUsersEmailsToGroupHead(app.createdBy);
+
+                var message = new TBL_MESSAGE_LOG()
+                {
+                    MESSAGESUBJECT = alertTitle,
+                    MESSAGEBODY = alertTemplate,
+                    MESSAGESTATUSID = 1,
+                    MESSAGETYPEID = 1,
+                    FROMADDRESS = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    TOADDRESS = emailList,
+                    DATETIMERECEIVED = DateTime.Now,
+                    SENDONDATETIME = DateTime.Now,
+                    OPERATIONMETHOD = "SLABREACH"
+                };
+
+                context.TBL_MESSAGE_LOG.Add(message);
+                context.SaveChanges();
+            }
+            else
+            {
+                if (app.currentApprovalLevelId != null)
+                {
+                    var staffRole = context.TBL_APPROVAL_LEVEL.Where(r => r.APPROVALLEVELID == app.currentApprovalLevelId).Select(r => r.STAFFROLEID).FirstOrDefault();
+                    var roleName = context.TBL_STAFF_ROLE.Where(n => n.STAFFROLEID == staffRole).Select(n => n.STAFFROLENAME).FirstOrDefault();
+                    var alertTitle = "SLA/TRT BREACH ON LOAN APPLICATION NUMBER " + app.applicationReferenceNumber;
+                    var alertTemplate = "The transaction with reference number " + app.applicationReferenceNumber + " and product name " + app.proposedProductName.ToUpper() + " which is currently with " + app.currentApprovalLevel + "(" + roleName + ") SLA/TRT has been breach";
+                    
+                    string emailList = "";
+                    var mailList = context.TBL_STAFF.Where(s => s.STAFFROLEID == staffRole).Select(s => s).ToList();
+                    foreach (var t in mailList)
+                    {
+                        emailList = emailList + ";" + t.EMAIL;
+                    }
+
+                    var message = new TBL_MESSAGE_LOG()
+                    {
+                        MESSAGESUBJECT = alertTitle,
+                        MESSAGEBODY = alertTemplate,
+                        MESSAGESTATUSID = 1,
+                        MESSAGETYPEID = 1,
+                        FROMADDRESS = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        TOADDRESS = emailList,
+                        DATETIMERECEIVED = DateTime.Now,
+                        SENDONDATETIME = DateTime.Now,
+                        OPERATIONMETHOD = "SLABREACH"
+                    };
+
+                    context.TBL_MESSAGE_LOG.Add(message);
+                    context.SaveChanges();
+                }
+            }
+        }
+
+        private string GetBusinessUsersEmailsToGroupHead(int accountOfficerId)
+        {
+            string emailList = "";
+
+            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficerId && x.DELETED == false).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID && x.DELETED == false).FirstOrDefault();
+
+                                if (groupHead != null)
+                                {
+                                    emailList = emailList + ";" + groupHead.EMAIL;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
         }
 
         private string GetSlaInduvidualStatus(LoanApplicationViewModel app)

@@ -33596,12 +33596,19 @@ namespace FintrakBanking.Repositories.Credit
                                  where
                                  b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                  && b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
-                                 && a.ISCOLLATERAL == false
+                                 //&& a.ISCOLLATERAL == false
                                  && a.VALIDITYSTATUS == true
 
                                  orderby b.REQUESTDATE descending
                                  select new MultipleInsuranceOutputApprovalViewModel()
                                  {
+                                     targetId = atrail.TARGETID,
+                                     collateralInsuranceTrackingId = a.COLLATERALINSURANCETRACKINGID,
+                                     customerCode = a.CUSTOMERCODE,
+                                     collateralCode = a.COLLATERALCODE,
+                                     customerId = a.CUSTOMERCODE,
+                                     isCollaterals = a.ISCOLLATERAL,
+                                     collateralDescription = a.COLLATERALDESCRIPTION,
                                      bulkInsuranceUploadApprovalId = b.BULKINSURANCEUPLOADAPPROVALID,
                                      systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                      operationId = b.OPERATIONID,
@@ -33644,11 +33651,18 @@ namespace FintrakBanking.Repositories.Credit
                                  }).ToList();
             foreach(var i in records)
             {
-                i.insuranceCompany = i.insuranceCompanyId > 0 ? context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == i.insuranceCompanyId).Select(x => x.COMPANYNAME).FirstOrDefault() : i.otherInsuranceCompany;
-                i.policyType = i.insurancePolicyTypeId > 0 ? context.TBL_INSURANCE_POLICY_TYPE.Where(x => x.POLICYTYPEID == i.insurancePolicyTypeId).Select(x => x.DESCRIPTION).FirstOrDefault() : i.otherInsurancePolicyType;
-                i.collateralCode = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.COLLATERALCODE).FirstOrDefault();
-                i.iCustomerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.CUSTOMERID).FirstOrDefault();
-                i.customerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+                if (i.isCollaterals == false)
+                {
+                    i.insuranceCompany = i.insuranceCompanyId > 0 ? context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == i.insuranceCompanyId).Select(x => x.COMPANYNAME).FirstOrDefault() : i.otherInsuranceCompany;
+                    i.policyType = i.insurancePolicyTypeId > 0 ? context.TBL_INSURANCE_POLICY_TYPE.Where(x => x.POLICYTYPEID == i.insurancePolicyTypeId).Select(x => x.DESCRIPTION).FirstOrDefault() : i.otherInsurancePolicyType;
+                    i.iCustomerId = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).Select(x => x.CUSTOMERID).FirstOrDefault();
+                }
+                else
+                {
+                    i.insuranceCompany = i.insuranceCompanyId > 0 ? context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == i.insuranceCompanyId).Select(x => x.COMPANYNAME).FirstOrDefault() : i.otherInsuranceCompany;
+                    i.policyType = i.insurancePolicyTypeId > 0 ? context.TBL_INSURANCE_POLICY_TYPE.Where(x => x.POLICYTYPEID == i.insurancePolicyTypeId).Select(x => x.DESCRIPTION).FirstOrDefault() : i.otherInsurancePolicyType;
+                    i.iCustomerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == i.customerCode).Select(x => x.CUSTOMERID).FirstOrDefault();
+                }
             }
 
             var data = records.GroupBy(x => x.referenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.systemArrivalDateTime);
@@ -34252,7 +34266,7 @@ namespace FintrakBanking.Repositories.Credit
                     xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                 }
 
-            var dataLoan = (from ln in context.TBL_LOAN
+            /*var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
                             join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID into atraila
@@ -34782,7 +34796,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 var unionAll = termLoanData.Union(revolvingLoanData);
                 var unionAll2 = termLoanDataNon.Union(revolvingLoanDataNon);
-                var allData = unionAll.Union(unionAll2).Union(exposureData).Union(exposureDigitalData);
+                var allData = unionAll.Union(unionAll2).Union(exposureData).Union(exposureDigitalData);*/
+                var allData = exposureData.Union(exposureDigitalData);
                 var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
 
                 return data;
@@ -35507,7 +35522,7 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryBand = ln.EXPIRINGBAND,
                                     divisionName = ln.DIVISIONNAME,
                                     totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
-                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                    totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
                                     dpdExposure = ln.UNPODAYSOVERDUE,
                                     loanCategory = ln.CBNCLASSIFICATION,
                                     casaAccount = ln.ACCOUNTNUMBER,
@@ -35558,7 +35573,7 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryBand = ln.EXPIRINGBAND,
                                     divisionName = ln.DIVISIONNAME,
                                     totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
-                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                    totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY, //ln.TOTALUNSETTLEDAMOUNT,
                                     dpdExposure = ln.UNPODAYSOVERDUE,
                                     loanCategory = ln.CBNCLASSIFICATION,
                                     casaAccount = ln.ACCOUNTNUMBER,
@@ -37027,7 +37042,7 @@ namespace FintrakBanking.Repositories.Credit
                                     collectionDate = lr.COLLECTIONDATE,
                                     amountRecovered = lr.AMOUNTRECOVERED,
                                     totalRecoveryAmount = (decimal?)lr.TOTALRECOVERYAMOUNT ?? 0,
-                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                    totalUnsettledAmount = l.TOTALAMOUNTRECOVERY,//ln.TOTALUNSETTLEDAMOUNT,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     productId = (short)l.PRODUCTID,
                                     productClassId = l.PRODUCTCLASSID,
@@ -37072,7 +37087,7 @@ namespace FintrakBanking.Repositories.Credit
                                     collectionDate = lr.COLLECTIONDATE,
                                     amountRecovered = lr.AMOUNTRECOVERED,
                                     totalRecoveryAmount = (decimal?)lr.TOTALRECOVERYAMOUNT ?? 0,
-                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                    totalUnsettledAmount = l.TOTALAMOUNTRECOVERY, //ln.TOTALUNSETTLEDAMOUNT,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     productId = (short)l.PRODUCTID,
                                     productClassId = l.PRODUCTCLASSID,
@@ -39675,14 +39690,89 @@ namespace FintrakBanking.Repositories.Credit
                         var policyRecords = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.ISCOLLATERAL == false && x.VALIDITYSTATUS == true).ToList();
                         foreach (var policyRecord in policyRecords)
                         {
-                            var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x=>x.COLLATERALCUSTOMERID == policyRecord.COLLATERALCUSTOMERID).FirstOrDefault();
-                            if (doseRecordExist == null)
+                            if (policyRecord.ISCOLLATERAL == false)
                             {
-                                var record = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(policyRecord.COLLATERALINSURANCETRACKINGID);
-                                bulkInsuranceUploads(record);
-                                record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                                context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(record);
-                                output = context.SaveChanges() > 0;
+                                var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == policyRecord.COLLATERALCUSTOMERID).FirstOrDefault();
+                                if (doseRecordExist == null)
+                                {
+                                    var record = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(policyRecord.COLLATERALINSURANCETRACKINGID);
+                                    bulkInsuranceUploads(record);
+                                    record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                    context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(record);
+                                    output = context.SaveChanges() > 0;
+                                }
+                            }
+                            else
+                            {
+                                var doseRecordExist = context.TBL_COLLATERAL_POLICY.Where(x => x.COLLATERALCUSTOMERID == policyRecord.COLLATERALCUSTOMERID).FirstOrDefault();
+                                if (doseRecordExist == null)
+                                {
+                                    var insurnceName = "";
+                                    var model = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(policyRecord.COLLATERALINSURANCETRACKINGID);
+                                    var verifyCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x=>x.CUSTOMERCODE == policyRecord.CUSTOMERCODE).FirstOrDefault();
+                                    if (verifyCollateral != null)
+                                    {
+                                        
+                                        var collateral = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
+                                        {
+                                            COLLATERALTYPEID = model.COLLATERALTYPE ?? 0,
+                                            COLLATERALSUBTYPEID = 0,
+                                            COLLATERALCODE = model.COLLATERALCODE,
+                                            COLLATERALVALUE = (decimal)0m,
+                                            COMPANYID = 1,
+                                            ALLOWSHARING = true,
+                                            ISLOCATIONBASED = true,
+                                            VALUATIONCYCLE = null,
+                                            HAIRCUT = 0,
+                                            CURRENCYID = 0,
+                                            EXCHANGERATE = 0,
+                                            CUSTOMERID = verifyCollateral.CUSTOMERID,
+                                            CAMREFNUMBER = null,
+                                            CREATEDBY = model.CREATEDBY,
+                                            DATETIMECREATED = DateTime.Now,
+                                            ACTEDONBY = null,
+                                            RELATEDCOLLATERALCODE = null,
+                                            LOANAPPLICATIONID = null,
+                                            COLLATERALSUMMARY = model.COLLATERALDESCRIPTION,
+                                            COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.InUse,
+                                            VALIDTILL = null,
+                                        });
+
+                                        context.SaveChanges();
+
+                                        if(model.INSURANCECOMPANYID != null)
+                                        {
+                                             insurnceName = context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == model.INSURANCECOMPANYID).Select(x=>x.COMPANYNAME).FirstOrDefault();
+                                        }
+                                        else
+                                        {
+                                            insurnceName = model.OTHERINSURANCECOMPANY;
+                                        }
+
+                                        var insuranceTracking = context.TBL_COLLATERAL_POLICY.Add(new TBL_COLLATERAL_POLICY
+                                        {
+                                            COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
+                                            ISOWNEDBYCUSTOMER = true,
+                                            PREMIUMAMOUNT = (decimal)model.PREMIUMPAID,
+                                            POLICYAMOUNT = (decimal)model.INSURABLEVALUE,
+                                            INSURANCECOMPANYNAME = insurnceName,
+                                            INSURANCETYPE = null,
+                                            INSURERADDRESS = model.ISURANCECOMPANYADDRESS,
+                                            POLICYSTARTDATE = (DateTime)model.INSURANCESTARTDATE,
+                                            ASSIGNDATE = (DateTime)model.INSURANCESTARTDATE,
+                                            RENEWALFREQUENCYTYPEID = 0,
+                                            INSURERDETAILS = model.COLLATERALDESCRIPTION,
+                                            INSURANCEPOLICYNUMBER = model.POLICYNUMBER,
+                                            POLICYRENEWALDATE = (DateTime)model.INSURANCEENDDATE,
+                                            REMARK = null,
+                                            INSURANCETYPEID = (int)model.INSURANCEPOLICYTYPEID,
+                                        });
+
+                                        model.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                        context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(model);
+                                        output = context.SaveChanges() > 0;
+                                    }
+                                }
                             }
                         }
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
@@ -39709,11 +39799,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 using (var trans = context.Database.BeginTransaction())
                 {
-                    foreach (var record in entity)
-                    {
-
+                    var batchCode = entity[0].batchCode;
                         var reviewRecord = (from s in context.TBL_BULK_INSURANCE_UPLOAD_APPROVAL
-                                            where s.BULKINSURANCEUPLOADAPPROVALID == record.targetId
+                                            where s.BATCHCODE == batchCode
                                             && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                             select s).FirstOrDefault();
 
@@ -39723,7 +39811,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = user.companyId,
                             approvalStatusId = ((short)approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)approvalStatusId,
                             comment = comment,
-                            targetId = record.collateralInsuranceTrackingId,
+                            targetId = reviewRecord.BULKINSURANCEUPLOADAPPROVALID,
                             operationId = reviewRecord.OPERATIONID,
                             BranchId = user.BranchId,
                             deferredExecution = false
@@ -39755,23 +39843,111 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
                             {
-                                var validRecords = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.ISCOLLATERAL == false).ToList();
+                                var validRecords = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Where(x => x.BATCHCODE == reviewRecord.BATCHCODE && x.VALIDITYSTATUS == true).ToList();
                                 foreach (var validRecord in validRecords)
                                 {
-                                    var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == validRecord.COLLATERALCUSTOMERID).FirstOrDefault();
-                                    if (doseRecordExist == null)
+                                    if (validRecord.ISCOLLATERAL == false)
                                     {
-                                        var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
-                                        bulkInsuranceUploads(rec);
-                                        rec.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                                        context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(rec);
+                                        if (validRecord.COLLATERALCUSTOMERID != null)
+                                        {
+                                            var doseRecordExist = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == validRecord.COLLATERALCUSTOMERID).FirstOrDefault();
+                                            if (doseRecordExist == null)
+                                            {
+                                                var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
+                                                bulkInsuranceUploads(rec);
+                                                context.SaveChanges();
+                                                
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var rec = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
+                                            bulkInsuranceUploads(rec);
+                                            context.SaveChanges();
+                                            
+                                        }
                                     }
+                                    else
+                                    {
+                                        var doseRecordExist = context.TBL_COLLATERAL_POLICY.Where(x => x.COLLATERALCUSTOMERID == validRecord.COLLATERALCUSTOMERID).FirstOrDefault();
+                                        if (doseRecordExist == null)
+                                        {
+                                            var insurnceName = "";
+                                            var model = context.TEMP_COLLATERAL_INSURANCE_TRACKING.Find(validRecord.COLLATERALINSURANCETRACKINGID);
+                                            var verifyCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == validRecord.COLLATERALCODE).FirstOrDefault();
+                                            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == validRecord.CUSTOMERCODE).FirstOrDefault();
+                                            var collateralType = context.TBL_COLLATERAL_TYPE.Where(x => x.COLLATERALTYPENAME.Contains("Insurance")).FirstOrDefault();
+                                            
+                                            if (verifyCollateral == null && collateralType != null)
+                                            {
+                                                var collateralTypeSub = context.TBL_COLLATERAL_TYPE_SUB.Where(x => x.COLLATERALTYPEID == collateralType.COLLATERALTYPEID).FirstOrDefault();
+                                                var collateral = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
+                                                {
+                                                    COLLATERALTYPEID = model.COLLATERALTYPE ?? collateralType.COLLATERALTYPEID,
+                                                    COLLATERALSUBTYPEID = collateralTypeSub.COLLATERALSUBTYPEID,
+                                                    COLLATERALCODE = model.COLLATERALCODE,
+                                                    CUSTOMERCODE = model.CUSTOMERCODE,
+                                                    COLLATERALVALUE = (decimal)0m,
+                                                    COMPANYID = 1,
+                                                    ALLOWSHARING = true,
+                                                    ISLOCATIONBASED = true,
+                                                    VALUATIONCYCLE = null,
+                                                    HAIRCUT = 0,
+                                                    CURRENCYID = 1,
+                                                    EXCHANGERATE = 0,
+                                                    CUSTOMERID = customer.CUSTOMERID,
+                                                    CAMREFNUMBER = null,
+                                                    CREATEDBY = model.CREATEDBY,
+                                                    DATETIMECREATED = DateTime.Now,
+                                                    ACTEDONBY = null,
+                                                    RELATEDCOLLATERALCODE = null,
+                                                    LOANAPPLICATIONID = null,
+                                                    COLLATERALSUMMARY = model.COLLATERALDESCRIPTION,
+                                                    COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.InUse,
+                                                    VALIDTILL = null,
+                                                });
+
+                                                context.SaveChanges();
+
+                                                if (model.INSURANCECOMPANYID != null)
+                                                {
+                                                    insurnceName = context.TBL_INSURANCE_COMPANY.Where(x => x.INSURANCECOMPANYID == model.INSURANCECOMPANYID).Select(x => x.COMPANYNAME).FirstOrDefault();
+                                                }
+                                                else
+                                                {
+                                                    insurnceName = model.OTHERINSURANCECOMPANY;
+                                                }
+
+                                                var insuranceTracking = context.TBL_COLLATERAL_POLICY.Add(new TBL_COLLATERAL_POLICY
+                                                {
+                                                    COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
+                                                    ISOWNEDBYCUSTOMER = true,
+                                                    PREMIUMAMOUNT = (decimal)model.PREMIUMPAID,
+                                                    POLICYAMOUNT = (decimal)model.INSURABLEVALUE,
+                                                    INSURANCECOMPANYNAME = insurnceName,
+                                                    INSURANCETYPE = null,
+                                                    INSURERADDRESS = model.ISURANCECOMPANYADDRESS,
+                                                    POLICYSTARTDATE = (DateTime)model.INSURANCESTARTDATE,
+                                                    ASSIGNDATE = (DateTime)model.INSURANCESTARTDATE,
+                                                    RENEWALFREQUENCYTYPEID = 1,
+                                                    INSURERDETAILS = model.COLLATERALDESCRIPTION,
+                                                    INSURANCEPOLICYNUMBER = model.POLICYNUMBER,
+                                                    POLICYRENEWALDATE = (DateTime)model.INSURANCEENDDATE,
+                                                    REMARK = null,
+                                                    INSURANCETYPEID = (int)model.INSURANCEPOLICYTYPEID,
+                                                });
+
+                                                context.SaveChanges();
+                                                
+                                            }
+                                        }
+                                    }
+                                       context.TEMP_COLLATERAL_INSURANCE_TRACKING.Remove(validRecord);
                                 }
                                 reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                             }
+                        
                         }
-
-                    }
                     context.SaveChanges();
                     trans.Commit();
                 }
@@ -39812,7 +39988,30 @@ namespace FintrakBanking.Repositories.Credit
                 INSURABLEVALUE = insurancePolicy.INSURABLEVALUE,
                 COMMENT = insurancePolicy.COMMENT,
                 DATETIMECREATED = DateTime.Now,
-                CREATEDBY = insurancePolicy.CREATEDBY
+                CREATEDBY = insurancePolicy.CREATEDBY,
+                COLLATERALDESCRIPTION = insurancePolicy.COLLATERALDESCRIPTION
+            });
+        }
+
+        private void bulkInsuranceCollateralUploads(TBL_COLLATERAL_POLICY collateralPolicy)
+        {
+            var insuranceTracking = context.TBL_COLLATERAL_POLICY.Add(new TBL_COLLATERAL_POLICY
+            {
+                COLLATERALCUSTOMERID = collateralPolicy.COLLATERALCUSTOMERID,
+                ISOWNEDBYCUSTOMER = collateralPolicy.ISOWNEDBYCUSTOMER,
+                PREMIUMAMOUNT = collateralPolicy.PREMIUMAMOUNT,
+                POLICYAMOUNT = collateralPolicy.POLICYAMOUNT,
+                INSURANCECOMPANYNAME = collateralPolicy.INSURANCECOMPANYNAME,
+                INSURANCETYPE = collateralPolicy.INSURANCETYPE,
+                INSURERADDRESS = collateralPolicy.INSURERADDRESS,
+                POLICYSTARTDATE = collateralPolicy.POLICYSTARTDATE,
+                ASSIGNDATE = collateralPolicy.ASSIGNDATE,
+                RENEWALFREQUENCYTYPEID = collateralPolicy.RENEWALFREQUENCYTYPEID,
+                INSURERDETAILS = collateralPolicy.INSURERDETAILS,
+                INSURANCEPOLICYNUMBER = collateralPolicy.INSURANCEPOLICYNUMBER,
+                POLICYRENEWALDATE = collateralPolicy.POLICYRENEWALDATE,
+                REMARK = collateralPolicy.REMARK,
+                INSURANCETYPEID = collateralPolicy.INSURANCETYPEID,
             });
         }
 
@@ -41011,6 +41210,56 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<AccreditedConsultantsViewModel> GetAllInternalRecoveryAgents(int staffId, int companyId, DateTime month)
         {
+            var monthInWord = "";
+            if(month.Month == 1)
+            {
+                monthInWord = "January, " +month.Year;
+            }
+            if (month.Month == 2)
+            {
+                monthInWord = "February, " + month.Year;
+            }
+            if (month.Month == 3)
+            {
+                monthInWord = "March, " + month.Year;
+            }
+            if (month.Month == 4)
+            {
+                monthInWord = "April, " + month.Year;
+            }
+            if (month.Month == 5)
+            {
+                monthInWord = "May, " + month.Year;
+            }
+            if (month.Month == 6)
+            {
+                monthInWord = "February, " + month.Year;
+            }
+            if (month.Month == 7)
+            {
+                monthInWord = "July, " + month.Year;
+            }
+            if (month.Month == 8)
+            {
+                monthInWord = "August, " + month.Year;
+            }
+            if (month.Month == 9)
+            {
+                monthInWord = "September, " + month.Year;
+            }
+            if (month.Month == 10)
+            {
+                monthInWord = "October, " + month.Year;
+            }
+            if (month.Month == 11)
+            {
+                monthInWord = "November, " + month.Year;
+            }
+            if (month.Month == 12)
+            {
+                monthInWord = "December, " + month.Year;
+            }
+
             var data = (from ln in context.TBL_ACCREDITEDCONSULTANT
                         join a in context.TBL_LOAN_RECOVERY_REPORT_COLLECTION on ln.ACCREDITEDCONSULTANTID equals a.ACCREDITEDCONSULTANT
                         where
@@ -41026,12 +41275,26 @@ namespace FintrakBanking.Repositories.Credit
                             emailAddress = ln.EMAILADDRESS,
                             accountNumber = ln.ACCOUNTNUMBER,
                             address = ln.ADDRESS,
-                            totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY),
-                            amountRecovered = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && (DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Month == DbFunctions.TruncateTime(month).Value.Month && DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Year == DbFunctions.TruncateTime(month).Value.Year)).Sum(x => x.AMOUNTRECOVERED)
+                            totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m),
+                            amountRecovered = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && (DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Month == DbFunctions.TruncateTime(month).Value.Month && DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Year == DbFunctions.TruncateTime(month).Value.Year)).Sum(x => x.AMOUNTRECOVERED ?? 0m),
+                            totalRecoveryAssign = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID).Sum(x => x.AMOUNTRECOVERED ?? 0m),
+                            allAmountRecovered = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID).Sum(x => x.AMOUNTRECOVERED ?? 0m)
                         }).ToList();
 
             var records = data.GroupBy(x => x.accreditedConsultantId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.accreditedConsultantId);
-
+            foreach(var i in records)
+            {
+                i.currentDate = monthInWord;
+                if (i.totalRecoveryAmount == null || i.totalRecoveryAmount == 0)
+                {
+                    i.totalRecoveryAssigned = i.totalRecoveryAssign;
+                    i.totalRecoveryAmount = 0m;
+                }
+                else
+                {
+                    i.totalRecoveryAssigned = i.totalRecoveryAssign + i.totalRecoveryAmount;
+                }
+            }
             return records;
         }
 

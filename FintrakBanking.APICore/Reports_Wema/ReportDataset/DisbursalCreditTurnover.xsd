@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DataSet1" targetNamespace="http://tempuri.org/DataSet1.xsd" xmlns:mstns="http://tempuri.org/DataSet1.xsd" xmlns="http://tempuri.org/DataSet1.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DataSet1" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DataSet1" msprop:Generator_UserDSName="DataSet1">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="DisbursalCreditTurnover" msprop:Generator_TableClassName="DisbursalCreditTurnoverDataTable" msprop:Generator_TableVarName="tableDisbursalCreditTurnover" msprop:Generator_RowChangedName="DisbursalCreditTurnoverRowChanged" msprop:Generator_TablePropName="DisbursalCreditTurnover" msprop:Generator_RowDeletingName="DisbursalCreditTurnoverRowDeleting" msprop:Generator_RowChangingName="DisbursalCreditTurnoverRowChanging" msprop:Generator_RowEvHandlerName="DisbursalCreditTurnoverRowChangeEventHandler" msprop:Generator_RowDeletedName="DisbursalCreditTurnoverRowDeleted" msprop:Generator_RowClassName="DisbursalCreditTurnoverRow" msprop:Generator_UserTableName="DisbursalCreditTurnover" msprop:Generator_RowEvArgName="DisbursalCreditTurnoverRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="bdo" msprop:Generator_ColumnVarNameInTable="columnbdo" msprop:Generator_ColumnPropNameInRow="bdo" msprop:Generator_ColumnPropNameInTable="bdoColumn" msprop:Generator_UserColumnName="bdo" type="xs:string" minOccurs="0" />
+              <xs:element name="groupName" msprop:Generator_ColumnVarNameInTable="columngroupName" msprop:Generator_ColumnPropNameInRow="groupName" msprop:Generator_ColumnPropNameInTable="groupNameColumn" msprop:Generator_UserColumnName="groupName" type="xs:string" minOccurs="0" />
+              <xs:element name="branches" msprop:Generator_ColumnVarNameInTable="columnbranches" msprop:Generator_ColumnPropNameInRow="branches" msprop:Generator_ColumnPropNameInTable="branchesColumn" msprop:Generator_UserColumnName="branches" type="xs:string" minOccurs="0" />
+              <xs:element name="schemeCode" msprop:Generator_ColumnVarNameInTable="columnschemeCode" msprop:Generator_ColumnPropNameInRow="schemeCode" msprop:Generator_ColumnPropNameInTable="schemeCodeColumn" msprop:Generator_UserColumnName="schemeCode" type="xs:string" minOccurs="0" />
+              <xs:element name="customerName" msprop:Generator_ColumnVarNameInTable="columncustomerName" msprop:Generator_ColumnPropNameInRow="customerName" msprop:Generator_ColumnPropNameInTable="customerNameColumn" msprop:Generator_UserColumnName="customerName" type="xs:string" minOccurs="0" />
+              <xs:element name="operativeAcct" msprop:Generator_ColumnVarNameInTable="columnoperativeAcct" msprop:Generator_ColumnPropNameInRow="operativeAcct" msprop:Generator_ColumnPropNameInTable="operativeAcctColumn" msprop:Generator_UserColumnName="operativeAcct" type="xs:string" minOccurs="0" />
+              <xs:element name="sanctionLimit" msprop:Generator_ColumnVarNameInTable="columnsanctionLimit" msprop:Generator_ColumnPropNameInRow="sanctionLimit" msprop:Generator_ColumnPropNameInTable="sanctionLimitColumn" msprop:Generator_UserColumnName="sanctionLimit" type="xs:string" minOccurs="0" />
+              <xs:element name="currentBalance" msprop:Generator_ColumnVarNameInTable="columncurrentBalance" msprop:Generator_ColumnPropNameInRow="currentBalance" msprop:Generator_ColumnPropNameInTable="currentBalanceColumn" msprop:Generator_UserColumnName="currentBalance" type="xs:string" minOccurs="0" />
+              <xs:element name="excessAboveLimit" msprop:Generator_ColumnVarNameInTable="columnexcessAboveLimit" msprop:Generator_ColumnPropNameInRow="excessAboveLimit" msprop:Generator_ColumnPropNameInTable="excessAboveLimitColumn" msprop:Generator_UserColumnName="excessAboveLimit" type="xs:string" minOccurs="0" />
+              <xs:element name="totalExposure" msprop:Generator_ColumnVarNameInTable="columntotalExposure" msprop:Generator_ColumnPropNameInRow="totalExposure" msprop:Generator_ColumnPropNameInTable="totalExposureColumn" msprop:Generator_UserColumnName="totalExposure" type="xs:string" minOccurs="0" />
+              <xs:element name="crTurnover" msprop:Generator_ColumnVarNameInTable="columncrTurnover" msprop:Generator_ColumnPropNameInRow="crTurnover" msprop:Generator_ColumnPropNameInTable="crTurnoverColumn" msprop:Generator_UserColumnName="crTurnover" type="xs:string" minOccurs="0" />
+              <xs:element name="dateDisbursed" msprop:Generator_ColumnVarNameInTable="columndateDisbursed" msprop:Generator_ColumnPropNameInRow="dateDisbursed" msprop:Generator_ColumnPropNameInTable="dateDisbursedColumn" msprop:Generator_UserColumnName="dateDisbursed" type="xs:string" minOccurs="0" />
+              <xs:element name="expiryDate" msprop:Generator_ColumnVarNameInTable="columnexpiryDate" msprop:Generator_ColumnPropNameInRow="expiryDate" msprop:Generator_ColumnPropNameInTable="expiryDateColumn" msprop:Generator_UserColumnName="expiryDate" type="xs:string" minOccurs="0" />
+              <xs:element name="daysPastDue" msprop:Generator_ColumnVarNameInTable="columndaysPastDue" msprop:Generator_ColumnPropNameInRow="daysPastDue" msprop:Generator_ColumnPropNameInTable="daysPastDueColumn" msprop:Generator_UserColumnName="daysPastDue" type="xs:string" minOccurs="0" />
+              <xs:element name="status" msprop:Generator_ColumnVarNameInTable="columnstatus" msprop:Generator_ColumnPropNameInRow="status" msprop:Generator_ColumnPropNameInTable="statusColumn" msprop:Generator_UserColumnName="status" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

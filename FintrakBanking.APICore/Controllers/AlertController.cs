@@ -30,7 +30,6 @@ namespace FintrakBanking.APICore.Controllers
        
         #region title Setup
         [HttpGet]
-        [ClaimsAuthorization]
         [Route("alert-title")]
         public HttpResponseMessage GetAlertTitle()
         {

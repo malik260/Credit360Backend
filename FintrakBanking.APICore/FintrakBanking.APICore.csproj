@@ -317,7 +317,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\AdminClaimsAuthorizationAttribute.cs" />
     <Compile Include="App_Start\ClaimsAuthorizationAttribute.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -440,6 +439,7 @@
     <Compile Include="Controllers\RiskAssessmentController.cs" />
     <Compile Include="Controllers\RiskController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
+    <Compile Include="Controllers\SupportUtilityController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TermSheetController.cs" />
     <Compile Include="Controllers\TestCollateralController.cs" />

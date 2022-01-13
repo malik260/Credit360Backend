@@ -20,6 +20,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        CloseMannualBookingResponseViewModel GetLoanBookingDetailsFromFlexcube(CloseMannualBookingViewModel model);
         WorkflowResponse saveMultipleRetailLoanUnAssignmentToAgent(List<GlobalExposureApplicationViewModel> model, UserInfo user);
         WorkflowResponse saveRetailBulkLoanUnAssignmentToAgent(LoanRecoveryAssignmentViewModel model, UserInfo user);
         bool saveBulkLoanReAssignmentToAgentRem(LoanRecoveryAssignmentViewModel model, UserInfo user);
@@ -293,6 +294,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool CancelFullAndFinal(int loanId, int statusId);
         List<LoanViewModel> GetApprovedLoanReviewAwaitingOperation(int staffId, int companyId);
         WorkflowResponse saveBulkInsurancePolicyEntries(List<MultipleInsuranceOutputViewModel> models, UserInfo user);
-
+        IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReviewSearch(int staffId, int companyId, string searchString);
+        IEnumerable<LoanViewModel> GetLoanReviewApplicationOverDraftSearch(int staffId, int companyId, string searchString);
+        IEnumerable<LoanViewModel> GetApprovedLoanReviewSearch(int companyId, int staffId, string searchString);
+        IEnumerable<LoanViewModel> GetContingentApprovedApplicationSearch(int staffId, int companyId, string searchString);
     }
 }

@@ -28,6 +28,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         #region Solicitors
         [HttpGet, Route("accreditedConsultantType")]
+        [ClaimsAuthorization]
         public HttpResponseMessage GetAccreditedConsultantType()
         {
             try
@@ -35,7 +36,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response = repo.GetAccreditedConsultantType();
                 if (response != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response});
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -70,7 +71,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetAccreditedStateConsultantsByStateId(token.GetCompanyId,stateId);
+                var response = repo.GetAccreditedStateConsultantsByStateId(token.GetCompanyId, stateId);
                 if (response != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
@@ -109,13 +110,14 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "No record found" });
-            }else
-            return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, result = data });
+            } else
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
 
         }
 
         [HttpPost, Route("consultant-type-add")]
+        [ClaimsAuthorization]
         public HttpResponseMessage AddConsultantType([FromBody] AccreditedConsultantTypeViewModel entity)
         {
             try
@@ -142,6 +144,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("accredited-solicitors")]
+        [ClaimsAuthorization]
         public async Task<HttpResponseMessage> AddAccreditedSolicitors([FromBody] AccreditedConsultantsViewModel entity)
         {
             try
@@ -168,6 +171,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut, Route("accredited-solicitors/{id}")]
+        [ClaimsAuthorization]
         public async Task<HttpResponseMessage> UpdateAccreditedSolicitors([FromBody] AccreditedConsultantsViewModel entity, int id)
         {
             try
@@ -193,7 +197,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete, Route("accredited-solicitors/{id}")]
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("accredited-solicitors/{id}")]
+       
         public async Task<HttpResponseMessage> DeleteAccreditedSolicitors(int id)
         {
             try
@@ -302,6 +309,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost, Route("accredited-principals")]
+        [ClaimsAuthorization]
         public async Task<HttpResponseMessage> AddAccreditedPrincipals([FromBody] AccreditedPrincipalsViewModel entity)
         {
             try
@@ -325,6 +333,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPut, Route("accredited-principals/{id}")]
+        [ClaimsAuthorization]
         public async Task<HttpResponseMessage> UpdateAccreditedPrincipals([FromBody] AccreditedPrincipalsViewModel entity, int id)
         {
             try

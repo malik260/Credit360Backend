@@ -80,7 +80,9 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string businessUnitName { get; set; }
         public string misCode { get; set; }
         public int? customerId { get; set; }
-
+        public bool isCurrent { get; set; }
+        public object approvalStatusName { get; set; }
+        public string createdByName { get; set; }
     }
 
     public class staffBulkFeedbackViewModel

@@ -518,7 +518,6 @@ namespace FintrakBanking.APICore.Providers
 
 
                 var ticket = new AuthenticationTicket(currIdentity, props);
-
                 context.Validated(ticket);
 
                 context.Request.Context.Authentication.SignIn(currIdentity);

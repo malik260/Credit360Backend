@@ -81,7 +81,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                       // .Distinct();
                       ///.OrderBy(m => m.position);
 
-            if (applicationId == null) { return list; }
+            if (applicationId == null || applicationId == 0) { return list; }
 
             var productIds = context.TBL_LOAN_APPLICATION_DETAIL
                 .Where(x => x.LOANAPPLICATIONID == applicationId)
@@ -98,7 +98,9 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 .Select(x => x.COLLATERALTYPEID)
                 .Distinct();
 
-            return list.Where(x => typeIds.Contains((short)x.collateralTypeId));
+            var data = list.Where(x => typeIds.Contains((short)x.collateralTypeId)).ToList();
+
+            return data;
         }
         public IEnumerable<CollateralDocumentTypeViewModel> GetCollateralDocumentTypes(int id)
         {

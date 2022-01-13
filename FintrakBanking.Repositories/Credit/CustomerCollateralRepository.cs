@@ -1285,8 +1285,17 @@ namespace FintrakBanking.Repositories.Credit
                     NOTE = entity.note,
                 });
 
-                context.SaveChanges();
-                //if (context.SaveChanges() > 0) // EF will take care of this
+               var comment = $"New temp miscellaneous collateral type has been created by {entity.createdBy} staffid";
+                workflow.StaffId = entity.createdBy;
+                workflow.CompanyId = entity.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = collateralId;
+                workflow.Comment = comment;
+                workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+               
                 AddMiscellaneousNotes(entity, collateral.TEMPCOLLATERALMISCELLANEOUSID);
             }
         }
@@ -4489,135 +4498,154 @@ namespace FintrakBanking.Repositories.Credit
 
         private CollateralViewModel GetCollateralVehicle(int collateralId)
         {
+            CollateralViewModel details = null;
             var specifics = context.TBL_COLLATERAL_VEHICLE.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
-            var details = new CollateralViewModel
-            {
-                collateralId = specifics.COLLATERALCUSTOMERID,
-                collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId).COLLATERALSUBTYPEID,
-                collateralVehicleId = specifics.COLLATERALVEHICLEID,
-                collateralCustomerId = specifics.COLLATERALCUSTOMERID,
-                vehicleType = specifics.VEHICLETYPE,
-                vehicleStatus = specifics.VEHICLESTATUS,
-                vehicleMake = specifics.VEHICLEMAKE,
-                modelName = specifics.MODELNAME,
-                dateOfManufacture = specifics.MANUFACTUREDDATE.Value,
-                registrationNumber = specifics.REGISTRATIONNUMBER,
-                serialNumber = specifics.SERIALNUMBER,
-                chasisNumber = specifics.CHASISNUMBER,
-                engineNumber = specifics.ENGINENUMBER,
-                nameOfOwner = specifics.NAMEOFOWNER,
-                registrationCompany = specifics.REGISTRATIONCOMPANY,
-                resaleValue = specifics.RESALEVALUE,
-                valuationDate = specifics.VALUATIONDATE,
-                lastValuationAmount = specifics.LASTVALUATIONAMOUNT,
-                invoiceValue = specifics.INVOICEVALUE,
-                remark = specifics.REMARK,
-            };
-            details = GetCollateralInsurancePolicy(details);
+            if (specifics != null) { 
+                details = new CollateralViewModel
+                {
+                    collateralId = specifics.COLLATERALCUSTOMERID,
+                    collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId).COLLATERALSUBTYPEID,
+                    collateralVehicleId = specifics.COLLATERALVEHICLEID,
+                    collateralCustomerId = specifics.COLLATERALCUSTOMERID,
+                    vehicleType = specifics.VEHICLETYPE,
+                    vehicleStatus = specifics.VEHICLESTATUS,
+                    vehicleMake = specifics.VEHICLEMAKE,
+                    modelName = specifics.MODELNAME,
+                    dateOfManufacture = specifics.MANUFACTUREDDATE.Value,
+                    registrationNumber = specifics.REGISTRATIONNUMBER,
+                    serialNumber = specifics.SERIALNUMBER,
+                    chasisNumber = specifics.CHASISNUMBER,
+                    engineNumber = specifics.ENGINENUMBER,
+                    nameOfOwner = specifics.NAMEOFOWNER,
+                    registrationCompany = specifics.REGISTRATIONCOMPANY,
+                    resaleValue = specifics.RESALEVALUE,
+                    valuationDate = specifics.VALUATIONDATE,
+                    lastValuationAmount = specifics.LASTVALUATIONAMOUNT,
+                    invoiceValue = specifics.INVOICEVALUE,
+                    remark = specifics.REMARK,
+                };
+                details = GetCollateralInsurancePolicy(details);
+            }
             return details;
         }
 
         private CollateralViewModel GetISPOCollateral(int collateralId)
         {
+            CollateralViewModel details = null;
             var collateral = context.TBL_COLLATERAL_ISPO.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
-            var details = new CollateralViewModel
+            if (collateral != null)
             {
-                collateralId = collateral.COLLATERALCUSTOMERID,
-                collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId).COLLATERALSUBTYPEID,
-                collateralISPOId = collateral.COLLATERALISPOID,
-                accountNameToDebit = collateral.ACCOUNTNAMETODEBIT,
-                accountNumberToDebit = collateral.ACCOUNTNUMBERTODEBIT,
-                interval = collateral.TBL_FREQUENCY_TYPE.MODE,
-                securityValue = collateral.SECURITYVALUE,
-                regularPaymentAmount = collateral.REGULARPAYMENTAMOUNT,
-                payer = collateral.PAYER,
-                remark = collateral.REMARK,
-                description = collateral.DESCRIPTION
+                details = new CollateralViewModel
+                {
+                    collateralId = collateral.COLLATERALCUSTOMERID,
+                    collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId).COLLATERALSUBTYPEID,
+                    collateralISPOId = collateral.COLLATERALISPOID,
+                    accountNameToDebit = collateral.ACCOUNTNAMETODEBIT,
+                    accountNumberToDebit = collateral.ACCOUNTNUMBERTODEBIT,
+                    interval = collateral.TBL_FREQUENCY_TYPE.MODE,
+                    securityValue = collateral.SECURITYVALUE,
+                    regularPaymentAmount = collateral.REGULARPAYMENTAMOUNT,
+                    payer = collateral.PAYER,
+                    remark = collateral.REMARK,
+                    description = collateral.DESCRIPTION
 
-            };
-            details = GetCollateralInsurancePolicy(details);
+                };
+                details = GetCollateralInsurancePolicy(details);
+            }
             return details;
         }
 
 
         private CollateralViewModel GetContractDomiciliationCollateral(int collateralId)
         {
+            CollateralViewModel details = null;
             var collateral = context.TBL_COLLATERAL_DOMICILIATION.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
-            var details = new CollateralViewModel
+            if (collateral != null)
             {
-                collateralId = collateral.COLLATERALCUSTOMERID,
-                collateralDomiciliationId = collateral.COLLATERALDOMICILIATIONID,
-                collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId).COLLATERALSUBTYPEID,
-                contractDetail = collateral.CONTRACTDETAILS,
-                contractEmployer = collateral.EMPLOYER,
-                contractValue = collateral.CONTRACTVALUE,
-                outstandingInvoiceAmount = collateral.OUTSTANDINGINVOICEAMOUNT,
-                accountNameToDebit = collateral.ACCOUNTNAMETODEBIT,
-                payer = collateral.PAYER,
-                renewalFrequencyTypeId = collateral.FREQUENCYTYPEID,
-                accountNumberToDebit = collateral.ACCOUNTNUMBERTODEBIT,
-                regularPaymentAmount = collateral.REGULARPAYMENTAMOUNT,
-                interval = collateral.TBL_FREQUENCY_TYPE.MODE,
-                invoiceNumber = collateral.INVOICENUMBER,
-                securityValue = collateral.SECURITYVALUE,
-                invoiceDate = collateral.INVOICEDATE,
-                remark = collateral.REMARK,
-                description = collateral.DESCRIPTION
-            };
-            details = GetCollateralInsurancePolicy(details);
+                details = new CollateralViewModel
+                {
+                    collateralId = collateral.COLLATERALCUSTOMERID,
+                    collateralDomiciliationId = collateral.COLLATERALDOMICILIATIONID,
+                    collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId).COLLATERALSUBTYPEID,
+                    contractDetail = collateral.CONTRACTDETAILS,
+                    contractEmployer = collateral.EMPLOYER,
+                    contractValue = collateral.CONTRACTVALUE,
+                    outstandingInvoiceAmount = collateral.OUTSTANDINGINVOICEAMOUNT,
+                    accountNameToDebit = collateral.ACCOUNTNAMETODEBIT,
+                    payer = collateral.PAYER,
+                    renewalFrequencyTypeId = collateral.FREQUENCYTYPEID,
+                    accountNumberToDebit = collateral.ACCOUNTNUMBERTODEBIT,
+                    regularPaymentAmount = collateral.REGULARPAYMENTAMOUNT,
+                    interval = collateral.TBL_FREQUENCY_TYPE.MODE,
+                    invoiceNumber = collateral.INVOICENUMBER,
+                    securityValue = collateral.SECURITYVALUE,
+                    invoiceDate = collateral.INVOICEDATE,
+                    remark = collateral.REMARK,
+                    description = collateral.DESCRIPTION
+                };
+                details = GetCollateralInsurancePolicy(details);
+            }
             return details;
         }
 
 
         private CollateralViewModel GetContractDomiciliationSalary(int collateralId)
         {
+            CollateralViewModel details = null;
             var collateral = context.TBL_COLLATERAL_DOMICILIATION.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
-            var details = new CollateralViewModel
+            if (collateral != null)
             {
-                collateralId = collateral.COLLATERALCUSTOMERID,
-                collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId).COLLATERALSUBTYPEID,
-                collateralDomiciliationId = collateral.COLLATERALDOMICILIATIONID,
-                contractDetail = collateral.CONTRACTDETAILS,
-                contractEmployer = collateral.EMPLOYER,
-                monthlySalary = collateral.MONTHLYSALARY,
-                annualAllowances = collateral.ANNUALALLOWANCES,
-                annualEmolument = collateral.ANNUALEMOLUMENT,
-                accountNumber = collateral.ACCOUNTNUMBER,
-                annualSalary = collateral.ANNUALSALARY,
-                securityValue = collateral.SECURITYVALUE,
-                remark = collateral.REMARK,
-                description = collateral.DESCRIPTION
-            };
-            details = GetCollateralInsurancePolicy(details);
+                details = new CollateralViewModel
+                {
+                    collateralId = collateral.COLLATERALCUSTOMERID,
+                    collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId).COLLATERALSUBTYPEID,
+                    collateralDomiciliationId = collateral.COLLATERALDOMICILIATIONID,
+                    contractDetail = collateral.CONTRACTDETAILS,
+                    contractEmployer = collateral.EMPLOYER,
+                    monthlySalary = collateral.MONTHLYSALARY,
+                    annualAllowances = collateral.ANNUALALLOWANCES,
+                    annualEmolument = collateral.ANNUALEMOLUMENT,
+                    accountNumber = collateral.ACCOUNTNUMBER,
+                    annualSalary = collateral.ANNUALSALARY,
+                    securityValue = collateral.SECURITYVALUE,
+                    remark = collateral.REMARK,
+                    description = collateral.DESCRIPTION
+                };
+                details = GetCollateralInsurancePolicy(details);
+            }
             return details;
         }
 
         private CollateralViewModel GetIndemityCollateral(int collateralId)
         {
+            CollateralViewModel details = null;
             var collateral = context.TBL_COLLATERAL_INDEMNITY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
-            var details = new CollateralViewModel
+            if (collateral != null)
             {
-                collateralId = collateral.COLLATERALCUSTOMERID,
-                collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId).COLLATERALSUBTYPEID,
-                collateralIndemnityId = collateral.COLLATERALINDEMNITYID,
-                securityValue = collateral.SECURITYVALUE,
-                remark = collateral.REMARK,
-                address = collateral.ADDRESS,
-                bvn = collateral.BVN,
-                emailAddress = collateral.EMAILADRRESS,
-                endDate = collateral.ENDDATE,
-                startDate = collateral.STARTDATE,
-                firstName = collateral.FIRSTNAME,
-                middleName = collateral.MIDDLENAME,
-                lastName = collateral.LASTNAME,
-                phoneNumber1 = collateral.PHONENUMBER1,
-                phoneNumber2 = collateral.PHONENUMBER2,
-                relationshipDuration = collateral.RELATIONSHIPDURATION,
-                relationship = collateral.RELATIONSHIP,
-                taxNumber = collateral.TAXNUMBER,
-                description = collateral.DESCRIPTION
-            };
-            details = GetCollateralInsurancePolicy(details);
+                details = new CollateralViewModel
+                {
+                    collateralId = collateral.COLLATERALCUSTOMERID,
+                    collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId).COLLATERALSUBTYPEID,
+                    collateralIndemnityId = collateral.COLLATERALINDEMNITYID,
+                    securityValue = collateral.SECURITYVALUE,
+                    remark = collateral.REMARK,
+                    address = collateral.ADDRESS,
+                    bvn = collateral.BVN,
+                    emailAddress = collateral.EMAILADRRESS,
+                    endDate = collateral.ENDDATE,
+                    startDate = collateral.STARTDATE,
+                    firstName = collateral.FIRSTNAME,
+                    middleName = collateral.MIDDLENAME,
+                    lastName = collateral.LASTNAME,
+                    phoneNumber1 = collateral.PHONENUMBER1,
+                    phoneNumber2 = collateral.PHONENUMBER2,
+                    relationshipDuration = collateral.RELATIONSHIPDURATION,
+                    relationship = collateral.RELATIONSHIP,
+                    taxNumber = collateral.TAXNUMBER,
+                    description = collateral.DESCRIPTION
+                };
+                details = GetCollateralInsurancePolicy(details);
+            }
             return details;
         }
         // preciousMetal collateral
@@ -5275,7 +5303,7 @@ namespace FintrakBanking.Repositories.Credit
                 lastValuationDate = x.LASTVALUATIONDATE,
                 //nextValuationDate = x.NEXTVALUATIONDATE,
                 valuerId = x.VALUERID,
-                collateralValuer = context.TBL_COLLATERAL_VALUER.Where(t => t.COLLATERALVALUERID == x.VALUERID).Select(q => q.NAME).FirstOrDefault(),
+                collateralValuer = context.TBL_ACCREDITEDCONSULTANT.Where(t => t.ACCREDITEDCONSULTANTID == x.VALUERID).Select(t => t.FIRMNAME).FirstOrDefault(),
                 valuerReferenceNumber = x.VALUERREFERENCENUMBER,
                 propertyValueBaseTypeId = x.PROPERTYVALUEBASETYPEID,
                 propertyValueBaseTypeName = context.TBL_COLLATERAL_VALUEBASE_TYPE.Where(t => t.COLLATERALVALUEBASETYPEID == x.PROPERTYVALUEBASETYPEID).Select(q => q.VALUEBASETYPENAME).FirstOrDefault(),
@@ -8651,9 +8679,11 @@ namespace FintrakBanking.Repositories.Credit
                                join atrail in context.TBL_APPROVAL_TRAIL on x.TEMPCOLLATERALCUSTOMERID equals atrail.TARGETID
                                join a in context.TBL_CUSTOMER on x.CUSTOMERID equals a.CUSTOMERID
                                let ColSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(c => c.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID).Select(c => c.COLLATERALSUBTYPENAME).FirstOrDefault()
-                               where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
-                                     || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.ISCURRENT == true //|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
-                                                                                                                         //  && x.ISCURRENT == true
+                               where atrail.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved 
+                                     && atrail.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                                     && x.ISCURRENT == true 
+                                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved 
                                      && atrail.RESPONSESTAFFID == null
                                      && atrail.OPERATIONID == (int)OperationsEnum.CollateralApproval
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
@@ -8733,13 +8763,14 @@ namespace FintrakBanking.Repositories.Credit
                 var refNo = CommonHelpers.GenerateRandomDigitCode(7);
                 model.collateralCode = refNo;
             }
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerId).Select(x => x).FirstOrDefault();
             int collateralId = 0;
             DateTime date = DateTime.Now;
             var xchRate = repo.GetExchangeRate(date, model.currencyId, model.companyId);
             if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
                 var mainCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE.Trim() == model.collateralCode.Trim()).Select(x => x).FirstOrDefault();
-
+                
                 if (mainCollateral != null)
                 {
 
@@ -8763,7 +8794,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainCollateral.CURRENCYID = model.currencyId;
                     mainCollateral.VALIDTILL = model.validTill;
                     mainCollateral.EXCHANGERATE = repo.GetExchangeRate(DateTime.Now, model.currencyId, model.companyId).sellingRate;
-
+                    mainCollateral.CUSTOMERCODE = customer.CUSTOMERCODE;
                     mainCollateral.CAMREFNUMBER = model.camRefNumber;
                     mainCollateral.LASTUPDATEDBY = model.createdBy;
                     mainCollateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
@@ -8793,6 +8824,7 @@ namespace FintrakBanking.Repositories.Credit
                         ISLOCATIONBASED = model.isLocationBased,
                         VALUATIONCYCLE = model.valuationCycle,
                         HAIRCUT = model.haircut,
+                        CUSTOMERCODE = customer.CUSTOMERCODE,
                         CURRENCYID = model.currencyId,
                         EXCHANGERATE = repo.GetExchangeRate(date, model.currencyId, model.companyId).sellingRate,
                         CUSTOMERID = model.customerId,
@@ -8838,7 +8870,7 @@ namespace FintrakBanking.Repositories.Credit
                     model.collateralCode = refNo;
                 }
 
-                if (model.validTill.Value == null)
+                if (model.validTill == null)
                 {
                     model.validTill = null;
                 }
@@ -8944,7 +8976,8 @@ namespace FintrakBanking.Repositories.Credit
                     INSURABLEVALUE = model.insurableValue,
                     COMMENT = model.comment,
                     CREATEDBY = accountOfficer,
-                    DATETIMECREATED = DateTime.Now
+                    DATETIMECREATED = DateTime.Now,
+                    COLLATERALDESCRIPTION = model.collateralDetails,
                 });
 
                if (context.SaveChanges() > 0)
@@ -10976,6 +11009,7 @@ namespace FintrakBanking.Repositories.Credit
                 var insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)
                     .Select(x => new InsurancePolicy
                     {
+                        collateralCustomerId = x.COLLATERALCUSTOMERID,
                         collateralInsuranceTrackingId = x.COLLATERALINSURANCETRACKINGID,
                         referenceNumber = x.POLICYNUMBER,
                         insuranceCompanyId = x.INSURANCECOMPANYID,
@@ -10984,7 +11018,7 @@ namespace FintrakBanking.Repositories.Credit
                         startDate = x.INSURANCESTARTDATE,
                         expiryDate = x.INSURANCEENDDATE,
                         customerGroupId = (from a in context.TBL_CUSTOMER join b in context.TBL_LOAN_APPLICATION_DETAIL on a.CUSTOMERID equals b.CUSTOMERID join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID where b.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select c.CUSTOMERGROUPID).FirstOrDefault(),
-                        customerId = (from a in context.TBL_CUSTOMER join b in context.TBL_LOAN_APPLICATION_DETAIL on a.CUSTOMERID equals b.CUSTOMERID where b.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID select a.CUSTOMERID).FirstOrDefault(),
+                        
                         insurancePolicyType = x.INSURANCEPOLICYTYPEID.Value == 0 ? x.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == x.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault(),
                         insurancePolicyTypeId = x.INSURANCEPOLICYTYPEID,
                         insuranceStatus = context.TBL_COLLATERAL_INSURANCE_STATUS.Where(o => o.INSURANCESTATUSID == x.INSURANCESTATUSID).Select(o => o.INSURANCESTATUS).FirstOrDefault(),
@@ -11014,6 +11048,27 @@ namespace FintrakBanking.Repositories.Credit
                         insurableValue = x.INSURABLEVALUE,
                         requestComment = x.COMMENT,
                     })).ToList();
+
+            foreach (var i in insurance)
+            {
+                if(i.collateralCustomerId != null)
+                {
+                    var collateralCustomer = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).FirstOrDefault(); 
+                    if(collateralCustomer != null)
+                    {
+                      i.customerId = (int)collateralCustomer.CUSTOMERID;
+                    }
+                }
+                else
+                {
+                    var collateralCustomer = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.COLLATERALCUSTOMERID == i.collateralCustomerId).FirstOrDefault();
+                    if (collateralCustomer != null)
+                    {
+                      i.customerId = (int)collateralCustomer.CUSTOMERID;
+                    }
+                }
+                 
+            }
 
                 return insurance;
             
@@ -11305,7 +11360,7 @@ namespace FintrakBanking.Repositories.Credit
                                     i.collateralCode = customerCollateral.COLLATERALCODE;
                                 }
 
-                                var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                                var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                                 if (createdBy > 0)
                                 {
                                     var staff = context.TBL_STAFF.Find(createdBy);
@@ -11447,7 +11502,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }
 
-                            var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                            var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                             if (createdBy > 0)
                             {
                                 var staff = context.TBL_STAFF.Find(createdBy);
@@ -11589,7 +11644,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }
 
-                            var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                            var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                             if (createdBy > 0)
                             {
                                 var staff = context.TBL_STAFF.Find(createdBy);
@@ -11733,7 +11788,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }
 
-                                var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                                var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                                 if (createdBy > 0)
                                 {
                                     var staff = context.TBL_STAFF.Find(createdBy);

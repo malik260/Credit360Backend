@@ -50,5 +50,8 @@ namespace FintrakBanking.Entities.Models
         public string BATCHCODE { get; set; }
         public bool? ISCOLLATERAL { get; set; }
         public bool? VALIDITYSTATUS { get; set; }
+        public string COLLATERALDESCRIPTION { get; set; }
+        public string CUSTOMERCODE { get; set; }
+        public string COLLATERALCODE { get; set; }
     }
 }
