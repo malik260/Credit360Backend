@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -100,7 +101,10 @@ namespace FintrakBanking.AccessSubsediary
 
         private string getUrl(string countryCode)
         {
-            return "https://fintrakcredit360api2.azurewebsites.net";
+            var url = ConfigurationManager.AppSettings[countryCode];
+            return url;
+            //return "https://fintrakcredit360api2.azurewebsites.net";
+ 
         }
     }
 }
