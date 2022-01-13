@@ -89,6 +89,7 @@ namespace FintrakBanking.ViewModels.SupportUtility
         public string email { get; set; }
         public string gender { get; set; }
         public string FullName { get { return $"{FirstName} {MiddleName} {LastName}"; } }
+        public string StaffFullName { get { return this.FirstName + " " + this.MiddleName + " " + this.LastName; } }
         public string Phone { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
@@ -118,6 +119,12 @@ namespace FintrakBanking.ViewModels.SupportUtility
         public DateTime? timeDeleted { get; set; }
         public int? mainStaff { get; set; }
         public int? tempStaff { get; set; }
+        public bool isCurrent { get; set; }
+        public short ApprovalStatusId { get; set; }
+        public DateTime? dateTimeCreated { get; set; }
+        public DateTime? dateTimeUpdated { get; set; }
+        public string approvalStatusName { get; set; }
+        public string createdByName { get; set; }
     }
 
 }

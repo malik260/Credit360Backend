@@ -176,7 +176,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "There was an error creating this record" });
+                   new { success = false, message = "There was an error updating this record" });
             }
             catch (ConditionNotMetException ce)
             {
@@ -186,7 +186,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+                   new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
 
         }
@@ -213,7 +213,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "There was an error creating this record" });
+                   new { success = false, message = "There was an error updating this record" });
             }
             catch (ConditionNotMetException ce)
             {
@@ -223,7 +223,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+                   new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
 
         }
