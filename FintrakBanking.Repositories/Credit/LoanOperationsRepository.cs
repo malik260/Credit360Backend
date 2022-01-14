@@ -35598,7 +35598,7 @@ namespace FintrakBanking.Repositories.Credit
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
-            var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+            /*var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                             join c in context.TBL_ACCREDITEDCONSULTANT on lr.ACCREDITEDCONSULTANT equals c.ACCREDITEDCONSULTANTID
                             join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -35801,7 +35801,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var termLoanData = dataLoan.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber);
             var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber);
-            var unionAll = termLoanData.Union(revolvingLoanData).Union(exposureData).Union(exposureDigitalData);
+            var unionAll = termLoanData.Union(revolvingLoanData).Union(exposureData).Union(exposureDigitalData);*/
+            var unionAll = exposureData.Union(exposureDigitalData);
 
             var data = unionAll;
 
@@ -35921,7 +35922,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
-            var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+            /*var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                             join c in context.TBL_ACCREDITEDCONSULTANT on lr.ACCREDITEDCONSULTANT equals c.ACCREDITEDCONSULTANTID
                             join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -36124,7 +36125,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var termLoanData = dataLoan.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber);
             var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber);
-            var unionAll = termLoanData.Union(revolvingLoanData).Union(exposureData).Union(exposureDigitalData);
+            var unionAll = termLoanData.Union(revolvingLoanData).Union(exposureData).Union(exposureDigitalData);*/
+            var unionAll = exposureData.Union(exposureDigitalData);
 
             var data = unionAll;
 
