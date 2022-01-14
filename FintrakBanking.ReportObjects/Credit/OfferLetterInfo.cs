@@ -39,8 +39,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                           //join j in context.TBL_CUSTOMER_GROUP_MAPPING on c.CUSTOMERGROUPID equals j.CUSTOMERGROUPID into jj
                                           //from j in jj.DefaultIfEmpty()
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
-                                  a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                  && d.STATUSID == (int)ApprovalStatusEnum.Approved
+                                      a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && d.STATUSID == (int)ApprovalStatusEnum.Approved
                                       select new OfferLetterViewModel
                                       {
                                           companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
@@ -48,7 +48,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                           customerAddress = e.ADDRESS ?? " ",
                                           customerEmailAddress = b.EMAILADDRESS,
                                           customerPhoneNumber = g.PHONENUMBER,
-                                          isFinal = (h.ISFINAL == null) ? false : h.ISFINAL,
+                                          isFinal = (h.ISFINAL == false) ? false : h.ISFINAL,
                                           producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                           loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                           offerLetterTitle = b.OFFERLETTERTITLE,
@@ -63,7 +63,7 @@ namespace FintrakBanking.ReportObjects.Credit
             {
                 var offerLetter = offerLetterDetails.Select(o => o).FirstOrDefault();
 
-                if (offerLetter!=null)
+                if (offerLetter != null)
                 {
                     if (offerLetter.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
                     {
