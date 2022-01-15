@@ -63,6 +63,7 @@ namespace FintrakBanking.Entities.Models
         public short? CURRENCYID { get; set; }
         public string CURRENCYTYPE { get; set; }
         public bool? ISRACTIERCONTROLKEY { get; set; }
+        public bool ISAGRICRAC { get; set; }
         public string SEARCHPLACEHOLDER { get; set; }
         public string EMPLOYMENTTYPE { get; set; }
         public short? CUSTOMERTYPEID { get; set; }
