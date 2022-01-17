@@ -309,6 +309,9 @@
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>..\..\..\Users\benjamin.gbaaikye\Documents\LIVE\Mazino\XLeratorDLL-financial.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Owin">
