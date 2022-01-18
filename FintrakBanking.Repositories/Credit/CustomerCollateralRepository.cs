@@ -8946,8 +8946,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
+            if (model.expiryDate <= model.startDate)
+                throw new ConditionNotMetException("Insurance start date must be less than the insurance end date");
 
-                var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
+
+            var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
                 {
                     INSURANCECOMPANYID = model.insuranceCompanyId,
                     ISURANCECOMPANYADDRESS = model.companyAddress,
@@ -8980,7 +8983,9 @@ namespace FintrakBanking.Repositories.Credit
                     COLLATERALDESCRIPTION = model.collateralDetails,
                 });
 
-               if (context.SaveChanges() > 0)
+            
+
+            if (context.SaveChanges() > 0)
                {
                 return true;
                }
