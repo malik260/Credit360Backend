@@ -17,6 +17,8 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces;
 using FintrakBanking.ViewModels.Reports;
 using System.Text;
+using FintrakBanking.ViewModels.SupportUtility;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -36,7 +38,8 @@ namespace FintrakBanking.APICore.Controllers
                                 IErrorLogRepository _errorLogger,
                                 ICanAuthorizationRepository _canAuthorization,
                                 IAuditTrailRepository _audit, IProfileSetupRepository _profileSetup,
-                                IAPIErrorLog log)
+                                IAPIErrorLog log
+                    )
         {
             this.repo = _repo;
             this.errorLogger = _errorLogger;
@@ -1008,6 +1011,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
+       
 
     }
 }

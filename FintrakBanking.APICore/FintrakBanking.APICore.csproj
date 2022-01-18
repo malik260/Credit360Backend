@@ -309,6 +309,9 @@
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>..\..\..\Users\benjamin.gbaaikye\Documents\LIVE\Mazino\XLeratorDLL-financial.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Owin">
@@ -439,6 +442,7 @@
     <Compile Include="Controllers\RiskAssessmentController.cs" />
     <Compile Include="Controllers\RiskController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
+    <Compile Include="Controllers\SupportUtilityController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TermSheetController.cs" />
     <Compile Include="Controllers\TestCollateralController.cs" />

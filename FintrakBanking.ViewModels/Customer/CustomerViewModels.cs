@@ -6,6 +6,8 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerViewModels : GeneralEntity
     {
+        public short? customerIssueTypeId;
+
         public string customerRating { get; set; }
 
         public string branchCode { get; set; }
@@ -166,6 +168,10 @@ namespace FintrakBanking.ViewModels.Customer
         public int? businessUnitId { get; set; }
         public decimal? pastDueObligations { get; set; }
         public string ownership { get; set; }
+        public string businessUnitName { get; set; }
+        public string approvalStatusName { get; set; }
+        public bool isCurrent { get; set; }
+        public string lastUpdatedByName { get; set; }
     }
 
     public class CustomerViewModels2 : GeneralEntity
@@ -719,7 +725,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string Message { get; set; }
         public string requestId { get; set; }
     	public string applicationReferenceNumber { get; set; }
-        public int responseCode { get; set; }
+        public string responseCode { get; set; }
         public string responseMessage { get; set; }
     }
 
