@@ -11360,7 +11360,7 @@ namespace FintrakBanking.Repositories.Credit
                                     i.collateralCode = customerCollateral.COLLATERALCODE;
                                 }
 
-                                var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                                var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                                 if (createdBy > 0)
                                 {
                                     var staff = context.TBL_STAFF.Find(createdBy);
@@ -11502,7 +11502,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }
 
-                            var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                            var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                             if (createdBy > 0)
                             {
                                 var staff = context.TBL_STAFF.Find(createdBy);
@@ -11644,7 +11644,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }
 
-                            var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                            var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                             if (createdBy > 0)
                             {
                                 var staff = context.TBL_STAFF.Find(createdBy);
@@ -11788,7 +11788,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }
 
-                                var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                                var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                                 if (createdBy > 0)
                                 {
                                     var staff = context.TBL_STAFF.Find(createdBy);

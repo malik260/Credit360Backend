@@ -29,6 +29,7 @@ namespace FintrakBanking.Common.Enum
 	    MPOWER = 32,
 	    AdvanceForSchoolFees = 39,
         DigitalLoans = 3,
+        All4one = 44,
     }
 
     public enum ProductGroupEnum
