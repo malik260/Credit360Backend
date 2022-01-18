@@ -46,7 +46,7 @@ using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using System.Transactions;
 using FintrakBanking.ViewModels.Reports;
 
-namespace FintrakBanking.Repositories.Credit
+namespace FintrakBanking.Repositories.Credit 
 {
     public class LoanRepository : ILoanRepository
     {
