@@ -3619,10 +3619,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 app.slaGlobalStatus = GetSlaGlobalStatus(app);
                 app.slaInduvidualStatus = GetSlaInduvidualStatus(app);
-                if(app.slaGlobalStatus.ToLower() == "danger" || app.slaInduvidualStatus.ToLower() == "danger")
-                {
-                    SlaNotification(app);
-                }
+                //if(app.slaGlobalStatus.ToLower() == "danger" || app.slaInduvidualStatus.ToLower() == "danger")
+                //{
+                //    SlaNotification(app);
+                //}
                 
             }
             return apps;
@@ -3631,12 +3631,13 @@ namespace FintrakBanking.Repositories.Credit
 
         private void SlaNotification(LoanApplicationViewModel app)
         {
+            //+ " and product name " + app.proposedProductName.ToUpper()
             AlertsViewModel alert = new AlertsViewModel();
             if (app.toStaffId != null)
             {
                 var ownerRecord = context.TBL_STAFF.Where(s => s.STAFFID == app.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME).FirstOrDefault();
                 var alertTitle = "SLA/TRT BREACH ON LOAN APPLICATION NUMBER " + app.applicationReferenceNumber;
-                var alertTemplate = "The transaction with reference number " + app.applicationReferenceNumber + " and product name " + app.proposedProductName.ToUpper() + " which is currently with " + app.currentApprovalLevel + "(" + ownerRecord + ") SLA/TRT has been breach";
+                var alertTemplate = "The transaction with reference number " + app.applicationReferenceNumber  + " which is currently with " + app.currentApprovalLevel + "(" + ownerRecord + ") SLA/TRT has been breach";
                 string emailList = GetBusinessUsersEmailsToGroupHead(app.createdBy);
 
                 var message = new TBL_MESSAGE_LOG()
@@ -3659,10 +3660,11 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (app.currentApprovalLevelId != null)
                 {
+                    //+ " and product name " + app.proposedProductName.ToUpper()
                     var staffRole = context.TBL_APPROVAL_LEVEL.Where(r => r.APPROVALLEVELID == app.currentApprovalLevelId).Select(r => r.STAFFROLEID).FirstOrDefault();
                     var roleName = context.TBL_STAFF_ROLE.Where(n => n.STAFFROLEID == staffRole).Select(n => n.STAFFROLENAME).FirstOrDefault();
                     var alertTitle = "SLA/TRT BREACH ON LOAN APPLICATION NUMBER " + app.applicationReferenceNumber;
-                    var alertTemplate = "The transaction with reference number " + app.applicationReferenceNumber + " and product name " + app.proposedProductName.ToUpper() + " which is currently with " + app.currentApprovalLevel + "(" + roleName + ") SLA/TRT has been breach";
+                    var alertTemplate = "The transaction with reference number " + app.applicationReferenceNumber  + " which is currently with " + app.currentApprovalLevel + "(" + roleName + ") SLA/TRT has been breach";
                     
                     string emailList = "";
                     var mailList = context.TBL_STAFF.Where(s => s.STAFFROLEID == staffRole).Select(s => s).ToList();
