@@ -8947,7 +8947,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
             if (model.expiryDate <= model.startDate)
-                throw new ConditionNotMetException("Insurance start date must be less than the insurance end date");
+                throw new ConditionNotMetException("Insurance End Date must be greater than the Insurance Start Date");
 
 
             var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
