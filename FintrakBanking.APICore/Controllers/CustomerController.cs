@@ -18,6 +18,7 @@ using FintrakBanking.Common.CustomException;
 
 using System.Web;
 using System.Web.Http;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -2684,7 +2685,73 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-     
+
+        [Route("pre-multiple-fs-caption")]
+        public async Task<HttpResponseMessage> UploadBulkFsCaptionData()
+        {
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+
+            var isFinal = Convert.ToBoolean(provider.FormData["isFinal"]);
+            var customerId = Convert.ToInt32(provider.FormData["customerId"]);
+
+            var entity = new UserInfo
+            {
+                BranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+
+            var file = provider.Contents.FirstOrDefault();
+            var buffer = await file.ReadAsByteArrayAsync();
+            var data = repo.preBulkFsCaption(buffer, entity, isFinal, customerId);
+
+            if (buffer != null)
+            {
+                bool success = true;
+                if (data.Item2 == false && isFinal) { success = false; }
+                if (!success) { return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Pre Bulk insurance failed to upload." }); }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Pre Bulk Insurance data was successfully uploaded" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Pre Bulk Insurance data" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-fs-caption-entries")]
+        public HttpResponseMessage saveBulkInsurancePolicyEntries([FromBody] List<MultipleFsCaptionOutputViewModel> models)
+        {
+            UserInfo user = new UserInfo();
+            user.BranchId = (short)token.GetBranchId;
+            user.applicationUrl = HttpContext.Current.Request.Path;
+            user.createdBy = token.GetStaffId;
+            user.companyId = token.GetCompanyId;
+
+            var response = repo.saveBulkFsCaptionEntries(models, user);
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, data = response, message = "Records saves successfully" });
+        }
+
+
+
+
+
+
     }
 }
 //Models
