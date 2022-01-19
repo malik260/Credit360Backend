@@ -1,7 +1,10 @@
-﻿using FintrakBanking.ViewModels;
+﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.WorkFlow;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -161,5 +164,7 @@ namespace FintrakBanking.Interfaces.Customer
         void UpdateCustomerCollateralId(string customerCode);
         bool refreshCustomerAccount(int customerCode);
         bool UpdateCustomerInformation(string customerCode, string accountNumber, int createdBy);
+        bool saveBulkFsCaptionEntries(List<MultipleFsCaptionOutputViewModel> models, UserInfo user);
+        Tuple<List<MultipleFsCaptionOutputViewModel>, bool> preBulkFsCaption(byte[] file, UserInfo user, bool isFinal, int customerId);
     }
 }

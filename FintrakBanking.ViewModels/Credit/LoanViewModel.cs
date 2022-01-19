@@ -2052,4 +2052,18 @@ namespace FintrakBanking.ViewModels.Credit
     //}
 
     //public class Accrual
+
+    public class MultipleFsCaptionOutputViewModel : GeneralEntity
+    {
+        public string fsGroup { get; set; }
+        public string fsItem { get; set; }
+        public decimal fsValue { get; set; }
+        public List<string> errorMessages { get; set; }
+        public bool passed { get; set; }
+        public string referenceId { get; set; }
+        public int customerId { get; set; }
+        public short fsGroupId { get; set; }
+        public int captionId { get; set; }
+    }
+
 }

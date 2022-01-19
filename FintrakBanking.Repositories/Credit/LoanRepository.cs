@@ -20987,7 +20987,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.InsuranceBulkUpload,
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ batchCode}' ",
+                DETAIL = $"Added TEMP_COLLATERAL_INSURANCE_TRACKING '{ batchCode}' ",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
