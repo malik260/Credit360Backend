@@ -19455,10 +19455,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 List<TEMP_COLLATERAL_INSURANCE_TRACKING> bulkPolicyTable = new List<TEMP_COLLATERAL_INSURANCE_TRACKING>();
                 var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                using (TransactionScope transactionScope = new TransactionScope())
+                List<int?> policyNumbers = new List<int?>();
+               using (TransactionScope transactionScope = new TransactionScope())
                 {
                     foreach (var policyRequest in models)
                     {
+                        policyNumbers.Add(policyRequest.policyId);
                         policyRequest.batchCode = batchCode;
                         if (policyRequest.isCollateral.ToLower() != "" && (policyRequest.isCollateral.ToLower() == "n" || policyRequest.isCollateral.ToLower() == "yes"))
                         {
@@ -19551,7 +19553,7 @@ namespace FintrakBanking.Repositories.Credit
                     AUDITTYPEID = (short)AuditTypeEnum.InsuranceBulkUpload,
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
-                    DETAIL = $"Added TBL_LOAN_RECOVERY_ASSIGNMENT '{ batchCode}' ",
+                    DETAIL = $"Insurance policy has benen bulk uploaded with the following details: 'batch code:' '{ batchCode}'",
                     IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
@@ -21057,6 +21059,11 @@ namespace FintrakBanking.Repositories.Credit
                         currentLine.passed = false;
                         currentLine.errorMessages.Add("Customer with customercode " + currentLine.customerId.ToString() + " does not exist on Credit360");
                     }
+                    if (currentLine.expiryDate <= currentLine.startDate)
+                    {
+                        currentLine.passed = false;
+                        currentLine.errorMessages.Add("<br/>Insurance End Date must be greater than Insurance Start Date");
+                    }
 
                     if (currentLine.isCollateral.ToLower() != "")
                     {
@@ -21087,6 +21094,7 @@ namespace FintrakBanking.Repositories.Credit
                                 currentLine.collateralCustomerId = customerCollateral.COLLATERALCUSTOMERID;
                                 currentLine.collateralDetails = customerCollateral.COLLATERALSUMMARY;
                                 currentLine.collateralCode = customerCollateral.COLLATERALCODE;
+                                
 
                                 var customerExistingCollateralPolicy = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => x.COLLATERALCUSTOMERID == customerCollateral.COLLATERALCUSTOMERID).FirstOrDefault();
                                 if (customerExistingCollateralPolicy != null)
@@ -21114,6 +21122,7 @@ namespace FintrakBanking.Repositories.Credit
                                         currentLine.passed = false;
                                         currentLine.errorMessages.Add("<br/>Insurance already exist on Credit360");
                                     }
+                                    
                                 }
                             }
                         }
