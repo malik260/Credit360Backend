@@ -6436,6 +6436,18 @@ namespace FintrakBanking.Repositories.Customer
                         bulkEntry.errorMessages.Add("FS Caption value can not be null or equal to zero ");
                     }
 
+                    if(bulkEntry.passed == true)
+                    {
+                        bulkEntry.validityStatus = "Passed";
+                    }
+                    else
+                    {
+                        bulkEntry.validityStatus = "Failed";
+                    }
+                        
+
+                            
+
                 }
                 catch (Exception e)
                 {
