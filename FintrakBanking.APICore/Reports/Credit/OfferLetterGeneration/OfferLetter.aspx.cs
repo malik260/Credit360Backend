@@ -117,7 +117,7 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
                 }
                 else if (x.productClassId == (int)ProductClassEnum.All4one)
                 {
-                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_All4one.rdlc");
+                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetterAll4one.rdlc");
                 }
                 else
                 {

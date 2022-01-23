@@ -403,7 +403,27 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Further to your application for a credit facility and our subsequent discussions, we are pleased to inform you that the Management of Access Bank Plc ("the Lender") has approved a term loan ("Maternal Health Service Support") under the following terms and conditions:</Value>
+                    <Value>Further to your application for a credit facility and our subsequent discussions, we are pleased to inform you that the Management of Access Bank Plc ("the Lender") </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>, an institution regulated by Central Bank of Nigeria,</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>has approved a term loan ("Maternal Health Service Support") under the following terms and conditions:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontSize>12pt</FontSize>
@@ -1749,6 +1769,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
