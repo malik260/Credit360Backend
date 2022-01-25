@@ -2064,6 +2064,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public short fsGroupId { get; set; }
         public int captionId { get; set; }
+        public string validityStatus { get; set; }
     }
 
 }

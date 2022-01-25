@@ -435,7 +435,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>We refer to your application for a Vehicle Lease Facility under our Auto Online Scheme and are pleased to inform you of the decision of Access Bank Plc to offer you a Vehicle Lease Facility, subject to the following terms and conditions:</Value>
+                    <Value>Further to your application for a credit facility and our subsequent discussions, we are pleased to inform you that the Management of Access Bank Plc (“the Lender”), an institution regulated by Central Bank of Nigeria, has approved a vehicle lease (“facility”) under the following terms and conditions:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontSize>12pt</FontSize>
@@ -2469,7 +2469,7 @@
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>on authorized excess overdraft</Value>
+                                  <Value>on  unauthorized excess overdraft</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>

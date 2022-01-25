@@ -37,6 +37,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string title { get; set; }
         public int documentTemplate { get; set; }
         public string customerName2 { get; set; }
+        public double? apr { get; set; }
     }
 
     public class OfferLetterDetailViewModel : GeneralEntity
@@ -98,6 +99,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string feeName { get; set; }
         public decimal rateValue { get; set; }
+        public double? apr { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity
