@@ -23,6 +23,10 @@ using Newtonsoft.Json.Linq;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using FintrakBanking.ViewModels.Audit;
+using FintrakBanking.ViewModels.Credit;
+using GemBox.Spreadsheet;
+using System.IO;
+using System.Transactions;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -6339,8 +6343,227 @@ namespace FintrakBanking.Repositories.Customer
 
             return new List< CustomerViewModels>();
         }
+
+        public Tuple<List<MultipleFsCaptionOutputViewModel>, bool> preBulkFsCaption(byte[] file, UserInfo user, bool isFinal, int customerId)
+        {
+            List<MultipleFsCaptionOutputViewModel> fsCaptionInputs = GetBulkFsCaptionInputs(file, customerId);
+
+            return new Tuple<List<MultipleFsCaptionOutputViewModel>, bool>(fsCaptionInputs, true);
+        }
+
+        private List<MultipleFsCaptionOutputViewModel> GetBulkFsCaptionInputs(byte[] file, int customerId)
+        {
+
+            List<MultipleFsCaptionOutputViewModel> bulkEntries = new List<MultipleFsCaptionOutputViewModel>();
+            
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
+            MemoryStream ms = new MemoryStream(file);
+            ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
+            //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+            ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
+            CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+
+            for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
+            {
+                MultipleFsCaptionOutputViewModel currentLine = new MultipleFsCaptionOutputViewModel();
+                int ctr = 0;
+                currentLine.errorMessages = new List<string>();
+                for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
+                {
+                    ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
+
+                    string cellName = CellRange.RowColumnToPosition(j, i);
+                    string cellRow = ExcelRowCollection.RowIndexToName(j);
+                    string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
+                    if (Convert.ToInt32(cellRow) == 1) continue;
+                    ctr = Convert.ToInt32(cellRow);
+                    switch (cellColumn)
+                    {
+                        case "A":
+                            currentLine.passed = true;
+                            try { currentLine.fsGroup = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            break;
+                        case "B":
+                            currentLine.passed = true;
+                            try { currentLine.fsItem = cell.Value.ToString(); }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
+                            }
+                            break;
+                        case "C":
+                            currentLine.passed = true;
+                            try
+                            {
+                              currentLine.fsValue = Convert.ToDecimal(cell.Value);
+                            }
+                            catch (Exception e)
+                            {
+                                currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
+                            }
+                            
+                            break;
+                    }
+
+                }
+
+                if (ctr > 1) bulkEntries.Add(currentLine);
+
+            };
+
+            foreach (var bulkEntry in bulkEntries)
+            {
+                try
+                {
+                    bulkEntry.referenceId = CommonHelpers.GenerateRandomDigitCode(10);
+                    bulkEntry.customerId = customerId;
+
+                    if (bulkEntry.fsGroup == null)
+                    {
+                        bulkEntry.passed = false;
+                        bulkEntry.errorMessages.Add("FS Caption group id can not be null ");
+                    }
+
+                    if (bulkEntry.fsItem == null)
+                    {
+                        bulkEntry.passed = false;
+                        bulkEntry.errorMessages.Add("FS Caption name can not be null ");
+                    }
+
+                    if (bulkEntry.fsValue <= 0)
+                    {
+                        bulkEntry.passed = false;
+                        bulkEntry.errorMessages.Add("FS Caption value can not be null or equal to zero ");
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+            }
+            return bulkEntries;
+
+        }
+
+        public bool saveBulkFsCaptionEntries(List<MultipleFsCaptionOutputViewModel> models, UserInfo user)
+        {
+            
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+                foreach (var fsRequest in models)
+                {
+                    fsRequest.createdBy = user.createdBy;
+                    var fsg = context.TBL_CUSTOMER_FS_CAPTION_GROUP.Where(x => fsRequest.fsGroup.ToLower().Contains(x.FSCAPTIONGROUPNAME.ToLower())).FirstOrDefault();
+                    if (fsg == null)
+                    {
+                        var fsGroupData = addBulkFsGroup(fsRequest);
+                        var saveFsg = context.TBL_CUSTOMER_FS_CAPTION_GROUP.Add(fsGroupData);
+                        context.SaveChanges();
+
+                        var fsi = context.TBL_CUSTOMER_FS_CAPTION.Where(x => fsRequest.fsItem.ToLower().Contains(x.FSCAPTIONNAME.ToLower()) ).FirstOrDefault();
+                        if (fsi == null)
+                        {
+                            fsRequest.fsGroupId = saveFsg.FSCAPTIONGROUPID;
+                            var fsItemData = addBulkFsItem(fsRequest);
+                            var saveFsi = context.TBL_CUSTOMER_FS_CAPTION.Add(fsItemData);
+                            context.SaveChanges();
+
+                            fsRequest.captionId = saveFsi.FSCAPTIONID;
+                            var fsDetailData = addBulkFsDetail(fsRequest);
+                            var saveFsd = context.TBL_CUSTOMER_FS_CAPTION_DETAIL.Add(fsDetailData);
+                            context.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                            var fsi = context.TBL_CUSTOMER_FS_CAPTION.Where(x => fsRequest.fsItem.ToLower().Contains(x.FSCAPTIONNAME.ToLower()) && x.FSCAPTIONGROUPID == fsg.FSCAPTIONGROUPID).FirstOrDefault();
+                            if (fsi == null)
+                            {
+                                fsRequest.fsGroupId = fsg.FSCAPTIONGROUPID;
+                                var fsItemData = addBulkFsItem(fsRequest);
+                                var saveFsi = context.TBL_CUSTOMER_FS_CAPTION.Add(fsItemData);
+                                context.SaveChanges();
+
+                                fsRequest.captionId = saveFsi.FSCAPTIONID;
+                                var fsDetailData = addBulkFsDetail(fsRequest);
+                                var saveFsd = context.TBL_CUSTOMER_FS_CAPTION_DETAIL.Add(fsDetailData);
+                                context.SaveChanges();
+                            }
+                    }
+                }
+                
+                transactionScope.Complete();
+                transactionScope.Dispose();
+            }
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.FsCaptionBulkUpload,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Added TBL_CUSTOMER_FS_CAPTION_GROUP",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            });
+
+            context.SaveChanges();
+            return true;
+        }
+
+        private TBL_CUSTOMER_FS_CAPTION_GROUP addBulkFsGroup(MultipleFsCaptionOutputViewModel fsGroup)
+        {
+
+            var fsg = context.TBL_CUSTOMER_FS_CAPTION_GROUP.Add(new TBL_CUSTOMER_FS_CAPTION_GROUP
+            {
+                FSCAPTIONGROUPNAME = fsGroup.fsGroup,
+                POSITION = 1,
+                CREATEDBY = fsGroup.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false,
+            });
+
+            return fsg;
+        }
+
+        private TBL_CUSTOMER_FS_CAPTION addBulkFsItem(MultipleFsCaptionOutputViewModel fsItem)
+        {
+
+            var fsg = context.TBL_CUSTOMER_FS_CAPTION.Add(new TBL_CUSTOMER_FS_CAPTION
+            {
+                FSCAPTIONNAME = fsItem.fsItem,
+                FSCAPTIONGROUPID = fsItem.fsGroupId,
+                ISRATIO = false,
+                POSITION = 1,
+                CREATEDBY = fsItem.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false,
+            });
+
+            return fsg;
+        }
+
+        private TBL_CUSTOMER_FS_CAPTION_DETAIL addBulkFsDetail(MultipleFsCaptionOutputViewModel fsDetail)
+        {
+
+            var fsd = context.TBL_CUSTOMER_FS_CAPTION_DETAIL.Add(new TBL_CUSTOMER_FS_CAPTION_DETAIL
+            {
+                CUSTOMERID = fsDetail.customerId,
+                FSCAPTIONID = fsDetail.captionId,
+                FSDATE = DateTime.Now,
+                AMOUNT = fsDetail.fsValue,
+                CREATEDBY = fsDetail.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false,
+            });
+
+            return fsd;
+        }
+
+
     }
-
-   
 }
-

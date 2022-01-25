@@ -23,6 +23,7 @@ namespace FintrakBanking.ViewModels.Risk
         public int? operationId { get; set; }
         public short? searchBaseId { get; set; }
         public string searchBasePlaceholder { get; set; }
+        public bool isAgricRac { get; set; }
     }
 
     public class ProductRacCategory
@@ -133,6 +134,7 @@ namespace FintrakBanking.ViewModels.Risk
         public string employmentType { get; set; }
         public short? customerTypeId { get; set; }
         public string criteria { get; set; }
+        public bool isAgricRac { get; set; }
     }
 
     public class RacDetailViewModel : GeneralEntity

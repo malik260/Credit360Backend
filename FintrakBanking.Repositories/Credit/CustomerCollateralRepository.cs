@@ -8946,8 +8946,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
+            if (model.expiryDate <= model.startDate)
+                throw new ConditionNotMetException("Insurance End Date must be greater than the Insurance Start Date");
 
-                var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
+
+            var insuranceTracking = context.TBL_COLLATERAL_INSURANCE_TRACKING.Add(new TBL_COLLATERAL_INSURANCE_TRACKING
                 {
                     INSURANCECOMPANYID = model.insuranceCompanyId,
                     ISURANCECOMPANYADDRESS = model.companyAddress,
@@ -8980,7 +8983,9 @@ namespace FintrakBanking.Repositories.Credit
                     COLLATERALDESCRIPTION = model.collateralDetails,
                 });
 
-               if (context.SaveChanges() > 0)
+            
+
+            if (context.SaveChanges() > 0)
                {
                 return true;
                }
@@ -11360,7 +11365,7 @@ namespace FintrakBanking.Repositories.Credit
                                     i.collateralCode = customerCollateral.COLLATERALCODE;
                                 }
 
-                                var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                                var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                                 if (createdBy > 0)
                                 {
                                     var staff = context.TBL_STAFF.Find(createdBy);
@@ -11369,7 +11374,7 @@ namespace FintrakBanking.Repositories.Credit
                                     {
                                         i.teamName = staff?.MISCODE;
                                         i.accountOfficerName = staff?.FIRSTNAME + " " + staff?.MIDDLENAME + " " + staff?.LASTNAME;
-                                        i.accountOfficerEmail = staff?.EMAIL;
+                                        i.accountOfficerEmail = staff?.EMAIL ?? string.Empty;
                                         var rm = context.TBL_STAFF.Find(staff.SUPERVISOR_STAFFID);
                                         if (rm != null && rm.SUPERVISOR_STAFFID > 0)
                                         {
@@ -11502,7 +11507,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }
 
-                            var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                            var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                             if (createdBy > 0)
                             {
                                 var staff = context.TBL_STAFF.Find(createdBy);
@@ -11644,7 +11649,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }
 
-                            var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                            var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                             if (createdBy > 0)
                             {
                                 var staff = context.TBL_STAFF.Find(createdBy);
@@ -11788,7 +11793,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }
 
-                                var createdBy = (i.createdBy == 0) ? customerCollateral?.CREATEDBY : i.createdBy;
+                                var createdBy = (i.createdBy < 1) ? customerCollateral?.CREATEDBY : i.createdBy;
                                 if (createdBy > 0)
                                 {
                                     var staff = context.TBL_STAFF.Find(createdBy);
