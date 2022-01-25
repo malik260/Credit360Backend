@@ -734,6 +734,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.loopedStaffId != null && this.loopedStaffId > 0)
             {
                 var p = context.TBL_STAFF.Where(x=>x.STAFFID == this.loopedStaffId && x.DELETED == false).FirstOrDefault();
+                if (p == null)
+                {
+                    var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.loopedStaffId).FirstOrDefault();
+                    throw new ConditionNotMetException("Staff " + staff.FIRSTNAME + " " + staff.LASTNAME + " has been deleted");
+                }
                 response.nextPersonId = this.loopedStaffId;
                 response.nextLevelName = p.TBL_STAFF_ROLE.STAFFROLENAME;
                 response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;

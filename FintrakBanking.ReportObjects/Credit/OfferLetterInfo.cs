@@ -207,6 +207,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                          b.STATUSID == (int)ApprovalStatusEnum.Approved
                                    select new OfferLetterDetailViewModel()
                                    {
+                                       apr = b.APPROVEDINTERESTRATE,
                                        productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTNAME,
                                        //customerName = c.FIRSTNAME + " " + c.LASTNAME,
                                        //customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
@@ -361,6 +362,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        && d.STATUSID == (int)ApprovalStatusEnum.Approved
                                   select new OfferLetterViewModel
                                   {
+                                      apr = d.APPROVEDINTERESTRATE,
                                       companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
                                       //customerId = b.CustomerId,
                                       customerName = a.LOANAPPLICATIONTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
