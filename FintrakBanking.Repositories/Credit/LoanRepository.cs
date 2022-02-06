@@ -5021,6 +5021,14 @@ namespace FintrakBanking.Repositories.Credit
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId, bool isManual = false)
         {
 
+            var coreBankingRef = entity.coreBankingRef;
+
+            var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
+            if (validateRef.response_code != "00")
+            {
+                throw new APIErrorException("Core Banking API Error "+ validateRef.response_message+ " - Kindly Contact System Administrator!");
+            }
+
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
             var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
             var dynamicMessage = string.Empty;
@@ -22017,6 +22025,38 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 throw new APIErrorException("Core Banking API Error - Kindly Contact System Administrator!");
+            }
+        }
+
+
+        private CloseMannualBookingResponseViewModel GetLoanBookingDetailFromFlexcube(string loan_accountno)
+        {
+            CloseMannualBookingViewModel model = null;
+            model.loan_accountno = loan_accountno;
+            if (model.loan_accountno == null)
+            {
+                throw new ConditionNotMetException("Flexcube reference number is null");
+            }
+
+            model.channel_code = "FINTRAK";
+
+            CloseMannualBookingResponseViewModel result = null;
+            Task.Run(async () => result = await transaction.ValidateMannualBookingClosure(model)).GetAwaiter().GetResult();
+
+            if (result.response_code == "00")
+            {
+                if (result.response_message.ToLower() == "successful")
+                {
+                    return new CloseMannualBookingResponseViewModel { response_code = result.response_code, response_message = result.response_message.ToLower(), loandetailsresp = result.loandetailsresp };
+                }
+                else
+                {
+                    throw new ConditionNotMetException("Core Banking API Error " + result.response_message.ToLower() + " - Kindly Contact System Administrator!");
+                }
+            }
+            else
+            {
+                throw new APIErrorException("Core Banking API Error " + result.response_message.ToLower() + "- Kindly Contact System Administrator!");
             }
         }
 
