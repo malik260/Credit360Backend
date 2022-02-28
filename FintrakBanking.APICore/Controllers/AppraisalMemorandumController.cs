@@ -452,10 +452,10 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("loan-application-approval-process")]
-        public async Task<HttpResponseMessage> GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
+        public HttpResponseMessage GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
         {
             IQueryable<LoanApplicationViewModel> items;
-            items = await repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
+            items = repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
 
 
             if (!String.IsNullOrEmpty(searchString))
@@ -513,9 +513,9 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("subsidiaries-loan-applications")]
-        public async Task<HttpResponseMessage> GetSubsidiaryPendingLoanApplications()
+        public HttpResponseMessage GetSubsidiaryPendingLoanApplications()
         {
-            var data = await repo.GetSubsidiaryPendingLoanApplications();
+            var data =  repo.GetSubsidiaryPendingLoanApplications();
             if (data != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });

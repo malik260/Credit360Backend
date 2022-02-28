@@ -3423,7 +3423,7 @@ namespace FintrakBanking.Repositories.Credit
 
         #region FAM Pending Applications
 
-        public async Task<IQueryable<LoanApplicationViewModel>> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId, bool isSpecific)
+        public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId, bool isSpecific)
         {
             // var declarations
             List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
@@ -3444,7 +3444,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var query = new List<LoanApplicationViewModel>();
 
-            query = await context.TBL_LOAN_APPLICATION.Where(x =>
+            query = context.TBL_LOAN_APPLICATION.Where(x =>
                 x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.COMPANYID == companyId
@@ -3548,7 +3548,7 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID
-        }).ToListAsync();
+        }).ToList();
 
             if (isSpecific)
             {
@@ -3565,9 +3565,9 @@ namespace FintrakBanking.Repositories.Credit
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
-        public async Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaryPendingLoanApplications()
+        public IEnumerable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications()
         {
-            var data = await (from a in stgContext.STG_SUB_BASICTRANSACTION
+            var data =  (from a in stgContext.STG_SUB_BASICTRANSACTION
                               select new SubsidiaryViewModel
                               {
                                   loanApplicationId = a.LOANAPPLICATIONID,
@@ -3598,7 +3598,7 @@ namespace FintrakBanking.Repositories.Credit
                                   dateTimeCreated = a.DATETIMECREATED,
                                   createdBy = a.CREATEDBY,
                                   createdByName = a.CREATEDBYNAME
-                              }).ToListAsync();
+                              }).ToList();
 
             return data;
         }
