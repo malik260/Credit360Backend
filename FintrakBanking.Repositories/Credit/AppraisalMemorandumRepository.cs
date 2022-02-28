@@ -3431,9 +3431,10 @@ namespace FintrakBanking.Repositories.Credit
             //List<int> levelIds2 = new List<int>();
            
             ExclusiveOperations.Add(operationId);
-            foreach(var i in ExclusiveOperations)
+            var levIds  = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+            foreach (var i in ExclusiveOperations)
             {
-                levelIds.AddRange(general.GetStaffApprovalLevelIds(staffId, operationId).ToList());
+                levelIds.AddRange(levIds);
             }
             
             var staffs = general.GetStaffRlieved(staffId);

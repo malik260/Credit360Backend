@@ -34,7 +34,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 
         IQueryable<WorkflowTrackerViewModel> GetAllRecordsOnApprovalTrail(int companyId);
 
-        IEnumerable<ApprovalLevelStaffViewModel> GetAllAssignedApprovalLevelStaff(int companyId);
+        IQueryable<ApprovalLevelStaffViewModel> GetAllAssignedApprovalLevelStaff(int companyId);
 
         ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId);
         List<WorkflowTrackerViewModel> GetAllApprovalStatus();
@@ -48,6 +48,6 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         List<WorkflowTrackerViewModel> GetApprovalTrailByTargetId(int targetId, int companyId);
         WorkflowTrackerViewModel GenerateApprovalMonitoringReport(DateRange param);
         WorkflowTrackerViewModel ExportApprovalComments(List<ApprovalTrailViewModel> commentsData, bool requireAll);
-
+        IQueryable<int> GetAllDetailedApprovalLevelStaffApprovalLevelId(int companyId, int staffId);
     }
 }
