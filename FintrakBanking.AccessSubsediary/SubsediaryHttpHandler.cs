@@ -16,6 +16,50 @@ namespace FintrakBanking.AccessSubsediary
 {
     public class SubsediaryHttpHandler : DelegatingHandler
     {
+        private const string Origin = "Origin";
+        private const string AccessControlRequestMethod = "Access-Control-Request-Method";
+        private const string AccessControlRequestHeaders = "Access-Control-Request-Headers";
+        private const string AccessControlAllowOrigin = "Access-Control-Allow-Origin";
+        private const string AccessControlAllowMethods = "Access-Control-Allow-Methods";
+        private const string AccessControlAllowHeaders = "Access-Control-Allow-Headers";
+        //protected override Task<HttpResponseMessage> SendAsync2(HttpRequestMessage request,
+        //                                                       CancellationToken cancellationToken)
+        //{
+        //    bool isCorsRequest = request.Headers.Contains(Origin);
+        //    bool isPreflightRequest = request.Method == HttpMethod.Options;
+        //    if (isCorsRequest)
+        //    {
+        //        if (isPreflightRequest)
+        //        {
+        //            var response = new HttpResponseMessage(HttpStatusCode.OK);
+        //            response.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
+
+        //            string accessControlRequestMethod =
+        //                request.Headers.GetValues(AccessControlRequestMethod).FirstOrDefault();
+        //            if (accessControlRequestMethod != null)
+        //            {
+        //                response.Headers.Add(AccessControlAllowMethods, accessControlRequestMethod);
+        //            }
+
+        //            string requestedHeaders = string.Join(", ", request.Headers.GetValues(AccessControlRequestHeaders));
+        //            if (!string.IsNullOrEmpty(requestedHeaders))
+        //            {
+        //                response.Headers.Add(AccessControlAllowHeaders, requestedHeaders);
+        //            }
+
+        //            var tcs = new TaskCompletionSource<HttpResponseMessage>();
+        //            tcs.SetResult(response);
+        //            return tcs.Task;
+        //        }
+        //        return base.SendAsync(request, cancellationToken).ContinueWith(t =>
+        //        {
+        //            HttpResponseMessage resp = t.Result;
+        //            resp.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
+        //            return resp;
+        //        });
+        //    }
+        //    return base.SendAsync(request, cancellationToken);
+        //}
         protected override async Task<HttpResponseMessage> SendAsync(
           HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -25,7 +69,10 @@ namespace FintrakBanking.AccessSubsediary
             var httpClient = new HttpClient();
             var token = HttpContext.Current.Request.Headers["Authorization"];
             string countryCode = HttpContext.Current.Request.Headers["X-COUNTRYCODE"];
-            if (countryCode != null && countryCode != "NG")
+            var excemptedUrls = new List<string>();
+            excemptedUrls.Add("/api/v1/credit/appraisal-memorandum/privilege");
+            excemptedUrls.Add("/api/v1/credit/appraisal-memorandum/forward");
+            if (countryCode != null && countryCode != "NG" && !excemptedUrls.Contains(HttpContext.Current.Request.CurrentExecutionFilePath))
             {
 
 
@@ -44,6 +91,7 @@ namespace FintrakBanking.AccessSubsediary
 
                     HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
                     message.Content = new StringContent(JsonConvert.SerializeObject(result), Encoding.UTF8, "application/json");
+                    message.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
                     tsc.SetResult(message);
                     return tsc.Task.Result;
 
@@ -60,13 +108,15 @@ namespace FintrakBanking.AccessSubsediary
                         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         httpClient.DefaultRequestHeaders.Add("Authorization", token);
                         var json = JsonConvert.SerializeObject(values);
-                        var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+                        var content = new StringContent(values, Encoding.UTF8, "application/json");
                         string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
                         var responseString = await httpClient.PostAsync(remoteURL, content);
                         var result = await responseString.Content.ReadAsAsync<object>();
                         var tsc = new TaskCompletionSource<HttpResponseMessage>();
                         HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
                         message.Content = new StringContent(JsonConvert.SerializeObject(result), Encoding.UTF8, "application/json");
+                        message.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
+
 
                         tsc.SetResult(message);
                         return tsc.Task.Result;
@@ -94,6 +144,8 @@ namespace FintrakBanking.AccessSubsediary
                         var tsc = new TaskCompletionSource<HttpResponseMessage>();
                         HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
                         message.Content = new StringContent(JsonConvert.SerializeObject(result), Encoding.UTF8, "application/json");
+                        message.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
+
                         tsc.SetResult(message);
                         return tsc.Task.Result;
                     }
