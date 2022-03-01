@@ -19470,7 +19470,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         policyNumbers.Add(policyRequest.policyId);
                         policyRequest.batchCode = batchCode;
-                        if (policyRequest.isCollateral.ToLower() != "" && (policyRequest.isCollateral.ToLower() == "n" || policyRequest.isCollateral.ToLower() == "yes"))
+                        if (policyRequest.isCollateral.ToLower() != "" && (policyRequest.isCollateral.ToLower() == "no" || policyRequest.isCollateral.ToLower() == "yes"))
                         {
                             if (policyRequest.passed == true)
                             {
@@ -19492,12 +19492,17 @@ namespace FintrakBanking.Repositories.Credit
                                 }
                                 else { policyRequest.insuranceStatus = (int)InsuranceStatusEnum.Expired; }
 
-                                var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => policyRequest.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
+                                var insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => x.DESCRIPTION == policyRequest.policyType.ToLower()).FirstOrDefault();
                                 if (insurancePolicyTypeDetail != null)
                                 {
                                     policyRequest.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
                                 }
-
+                                else
+                                {
+                                    insurancePolicyTypeDetail = context.TBL_INSURANCE_POLICY_TYPE.Where(x => policyRequest.policyType.ToLower().Contains(x.DESCRIPTION.ToLower())).FirstOrDefault();
+                                    if (insurancePolicyTypeDetail != null) policyRequest.insurancePolicyTypeId = insurancePolicyTypeDetail.POLICYTYPEID;
+                                    
+                                }
                                 policyRequest.dateTimeCreated = DateTime.Now;
                                 policyRequest.createdBy = user.createdBy;
 
@@ -21105,10 +21110,15 @@ namespace FintrakBanking.Repositories.Credit
                             if (customerCollateral == null)
                             {
                                 currentLine.passed = false;
-                                currentLine.errorMessages.Add("<br/>Collateral with collateralcode " + currentLine.collateralCode.ToString() + " does not exist on Credit360");
+                                currentLine.errorMessages.Add("<br/>Collateral with collateralcode " + currentLine.collateralCode?.ToString() + " does not exist on Credit360");
                             }
+                            //else if(customerCollateral == null && (currentLine.collateralCode != string.Empty || currentLine.collateralCode != null))
+                            //{
+                            //    currentLine.passed = false;
+                            //    currentLine.errorMessages.Add("<br/>Collateral with collateralcode " + currentLine.collateralCode?.ToString() + " does not exist on Credit360");
+                            //}
                             else
-                            {
+                            { 
                                 currentLine.collateralCustomerId = customerCollateral.COLLATERALCUSTOMERID;
                                 currentLine.collateralDetails = customerCollateral.COLLATERALSUMMARY;
                                 currentLine.collateralCode = customerCollateral.COLLATERALCODE;

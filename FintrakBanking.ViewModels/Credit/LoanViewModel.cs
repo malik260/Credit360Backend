@@ -1918,6 +1918,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? approvalStatusId { get; set; }
         public string validityStatus { get; set; }
         public string collateralDescription { get; set; }
+        public string nameOfSecurity { get; set; }
     }
 
 
