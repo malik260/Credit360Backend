@@ -5021,13 +5021,13 @@ namespace FintrakBanking.Repositories.Credit
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId, bool isManual = false)
         {
 
-            var coreBankingRef = entity.coreBankingRef;
+            //var coreBankingRef = entity.coreBankingRef;
 
-            var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
-            if (validateRef.response_code != "00")
-            {
-                throw new APIErrorException("Core Banking API Error "+ validateRef.response_message+ " - Kindly Contact System Administrator!");
-            }
+            //var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
+            //if (validateRef.response_code != "00")
+            //{
+            //    throw new APIErrorException("Core Banking API Error "+ validateRef.response_message+ " - Kindly Contact System Administrator!");
+            //}
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
             var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
