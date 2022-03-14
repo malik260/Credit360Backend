@@ -11374,7 +11374,7 @@ namespace FintrakBanking.Repositories.Credit
                                     {
                                         i.teamName = staff?.MISCODE;
                                         i.accountOfficerName = staff?.FIRSTNAME + " " + staff?.MIDDLENAME + " " + staff?.LASTNAME;
-                                        i.accountOfficerEmail = staff?.EMAIL;
+                                        i.accountOfficerEmail = staff?.EMAIL ?? string.Empty;
                                         var rm = context.TBL_STAFF.Find(staff.SUPERVISOR_STAFFID);
                                         if (rm != null && rm.SUPERVISOR_STAFFID > 0)
                                         {
