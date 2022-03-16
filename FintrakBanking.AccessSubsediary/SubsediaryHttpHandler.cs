@@ -70,8 +70,8 @@ namespace FintrakBanking.AccessSubsediary
             var token = HttpContext.Current.Request.Headers["Authorization"];
             string countryCode = HttpContext.Current.Request.Headers["X-COUNTRYCODE"];
             var excemptedUrls = new List<string>();
-            excemptedUrls.Add("/api/v1/credit/appraisal-memorandum/privilege");
-            excemptedUrls.Add("/api/v1/credit/appraisal-memorandum/forward");
+           // excemptedUrls.Add("/api/v1/credit/appraisal-memorandum/privilege");
+           // excemptedUrls.Add("/api/v1/credit/appraisal-memorandum/forward");
             if (countryCode != null && countryCode != "NG" && !excemptedUrls.Contains(HttpContext.Current.Request.CurrentExecutionFilePath))
             {
 
@@ -84,7 +84,7 @@ namespace FintrakBanking.AccessSubsediary
                     httpClient.DefaultRequestHeaders.Clear();
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     httpClient.DefaultRequestHeaders.Add("Authorization", token);
-                    string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
+                    string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.RawUrl}";
                     var responseString = await httpClient.GetAsync(remoteURL);
                     var result = await responseString.Content.ReadAsAsync<object>();
                     var tsc = new TaskCompletionSource<HttpResponseMessage>();
@@ -109,7 +109,7 @@ namespace FintrakBanking.AccessSubsediary
                         httpClient.DefaultRequestHeaders.Add("Authorization", token);
                         var json = JsonConvert.SerializeObject(values);
                         var content = new StringContent(values, Encoding.UTF8, "application/json");
-                        string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
+                        string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.RawUrl}";
                         var responseString = await httpClient.PostAsync(remoteURL, content);
                         var result = await responseString.Content.ReadAsAsync<object>();
                         var tsc = new TaskCompletionSource<HttpResponseMessage>();
@@ -138,7 +138,7 @@ namespace FintrakBanking.AccessSubsediary
                         httpClient.DefaultRequestHeaders.Add("Authorization", token);
                         var json = JsonConvert.SerializeObject(values);
                         var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-                        string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
+                        string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.RawUrl}";
                         var responseString = await httpClient.PutAsync(remoteURL, content);
                         var result = await responseString.Content.ReadAsAsync<object>();
                         var tsc = new TaskCompletionSource<HttpResponseMessage>();

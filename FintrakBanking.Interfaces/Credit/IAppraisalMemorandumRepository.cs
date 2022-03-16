@@ -64,7 +64,7 @@ namespace FintrakBanking.Interfaces.Credit
         //bool Confirmation(int type, int applicationId);
 
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, bool isSpecific = false);
-        IEnumerable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications();
+        IEnumerable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, bool isSpecific = false);
         Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaries();
         List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps);
         IQueryable<LoanApplicationViewModel> GetPoolApplications(int operationId, int companyId, int branchId, int staffId, int? classId);
