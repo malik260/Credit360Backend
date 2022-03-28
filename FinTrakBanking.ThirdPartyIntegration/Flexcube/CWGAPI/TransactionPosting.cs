@@ -1473,13 +1473,15 @@
                     handler.UseDefaultCredentials = true;
                     getAPIURLSettings("ApprovalPostingToSub");
                     httpClientInstance = new HttpClient();
-                    var token = new AuthenticationHeaderValue("Basic", API_KEY);
+                    //var token = new AuthenticationHeaderValue("Basic", API_KEY);
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Add("Authorization", API_KEY);
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", API_KEY);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Authorization = token;
+                    //client.DefaultRequestHeaders.Authorization = token;
 
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
@@ -1549,8 +1551,10 @@
 
             public async Task<CloseMannualBookingResponseViewModel> ValidateMannualBookingClosure(CloseMannualBookingViewModel model)
             {
-                HttpClientHandler handler = new HttpClientHandler();
-                //HttpClient httpClientInstance;
+                var handler = new HttpClientHandler()
+                {
+                    AllowAutoRedirect = false
+                };
 
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
@@ -1558,17 +1562,18 @@
                 string responseMessage = "";
                 try
                 {
+                    getAPIURLSettings("MannualBookingClose");
                     handler.UseDefaultCredentials = true;
                     client.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(180);
                     client.DefaultRequestHeaders.Accept.Clear();
-                    getAPIURLSettings("MannualBookingClose");
+                   
                     client.BaseAddress = new Uri(API_URL);
+                    ////client.DefaultRequestHeaders.Add("Authorization", "Bearer " + API_KEY);
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", API_KEY);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
-                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
                     responseDateTime = DateTime.Now;
 
@@ -1598,7 +1603,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new APIErrorException($"Error" + ex.Message);
+                    throw new APIErrorException($"Error " + ex.InnerException.InnerException.Message);
                 }
                 finally
                 {
