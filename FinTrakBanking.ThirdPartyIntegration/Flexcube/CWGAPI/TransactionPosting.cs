@@ -1569,9 +1569,8 @@
                     client.DefaultRequestHeaders.Accept.Clear();
                    
                     client.BaseAddress = new Uri(API_URL);
-                    client.DefaultRequestHeaders.Add("Authorization", API_KEY);
-                    //var _authHeader = new AuthenticationHeaderValue("Basic", API_KEY);
-                    //client.DefaultRequestHeaders.Authorization = _authHeader;
+                    ////client.DefaultRequestHeaders.Add("Authorization", "Bearer " + API_KEY);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", API_KEY);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
@@ -1604,7 +1603,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new APIErrorException($"Error" + ex.Message);
+                    throw new APIErrorException($"Error " + ex.InnerException.InnerException.Message);
                 }
                 finally
                 {
