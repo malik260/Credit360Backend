@@ -2809,6 +2809,90 @@ namespace FintrakBanking.Repositories.Credit
             return grant;
         }
 
+        public PrivilegeViewModel GetUserPrivilegeByCode(AuthoritySignatureViewModel entity)
+        {
+            var appl = context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+            List<int> ExclusiveOperations = new List<int>(); // (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
+            List<int> levelIds = new List<int>();
+
+            //ExclusiveOperations.Add(entity.operationId);
+            if (appl != null)
+            {
+                ExclusiveOperations.Add(appl.OPERATIONID);
+            }
+
+            //var operationId = entity.operationId;
+            var staffRoleCode = entity.staffRoleCode;
+            var rank = context.TBL_STAFF_ROLE.Where(c => c.STAFFROLECODE == staffRoleCode).FirstOrDefault();
+            if (rank == null)
+            {
+                throw new SecureException("Staff role " + staffRoleCode + " cannot be found");
+            }
+            IQueryable<PrivilegeViewModel> grants;
+            PrivilegeViewModel grant;
+
+            // check default role
+            // var rank = context.TBL_STAFF_ROLE.Find(staffRole);
+
+            //grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
+            //    .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
+            //        m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+            //    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
+            //        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
+            //    .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false ),
+            //        gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
+            //        {
+            //            viewCamDocument = s.CANVIEWDOCUMENT,
+            //            canMakeChanges = s.CANEDIT,
+            //            canAppendTemplate = s.CANEDIT,
+            //            viewUploadedFiles = s.CANVIEWUPLOAD,
+            //            canUploadFile = s.CANUPLOAD,
+            //            viewApproval = s.CANVIEWAPPROVAL,
+            //            canApprove = s.CANAPPROVE,
+            //            approvalLimit = s.MAXIMUMAMOUNT,
+            //            approvalLevelId = s.APPROVALLEVELID,
+            //            groupRoleId = gl.mg.g.ROLEID,
+            //            canEscalate = gl.l.CANESCALATE,
+            //            levelTypeId = gl.l.LEVELTYPEID,
+            //            staffId = entity.createdBy,
+            //            roleId = rank.STAFFROLEID,
+            //            //userBranchId = (short)entity.BRANCHID
+            //        });
+
+            //if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
+            //{
+            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
+                .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
+                    m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == rank.STAFFROLEID),
+                    mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
+                    {
+                        viewCamDocument = l.CANVIEWDOCUMENT,
+                        canMakeChanges = l.CANEDIT,
+                        canAppendTemplate = l.CANEDIT,
+                        viewUploadedFiles = l.CANVIEWUPLOAD,
+                        canUploadFile = l.CANUPLOAD,
+                        viewApproval = l.CANVIEWAPPROVAL,
+                        canApprove = l.CANAPPROVE,
+                        approvalLimit = l.MAXIMUMAMOUNT,
+                        approvalLevelId = l.APPROVALLEVELID,
+                        groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
+                        canEscalate = l.CANESCALATE,
+                        levelTypeId = l.LEVELTYPEID,
+                        staffId = entity.createdBy,
+                        roleId = rank.STAFFROLEID,
+                            //userBranchId = (short)staff.BRANCHID
+                        });
+            //}
+
+            grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
+            if (grant == null) { return GetRelieverPrivilege(entity); }
+            grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
+            grant.owner = grant.userApprovalLevelIds.Contains((int)entity.levelId);
+
+            return grant;
+        }
+
         private PrivilegeViewModel GetRelieverPrivilege(AuthoritySignatureViewModel entity)
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(entity.targetId);

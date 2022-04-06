@@ -89,6 +89,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool GetUntenoredStatus(int applicationId);
 
         PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity);
+        PrivilegeViewModel GetUserPrivilegeByCode(AuthoritySignatureViewModel entity);
 
         IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggers(int applicationId);
 

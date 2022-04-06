@@ -316,6 +316,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? productClassId { get; set; }
         public int? productId { get; set; }
         public int? levelId { get; set; }
+        public string staffRoleCode { get; set; }
     }
     public class ApprovalTrailRequestViewModel : GeneralEntity
     {

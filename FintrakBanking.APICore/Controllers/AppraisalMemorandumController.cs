@@ -357,6 +357,22 @@ namespace FintrakBanking.APICore.Controllers
  
         }
 
+        [HttpPost]
+        [Route("appraisal-memorandum/privilege-by-code")]
+        public HttpResponseMessage GetUserPrivilegeByCode([FromBody] AuthoritySignatureViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffRoleCode = token.GetStaffRoleCode;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            var data = repo.GetUserPrivilegeByCode(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
         [HttpGet]
         [Route("appraisal-memorandum/loan-detail/{loanApplicationId}")]
         public HttpResponseMessage GetApprovedLoanDetail(int loanApplicationId)
