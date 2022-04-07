@@ -1473,13 +1473,15 @@
                     handler.UseDefaultCredentials = true;
                     getAPIURLSettings("ApprovalPostingToSub");
                     httpClientInstance = new HttpClient();
-                    var token = new AuthenticationHeaderValue("Basic", API_KEY);
+                    //var token = new AuthenticationHeaderValue("Basic", API_KEY);
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Add("Authorization", API_KEY);
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", API_KEY);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Authorization = token;
+                    //client.DefaultRequestHeaders.Authorization = token;
 
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
@@ -1550,39 +1552,35 @@
             public async Task<CloseMannualBookingResponseViewModel> ValidateMannualBookingClosure(CloseMannualBookingViewModel model)
             {
                 HttpClientHandler handler = new HttpClientHandler();
-                //HttpClient httpClientInstance;
-
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
                 string responseMessage = "";
+                CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
+                requestDatetime = DateTime.Now;
+                responseDateTime = DateTime.Now;
                 try
                 {
-                    handler.UseDefaultCredentials = true;
-                    client.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(180);
-                    client.DefaultRequestHeaders.Accept.Clear();
                     getAPIURLSettings("MannualBookingClose");
+                    handler.UseDefaultCredentials = true;
+                    var token = new AuthenticationHeaderValue("Basic", API_KEY);
+                    client.DefaultRequestHeaders.Accept.Clear();
                     client.BaseAddress = new Uri(API_URL);
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", API_KEY);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
-                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                    requestDatetime = DateTime.Now;
-                    responseDateTime = DateTime.Now;
-
+                    client.DefaultRequestHeaders.ConnectionClose = false;
+                    client.DefaultRequestHeaders.Authorization = token;
                     response = client.PostAsync("GetLoanDetails", new StringContent(new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                   
 
                     if (response.IsSuccessStatusCode)
                     {
                         var rep = await response.Content.ReadAsAsync<CloseMannualBookingResponseViewModel>();
-
+                        responseMessage = rep.response_message;
                         if (!rep.response_message.ToLower().Contains("successful"))
                         {
                             throw new APIErrorException("Core Banking API error - " + rep.response_message + " " + DateTime.Now);
                         }
-
+                        
                         records.response_code = rep.response_code;
                         records.response_message = rep.response_message;
                         records.loandetailsresp = rep.loandetailsresp;
@@ -1598,27 +1596,32 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new APIErrorException($"Error" + ex.Message);
+                    throw new APIErrorException($"Error " + ex.InnerException.ToString());
                 }
                 finally
                 {
                     handler.Dispose();
                     client.Dispose();
-
-                    var logs = new TBL_CUSTOM_API_LOGS
+                    try
                     {
-                        APIURL = $"{API_URL}GetLoanDetails",
-                        LOGTYPEID = 8,
-                        REFERENCENUMBER = model.loan_accountno,
-                        REQUESTDATETIME = requestDatetime,
-                        REQUESTMESSAGE = new JavaScriptSerializer().Serialize(model),
-                        RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = responseMessage,
-                    };
+                        var logs = new TBL_CUSTOM_API_LOGS
+                        {
+                            APIURL = $"{API_URL}GetLoanDetails",
+                            LOGTYPEID = 8,
+                            REFERENCENUMBER = model.loan_accountno,
+                            REQUESTDATETIME = requestDatetime,
+                            REQUESTMESSAGE = new JavaScriptSerializer().Serialize(model),
+                            RESPONSEDATETIME = responseDateTime,
+                            RESPONSEMESSAGE = responseMessage,
+                        };
 
-                    FinTrakBankingContext logContext = new FinTrakBankingContext();
-                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-                    logContext.SaveChanges();
+                        FinTrakBankingContext logContext = new FinTrakBankingContext();
+                        logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                        logContext.SaveChanges();
+                    }catch(Exception e)
+                    {
+                        throw e;
+                    }
                 }
             }
 

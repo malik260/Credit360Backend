@@ -5021,13 +5021,13 @@ namespace FintrakBanking.Repositories.Credit
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId, bool isManual = false)
         {
 
-            //var coreBankingRef = entity.coreBankingRef;
+            var coreBankingRef = entity.coreBankingRef;
 
-            //var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
-            //if (validateRef.response_code != "00")
-            //{
-            //    throw new APIErrorException("Core Banking API Error "+ validateRef.response_message+ " - Kindly Contact System Administrator!");
-            //}
+            var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
+            if (validateRef.response_code != "00")
+            {
+                throw new APIErrorException("Core Banking API Error " + validateRef.response_message + " - Kindly Contact System Administrator!");
+            }
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
             var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
@@ -22048,19 +22048,19 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new ConditionNotMetException("Core Banking API Error - Kindly Contact System Administrator!");
+                    throw new ConditionNotMetException("Core Banking API Error " + result.response_message.ToLower() + " -  Kindly Contact System Administrator!");
                 }
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error - Kindly Contact System Administrator!");
+                throw new APIErrorException("Core Banking API Error " + result.response_message.ToLower() + " -  Kindly Contact System Administrator!");
             }
         }
 
 
         private CloseMannualBookingResponseViewModel GetLoanBookingDetailFromFlexcube(string loan_accountno)
         {
-            CloseMannualBookingViewModel model = null;
+            CloseMannualBookingViewModel model = new CloseMannualBookingViewModel();
             model.loan_accountno = loan_accountno;
             if (model.loan_accountno == null)
             {
