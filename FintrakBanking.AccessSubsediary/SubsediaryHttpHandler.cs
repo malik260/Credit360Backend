@@ -84,6 +84,7 @@ namespace FintrakBanking.AccessSubsediary
                     httpClient.DefaultRequestHeaders.Clear();
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                    httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                     string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.RawUrl}";
                     var responseString = await httpClient.GetAsync(remoteURL);
                     var result = await responseString.Content.ReadAsAsync<object>();
@@ -107,6 +108,7 @@ namespace FintrakBanking.AccessSubsediary
                         httpClient.DefaultRequestHeaders.Clear();
                         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                        httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                         var json = JsonConvert.SerializeObject(values);
                         var content = new StringContent(values, Encoding.UTF8, "application/json");
                         string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.RawUrl}";
@@ -136,6 +138,7 @@ namespace FintrakBanking.AccessSubsediary
                         httpClient.DefaultRequestHeaders.Clear();
                         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                        httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                         var json = JsonConvert.SerializeObject(values);
                         var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
                         string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.RawUrl}";

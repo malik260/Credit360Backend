@@ -37,6 +37,7 @@ namespace FintrakBanking.AccessSubsediary
                 this.httpClient.DefaultRequestHeaders.Clear();
                 this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 this.httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                this.httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                 var json = JsonConvert.SerializeObject(body);
                 var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
                 string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
@@ -60,6 +61,7 @@ namespace FintrakBanking.AccessSubsediary
                     this.httpClient.DefaultRequestHeaders.Clear();
                     this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     this.httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                    this.httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                     var json = JsonConvert.SerializeObject(body);
                     var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
                     string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
@@ -80,15 +82,16 @@ namespace FintrakBanking.AccessSubsediary
             try
             {
                 var token = HttpContext.Current.Request.Headers["Authorization"];
-            var absoluteURL = getUrl(countryCode);
-            this.httpClient.DefaultRequestHeaders.Clear();
-            this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            this.httpClient.DefaultRequestHeaders.Add("Authorization", token);
-            var json = JsonConvert.SerializeObject(body);
-            var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+                var absoluteURL = getUrl(countryCode);
+                this.httpClient.DefaultRequestHeaders.Clear();
+                this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                this.httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                this.httpClient.DefaultRequestHeaders.Add("isRemote", "1");
+                var json = JsonConvert.SerializeObject(body);
+                var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
                 string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
                 var responseString = await this.httpClient.PutAsync(remoteURL, content);
-            var result = await responseString.Content.ReadAsAsync<object>();
+                var result = await responseString.Content.ReadAsAsync<object>();
 
             return result;
             }catch (Exception ex)
@@ -106,6 +109,7 @@ namespace FintrakBanking.AccessSubsediary
                 this.httpClient.DefaultRequestHeaders.Clear();
                 this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 this.httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                this.httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                 var json = JsonConvert.SerializeObject(body);
                 var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
                 string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
@@ -128,6 +132,7 @@ namespace FintrakBanking.AccessSubsediary
                 this.httpClient.DefaultRequestHeaders.Clear();
                 this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 this.httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                this.httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                 string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
                 var responseString = await this.httpClient.GetAsync(remoteURL);
                 var result = await responseString.Content.ReadAsAsync<object>();
@@ -149,6 +154,7 @@ namespace FintrakBanking.AccessSubsediary
                 this.httpClient.DefaultRequestHeaders.Clear();
                 this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 this.httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                this.httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                 string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
                 var responseString = await this.httpClient.GetAsync(remoteURL);
                 var result = await responseString.Content.ReadAsAsync<object>();
@@ -173,6 +179,7 @@ namespace FintrakBanking.AccessSubsediary
                 this.httpClient.DefaultRequestHeaders.Clear();
                 this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 this.httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                this.httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                 string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
                 var responseString = await this.httpClient.DeleteAsync(remoteURL);
                 var result = await responseString.Content.ReadAsAsync<object>();
@@ -196,6 +203,7 @@ namespace FintrakBanking.AccessSubsediary
                 this.httpClient.DefaultRequestHeaders.Clear();
                 this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 this.httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                this.httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                 string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
                 var responseString = await this.httpClient.DeleteAsync(remoteURL);
                 var result = await responseString.Content.ReadAsAsync<object>();
