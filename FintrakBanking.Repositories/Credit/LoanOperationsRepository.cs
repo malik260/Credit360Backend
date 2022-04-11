@@ -37295,7 +37295,8 @@ namespace FintrakBanking.Repositories.Credit
                                     branchName = ln.BRANCHNAME,
                                     divisionCode = ln.DIVISIONCODE,
                                     region = ln.REGIONCODE,
-                                    expCompletionDate = lr.EXPCOMPLETIONDATE
+                                    expCompletionDate = lr.EXPCOMPLETIONDATE,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                 }).ToList();
 
             foreach (var xx in exposureDigitalData)
@@ -37306,7 +37307,7 @@ namespace FintrakBanking.Repositories.Credit
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
-            var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+            /*var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                             join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -37472,7 +37473,8 @@ namespace FintrakBanking.Repositories.Credit
                                      }).ToList();
 
 
-            var data = dataLoan.Union(dataRevolvingLoan).Union(exposureData).Union(exposureDigitalData);
+            var data = dataLoan.Union(dataRevolvingLoan).Union(exposureData).Union(exposureDigitalData);*/
+            var data = exposureData.Union(exposureDigitalData);
 
             return data;
         }
@@ -37512,6 +37514,7 @@ namespace FintrakBanking.Repositories.Credit
                                     branchName = ln.BRANCHNAME,
                                     divisionCode = ln.DIVISIONCODE,
                                     region = ln.REGIONCODE,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                 }).ToList();
 
             foreach (var xx in exposureData)
@@ -37552,6 +37555,7 @@ namespace FintrakBanking.Repositories.Credit
                                     branchName = ln.BRANCHNAME,
                                     divisionCode = ln.DIVISIONCODE,
                                     region = ln.REGIONCODE,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                 }).ToList();
 
             foreach (var xx in exposureDigitalData)
@@ -37562,7 +37566,7 @@ namespace FintrakBanking.Repositories.Credit
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
-            var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+            /*var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                             join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -37728,9 +37732,10 @@ namespace FintrakBanking.Repositories.Credit
                                      }).ToList();
 
 
-            var data = dataLoan.Union(dataRevolvingLoan).Union(exposureData).Union(exposureDigitalData);
+            var data = dataLoan.Union(dataRevolvingLoan).Union(exposureData).Union(exposureDigitalData);*/
+            var data = exposureData.Union(exposureDigitalData);
 
-            return data;
+            return data; 
         }
 
         public IEnumerable<GlobalExposureApplicationViewModel> getAllLoansRecoveryAnalysisByAgentRemedial(int staffId, int companyId, int accreditedConsultantId, string referenceId)
@@ -37770,6 +37775,7 @@ namespace FintrakBanking.Repositories.Credit
                                     assignmentType = lr.ASSIGNMENTTYPE,
                                     expCompletionDate = lr.EXPCOMPLETIONDATE,
                                     loanAssignId = lr.LOANASSIGNID,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                 }).ToList();
 
             foreach (var xx in exposureData)
@@ -37813,7 +37819,7 @@ namespace FintrakBanking.Repositories.Credit
                                     assignmentType = lr.ASSIGNMENTTYPE,
                                     expCompletionDate = lr.EXPCOMPLETIONDATE,
                                     loanAssignId = lr.LOANASSIGNID,
-
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                 }).ToList();
 
             foreach (var xx in exposureDigitalData)
@@ -37824,7 +37830,7 @@ namespace FintrakBanking.Repositories.Credit
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
-            var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+            /*var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                             join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -37989,9 +37995,10 @@ namespace FintrakBanking.Repositories.Credit
                                          comment = "",
                                      }).ToList();
 
-            var data = dataLoan.Union(dataRevolvingLoan).Union(exposureData).Union(exposureDigitalData);
+            var data = dataLoan.Union(dataRevolvingLoan).Union(exposureData).Union(exposureDigitalData);*/
+            var data = exposureData.Union(exposureDigitalData);
 
-            return data;
+            return data; 
         }
 
         public IEnumerable<GlobalExposureApplicationViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId)
@@ -38021,6 +38028,7 @@ namespace FintrakBanking.Repositories.Credit
                                     branchName = ln.BRANCHNAME,
                                     divisionCode = ln.DIVISIONCODE,
                                     region = ln.REGIONCODE,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                 }).ToList();
 
             foreach (var xx in exposureData)
@@ -38054,6 +38062,7 @@ namespace FintrakBanking.Repositories.Credit
                                     branchName = ln.BRANCHNAME,
                                     divisionCode = ln.DIVISIONCODE,
                                     region = ln.REGIONCODE,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                 }).ToList();
 
             foreach (var xx in exposureDigitalData)
@@ -38064,7 +38073,7 @@ namespace FintrakBanking.Repositories.Credit
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
-            var dataLoan = (from lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY
+            /*var dataLoan = (from lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY
                             join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -38276,8 +38285,9 @@ namespace FintrakBanking.Repositories.Credit
            // var termLoanData = dataLoan.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber);
             //var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber);
             var unionAll = dataLoan.Union(dataRevolvingLoan).Union(exposureDigitalData);
+            */
 
-            var data = unionAll;
+            var data = exposureData.Union(exposureDigitalData);
 
             return data;
         }
