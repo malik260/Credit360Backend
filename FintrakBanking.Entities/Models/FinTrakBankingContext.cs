@@ -24,6 +24,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RECORD_TRACKING> TBL_RECORD_TRACKING { get; set; }
         public virtual DbSet<TBL_ALERT_BINDING_METHODS> TBL_ALERT_BINDING_METHODS { get; set; }
         public virtual DbSet<TBL_ALERT_SCHEDULE> TBL_ALERT_SCHEDULE { get; set; }
+        public virtual DbSet<TBL_SUB_BASICTRANSACTION> TBL_SUB_BASICTRANSACTION { get; set; }
         public virtual DbSet<TBL_ALERT_PLACEHOLDER> TBL_ALERT_PLACEHOLDER { get; set; }
         public virtual DbSet<TBL_COLLATERAL_INSURANCE_STATUS> TBL_COLLATERAL_INSURANCE_STATUS { get; set; }
         public virtual DbSet<TBL_COLLATERAL_INSURANCE_TRACKING> TBL_COLLATERAL_INSURANCE_TRACKING { get; set; }
@@ -157,6 +158,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CHARGE_RANGE> TBL_CHARGE_RANGE { get; set; }
         public virtual DbSet<TBL_CHARGES> TBL_CHARGES { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
+        public virtual DbSet<TBL_APPROVAL_LEVEL_IDS> TBL_APPROVAL_LEVEL_IDS { get; set; }
         public virtual DbSet<TBL_CHART_OF_ACCOUNT> TBL_CHART_OF_ACCOUNT { get; set; }
         public virtual DbSet<TBL_CHART_OF_ACCOUNT_CLASS> TBL_CHART_OF_ACCOUNT_CLASS { get; set; }
         public virtual DbSet<TBL_CHART_OF_ACCOUNT_CURRENCY> TBL_CHART_OF_ACCOUNT_CURRENCY { get; set; }

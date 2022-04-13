@@ -10275,7 +10275,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if(model != null)
             {
-                var inputRecords = new STG_SUB_BASICTRANSACTION()
+                var inputRecords = new TBL_SUB_BASICTRANSACTION()
                 {
                     LOANAPPLICATIONID = model.loanApplicationId,
                     LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
@@ -10316,7 +10316,7 @@ namespace FintrakBanking.Repositories.Credit
                     COUNTRYCODE = model.countryCode
                 };
 
-                scontext.STG_SUB_BASICTRANSACTION.Add(inputRecords);
+                context.TBL_SUB_BASICTRANSACTION.Add(inputRecords);
                 response = scontext.SaveChanges() > 0;
             }
 

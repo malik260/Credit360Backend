@@ -350,7 +350,7 @@ namespace FintrakBanking.Repositories.Credit
                     var response = headOfficeToSub.PostFacilityApprovalToSubnputs(model);
                     if(response != null)
                     {
-                    var update =  stgContext.STG_SUB_BASICTRANSACTION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPROVALLEVELID == model.nextApprovalLevelId && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved).FirstOrDefault();
+                    var update =  context.TBL_SUB_BASICTRANSACTION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPROVALLEVELID == model.nextApprovalLevelId && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved).FirstOrDefault();
                     update.APPROVALSTATUSID = model.applicationStatusId;
                     stgContext.SaveChanges();
                     }
@@ -3651,8 +3651,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, bool isSpecific = false)
         {
-            var data =  (from a in stgContext.STG_SUB_BASICTRANSACTION
-                              select new SubsidiaryViewModel
+            var data =  (from a in context.TBL_SUB_BASICTRANSACTION 
+                         join l in context.TBL_APPROVAL_LEVEL_IDS on a.APPROVALLEVELID equals l.REMOTEAPPROVALLEVELID
+                         where a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                         select new SubsidiaryViewModel
                               {
                                   loanApplicationId = a.LOANAPPLICATIONID,
                                   loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
