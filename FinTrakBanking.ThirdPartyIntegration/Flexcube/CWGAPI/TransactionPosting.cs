@@ -18,6 +18,7 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using System.Web.Script.Serialization;
 
@@ -1552,10 +1553,10 @@
 
             public async Task<CloseMannualBookingResponseViewModel> ValidateMannualBookingClosure(CloseMannualBookingViewModel model)
             {
-
+                IRestResponse response = null;
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 string responseMessage = "";
-                RestRequest req = new RestRequest("Default", Method.Post);
+                RestRequest req = new RestRequest(Method.POST);
                 CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
                 try
                 {
@@ -1572,6 +1573,9 @@
                         channel_code = model.channel_code
                     };
 
+                    requestDatetime = DateTime.Now;
+                    responseDateTime = DateTime.Now;
+
                     var jsonbody = new JavaScriptSerializer().Serialize(reqbody);
                     req.AddParameter("application/json", jsonbody, ParameterType.RequestBody);
                     req.AddHeader("Content-Type", "application/json");
@@ -1580,27 +1584,23 @@
 
                     ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-
-                    var response = await client.ExecuteAsync<CloseMannualBookingResponseViewModel>(req);
-                    //var responbody = JsonConvert.DeserializeObject<CloseMannualBookingResponseViewModel>(response.Content);
-
-                    requestDatetime = DateTime.Now;
-                    responseDateTime = DateTime.Now;
+                    
+                    response = await client.ExecuteAsync<CloseMannualBookingResponseViewModel>(req);
+                    var responbody = JsonConvert.DeserializeObject<CloseMannualBookingResponseViewModel>(response.Content);
 
                     if (response.IsSuccessful)
                     {
-                        var rep = JsonConvert.DeserializeObject<CloseMannualBookingResponseViewModel>(response.Content);
-
-                        if (!rep.response_message.ToLower().Contains("successful"))
+                        if (responbody != null || !responbody.response_message.ToLower().Contains("success"))
                         {
-                            throw new APIErrorException("Core Banking API error - " + rep.response_message + " " + DateTime.Now);
+                            throw new APIErrorException("API call error - " + responbody.response_message + " " + responbody.response_code + " " + DateTime.Now);
                         }
-
+                        var rep = responbody;
                         records.response_code = rep.response_code;
                         records.response_message = rep.response_message;
                         records.loandetailsresp = rep.loandetailsresp;
                     }
-
+                   
+                    responseMessage = responbody?.response_message;
                     return records;
                 }
                 catch (APIErrorException ex)
@@ -1609,7 +1609,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new APIErrorException($"Error " + ex.InnerException.InnerException.Message);
+                    throw new APIErrorException($"Error 202 " + ex.Message);
                 }
                 finally
                 {
