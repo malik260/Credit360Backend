@@ -3656,6 +3656,8 @@ namespace FintrakBanking.Repositories.Credit
                          where 
                          (a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending 
                          || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                         || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                         || a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                          || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                          && a.STAFFROLECODE == staffRoleCode
 
