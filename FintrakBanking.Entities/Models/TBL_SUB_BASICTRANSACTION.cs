@@ -50,6 +50,7 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
         public DateTime? SYSTEMDATETIME { get; set; }
+        public string STAFFROLECODE { get; set; }
     }
 }
 

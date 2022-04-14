@@ -531,7 +531,8 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet, Route("subsidiaries-loan-applications")]
         public HttpResponseMessage GetSubsidiaryPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
         {
-            var items =  repo.GetSubsidiaryPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
+            var staffRoleCode = token.GetStaffRoleCode;
+            var items =  repo.GetSubsidiaryPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, staffRoleCode, isSpecific);
             if (items != null)
             {
                 if (!String.IsNullOrEmpty(searchString))

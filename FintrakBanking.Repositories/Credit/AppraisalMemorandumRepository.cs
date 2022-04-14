@@ -3649,11 +3649,16 @@ namespace FintrakBanking.Repositories.Credit
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
-        public IEnumerable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, bool isSpecific = false)
+        public IEnumerable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, string staffRoleCode, bool isSpecific = false)
         {
+            
             var data =  (from a in context.TBL_SUB_BASICTRANSACTION 
-                         join l in context.TBL_APPROVAL_LEVEL_IDS on a.APPROVALLEVELID equals l.REMOTEAPPROVALLEVELID
-                         where a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                         where 
+                         (a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending 
+                         || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                         || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                         && a.STAFFROLECODE == staffRoleCode
+
                          select new SubsidiaryViewModel
                               {
                                   loanApplicationId = a.LOANAPPLICATIONID,
