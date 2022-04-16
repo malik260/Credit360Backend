@@ -3690,7 +3690,9 @@ namespace FintrakBanking.Repositories.Credit
                                   customerName = a.CUSTOMERID.HasValue ? a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME : "",
                                   dateTimeCreated = a.DATETIMECREATED,
                                   createdBy = a.CREATEDBY,
-                                  createdByName = a.CREATEDBYNAME
+                                  createdByName = a.CREATEDBYNAME,
+                                  targetId = a.TARGETID,
+                                  operationId = a.OPERATIONID
                               }).ToList();
 
             return data;
