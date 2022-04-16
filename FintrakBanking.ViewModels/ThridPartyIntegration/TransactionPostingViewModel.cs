@@ -298,6 +298,8 @@ public class LienProcessViewModel //: GeneralEntity
         public int? toStaffId { get; set; }
         public short applicationStatusId { get; set; }
         public string operationName { get; set; }
+        public int targetId { get; set; }
+        public int operationId { get; set; }
         public string productClassName { get; set; }
         public string productName { get; set; }
         public string productClassProcess { get; set; }

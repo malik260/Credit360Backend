@@ -52,6 +52,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? SYSTEMDATETIME { get; set; }
         public int STAFFROLEID { get; set; }
         public string STAFFROLECODE { get; set; }
+        public bool ACTEDON { get; set; }
     }
 }
 
