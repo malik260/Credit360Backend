@@ -53,6 +53,8 @@ namespace FintrakBanking.Entities.Models
         public int STAFFROLEID { get; set; }
         public string STAFFROLECODE { get; set; }
         public bool ACTEDON { get; set; }
+        public int TARGETID { get; set; }
+        public int OPERATIONID { get; set; }
     }
 }
 

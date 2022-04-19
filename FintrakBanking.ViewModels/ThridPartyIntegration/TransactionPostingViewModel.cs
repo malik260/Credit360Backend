@@ -324,6 +324,7 @@ public class LienProcessViewModel //: GeneralEntity
         public string createdByName { get; set; }
         public string countryCode { get; set; }
         public string staffRoleCode { get; set; }
+        public bool actedOn { get; set; }
     }
 
 

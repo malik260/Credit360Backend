@@ -1608,6 +1608,11 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime dateTimeCreated { get; set; }
         public int createdBy { get; set; }
         public string createdByName { get; set; }
+        public int targetId { get; set; }
+        public int operationId { get; set; }
+        public int subBasicId { get; set; }
+        public bool actedOn { get; set; }
+        public string loanTypeName { get; set; }
     }
 }
 

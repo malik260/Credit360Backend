@@ -10315,7 +10315,10 @@ namespace FintrakBanking.Repositories.Credit
                         SYSTEMDATETIME = model.systemDateTime,
                         CREATEDBYNAME = model.createdByName,
                         COUNTRYCODE = model.countryCode,
-                        STAFFROLECODE = model.staffRoleCode
+                        STAFFROLECODE = model.staffRoleCode,
+                        TARGETID = model.targetId,
+                        OPERATIONID = model.operationId,
+                        ACTEDON = model.actedOn
                     };
 
                     context.TBL_SUB_BASICTRANSACTION.Add(inputRecords);
