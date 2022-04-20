@@ -5021,12 +5021,12 @@ namespace FintrakBanking.Repositories.Credit
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId, bool isManual = false)
         {
 
-            //var coreBankingRef = entity.coreBankingRef;
+            var coreBankingRef = entity.coreBankingRef;
 
             //var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
             //if (validateRef.response_code != "00")
             //{
-            //    throw new APIErrorException("Core Banking API Error "+ validateRef.response_message+ " - Kindly Contact System Administrator!");
+            //    throw new APIErrorException("Core Banking API Error 205 " + validateRef.response_message + " - Kindly Contact System Administrator!");
             //}
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
@@ -20945,10 +20945,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             case "A":
                                 currentLine.passed = true;
-                                try {
-
-                                if (cell.Value == null) { currentLine.passed = false; currentLine.errorMessages.Add("<br/> Is collateral column is empty"); }
-                                else currentLine.isCollateral = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                                try { currentLine.isCollateral = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
                                 break;
                             case "B":
                                 currentLine.passed = true;
@@ -20961,12 +20958,11 @@ namespace FintrakBanking.Repositories.Credit
                             case "C":
                                 currentLine.passed = true;
                                 try {
-                                if (currentLine.isCollateral == null) { currentLine.passed = false; currentLine.errorMessages.Add("<br/> Collateral code cannot be used for an unspecified collateral"); }
-                                else if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
+                                if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
                                 {
                                     currentLine.collateralCode = null;
                                 }
-                                else { currentLine.collateralCode = cell.Value?.ToString(); }
+                                else { currentLine.collateralCode = cell.Value.ToString(); }
                                 
                                 }
                                 catch (Exception e)
@@ -20995,11 +20991,7 @@ namespace FintrakBanking.Repositories.Credit
                                 break;
                             case "F":
                                 currentLine.passed = true;
-                                try {
-
-                                if (cell.Value == null) { currentLine.passed = false; currentLine.errorMessages.Add("<br/>Insurance Company column is empty"); }
-                                else currentLine.insuranceCompany = cell.Value.ToString(); 
-                            }
+                                try { currentLine.insuranceCompany = cell.Value.ToString(); }
                                 catch (Exception e)
                                 {
                                     currentLine.passed = false; currentLine.errorMessages.Add(e.Message);
@@ -21060,7 +21052,7 @@ namespace FintrakBanking.Repositories.Credit
                     var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
                     var newCollateralCode = CommonHelpers.GenerateRandomDigitCode(7);
                     //========================================== other valiadation =============================
-                    if (currentLine.isCollateral?.ToLower() == "y" || currentLine.isCollateral?.ToLower() == "yes")
+                    if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
                     {
                         currentLine.collateralCode = newCollateralCode;
                     }
@@ -21073,7 +21065,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (customer == null)
                     {
                         currentLine.passed = false;
-                        currentLine.errorMessages.Add("<br/>Customer with customercode " + currentLine.customerId.ToString() + " does not exist on Credit360");
+                        currentLine.errorMessages.Add("Customer with customercode " + currentLine.customerId.ToString() + " does not exist on Credit360");
                     }
                     if (currentLine.expiryDate <= currentLine.startDate)
                     {
@@ -21081,9 +21073,9 @@ namespace FintrakBanking.Repositories.Credit
                         currentLine.errorMessages.Add("<br/>Insurance End Date must be greater than Insurance Start Date");
                     }
 
-                    if (currentLine.isCollateral?.ToLower() != "")
+                    if (currentLine.isCollateral.ToLower() != "")
                     {
-                        if (currentLine.isCollateral?.ToLower() == "y" || currentLine.isCollateral?.ToLower() == "yes")
+                        if (currentLine.isCollateral.ToLower() == "y" || currentLine.isCollateral.ToLower() == "yes")
                         {
                             currentLine.collateralCustomerId = null;
                             currentLine.collateralDetails = currentLine.collateralDescription;
@@ -21094,13 +21086,11 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode.Trim().ToString()).FirstOrDefault();
 
-                            if (currentLine.collateralCode != null) { currentLine.collateralDescription = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == currentLine.collateralCode).FirstOrDefault()?.COLLATERALSUMMARY; }
-                            if (currentLine.collateralDescription == null )
+                            if (currentLine.collateralDescription == null)
                             {
                                 currentLine.passed = false;
                                 currentLine.errorMessages.Add("<br/>Collateral Description column is null ");
                             }
-                            
 
                             if (customerCollateral == null)
                             {
@@ -21168,7 +21158,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (insuranceCompanyDetail == null)
                     {
                         currentLine.passed = false;
-                        currentLine.errorMessages.Add("<br/>Insurance company " + currentLine.insuranceCompany?.ToString() + " does not exist on Credit360");
+                        currentLine.errorMessages.Add("<br/>Insurance company " + currentLine.insuranceCompany.ToString() + " does not exist on Credit360");
                     }
                     else
                     {
@@ -21185,7 +21175,7 @@ namespace FintrakBanking.Repositories.Credit
                         currentLine.validityStatus = "Failed";
                     }
 
-                    if (currentLine.isCollateral?.ToLower() == "n" || currentLine.isCollateral?.ToLower() == "no")
+                    if (currentLine.isCollateral.ToLower() == "n" || currentLine.isCollateral.ToLower() == "no")
                     {
                         currentLine.isCollateral = "No";
                     }
@@ -22030,7 +22020,7 @@ namespace FintrakBanking.Repositories.Credit
             CloseMannualBookingResponseViewModel result = null;
             Task.Run(async () => result = await transaction.ValidateMannualBookingClosure(model)).GetAwaiter().GetResult();
 
-            if (result.response_code == "00")
+            if (result!= null && result?.response_code == "00")
             {
                 if (result.response_message.ToLower() == "successful")
                 {
@@ -22038,19 +22028,19 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new ConditionNotMetException("Core Banking API Error - Kindly Contact System Administrator!");
+                    throw new ConditionNotMetException("Core Banking API Error 206 " + result.response_message.ToLower() + " -  Kindly Contact System Administrator!");
                 }
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error - Kindly Contact System Administrator!");
+                throw new APIErrorException("Core Banking API Error 207 " + result?.response_message.ToLower() + " -  Kindly Contact System Administrator!");
             }
         }
 
 
         private CloseMannualBookingResponseViewModel GetLoanBookingDetailFromFlexcube(string loan_accountno)
         {
-            CloseMannualBookingViewModel model = null;
+            CloseMannualBookingViewModel model = new CloseMannualBookingViewModel();
             model.loan_accountno = loan_accountno;
             if (model.loan_accountno == null)
             {
@@ -22062,7 +22052,7 @@ namespace FintrakBanking.Repositories.Credit
             CloseMannualBookingResponseViewModel result = null;
             Task.Run(async () => result = await transaction.ValidateMannualBookingClosure(model)).GetAwaiter().GetResult();
 
-            if (result.response_code == "00")
+            if (result != null && result.response_code == "00")
             {
                 if (result.response_message.ToLower() == "successful")
                 {
@@ -22070,12 +22060,12 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new ConditionNotMetException("Core Banking API Error " + result.response_message.ToLower() + " - Kindly Contact System Administrator!");
+                    throw new ConditionNotMetException("Core Banking API Error 203 " + result.response_message.ToLower() + " - Kindly Contact System Administrator!");
                 }
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error " + result.response_message.ToLower() + "- Kindly Contact System Administrator!");
+                throw new APIErrorException("Core Banking API Error 204 " + result.response_message.ToLower() + "- Kindly Contact System Administrator!");
             }
         }
 
