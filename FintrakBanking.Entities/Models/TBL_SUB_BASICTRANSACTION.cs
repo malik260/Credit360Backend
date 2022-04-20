@@ -41,7 +41,7 @@ namespace FintrakBanking.Entities.Models
         public string BUSINESSUNITSHORTCODE { get; set; }
         public decimal APPLICATIONAMOUNT { get; set; }
         public decimal TOTALEXPOSUREAMOUNT { get; set; }
-        public int CREATEDBY { get; set; }
+        public int? CREATEDBY { get; set; }
         public string CREATEDBYNAME { get; set; }
         public DateTime DATETIMECREATED { get; set; }
         public int LASTUPDATEDBY { get; set; }
@@ -50,11 +50,11 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
         public DateTime? SYSTEMDATETIME { get; set; }
-        public int STAFFROLEID { get; set; }
+        public int? STAFFROLEID { get; set; }
         public string STAFFROLECODE { get; set; }
         public bool ACTEDON { get; set; }
-        public int TARGETID { get; set; }
-        public int OPERATIONID { get; set; }
+        public int? TARGETID { get; set; }
+        public int? OPERATIONID { get; set; }
     }
 }
 

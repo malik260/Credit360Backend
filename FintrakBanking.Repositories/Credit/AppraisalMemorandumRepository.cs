@@ -3696,7 +3696,10 @@ namespace FintrakBanking.Repositories.Credit
                                 targetId = a.TARGETID,
                                 operationId = a.OPERATIONID,
                                 actedOn = a.ACTEDON,
-                                loanTypeName = a.LOANAPPLICATIONTYPENAME
+                                loanTypeName = a.LOANAPPLICATIONTYPENAME,
+                                facility = a.PRODUCTNAME,
+                                divisionShortCode = a.BUSINESSUNITSHORTCODE
+
                             }).ToList();
 
                 return data;
