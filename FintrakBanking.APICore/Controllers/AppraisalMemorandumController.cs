@@ -109,6 +109,7 @@ namespace FintrakBanking.APICore.Controllers
                 WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
                 if (response != null)
                 {
+                    if(entity.subTransId != null) { repo.UpdateSubsidiaryBasicTransaction((int)entity.subTransId); }
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error acting on this record" });
@@ -1108,5 +1109,14 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("update-subsidiary-basic-transaction/{id}")]
+        public HttpResponseMessage UpdateSubsidiaryBasicTransaction(int id)
+        {
+
+            bool response = repo.UpdateSubsidiaryBasicTransaction(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response });
+        }
     }
 }

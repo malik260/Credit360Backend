@@ -62,15 +62,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
-        [ClaimsAuthorization]
-        [Route("update-subsidiary-basic-transaction/{id}")]
-        public HttpResponseMessage UpdateSubsidiaryBasicTransaction([FromBody] HeadOfficeFacilityApprovalViewModel model, int id, int targetId, int operationId)
-        {
-           
-            bool response = repo.UpdateSubsidiaryBasicTransaction(model, id, targetId, operationId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
-        }
+        
 
     }
 }

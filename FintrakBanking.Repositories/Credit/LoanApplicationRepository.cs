@@ -10334,15 +10334,6 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public bool UpdateSubsidiaryBasicTransaction(HeadOfficeFacilityApprovalViewModel model, int id, int targetId, int operationId)
-        {
-            var subData = context.TBL_SUB_BASICTRANSACTION.Find(id);
-            if (model.targetId == targetId && model.operationId == operationId)
-            {
-                subData.ACTEDON = true;
-            }
-            context.SaveChanges();
-            return false;
-        }
+        
     }
 }

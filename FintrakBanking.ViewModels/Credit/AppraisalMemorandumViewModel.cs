@@ -45,6 +45,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal principal { get; set; }
         public double rate { get; set; }
         //public int tenor { get; set; }
+        public int? subTransId { get; set; }
         public bool investmentGrade { get; set; }
         public List<ApprovedLoanDetailViewModel> lineItems { get; set; }
         public List<RecommendedChangesViewModel> recommendedChanges { get; set; }

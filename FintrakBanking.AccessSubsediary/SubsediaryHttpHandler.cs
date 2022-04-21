@@ -113,7 +113,7 @@ namespace FintrakBanking.AccessSubsediary
                         var content = new StringContent(values, Encoding.UTF8, "application/json");
                         string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.RawUrl}";
                         var responseString = await httpClient.PostAsync(remoteURL, content);
-                        var result = await responseString.Content.ReadAsAsync<object>();
+                        var result = await responseString.Content.ReadAsStringAsync();
                         var tsc = new TaskCompletionSource<HttpResponseMessage>();
                         HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
                         message.Content = new StringContent(JsonConvert.SerializeObject(result), Encoding.UTF8, "application/json");

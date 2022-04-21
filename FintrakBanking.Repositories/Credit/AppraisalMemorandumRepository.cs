@@ -5275,8 +5275,23 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw ex;
             }
+
+
         }
 
+
+        public bool UpdateSubsidiaryBasicTransaction(int id)
+        {
+            bool status = false;
+            var subData = context.TBL_SUB_BASICTRANSACTION.Find(id);
+            if (subData != null)
+            {
+                subData.ACTEDON = true;
+
+            }
+            status = context.SaveChanges() > 0;
+            return status;
+        }
     }
 
 
