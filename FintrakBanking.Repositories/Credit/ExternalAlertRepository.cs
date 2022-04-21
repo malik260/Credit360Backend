@@ -6153,6 +6153,7 @@ namespace FintrakBanking.Repositories.Credit
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
+            /*
             var dataLoanNonPerforming = (from ln in context.TBL_LOAN
                                          join tt in context.TBL_OPERATIONS on ln.OPERATIONID equals tt.OPERATIONID
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -6347,8 +6348,8 @@ namespace FintrakBanking.Repositories.Credit
             var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
 
-            var allData = termLoanDataNon.Union(revolvingLoanDataNon);
-            allData = allData.Union(exposureNonPerforming).Union(exposureDigitalNonPerforming);
+            var allData = termLoanDataNon.Union(revolvingLoanDataNon);*/
+            var allData = exposureNonPerforming.Union(exposureDigitalNonPerforming);
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }
@@ -6416,7 +6417,7 @@ namespace FintrakBanking.Repositories.Credit
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
                                              totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                             totalUnsettledAmount = ln.TOTALUNPAIDOBLIGATION,
+                                             totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6429,7 +6430,7 @@ namespace FintrakBanking.Repositories.Credit
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
-            var dataLoanNonPerforming = (from ln in context.TBL_LOAN
+            /*var dataLoanNonPerforming = (from ln in context.TBL_LOAN
                                          join tt in context.TBL_OPERATIONS on ln.OPERATIONID equals tt.OPERATIONID
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -6617,12 +6618,12 @@ namespace FintrakBanking.Repositories.Credit
                                                   approvedAmount = ld.APPROVEDAMOUNT,
                                                   creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
                                               }).ToList();
-
+            
             var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
-
-            var allData = termLoanDataNon.Union(revolvingLoanDataNon);
-                allData = allData.Union(exposureNonPerforming).Union(exposureDigitalNonPerforming);
+            
+            var allData = termLoanDataNon.Union(revolvingLoanDataNon);*/
+            var allData = exposureNonPerforming.Union(exposureDigitalNonPerforming);
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }
@@ -6656,7 +6657,7 @@ namespace FintrakBanking.Repositories.Credit
                                              exposureType = ln.EXPOSURETYPE,
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
-                                             totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             totalAmountRecovery = (decimal)ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6692,7 +6693,7 @@ namespace FintrakBanking.Repositories.Credit
                                              exposureType = ln.EXPOSURETYPE,
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
-                                             totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             totalAmountRecovery = (decimal)ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6705,6 +6706,7 @@ namespace FintrakBanking.Repositories.Credit
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
+            /*
             var dataLoanNonPerforming = (from ln in context.TBL_LOAN
                                          join tt in context.TBL_OPERATIONS on ln.OPERATIONID equals tt.OPERATIONID
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -6897,8 +6899,8 @@ namespace FintrakBanking.Repositories.Credit
             var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
 
-            var allData = termLoanDataNon.Union(revolvingLoanDataNon);
-            allData = allData.Union(exposureNonPerforming).Union(exposureDigitalNonPerforming);
+            var allData = termLoanDataNon.Union(revolvingLoanDataNon);*/
+            var allData = exposureNonPerforming.Union(exposureDigitalNonPerforming);
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }
@@ -6930,7 +6932,7 @@ namespace FintrakBanking.Repositories.Credit
                                              exposureType = ln.EXPOSURETYPE,
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
-                                             totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             totalAmountRecovery = (decimal)ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6964,7 +6966,7 @@ namespace FintrakBanking.Repositories.Credit
                                              exposureType = ln.EXPOSURETYPE,
                                              expiryBand = ln.EXPIRINGBAND,
                                              divisionName = ln.DIVISIONNAME,
-                                             totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                             totalAmountRecovery = (decimal)ln.TOTALUNSETTLEDAMOUNT,
                                              dpdExposure = ln.UNPODAYSOVERDUE,
                                              loanCategory = ln.CBNCLASSIFICATION
                                          }).ToList();
@@ -6977,6 +6979,7 @@ namespace FintrakBanking.Repositories.Credit
                 xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
             }
 
+            /*
             var dataLoanNonPerforming = (from ln in context.TBL_LOAN
                                          join tt in context.TBL_OPERATIONS on ln.OPERATIONID equals tt.OPERATIONID
                                          join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -7167,8 +7170,8 @@ namespace FintrakBanking.Repositories.Credit
             var termLoanDataNon = dataLoanNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
 
-            var allData = termLoanDataNon.Union(revolvingLoanDataNon);
-            allData = allData.Union(exposureNonPerforming).Union(exposureDigitalNonPerforming);
+            var allData = termLoanDataNon.Union(revolvingLoanDataNon);*/
+            var allData = exposureNonPerforming.Union(exposureDigitalNonPerforming);
             var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber).ToList();
             return data;
         }

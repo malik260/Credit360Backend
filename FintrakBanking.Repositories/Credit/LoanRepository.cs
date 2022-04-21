@@ -5026,7 +5026,11 @@ namespace FintrakBanking.Repositories.Credit
             //var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
             //if (validateRef.response_code != "00")
             //{
+<<<<<<< HEAD
             //    throw new APIErrorException("Core Banking API Error "+ validateRef.response_message+ " - Kindly Contact System Administrator!");
+=======
+            //    throw new APIErrorException("Core Banking API Error 205 " + validateRef.response_message + " - Kindly Contact System Administrator!");
+>>>>>>> 96c1ef05217ded192f3451b7c0a9e3d5ed001fa3
             //}
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
@@ -22030,7 +22034,7 @@ namespace FintrakBanking.Repositories.Credit
             CloseMannualBookingResponseViewModel result = null;
             Task.Run(async () => result = await transaction.ValidateMannualBookingClosure(model)).GetAwaiter().GetResult();
 
-            if (result.response_code == "00")
+            if (result!= null && result?.response_code == "00")
             {
                 if (result.response_message.ToLower() == "successful")
                 {
@@ -22038,19 +22042,19 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new ConditionNotMetException("Core Banking API Error - Kindly Contact System Administrator!");
+                    throw new ConditionNotMetException("Core Banking API Error 206 " + result.response_message.ToLower() + " -  Kindly Contact System Administrator!");
                 }
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error - Kindly Contact System Administrator!");
+                throw new APIErrorException("Core Banking API Error 207 " + result?.response_message.ToLower() + " -  Kindly Contact System Administrator!");
             }
         }
 
 
         private CloseMannualBookingResponseViewModel GetLoanBookingDetailFromFlexcube(string loan_accountno)
         {
-            CloseMannualBookingViewModel model = null;
+            CloseMannualBookingViewModel model = new CloseMannualBookingViewModel();
             model.loan_accountno = loan_accountno;
             if (model.loan_accountno == null)
             {
@@ -22062,7 +22066,7 @@ namespace FintrakBanking.Repositories.Credit
             CloseMannualBookingResponseViewModel result = null;
             Task.Run(async () => result = await transaction.ValidateMannualBookingClosure(model)).GetAwaiter().GetResult();
 
-            if (result.response_code == "00")
+            if (result != null && result.response_code == "00")
             {
                 if (result.response_message.ToLower() == "successful")
                 {
@@ -22070,12 +22074,12 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new ConditionNotMetException("Core Banking API Error " + result.response_message.ToLower() + " - Kindly Contact System Administrator!");
+                    throw new ConditionNotMetException("Core Banking API Error 203 " + result.response_message.ToLower() + " - Kindly Contact System Administrator!");
                 }
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error " + result.response_message.ToLower() + "- Kindly Contact System Administrator!");
+                throw new APIErrorException("Core Banking API Error 204 " + result.response_message.ToLower() + "- Kindly Contact System Administrator!");
             }
         }
 

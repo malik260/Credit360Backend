@@ -9,6 +9,7 @@
     using FintrakBanking.ViewModels.Flexcube;
     using FintrakBanking.ViewModels.ThridPartyIntegration;
     using Newtonsoft.Json;
+    using RestSharp;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -17,6 +18,7 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using System.Web.Script.Serialization;
 
@@ -1473,13 +1475,15 @@
                     handler.UseDefaultCredentials = true;
                     getAPIURLSettings("ApprovalPostingToSub");
                     httpClientInstance = new HttpClient();
-                    var token = new AuthenticationHeaderValue("Basic", API_KEY);
+                    //var token = new AuthenticationHeaderValue("Basic", API_KEY);
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
                     client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Add("Authorization", API_KEY);
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", API_KEY);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Authorization = token;
+                    //client.DefaultRequestHeaders.Authorization = token;
 
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
@@ -1549,47 +1553,54 @@
 
             public async Task<CloseMannualBookingResponseViewModel> ValidateMannualBookingClosure(CloseMannualBookingViewModel model)
             {
-                HttpClientHandler handler = new HttpClientHandler();
-                //HttpClient httpClientInstance;
-
-                HttpClient client = new HttpClient(handler);
+                IRestResponse response = null;
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
-                HttpResponseMessage response = null;
                 string responseMessage = "";
+                RestRequest req = new RestRequest(Method.POST);
+                CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
                 try
                 {
-                    handler.UseDefaultCredentials = true;
-                    client.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(180);
-                    client.DefaultRequestHeaders.Accept.Clear();
                     getAPIURLSettings("MannualBookingClose");
-                    client.BaseAddress = new Uri(API_URL);
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", API_KEY);
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
-                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    var baseURL = API_URL;
+                    string fullURL = baseURL + "GetLoanDetails";
+                    RestClient client = new RestClient(fullURL);
+
+                    CloseMannualBookingViewModel reqbody = new CloseMannualBookingViewModel()
+
+                    {
+                        loan_accountno = model.loan_accountno,
+                        channel_code = model.channel_code
+                    };
+
                     requestDatetime = DateTime.Now;
                     responseDateTime = DateTime.Now;
 
-                    response = client.PostAsync("GetLoanDetails", new StringContent(new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                    var jsonbody = new JavaScriptSerializer().Serialize(reqbody);
+                    req.AddParameter("application/json", jsonbody, ParameterType.RequestBody);
+                    req.AddHeader("Content-Type", "application/json");
+                    req.AddHeader("Accept", "application/json");
+                    req.AddHeader("Authorization", API_KEY);
 
-                    if (response.IsSuccessStatusCode)
+                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                    
+                    response = await client.ExecuteAsync<CloseMannualBookingResponseViewModel>(req);
+                    var responbody = JsonConvert.DeserializeObject<CloseMannualBookingResponseViewModel>(response.Content);
+
+                    if (response.IsSuccessful)
                     {
-                        var rep = await response.Content.ReadAsAsync<CloseMannualBookingResponseViewModel>();
-
-                        if (!rep.response_message.ToLower().Contains("successful"))
+                        if (responbody != null || !responbody.response_message.ToLower().Contains("success"))
                         {
-                            throw new APIErrorException("Core Banking API error - " + rep.response_message + " " + DateTime.Now);
+                            throw new APIErrorException("API call error - " + responbody.response_message + " " + responbody.response_code + " " + DateTime.Now);
                         }
-
+                        var rep = responbody;
                         records.response_code = rep.response_code;
                         records.response_message = rep.response_message;
                         records.loandetailsresp = rep.loandetailsresp;
                     }
-
-                    responseMessage = await response.Content.ReadAsStringAsync();
-
+                   
+                    responseMessage = responbody?.response_message;
                     return records;
                 }
                 catch (APIErrorException ex)
@@ -1598,13 +1609,10 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new APIErrorException($"Error" + ex.Message);
+                    throw new APIErrorException($"Error 202 " + ex.Message);
                 }
                 finally
                 {
-                    handler.Dispose();
-                    client.Dispose();
-
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
                         APIURL = $"{API_URL}GetLoanDetails",

@@ -673,6 +673,7 @@ namespace FintrakBanking.APICore.Controllers
             model.BranchId = (short)token.GetBranchId;
             model.staffId = token.GetStaffId;
 
+            
             var responseId = repo.GoForApproval(model, loanBookingRequestId, isManual);
             var dynamicMessage = string.Empty;
             if (responseId == 1)
