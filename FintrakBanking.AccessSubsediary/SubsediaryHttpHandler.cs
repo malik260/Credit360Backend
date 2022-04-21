@@ -64,7 +64,7 @@ namespace FintrakBanking.AccessSubsediary
           HttpRequestMessage request, CancellationToken cancellationToken)
         {
 
-            string url = HttpContext.Current.Request.CurrentExecutionFilePath;
+                string url = HttpContext.Current.Request.CurrentExecutionFilePath;
             string method = HttpContext.Current.Request.HttpMethod;
             var httpClient = new HttpClient();
             var token = HttpContext.Current.Request.Headers["Authorization"];
@@ -113,7 +113,7 @@ namespace FintrakBanking.AccessSubsediary
                         var content = new StringContent(values, Encoding.UTF8, "application/json");
                         string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.RawUrl}";
                         var responseString = await httpClient.PostAsync(remoteURL, content);
-                        var result = await responseString.Content.ReadAsStringAsync();
+                        var result = await responseString.Content.ReadAsAsync<object>();
                         var tsc = new TaskCompletionSource<HttpResponseMessage>();
                         HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
                         message.Content = new StringContent(JsonConvert.SerializeObject(result), Encoding.UTF8, "application/json");
