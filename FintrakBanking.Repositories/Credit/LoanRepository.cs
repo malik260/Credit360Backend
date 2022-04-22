@@ -5026,7 +5026,26 @@ namespace FintrakBanking.Repositories.Credit
             var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
             if (validateRef.response_code != "00")
             {
-                throw new APIErrorException("Core Banking API Error " + validateRef.response_message + " - Kindly Contact System Administrator!");
+                throw new APIErrorException("Core Banking API Error 205 " + validateRef.response_message + " - Kindly Contact System Administrator!");
+            }
+
+            var refExist = context.TBL_LOAN.Where(x => x.COREBANKINGREF.Trim() == entity.coreBankingRef.Trim()).FirstOrDefault();
+            var refExist2 = context.TBL_LOAN_REVOLVING.Where(x => x.COREBANKINGREF == entity.coreBankingRef.Trim()).FirstOrDefault();
+            var refExist3 = context.TBL_LOAN_CONTINGENT.Where(x => x.COREBANKINGREF == entity.coreBankingRef.Trim()).FirstOrDefault();
+
+            if(refExist != null)
+            {
+                throw new APIErrorException("Sorry Flexcube reference " + entity.coreBankingRef + " has already been used for a term loan facility refernce number "+ refExist.LOANREFERENCENUMBER);
+            }
+
+            if (refExist2 != null)
+            {
+                throw new APIErrorException("Sorry Flexcube reference " + entity.coreBankingRef + " has already been used for a revolving facility refernce number " + refExist2.LOANREFERENCENUMBER);
+            }
+
+            if (refExist3 != null)
+            {
+                throw new APIErrorException("Sorry Flexcube reference " + entity.coreBankingRef + " has already been used for a contingent facility refernce number " + refExist3.LOANREFERENCENUMBER);
             }
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
