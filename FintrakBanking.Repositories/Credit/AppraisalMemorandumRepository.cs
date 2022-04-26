@@ -5280,7 +5280,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public bool UpdateSubsidiaryBasicTransaction(int id)
+        public bool UpdateSubsidiaryBasicTransaction(int id, ForwardViewModel entity)
         {
             bool status = false;
             var subData = context.TBL_SUB_BASICTRANSACTION.Find(id);

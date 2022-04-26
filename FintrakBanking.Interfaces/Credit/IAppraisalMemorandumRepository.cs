@@ -128,7 +128,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode);
 
-        bool UpdateSubsidiaryBasicTransaction(int id);
+        bool UpdateSubsidiaryBasicTransaction(int id,ForwardViewModel entity);
 
     }
 }
