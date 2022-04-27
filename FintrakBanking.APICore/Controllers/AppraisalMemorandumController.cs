@@ -1110,7 +1110,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [ClaimsAuthorization]
+        //[ClaimsAuthorization]
         [Route("update-subsidiary-basic-transaction/{id}")]
         public HttpResponseMessage UpdateSubsidiaryBasicTransaction(int id, [FromBody] ForwardViewModel entity)
         {

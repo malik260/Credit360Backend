@@ -70,9 +70,11 @@ namespace FintrakBanking.AccessSubsediary
             var token = HttpContext.Current.Request.Headers["Authorization"];
             string countryCode = HttpContext.Current.Request.Headers["X-COUNTRYCODE"];
             var excemptedUrls = new List<string>();
+            //int idValue = 0;
            // excemptedUrls.Add("/api/v1/credit/appraisal-memorandum/privilege");
-           // excemptedUrls.Add("/api/v1/credit/appraisal-memorandum/forward");
-            if (countryCode != null && countryCode != "NG" && !excemptedUrls.Contains(HttpContext.Current.Request.CurrentExecutionFilePath))
+           excemptedUrls.Add("/api/v1/credit/update-subsidiary-basic-transaction/");
+            if (countryCode != null && countryCode != "NG" && !excemptedUrls.Contains(HttpContext.Current.Request.CurrentExecutionFilePath)
+                && !HttpContext.Current.Request.CurrentExecutionFilePath.Contains("/api/v1/credit/update-subsidiary-basic-transaction/"))
             {
 
 
