@@ -5053,6 +5053,15 @@ namespace FintrakBanking.Repositories.Credit
             var dynamicMessage = string.Empty;
             var staffEmail = context.TBL_STAFF.Find(request.CREATEDBY);
             var customer = context.TBL_CUSTOMER.Find(appDetail.CUSTOMERID);
+
+            var fullCustomer = customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME;
+
+            if (validateRef.loandetailsresp[0].customer_no != customer.CUSTOMERCODE)
+            {
+                throw new APIErrorException("Sorry Customer ID " + validateRef.loandetailsresp[0].customer_no + " (" + validateRef.loandetailsresp[0].customer_name + ") did not match that of Customer on Credit360  " + customer.CUSTOMERCODE + " (" + fullCustomer +")" );
+            }
+
+
             var loanBrief = "for customer: (" + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " Customer Code:" + customer.CUSTOMERCODE + ")" +
                             " with loan purpose " + appDetail.LOANPURPOSE.ToUpper() + " and loan amount " + string.Format("{0:#,##.00}", Convert.ToDecimal(request.AMOUNT_REQUESTED));
 
