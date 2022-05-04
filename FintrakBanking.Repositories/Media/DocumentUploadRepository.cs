@@ -14,6 +14,9 @@ using System.Linq;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common;
 using FintrakBanking.Interfaces.Credit;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Configuration;
 
 namespace FintrakBanking.Repositories.Media
 {
@@ -44,6 +47,13 @@ namespace FintrakBanking.Repositories.Media
             this.admin = _admin;
             this.workflow = _workflow;
             this.creditBureau = _creditBureau;
+        }
+
+        private string getUrl(string countryCode)
+        {
+            var url = ConfigurationManager.AppSettings[countryCode];
+            return url;
+
         }
 
         //public IEnumerable<DocumentUploadViewModel> GetDocumentUploads()
@@ -808,6 +818,22 @@ namespace FintrakBanking.Repositories.Media
 
                 return 2;
            
+        }
+        public  async Task<int> AddDocumentUploadToSubsidiary(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent)
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Clear();
+                httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                var url = getUrl(model.countryCode);
+                var responseString = await httpClient.PostAsync(url + "/api/v1/document/document-upload", formContent).ConfigureAwait(false);
+                var result = await responseString.Content.ReadAsAsync<DocumentUploadViewModelResut>();
+                //if (result == 2) return (HttpStatusCode.OK, new { success = true, result = result, message = "The file has been uploaded successfully" });
+                //if (result == 3) return (HttpStatusCode.OK, new { success = true, result = result, message = "The file already exist" });
+                return result.result;
+
+            }
+
         }
 
         private string GetCustomerCode(int customerId)

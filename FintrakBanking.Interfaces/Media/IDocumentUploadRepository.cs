@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
@@ -21,6 +22,8 @@ namespace FintrakBanking.Interfaces.Media
         IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId);
 
         int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer);
+
+        Task<int> AddDocumentUploadToSubsidiary(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent);
 
         bool UpdateDocumentUpload(DocumentUploadViewModel model, int id, UserInfo user);
 
