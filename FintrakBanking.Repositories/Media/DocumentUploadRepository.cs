@@ -819,21 +819,49 @@ namespace FintrakBanking.Repositories.Media
                 return 2;
            
         }
-        public  async Task<int> AddDocumentUploadToSubsidiary(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent)
+        private  async Task<DocumentUploadViewModelResut> AddDocumentUploadToSubsidiary(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent)
         {
-            using (HttpClient httpClient = new HttpClient())
-            {
+            var response = new DocumentUploadViewModelResut();
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClient = new HttpClient(handler);
+           // using (HttpClient httpClient = new HttpClient())
+            try{
+
                 httpClient.DefaultRequestHeaders.Clear();
                 httpClient.DefaultRequestHeaders.Add("Authorization", token);
                 var url = getUrl(model.countryCode);
                 var responseString = await httpClient.PostAsync(url + "/api/v1/document/document-upload", formContent).ConfigureAwait(false);
                 var result = await responseString.Content.ReadAsAsync<DocumentUploadViewModelResut>();
-                //if (result == 2) return (HttpStatusCode.OK, new { success = true, result = result, message = "The file has been uploaded successfully" });
-                //if (result == 3) return (HttpStatusCode.OK, new { success = true, result = result, message = "The file already exist" });
-                return result.result;
+                
+                if (responseString.IsSuccessStatusCode)
+                {
+                    
+                    response = result;
+                }
 
+                return response;
             }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new APIErrorException($"Error" + ex.Message);
+            }
+            finally
+            {
+                handler.Dispose();
+                httpClient.Dispose();
+            }
+        }
 
+        public DocumentUploadViewModelResut AddDocumentUploadToSubsidiaryResult(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent)
+        {
+            DocumentUploadViewModelResut fileUpload = new DocumentUploadViewModelResut();
+            Task.Run(async () => fileUpload = await AddDocumentUploadToSubsidiary(model, buffer, token, formContent))
+                .GetAwaiter().GetResult();
+            return fileUpload;
         }
 
         private string GetCustomerCode(int customerId)

@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.Media
 
         int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer);
 
-        Task<int> AddDocumentUploadToSubsidiary(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent);
+        DocumentUploadViewModelResut AddDocumentUploadToSubsidiaryResult(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent);
 
         bool UpdateDocumentUpload(DocumentUploadViewModel model, int id, UserInfo user);
 

@@ -121,7 +121,7 @@ namespace FintrakBanking.APICore.Controllers
             //{
             //    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
             //}
-            //try {
+          try {
                 var entity = new DocumentUploadViewModel();
                 entity.fileName = provider.FormData["fileName"];
                 entity.fileExtension = provider.FormData["fileExtension"];
@@ -174,8 +174,6 @@ namespace FintrakBanking.APICore.Controllers
                     {new StringContent(entity.fileExtension),"fileExtension"},
                     {new StringContent( Convert.ToString(entity.fileSize)),"fileSize"},
                     {new StringContent( Convert.ToString(entity.documentTypeId)),"documentTypeId"},
-
-
                     {new StringContent(entity.issueDate.ToString()),"issueDate"},
                     {new StringContent(entity.expiryDate.ToString()),"expiryDate"},
                     {new StringContent(entity.targetReferenceNumber),"targetReferenceNumber"},
@@ -193,34 +191,18 @@ namespace FintrakBanking.APICore.Controllers
                 IEnumerable<string> headerValues;
                 if (Request.Headers.TryGetValues("Authorization", out headerValues)) ;
                 var token = headerValues.First();
-                int response = await repo.AddDocumentUploadToSubsidiary(entity, buffer, token, formContent);
+                var response = repo.AddDocumentUploadToSubsidiaryResult(entity, buffer, token, formContent);
 
-                // var result = await Task.FromResult( this.httpClient.PostAsync(url + "/api/v1/document/document-upload", formContent).ConfigureAwait(false));
-                //using(HttpClient httpClient = new HttpClient())
-                //{
-                //    httpClient.DefaultRequestHeaders.Clear();
-                //    httpClient.DefaultRequestHeaders.Add("Authorization", token);
-                //    var url = getUrl(entity.countryCode);
-                //    var responseString = await httpClient.PostAsync(url + "/api/v1/document/document-upload", formContent).ConfigureAwait(false);
-                //   var result = await responseString.Content.ReadAsAsync<object>();
-                   if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
-                   if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+                if (response != null && response.result > 0)
+                {
+                    if (response.result == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+                    if (response.result == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
                     return response;
-
-                //}
-                //if ((int)responseString.StatusCode == 401) { return Request.CreateResponse(HttpStatusCode.Unauthorized, new { success = false, message = responseString.ReasonPhrase }); }
-                //if ((int)responseString.StatusCode == 500)
-                //{
-                //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = responseString.ReasonPhrase });
-                //}
-                //var result = await responseString.Content.ReadAsAsync<object>();
-
-                // return result;
-
+                }
             }
 
-            //}
-            //catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
 
         }
@@ -318,6 +300,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("document-upload/{id}/{documentTypeId}")]
         public HttpResponseMessage DeleteDocumentUpload(int id, int documentTypeId)
         {
+
             UserInfo user = new UserInfo()
             {
                 BranchId = token.GetBranchId,
