@@ -115,12 +115,12 @@ namespace FintrakBanking.APICore.Controllers
             await Task.FromResult(Request.Content.ReadAsMultipartAsync(provider).ContinueWith(t=> { 
                 if(t.IsFaulted || t.IsCanceled) { throw new Exception("Task got canceled!"); }
             }));
-            //await Request.Content.ReadAsMultipartAsync(provider);
+            await Request.Content.ReadAsMultipartAsync(provider);
 
-            //if (!provider.FileStreams.Any())
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
-            //}
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
           try {
                 var entity = new DocumentUploadViewModel();
                 entity.fileName = provider.FormData["fileName"];

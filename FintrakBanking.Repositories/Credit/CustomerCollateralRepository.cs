@@ -11249,7 +11249,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public List<InsurancePolicy> GetCollateralInsurancePolicyReport(DateTime? startDate, DateTime? endDate, string searchString)
+        public List<InsurancePolicy> GetCollateralInsurancePolicyReport(DateTime? startDate, DateTime? endDate, string searchString/*, int? businessUnitId*/)
         {
                 List<InsurancePolicy> insurance = null;
                 TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
