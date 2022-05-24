@@ -47,6 +47,7 @@ namespace FintrakBanking.AccessSubsediary
                     httpClient.DefaultRequestHeaders.Clear();
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                    httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                     string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
                     var responseString = await httpClient.GetAsync(remoteURL);
                     var result = await responseString.Content.ReadAsAsync<object>();
@@ -63,6 +64,7 @@ namespace FintrakBanking.AccessSubsediary
                     httpClient.DefaultRequestHeaders.Clear();
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                    httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                     var body = HttpUtility.UrlDecode(context.Request.Form.ToString());
                     var content = new StringContent(body, Encoding.UTF8, "application/json");
                     string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";
@@ -76,6 +78,7 @@ namespace FintrakBanking.AccessSubsediary
                     httpClient.DefaultRequestHeaders.Clear();
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                    httpClient.DefaultRequestHeaders.Add("isRemote", "1");
                     var body = HttpUtility.UrlDecode(context.Request.Form.ToString());
                     var content = new StringContent(body, Encoding.UTF8, "application/json");
                     string remoteURL = $"{absoluteURL}{HttpContext.Current.Request.CurrentExecutionFilePath}";

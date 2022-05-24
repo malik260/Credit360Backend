@@ -109,6 +109,7 @@ namespace FintrakBanking.APICore.Controllers
                 WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
                 if (response != null)
                 {
+                    if(entity.subTransId != null) { repo.UpdateSubsidiaryBasicTransaction((int)entity.subTransId, entity); }
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error acting on this record" });
@@ -531,7 +532,8 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet, Route("subsidiaries-loan-applications")]
         public HttpResponseMessage GetSubsidiaryPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
         {
-            var items =  repo.GetSubsidiaryPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
+            var staffRoleCode = token.GetStaffRoleCode;
+            var items =  repo.GetSubsidiaryPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, staffRoleCode, isSpecific);
             if (items != null)
             {
                 if (!String.IsNullOrEmpty(searchString))
@@ -1107,5 +1109,14 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
         }
 
+        [HttpPut]
+        //[ClaimsAuthorization]
+        [Route("update-subsidiary-basic-transaction/{id}")]
+        public HttpResponseMessage UpdateSubsidiaryBasicTransaction(int id, [FromBody] ForwardViewModel entity)
+        {
+
+            bool response = repo.UpdateSubsidiaryBasicTransaction(id, entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response });
+        }
     }
 }
