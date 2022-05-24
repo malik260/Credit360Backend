@@ -5026,11 +5026,10 @@ namespace FintrakBanking.Repositories.Credit
             //var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
             //if (validateRef.response_code != "00")
             //{
-<<<<<<< HEAD
+
             //    throw new APIErrorException("Core Banking API Error "+ validateRef.response_message+ " - Kindly Contact System Administrator!");
-=======
+
             //    throw new APIErrorException("Core Banking API Error 205 " + validateRef.response_message + " - Kindly Contact System Administrator!");
->>>>>>> 96c1ef05217ded192f3451b7c0a9e3d5ed001fa3
             //}
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
