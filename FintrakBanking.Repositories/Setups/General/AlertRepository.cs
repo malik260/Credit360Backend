@@ -66302,7 +66302,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     result = result + $"</table>";
 
                     alertTemplate = alertTemplate.Replace("@{{detail}}", result);
-                    emailList = zh?.EMAIL + ";" + gh?.EMAIL;
+                    emailList = zh?.EMAIL + ";" + gh?.EMAIL + ";" + rm?.EMAIL + ";" + staff?.EMAIL;
                     emailList = emailList + defaultEmail;
                     alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
