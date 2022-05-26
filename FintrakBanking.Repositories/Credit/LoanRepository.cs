@@ -5021,12 +5021,31 @@ namespace FintrakBanking.Repositories.Credit
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId, bool isManual = false)
         {
 
-            var coreBankingRef = entity.coreBankingRef;
+            //var coreBankingRef = entity.coreBankingRef;
 
             var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
             if (validateRef.response_code != "00")
             {
-                throw new APIErrorException("Core Banking API Error " + validateRef.response_message + " - Kindly Contact System Administrator!");
+                throw new APIErrorException("Core Banking API Error 205 " + validateRef.response_message + " - Kindly Contact System Administrator!");
+            }
+
+            var refExist = context.TBL_LOAN.Where(x => x.COREBANKINGREF.Trim() == entity.coreBankingRef.Trim()).FirstOrDefault();
+            var refExist2 = context.TBL_LOAN_REVOLVING.Where(x => x.COREBANKINGREF == entity.coreBankingRef.Trim()).FirstOrDefault();
+            var refExist3 = context.TBL_LOAN_CONTINGENT.Where(x => x.COREBANKINGREF == entity.coreBankingRef.Trim()).FirstOrDefault();
+
+            if(refExist != null)
+            {
+                throw new APIErrorException("Sorry Flexcube reference " + entity.coreBankingRef + " has already been used for a term loan facility refernce number "+ refExist.LOANREFERENCENUMBER);
+            }
+
+            if (refExist2 != null)
+            {
+                throw new APIErrorException("Sorry Flexcube reference " + entity.coreBankingRef + " has already been used for a revolving facility refernce number " + refExist2.LOANREFERENCENUMBER);
+            }
+
+            if (refExist3 != null)
+            {
+                throw new APIErrorException("Sorry Flexcube reference " + entity.coreBankingRef + " has already been used for a contingent facility refernce number " + refExist3.LOANREFERENCENUMBER);
             }
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
@@ -5034,6 +5053,15 @@ namespace FintrakBanking.Repositories.Credit
             var dynamicMessage = string.Empty;
             var staffEmail = context.TBL_STAFF.Find(request.CREATEDBY);
             var customer = context.TBL_CUSTOMER.Find(appDetail.CUSTOMERID);
+
+            var fullCustomer = customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME;
+
+            if (validateRef.loandetailsresp[0].customer_no != customer.CUSTOMERCODE)
+            {
+                throw new APIErrorException("Sorry Customer ID " + validateRef.loandetailsresp[0].customer_no + " (" + validateRef.loandetailsresp[0].customer_name + ") did not match that of Customer on Credit360  " + customer.CUSTOMERCODE + " (" + fullCustomer +")" );
+            }
+
+
             var loanBrief = "for customer: (" + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " Customer Code:" + customer.CUSTOMERCODE + ")" +
                             " with loan purpose " + appDetail.LOANPURPOSE.ToUpper() + " and loan amount " + string.Format("{0:#,##.00}", Convert.ToDecimal(request.AMOUNT_REQUESTED));
 
@@ -22040,7 +22068,7 @@ namespace FintrakBanking.Repositories.Credit
             CloseMannualBookingResponseViewModel result = null;
             Task.Run(async () => result = await transaction.ValidateMannualBookingClosure(model)).GetAwaiter().GetResult();
 
-            if (result.response_code == "00")
+            if (result!= null && result?.response_code == "00")
             {
                 if (result.response_message.ToLower() == "successful")
                 {
@@ -22072,7 +22100,7 @@ namespace FintrakBanking.Repositories.Credit
             CloseMannualBookingResponseViewModel result = null;
             Task.Run(async () => result = await transaction.ValidateMannualBookingClosure(model)).GetAwaiter().GetResult();
 
-            if (result.response_code == "00")
+            if (result != null && result.response_code == "00")
             {
                 if (result.response_message.ToLower() == "successful")
                 {
@@ -22080,12 +22108,12 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new ConditionNotMetException("Core Banking API Error " + result.response_message.ToLower() + " - Kindly Contact System Administrator!");
+                    throw new ConditionNotMetException("Core Banking API Error 203 " + result.response_message.ToLower() + " - Kindly Contact System Administrator!");
                 }
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error " + result.response_message.ToLower() + "- Kindly Contact System Administrator!");
+                throw new APIErrorException("Core Banking API Error 204 " + result.response_message.ToLower() + "- Kindly Contact System Administrator!");
             }
         }
 

@@ -9,6 +9,7 @@
     using FintrakBanking.ViewModels.Flexcube;
     using FintrakBanking.ViewModels.ThridPartyIntegration;
     using Newtonsoft.Json;
+    using RestSharp;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -17,6 +18,7 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using System.Web.Script.Serialization;
 
@@ -1551,43 +1553,54 @@
 
             public async Task<CloseMannualBookingResponseViewModel> ValidateMannualBookingClosure(CloseMannualBookingViewModel model)
             {
-                HttpClientHandler handler = new HttpClientHandler();
-                HttpClient client = new HttpClient(handler);
+                IRestResponse response = null;
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
-                HttpResponseMessage response = null;
                 string responseMessage = "";
+                RestRequest req = new RestRequest(Method.POST);
                 CloseMannualBookingResponseViewModel records = new CloseMannualBookingResponseViewModel();
-                requestDatetime = DateTime.Now;
-                responseDateTime = DateTime.Now;
                 try
                 {
                     getAPIURLSettings("MannualBookingClose");
-                    handler.UseDefaultCredentials = true;
-                    var token = new AuthenticationHeaderValue("Basic", API_KEY);
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.BaseAddress = new Uri(API_URL);
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.ConnectionClose = false;
-                    client.DefaultRequestHeaders.Authorization = token;
-                    response = client.PostAsync("GetLoanDetails", new StringContent(new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-                   
 
-                    if (response.IsSuccessStatusCode)
+                    var baseURL = API_URL;
+                    string fullURL = baseURL + "GetLoanDetails";
+                    RestClient client = new RestClient(fullURL);
+
+                    CloseMannualBookingViewModel reqbody = new CloseMannualBookingViewModel()
+
                     {
-                        var rep = await response.Content.ReadAsAsync<CloseMannualBookingResponseViewModel>();
-                        responseMessage = rep.response_message;
-                        if (!rep.response_message.ToLower().Contains("successful"))
+                        loan_accountno = model.loan_accountno,
+                        channel_code = model.channel_code
+                    };
+
+                    requestDatetime = DateTime.Now;
+                    responseDateTime = DateTime.Now;
+
+                    var jsonbody = new JavaScriptSerializer().Serialize(reqbody);
+                    req.AddParameter("application/json", jsonbody, ParameterType.RequestBody);
+                    req.AddHeader("Content-Type", "application/json");
+                    req.AddHeader("Accept", "application/json");
+                    req.AddHeader("Authorization", API_KEY);
+
+                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                    
+                    response = await client.ExecuteAsync<CloseMannualBookingResponseViewModel>(req);
+                    var responbody = JsonConvert.DeserializeObject<CloseMannualBookingResponseViewModel>(response.Content);
+
+                    if (response.IsSuccessful)
+                    {
+                        if (responbody == null || !responbody.response_message.ToLower().Contains("successful"))
                         {
-                            throw new APIErrorException("Core Banking API error - " + rep.response_message + " " + DateTime.Now);
+                            throw new APIErrorException("API call error - " + responbody.response_message + " " + responbody.response_code + " " + DateTime.Now);
                         }
-                        
+                        var rep = responbody;
                         records.response_code = rep.response_code;
                         records.response_message = rep.response_message;
                         records.loandetailsresp = rep.loandetailsresp;
                     }
-
-                    responseMessage = await response.Content.ReadAsStringAsync();
-
+                   
+                    responseMessage = responbody?.response_message;
                     return records;
                 }
                 catch (APIErrorException ex)
@@ -1596,32 +1609,24 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new APIErrorException($"Error " + ex.InnerException.ToString());
+                    throw new APIErrorException($"Error 202 " + ex.Message);
                 }
                 finally
                 {
-                    handler.Dispose();
-                    client.Dispose();
-                    try
+                    var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        var logs = new TBL_CUSTOM_API_LOGS
-                        {
-                            APIURL = $"{API_URL}GetLoanDetails",
-                            LOGTYPEID = 8,
-                            REFERENCENUMBER = model.loan_accountno,
-                            REQUESTDATETIME = requestDatetime,
-                            REQUESTMESSAGE = new JavaScriptSerializer().Serialize(model),
-                            RESPONSEDATETIME = responseDateTime,
-                            RESPONSEMESSAGE = responseMessage,
-                        };
+                        APIURL = $"{API_URL}GetLoanDetails",
+                        LOGTYPEID = 8,
+                        REFERENCENUMBER = model.loan_accountno,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = new JavaScriptSerializer().Serialize(model),
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
 
-                        FinTrakBankingContext logContext = new FinTrakBankingContext();
-                        logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-                        logContext.SaveChanges();
-                    }catch(Exception e)
-                    {
-                        throw e;
-                    }
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    logContext.SaveChanges();
                 }
             }
 
