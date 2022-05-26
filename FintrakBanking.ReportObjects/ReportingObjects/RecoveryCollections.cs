@@ -346,7 +346,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                     && lr.SOURCE.ToLower() == "retail"
                                     && lr.DELETED == false
-                                    && p.ISPAYDAYPRODUCT == true
+                                    //&& p.ISPAYDAYPRODUCT == true
 
                                     orderby ln.ID descending
                                     select new RecoveryCollectionsViewModel

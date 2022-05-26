@@ -9503,6 +9503,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
             }
+
             var company = context.TBL_COMPANY.Find(companyId);
             IEnumerable<CamProcessedLoanViewModel> allLoans = null;
             IEnumerable<CamProcessedLoanViewModel> bookingRequestLoans = null;
