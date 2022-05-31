@@ -116,4 +116,42 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public bool notifyOfPendingApprovals { get; set; }
         public bool notifyOnwer { get; set; }
     }
+
+    public class DynamicWorkflowViewModel : GeneralEntity
+    {
+        public int? idValue { get; set; }
+        public bool? booleanValue { get; set; }
+        public string textValue { get; set; }
+
+        public string expression { get; set; }
+        public int workflowId { get; set; }
+        public int contextId { get; set; }
+        public int dataItemId { get; set; }
+        public int comparisonId { get; set; }
+        public int valueId { get; set; }
+        public int combineId { get; set; }
+        public string contextName { get; set; }
+        public int valueTypeId { get; set; }
+        public string dataItemName { get; set; }
+        public int expressionId { get; set; }
+        public string value { get; set; }
+        public string comparison { get; set; }
+        public string workflowExpression { get; set; }
+        public int? approvalBusinessRuleId { get; set; }
+        public string approvalBusinessRule { get; set; }
+        public string valueTypeName { get; set; }
+    }
+
+    public class OperatorsViewModel
+    {
+        public int operatorId { get; set; }
+        public string operators { get; set; }
+        public string description { get; set; }
+    }
+
+    public class DynamicContextListViewModel
+    {
+        public int id { get; set; }
+        public string value { get; set; }
+    }
 }

@@ -44,8 +44,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_RETAIL> TBL_LOAN_RECOVERY_COMMISSION_RETAIL { get; set; }
         public virtual DbSet<TBL_COLLECTION_RETAIL_CRON_SETUP> TBL_COLLECTION_RETAIL_CRON_SETUP { get; set; }
         public virtual DbSet<TBL_DOCUMENTATION_FILLING_APPROVAL> TBL_DOCUMENTATION_FILLING_APPROVAL { get; set; }
+        public virtual DbSet<TBL_WORKFLOW_ITEM_EXPRESSION> TBL_WORKFLOW_ITEM_EXPRESSION { get; set; }
         public virtual DbSet<TBL_CONTRACTOR_CRITERIA_OPTION> TBL_CONTRACTOR_CRITERIA_OPTION { get; set; }
         public virtual DbSet<TBL_LMS_FACILITY_MODIFICATION> TBL_LMS_FACILITY_MODIFICATION { get; set; }
+        public virtual DbSet<TBL_WORKFLOW_DATA_ITEM_DEFINITION> TBL_WORKFLOW_DATA_ITEM_DEFINITION { get; set; }
+        public virtual DbSet<TBL_WFCONTEXT_VALUE_TYPE> TBL_WFCONTEXT_VALUE_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_APPROVAL> TBL_LOAN_RECOVERY_COMMISSION_APPROVAL { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_BATCH> TBL_LOAN_RECOVERY_COMMISSION_BATCH { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_REPORTING_APPROVAL> TBL_LOAN_RECOVERY_REPORTING_APPROVAL { get; set; }
@@ -134,6 +137,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_APPROVAL_SETUP> TBL_APPROVAL_SETUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_FLOW_TYPE> TBL_APPROVAL_FLOW_TYPE { get; set; }
         public virtual DbSet<TBL_WORKFLOW_NOTIFICATION> TBL_WORKFLOW_NOTIFICATION { get; set; }
+        public virtual DbSet<TBL_WORKFLOW_CONTEXT> TBL_WORKFLOW_CONTEXT { get; set; }
+        public virtual DbSet<TBL_OPERATORS> TBL_OPERATORS { get; set; }
         public virtual DbSet<TBL_APPROVAL_VOTE_OPTION> TBL_APPROVAL_VOTE_OPTION { get; set; }
         public virtual DbSet<TBL_AUDIT> TBL_AUDIT { get; set; }
         public virtual DbSet<TBL_AUDIT_TYPE> TBL_AUDIT_TYPE { get; set; }
