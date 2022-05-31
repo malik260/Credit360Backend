@@ -49,5 +49,14 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         Task<bool> AddWorkflowMappingNotification(WorkflowNotificationViewModel model);
         Task<bool> UpdateWorkflowMappingNotification(WorkflowNotificationViewModel model, int workflowNotificationId);
         Task<bool> DeleteWorkflowMappingNotification(int MappingId, UserInfo user);
+        IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowContext();
+        IEnumerable<OperatorsViewModel> GetAllOperators();
+        IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowDataItemDefinition();
+        IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowDataItemByContextId(int contextId);
+        DynamicWorkflowViewModel GetValueTypeByItemId(int dataItemId);
+        bool CreateDynamicWorkflowItemExpression(DynamicWorkflowViewModel model);
+        IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowItemExpression();
+        bool UpdateDynamicWorkflowItemExpression(DynamicWorkflowViewModel model, int expressionId);
+        List<DynamicContextListViewModel> GetDynamicBusinessRuleItemValueListByItemId(int dataItemId);
     }
 }
