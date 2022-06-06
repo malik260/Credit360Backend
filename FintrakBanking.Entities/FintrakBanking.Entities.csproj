@@ -243,6 +243,7 @@
     <Compile Include="Models\TBL_LOAN_BULK_DISBURSEMENT.cs" />
     <Compile Include="Models\TBL_LOAN_BULK_DISBURSE_SCHEME.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PAYMENT.cs" />
+    <Compile Include="Models\TBL_OPERATORS.cs" />
     <Compile Include="Models\TBL_ORIGINAL_DOCUMENT_APPROVAL.cs" />
     <Compile Include="Models\TBL_ORIGINAL_DOCUMENT_RELEASE.cs" />
     <Compile Include="DocumentModels\TBL_DOC_MAPPING.cs" />
@@ -731,6 +732,10 @@
     <Compile Include="Models\TBL_USER_CLAIMS.cs" />
     <Compile Include="Models\TBL_VALUATION_REPORT.cs" />
     <Compile Include="Models\TBL_VALUATION_REQUEST_TYPE.cs" />
+    <Compile Include="Models\TBL_WFCONTEXT_VALUE_TYPE.cs" />
+    <Compile Include="Models\TBL_WORKFLOW_CONTEXT.cs" />
+    <Compile Include="Models\TBL_WORKFLOW_DATA_ITEM_DEFINITION.cs" />
+    <Compile Include="Models\TBL_WORKFLOW_ITEM_EXPRESSION.cs" />
     <Compile Include="Models\TBL_WORKFLOW_NOTIFICATION.cs" />
     <Compile Include="Models\TEMP_COLLATERAL_INSURANCE_TRACKING.cs" />
     <Compile Include="OracleDatabaseConfiguration.cs" />
