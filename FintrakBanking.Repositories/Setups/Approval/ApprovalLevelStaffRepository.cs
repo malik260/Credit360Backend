@@ -972,7 +972,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   loanApplicationId = d.LOANAPPLICATIONID,
                                   approvalTrailId = a.APPROVALTRAILID,
                                   toStaffId = a.TOSTAFFID,
-                              })
+                                  customerCode = cust.CUSTOMERCODE,
+                                  
+                               })
                               ).ToList()
                               
                               .OrderBy(o => o.approvalTrailId);
@@ -985,6 +987,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 foreach (var item in records.ToList())
                 {
                     var ProductName = "";
+                    var accountNumber = "";
                     int count = serial;
                     var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == item.loanApplicationId).ToList();
                     decimal amount = 0;
@@ -994,11 +997,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         {
                             ProductName += rec.TBL_PRODUCT.PRODUCTNAME + ", ";
                             amount += (decimal)rec.APPROVEDAMOUNT * (decimal)rec.EXCHANGERATE;
+                            accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == rec.CUSTOMERID && x.PRODUCTID == rec.TBL_PRODUCT.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
                         }
                         else
                         {
                             ProductName += rec.TBL_PRODUCT.PRODUCTNAME;
                             amount += (decimal)rec.APPROVEDAMOUNT * (decimal)rec.EXCHANGERATE;
+                            accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == rec.CUSTOMERID && x.PRODUCTID == rec.TBL_PRODUCT.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
                         }
                     }
                     if (item.toStaffId > 0 && string.IsNullOrWhiteSpace(item.responsibleStaffName))
@@ -1010,6 +1015,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     item.productNames = ProductName;
                     item.amount = amount;
                     item.baseCurrencyCode = baseCurrencyCode;
+                    item.accountNumber = accountNumber;
                     item.serial = count;
                     approvalRecord.Add(item);
                 }
@@ -1100,7 +1106,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             //dueDate = (DateTime.Now.Date - a.SYSTEMARRIVALDATETIME.Date).Days,
                                             approvalTrailId = a.APPROVALTRAILID,
                                             toStaffId = a.TOSTAFFID,
-                                            productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                            customerCode = d.TBL_CUSTOMER.CUSTOMERCODE,
+                                            accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PROPOSEDPRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                           productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                         })
                            );
 
@@ -1157,6 +1165,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   //dueDate = (DateTime.Now.Date - a.SYSTEMARRIVALDATETIME.Date).Days,
                                   approvalTrailId = a.APPROVALTRAILID,
                                   toStaffId = a.TOSTAFFID,
+                                  customerCode = d.TBL_CUSTOMER.CUSTOMERCODE,
+                                  accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PROPOSEDPRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                   productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                               })
                            );
@@ -1246,6 +1256,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             //dueDate = (DateTime.Now.Date - a.SYSTEMARRIVALDATETIME.Date).Days,
                                             approvalTrailId = a.APPROVALTRAILID,
                                             toStaffId = a.TOSTAFFID,
+                                            customerCode = d.TBL_CUSTOMER.CUSTOMERCODE,
+                                            accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                             productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                         })
                            );
@@ -1301,6 +1313,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   //dueDate = (DateTime.Now.Date - a.SYSTEMARRIVALDATETIME.Date).Days,
                                   approvalTrailId = a.APPROVALTRAILID,
                                   toStaffId = a.TOSTAFFID,
+                                  customerCode = d.TBL_CUSTOMER.CUSTOMERCODE,
+                                  accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                   productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                               })
                            );
