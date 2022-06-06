@@ -1590,7 +1590,7 @@
 
                     if (response.IsSuccessful)
                     {
-                        if (responbody != null || !responbody.response_message.ToLower().Contains("success"))
+                        if (responbody == null || !responbody.response_message.ToLower().Contains("successful"))
                         {
                             throw new APIErrorException("API call error - " + responbody.response_message + " " + responbody.response_code + " " + DateTime.Now);
                         }
