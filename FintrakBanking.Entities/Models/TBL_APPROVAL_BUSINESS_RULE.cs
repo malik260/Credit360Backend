@@ -30,6 +30,7 @@
         public bool INTERVENTIONFUNDS { get; set; }
         public bool ORRBASEDAPPROVAL { get; set; }
         public bool ISAGRICRELATED { get; set; }
+        public bool ISSYNDICATED { get; set; }
         public bool WITHINSTRUCTION { get; set; }
         public bool DOMICILIATIONNOTINPLACE { get; set; }
         public bool ESRM { get; set; }

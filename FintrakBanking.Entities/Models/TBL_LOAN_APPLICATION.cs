@@ -101,6 +101,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISINTERVENTIONFUNDS { get; set; }
         public bool ISORRBASEDAPPROVAL { get; set; }
         public bool ISAGRICRELATED { get; set; }
+        public bool ISSYNDICATED { get; set; }
         public bool WITHINSTRUCTION { get; set; }
         public bool DOMICILIATIONNOTINPLACE { get; set; }
         

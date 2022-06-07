@@ -480,6 +480,7 @@ namespace FintrakBanking.Repositories.Credit
                         OnLending = appl.ISONLENDING,
                         InterventionFunds = appl.ISINTERVENTIONFUNDS,
                         isAgricRelated = appl.ISAGRICRELATED,
+                        isSyndicated = appl.ISSYNDICATED,
                         isRenewal = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.Renewal || d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.RenewalWithDecrease),
                         OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
                         DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
