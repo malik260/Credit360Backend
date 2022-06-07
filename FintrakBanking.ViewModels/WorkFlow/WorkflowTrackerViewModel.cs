@@ -65,5 +65,6 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string customerCode { get; set; }
         public string accountNumber { get; set; }
         public int customerId { get; set; }
+        public int loanId { get; set; }
     }
 }
