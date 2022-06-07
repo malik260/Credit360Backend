@@ -993,17 +993,51 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     decimal amount = 0;
                     foreach (var rec in loanDetails)
                     {
+                        int casaId1 = 0;
+                        int casaId2 = 0;
+                        int casaId3 = 0;
+
                         if (loanDetails.Count > 1)
                         {
+                            casaId1 = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == rec.LOANAPPLICATIONDETAILID && x.CUSTOMERID == rec.CUSTOMERID).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                            if(casaId1 > 0)
+                            {
+                              accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId1).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                            }
+                            casaId2 = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == rec.LOANAPPLICATIONDETAILID && x.CUSTOMERID == rec.CUSTOMERID).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                            if(casaId2 > 0)
+                            {
+                              accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId2).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                            }
+                            casaId3 = context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == rec.LOANAPPLICATIONDETAILID && x.CUSTOMERID == rec.CUSTOMERID).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                            if (casaId3 > 0)
+                            {
+                                accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId3).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                            }
                             ProductName += rec.TBL_PRODUCT.PRODUCTNAME + ", ";
                             amount += (decimal)rec.APPROVEDAMOUNT * (decimal)rec.EXCHANGERATE;
-                            accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == rec.CUSTOMERID && x.PRODUCTID == rec.TBL_PRODUCT.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                            //accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == rec.CUSTOMERID && x.PRODUCTID == rec.TBL_PRODUCT.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
                         }
                         else
                         {
+                            casaId1 = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == rec.LOANAPPLICATIONDETAILID && x.CUSTOMERID == rec.CUSTOMERID).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                            if(casaId1 > 0)
+                            {
+                              accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId1).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                            }
+                            casaId2 = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == rec.LOANAPPLICATIONDETAILID && x.CUSTOMERID == rec.CUSTOMERID).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                            if(casaId2 > 0)
+                            {
+                              accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId2).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                            }
+                            casaId3 = context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == rec.LOANAPPLICATIONDETAILID && x.CUSTOMERID == rec.CUSTOMERID).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                            if (casaId3 > 0)
+                            {
+                                accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId3).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                            }
                             ProductName += rec.TBL_PRODUCT.PRODUCTNAME;
                             amount += (decimal)rec.APPROVEDAMOUNT * (decimal)rec.EXCHANGERATE;
-                            accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == rec.CUSTOMERID && x.PRODUCTID == rec.TBL_PRODUCT.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                            //accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == rec.CUSTOMERID && x.PRODUCTID == rec.TBL_PRODUCT.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
                         }
                     }
                     if (item.toStaffId > 0 && string.IsNullOrWhiteSpace(item.responsibleStaffName))
@@ -1107,7 +1141,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             approvalTrailId = a.APPROVALTRAILID,
                                             toStaffId = a.TOSTAFFID,
                                             customerCode = d.TBL_CUSTOMER.CUSTOMERCODE,
-                                            accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PROPOSEDPRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                            customerId = d.CUSTOMERID,
+                                            //accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PROPOSEDPRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                            productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                         })
                            );
@@ -1166,7 +1201,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   approvalTrailId = a.APPROVALTRAILID,
                                   toStaffId = a.TOSTAFFID,
                                   customerCode = d.TBL_CUSTOMER.CUSTOMERCODE,
-                                  accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PROPOSEDPRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                  customerId = d.CUSTOMERID,
+                                 // accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PROPOSEDPRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                   productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                               })
                            );
@@ -1178,15 +1214,39 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 int serial = 1;
                 foreach (var item in records.ToList())
                 {
+                    var accountNumber = "";
+                    int casaId1 = 0;
+                    int casaId2 = 0;
+                    int casaId3 = 0;
+
+                    casaId1 = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.CUSTOMERID == item.customerId).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                    if (casaId1 > 0)
+                    {
+                        accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId1).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                    }
+                    casaId2 = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.CUSTOMERID == item.customerId).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                    if (casaId2 > 0)
+                    {
+                        accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId2).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                    }
+                    casaId3 = context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.CUSTOMERID == item.customerId).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                    if (casaId3 > 0)
+                    {
+                        accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId3).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                    }
                     int count = serial;
                     if (item.toStaffId > 0 && string.IsNullOrWhiteSpace(item.responsibleStaffName))
                     {
                         var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == item.toStaffId);
                         item.responsibleStaffName = staff.LASTNAME + " " + staff.MIDDLENAME + " " + staff.FIRSTNAME;
                     }
+
+                    item.accountNumber = accountNumber;
                     serial += 1;
                     item.serial = count;
                     approvalRecord.Add(item);
+
+
                 }
                 //var test = approvalRecord.ToList();
 
@@ -1257,7 +1317,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             approvalTrailId = a.APPROVALTRAILID,
                                             toStaffId = a.TOSTAFFID,
                                             customerCode = d.TBL_CUSTOMER.CUSTOMERCODE,
-                                            accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                            customerId = d.TBL_CUSTOMER.CUSTOMERID,
+                                            //accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                             productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                         })
                            );
@@ -1314,7 +1375,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   approvalTrailId = a.APPROVALTRAILID,
                                   toStaffId = a.TOSTAFFID,
                                   customerCode = d.TBL_CUSTOMER.CUSTOMERCODE,
-                                  accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                  customerId = d.TBL_CUSTOMER.CUSTOMERID,
+                                  //accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID && x.PRODUCTID == d.PRODUCTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                   productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                               })
                            );
@@ -1326,6 +1388,29 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 int serial = 1;
                 foreach (var item in records.ToList())
                 {
+
+                    var accountNumber = "";
+                    int casaId1 = 0;
+                    int casaId2 = 0;
+                    int casaId3 = 0;
+
+                    casaId1 = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.CUSTOMERID == item.customerId).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                    if (casaId1 > 0)
+                    {
+                        accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId1).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                    }
+                    casaId2 = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.CUSTOMERID == item.customerId).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                    if (casaId2 > 0)
+                    {
+                        accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId2).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                    }
+                    casaId3 = context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.CUSTOMERID == item.customerId).Select(x => x.CASAACCOUNTID).FirstOrDefault();
+                    if (casaId3 > 0)
+                    {
+                        accountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaId3).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                    }
+
+                    item.accountNumber = accountNumber;
                     int count = serial;
                     if (item.toStaffId > 0 && string.IsNullOrWhiteSpace(item.responsibleStaffName))
                     {
