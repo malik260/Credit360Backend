@@ -1510,6 +1510,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double amountRecoveredOrl { get; set; }
         public decimal? paydayLoanMinimumAssigned { get; set; }
         public decimal? amountRecoveredPaydayLoan { get; set; }
+        public decimal? initialAssigned { get; set; }
     }
 
 
