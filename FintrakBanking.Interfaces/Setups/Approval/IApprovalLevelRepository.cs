@@ -60,3 +60,4 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         List<DynamicContextListViewModel> GetDynamicBusinessRuleItemValueListByItemId(int dataItemId);
     }
 }
+

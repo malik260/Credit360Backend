@@ -346,7 +346,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                     && lr.SOURCE.ToLower() == "retail"
                                     && lr.DELETED == false
-                                    && p.ISPAYDAYPRODUCT == true
+                                    //&& p.ISPAYDAYPRODUCT == true
 
                                     orderby ln.ID descending
                                     select new RecoveryCollectionsViewModel
@@ -1213,7 +1213,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  productName = ln.PRODUCTNAME,
                                                  principalOutstandingBalLcy = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
                                                  minimumAmountDueUnpaid = (decimal)ln.TOTALUNSETTLEDAMOUNT, //(decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
-                                                 totalOutstanding = lr.TOTALAMOUNTRECOVERY,
+                                                 //totalOutstanding = lr.TOTALAMOUNTRECOVERY,
                                                  bookingDate = ln.BOOKINGDATE,
                                                  valueDate = ln.BOOKINGDATE,
                                                  referenceDate = ln.BOOKINGDATE,
@@ -1232,6 +1232,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                  commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == lr.ACCREDITEDCONSULTANT && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE),
                                                  staffCode = ln.ACCOUNTOFFICERCODE,
                                                  location = ln.BRANCHNAME,
+                                                 initialAssigned = lr.TOTALAMOUNTRECOVERY,
                                              }).ToList();
 
                 foreach (var xx in dataExposure)
@@ -1278,7 +1279,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                         productName = ln.PRODUCTNAME,
                                         principalOutstandingBalLcy = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
                                         minimumAmountDueUnpaid = (decimal)ln.TOTALUNSETTLEDAMOUNT, //(decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
-                                        totalOutstanding = lr.TOTALAMOUNTRECOVERY,
+                                        //totalOutstanding = lr.TOTALAMOUNTRECOVERY,
                                         bookingDate = ln.BOOKINGDATE,
                                         valueDate = ln.BOOKINGDATE,
                                         referenceDate = ln.BOOKINGDATE,
@@ -1297,6 +1298,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                         commission = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(c => c.ACCREDITEDCONSULTANT == lr.ACCREDITEDCONSULTANT && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.COMMISSIONPAYABLE),
                                         staffCode = ln.ACCOUNTOFFICERCODE,
                                         location = ln.BRANCHNAME,
+                                        initialAssigned = lr.TOTALAMOUNTRECOVERY,
                                     }).ToList();
 
                 foreach (var xx in dataDigitalExposure)
@@ -1443,6 +1445,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                   var revolvingLoanDataNon = dataRevolvingNonPerforming.GroupBy(x => x.loanReference).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReference).ToList();
                   var unionAll = termLoanDataNon.Union(revolvingLoanDataNon).Union(dataExposure).Union(dataDigitalExposure);*/
                 var allData = dataExposure.Union(dataDigitalExposure);
+                foreach(var rec in allData)
+                {
+                   rec.totalOutstanding = rec.actualRecovery + rec.initialAssigned;
+                }
                 return allData.ToList();
             }
             
@@ -1705,18 +1711,24 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         consultant.totalAmountAssigned = totalAmountAssigned + collections;
                         consultant.amountRecoveredCreditCard = amountRecoveredCreditCard;
                         consultant.creditCardMinimumAssigned = creditCardMinimumAssigned + amountRecoveredCreditCard;
+                        
+                        
+                        var paydayLoanMinimumAssigned = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.ACCREDITEDCONSULTANT == consultant.accreditedConsultant && c.PRODUCTCLASSID == (int)ProductClassEnum.DigitalLoans && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED) ?? (decimal)0.0;
+                        var amountRecoveredPaydayLoan = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber && c.PRODUCTCLASSID == (int)ProductClassEnum.DigitalLoans && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.TOTALRECOVERYAMOUNT) ?? (decimal)0.0;
+                        consultant.paydayLoanMinimumAssigned = paydayLoanMinimumAssigned + amountRecoveredPaydayLoan;
+                        consultant.amountRecoveredPaydayLoan = amountRecoveredPaydayLoan;
 
-                        var pdl = context.TBL_PRODUCT.Where(x => x.PRODUCTID == consultant.productId && x.ISPAYDAYPRODUCT == true).Select(x => (int)x.PRODUCTID).ToList();
+                        /*var pdl = context.TBL_PRODUCT.Where(x => x.PRODUCTID == consultant.productId && x.ISPAYDAYPRODUCT == true).Select(x => (int)x.PRODUCTID).ToList();
                         if (pdl.Count() > 0)
                         {
-                            consultant.paydayLoanMinimumAssigned = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber && c.PRODUCTCLASSID == (int)ProductClassEnum.DigitalLoans && pdl.Contains((int)c.PRODUCTID) && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.TOTALRECOVERYAMOUNT);
-                            consultant.amountRecoveredPaydayLoan = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.ACCREDITEDCONSULTANT == consultant.accreditedConsultant && c.PRODUCTCLASSID == (int)ProductClassEnum.DigitalLoans && pdl.Contains((int)c.PRODUCTID) && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED);
+                           consultant.paydayLoanMinimumAssigned = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.AGENTACCOUNTNUMBER == consultant.accountNumber && c.PRODUCTCLASSID == (int)ProductClassEnum.DigitalLoans && pdl.Contains((int)c.PRODUCTID) && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.TOTALRECOVERYAMOUNT);
+                           consultant.amountRecoveredPaydayLoan = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(c => c.ACCREDITEDCONSULTANT == consultant.accreditedConsultant && c.PRODUCTCLASSID == (int)ProductClassEnum.DigitalLoans && pdl.Contains((int)c.PRODUCTID) && (DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month >= DbFunctions.TruncateTime(startDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Month <= DbFunctions.TruncateTime(endDate).Value.Month && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year >= DbFunctions.TruncateTime(startDate).Value.Year && DbFunctions.TruncateTime(c.DATETIMECREATED).Value.Year <= DbFunctions.TruncateTime(endDate).Value.Year)).Sum(c => c.AMOUNTRECOVERED);
                         }
                         else
                         {
                             consultant.paydayLoanMinimumAssigned = (decimal)0.0;
                             consultant.amountRecoveredPaydayLoan = (decimal)0.0;
-                        }
+                        }*/
 
                     }
 
