@@ -244,6 +244,200 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
+        #region Dynamic Workflow BusinessRule
+
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-dynamic-workflow-context")]
+        public HttpResponseMessage GetDynamicWorkflowContext()
+        {
+            try
+            {
+                var response = repo.GetDynamicWorkflowContext();
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-all-operators")]
+        public HttpResponseMessage GetAllOperators()
+        {
+            try
+            {
+                var response = repo.GetAllOperators();
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-dynamic-workflow-data-item-definition")]
+        public HttpResponseMessage GetDynamicWorkflowDataItemDefinition()
+        {
+            try
+            {
+                var response = repo.GetDynamicWorkflowDataItemDefinition();
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-dynamic-workflow-data-item-definition/{contextId}")]
+        public HttpResponseMessage GetDynamicWorkflowDataItemByContextId(int contextId)
+        {
+            try
+            {
+                var response = repo.GetDynamicWorkflowDataItemByContextId(contextId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-dynamic-workflow-value-type/{dataItemId}")]
+        public HttpResponseMessage GetValueTypeByItemId(int dataItemId)
+        {
+            try
+            {
+                var response = repo.GetValueTypeByItemId(dataItemId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+
+
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-dynamic-business-rule-value-list/{dataItemId}")]
+        public HttpResponseMessage GetDynamicBizRuleDataValueListByDataItemId(int dataItemId)
+        {
+            try
+            {
+                var response = repo.GetDynamicBusinessRuleItemValueListByItemId(dataItemId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+
+
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-dynamic-workflow")]
+        public HttpResponseMessage AddDynamicWorkflowExpression([FromBody] DynamicWorkflowViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.CreateDynamicWorkflowItemExpression(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("update-dynamic-workflow/{expressionId}")]
+        public HttpResponseMessage UpdateDynamicWorkflowItemExpression([FromBody] DynamicWorkflowViewModel model, int expressionId)
+        {
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                var data = repo.UpdateDynamicWorkflowItemExpression(model, expressionId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = data, message = "Record updated successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-dynamic-workflow-item-expression")]
+        public HttpResponseMessage GetDynamicWorkflowItemExpression()
+        {
+            try
+            {
+                var response = repo.GetDynamicWorkflowItemExpression();
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        #endregion
+
         #region workflow notofications
         [HttpGet]
         [Route("approval-level/workflow-notification/{id}")]
