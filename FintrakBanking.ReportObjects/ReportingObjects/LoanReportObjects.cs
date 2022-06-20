@@ -5184,7 +5184,7 @@ namespace FintrakBanking.ReportObjects
                     join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                     join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
                     join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
-                    join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
+                    //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                     join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                     join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
                     join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
@@ -5233,13 +5233,6 @@ namespace FintrakBanking.ReportObjects
                         refNo = l.APPLICATIONREFERENCENUMBER,
                         customerCode = c.CUSTOMERCODE,
                         bvn = cd.CUSTOMERBVN,
-
-                        firstTimeAccessToCredit = ci.ISFIRSTTIMECREDIT ? "Yes" : "No",
-                        startUp = ci.ISSTARTUP ? "Yes" : "No",
-                        msmeAnnualTurnover = ci.ANNUALTURNOVER,
-                        noOfEmployees = ci.NUMBEROFEMPLOYEES ?? 0,
-                        noOfFemaleEmployees = ci.NOOFFEMALEEMPLOYEES > 0 ? ci.NOOFFEMALEEMPLOYEES : 0,
-                        totalAsset = ci.TOTALASSETS,
                     }).ToList();
 
             var revolving = (from ln in context.TBL_LOAN_REVOLVING
@@ -5248,7 +5241,7 @@ namespace FintrakBanking.ReportObjects
                              join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                              join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
                              join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
-                             join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
+                             //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                              join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                              join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
                              join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
@@ -5298,13 +5291,6 @@ namespace FintrakBanking.ReportObjects
                                  refNo = l.APPLICATIONREFERENCENUMBER,
                                  customerCode = c.CUSTOMERCODE,
                                  bvn = cd.CUSTOMERBVN,
-
-                                 firstTimeAccessToCredit = ci.ISFIRSTTIMECREDIT ? "Yes" : "No",
-                                 startUp = ci.ISSTARTUP ? "Yes" : "No",
-                                 msmeAnnualTurnover = ci.ANNUALTURNOVER,
-                                 noOfEmployees = ci.NUMBEROFEMPLOYEES ?? 0,
-                                 noOfFemaleEmployees = ci.NOOFFEMALEEMPLOYEES > 0 ? ci.NOOFFEMALEEMPLOYEES : 0,
-                                 totalAsset = ci.TOTALASSETS,
                              }).ToList();
 
             var contingent = (from ln in context.TBL_LOAN_CONTINGENT
@@ -5313,7 +5299,7 @@ namespace FintrakBanking.ReportObjects
                               join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                               join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
                               join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID 
-                              join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
+                              //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                               join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                               join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
                               join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
@@ -5363,18 +5349,10 @@ namespace FintrakBanking.ReportObjects
                                   refNo = l.APPLICATIONREFERENCENUMBER,
                                   customerCode = c.CUSTOMERCODE,
                                   bvn = cd.CUSTOMERBVN,
-
-                                  firstTimeAccessToCredit = ci.ISFIRSTTIMECREDIT ? "Yes" : "No",
-                                  startUp = ci.ISSTARTUP ? "Yes" : "No",
-                                  msmeAnnualTurnover = ci.ANNUALTURNOVER,
-                                  noOfEmployees = ci.NUMBEROFEMPLOYEES ?? 0,
-                                  noOfFemaleEmployees = ci.NOOFFEMALEEMPLOYEES > 0 ? ci.NOOFFEMALEEMPLOYEES : 0,
-                                  totalAsset = ci.TOTALASSETS,
-
                               }).ToList();
             var result = data.Union(revolving).Union(contingent).Distinct().ToList();
 
-            /*foreach(var i in result)
+            foreach(var i in result)
             {
                 var ci = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == i.customerId).FirstOrDefault();
                 if (ci != null)
@@ -5396,7 +5374,7 @@ namespace FintrakBanking.ReportObjects
                     i.totalAsset = 0;
                 }
                 
-            }*/
+            }
             return result;
         }
 
