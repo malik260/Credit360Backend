@@ -3975,10 +3975,10 @@ namespace FintrakBanking.Repositories.Credit
                         && (x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount
                             && x.approvalLevelStaff.STAFFID == staffId)
                    || x.creditGradeId == (int)CreditGradeEnum.StandardGrade
-                        && (x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount
+                        && (x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount
                             && x.approvalLevelStaff.STAFFID == staffId)
                    || x.creditGradeId == (int)CreditGradeEnum.RenewalGrade
-                        && (x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount
+                        && (x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount
                             && x.approvalLevelStaff.STAFFID == staffId)
                    || x.approvalLevelStaff.STAFFID != staffId)
                 )
