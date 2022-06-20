@@ -54,6 +54,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             tenor = x.TENOR,
                             maximumAmount = x.MAXIMUMAMOUNT,
                             investmentGradeAmount = x.INVESTMENTGRADEAMOUNT,
+                            standardGradeAmount = x.STANDARDGRADEAMOUNT,
+                            renewalLimit = x.RENEWALLIMIT,
                             feeRate = x.FEERATE,
                             interestRate = x.INTERESTRATE,
                             numberOfUsers = x.NUMBEROFUSERS,
@@ -113,6 +115,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             tenor = a.TENOR,
                             maximumAmount = a.MAXIMUMAMOUNT,
                             investmentGradeAmount = a.INVESTMENTGRADEAMOUNT,
+                            standardGradeAmount = a.STANDARDGRADEAMOUNT,
+                            renewalLimit = a.RENEWALLIMIT,
                             feeRate = a.FEERATE,
                             interestRate = a.INTERESTRATE,
                             numberOfUsers = a.NUMBEROFUSERS,
@@ -237,6 +241,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     TENOR = model.tenor,
                     MAXIMUMAMOUNT = model.maximumAmount,
                     INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+                    STANDARDGRADEAMOUNT = model.standardGradeAmount,
+                    RENEWALLIMIT = model.renewalLimit,
                     FEERATE = model.feeRate,
                     INTERESTRATE = model.interestRate,
                     NUMBEROFUSERS = model.numberOfUsers,
@@ -297,6 +303,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     TENOR = model.tenor,
                     MAXIMUMAMOUNT = model.maximumAmount,
                     INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+                    STANDARDGRADEAMOUNT = model.standardGradeAmount,
+                    RENEWALLIMIT = model.renewalLimit,
                     FEERATE = model.feeRate,
                     INTERESTRATE = model.interestRate,
                     NUMBEROFUSERS = model.numberOfUsers,
@@ -395,6 +403,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 //data.TenorModeId = 1; // model.tenorModeId;
                 data.MAXIMUMAMOUNT = model.maximumAmount;
                 data.INVESTMENTGRADEAMOUNT = model.investmentGradeAmount;
+                data.STANDARDGRADEAMOUNT = model.standardGradeAmount;
+                data.RENEWALLIMIT = model.renewalLimit;
                 data.FEERATE = model.feeRate;
                 data.INTERESTRATE = model.interestRate;
                 data.NUMBEROFUSERS = model.numberOfUsers;
@@ -459,6 +469,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     TENOR = model.tenor,
                     MAXIMUMAMOUNT = model.maximumAmount,
                     INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+                    STANDARDGRADEAMOUNT = model.standardGradeAmount,
+                    RENEWALLIMIT = model.renewalLimit,
                     FEERATE = model.feeRate,
                     INTERESTRATE = model.interestRate,
                     NUMBEROFUSERS = model.numberOfUsers,
@@ -575,6 +587,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         TENOR = model.TENOR,
                         MAXIMUMAMOUNT = model.MAXIMUMAMOUNT,
                         INVESTMENTGRADEAMOUNT = model.INVESTMENTGRADEAMOUNT,
+                        STANDARDGRADEAMOUNT = model.STANDARDGRADEAMOUNT,
+                        RENEWALLIMIT = model.RENEWALLIMIT,
                         FEERATE = model.FEERATE,
                         INTERESTRATE = model.INTERESTRATE,
                         NUMBEROFUSERS = model.NUMBEROFUSERS,
@@ -849,6 +863,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 TENOR = data.TENOR,
                 MAXIMUMAMOUNT = data.MAXIMUMAMOUNT,
                 INVESTMENTGRADEAMOUNT = data.INVESTMENTGRADEAMOUNT,
+                STANDARDGRADEAMOUNT = data.STANDARDGRADEAMOUNT,
+                RENEWALLIMIT = data.RENEWALLIMIT,
                 FEERATE = data.FEERATE,
                 INTERESTRATE = data.INTERESTRATE,
                 NUMBEROFUSERS = data.NUMBEROFUSERS,
@@ -891,6 +907,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 updateData.TENOR = data.TENOR;
                 updateData.MAXIMUMAMOUNT = data.MAXIMUMAMOUNT;
                 updateData.INVESTMENTGRADEAMOUNT = data.INVESTMENTGRADEAMOUNT;
+                updateData.STANDARDGRADEAMOUNT = data.STANDARDGRADEAMOUNT;
+                updateData.RENEWALLIMIT = data.RENEWALLIMIT;
                 updateData.FEERATE = data.FEERATE;
                 updateData.INTERESTRATE = data.INTERESTRATE;
                 updateData.NUMBEROFUSERS = data.NUMBEROFUSERS;
@@ -961,6 +979,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                  tenor = x.TENOR,
                                  maximumAmount = x.MAXIMUMAMOUNT,
                                  investmentGradeAmount = x.INVESTMENTGRADEAMOUNT,
+                                 standardGradeAmount = x.STANDARDGRADEAMOUNT,
+                                 renewalLimit = x.RENEWALLIMIT,
                                  feeRate = x.FEERATE,
                                  interestRate = x.INTERESTRATE,
                                  numberOfUsers = x.NUMBEROFUSERS,

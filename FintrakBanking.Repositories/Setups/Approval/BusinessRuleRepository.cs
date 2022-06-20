@@ -139,7 +139,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public IEnumerable<BusinessRuleViewModel> GetBusinessRule(int companyId)
         {
-            return context.TBL_APPROVAL_BUSINESS_RULE
+            var businessRile = context.TBL_APPROVAL_BUSINESS_RULE
                 .Where(x => x.COMPANYID == companyId && x.DELETED == false)
                 .Select(x => new BusinessRuleViewModel
                 {
@@ -169,6 +169,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     isSyndicated = x.ISSYNDICATED
                 }).OrderBy(b => b.description)
                 .ToList();
+
+            return businessRile;
         }
 
         public BusinessRuleViewModel GetBusinessRuleById(int businessRuleId)

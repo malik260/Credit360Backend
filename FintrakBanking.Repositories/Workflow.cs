@@ -91,13 +91,14 @@ namespace FintrakBanking.Repositories.WorkFlow
         private float? interestRateConcession = null;
         private float? feeRateConcession = null;
         private int? ownerId = null;
+        private int? creditGradeId = null;
 
         public int StaffId { set { staffId = value; } }
         public int? ToStaffId { set { toStaffId = value; } }
         public int TargetId { set { targetId = value; } }
         public int CompanyId { set { companyId = value; } }
         public int OperationId { set { operationId = value; } }
-
+        public int? CreditGradeId { set { creditGradeId = value; } }
         public decimal Amount { set { amount = value; } }
         public decimal FacilityAmount { set { facilityAmount = value; } }
         public string Comment { set { comment = value; } }
@@ -1528,7 +1529,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool WithinAllLimits()
         {
-            if (this.level.ISPOSTAPPROVALREVIEWER == true) return true;
+            if (this.level.IsPostApprovalReviewer == true) return true;
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
             if (level == null ) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
             if (this.nextLevelId != null)
@@ -1785,8 +1786,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                                LevelBusinessRuleId = x.Level.APPROVALBUSINESSRULEID,
                                LevelBusinessRule = x.Level.TBL_APPROVAL_BUSINESS_RULE,
                                AllowMultipleInitiator = x.Mapping.ALLOWMULTIPLEINITIATOR,
-                               ROLEIDTOROUTE = x.Level.ROLEIDTOROUTE,
-                               ISPOSTAPPROVALREVIEWER = x.Level.ISPOSTAPPROVALREVIEWER
+                               RoleIdToRoute = x.Level.ROLEIDTOROUTE,
+                               IsPostApprovalReviewer = x.Level.ISPOSTAPPROVALREVIEWER,
+                               InvestmentGradeLimit = (decimal)x.Level.INVESTMENTGRADEAMOUNT,
+                               StandardGradeLimit = (decimal)x.Level.STANDARDGRADEAMOUNT,
+                               RenewalLimit = (decimal)x.Level.RENEWALLIMIT
                            })
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition)
@@ -1805,7 +1809,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     if (initiator != null)
                     {
                         var initiatorStaff = context.TBL_STAFF.Find(initiator?.REQUESTSTAFFID);
-                        if (initiatorStaff != null && level.ROLEIDTOROUTE != initiatorStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
+                        if (initiatorStaff != null && level.RoleIdToRoute != initiatorStaff.STAFFROLEID && level.RoleIdToRoute != null)
                         {
                             continue;
                         }
@@ -1815,7 +1819,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if(this.staffId > 0)
                         {
                             var currentRequestStaff = context.TBL_STAFF.Where(x=>x.STAFFID == this.staffId && x.DELETED == false).FirstOrDefault();
-                            if (currentRequestStaff != null && level.ROLEIDTOROUTE != currentRequestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
+                            if (currentRequestStaff != null && level.RoleIdToRoute != currentRequestStaff.STAFFROLEID && level.RoleIdToRoute != null)
                             {
                                 continue;
                             }
@@ -1825,10 +1829,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 var testField = level.Level.LEVELNAME;
 
-                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule))
-                {
-                    continue;
-                }
+                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) continue;
+                //if (!ResolveApprovalGridLimits(level, this.amount)) continue;
+                
                 //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
                 grid.Add(new WorkflowSetup
@@ -1949,6 +1952,21 @@ namespace FintrakBanking.Repositories.WorkFlow
             return validity;
         }
 
+        //private bool ResolveApprovalGridLimits(WorkflowSetup level, decimal amount)
+        //{
+        //    if(creditGradeId != null)
+        //    {
+        //        if(creditGradeId == (int)CreditGradeEnum.InvestmentGrade) 
+        //        { 
+        //            if(level.StandardGradeLimit < amount) return false;
+        //        }
+        //        if (creditGradeId == (int)CreditGradeEnum.StandardGrade)
+        //        { return true; }
+        //        if (creditGradeId == (int)CreditGradeEnum.RenewalGrade)
+        //        { return true; }
+        //    }
+        //    return true;
+        //}
         //private void SendNotifications()
         //{
         //    if (statusOnly) return;

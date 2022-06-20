@@ -15,4 +15,12 @@ namespace FintrakBanking.Common.Enum
         BCC = 7,
         BOD = 8,
     }
+
+    public enum CreditGradeEnum
+    {
+        InvestmentGrade = 1,
+        StandardGrade = 2,
+        RenewalGrade = 3,
+    }
+   
 }
