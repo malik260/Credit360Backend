@@ -5357,8 +5357,8 @@ namespace FintrakBanking.ReportObjects
                 var ci = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == i.customerId).FirstOrDefault();
                 if (ci != null)
                 {
-                    i.firstTimeAccessToCredit = ci.ISFIRSTTIMECREDIT ? "Yes" : "No";
-                    i.startUp = ci.ISSTARTUP ? "Yes" : "No";
+                    i.firstTimeAccessToCredit = ci.ISFIRSTTIMECREDIT == true ? "Yes" : "No";
+                    i.startUp = ci.ISSTARTUP == true ? "Yes" : "No";
                     i.msmeAnnualTurnover = ci.ANNUALTURNOVER;
                     i.noOfEmployees = ci.NUMBEROFEMPLOYEES ?? 0;
                     i.noOfFemaleEmployees = ci.NOOFFEMALEEMPLOYEES;
