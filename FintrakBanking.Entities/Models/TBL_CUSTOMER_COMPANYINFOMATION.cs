@@ -47,7 +47,7 @@ namespace FintrakBanking.Entities.Models
 
         //[Column(TypeName = "money")]
         public decimal? SHAREHOLDER_FUND { get; set; }
-        public int NOOFFEMALEEMPLOYEES { get; set; }
+        public int? NOOFFEMALEEMPLOYEES { get; set; }
         public bool ISSTARTUP { get; set; }
         public bool ISFIRSTTIMECREDIT { get; set; }
         public int? TOTALASSETS { get; set; }

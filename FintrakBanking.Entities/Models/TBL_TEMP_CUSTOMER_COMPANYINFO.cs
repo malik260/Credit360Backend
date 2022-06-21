@@ -58,7 +58,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISCURRENT { get; set; }
 
         public short APPROVALSTATUSID { get; set; }
-        public int NOOFFEMALEEMPLOYEES { get; set; }
+        public int? NOOFFEMALEEMPLOYEES { get; set; }
         public bool ISSTARTUP { get; set; }
         public bool ISFIRSTTIMECREDIT { get; set; }
         public int? TOTALASSETS { get; set; }
