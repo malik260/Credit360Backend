@@ -1825,10 +1825,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 var testField = level.Level.LEVELNAME;
 
-                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule))
-                {
-                    continue;
-                }
+                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) { continue; }
+                if (level.LevelBusinessRuleId != null && !ExecuteStandardBusinessRule(level.LevelBusinessRule)) { continue; }
                 //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
                 grid.Add(new WorkflowSetup
@@ -1870,9 +1868,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             
             if (levelBusinessRule == null) return true;
 
-            bool validity = false;
-            bool flagChecked = false;
-            bool limitChecked = false;
+            bool validity = true;
+            bool flagChecked = true;
+            bool limitChecked = true;
             decimal pepAmount = rule.PEPAMOUNT ?? 0;
             decimal minimumAmount = rule.MINIMUMAMOUNT ?? 0;
             decimal maximumAmount = rule.MAXIMUMAMOUNT ?? 0;
@@ -1947,6 +1945,117 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (limitChecked || flagChecked) return true;
 
             return validity;
+        }
+
+
+        private bool ExecuteStandardBusinessRule(TBL_APPROVAL_BUSINESS_RULE rule)
+        {
+            if (levelBusinessRule == null) return true;
+
+            var expression = context.TBL_WORKFLOW_ITEM_EXPRESSION
+                .Where(x => x.APPROVALBUSINESSRULEID == rule.APPROVALBUSINESSRULEID).ToList();
+
+            //var ctr = 0;
+            var totalExpression = expression.Count();
+            foreach (var item in expression)
+            {
+                //var response = false;
+                //var previousResponse = false;
+                TBL_WORKFLOW_ITEM_EXPRESSION previousItem = new TBL_WORKFLOW_ITEM_EXPRESSION();
+                return ResolveStandardRules(item, rule);
+                //if (ctr == 0)
+                //{
+                //    previousResponse = response = ResolveStandardRules(item, rule);
+                //}
+
+
+                //if (ctr > 0 && previousItem.CONJUCTION == "OR") return response;
+
+                //if (response = ResolveStandardRules(item, rule) != previousResponse && previousItem.CONJUCTION == "AND")
+                //{
+                //    return false;
+                //}
+                //else previousResponse = response;
+
+                //ctr++;
+                //previousItem = item;
+                //if (totalExpression == ctr) return response;
+            }
+            return true;
+        }
+
+        private bool ResolveStandardRules(TBL_WORKFLOW_ITEM_EXPRESSION expression, TBL_APPROVAL_BUSINESS_RULE rule)
+        {
+            var ruleBase = context.TBL_WORKFLOW_CONTEXT.Find(expression.CONTEXTID);
+
+            var ruleItem = context.TBL_WORKFLOW_DATA_ITEM_DEFINITION
+                                    .Where(x => x.DATAITEMID == expression.DATAITEMID).FirstOrDefault();
+
+            var list = context.TBL_WFCONTEXT_VALUE_TYPE.Where(x => x.VALUETYPENAME.ToUpper() == "LIST").FirstOrDefault()?.VALUETYPEID;
+            var text = context.TBL_WFCONTEXT_VALUE_TYPE.Where(x => x.VALUETYPENAME.ToUpper() == "TEXT").FirstOrDefault()?.VALUETYPEID;
+            var boolean = context.TBL_WFCONTEXT_VALUE_TYPE.Where(x => x.VALUETYPENAME.ToUpper() == "BOOLEAN").FirstOrDefault()?.VALUETYPEID;
+
+            if (ruleBase.CONTEXTNAME.ToUpper() == "CUSTOMER")
+            {
+                if (ruleItem.DATAITEMNAME.ToUpper() == "BUSINESS UNIT")
+                {
+                    if (ruleItem.VALUETYPEID == list)
+                    {
+                        var comparisonString = context.TBL_OPERATORS.Where(x => x.OPERATORID == expression.COMPARISONID).FirstOrDefault()?.OPERATOR.ToString();
+                        if (businessUnitId == null) businessUnitId = 0;
+                        if (expression.IDVALUE == null) expression.IDVALUE = 0;
+                        return Compare(businessUnitId.Value, expression.IDVALUE.Value, comparisonString);
+                    }
+                }
+            }
+
+            //if (ruleBase.CONTEXTNAME.ToUpper() == "COLLATERAL")
+            //{
+            //    //insert code here
+            //    decimal coverange = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == targetId).FirstOrDefault()?.COLLATERALCOVERAGE ?? 0;
+            //    if (ruleItem.DATAITEMNAME.ToUpper() == "COLLATERAL COVERAGE" && rule.ISCOLLATERALECOVERED)
+            //    {
+            //        if (rule.ISCOLLATERALECOVERED) return true;
+            //        else { isExceptionaApprover = true; return false; }
+            //    }
+            //}
+
+
+
+
+            return true;
+        }
+
+        public static bool Compare<T>(T value1, T value2, string str) where T : IComparable<T>
+        {
+            Func<T, T, bool> op = null;
+
+            switch (str)
+            {
+                case "<":
+                    op = (a, b) => a.CompareTo(b) < 0;
+                    break;
+                case ">":
+                    op = (a, b) => a.CompareTo(b) > 0;
+                    break;
+                case "<=":
+                    op = (a, b) => a.CompareTo(b) <= 0;
+                    break;
+                case ">=":
+                    op = (a, b) => a.CompareTo(b) >= 0;
+                    break;
+                case "=":
+                    op = (a, b) => a.CompareTo(b) == 0;
+                    break;
+                case "!=":
+                    op = (a, b) => a.CompareTo(b) != 0;
+                    break;
+                default:
+                    return true;
+                    //throw new ArgumentException();
+            }
+
+            return op(value1, value2);
         }
 
         //private void SendNotifications()

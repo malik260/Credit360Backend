@@ -54,6 +54,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             tenor = x.TENOR,
                             maximumAmount = x.MAXIMUMAMOUNT,
                             investmentGradeAmount = x.INVESTMENTGRADEAMOUNT,
+                            standardGradeAmount = x.STANDARDGRADEAMOUNT,
+                            renewalLimit = x.RENEWALLIMIT,
                             feeRate = x.FEERATE,
                             interestRate = x.INTERESTRATE,
                             numberOfUsers = x.NUMBEROFUSERS,
@@ -113,6 +115,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             tenor = a.TENOR,
                             maximumAmount = a.MAXIMUMAMOUNT,
                             investmentGradeAmount = a.INVESTMENTGRADEAMOUNT,
+                            standardGradeAmount = a.STANDARDGRADEAMOUNT,
+                            renewalLimit = a.RENEWALLIMIT,
                             feeRate = a.FEERATE,
                             interestRate = a.INTERESTRATE,
                             numberOfUsers = a.NUMBEROFUSERS,
@@ -237,6 +241,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     TENOR = model.tenor,
                     MAXIMUMAMOUNT = model.maximumAmount,
                     INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+                    STANDARDGRADEAMOUNT = model.standardGradeAmount,
+                    RENEWALLIMIT = model.renewalLimit,
                     FEERATE = model.feeRate,
                     INTERESTRATE = model.interestRate,
                     NUMBEROFUSERS = model.numberOfUsers,
@@ -297,6 +303,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     TENOR = model.tenor,
                     MAXIMUMAMOUNT = model.maximumAmount,
                     INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+                    STANDARDGRADEAMOUNT = model.standardGradeAmount,
+                    RENEWALLIMIT = model.renewalLimit,
                     FEERATE = model.feeRate,
                     INTERESTRATE = model.interestRate,
                     NUMBEROFUSERS = model.numberOfUsers,
@@ -395,6 +403,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 //data.TenorModeId = 1; // model.tenorModeId;
                 data.MAXIMUMAMOUNT = model.maximumAmount;
                 data.INVESTMENTGRADEAMOUNT = model.investmentGradeAmount;
+                data.STANDARDGRADEAMOUNT = model.standardGradeAmount;
+                data.RENEWALLIMIT = model.renewalLimit;
                 data.FEERATE = model.feeRate;
                 data.INTERESTRATE = model.interestRate;
                 data.NUMBEROFUSERS = model.numberOfUsers;
@@ -459,6 +469,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     TENOR = model.tenor,
                     MAXIMUMAMOUNT = model.maximumAmount,
                     INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+                    STANDARDGRADEAMOUNT = model.standardGradeAmount,
+                    RENEWALLIMIT = model.renewalLimit,
                     FEERATE = model.feeRate,
                     INTERESTRATE = model.interestRate,
                     NUMBEROFUSERS = model.numberOfUsers,
@@ -575,6 +587,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         TENOR = model.TENOR,
                         MAXIMUMAMOUNT = model.MAXIMUMAMOUNT,
                         INVESTMENTGRADEAMOUNT = model.INVESTMENTGRADEAMOUNT,
+                        STANDARDGRADEAMOUNT = model.STANDARDGRADEAMOUNT,
+                        RENEWALLIMIT = model.RENEWALLIMIT,
                         FEERATE = model.FEERATE,
                         INTERESTRATE = model.INTERESTRATE,
                         NUMBEROFUSERS = model.NUMBEROFUSERS,
@@ -849,6 +863,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 TENOR = data.TENOR,
                 MAXIMUMAMOUNT = data.MAXIMUMAMOUNT,
                 INVESTMENTGRADEAMOUNT = data.INVESTMENTGRADEAMOUNT,
+                STANDARDGRADEAMOUNT = data.STANDARDGRADEAMOUNT,
+                RENEWALLIMIT = data.RENEWALLIMIT,
                 FEERATE = data.FEERATE,
                 INTERESTRATE = data.INTERESTRATE,
                 NUMBEROFUSERS = data.NUMBEROFUSERS,
@@ -891,6 +907,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 updateData.TENOR = data.TENOR;
                 updateData.MAXIMUMAMOUNT = data.MAXIMUMAMOUNT;
                 updateData.INVESTMENTGRADEAMOUNT = data.INVESTMENTGRADEAMOUNT;
+                updateData.STANDARDGRADEAMOUNT = data.STANDARDGRADEAMOUNT;
+                updateData.RENEWALLIMIT = data.RENEWALLIMIT;
                 updateData.FEERATE = data.FEERATE;
                 updateData.INTERESTRATE = data.INTERESTRATE;
                 updateData.NUMBEROFUSERS = data.NUMBEROFUSERS;
@@ -961,6 +979,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                  tenor = x.TENOR,
                                  maximumAmount = x.MAXIMUMAMOUNT,
                                  investmentGradeAmount = x.INVESTMENTGRADEAMOUNT,
+                                 standardGradeAmount = x.STANDARDGRADEAMOUNT,
+                                 renewalLimit = x.RENEWALLIMIT,
                                  feeRate = x.FEERATE,
                                  interestRate = x.INTERESTRATE,
                                  numberOfUsers = x.NUMBEROFUSERS,
@@ -1393,6 +1413,224 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 return saved;
             }
             
+        }
+
+        public IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowContext()
+        {
+            var data = (from a in context.TBL_WORKFLOW_CONTEXT
+
+                        select new DynamicWorkflowViewModel
+                        {
+                            contextId = a.CONTEXTID,
+                            contextName = a.CONTEXTNAME,
+
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<OperatorsViewModel> GetAllOperators()
+        {
+            var data = (from a in context.TBL_OPERATORS
+
+                        select new OperatorsViewModel
+                        {
+                            operatorId = a.OPERATORID,
+                            operators = a.OPERATOR,
+                            description = a.DESCRIPTION
+
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowDataItemDefinition()
+        {
+            var data = (from a in context.TBL_WORKFLOW_DATA_ITEM_DEFINITION
+
+                        select new DynamicWorkflowViewModel
+                        {
+                            dataItemId = a.DATAITEMID,
+                            contextName = context.TBL_WORKFLOW_CONTEXT.Where(c => c.CONTEXTID == a.CONTEXTID).Select(c => c.CONTEXTNAME).FirstOrDefault(),
+                            dataItemName = a.DATAITEMNAME,
+                            contextId = a.CONTEXTID,
+                            valueTypeId = a.VALUETYPEID
+
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowDataItemByContextId(int contextId)
+        {
+            var data = (from a in context.TBL_WORKFLOW_DATA_ITEM_DEFINITION
+                        where contextId == a.CONTEXTID
+                        select new DynamicWorkflowViewModel
+                        {
+                            dataItemId = a.DATAITEMID,
+                            contextName = context.TBL_WORKFLOW_CONTEXT.Where(c => c.CONTEXTID == a.CONTEXTID).Select(c => c.CONTEXTNAME).FirstOrDefault(),
+                            dataItemName = a.DATAITEMNAME,
+                            contextId = a.CONTEXTID,
+                            valueTypeId = a.VALUETYPEID
+
+                        }).ToList();
+            return data;
+        }
+
+        public DynamicWorkflowViewModel GetValueTypeByItemId(int dataItemId)
+        {
+            var data = (from a in context.TBL_WORKFLOW_DATA_ITEM_DEFINITION
+                        join c in context.TBL_WORKFLOW_CONTEXT on a.CONTEXTID equals c.CONTEXTID
+                        where a.DATAITEMID == dataItemId
+                        select new DynamicWorkflowViewModel
+                        {
+                            dataItemId = a.DATAITEMID,
+                            contextName = c.CONTEXTNAME, //context.TBL_WORKFLOW_CONTEXT.Where(c => c.CONTEXTID == a.CONTEXTID).Select(c => c.CONTEXTNAME).FirstOrDefault(),
+                            dataItemName = a.DATAITEMNAME,
+                            contextId = a.CONTEXTID,
+                            valueTypeId = a.VALUETYPEID
+
+                        }).FirstOrDefault();
+            return data;
+        }
+
+        public List<DynamicContextListViewModel> GetDynamicBusinessRuleItemValueListByItemId(int dataItemId)
+        {
+            var dynamicCntxModel = new List<DynamicContextListViewModel>();
+            var dataItem = context.TBL_WORKFLOW_DATA_ITEM_DEFINITION.Find(dataItemId);
+            bool isBoolValueType = context.TBL_WFCONTEXT_VALUE_TYPE.Where(x => x.VALUETYPEID == dataItem.VALUETYPEID && x.VALUETYPENAME.ToUpper() == "BOOLEAN" && x.INUSE == true).Any();
+
+            if (isBoolValueType)
+            {
+                var boolList_False = new DynamicContextListViewModel() { id = 0, value = "False" };
+                var boolList_True = new DynamicContextListViewModel() { id = 1, value = "True" };
+
+                dynamicCntxModel.Add(boolList_False);
+                dynamicCntxModel.Add(boolList_True);
+
+                return dynamicCntxModel;
+            }
+
+            if (dataItemId == 10)//BUSINESS UNIT LIST
+            {
+                var businessunits = context.TBL_PROFILE_BUSINESS_UNIT.ToList();
+                foreach (var item in businessunits)
+                {
+                    var prod = new DynamicContextListViewModel()
+                    {
+                        id = item.BUSINESSUNITID,
+                        value = item.BUSINESSUNITNAME
+                    };
+                    dynamicCntxModel.Add(prod);
+                }
+
+            }
+            if (dataItemId == 15) //PRODUCT LIST
+            {
+                var prodList = context.TBL_PRODUCT.ToList();
+                foreach (var item in prodList)
+                {
+                    var prod = new DynamicContextListViewModel()
+                    {
+                        id = item.PRODUCTID,
+                        value = item.PRODUCTNAME
+                    };
+                    dynamicCntxModel.Add(prod);
+                }
+            }
+
+            return dynamicCntxModel;
+        }
+
+        public IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowItemExpression()
+        {
+            var data = (from a in context.TBL_WORKFLOW_ITEM_EXPRESSION
+                        join d in context.TBL_WORKFLOW_DATA_ITEM_DEFINITION on a.DATAITEMID equals d.DATAITEMID
+
+                        select new DynamicWorkflowViewModel
+                        {
+                            expressionId = a.EXPRESSIONID,
+                            contextId = a.CONTEXTID,
+                            valueTypeId = d.VALUETYPEID,
+                            dataItemId = a.DATAITEMID,
+                            contextName = context.TBL_WORKFLOW_CONTEXT.Where(c => c.CONTEXTID == a.CONTEXTID).Select(c => c.CONTEXTNAME).FirstOrDefault(),
+                            dataItemName = context.TBL_WORKFLOW_DATA_ITEM_DEFINITION.Where(c => c.DATAITEMID == a.DATAITEMID).Select(c => c.DATAITEMNAME).FirstOrDefault(),
+                            value = a.BOOLEANVALUE != null ? a.BOOLEANVALUE.ToString() : a.TEXTVALUE != string.Empty ? a.TEXTVALUE : a.IDVALUE != null ? a.IDVALUE.ToString() : "",
+                            expression = a.EXPRESSION,
+                            comparisonId = a.COMPARISONID,
+                            workflowExpression = context.TBL_WORKFLOW_DATA_ITEM_DEFINITION.Where(c => c.DATAITEMID == a.DATAITEMID).Select(c => c.DATAITEMNAME).FirstOrDefault() + " " +
+                                                context.TBL_OPERATORS.Where(c => c.OPERATORID == a.COMPARISONID).Select(c => c.OPERATOR).FirstOrDefault() + " " + a.EXPRESSION,
+                            approvalBusinessRuleId = a.APPROVALBUSINESSRULEID,
+                            approvalBusinessRule = context.TBL_APPROVAL_BUSINESS_RULE.Where(c => c.APPROVALBUSINESSRULEID == a.APPROVALBUSINESSRULEID).Select(c => c.DESCRIPTION).FirstOrDefault(),
+
+                        }).ToList();
+            return data;
+        }
+
+        public bool CreateDynamicWorkflowItemExpression(DynamicWorkflowViewModel model)
+        {
+            if (admin.IsSuperAdmin(model.createdBy) == true)
+            {
+                var expression = new TBL_WORKFLOW_ITEM_EXPRESSION
+                {
+                    CONTEXTID = model.contextId,
+                    DATAITEMID = model.dataItemId,
+                    COMPARISONID = model.comparisonId,
+                    EXPRESSION = model.value,
+                    IDVALUE = model.idValue,
+                    TEXTVALUE = model.textValue,
+                    BOOLEANVALUE = model.booleanValue,
+                    WORKFLOWEXPRESSION = model.dataItemId + "" + model.comparisonId + "" + model.value,
+                    APPROVALBUSINESSRULEID = model.approvalBusinessRuleId
+                };
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.BusinessRuleAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"New Dynamic Workflow businessrul '{ model.workflowExpression }' created.",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+                this.auditTrail.AddAuditTrail(audit);
+                context.TBL_WORKFLOW_ITEM_EXPRESSION.Add(expression);
+
+            }
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateDynamicWorkflowItemExpression(DynamicWorkflowViewModel model, int expressionId)
+        {
+            var expre = context.TBL_WORKFLOW_ITEM_EXPRESSION.FirstOrDefault(x => x.EXPRESSIONID == expressionId);
+            if (expre != null)
+            {
+                expre.CONTEXTID = model.contextId;
+                expre.DATAITEMID = model.dataItemId;
+                expre.COMPARISONID = model.comparisonId;
+                expre.EXPRESSION = model.value;
+                expre.WORKFLOWEXPRESSION = model.dataItemName + " " + model.comparisonId + " " + model.value;
+                expre.APPROVALBUSINESSRULEID = model.approvalBusinessRuleId;
+            }
+
+            var saved = context.SaveChanges() > 0;
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.BusinessRuleUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"New Dynamic Workflow business rule '{ model.workflowExpression }' updated.",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            return saved;
         }
     }
 }

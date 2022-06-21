@@ -23,6 +23,9 @@ namespace FintrakBanking.Entities.Models
 
         //[Column(TypeName = "money")]
         public decimal MAXIMUMAMOUNT { get; set; }
+        public decimal? INVESTMENTGRADEAMOUNT { get; set; }
+        public decimal? STANDARDGRADEAMOUNT { get; set; }
+        public decimal? RENEWALLIMIT { get; set; }
 
         public short PROCESSVIEWSCOPEID { get; set; }
 
