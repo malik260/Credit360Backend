@@ -1,10 +1,8 @@
 namespace FintrakBanking.Entities.Models
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("TBL_APPROVAL_LEVEL_STAFF")]
     public partial class TBL_APPROVAL_LEVEL_STAFF
@@ -18,6 +16,9 @@ namespace FintrakBanking.Entities.Models
 
         //[Column(TypeName = "money")]
         public decimal MAXIMUMAMOUNT { get; set; }
+        public decimal? INVESTMENTGRADEAMOUNT { get; set; }
+        public decimal? STANDARDGRADEAMOUNT { get; set; }
+        public decimal? RENEWALLIMIT { get; set; }
 
         public short PROCESSVIEWSCOPEID { get; set; }
 

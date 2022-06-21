@@ -41287,7 +41287,6 @@ namespace FintrakBanking.Repositories.Credit
                             emailAddress = ln.EMAILADDRESS,
                             accountNumber = ln.ACCOUNTNUMBER,
                             address = ln.ADDRESS,
-                            totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m),
                             amountRecovered = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID && (DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Month == DbFunctions.TruncateTime(month).Value.Month && DbFunctions.TruncateTime(x.COLLECTIONDATE).Value.Year == DbFunctions.TruncateTime(month).Value.Year)).Sum(x => x.AMOUNTRECOVERED ?? 0m),
                             totalRecoveryAssign = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID).Sum(x => x.AMOUNTRECOVERED ?? 0m),
                             allAmountRecovered = context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Where(x => x.ACCREDITEDCONSULTANT == ln.ACCREDITEDCONSULTANTID).Sum(x => x.AMOUNTRECOVERED ?? 0m)
@@ -41297,6 +41296,8 @@ namespace FintrakBanking.Repositories.Credit
             foreach(var i in records)
             {
                 i.currentDate = monthInWord;
+                i.totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m) + i.amountRecovered;
+                            
                 if (i.totalRecoveryAmount == null || i.totalRecoveryAmount == 0)
                 {
                     i.totalRecoveryAssigned = i.totalRecoveryAssign;

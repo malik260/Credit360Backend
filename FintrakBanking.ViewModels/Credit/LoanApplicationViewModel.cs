@@ -262,6 +262,14 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalExposureAmount { get; set; }
         public string countryCode { get; set; }
         public string createdByName { get; set; }
+
+        public int? creditGradeId { get; set; }
+        public decimal investmentGradeLimit { get; set; }
+        public decimal standardGradeLimit { get; set; }
+        public decimal renewalLimit { get; set; }
+        public TBL_APPROVAL_LEVEL_STAFF approvalLevelStaff { get; set; }
+
+
     }
 
     public class InterestIncomeViewModel
@@ -1042,6 +1050,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isOnLending { get; set; }
         public bool isInterventionFunds { get; set; }
         public bool isAgricRelated { get; set; }
+        public bool isSyndicated { get; set; }  
     }
 
     public class LoanApplicationTagsLMSViewModel : GeneralEntity
@@ -1052,6 +1061,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isOnLending { get; set; }
         public bool? isInterventionFunds { get; set; }
         public bool isAgricRelated { get; set; }
+        public bool isSyndicated { get; set; }
     }
 
 
