@@ -26,7 +26,7 @@ namespace FintrakBanking.ViewModels.Customer
         public int? numberOfEmployees { get; set; }
         public int? countryOfParentCompanyId { get; set; }
         public string companyStructure { get; set; }
-        public int noOfFemaleEmployees { get; set; }
+        public int? noOfFemaleEmployees { get; set; }
         public bool isStartUp { get; set; }
         public bool isFirstTimeCredit { get; set; }
         public string fullName { get; set; }
