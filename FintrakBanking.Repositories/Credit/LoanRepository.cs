@@ -5023,7 +5023,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //var coreBankingRef = entity.coreBankingRef;
 
-            var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
+            /*var validateRef = GetLoanBookingDetailFromFlexcube(entity.coreBankingRef);
             if (validateRef.response_code != "00")
             {
                 throw new APIErrorException("Core Banking API Error 205 " + validateRef.response_message + " - Kindly Contact System Administrator!");
@@ -5046,7 +5046,7 @@ namespace FintrakBanking.Repositories.Credit
             if (refExist3 != null)
             {
                 throw new APIErrorException("Sorry Flexcube reference " + entity.coreBankingRef + " has already been used for a contingent facility refernce number " + refExist3.LOANREFERENCENUMBER);
-            }
+            }*/
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
             var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
@@ -5056,10 +5056,10 @@ namespace FintrakBanking.Repositories.Credit
 
             var fullCustomer = customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME;
 
-            if (validateRef.loandetailsresp[0].customer_no != customer.CUSTOMERCODE)
+            /*if (validateRef.loandetailsresp[0].customer_no != customer.CUSTOMERCODE)
             {
                 throw new APIErrorException("Sorry Customer ID " + validateRef.loandetailsresp[0].customer_no + " (" + validateRef.loandetailsresp[0].customer_name + ") did not match that of Customer on Credit360  " + customer.CUSTOMERCODE + " (" + fullCustomer +")" );
-            }
+            }*/
 
 
             var loanBrief = "for customer: (" + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " Customer Code:" + customer.CUSTOMERCODE + ")" +
