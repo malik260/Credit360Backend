@@ -114,7 +114,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerGroupName { get; set; }
         public int? termSheetCode { get; set; }
 
-    public string loanTypeName { get; set; }
+        public string loanTypeName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string tenorModeName { get; set; }

@@ -1788,9 +1788,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                                AllowMultipleInitiator = x.Mapping.ALLOWMULTIPLEINITIATOR,
                                RoleIdToRoute = x.Level.ROLEIDTOROUTE,
                                IsPostApprovalReviewer = x.Level.ISPOSTAPPROVALREVIEWER,
-                               InvestmentGradeLimit = (decimal)x.Level.INVESTMENTGRADEAMOUNT,
-                               StandardGradeLimit = (decimal)x.Level.STANDARDGRADEAMOUNT,
-                               RenewalLimit = (decimal)x.Level.RENEWALLIMIT
+                               InvestmentGradeLimit = x.Level.INVESTMENTGRADEAMOUNT,
+                               StandardGradeLimit = x.Level.STANDARDGRADEAMOUNT,
+                               RenewalLimit = x.Level.RENEWALLIMIT,
+                               IsSyndicated = x.Level.ISSYNDICATED
                            })
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition)
@@ -1899,6 +1900,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
             if (rule.ESRM && levelBusinessRule.esrm) flagChecked = true;
             if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = true;
+            if (rule.ISSYNDICATED && levelBusinessRule.isSyndicated) flagChecked = true;
             //if (rule.ISFORREVOLVINGFACILITY && levelBusinessRule.isRevolvingFacility) flagChecked = true;
             if (rule.ISFORRENEWAL)
             {

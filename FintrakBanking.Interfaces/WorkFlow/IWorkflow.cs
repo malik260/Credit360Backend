@@ -144,9 +144,10 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public bool AllowMultipleInitiator { get; set; }
         public int? RoleIdToRoute { get; set; }
         public bool IsPostApprovalReviewer { get; set; }
-        public decimal InvestmentGradeLimit { get; set; }
-        public decimal StandardGradeLimit { get; set; }
-        public decimal RenewalLimit { get; set; }
+        public decimal? InvestmentGradeLimit { get; set; }
+        public decimal? StandardGradeLimit { get; set; }
+        public decimal? RenewalLimit { get; set; }
+        public bool IsSyndicated { get; set; }
     }
 
 }
