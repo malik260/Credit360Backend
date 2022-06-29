@@ -1528,7 +1528,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool WithinAllLimits()
         {
-            if (this.level.ISPOSTAPPROVALREVIEWER == true) return true;
+            if (this.level.IsPostApprovalReviewer == true) return true;
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
             if (level == null ) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
             if (this.nextLevelId != null)
