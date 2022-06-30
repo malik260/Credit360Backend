@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Credit
                 var applicationDate = general.GetApplicationDate();
                 List<TBL_LOAN_APPLICATION_DETAIL> items = null;
                 var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
-                appl.CREDITGRAGEID = model.creditGradeId;
+                appl.CREDITGRADEID = model.creditGradeId;
                 // LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
                 var staff = context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).FirstOrDefault();
 
@@ -3552,7 +3552,7 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID,
-            creditGradeId = x.a.CREDITGRAGEID,
+            creditGradeId = x.a.CREDITGRADEID,
             approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f=>f.STAFFID == staffId)
         }).ToListAsync();
 
@@ -3561,20 +3561,19 @@ namespace FintrakBanking.Repositories.Credit
                 query = query.Where(q => q.toStaffId == null).ToList();
             }
 
-            applications = query.AsQueryable().Where(x => x.currentApprovalLevelTypeId != 2 && (
-                              (x.creditGradeId > 0 && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade
-                                   && (x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount
-                                       && x.approvalLevelStaff.STAFFID == staffId))
-                              || (x.creditGradeId == (int)CreditGradeEnum.StandardGrade
-                                   && (x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount
-                                       && x.approvalLevelStaff.STAFFID == staffId))
-                              || (x.creditGradeId == (int)CreditGradeEnum.RenewalGrade
-                                   && (x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount
-                                       && x.approvalLevelStaff.STAFFID == staffId))
-                              || x.approvalLevelStaff.STAFFID != staffId
-                              || (x.creditGradeId <= 0 || x.creditGradeId == null)))
+
+            applications = query.AsQueryable()
+                .Where(x => x.currentApprovalLevelTypeId != 2 )
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+
+            applications = applications.Where(x => (x.approvalLevelStaff == null) || (x.approvalLevelStaff !=null &&  x.approvalLevelStaff.STAFFID != staffId) || (x.creditGradeId <= 0 || x.creditGradeId == null)
+            || (
+                (x.approvalLevelStaff != null && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount)
+                || (x.approvalLevelStaff != null && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount)
+                || (x.approvalLevelStaff != null && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount)
+               )
+               );
 
             //applications = query.AsQueryable()
             //    .Where(x => x.currentApprovalLevelTypeId != 2)
@@ -3981,24 +3980,22 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID,
-            creditGradeId = x.a.CREDITGRAGEID,
+            creditGradeId = x.a.CREDITGRADEID,
         }).ToList();
 
-            
-            applications = query.AsQueryable().Where( x => x.currentApprovalLevelTypeId != 2 && (
-                               (x.creditGradeId > 0 && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade
-                                    && (x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount
-                                        && x.approvalLevelStaff.STAFFID == staffId))
-                               || (x.creditGradeId == (int)CreditGradeEnum.StandardGrade
-                                    && (x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount
-                                        && x.approvalLevelStaff.STAFFID == staffId))
-                               || (x.creditGradeId == (int)CreditGradeEnum.RenewalGrade
-                                    && (x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount
-                                        && x.approvalLevelStaff.STAFFID == staffId))
-                               || x.approvalLevelStaff.STAFFID != staffId
-                               || (x.creditGradeId <= 0 || x.creditGradeId == null)))
-                .GroupBy(d => d.loanApplicationId)
-                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+
+            applications = query.AsQueryable()
+                            .Where(x => x.currentApprovalLevelTypeId != 2)
+                            .GroupBy(d => d.loanApplicationId)
+                            .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+
+            applications = applications.Where(x => (x.approvalLevelStaff == null) || (x.approvalLevelStaff != null && x.approvalLevelStaff.STAFFID != staffId) || (x.creditGradeId <= 0 || x.creditGradeId == null)
+            || (
+                (x.approvalLevelStaff != null && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount)
+                || (x.approvalLevelStaff != null && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount)
+                || (x.approvalLevelStaff != null && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount)
+               )
+               );
 
             return applications;
 
