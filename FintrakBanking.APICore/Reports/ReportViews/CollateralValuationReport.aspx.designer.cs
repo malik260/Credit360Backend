@@ -7,29 +7,31 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FintrakBanking.APICore.Reports.ReportViews {
-    
-    
-    public partial class CollateralValuationReport {
-        
+namespace FintrakBanking.APICore.Reports.ReportViews
+{
+
+
+    public partial class CollateralValuationReport
+    {
+
         /// <summary>
-        /// form1 control.
+        /// form control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-        
+        protected global::System.Web.UI.HtmlControls.HtmlForm form;
+
         /// <summary>
-        /// ScriptManager1 control.
+        /// ScriptManager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.ScriptManager ScriptManager1;
-        
+        protected global::System.Web.UI.ScriptManager ScriptManager;
+
         /// <summary>
         /// ReportViewer control.
         /// </summary>

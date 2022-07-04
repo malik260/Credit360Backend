@@ -2707,18 +2707,10 @@
           <DataField>field1</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="field2">
-          <DataField>field2</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="field3">
-          <DataField>field3</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>LoanDataSet</rd:DataSetName>
-        <rd:SchemaPath>C:\C360\Access\Access\ReportDeveloper\ReportDeveloper\ReportDataset\LoanDataSet.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\AccessBankCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\LoanDataSet.xsd</rd:SchemaPath>
         <rd:TableName>CorporateCustomerCreation</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
