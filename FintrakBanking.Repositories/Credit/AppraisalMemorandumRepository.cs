@@ -1010,6 +1010,8 @@ namespace FintrakBanking.Repositories.Credit
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
+
+
             return applications;
         }
 
@@ -3561,25 +3563,19 @@ namespace FintrakBanking.Repositories.Credit
                 query = query.Where(q => q.toStaffId == null).ToList();
             }
 
-            applications = query.AsQueryable().Where(x => x.currentApprovalLevelTypeId != 2 && (
-                              (x.creditGradeId > 0 && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade
-                                   && (x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount
-                                       && x.approvalLevelStaff.STAFFID == staffId))
-                              || (x.creditGradeId == (int)CreditGradeEnum.StandardGrade
-                                   && (x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount
-                                       && x.approvalLevelStaff.STAFFID == staffId))
-                              || (x.creditGradeId == (int)CreditGradeEnum.RenewalGrade
-                                   && (x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount
-                                       && x.approvalLevelStaff.STAFFID == staffId))
-                              || x.approvalLevelStaff.STAFFID != staffId
-                              || (x.creditGradeId <= 0 || x.creditGradeId == null)))
+            applications = query.AsQueryable()
+                .Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
-            //applications = query.AsQueryable()
-            //    .Where(x => x.currentApprovalLevelTypeId != 2)
-            //    .GroupBy(d => d.loanApplicationId)
-            //    .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+            applications = applications.Where(x=>(x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId) || (x.approvalLevelStaff.STAFFID != staffId || (x.creditGradeId <= 0 || x.creditGradeId == null))
+            && (
+                (x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount )
+                || (x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount )
+                || (x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount )
+               ));
+
+            
             //var test = applications.ToList();
             //applications = test.AsQueryable();
             return applications;
@@ -3985,20 +3981,16 @@ namespace FintrakBanking.Repositories.Credit
         }).ToList();
 
             
-            applications = query.AsQueryable().Where( x => x.currentApprovalLevelTypeId != 2 && (
-                               (x.creditGradeId > 0 && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade
-                                    && (x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount
-                                        && x.approvalLevelStaff.STAFFID == staffId))
-                               || (x.creditGradeId == (int)CreditGradeEnum.StandardGrade
-                                    && (x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount
-                                        && x.approvalLevelStaff.STAFFID == staffId))
-                               || (x.creditGradeId == (int)CreditGradeEnum.RenewalGrade
-                                    && (x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount
-                                        && x.approvalLevelStaff.STAFFID == staffId))
-                               || x.approvalLevelStaff.STAFFID != staffId
-                               || (x.creditGradeId <= 0 || x.creditGradeId == null)))
+            applications = query.AsQueryable().Where( x => x.currentApprovalLevelTypeId != 2 )
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+
+            applications = applications.Where(x => (x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId) || (x.approvalLevelStaff.STAFFID != staffId || (x.creditGradeId <= 0 || x.creditGradeId == null))
+            && (
+                (x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount)
+                || (x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount)
+                || (x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount)
+               ));
 
             return applications;
 
