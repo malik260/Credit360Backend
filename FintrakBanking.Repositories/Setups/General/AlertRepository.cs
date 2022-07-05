@@ -66173,7 +66173,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{customerName}}", customerName);
                     alertTemplate = alertTemplate.Replace("@{{daysToExpire}}", numberOfDays.ToString());
                     alertTemplate = alertTemplate.Replace("@{{detail}}", result);
-                    emailList = rmEmail + ";" + accountOfficerEmail;
+                    emailList = zh?.EMAIL + ";" + gh?.EMAIL + ";" + rm?.EMAIL + ";" + staff?.EMAIL + ";" + accountOfficerEmail;
                     emailList = emailList + defaultEmail;
                     alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;

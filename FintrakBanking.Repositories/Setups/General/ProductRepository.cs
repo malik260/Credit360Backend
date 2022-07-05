@@ -2096,7 +2096,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         context.SaveChanges();
                         productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
                         context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(productBehaviour);
-                        output = await context.SaveChangesAsync() > 0;
+                        output = context.SaveChanges() > 0;
 
                         //productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
 
