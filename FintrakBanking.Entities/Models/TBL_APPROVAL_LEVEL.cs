@@ -43,6 +43,8 @@ namespace FintrakBanking.Entities.Models
 
         //[Column(TypeName = "money")]
         public decimal? INVESTMENTGRADEAMOUNT { get; set; }
+        public decimal? STANDARDGRADEAMOUNT { get; set; }
+        public decimal? RENEWALLIMIT { get; set; }
 
         public int NUMBEROFUSERS { get; set; }
 

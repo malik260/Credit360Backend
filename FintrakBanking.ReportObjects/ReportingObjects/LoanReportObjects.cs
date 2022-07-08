@@ -5183,8 +5183,7 @@ namespace FintrakBanking.ReportObjects
                     join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                     join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                     join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
-                    join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID into ccd
-                    from cd in ccd.DefaultIfEmpty()
+                    join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
                     //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                     join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                     join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
@@ -5241,8 +5240,7 @@ namespace FintrakBanking.ReportObjects
                              join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                              join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                              join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
-                             join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID into ccd
-                             from cd in ccd.DefaultIfEmpty()
+                             join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
                              //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                              join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                              join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
@@ -5300,8 +5298,7 @@ namespace FintrakBanking.ReportObjects
                               join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                               join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                               join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
-                              join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID into ccd
-                              from cd in ccd.DefaultIfEmpty()
+                              join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
                               //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                               join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                               join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
@@ -5355,15 +5352,28 @@ namespace FintrakBanking.ReportObjects
                               }).ToList();
             var result = data.Union(revolving).Union(contingent).Distinct().ToList();
 
-            foreach(var i in result)
+            foreach (var i in result)
             {
                 var ci = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == i.customerId).FirstOrDefault();
-                i.firstTimeAccessToCredit = ci.ISFIRSTTIMECREDIT ? "Yes" : "No";
-                i.startUp = ci.ISSTARTUP ? "Yes" : "No";
-                i.msmeAnnualTurnover = ci.ANNUALTURNOVER;
-                i.noOfEmployees = ci.NUMBEROFEMPLOYEES ?? 0;
-                i.noOfFemaleEmployees = ci.NOOFFEMALEEMPLOYEES;
-                i.totalAsset = ci.TOTALASSETS;
+                if (ci != null)
+                {
+                    i.firstTimeAccessToCredit = ci.ISFIRSTTIMECREDIT ? "Yes" : "No";
+                    i.startUp = ci.ISSTARTUP ? "Yes" : "No";
+                    i.msmeAnnualTurnover = ci.ANNUALTURNOVER;
+                    i.noOfEmployees = ci.NUMBEROFEMPLOYEES ?? 0;
+                    i.noOfFemaleEmployees = ci.NOOFFEMALEEMPLOYEES;
+                    i.totalAsset = ci.TOTALASSETS ?? 0;
+                }
+                else
+                {
+                    i.firstTimeAccessToCredit = "Nil";
+                    i.startUp = "Nil";
+                    i.msmeAnnualTurnover = "0.00";
+                    i.noOfEmployees = 0;
+                    i.noOfFemaleEmployees = 0;
+                    i.totalAsset = 0;
+                }
+
             }
             return result;
         }

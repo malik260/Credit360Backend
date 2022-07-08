@@ -52,6 +52,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             groupId = (int)a.TBL_APPROVAL_LEVEL.GROUPID,
                             // operationId = b.OperationId,
                             maximumAmount = a.MAXIMUMAMOUNT,
+                            investmentGradeAmount = a.INVESTMENTGRADEAMOUNT,
+                            standardGradeAmount = a.STANDARDGRADEAMOUNT,
+                            renewalLimit = a.RENEWALLIMIT,
                             processViewScope = a.PROCESSVIEWSCOPEID,
                             canViewDocument = a.CANVIEWDOCUMENT,
                             canViewUploadedFile = a.CANVIEWUPLOAD,
@@ -119,6 +122,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             groupId = (int)a.TBL_APPROVAL_LEVEL.GROUPID,
                             operationId = d.OPERATIONID,
                             maximumAmount = a.MAXIMUMAMOUNT,
+                            investmentGradeAmount = a.INVESTMENTGRADEAMOUNT,
+                            standardGradeAmount = a.STANDARDGRADEAMOUNT,
+                            renewalLimit = a.RENEWALLIMIT,
                             processViewScope = a.PROCESSVIEWSCOPEID,
                             canViewDocument = a.CANVIEWDOCUMENT,
                             canViewUploadedFile = a.CANVIEWUPLOAD,
@@ -221,6 +227,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var data = new TBL_APPROVAL_LEVEL_STAFF
                 {
                     MAXIMUMAMOUNT = model.maximumAmount,
+                    INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+                    STANDARDGRADEAMOUNT = model.standardGradeAmount,
+                    RENEWALLIMIT = model.renewalLimit,
                     STAFFID = model.staffId,
                     APPROVALLEVELID = model.approvalLevelId,
                     POSITION = model.position,
@@ -268,6 +277,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
                 {
                     MAXIMUMAMOUNT = model.maximumAmount,
+                    INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+                    STANDARDGRADEAMOUNT = model.standardGradeAmount,
+                    RENEWALLIMIT = model.renewalLimit,
                     STAFFID = model.staffId,
                     APPROVALLEVELID = model.approvalLevelId,
                     POSITION = model.position,
@@ -343,6 +355,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         select new ApprovalLevelStaffViewModel
                         {
                             maximumAmount = a.MAXIMUMAMOUNT,
+                            investmentGradeAmount = a.INVESTMENTGRADEAMOUNT,
+                            standardGradeAmount = a.STANDARDGRADEAMOUNT,
+                            renewalLimit = a.RENEWALLIMIT,
                             processViewScope = a.PROCESSVIEWSCOPEID,
                             canViewDocument = a.CANVIEWDOCUMENT,
                             canViewUploadedFile = a.CANVIEWUPLOAD,
@@ -376,6 +391,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 if (data == null) return false;
 
                 data.MAXIMUMAMOUNT = model.maximumAmount;
+                data.INVESTMENTGRADEAMOUNT = model.investmentGradeAmount;
+                data.STANDARDGRADEAMOUNT = model.standardGradeAmount;
+                data.RENEWALLIMIT = model.renewalLimit;
                 data.STAFFID = model.staffId;
                 data.APPROVALLEVELID = model.approvalLevelId;
                 data.POSITION = model.position;
@@ -420,6 +438,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
                     {
                         MAXIMUMAMOUNT = model.maximumAmount,
+                        INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+                        STANDARDGRADEAMOUNT = model.standardGradeAmount,
+                        RENEWALLIMIT = model.renewalLimit,
                         STAFFID = model.staffId,
                         APPROVALLEVELID = model.approvalLevelId,
                         POSITION = model.position,
@@ -527,6 +548,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
                     {
                         MAXIMUMAMOUNT = model.MAXIMUMAMOUNT,
+                        INVESTMENTGRADEAMOUNT = model.INVESTMENTGRADEAMOUNT,
+                        STANDARDGRADEAMOUNT = model.STANDARDGRADEAMOUNT,
+                        RENEWALLIMIT = model.RENEWALLIMIT,
                         STAFFID = model.STAFFID,
                         APPROVALLEVELID = model.APPROVALLEVELID,
                         POSITION = model.POSITION,
@@ -661,6 +685,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var data = new TBL_APPROVAL_LEVEL_STAFF
             {
                 MAXIMUMAMOUNT = model.MAXIMUMAMOUNT,
+                STANDARDGRADEAMOUNT = model.STANDARDGRADEAMOUNT,
+                INVESTMENTGRADEAMOUNT = model.INVESTMENTGRADEAMOUNT,
+                RENEWALLIMIT = model.RENEWALLIMIT,
                 STAFFID = model.STAFFID,
                 APPROVALLEVELID = model.APPROVALLEVELID,
                 POSITION = model.POSITION,
@@ -683,6 +710,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var data = new TBL_APPROVAL_LEVEL_STAFF
             {
                 MAXIMUMAMOUNT = model.MAXIMUMAMOUNT,
+                STANDARDGRADEAMOUNT = model.STANDARDGRADEAMOUNT,
+                INVESTMENTGRADEAMOUNT = model.INVESTMENTGRADEAMOUNT,
+                RENEWALLIMIT = model.RENEWALLIMIT,
                 STAFFID = model.STAFFID,
                 APPROVALLEVELID = model.APPROVALLEVELID,
                 POSITION = model.POSITION,

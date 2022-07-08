@@ -9058,7 +9058,7 @@ namespace FintrakBanking.Repositories.Credit
                 entity.WITHINSTRUCTION = model.withInstruction;
                 entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
                 entity.ISAGRICRELATED = model.isAgricRelated;
-
+                entity.ISSYNDICATED = model.isSyndicated;
                 entity.LASTUPDATEDBY = user.createdBy;
                 entity.DATETIMEUPDATED = DateTime.Now;
             }
@@ -9078,6 +9078,7 @@ namespace FintrakBanking.Repositories.Credit
                 withInstruction = entity.WITHINSTRUCTION,
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
                 isAgricRelated = entity.ISAGRICRELATED,
+                isSyndicated = entity.ISSYNDICATED,
             };
         }
 
@@ -9093,7 +9094,7 @@ namespace FintrakBanking.Repositories.Credit
                 withInstruction = entity.WITHINSTRUCTION,
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
                 isAgricRelated = entity.ISAGRICRELATED,
-
+                isSyndicated = entity.ISSYNDICATED,
             };
         }
 
@@ -9108,6 +9109,7 @@ namespace FintrakBanking.Repositories.Credit
                 entity.WITHINSTRUCTION = model.withInstruction;
                 entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
                 entity.ISAGRICRELATED = model.isAgricRelated;
+                entity.ISSYNDICATED = model.isSyndicated;
 
                 entity.LASTUPDATEDBY = user.createdBy;
                 entity.DATETIMEUPDATED = DateTime.Now;

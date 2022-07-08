@@ -362,6 +362,7 @@ namespace FintrakBanking.Repositories.Credit
                 var applicationDate = general.GetApplicationDate();
                 List<TBL_LOAN_APPLICATION_DETAIL> items = null;
                 var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+                appl.CREDITGRAGEID = model.creditGradeId;
                 // LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
                 var staff = context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).FirstOrDefault();
 
@@ -428,6 +429,7 @@ namespace FintrakBanking.Repositories.Credit
                             workflow.Amount = appl.TOTALEXPOSUREAMOUNT;   //model.legalLendingLimit;
                             workflow.FacilityAmount = appl.APPLICATIONAMOUNT;
                             workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
+                           // workflow.CreditGradeId = appl.CREDITGRAGEID;
                             workflow.LogActivity();
 
                             //workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
@@ -463,6 +465,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.IsFromPc = model.isFromPc;
                     workflow.IsFlowTest = model.isFlowTest;
                     workflow.OwnerId = appl.OWNEDBY;
+                    //workflow.CreditGradeId = appl.CREDITGRAGEID;
                     workflow.SkipLimitsCheck = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISREALATEDPARTY == true);
                     var details = appl.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.DELETED == false
                                                  && d.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.CAMBased
@@ -480,6 +483,7 @@ namespace FintrakBanking.Repositories.Credit
                         OnLending = appl.ISONLENDING,
                         InterventionFunds = appl.ISINTERVENTIONFUNDS,
                         isAgricRelated = appl.ISAGRICRELATED,
+                        isSyndicated = appl.ISSYNDICATED,
                         isRenewal = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.Renewal || d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.RenewalWithDecrease),
                         OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
                         DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
@@ -546,6 +550,7 @@ namespace FintrakBanking.Repositories.Credit
                                 detail.EXCHANGERATE = changed.exchangeRate;
                                 detail.LASTUPDATEDBY = model.createdBy;
                                 detail.DATETIMEUPDATED = DateTime.Now;
+                                
 
                                 if (model.isBusiness && model.forwardAction != (int)ApprovalStatusEnum.Referred) // DELETE OR UPDATE PROPOSED
                                 {
@@ -3954,7 +3959,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 levelIds.AddRange(general.GetStaffApprovalLevelIds(staffId, operationId).ToList());
             }
-
+            List<TBL_APPROVAL_LEVEL> approvalLevels = context.TBL_APPROVAL_LEVEL.Where(c => levelIds.Contains(c.APPROVALLEVELID)).ToList();
+            //context.TBL_APPROVAL_LEVEL.Where(c=>)
             var staffs = general.GetStaffRlieved(staffId);
             IQueryable<LoanApplicationViewModel> applications = null;
 
@@ -3966,6 +3972,8 @@ namespace FintrakBanking.Repositories.Credit
                 && x.COMPANYID == companyId
                 && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                 && x.ISADHOCAPPLICATION != true
+                
+               
             )
         .OrderByDescending(x => x.LOANAPPLICATIONID)
         .Join(
@@ -3973,7 +3981,8 @@ namespace FintrakBanking.Repositories.Credit
                 && x.APPROVALSTATEID != (int)ApprovalState.Ended
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.RESPONSESTAFFID == null
-                && levelIds.Contains((int)x.TOAPPROVALLEVELID)
+                && levelIds.Contains((int)x.TOAPPROVALLEVELID) 
+                
                 //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
                 && (staffs.Contains((int)x.TOSTAFFID))
             ),
@@ -4054,6 +4063,8 @@ namespace FintrakBanking.Repositories.Credit
             operationId = x.a.OPERATIONID,
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
             tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
+            creditGradeId = x.a.CREDITGRAGEID,
+            approvalLevelStaff = (TBL_APPROVAL_LEVEL_STAFF)x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF,
 
 
             globalsla = context.TBL_LOAN_APPLICATION_DETAIL
@@ -4067,7 +4078,19 @@ namespace FintrakBanking.Repositories.Credit
 
             
             applications = query.AsQueryable()
-                .Where(x => x.currentApprovalLevelTypeId != 2)
+                .Where(
+                x => x.currentApprovalLevelTypeId != 2
+                && (x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade
+                        && (x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount
+                            && x.approvalLevelStaff.STAFFID == staffId)
+                   || x.creditGradeId == (int)CreditGradeEnum.StandardGrade
+                        && (x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount
+                            && x.approvalLevelStaff.STAFFID == staffId)
+                   || x.creditGradeId == (int)CreditGradeEnum.RenewalGrade
+                        && (x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount
+                            && x.approvalLevelStaff.STAFFID == staffId)
+                   || x.approvalLevelStaff.STAFFID != staffId)
+                )
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 

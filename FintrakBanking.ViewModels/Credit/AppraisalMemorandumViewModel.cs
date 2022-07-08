@@ -63,6 +63,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isFromPc { get; set; }
         public int toStaffId { get; set; }
         public int ownerId { get; set; }
+        public int creditGradeId { get; set; }
         public string responseMessage { get; set; }
         public string responseCode { get; set; }
     }

@@ -11938,10 +11938,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnfield1;
             
-            private global::System.Data.DataColumn columnfield2;
-            
-            private global::System.Data.DataColumn columnfield3;
-            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public CorporateCustomerCreationDataTable() {
@@ -12265,22 +12261,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn field2Column {
-                get {
-                    return this.columnfield2;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn field3Column {
-                get {
-                    return this.columnfield3;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -12352,9 +12332,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string refNo, 
                         string customerCode, 
                         string totalAsset, 
-                        string field1, 
-                        string field2, 
-                        string field3) {
+                        string field1) {
                 CorporateCustomerCreationRow rowCorporateCustomerCreationRow = ((CorporateCustomerCreationRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         companyName,
@@ -12392,9 +12370,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         refNo,
                         customerCode,
                         totalAsset,
-                        field1,
-                        field2,
-                        field3};
+                        field1};
                 rowCorporateCustomerCreationRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowCorporateCustomerCreationRow);
                 return rowCorporateCustomerCreationRow;
@@ -12453,8 +12429,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columncustomerCode = base.Columns["customerCode"];
                 this.columntotalAsset = base.Columns["totalAsset"];
                 this.columnfield1 = base.Columns["field1"];
-                this.columnfield2 = base.Columns["field2"];
-                this.columnfield3 = base.Columns["field3"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -12532,10 +12506,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columntotalAsset);
                 this.columnfield1 = new global::System.Data.DataColumn("field1", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnfield1);
-                this.columnfield2 = new global::System.Data.DataColumn("field2", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnfield2);
-                this.columnfield3 = new global::System.Data.DataColumn("field3", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnfield3);
                 this.columncompanyName.Caption = "customerID";
                 this.columnfullName.Caption = "fintrakReferenceId";
                 this.columnbirthDate.Caption = "customerName";
@@ -23679,38 +23649,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string field2 {
-                get {
-                    try {
-                        return ((string)(this[this.tableCorporateCustomerCreation.field2Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'field2\' in table \'CorporateCustomerCreation\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCorporateCustomerCreation.field2Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string field3 {
-                get {
-                    try {
-                        return ((string)(this[this.tableCorporateCustomerCreation.field3Column]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'field3\' in table \'CorporateCustomerCreation\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCorporateCustomerCreation.field3Column] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public bool IscompanyNameNull() {
                 return this.IsNull(this.tableCorporateCustomerCreation.companyNameColumn);
             }
@@ -24139,30 +24077,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void Setfield1Null() {
                 this[this.tableCorporateCustomerCreation.field1Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Isfield2Null() {
-                return this.IsNull(this.tableCorporateCustomerCreation.field2Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setfield2Null() {
-                this[this.tableCorporateCustomerCreation.field2Column] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool Isfield3Null() {
-                return this.IsNull(this.tableCorporateCustomerCreation.field3Column);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void Setfield3Null() {
-                this[this.tableCorporateCustomerCreation.field3Column] = global::System.Convert.DBNull;
             }
         }
         

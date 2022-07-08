@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CorporateCustomerCreation.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.CorporateCustomerCreation" %>
-<%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
+<%@ Register assembly="Microsoft.ReportViewer.WebForms" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
 <!DOCTYPE html>
 
@@ -13,8 +13,9 @@
             <asp:ScriptManager ID="ScriptManager1" runat="server">
             </asp:ScriptManager>
         </div>
-        <rsweb:reportviewer id="ReportViewer" runat="server" height="800px" width="100%">
-        </rsweb:reportviewer>
+        <rsweb:ReportViewer KeepSessionAlive="false" ID="ReportViewer" runat="server" Height="800px" Width="100%">
+        </rsweb:ReportViewer>
     </form>
 </body>
 </html>
+

@@ -50,7 +50,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool? TerminateOnApproval { set; }
         string Flow_log { set; }
         bool SkipLimitsCheck { set; }
-        //bool? IgnorePostApprovalReviewwer { set; }
+        //int? CreditGradeId { set; }
+        //bool? IgnorePostApprovalReviewwer { set; }o
         List<WorkflowSetup> WorkflowSetup { get; }
         int? OwnerId { set; }
 
@@ -141,8 +142,13 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
         public TBL_APPROVAL_BUSINESS_RULE LevelBusinessRule { get; set; }
         public bool AllowMultipleInitiator { get; set; }
+        public int? RoleIdToRoute { get; set; }
         public int? ROLEIDTOROUTE { get; set; }
+        public bool IsPostApprovalReviewer { get; set; }
         public bool ISPOSTAPPROVALREVIEWER { get; set; }
+        public decimal InvestmentGradeLimit { get; set; }
+        public decimal StandardGradeLimit { get; set; }
+        public decimal RenewalLimit { get; set; }
     }
 
 }
