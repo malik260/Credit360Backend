@@ -169,7 +169,7 @@ namespace FintrakBanking.Entities.Models
         public int? LOANAPPROVEDLIMITID { get; set; }
 
         public int? FLOWCHANGEID { get; set; }
-        public int? CREDITGRAGEID { get; set; }
+        public int? CREDITGRADEID { get; set; }
 
         public bool? ISMULTIPLEPRODUCTDRAWDOWN { get; set; }
         public short? APPROVEDLINESTATUSID { get; set; }

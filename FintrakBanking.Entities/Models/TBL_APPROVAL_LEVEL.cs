@@ -42,9 +42,9 @@ namespace FintrakBanking.Entities.Models
         public decimal MAXIMUMAMOUNT { get; set; }
 
         //[Column(TypeName = "money")]
-        public decimal INVESTMENTGRADEAMOUNT { get; set; }
-        public decimal STANDARDGRADEAMOUNT { get; set; }
-        public decimal RENEWALLIMIT { get; set; }
+        public decimal? INVESTMENTGRADEAMOUNT { get; set; }
+        public decimal? STANDARDGRADEAMOUNT { get; set; }
+        public decimal? RENEWALLIMIT { get; set; }
 
         public int NUMBEROFUSERS { get; set; }
 

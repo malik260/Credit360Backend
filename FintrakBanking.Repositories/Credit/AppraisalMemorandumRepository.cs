@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Credit
                 var applicationDate = general.GetApplicationDate();
                 List<TBL_LOAN_APPLICATION_DETAIL> items = null;
                 var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
-                appl.CREDITGRAGEID = model.creditGradeId;
+                appl.CREDITGRADEID = model.creditGradeId;
                 // LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
                 var staff = context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).FirstOrDefault();
 
@@ -3262,6 +3262,8 @@ namespace FintrakBanking.Repositories.Credit
                     syndicationAmount = x.d.FIELD3,
                     conditionPrecedent = x.d.CONDITIONPRECIDENT,
                     conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
+                    creditGradeId = x.a.CREDITGRADEID,
+                    isSyndicated = x.a.ISSYNDICATED,
 
                 }).ToList();
             //var syndicated = context.TBL_LOAN_APPLICATION_DETAIL//.Where(x => x.LOANAPPLICATIONID == applicationId)
@@ -3554,8 +3556,8 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID,
-            creditGradeId = x.a.CREDITGRAGEID,
-            approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f=>f.STAFFID == staffId)
+            creditGradeId = x.a.CREDITGRADEID,
+            approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f=>f.STAFFID == staffId)
         }).ToListAsync();
 
             if (isSpecific)
@@ -3564,18 +3566,19 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             applications = query.AsQueryable()
-                .Where(x => x.currentApprovalLevelTypeId != 2)
+                .Where(x => x.currentApprovalLevelTypeId != 2 )
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
-            applications = applications.Where(x=>(x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId) || (x.approvalLevelStaff.STAFFID != staffId || (x.creditGradeId <= 0 || x.creditGradeId == null))
-            && (
-                (x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount )
-                || (x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount )
-                || (x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount )
-               ));
-
             
+            var investmentGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT < x.approvedAmount);
+            var standardGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT < x.approvedAmount);
+            var renewalLimitApp = applications.Where(x => x.approvalLevelStaff != null &&  x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT < x.approvedAmount);
+
+
+            applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp);
+
+
             //var test = applications.ToList();
             //applications = test.AsQueryable();
             return applications;
@@ -3977,7 +3980,7 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID,
-            creditGradeId = x.a.CREDITGRAGEID,
+            creditGradeId = x.a.CREDITGRADEID,
         }).ToList();
 
             
@@ -3985,12 +3988,13 @@ namespace FintrakBanking.Repositories.Credit
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
-            applications = applications.Where(x => (x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId) || (x.approvalLevelStaff.STAFFID != staffId || (x.creditGradeId <= 0 || x.creditGradeId == null))
-            && (
-                (x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount)
-                || (x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount)
-                || (x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount)
-               ));
+           
+            var investmentGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT < x.approvedAmount);
+            var standardGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT < x.approvedAmount);
+            var renewalLimitApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT < x.approvedAmount);
+
+
+            applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp);
 
             return applications;
 
