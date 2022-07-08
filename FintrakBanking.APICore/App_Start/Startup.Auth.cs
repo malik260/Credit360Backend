@@ -48,7 +48,9 @@ namespace FintrakBanking.APICore
 
                     if (!string.IsNullOrEmpty(origin))
                     {
+                        res.Headers.Set("Access-Control-Allow-Origin", "*");
                         res.Headers.Set("Access-Control-Allow-Origin", origin);
+
                     }
 
                     if (req.Method == "OPTIONS")
