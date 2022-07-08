@@ -15,9 +15,9 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public int? tenor { get; set; }
         public short? tenorModeId { get; set; }
         public decimal maximumAmount { get; set; }
-        public decimal investmentGradeAmount { get; set; }
-        public decimal standardGradeAmount { get; set; }
-        public decimal renewalLimit { get; set; }
+        public decimal? investmentGradeAmount { get; set; }
+        public decimal? standardGradeAmount { get; set; }
+        public decimal? renewalLimit { get; set; }
     
         public int numberOfUsers { get; set; }
         public int numberOfApprovals { get; set; }
