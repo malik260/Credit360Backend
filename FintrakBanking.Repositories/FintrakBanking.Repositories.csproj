@@ -119,7 +119,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\benjamin.gbaaikye\Documents\LIVE\Mazino\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
