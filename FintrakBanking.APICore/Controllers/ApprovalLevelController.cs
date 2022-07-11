@@ -406,6 +406,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
                 var data = repo.UpdateDynamicWorkflowItemExpression(model, expressionId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = data, message = "Record updated successfully" });
             }
