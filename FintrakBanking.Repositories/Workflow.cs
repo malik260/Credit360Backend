@@ -437,6 +437,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void AllocateBySBU()
         {
+
             List<StaffAllocatedjob> staffAllocations = new List<StaffAllocatedjob>();
 
             if (this.toStaffId != null) { return; }
@@ -481,7 +482,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
 
                 var orderedAllocation = staffAllocations.Where(x => staffInrole.Select(c => c.STAFFID).Contains(x.staffId)).OrderBy(x => x.pendingJobCount).FirstOrDefault();
-                if (this.toStaffId == null) { this.toStaffId = orderedAllocation.staffId; }
+                if (this.toStaffId == null) { this.toStaffId = orderedAllocation?.staffId; }
                 SaveFlowLog("After AllocateBySBU");
 
             }

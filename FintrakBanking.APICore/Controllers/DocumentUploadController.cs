@@ -102,7 +102,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("document-upload")]
-        public async Task<object> AddDocumentUploadAsync()
+        public async System.Threading.Tasks.Task<HttpResponseMessage> AddDocumentUploadAsync()
         {
 
             if (!Request.Content.IsMimeMultipartContent())
@@ -111,40 +111,36 @@ namespace FintrakBanking.APICore.Controllers
             }
 
             MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-            //await Task.Run(async () => await Request.Content.ReadAsMultipartAsync(provider));
-            await Task.FromResult(Request.Content.ReadAsMultipartAsync(provider).ContinueWith(t=> { 
-                if(t.IsFaulted || t.IsCanceled) { throw new Exception("Task got canceled!"); }
-            }));
             await Request.Content.ReadAsMultipartAsync(provider);
 
             if (!provider.FileStreams.Any())
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
             }
-          try {
-                var entity = new DocumentUploadViewModel();
-                entity.fileName = provider.FormData["fileName"];
-                entity.fileExtension = provider.FormData["fileExtension"];
-                entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
-                entity.isOriginalCopy = Convert.ToBoolean(provider.FormData["isOriginalCopy"]);
-                entity.documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]);
-                entity.issueDate = GetCulture(provider.FormData["issueDate"]);
-                entity.expiryDate = GetCulture(provider.FormData["expiryDate"]);
-                entity.targetReferenceNumber = provider.FormData["targetReferenceNumber"];
-                entity.operationId = Convert.ToInt32(provider.FormData["operationId"]);
-                entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
-                entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
-                entity.overwrite = provider.FormData["overwrite"] == "true";
-                entity.source = (int) DocUploadSourceEnum.InApp;
-                entity.countryCode = provider.FormData["X-COUNTRYCODE"];
-            var a = provider.FormData["targetId"];
+            try {
+            var entity = new DocumentUploadViewModel();
+            entity.fileName = provider.FormData["fileName"];
+            entity.fileExtension = provider.FormData["fileExtension"];
+            entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+            entity.isOriginalCopy = Convert.ToBoolean(provider.FormData["isOriginalCopy"]);
+            entity.documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]);
+            entity.issueDate = GetCulture(provider.FormData["issueDate"]);
+            entity.expiryDate = GetCulture(provider.FormData["expiryDate"]);
+            entity.targetReferenceNumber = provider.FormData["targetReferenceNumber"];
+            entity.operationId = Convert.ToInt32(provider.FormData["operationId"]);
+            entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
+            entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
+            entity.overwrite = provider.FormData["overwrite"] == "true";
+            entity.source = (int)DocUploadSourceEnum.InApp;
+            entity.countryCode = provider.FormData["X-COUNTRYCODE"];
+                var a = provider.FormData["targetId"];
 
-                if (provider.FormData["targetId"] != null && provider.FormData["targetId"]!= "undefined")
-                {
-                    entity.targetId = Convert.ToInt32(provider.FormData["targetId"]);
-                }
+            if (provider.FormData["targetId"] != null && provider.FormData["targetId"] != "undefined")
+            {
+                entity.targetId = Convert.ToInt32(provider.FormData["targetId"]);
+            }
 
-                    entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
             entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
             entity.applicationUrl = HttpContext.Current.Request.Path;
             entity.createdBy = token.GetStaffId;
@@ -158,6 +154,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
                 if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+                
             }
             else
             {
@@ -197,11 +194,11 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     if (response.result == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
                     if (response.result == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
-                    return response;
+                   // return response;
                 }
             }
 
-            }
+          }
             catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
 

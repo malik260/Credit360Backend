@@ -4064,7 +4064,7 @@ namespace FintrakBanking.Repositories.Credit
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
             tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
             creditGradeId = x.a.CREDITGRAGEID,
-            approvalLevelStaff = (TBL_APPROVAL_LEVEL_STAFF)x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF,
+            //approvalLevelStaff = (TBL_APPROVAL_LEVEL_STAFF)x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF,
 
 
             globalsla = context.TBL_LOAN_APPLICATION_DETAIL
@@ -4076,21 +4076,8 @@ namespace FintrakBanking.Repositories.Credit
             apiRequestId = x.a.APIREQUESTID
         }).ToList();
 
-            
-            applications = query.AsQueryable()
-                .Where(
-                x => x.currentApprovalLevelTypeId != 2
-                && (x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade
-                        && (x.approvalLevelStaff.INVESTMENTGRADEAMOUNT >= x.approvedAmount
-                            && x.approvalLevelStaff.STAFFID == staffId)
-                   || x.creditGradeId == (int)CreditGradeEnum.StandardGrade
-                        && (x.approvalLevelStaff.STANDARDGRADEAMOUNT >= x.approvedAmount
-                            && x.approvalLevelStaff.STAFFID == staffId)
-                   || x.creditGradeId == (int)CreditGradeEnum.RenewalGrade
-                        && (x.approvalLevelStaff.RENEWALLIMIT >= x.approvedAmount
-                            && x.approvalLevelStaff.STAFFID == staffId)
-                   || x.approvalLevelStaff.STAFFID != staffId)
-                )
+
+            applications = query.AsQueryable().Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
@@ -5197,9 +5184,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse GetWorkflowNextStatus(ForwardViewModel model)
         {
-            int operationId = (int)OperationsEnum.CreditAppraisal;
+            //int operationId = (int)OperationsEnum.CreditAppraisal; //old
             var applicationDate = general.GetApplicationDate();
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+            int operationId = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).FirstOrDefault().OPERATIONID;
 
             workflow.StaffId = model.createdBy;
             workflow.OperationId = operationId;
