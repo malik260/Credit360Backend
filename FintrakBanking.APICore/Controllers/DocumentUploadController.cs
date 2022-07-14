@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
             this.httpClient = new HttpClient();
             //this.httpClient.BaseAddress = new Uri(ConfigurationManager.AppSettings["CoreAPIUrl"] + "api/v1/document/");
         }
-        
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("document-upload/operation/{operationId}/target/{targetId}/isOperationSpecific/{isOperationSpecific}")]
         public HttpResponseMessage GetDocumentUploads(int operationId, int targetId, bool isOperationSpecific)
         {
-            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId,  isOperationSpecific);
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId, isOperationSpecific);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
@@ -99,6 +99,113 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("document-upload")]
+        public async Task<HttpResponseMessage> AddDocumentUploadAsync()
+        {
+
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+            try
+            {
+                var entity = new DocumentUploadViewModel();
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+                entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+                entity.isOriginalCopy = Convert.ToBoolean(provider.FormData["isOriginalCopy"]);
+                entity.documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]);
+                entity.issueDate = GetCulture(provider.FormData["issueDate"]);
+                entity.expiryDate = GetCulture(provider.FormData["expiryDate"]);
+                entity.targetReferenceNumber = provider.FormData["targetReferenceNumber"];
+                entity.operationId = Convert.ToInt32(provider.FormData["operationId"]);
+                entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
+                entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
+                entity.overwrite = provider.FormData["overwrite"] == "true";
+                entity.source = (int)DocUploadSourceEnum.InApp;
+                entity.countryCode = provider.FormData["X-COUNTRYCODE"];
+                var a = provider.FormData["targetId"];
+
+                if (provider.FormData["targetId"] != null && provider.FormData["targetId"] != "undefined")
+                {
+                    entity.targetId = Convert.ToInt32(provider.FormData["targetId"]);
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                if (entity.countryCode == "NG")
+                {
+                    var file = provider.Contents.FirstOrDefault();
+                    var buffer = await file.ReadAsByteArrayAsync();
+                    int response = repo.AddDocumentUpload(entity, buffer);
+
+
+                    if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+                    if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+
+                }
+                else
+                {
+                    var file = provider.Contents.FirstOrDefault();
+                    var buffer = await file.ReadAsByteArrayAsync();
+                    var formContent = new MultipartFormDataContent
+                {
+
+                // send Image Here
+                     {new ByteArrayContent(buffer),"file","file"},
+
+                //send form text values here
+                    {new StringContent(entity.fileName),"fileName"},
+                    {new StringContent(entity.fileExtension),"fileExtension"},
+                    {new StringContent( Convert.ToString(entity.fileSize)),"fileSize"},
+                    {new StringContent( Convert.ToString(entity.documentTypeId)),"documentTypeId"},
+                    {new StringContent(entity.issueDate.ToString()),"issueDate"},
+                    {new StringContent(entity.expiryDate.ToString()),"expiryDate"},
+                    {new StringContent(entity.targetReferenceNumber),"targetReferenceNumber"},
+                    { new StringContent(entity.operationId.ToString()),"operationId"},
+                    { new StringContent(entity.customerId.ToString()),"customerId"},
+                    { new StringContent(entity.customerGroupId.ToString()),"customerGroupId"},
+                    { new StringContent(entity.overwrite.ToString()),"overwrite"},
+                    { new StringContent(entity.targetId.ToString()),"targetId"},
+                };
+
+                    if (!provider.FileStreams.Any())
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                    }
+                    IEnumerable<string> headerValues;
+                    if (Request.Headers.TryGetValues("Authorization", out headerValues)) ;
+                    var token = headerValues.First();
+                    var response = repo.AddDocumentUploadToSubsidiaryResult(entity, buffer, token, formContent);
+
+                    if (response != null && response.result > 0)
+                    {
+                        if (response.result == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+                        if (response.result == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+                        // return response;
+                    }
+                }
+
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
+
+        }
+
         //[HttpPost]
         //[ClaimsAuthorization]
         //[Route("document-upload")]
@@ -117,7 +224,7 @@ namespace FintrakBanking.APICore.Controllers
         //    {
         //        return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
         //    }
-        //    try {
+        //    //try {
         //    var entity = new DocumentUploadViewModel();
         //    entity.fileName = provider.FormData["fileName"];
         //    entity.fileExtension = provider.FormData["fileExtension"];
@@ -132,8 +239,7 @@ namespace FintrakBanking.APICore.Controllers
         //    entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
         //    entity.overwrite = provider.FormData["overwrite"] == "true";
         //    entity.source = (int)DocUploadSourceEnum.InApp;
-        //    entity.countryCode = provider.FormData["X-COUNTRYCODE"];
-        //        var a = provider.FormData["targetId"];
+        //    var a = provider.FormData["targetId"];
 
         //    if (provider.FormData["targetId"] != null && provider.FormData["targetId"] != "undefined")
         //    {
@@ -145,123 +251,19 @@ namespace FintrakBanking.APICore.Controllers
         //    entity.applicationUrl = HttpContext.Current.Request.Path;
         //    entity.createdBy = token.GetStaffId;
         //    entity.companyId = token.GetCompanyId;
-        //    if (entity.countryCode == "NG")
-        //    {
-        //        var file = provider.Contents.FirstOrDefault();
-        //        var buffer = await file.ReadAsByteArrayAsync();
-        //        int response = repo.AddDocumentUpload(entity, buffer);
+
+        //    var file = provider.Contents.FirstOrDefault();
+        //    var buffer = await file.ReadAsByteArrayAsync();
+        //    int response = repo.AddDocumentUpload(entity, buffer);
 
 
-        //        if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
-        //        if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
-
-        //    }
-        //    else
-        //    {
-        //        var file = provider.Contents.FirstOrDefault();
-        //        var buffer = await file.ReadAsByteArrayAsync();
-        //        var formContent = new MultipartFormDataContent
-        //        {
-
-        //        // send Image Here
-        //             {new ByteArrayContent(buffer),"file","file"},
-
-        //        //send form text values here
-        //            {new StringContent(entity.fileName),"fileName"},
-        //            {new StringContent(entity.fileExtension),"fileExtension"},
-        //            {new StringContent( Convert.ToString(entity.fileSize)),"fileSize"},
-        //            {new StringContent( Convert.ToString(entity.documentTypeId)),"documentTypeId"},
-        //            {new StringContent(entity.issueDate.ToString()),"issueDate"},
-        //            {new StringContent(entity.expiryDate.ToString()),"expiryDate"},
-        //            {new StringContent(entity.targetReferenceNumber),"targetReferenceNumber"},
-        //            { new StringContent(entity.operationId.ToString()),"operationId"},
-        //            { new StringContent(entity.customerId.ToString()),"customerId"},
-        //            { new StringContent(entity.customerGroupId.ToString()),"customerGroupId"},
-        //            { new StringContent(entity.overwrite.ToString()),"overwrite"},
-        //            { new StringContent(entity.targetId.ToString()),"targetId"},
-        //        };
-
-        //        if (!provider.FileStreams.Any())
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
-        //        }
-        //        IEnumerable<string> headerValues;
-        //        if (Request.Headers.TryGetValues("Authorization", out headerValues)) ;
-        //        var token = headerValues.First();
-        //        var response = repo.AddDocumentUploadToSubsidiaryResult(entity, buffer, token, formContent);
-
-        //        if (response != null && response.result > 0)
-        //        {
-        //            if (response.result == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
-        //            if (response.result == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
-        //           // return response;
-        //        }
-        //    }
-
-        //  }
-        //    catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+        //    if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+        //    if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+        //    //}
+        //    //catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
         //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
 
         //}
-
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("document-upload")]
-        public async System.Threading.Tasks.Task<HttpResponseMessage> AddDocumentUploadAsync()
-        {
-
-            if (!Request.Content.IsMimeMultipartContent())
-            {
-                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
-            }
-
-            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-            await Request.Content.ReadAsMultipartAsync(provider);
-
-            if (!provider.FileStreams.Any())
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
-            }
-            //try {
-            var entity = new DocumentUploadViewModel();
-            entity.fileName = provider.FormData["fileName"];
-            entity.fileExtension = provider.FormData["fileExtension"];
-            entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
-            entity.isOriginalCopy = Convert.ToBoolean(provider.FormData["isOriginalCopy"]);
-            entity.documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]);
-            entity.issueDate = GetCulture(provider.FormData["issueDate"]);
-            entity.expiryDate = GetCulture(provider.FormData["expiryDate"]);
-            entity.targetReferenceNumber = provider.FormData["targetReferenceNumber"];
-            entity.operationId = Convert.ToInt32(provider.FormData["operationId"]);
-            entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
-            entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
-            entity.overwrite = provider.FormData["overwrite"] == "true";
-            entity.source = (int)DocUploadSourceEnum.InApp;
-            var a = provider.FormData["targetId"];
-
-            if (provider.FormData["targetId"] != null && provider.FormData["targetId"] != "undefined")
-            {
-                entity.targetId = Convert.ToInt32(provider.FormData["targetId"]);
-            }
-
-            entity.userBranchId = (short)token.GetBranchId;
-            entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            entity.applicationUrl = HttpContext.Current.Request.Path;
-            entity.createdBy = token.GetStaffId;
-            entity.companyId = token.GetCompanyId;
-
-            var file = provider.Contents.FirstOrDefault();
-            var buffer = await file.ReadAsByteArrayAsync();
-            int response = repo.AddDocumentUpload(entity, buffer);
-
-
-            if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
-            if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
-            //}
-            //catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
-
-        }
 
 
 
