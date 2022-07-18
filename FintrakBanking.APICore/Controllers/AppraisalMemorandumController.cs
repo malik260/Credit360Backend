@@ -109,6 +109,7 @@ namespace FintrakBanking.APICore.Controllers
                 WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
                 if (response != null)
                 {
+                    if(entity.subTransId != null) { repo.UpdateSubsidiaryBasicTransaction((int)entity.subTransId, entity); }
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error acting on this record" });
@@ -357,6 +358,22 @@ namespace FintrakBanking.APICore.Controllers
  
         }
 
+        [HttpPost]
+        [Route("appraisal-memorandum/privilege-by-code")]
+        public HttpResponseMessage GetUserPrivilegeByCode([FromBody] AuthoritySignatureViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffRoleCode = token.GetStaffRoleCode;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            var data = repo.GetUserPrivilegeByCode(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
         [HttpGet]
         [Route("appraisal-memorandum/loan-detail/{loanApplicationId}")]
         public HttpResponseMessage GetApprovedLoanDetail(int loanApplicationId)
@@ -452,10 +469,10 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("loan-application-approval-process")]
-        public async Task<HttpResponseMessage> GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
+        public HttpResponseMessage GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
         {
             IQueryable<LoanApplicationViewModel> items;
-            items = await repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
+            items = repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
 
 
             if (!String.IsNullOrEmpty(searchString))
@@ -484,7 +501,7 @@ namespace FintrakBanking.APICore.Controllers
                 .Skip(page)
                 .Take(itemsPerPage)
                 .ToList();
-            data = repo.CalculateSLA(data);
+           // data = repo.CalculateSLA(data);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 
@@ -513,11 +530,30 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("subsidiaries-loan-applications")]
-        public async Task<HttpResponseMessage> GetSubsidiaryPendingLoanApplications()
+        public HttpResponseMessage GetSubsidiaryPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
         {
-            var data = await repo.GetSubsidiaryPendingLoanApplications();
-            if (data != null)
+            var staffRoleCode = token.GetStaffRoleCode;
+            var items =  repo.GetSubsidiaryPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, staffRoleCode, isSpecific);
+            if (items != null)
             {
+                if (!String.IsNullOrEmpty(searchString))
+                {
+
+                    searchString = searchString.Trim().ToLower();
+                    items = (from x in items
+                             where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
+                            
+                             || x.applicationAmount.ToString() == searchString
+                             select x);
+                    items = items.Take(itemsPerPage);
+                }
+
+                var data = items
+                    .OrderByDescending(x => x.timeIn) 
+                    .Skip(page)
+                    .Take(itemsPerPage)
+                    .ToList();
+                
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
             else
@@ -1073,5 +1109,14 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
         }
 
+        [HttpPut]
+        //[ClaimsAuthorization]
+        [Route("update-subsidiary-basic-transaction/{id}")]
+        public HttpResponseMessage UpdateSubsidiaryBasicTransaction(int id, [FromBody] ForwardViewModel entity)
+        {
+
+            bool response = repo.UpdateSubsidiaryBasicTransaction(id, entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response });
+        }
     }
 }

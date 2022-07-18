@@ -2227,6 +2227,10 @@
     <Folder Include="Views\Testing\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FintrakBanking.AccessSubsediary\FintrakBanking.AccessSubsediaryRepo.csproj">
+      <Project>{E018722D-75BA-41DE-9812-8F3AA3FF10DC}</Project>
+      <Name>FintrakBanking.AccessSubsediaryRepo</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">
       <Project>{18cefc20-2662-4757-94de-23d623ffc98d}</Project>
       <Name>FintrakBanking.Common</Name>

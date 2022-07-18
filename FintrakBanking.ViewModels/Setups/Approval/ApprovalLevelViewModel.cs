@@ -119,6 +119,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public bool notifyOfPendingApprovals { get; set; }
         public bool notifyOnwer { get; set; }
     }
+
     public class DynamicWorkflowViewModel : GeneralEntity
     {
         public int? idValue { get; set; }

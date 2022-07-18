@@ -11249,7 +11249,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public List<InsurancePolicy> GetCollateralInsurancePolicyReport(DateTime? startDate, DateTime? endDate, string searchString)
+        public List<InsurancePolicy> GetCollateralInsurancePolicyReport(DateTime? startDate, DateTime? endDate, string searchString/*, int? businessUnitId*/)
         {
                 List<InsurancePolicy> insurance = null;
                 TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
@@ -11259,7 +11259,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (searchString == null || searchString == "")
                 {
-                    insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && x.DELETED == false)
+                    insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && x.DELETED == false)
                        .Select(x => new InsurancePolicy
                        {
                            confirmedAdmin = context.TBL_STAFF.Where(a=>a.STAFFID == x.INFORMATIONCONFIRMEDBY).Select(a=>a.FIRSTNAME +" "+ a.MIDDLENAME +" "+ a.LASTNAME).FirstOrDefault(),
@@ -11400,7 +11400,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (searchString.ToLower().Trim() == "all")
                 {
-                    insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && x.DELETED == false)
+                    insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && x.DELETED == false)
                        .Select(x => new InsurancePolicy
                        {
                            confirmedAdmin = context.TBL_STAFF.Where(a => a.STAFFID == x.INFORMATIONCONFIRMEDBY).Select(a => a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME).FirstOrDefault(),
@@ -11542,7 +11542,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (searchString.ToLower().Trim() == "active")
                 {
-                    insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && (DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value >= DbFunctions.TruncateTime(DateTime.Now)) && x.DELETED == false)
+                    insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && (DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value >= DbFunctions.TruncateTime(DateTime.Now)) && x.DELETED == false)
                        .Select(x => new InsurancePolicy
                        {
                            confirmedAdmin = context.TBL_STAFF.Where(a => a.STAFFID == x.INFORMATIONCONFIRMEDBY).Select(a => a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME).FirstOrDefault(),
@@ -11684,7 +11684,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (searchString.ToLower().Trim() == "expired")
                 {
-                    insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCESTARTDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && (DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value < DbFunctions.TruncateTime(DateTime.Now)) && x.DELETED == false)
+                    insurance = (context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(x => DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value >= DbFunctions.TruncateTime(startDate).Value && DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value <= DbFunctions.TruncateTime(endDate).Value && (DbFunctions.TruncateTime(x.INSURANCEENDDATE).Value < DbFunctions.TruncateTime(DateTime.Now)) && x.DELETED == false)
                        .Select(x => new InsurancePolicy
                        {
                            confirmedAdmin = context.TBL_STAFF.Where(a => a.STAFFID == x.INFORMATIONCONFIRMEDBY).Select(a => a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME).FirstOrDefault(),

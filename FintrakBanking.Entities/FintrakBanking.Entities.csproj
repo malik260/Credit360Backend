@@ -86,6 +86,7 @@
     <Compile Include="Models\TBL_ALERT_PLACEHOLDER.cs" />
     <Compile Include="Models\TBL_ALERT_SCHEDULE.cs" />
     <Compile Include="Models\TBL_APPROVAL_FLOW_TYPE.cs" />
+    <Compile Include="Models\TBL_APPROVAL_LEVEL_IDS.cs" />
     <Compile Include="Models\TBL_APPROVED_TRADE_CYCLE.cs" />
     <Compile Include="Models\TBL_ALERT_BINDING_METHODS.cs" />
     <Compile Include="Models\TBL_BULK_INSURANCE_UPLOAD_APPROVAL.cs" />
@@ -275,6 +276,7 @@
     <Compile Include="Models\TBL_RECOVERY_REPORT_COLLECTION.cs" />
     <Compile Include="Models\TBL_REPAYMENT_TERM.cs" />
     <Compile Include="Models\TBL_SECTOR_GLOBAL_LIMIT.cs" />
+    <Compile Include="Models\TBL_SUB_BASICTRANSACTION.cs" />
     <Compile Include="Models\TBL_SUPPORTISSUETYPE.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_INDEMNITY.cs" />

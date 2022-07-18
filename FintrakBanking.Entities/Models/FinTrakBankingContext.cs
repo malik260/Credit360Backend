@@ -24,6 +24,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RECORD_TRACKING> TBL_RECORD_TRACKING { get; set; }
         public virtual DbSet<TBL_ALERT_BINDING_METHODS> TBL_ALERT_BINDING_METHODS { get; set; }
         public virtual DbSet<TBL_ALERT_SCHEDULE> TBL_ALERT_SCHEDULE { get; set; }
+        public virtual DbSet<TBL_SUB_BASICTRANSACTION> TBL_SUB_BASICTRANSACTION { get; set; }
         public virtual DbSet<TBL_ALERT_PLACEHOLDER> TBL_ALERT_PLACEHOLDER { get; set; }
         public virtual DbSet<TBL_COLLATERAL_INSURANCE_STATUS> TBL_COLLATERAL_INSURANCE_STATUS { get; set; }
         public virtual DbSet<TBL_COLLATERAL_INSURANCE_TRACKING> TBL_COLLATERAL_INSURANCE_TRACKING { get; set; }
@@ -43,19 +44,17 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_RETAIL> TBL_LOAN_RECOVERY_COMMISSION_RETAIL { get; set; }
         public virtual DbSet<TBL_COLLECTION_RETAIL_CRON_SETUP> TBL_COLLECTION_RETAIL_CRON_SETUP { get; set; }
         public virtual DbSet<TBL_DOCUMENTATION_FILLING_APPROVAL> TBL_DOCUMENTATION_FILLING_APPROVAL { get; set; }
+        public virtual DbSet<TBL_WORKFLOW_ITEM_EXPRESSION> TBL_WORKFLOW_ITEM_EXPRESSION { get; set; }
         public virtual DbSet<TBL_CONTRACTOR_CRITERIA_OPTION> TBL_CONTRACTOR_CRITERIA_OPTION { get; set; }
         public virtual DbSet<TBL_LMS_FACILITY_MODIFICATION> TBL_LMS_FACILITY_MODIFICATION { get; set; }
+        public virtual DbSet<TBL_WORKFLOW_DATA_ITEM_DEFINITION> TBL_WORKFLOW_DATA_ITEM_DEFINITION { get; set; }
+        public virtual DbSet<TBL_WFCONTEXT_VALUE_TYPE> TBL_WFCONTEXT_VALUE_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_APPROVAL> TBL_LOAN_RECOVERY_COMMISSION_APPROVAL { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_BATCH> TBL_LOAN_RECOVERY_COMMISSION_BATCH { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_REPORTING_APPROVAL> TBL_LOAN_RECOVERY_REPORTING_APPROVAL { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_REPORTING_BATCH> TBL_LOAN_RECOVERY_REPORTING_BATCH { get; set; }
         public virtual DbSet<TBL_FACILITY_MOD_DETL_FEE> TBL_FACILITY_MOD_DETL_FEE { get; set; }
         public virtual DbSet<TBL_FACILITY_MODIFICATION> TBL_FACILITY_MODIFICATION { get; set; }
-        public virtual DbSet<TBL_WORKFLOW_DATA_ITEM_DEFINITION> TBL_WORKFLOW_DATA_ITEM_DEFINITION { get; set; }
-        public virtual DbSet<TBL_WORKFLOW_ITEM_EXPRESSION> TBL_WORKFLOW_ITEM_EXPRESSION { get; set; }
-        public virtual DbSet<TBL_WORKFLOW_CONTEXT> TBL_WORKFLOW_CONTEXT { get; set; }
-        public virtual DbSet<TBL_OPERATORS> TBL_OPERATORS { get; set; }
-        public virtual DbSet<TBL_WFCONTEXT_VALUE_TYPE> TBL_WFCONTEXT_VALUE_TYPE { get; set; }
         public virtual DbSet<TBL_PROJECT_RISK_RATING_CRITERIA> TBL_PROJECT_RISK_RATING_CRITERIA { get; set; }
         public virtual DbSet<TBL_CONTRACTOR_CRITERIA> TBL_CONTRACTOR_CRITERIA { get; set; }
         public virtual DbSet<TBL_PROJECT_RISK_RATING> TBL_PROJECT_RISK_RATING { get; set; }
@@ -138,6 +137,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_APPROVAL_SETUP> TBL_APPROVAL_SETUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_FLOW_TYPE> TBL_APPROVAL_FLOW_TYPE { get; set; }
         public virtual DbSet<TBL_WORKFLOW_NOTIFICATION> TBL_WORKFLOW_NOTIFICATION { get; set; }
+        public virtual DbSet<TBL_WORKFLOW_CONTEXT> TBL_WORKFLOW_CONTEXT { get; set; }
+        public virtual DbSet<TBL_OPERATORS> TBL_OPERATORS { get; set; }
         public virtual DbSet<TBL_APPROVAL_VOTE_OPTION> TBL_APPROVAL_VOTE_OPTION { get; set; }
         public virtual DbSet<TBL_AUDIT> TBL_AUDIT { get; set; }
         public virtual DbSet<TBL_AUDIT_TYPE> TBL_AUDIT_TYPE { get; set; }
@@ -162,6 +163,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CHARGE_RANGE> TBL_CHARGE_RANGE { get; set; }
         public virtual DbSet<TBL_CHARGES> TBL_CHARGES { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
+        public virtual DbSet<TBL_APPROVAL_LEVEL_IDS> TBL_APPROVAL_LEVEL_IDS { get; set; }
         public virtual DbSet<TBL_CHART_OF_ACCOUNT> TBL_CHART_OF_ACCOUNT { get; set; }
         public virtual DbSet<TBL_CHART_OF_ACCOUNT_CLASS> TBL_CHART_OF_ACCOUNT_CLASS { get; set; }
         public virtual DbSet<TBL_CHART_OF_ACCOUNT_CURRENCY> TBL_CHART_OF_ACCOUNT_CURRENCY { get; set; }

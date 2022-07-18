@@ -63,8 +63,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         //bool Confirmation(int type, int applicationId);
 
-        Task<IQueryable<LoanApplicationViewModel>> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, bool isSpecific = false);
-        Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaryPendingLoanApplications();
+        IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, bool isSpecific = false);
+        IEnumerable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, string staffRoleCode, bool isSpecific = false);
         Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaries();
         List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps);
         IQueryable<LoanApplicationViewModel> GetPoolApplications(int operationId, int companyId, int branchId, int staffId, int? classId);
@@ -89,6 +89,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool GetUntenoredStatus(int applicationId);
 
         PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity);
+        PrivilegeViewModel GetUserPrivilegeByCode(AuthoritySignatureViewModel entity);
 
         IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggers(int applicationId);
 
@@ -126,6 +127,8 @@ namespace FintrakBanking.Interfaces.Credit
         LoanApplicationDetailsViewModel GetLoanApplicationDetailByRefNo(string applicationReferenceNumber);
 
         void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode);
+
+        bool UpdateSubsidiaryBasicTransaction(int id,ForwardViewModel entity);
 
     }
 }
