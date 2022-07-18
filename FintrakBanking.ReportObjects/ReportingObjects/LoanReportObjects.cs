@@ -5187,16 +5187,16 @@ namespace FintrakBanking.ReportObjects
                     //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                     join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                     join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
-                    join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
+                    /*join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
                     from es in esr.DefaultIfEmpty()
                     join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE into scr
-                    from sc in scr.DefaultIfEmpty()
+                    from sc in scr.DefaultIfEmpty()*/
 
                     where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                     DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                     && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
-                    && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
-                    && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
+                    //&& (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                    //&& (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
                     && cd.ISTHEPROMOTER == true
                     select new CustomerCompanyInfomationViewModels
                     {
@@ -5225,7 +5225,11 @@ namespace FintrakBanking.ReportObjects
                         sector = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                         natureOfBusiness = ln.TBL_SUB_SECTOR.NAME,
                         moratorium = d.MORATORIUM,
-                        esRating = sc.GRADE,
+                        esRating = (from es in context.TBL_ESG_CHECKLIST_SUMMARY
+                                    join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE where  es.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID
+                                    && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null
+                                    && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null))
+                                    select sc.GRADE).FirstOrDefault(),   //sc.GRADE,
                         wpower = pc.PRODUCTCLASSID == 31 ? "Yes" : "No",
                         facilityType = p.PRODUCTNAME,
                         refNo = l.APPLICATIONREFERENCENUMBER,
@@ -5249,16 +5253,16 @@ namespace FintrakBanking.ReportObjects
                              //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                              join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                              join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
-                             join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
+                             /*join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
                              from es in esr.DefaultIfEmpty()
                              join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE into scr
-                             from sc in scr.DefaultIfEmpty()
+                             from sc in scr.DefaultIfEmpty()*/
 
                              where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                              DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                              && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
-                             && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
-                             && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
+                             //&& (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                             //&& (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
                              && cd.ISTHEPROMOTER == true
                              select new CustomerCompanyInfomationViewModels
                              {
@@ -5287,7 +5291,12 @@ namespace FintrakBanking.ReportObjects
                                  sector = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                  natureOfBusiness = ln.TBL_SUB_SECTOR.NAME,
                                  moratorium = d.MORATORIUM,
-                                 esRating = sc.GRADE,
+                                 esRating = (from es in context.TBL_ESG_CHECKLIST_SUMMARY
+                                             join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE
+                                             where es.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID
+                                                && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null
+                                                && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null))
+                                             select sc.GRADE).FirstOrDefault(),   //sc.GRADE,
                                  wpower = pc.PRODUCTCLASSID == 31 ? "Yes" : "No",
                                  facilityType = p.PRODUCTNAME,
                                  refNo = l.APPLICATIONREFERENCENUMBER,
@@ -5311,16 +5320,16 @@ namespace FintrakBanking.ReportObjects
                               //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                               join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                               join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
-                              join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
+                              /*join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
                               from es in esr.DefaultIfEmpty()
                               join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE into scr
-                              from sc in scr.DefaultIfEmpty()
+                              from sc in scr.DefaultIfEmpty()*/
 
                               where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                               DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                               && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
-                              && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
-                              && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
+                              //&& (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                              //&& (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
                               && cd.ISTHEPROMOTER == true
                               select new CustomerCompanyInfomationViewModels
                               {
@@ -5349,7 +5358,12 @@ namespace FintrakBanking.ReportObjects
                                   sector = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                   natureOfBusiness = ln.TBL_SUB_SECTOR.NAME,
                                   moratorium = d.MORATORIUM,
-                                  esRating = sc.GRADE,
+                                  esRating = (from es in context.TBL_ESG_CHECKLIST_SUMMARY
+                                              join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE
+                                              where es.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID
+                                                && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null
+                                                && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null))
+                                              select sc.GRADE).FirstOrDefault(),   //sc.GRADE,
                                   wpower = pc.PRODUCTCLASSID == 31 ? "Yes" : "No",
                                   facilityType = p.PRODUCTNAME,
                                   refNo = l.APPLICATIONREFERENCENUMBER,
