@@ -1529,7 +1529,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool WithinAllLimits()
         {
-            if (this.level.ISPOSTAPPROVALREVIEWER == true) return true;
+            if (this.level.IsPostApprovalReviewer == true) return true;
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
             if (level == null ) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
             if (this.nextLevelId != null)
@@ -1786,8 +1786,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                LevelBusinessRuleId = x.Level.APPROVALBUSINESSRULEID,
                                LevelBusinessRule = x.Level.TBL_APPROVAL_BUSINESS_RULE,
                                AllowMultipleInitiator = x.Mapping.ALLOWMULTIPLEINITIATOR,
-                               ROLEIDTOROUTE = x.Level.ROLEIDTOROUTE,
-                               ISPOSTAPPROVALREVIEWER = x.Level.ISPOSTAPPROVALREVIEWER
+                               RoleIdToRoute = x.Level.ROLEIDTOROUTE,
+                               IsPostApprovalReviewer = x.Level.ISPOSTAPPROVALREVIEWER
                            })
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition)
@@ -1806,7 +1806,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     if (initiator != null)
                     {
                         var initiatorStaff = context.TBL_STAFF.Find(initiator?.REQUESTSTAFFID);
-                        if (initiatorStaff != null && level.ROLEIDTOROUTE != initiatorStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
+                        if (initiatorStaff != null && level.RoleIdToRoute != initiatorStaff.STAFFROLEID && level.RoleIdToRoute != null)
                         {
                             continue;
                         }
@@ -1816,7 +1816,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if(this.staffId > 0)
                         {
                             var currentRequestStaff = context.TBL_STAFF.Where(x=>x.STAFFID == this.staffId && x.DELETED == false).FirstOrDefault();
-                            if (currentRequestStaff != null && level.ROLEIDTOROUTE != currentRequestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
+                            if (currentRequestStaff != null && level.RoleIdToRoute != currentRequestStaff.STAFFROLEID && level.RoleIdToRoute != null)
                             {
                                 continue;
                             }
@@ -1869,9 +1869,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             
             if (levelBusinessRule == null) return true;
 
-            bool validity = true;
-            bool flagChecked = true;
-            bool limitChecked = true;
+            bool validity = false;
+            bool flagChecked = false;
+            bool limitChecked = false;
             decimal pepAmount = rule.PEPAMOUNT ?? 0;
             decimal minimumAmount = rule.MINIMUMAMOUNT ?? 0;
             decimal maximumAmount = rule.MAXIMUMAMOUNT ?? 0;
