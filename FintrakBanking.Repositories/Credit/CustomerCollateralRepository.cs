@@ -11249,7 +11249,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public List<InsurancePolicy> GetCollateralInsurancePolicyReport(DateTime? startDate, DateTime? endDate, string searchString/*, int? businessUnitId*/)
+        public List<InsurancePolicy> GetCollateralInsurancePolicyReport(DateTime? startDate, DateTime? endDate, string searchString, int? businessUnitId)
         {
                 List<InsurancePolicy> insurance = null;
                 TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
@@ -11293,7 +11293,15 @@ namespace FintrakBanking.Repositories.Credit
                            otherInsurancePolicyType = x.OTHERINSURANCEPOLICYTYPE,
                            insuranceStatusId = x.INSURANCESTATUSID,
                            createdBy = x.CREATEDBY == null ? 0 : (int)x.CREATEDBY,
+                           customerId =context.TBL_COLLATERAL_CUSTOMER.Where(c=>c.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID ).Select(i=>i.CUSTOMERID).FirstOrDefault() ?? 0
                        })).OrderBy(x => x.collateralInsuranceTrackingId).ToList();
+
+                
+                if(businessUnitId != null && businessUnitId != 0)
+                {
+                    var sbuCustomers = context.TBL_CUSTOMER.Where(x => x.BUSINESSUNTID == businessUnitId).Select(i => i.CUSTOMERID).ToList();
+                    insurance = insurance.Where(x => sbuCustomers.Contains(x.customerId)).ToList();
+                }
 
                     foreach (var i in insurance)
                     {
@@ -11434,7 +11442,15 @@ namespace FintrakBanking.Repositories.Credit
                            otherInsurancePolicyType = x.OTHERINSURANCEPOLICYTYPE,
                            insuranceStatusId = x.INSURANCESTATUSID,
                            createdBy = x.CREATEDBY == null ? 0 : (int)x.CREATEDBY,
+                           customerId = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).Select(i => i.CUSTOMERID).FirstOrDefault() ?? 0
+
                        })).OrderBy(x => x.collateralInsuranceTrackingId).ToList();
+
+                if (businessUnitId != null && businessUnitId != 0)
+                {
+                    var sbuCustomers = context.TBL_CUSTOMER.Where(x => x.BUSINESSUNTID == businessUnitId).Select(i => i.CUSTOMERID).ToList();
+                    insurance = insurance.Where(x => sbuCustomers.Contains(x.customerId)).ToList();
+                }
 
                 foreach (var i in insurance)
                 {
@@ -11576,7 +11592,15 @@ namespace FintrakBanking.Repositories.Credit
                            otherInsurancePolicyType = x.OTHERINSURANCEPOLICYTYPE,
                            insuranceStatusId = x.INSURANCESTATUSID,
                            createdBy = x.CREATEDBY == null ? 0 : (int)x.CREATEDBY,
+                           customerId = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).Select(i => i.CUSTOMERID).FirstOrDefault() ?? 0
+
                        })).OrderBy(x => x.collateralInsuranceTrackingId).ToList();
+
+                if (businessUnitId != null && businessUnitId != 0)
+                {
+                    var sbuCustomers = context.TBL_CUSTOMER.Where(x => x.BUSINESSUNTID == businessUnitId).Select(i => i.CUSTOMERID).ToList();
+                    insurance = insurance.Where(x => sbuCustomers.Contains(x.customerId)).ToList();
+                }
 
                 foreach (var i in insurance)
                 {
@@ -11719,7 +11743,14 @@ namespace FintrakBanking.Repositories.Credit
                            otherInsurancePolicyType = x.OTHERINSURANCEPOLICYTYPE,
                            insuranceStatusId = x.INSURANCESTATUSID,
                            createdBy = x.CREATEDBY == null ? 0 : (int)x.CREATEDBY,
+                           customerId = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).Select(i => i.CUSTOMERID).FirstOrDefault() ?? 0
                        })).OrderBy(x => x.collateralInsuranceTrackingId).ToList();
+
+                if (businessUnitId != null && businessUnitId != 0)
+                {
+                    var sbuCustomers = context.TBL_CUSTOMER.Where(x => x.BUSINESSUNTID == businessUnitId).Select(i => i.CUSTOMERID).ToList();
+                    insurance = insurance.Where(x => sbuCustomers.Contains(x.customerId)).ToList();
+                }
 
                 foreach (var i in insurance)
                     {

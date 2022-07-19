@@ -813,7 +813,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetCollateralInsurancePolicyReport(model.startDate, model.expiryDate, model.valueCode/*, int? businessUnitId*/);
+                var response = repo.GetCollateralInsurancePolicyReport(model.startDate, model.expiryDate, model.valueCode,  model?.businessUnitId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
