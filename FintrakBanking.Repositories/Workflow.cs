@@ -1826,7 +1826,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 var testField = level.Level.LEVELNAME;
 
-                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) { continue; }
+                if (level.LevelBusinessRuleId != null && LevelBusinessRuleIsValid(level.LevelBusinessRule)) { continue; }
                 if (level.LevelBusinessRuleId != null && !ExecuteStandardBusinessRule(level.LevelBusinessRule)) { continue; }
                 //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
@@ -1867,9 +1867,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool LevelBusinessRuleIsValid(TBL_APPROVAL_BUSINESS_RULE rule)
         {
             
-            if (levelBusinessRule == null) return true;
+            if (levelBusinessRule == null) return false;
 
-            bool validity = false;
+            bool validity =false;
             bool flagChecked = false;
             bool limitChecked = false;
             decimal pepAmount = rule.PEPAMOUNT ?? 0;
@@ -2005,7 +2005,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                         var comparisonString = context.TBL_OPERATORS.Where(x => x.OPERATORID == expression.COMPARISONID).FirstOrDefault()?.OPERATOR.ToString();
                         if (businessUnitId == null) businessUnitId = 0;
                         if (expression.IDVALUE == null) expression.IDVALUE = 0;
-                        return Compare(businessUnitId.Value, expression.IDVALUE.Value, comparisonString);
+                        var res = Compare(businessUnitId.Value, expression.IDVALUE.Value, comparisonString);
+                        return res;
                     }
                 }
             }
@@ -2021,11 +2022,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             //    }
             //}
 
-
-
-
             return true;
         }
+
 
         public static bool Compare<T>(T value1, T value2, string str) where T : IComparable<T>
         {
@@ -2052,7 +2051,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     op = (a, b) => a.CompareTo(b) != 0;
                     break;
                 default:
-                    return true;
+                    return false;
                     //throw new ArgumentException();
             }
 
