@@ -33,11 +33,11 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application/credit-assessment-memorandum/approved-loans")]
-        public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForOfferLetter()
+        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForOfferLetter()
         {
             try
             {
-                var response = await repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetCompanyId).ToListAsync();
+                var response = repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetCompanyId).ToList();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count(), message = "No record found" });
             }
             catch (SecureException e)
@@ -80,12 +80,12 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application/credit-assessment-memorandum/due-for-review")]
-        public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForReview()
+        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForReview()
         {
             try
             {
                 var staffid = token.GetStaffId;
-                var response = await repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
+                var response = repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToList();
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });

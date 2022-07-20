@@ -48,5 +48,6 @@ namespace FintrakBanking.Entities.Models
         public int? CREATEDBY { get; set; }
         public DateTime? DATETIMECREATED { get; set; }
         public string COLLATERALDESCRIPTION { get; set; }
+        
     }
 }
