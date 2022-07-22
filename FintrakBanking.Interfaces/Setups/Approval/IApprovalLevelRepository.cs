@@ -56,6 +56,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         DynamicWorkflowViewModel GetValueTypeByItemId(int dataItemId);
         bool CreateDynamicWorkflowItemExpression(DynamicWorkflowViewModel model);
         IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowItemExpression();
+       // IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowItemExpressionById();
         bool UpdateDynamicWorkflowItemExpression(DynamicWorkflowViewModel model, int expressionId);
         List<DynamicContextListViewModel> GetDynamicBusinessRuleItemValueListByItemId(int dataItemId);
     }

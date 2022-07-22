@@ -137,6 +137,46 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return context.SaveChanges() != 0;
         }
 
+        public bool DeleteDynamicBusinessRule(int id, UserInfo user)
+        {
+            var model = this.context.TBL_WORKFLOW_ITEM_EXPRESSION.Find(id);
+            var ruleInUse = context.TBL_WORKFLOW_ITEM_EXPRESSION.Where(x => x.APPROVALBUSINESSRULEID == model.APPROVALBUSINESSRULEID).FirstOrDefault()?.APPROVALBUSINESSRULEID;
+            if (admin.IsSuperAdmin(user.createdBy) == true)
+            {
+                model.DELETED = true;
+                model.DELETEDBY = user.createdBy;
+                model.DATETIMEDELETED = genSetup.GetApplicationDate();
+
+                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.BusinessRuleDeleted,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Dynamic Workflow business rule '{model.EXPRESSION}' was deleted by this super-admin {audit_staff}",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = model.EXPRESSIONID,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            if (context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALBUSINESSRULEID == ruleInUse).Any()) throw new SecureException("Can not delete this business rule because it is being used. You can deactivate it.");
+
+            return context.SaveChanges() != 0;
+        }
+
+
         public IEnumerable<BusinessRuleViewModel> GetBusinessRule(int companyId)
         {
             var businessRile = context.TBL_APPROVAL_BUSINESS_RULE

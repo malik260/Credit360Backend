@@ -17,5 +17,6 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         bool UpdateBusinessRule(BusinessRuleViewModel model, int businessRuleId, UserInfo user);
 
         bool DeleteBusinessRule(int businessRuleId, UserInfo user);
+        bool DeleteDynamicBusinessRule(int businessRuleId, UserInfo user);
     }
 }

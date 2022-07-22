@@ -1543,7 +1543,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var data = (from a in context.TBL_WORKFLOW_ITEM_EXPRESSION
                         join d in context.TBL_WORKFLOW_DATA_ITEM_DEFINITION on a.DATAITEMID equals d.DATAITEMID
-
+                        where a.DELETED == false
                         select new DynamicWorkflowViewModel
                         {
                             expressionId = a.EXPRESSIONID,

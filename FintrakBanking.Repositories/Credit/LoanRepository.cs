@@ -3296,7 +3296,7 @@ namespace FintrakBanking.Repositories.Credit
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
                             crmsCode = s.CRMSCODE,
 
-                        }).ToList().Take(30);
+                        }).ToList().Take(60);
 
             //var books = data.Where(d => d.loanBookingRequestId == 1380).ToList();
 
@@ -9587,7 +9587,7 @@ namespace FintrakBanking.Repositories.Credit
                                        canReRouteBooking = canReRouteBooking,
                                        approvalTrailId = atrail.APPROVALTRAILID,
                                        responseStaffId = atrail.RESPONSESTAFFID
-                                   }).ToList().Take(30);
+                                   }).ToList().Take(60);
 
             //referredBackLoans = (from s in context.TBL_LOAN_BOOKING_REQUEST
             //                     join l in context.TBL_LOAN on s.LOAN_BOOKING_REQUESTID equals l.LOAN_BOOKING_REQUESTID
@@ -9964,7 +9964,7 @@ namespace FintrakBanking.Repositories.Credit
                                        canReRouteBooking = canReRouteBooking,
                                        approvalTrailId = atrail.APPROVALTRAILID,
                                        responseStaffId = atrail.RESPONSESTAFFID
-                                   }).ToList().Take(30);
+                                   }).ToList().Take(60);
 
             IEnumerable<CamProcessedLoanViewModel> lcyAndFcyLoans = bookingRequestLoans;
 

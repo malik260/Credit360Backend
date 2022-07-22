@@ -24,5 +24,8 @@ namespace FintrakBanking.Entities.Models
         public int? APPROVALBUSINESSRULEID { get; set; }
         public string CONJUCTION { get; set; }
         public string EXPRESSION { get; set; }
+        public bool DELETED { get; set; }
+        public int? DELETEDBY { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
     }
 }

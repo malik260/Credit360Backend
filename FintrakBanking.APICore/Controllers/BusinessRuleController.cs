@@ -105,6 +105,26 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
         }
 
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("dynamic-business-rule/{id}")]
+        public HttpResponseMessage DeleteDynamicBusinessRule(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool data = repo.DeleteDynamicBusinessRule(id, user);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1, message = "The record has been deleted successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
+        }
 
     }
 }
