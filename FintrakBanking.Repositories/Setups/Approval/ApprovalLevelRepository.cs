@@ -1559,6 +1559,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                                 context.TBL_OPERATORS.Where(c => c.OPERATORID == a.COMPARISONID).Select(c => c.OPERATOR).FirstOrDefault() + " " + a.EXPRESSION,
                             approvalBusinessRuleId = a.APPROVALBUSINESSRULEID,
                             approvalBusinessRule = context.TBL_APPROVAL_BUSINESS_RULE.Where(c => c.APPROVALBUSINESSRULEID == a.APPROVALBUSINESSRULEID).Select(c => c.DESCRIPTION).FirstOrDefault(),
+                            idValue = a.IDVALUE,
+                            textValue = a.TEXTVALUE,
+                            booleanValue = a.BOOLEANVALUE
 
                         }).ToList();
             return data;
@@ -1610,8 +1613,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 {
                     expre.CONTEXTID = model.contextId;
                     expre.DATAITEMID = model.dataItemId;
+                    expre.IDVALUE = model.idValue;
                     expre.COMPARISONID = model.comparisonId;
                     expre.EXPRESSION = model.value;
+                    expre.TEXTVALUE = model.textValue;
+                    expre.BOOLEANVALUE = model.booleanValue;
                     expre.WORKFLOWEXPRESSION = model.dataItemName + " " + model.comparisonId + " " + model.value;
                     expre.APPROVALBUSINESSRULEID = model.approvalBusinessRuleId;
                 }

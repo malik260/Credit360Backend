@@ -154,7 +154,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     AUDITTYPEID = (short)AuditTypeEnum.BusinessRuleDeleted,
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
-                    DETAIL = $"Dynamic Workflow business rule '{model.EXPRESSION}' was deleted by this super-admin {audit_staff}",
+                    DETAIL = $"Dynamic Workflow business rule '{model.WORKFLOWEXPRESSION}' was deleted by this super-admin {audit_staff}",
                     IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),

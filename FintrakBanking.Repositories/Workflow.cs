@@ -1989,8 +1989,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var ruleBase = context.TBL_WORKFLOW_CONTEXT.Find(expression.CONTEXTID);
 
-            var ruleItem = context.TBL_WORKFLOW_DATA_ITEM_DEFINITION
-                                    .Where(x => x.DATAITEMID == expression.DATAITEMID).FirstOrDefault();
+            var ruleItem = context.TBL_WORKFLOW_DATA_ITEM_DEFINITION.Where(x => x.DATAITEMID == expression.DATAITEMID).FirstOrDefault();
 
             var list = context.TBL_WFCONTEXT_VALUE_TYPE.Where(x => x.VALUETYPENAME.ToUpper() == "LIST").FirstOrDefault()?.VALUETYPEID;
             var text = context.TBL_WFCONTEXT_VALUE_TYPE.Where(x => x.VALUETYPENAME.ToUpper() == "TEXT").FirstOrDefault()?.VALUETYPEID;
@@ -2002,7 +2001,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     if (ruleItem.VALUETYPEID == list)
                     {
-                        var comparisonString = context.TBL_OPERATORS.Where(x => x.OPERATORID == expression.COMPARISONID).FirstOrDefault()?.OPERATOR.ToString();
+                        var comparisonString = context.TBL_OPERATORS.Where(x => x.OPERATORID == expression.COMPARISONID && expression.DELETED == false).FirstOrDefault()?.OPERATOR.ToString();
                         if (businessUnitId == null) businessUnitId = 0;
                         if (expression.IDVALUE == null) expression.IDVALUE = 0;
                         var res = Compare(businessUnitId.Value, expression.IDVALUE.Value, comparisonString);
