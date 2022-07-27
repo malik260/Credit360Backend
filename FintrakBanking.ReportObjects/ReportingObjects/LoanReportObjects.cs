@@ -5183,7 +5183,7 @@ namespace FintrakBanking.ReportObjects
                     join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                     join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                     join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
-                    join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
+                    //join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
                     //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                     join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                     join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
@@ -5201,11 +5201,14 @@ namespace FintrakBanking.ReportObjects
                     select new CustomerCompanyInfomationViewModels
                     {
                         customerId = c.CUSTOMERID,
-                        companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
-                        fullName = cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME,
-                        birthDate = cd.DATEOFBIRTH,
-                        gender = cd.GENDER,
-                        field1 = cd.ISTHEPROMOTER ? "Yes" : "No",
+                        companyName = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.COMPANYNAME).FirstOrDefault(),
+                        
+                        fullName = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd=>cd.CUSTOMERID == c.CUSTOMERID).Select(cd=>cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME).FirstOrDefault(),
+                        birthDate = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.DATEOFBIRTH).FirstOrDefault(),
+                        gender = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.GENDER).FirstOrDefault(),
+                        field1 = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.ISTHEPROMOTER).FirstOrDefault() == true? "Yes" : "No",
+                        bvn = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.CUSTOMERBVN).FirstOrDefault(),
+
                         address = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ADDRESS).FirstOrDefault(),
                         state = (from a in context.TBL_CUSTOMER_ADDRESS join b in context.TBL_STATE on a.STATEID equals b.STATEID where a.CUSTOMERID == c.CUSTOMERID select b.STATENAME).FirstOrDefault(),
                         phoneNo = context.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault(ph => ph.CUSTOMERID == c.CUSTOMERID).PHONENUMBER,
@@ -5234,7 +5237,7 @@ namespace FintrakBanking.ReportObjects
                         facilityType = p.PRODUCTNAME,
                         refNo = l.APPLICATIONREFERENCENUMBER,
                         customerCode = c.CUSTOMERCODE,
-                        bvn = cd.CUSTOMERBVN,
+                       
                         firstTimeAccessToCredit = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ISFIRSTTIMECREDIT).FirstOrDefault() ? "Yes" : "No",
                         startUp = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ISSTARTUP).FirstOrDefault() ? "Yes" : "No",
                         msmeAnnualTurnover = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ANNUALTURNOVER).FirstOrDefault(),
@@ -5249,7 +5252,7 @@ namespace FintrakBanking.ReportObjects
                              join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                              join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                              join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
-                             join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
+                             //join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
                              //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                              join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                              join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
@@ -5267,11 +5270,13 @@ namespace FintrakBanking.ReportObjects
                              select new CustomerCompanyInfomationViewModels
                              {
                                  customerId = c.CUSTOMERID,
-                                 companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
-                                 fullName = cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME,
-                                 birthDate = cd.DATEOFBIRTH,
-                                 gender = cd.GENDER,
-                                 field1 = cd.ISTHEPROMOTER ? "Yes" : "No",
+                                 companyName = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.COMPANYNAME).FirstOrDefault(),
+                                 fullName = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME).FirstOrDefault(),
+                                 birthDate = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.DATEOFBIRTH).FirstOrDefault(),
+                                 gender = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.GENDER).FirstOrDefault(),
+                                 field1 = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.ISTHEPROMOTER).FirstOrDefault() == true ? "Yes" : "No",
+                                 bvn = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.CUSTOMERBVN).FirstOrDefault(),
+
                                  address = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ADDRESS).FirstOrDefault(),
                                  state = (from a in context.TBL_CUSTOMER_ADDRESS join b in context.TBL_STATE on a.STATEID equals b.STATEID where a.CUSTOMERID == c.CUSTOMERID select b.STATENAME).FirstOrDefault(),
                                  phoneNo = context.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault(ph => ph.CUSTOMERID == c.CUSTOMERID).PHONENUMBER,
@@ -5301,7 +5306,6 @@ namespace FintrakBanking.ReportObjects
                                  facilityType = p.PRODUCTNAME,
                                  refNo = l.APPLICATIONREFERENCENUMBER,
                                  customerCode = c.CUSTOMERCODE,
-                                 bvn = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.ISTHEPROMOTER == true).Select(x => x.CUSTOMERBVN).FirstOrDefault(),
                                  firstTimeAccessToCredit = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ISFIRSTTIMECREDIT).FirstOrDefault() ? "Yes" : "No",
                                  startUp = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ISSTARTUP).FirstOrDefault() ? "Yes" : "No",
                                  msmeAnnualTurnover = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ANNUALTURNOVER).FirstOrDefault(),
@@ -5316,7 +5320,7 @@ namespace FintrakBanking.ReportObjects
                               join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                               join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                               join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
-                              join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
+                              //join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
                               //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                               join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                               join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
@@ -5334,11 +5338,13 @@ namespace FintrakBanking.ReportObjects
                               select new CustomerCompanyInfomationViewModels
                               {
                                   customerId = c.CUSTOMERID,
-                                  companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
-                                  fullName = cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME,
-                                  birthDate = cd.DATEOFBIRTH,
-                                  gender = cd.GENDER,
-                                  field1 = cd.ISTHEPROMOTER ? "Yes" : "No",
+                                  companyName = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.COMPANYNAME).FirstOrDefault(),
+                                  fullName = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME).FirstOrDefault(),
+                                  birthDate = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.DATEOFBIRTH).FirstOrDefault(),
+                                  gender = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.GENDER).FirstOrDefault(),
+                                  field1 = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.ISTHEPROMOTER).FirstOrDefault() == true ? "Yes" : "No",
+                                  bvn = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.CUSTOMERBVN).FirstOrDefault(),
+
                                   address = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ADDRESS).FirstOrDefault(),
                                   state = (from a in context.TBL_CUSTOMER_ADDRESS join b in context.TBL_STATE on a.STATEID equals b.STATEID where a.CUSTOMERID == c.CUSTOMERID select b.STATENAME).FirstOrDefault(),
                                   phoneNo = context.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault(ph => ph.CUSTOMERID == c.CUSTOMERID).PHONENUMBER,
@@ -5368,8 +5374,6 @@ namespace FintrakBanking.ReportObjects
                                   facilityType = p.PRODUCTNAME,
                                   refNo = l.APPLICATIONREFERENCENUMBER,
                                   customerCode = c.CUSTOMERCODE,
-                                  bvn = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.ISTHEPROMOTER == true).Select(x => x.CUSTOMERBVN).FirstOrDefault(),
-                                  
                                   firstTimeAccessToCredit = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x=>x.ISFIRSTTIMECREDIT).FirstOrDefault() ? "Yes" : "No",
                                   startUp = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ISSTARTUP).FirstOrDefault() ? "Yes" : "No",
                                   msmeAnnualTurnover = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ANNUALTURNOVER).FirstOrDefault(),
