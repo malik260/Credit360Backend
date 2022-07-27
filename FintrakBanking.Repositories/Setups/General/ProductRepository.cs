@@ -674,14 +674,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 var Productdata = productData;
                 foreach (var item in productData)
                 {
-                    item.currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
-                                  .Select(c => new ProductCurrencyViewModel()
+                    item.currencies =(from c in context.TBL_PRODUCT_CURRENCY where c.PRODUCTID == item.productId && c.DELETED != false
+                                  select new ProductCurrencyViewModel()
                                   {
                                       productCurrencyId = c.PRODUCTCURRENCYID,
                                       currencyId = c.CURRENCYID,
                                       currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
                                   }).ToList();
-                    item.fees = context.TBL_PRODUCT_CHARGE_FEE.Where(curr => curr.PRODUCTID == item.productId).Select(pf => new ProductFeeViewModel()
+                    item.fees = (from pf in context.TBL_PRODUCT_CHARGE_FEE where pf.PRODUCTID == item.productId select new ProductFeeViewModel()
                     {
                         productId = pf.PRODUCTID,
                         productFeeId = pf.PRODUCTFEEID,
@@ -696,7 +696,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         // glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
 
                     }).ToList();
-                    item.productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
+                    item.productBehaviour = (from d in context.TBL_PRODUCT_BEHAVIOUR where d.PRODUCTID == item.productId select new ProductBehaviourViewModel()
                     {
                         crmsRegulatoryId = d.CRMSREGULATORYID,
                         customerLimit = d.CUSTOMER_LIMIT,
@@ -2096,7 +2096,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         context.SaveChanges();
                         productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
                         context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(productBehaviour);
-                        output = await context.SaveChangesAsync() > 0;
+                        output = context.SaveChanges() > 0;
 
                         //productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
 

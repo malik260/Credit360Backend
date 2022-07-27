@@ -9,6 +9,7 @@ namespace FintrakBanking.ViewModels.Setups.General
     public class DocumentUploadViewModel : GeneralEntity
     {
         public string deletedByName;
+        public string countryCode { get; set; }
 
         public int documentUploadId { get; set; }
 
@@ -111,4 +112,12 @@ namespace FintrakBanking.ViewModels.Setups.General
         public byte[] fileData { get; set; }
         public DateTime dateTimeCreated { get; set; }
     }
-}
+
+    public class DocumentUploadViewModelResut
+    {
+        public string success;
+        public int result { get; set; }
+
+        public string message { get; set; }
+    }
+    }

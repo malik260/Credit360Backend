@@ -19,6 +19,7 @@ namespace FintrakBanking.APICore.Controllers
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         private ICreditTemplateRepository repo;
         private IMemorandumRepository _memoRepo;
+        private const string AccessControlAllowOrigin = "Access-Control-Allow-Origin";
 
         public CreditTemplateController(ICreditTemplateRepository repo, IMemorandumRepository memoRepo)
         {

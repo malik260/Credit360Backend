@@ -104,7 +104,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         {
                             context.TBL_TEMP_STAFF_RELIEF.Add(tempStaffRelief);
                             this.auditTrail.AddAuditTrail(audit);
-                            output = await context.SaveChangesAsync() > 0;
+                            output = context.SaveChanges() > 0;
 
                             var entity = new ApprovalViewModel
                             {
@@ -140,37 +140,69 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         }
 
-        public IEnumerable<ApprovalReliefViewModel> GetAllApprovalRelief(int companyId)
+        public void UpdateAllApprovalRelief(int companyId)
         {
-
-            var relisfData = context.TBL_STAFF_RELIEF
+            try
+            {
+                var relisfData = context.TBL_STAFF_RELIEF
                 .Where(x => x.DELETED == false)
                 .OrderByDescending(x => x.RELIEFID).ToList();
-            foreach(var r in relisfData)
-            {
-                r.ISACTIVE = DateTime.Now.CompareTo(r.ENDDATE) < 0;
+                foreach (var r in relisfData)
+                {
+                    r.ISACTIVE = DateTime.Now.CompareTo(r.ENDDATE) < 0;
+                }
+                context.SaveChanges();
+                
             }
-            context.SaveChanges();
-            var reliefs = relisfData.Select(x => new ApprovalReliefViewModel
+            catch (Exception e)
             {
-                reliefId = x.RELIEFID,
-                relievedStaffId = x.STAFFID,
-                reliefStaffId = x.RELIEFSTAFFID,
-                staffName = context.TBL_STAFF.Where(s => s.STAFFID == x.STAFFID)
-                                            .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
-                                            .FirstOrDefault().name ?? "",
-                reliefStaffName = context.TBL_STAFF.Where(s => s.STAFFID == x.RELIEFSTAFFID)
-                                            .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
-                                            .FirstOrDefault().name ?? "",
-                reliefReason = x.RELIEFREASON,
-                startDate = x.STARTDATE,
-                endDate = x.ENDDATE,
-                isActive = x.ISACTIVE,
-                //isActive = DateTime.Now.CompareTo(x.ENDDATE) < 0,
+                throw e;
+            }
 
-            }).ToList();
 
-            return reliefs;
+        }
+
+
+        public IEnumerable<ApprovalReliefViewModel> GetAllApprovalRelief(int companyId)
+        {
+            try
+            {
+                var relisfData = context.TBL_STAFF_RELIEF
+                .Where(x => x.DELETED == false)
+                .OrderByDescending(x => x.RELIEFID).ToList();
+                foreach (var r in relisfData)
+                {
+                    r.ISACTIVE = DateTime.Now.CompareTo(r.ENDDATE) < 0;
+                }
+                context.SaveChanges();
+                var reliefs = (from x in context.TBL_STAFF_RELIEF where x.DELETED == false
+
+                       select new ApprovalReliefViewModel
+                       {
+                           reliefId = x.RELIEFID,
+                           relievedStaffId = x.STAFFID,
+                           reliefStaffId = x.RELIEFSTAFFID,
+                           staffName = context.TBL_STAFF.Where(s => s.STAFFID == x.STAFFID)
+                                                .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
+                                                .FirstOrDefault().name ?? "",
+                           reliefStaffName = context.TBL_STAFF.Where(s => s.STAFFID == x.RELIEFSTAFFID)
+                                                .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
+                                                .FirstOrDefault().name ?? "",
+                           reliefReason = x.RELIEFREASON,
+                           startDate = x.STARTDATE,
+                           endDate = x.ENDDATE,
+                           isActive = x.ISACTIVE,
+                           //isActive = DateTime.Now.CompareTo(x.ENDDATE) < 0,
+
+                       }).ToList();
+                return reliefs;
+           }
+            catch(Exception e)
+            {
+                throw e;
+            }
+
+            
         }
         public async Task<bool> UpdateApprovalRelief(int reliefId, ApprovalReliefViewModel model)
         {
@@ -252,7 +284,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     this.auditTrail.AddAuditTrail(audit);
                     //end of Audit section -------------------------------
 
-                    output = await context.SaveChangesAsync() > 0;
+                    output = context.SaveChanges() > 0;
 
                     targetReliefId = existingTempApprovalRelief?.TEMPRELIEFID ?? tempApprovalRelief.TEMPRELIEFID;
 

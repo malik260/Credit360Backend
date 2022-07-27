@@ -79,8 +79,36 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         ;
             return data;
         }
+        public IQueryable<int> GetAllDetailedApprovalLevelStaffApprovalLevelId(int companyId, int staffId)
+        {
+            var data = (from a in context.TBL_APPROVAL_LEVEL_STAFF
+                        join e in context.TBL_STAFF on a.STAFFID equals e.STAFFID
+                        join b in context.TBL_APPROVAL_LEVEL on a.APPROVALLEVELID equals b.APPROVALLEVELID
+                        join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                        join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                        where c.COMPANYID == companyId
+                        && a.STAFFID == staffId
+                        && a.DELETED == false
+                        select a.APPROVALLEVELID 
+                        );
 
-        private IEnumerable<ApprovalLevelStaffViewModel> GetAllDetailedApprovalLevelStaff(int companyId)
+            var data2 = (from a in context.TBL_STAFF_ROLE
+                         join e in context.TBL_STAFF on a.STAFFROLEID equals e.STAFFROLEID
+                         join b in context.TBL_APPROVAL_LEVEL on e.STAFFROLEID equals b.STAFFROLEID
+                         join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                         join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                         where c.COMPANYID == companyId
+                         && e.STAFFID == staffId
+                         && e.DELETED == false
+                         select b.APPROVALLEVELID
+                             
+                         );
+
+            return data.Union(data2).Distinct();
+                ;
+        }
+
+        private IQueryable<ApprovalLevelStaffViewModel> GetAllDetailedApprovalLevelStaff(int companyId)
         {
             var data = (from a in context.TBL_APPROVAL_LEVEL_STAFF
                         join e in context.TBL_STAFF on a.STAFFID equals e.STAFFID
@@ -94,9 +122,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             groupId = (int)a.TBL_APPROVAL_LEVEL.GROUPID,
                             operationId = d.OPERATIONID,
                             maximumAmount = a.MAXIMUMAMOUNT,
-                            investmentGradeAmount = a.INVESTMENTGRADEAMOUNT,
-                            standardGradeAmount = a.STANDARDGRADEAMOUNT,
-                            renewalLimit = a.RENEWALLIMIT,
                             processViewScope = a.PROCESSVIEWSCOPEID,
                             canViewDocument = a.CANVIEWDOCUMENT,
                             canViewUploadedFile = a.CANVIEWUPLOAD,
@@ -112,10 +137,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
                             staffId = a.STAFFID,
                             staffLevelId = a.STAFFLEVELID,// added
+                            staffRoleId = a.TBL_STAFF.STAFFROLEID,// added
                             staffLevelName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
                             dateTimeCreated = a.DATETIMECREATED,
-                            createdBy = (int)a.CREATEDBY
-                        }).ToList();
+                            createdBy = (int)a.CREATEDBY,
+                            investmentGradeAmount = a.INVESTMENTGRADEAMOUNT,
+                            standardGradeAmount = a.STANDARDGRADEAMOUNT,
+                            renewalLimit = a.RENEWALLIMIT,
+                        });
 
             var data2 = (from a in context.TBL_STAFF_ROLE
                          join e in context.TBL_STAFF on a.STAFFROLEID equals e.STAFFROLEID
@@ -129,15 +158,15 @@ namespace FintrakBanking.Repositories.Setups.Approval
                              groupId = (int)b.GROUPID,
                              operationId = d.OPERATIONID,
                              maximumAmount = b.MAXIMUMAMOUNT,
-                             //processViewScope = b.PROCESSVIEWSCOPEID,
-                             //canViewDocument = b.CANVIEWDOCUMENT,
-                             //canViewUploadedFile = b.CANVIEWUPLOAD,
-                             //canViewApproval = b.CANVIEWAPPROVAL,
-                             //canApprove = b.CANAPPROVE,
-                             //canUploadFile = b.CANUPLOAD,
+                             processViewScope = 0,
+                             canViewDocument = b.CANVIEWDOCUMENT,
+                             canViewUploadedFile = b.CANVIEWUPLOAD,
+                             canViewApproval = b.CANVIEWAPPROVAL,
+                             canApprove = b.CANAPPROVE,
+                             canUploadFile = b.CANUPLOAD,
                              //canSendRequest = a.CANSENDJOBREQUEST,
-                             //canEdit = b.CANEDIT,
-                             //vetoPower = b.VETOPOWER,
+                             canEdit = b.CANEDIT,
+                             vetoPower = false,
                              //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
                              position = b.POSITION,
                              approvalLevelId = b.APPROVALLEVELID,
@@ -146,19 +175,92 @@ namespace FintrakBanking.Repositories.Setups.Approval
                              staffLevelId = b.APPROVALLEVELID,
                              staffRoleId = a.STAFFROLEID,// added
                              staffLevelName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME,
-                             //dateTimeCreated = e.DATETIMECREATED,
-                             //createdBy = (int)e.CREATEDBY
-                         }).ToList();
+                             dateTimeCreated = DateTime.Now,
+                             createdBy = (int)e.CREATEDBY,
+                             investmentGradeAmount = b.INVESTMENTGRADEAMOUNT,
+                             standardGradeAmount = b.STANDARDGRADEAMOUNT,
+                             renewalLimit = b.RENEWALLIMIT,
+
+                         });
 
             return data.Union(data2);
         }
+        //private IQueryable<ApprovalLevelStaffViewModel> GetAllDetailedApprovalLevelStaff(int companyId)
+        //{
+        //    var data = (from a in context.TBL_APPROVAL_LEVEL_STAFF
+        //                join e in context.TBL_STAFF on a.STAFFID equals e.STAFFID
+        //                join b in context.TBL_APPROVAL_LEVEL on a.APPROVALLEVELID equals b.APPROVALLEVELID
+        //                join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+        //                join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+        //                where c.COMPANYID == companyId
+        //                && a.DELETED == false
+        //                select new ApprovalLevelStaffViewModel
+        //                {
+        //                    groupId = (int)a.TBL_APPROVAL_LEVEL.GROUPID,
+        //                    operationId = d.OPERATIONID,
+        //                    maximumAmount = a.MAXIMUMAMOUNT,
+        //                    processViewScope = a.PROCESSVIEWSCOPEID,
+        //                    canViewDocument = a.CANVIEWDOCUMENT,
+        //                    canViewUploadedFile = a.CANVIEWUPLOAD,
+        //                    canViewApproval = a.CANVIEWAPPROVAL,
+        //                    canApprove = a.CANAPPROVE,
+        //                    canUploadFile = a.CANUPLOAD,
+        //                    //canSendRequest = a.CANSENDJOBREQUEST,
+        //                    canEdit = a.CANEDIT,
+        //                    vetoPower = a.VETOPOWER,
+        //                    //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
+        //                    position = a.POSITION,
+        //                    approvalLevelId = a.APPROVALLEVELID,
+        //                    approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+        //                    staffId = a.STAFFID,
+        //                    staffLevelId = a.STAFFLEVELID,// added
+        //                    staffLevelName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+        //                    dateTimeCreated = a.DATETIMECREATED,
+        //                    createdBy = (int)a.CREATEDBY
+        //                });
+
+        //    var data2 = (from a in context.TBL_STAFF_ROLE
+        //                 join e in context.TBL_STAFF on a.STAFFROLEID equals e.STAFFROLEID
+        //                 join b in context.TBL_APPROVAL_LEVEL on e.STAFFROLEID equals b.STAFFROLEID
+        //                 join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+        //                 join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+        //                 where c.COMPANYID == companyId
+        //                 && e.DELETED == false
+        //                 select new ApprovalLevelStaffViewModel
+        //                 {
+        //                     groupId = (int)b.GROUPID,
+        //                     operationId = d.OPERATIONID,
+        //                     maximumAmount = b.MAXIMUMAMOUNT,
+        //                     //processViewScope = b.PROCESSVIEWSCOPEID,
+        //                     //canViewDocument = b.CANVIEWDOCUMENT,
+        //                     //canViewUploadedFile = b.CANVIEWUPLOAD,
+        //                     //canViewApproval = b.CANVIEWAPPROVAL,
+        //                     //canApprove = b.CANAPPROVE,
+        //                     //canUploadFile = b.CANUPLOAD,
+        //                     //canSendRequest = a.CANSENDJOBREQUEST,
+        //                     //canEdit = b.CANEDIT,
+        //                     //vetoPower = b.VETOPOWER,
+        //                     //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
+        //                     position = b.POSITION,
+        //                     approvalLevelId = b.APPROVALLEVELID,
+        //                     approvalLevelName = b.LEVELNAME,
+        //                     staffId = e.STAFFID,
+        //                     staffLevelId = b.APPROVALLEVELID,
+        //                     staffRoleId = a.STAFFROLEID,// added
+        //                     staffLevelName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME,
+        //                     //dateTimeCreated = e.DATETIMECREATED,
+        //                     //createdBy = (int)e.CREATEDBY
+        //                 });
+
+        //    return data.Union(data2);
+        //}
 
         public IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaff(int companyId)
         {
             return GetApprovalLevelStaff(companyId);
         }
 
-        public IEnumerable<ApprovalLevelStaffViewModel> GetAllAssignedApprovalLevelStaff(int companyId)
+        public IQueryable<ApprovalLevelStaffViewModel> GetAllAssignedApprovalLevelStaff(int companyId)
         {
             var data = GetAllDetailedApprovalLevelStaff(companyId);
             return data;

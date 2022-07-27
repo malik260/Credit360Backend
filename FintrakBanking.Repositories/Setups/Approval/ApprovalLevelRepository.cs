@@ -1603,34 +1603,43 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool UpdateDynamicWorkflowItemExpression(DynamicWorkflowViewModel model, int expressionId)
         {
-            var expre = context.TBL_WORKFLOW_ITEM_EXPRESSION.FirstOrDefault(x => x.EXPRESSIONID == expressionId);
-            if (expre != null)
+            try
             {
-                expre.CONTEXTID = model.contextId;
-                expre.DATAITEMID = model.dataItemId;
-                expre.COMPARISONID = model.comparisonId;
-                expre.EXPRESSION = model.value;
-                expre.WORKFLOWEXPRESSION = model.dataItemName + " " + model.comparisonId + " " + model.value;
-                expre.APPROVALBUSINESSRULEID = model.approvalBusinessRuleId;
+                var expre = context.TBL_WORKFLOW_ITEM_EXPRESSION.FirstOrDefault(x => x.EXPRESSIONID == expressionId);
+                if (expre != null)
+                {
+                    expre.CONTEXTID = model.contextId;
+                    expre.DATAITEMID = model.dataItemId;
+                    expre.COMPARISONID = model.comparisonId;
+                    expre.EXPRESSION = model.value;
+                    expre.WORKFLOWEXPRESSION = model.dataItemName + " " + model.comparisonId + " " + model.value;
+                    expre.APPROVALBUSINESSRULEID = model.approvalBusinessRuleId;
+                }
+
+                var saved = context.SaveChanges() > 0;
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.BusinessRuleUpdated,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"New Dynamic Workflow business rule '{ model.workflowExpression }' updated.",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+                this.auditTrail.AddAuditTrail(audit);
+                return saved;
             }
-
-            var saved = context.SaveChanges() > 0;
-
-            var audit = new TBL_AUDIT
+            catch (Exception e)
             {
-                AUDITTYPEID = (short)AuditTypeEnum.BusinessRuleUpdated,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"New Dynamic Workflow business rule '{ model.workflowExpression }' updated.",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = model.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName()
-            };
-            this.auditTrail.AddAuditTrail(audit);
-            return saved;
+                throw e;
+            }
+            
+            
         }
     }
 }

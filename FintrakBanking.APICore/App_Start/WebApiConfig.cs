@@ -1,10 +1,11 @@
 ﻿using FintrakBanking.APICore.Filters;
+using FintrakBanking.AccessSubsediary;
 using Microsoft.AspNet.WebApi.Extensions.Compression.Server;
 using Microsoft.Owin.Security.OAuth;
-using Newtonsoft.Json.Serialization;
 using System.Net.Http.Extensions.Compression.Core.Compressors;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using Newtonsoft.Json.Serialization;
 
 namespace FintrakBanking.APICore
 {
@@ -17,7 +18,7 @@ namespace FintrakBanking.APICore
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
             config.Filters.Add(new SecureExceptionFilterAttribute());
-
+            config.MessageHandlers.Add(new SubsediaryHttpHandler());
             // Use camel case for JSON data.
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver =
                 new CamelCasePropertyNamesContractResolver();

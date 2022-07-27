@@ -5197,7 +5197,7 @@ namespace FintrakBanking.ReportObjects
                     && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
                     //&& (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
                     //&& (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
-                    && cd.ISTHEPROMOTER == true
+                    
                     select new CustomerCompanyInfomationViewModels
                     {
                         customerId = c.CUSTOMERID,
@@ -5266,7 +5266,7 @@ namespace FintrakBanking.ReportObjects
                              && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
                              //&& (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
                              //&& (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
-                             && cd.ISTHEPROMOTER == true
+                             //&& cd.ISTHEPROMOTER == true
                              select new CustomerCompanyInfomationViewModels
                              {
                                  customerId = c.CUSTOMERID,
@@ -5334,7 +5334,7 @@ namespace FintrakBanking.ReportObjects
                               && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
                               //&& (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
                               //&& (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
-                              && cd.ISTHEPROMOTER == true
+                              //&& cd.ISTHEPROMOTER == true
                               select new CustomerCompanyInfomationViewModels
                               {
                                   customerId = c.CUSTOMERID,

@@ -298,6 +298,8 @@ public class LienProcessViewModel //: GeneralEntity
         public int? toStaffId { get; set; }
         public short applicationStatusId { get; set; }
         public string operationName { get; set; }
+        public int targetId { get; set; }
+        public int operationId { get; set; }
         public string productClassName { get; set; }
         public string productName { get; set; }
         public string productClassProcess { get; set; }
@@ -321,6 +323,8 @@ public class LienProcessViewModel //: GeneralEntity
         public string responseCode { get; set; }
         public string createdByName { get; set; }
         public string countryCode { get; set; }
+        public string staffRoleCode { get; set; }
+        public bool actedOn { get; set; }
     }
 
 

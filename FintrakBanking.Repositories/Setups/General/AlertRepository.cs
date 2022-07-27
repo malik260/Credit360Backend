@@ -65931,6 +65931,9 @@ namespace FintrakBanking.Repositories.Setups.General
             var emailList = "";
             int appDetails;
             TBL_STAFF staff = null;
+            TBL_STAFF rm = null;
+            TBL_STAFF zh = null;
+            TBL_STAFF gh = null;
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
@@ -65982,6 +65985,20 @@ namespace FintrakBanking.Repositories.Setups.General
                     var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == staff.STAFFID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                     var accountOfficerEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.STAFFID).Select(x => x.EMAIL).FirstOrDefault();
                     var rmEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL).FirstOrDefault();
+                    appDetails = (int)i.CREATEDBY;
+                    staff = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x).FirstOrDefault();
+                    if (staff != null)
+                    {
+                        rm = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                        if (rm != null)
+                        {
+                            zh = context.TBL_STAFF.Where(x => x.STAFFID == rm.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                            if (zh != null)
+                            {
+                                gh = context.TBL_STAFF.Where(x => x.STAFFID == zh.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
+                            }
+                        }
+                    }
                     //var previousInsurancePolicyDetails = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => d.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID && DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)).OrderBy(d=>d.INSURANCEENDDATE).ToList();
 
                     var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();
@@ -66022,7 +66039,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             alertTemplate = alertTemplate.Replace("@{{customerName}}", customerName);
                             alertTemplate = alertTemplate.Replace("@{{daysToExpire}}", numberOfDays.ToString());
                             alertTemplate = alertTemplate.Replace("@{{detail}}", result);
-                            emailList = rmEmail + ";" + accountOfficerEmail;
+                            emailList = zh?.EMAIL + ";" + gh?.EMAIL + ";" + rm?.EMAIL + ";" + staff?.EMAIL + ";" + accountOfficerEmail;
                             emailList = emailList + defaultEmail;
                             alert.receiverEmailList.Add(emailList);
                             alert.template = alertTemplate;
@@ -66098,10 +66115,11 @@ namespace FintrakBanking.Repositories.Setups.General
                         staff = context.TBL_STAFF.Find(appDetails);
                     }
 
+                    appDetails = (int)i.CREATEDBY;
                     var accountOfficerName = context.TBL_STAFF.Where(x => x.STAFFID == staff.STAFFID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                     var accountOfficerEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.STAFFID).Select(x => x.EMAIL).FirstOrDefault();
-                   // var rmEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL).FirstOrDefault();
-                    
+                    var rmEmail = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x.EMAIL).FirstOrDefault();
+                    staff = context.TBL_STAFF.Where(x => x.STAFFID == appDetails).Select(x => x).FirstOrDefault();
                     if (staff != null)
                     {
                         rm = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).Select(x => x).FirstOrDefault();
@@ -66114,6 +66132,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             }
                         }
                     }
+
                     //var previousInsurancePolicyDetails = context.TBL_COLLATERAL_INSURANCE_TRACKING.Where(d => d.COLLATERALCUSTOMERID == i.COLLATERALCUSTOMERID && DbFunctions.TruncateTime(d.INSURANCEENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)).OrderBy(d=>d.INSURANCEENDDATE).ToList();
 
                     var insurancePolicyType = i.INSURANCEPOLICYTYPEID.Value == 0 ? i.OTHERINSURANCEPOLICYTYPE : context.TBL_INSURANCE_POLICY_TYPE.Where(o => o.POLICYTYPEID == i.INSURANCEPOLICYTYPEID).Select(o => o.DESCRIPTION).FirstOrDefault();

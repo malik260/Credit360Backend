@@ -19,6 +19,8 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         IEnumerable<ApprovalReliefViewModel> GetAllStaffRelief(int companyId, int staffId);
         bool AddStaffRelief(ApprovalReliefViewModel model);
 
+        void UpdateAllApprovalRelief(int companyId);
+
 
     }
 }
