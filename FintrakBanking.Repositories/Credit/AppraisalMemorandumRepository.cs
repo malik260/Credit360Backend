@@ -3571,14 +3571,11 @@ namespace FintrakBanking.Repositories.Credit
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
-            
             var investmentGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT < x.approvedAmount);
             var standardGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT < x.approvedAmount);
             var renewalLimitApp = applications.Where(x => x.approvalLevelStaff != null &&  x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT < x.approvedAmount);
 
-
             applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp);
-
 
             //var test = applications.ToList();
             //applications = test.AsQueryable();
@@ -3990,12 +3987,12 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
            
-            var investmentGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT < x.approvedAmount);
-            var standardGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT < x.approvedAmount);
-            var renewalLimitApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT < x.approvedAmount);
+            //var investmentGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT < x.approvedAmount);
+            //var standardGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT < x.approvedAmount);
+            //var renewalLimitApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT < x.approvedAmount);
 
 
-            applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp);
+            //applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp);
 
             return applications;
 

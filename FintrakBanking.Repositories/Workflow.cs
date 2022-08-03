@@ -1870,7 +1870,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool LevelBusinessRuleIsValid(TBL_APPROVAL_BUSINESS_RULE rule)
         {
             
-            if (levelBusinessRule == null) return true;
+            if (levelBusinessRule == null) return false;
 
             bool validity = false;
             bool flagChecked = false;
