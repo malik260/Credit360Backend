@@ -254,26 +254,26 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanDocumentViewModel> GetApplicationLoanDocument(string applicationNumber)
         {
-            //var data = (from x in this.context.TBL_MEDIA_LOAN_DOCUMENTS
-            //            where x.LOANAPPLICATIONNUMBER == applicationNumber
-            //            select new LoanDocumentViewModel
-            //            {
-            //                documentId = x.DOCUMENTID,
-            //                loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
-            //                loanReferenceNumber = x.LOANREFERENCENUMBER,
-            //                documentTitle = x.DOCUMENTTITLE,
-            //                documentTypeId = x.DOCUMENTTYPEID,
-            //                fileData = x.FILEDATA,
-            //                fileName = x.FILENAME,
-            //                fileExtension = x.FILEEXTENSION,
-            //                systemDateTime = x.SYSTEMDATETIME,
-            //                physicalFileNumber = x.PHYSICALFILENUMBER,
-            //                physicalLocation = x.PHYSICALLOCATION,
-            //                isPrimaryDocument = x.ISPRIMARYDOCUMENT,
-            //            }).ToList();
+            var data = (from x in this.docContext.TBL_MEDIA_LOAN_DOCUMENTS
+                        where x.LOANAPPLICATIONNUMBER == applicationNumber
+                        select new LoanDocumentViewModel
+                        {
+                            documentId = x.DOCUMENTID,
+                            loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                            loanReferenceNumber = x.LOANREFERENCENUMBER,
+                            documentTitle = x.DOCUMENTTITLE,
+                            documentTypeId = x.DOCUMENTTYPEID,
+                            fileData = x.FILEDATA,
+                            fileName = x.FILENAME,
+                            fileExtension = x.FILEEXTENSION,
+                            systemDateTime = x.SYSTEMDATETIME,
+                            physicalFileNumber = x.PHYSICALFILENUMBER,
+                            physicalLocation = x.PHYSICALLOCATION,
+                            isPrimaryDocument = x.ISPRIMARYDOCUMENT,
+                        }).ToList();
 
-            //return data;
-            return new List<LoanDocumentViewModel>();
+            return data;
+            //return new List<LoanDocumentViewModel>();
         }
         public void GetApplicationLoanDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
         {

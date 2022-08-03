@@ -1872,9 +1872,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             
             if (levelBusinessRule == null) return true;
 
-            bool validity = true;
-            bool flagChecked = true;
-            bool limitChecked = true;
+            bool validity = false;
+            bool flagChecked = false;
+            bool limitChecked = false;
             decimal pepAmount = rule.PEPAMOUNT ?? 0;
             decimal minimumAmount = rule.MINIMUMAMOUNT ?? 0;
             decimal maximumAmount = rule.MAXIMUMAMOUNT ?? 0;
