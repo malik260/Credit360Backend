@@ -27,7 +27,7 @@ namespace FintrakBanking.Common.Enum
         ConfirmationOfTreasuryBills = 7,
         ConfirmationOfDealSlip = 8,
         ConfirmationOfStock = 9,
-        ConfirmationOfFBNQUEST = 10,
+        CreditRisk = 10,
     }
 
 
