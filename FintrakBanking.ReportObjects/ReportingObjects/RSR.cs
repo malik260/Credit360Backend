@@ -395,7 +395,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                 join r in context.TBL_LOAN on p.LOANID equals r.TERMLOANID
                                 let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                where p.PROJECTSITEREPORTID == id && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
+                                where p.PROJECTSITEREPORTID == id && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
                                  select new LoanApplicationViewModel
                                 {
                                 customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
@@ -429,7 +429,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                 join r in context.TBL_LOAN_REVOLVING on p.LOANID equals r.REVOLVINGLOANID
                                 let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                where p.PROJECTSITEREPORTID == id && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
+                                where p.PROJECTSITEREPORTID == id && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
                                  select new LoanApplicationViewModel
                                 {
                                     customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
@@ -463,7 +463,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                 join r in context.TBL_LOAN_CONTINGENT on p.LOANID equals r.CONTINGENTLOANID
                                 let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                where p.PROJECTSITEREPORTID == id && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
+                                where p.PROJECTSITEREPORTID == id && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
                                   select new LoanApplicationViewModel
                                 {
                                     customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
@@ -496,7 +496,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
                                 join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                 let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                where p.PROJECTSITEREPORTID == id && p.LOANID == null && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
+                                where p.PROJECTSITEREPORTID == id && p.LOANID == null && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
                                  select new LoanApplicationViewModel
                                 {
                                     customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
@@ -529,7 +529,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                  join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
                                  join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                  let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                 where p.PROJECTSITEREPORTID == id && p.LOANID == null  && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
+                                 where p.PROJECTSITEREPORTID == id && p.LOANID == null  && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
                                  select new LoanApplicationViewModel
                                  {
                                      customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
@@ -562,7 +562,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                   join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
                                   join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                   let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                  where p.PROJECTSITEREPORTID == id && p.LOANID == null  && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
+                                  where p.PROJECTSITEREPORTID == id && p.LOANID == null  && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
                                   select new LoanApplicationViewModel
                                   {
                                       customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),

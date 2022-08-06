@@ -952,7 +952,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                           });
             var vr = result.Distinct();
             var vr2 = vr.ToList();
-            return result;
+            return vr2;
         }
 
         public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
