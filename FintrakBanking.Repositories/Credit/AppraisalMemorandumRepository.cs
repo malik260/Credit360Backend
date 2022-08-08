@@ -345,16 +345,7 @@ namespace FintrakBanking.Repositories.Credit
         {
                 //Task.Run(() => CreateOutPutDocument(model.applicationId));
 
-                if (model.isExternalSystemApprover)
-                {
-                    var response = headOfficeToSub.PostFacilityApprovalToSubnputs(model);
-                    if(response != null)
-                    {
-                    var update =  stgContext.STG_SUB_BASICTRANSACTION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPROVALLEVELID == model.nextApprovalLevelId && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved).FirstOrDefault();
-                    update.APPROVALSTATUSID = model.applicationStatusId;
-                    stgContext.SaveChanges();
-                    }
-                }
+                
 
                 bool updateApprovedAmount = false;
                 bool generateOutPutDocument = false;
@@ -3558,7 +3549,7 @@ namespace FintrakBanking.Repositories.Credit
             apiRequestId = x.a.APIREQUESTID,
             creditGradeId = x.a.CREDITGRADEID,
             
-            approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f=>f.STAFFID == staffId)
+            approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f=>f.STAFFID == staffId)
         }).ToListAsync();
 
             if (isSpecific)
