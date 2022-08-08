@@ -3556,9 +3556,9 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID,
-            creditGradeId = x.a.CREDITGRADEID,
+            //creditGradeId = x.a.CREDITGRADEID,
             
-            approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f=>f.STAFFID == staffId)
+            //approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f=>f.STAFFID == staffId)
         }).ToListAsync();
 
             if (isSpecific)
