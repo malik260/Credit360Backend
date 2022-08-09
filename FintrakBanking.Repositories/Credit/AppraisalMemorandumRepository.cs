@@ -3959,7 +3959,7 @@ namespace FintrakBanking.Repositories.Credit
             operationId = x.a.OPERATIONID,
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
             tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
-            approvalLevelStaff = (TBL_APPROVAL_LEVEL_STAFF)x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF,
+            //approvalLevelStaff = (TBL_APPROVAL_LEVEL_STAFF)x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF,
 
 
             globalsla = context.TBL_LOAN_APPLICATION_DETAIL
@@ -3970,6 +3970,7 @@ namespace FintrakBanking.Repositories.Credit
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID,
             creditGradeId = x.a.CREDITGRADEID,
+            approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f => f.STAFFID == staffId)
         }).ToList();
 
             
