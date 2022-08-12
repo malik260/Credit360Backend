@@ -14436,7 +14436,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public async Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId)
         {
-            var result = await GetApprovalTrail(companyId, staffId, targetId, operationId).ToListAsync();
+            var result = GetApprovalTrail(companyId, staffId, targetId, operationId).ToList();
             return result.Distinct();
         }
 
