@@ -94,7 +94,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             levelTypeId = x.LEVELTYPEID,
                             levelBusinessRuleId = x.APPROVALBUSINESSRULEID,
                             roleIdToRoute = x.ROLEIDTOROUTE,
-                            isPostApprovalReviewer = x.ISPOSTAPPROVALREVIEWER
+                            isPostApprovalReviewer = x.ISPOSTAPPROVALREVIEWER,
+                            ignoreIfApprovalLevelStaff = x.IGNOREIFAPPROVALLEVELSTAFF
 
                         }).OrderBy(x => x.position).ToList();
 
@@ -129,6 +130,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             canResolveDispute = a.CANRESOLVEDISPUTE,
                             isActive = a.ISACTIVE,
                             isPostApprovalReviewer = a.ISPOSTAPPROVALREVIEWER,
+                            ignoreIfApprovalLevelStaff = a.IGNOREIFAPPROVALLEVELSTAFF,
                             canViewDocument = a.CANVIEWDOCUMENT,
                             canEdit = a.CANEDIT,
                             canViewUploadedFile = a.CANVIEWUPLOAD,
@@ -270,7 +272,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     LEVELTYPEID = model.levelTypeId,
                     APPROVALBUSINESSRULEID = model.levelBusinessRuleId,
                     ROLEIDTOROUTE = model.roleIdToRoute,
-                    ISPOSTAPPROVALREVIEWER = model.isPostApprovalReviewer
+                    ISPOSTAPPROVALREVIEWER = model.isPostApprovalReviewer,
+                    IGNOREIFAPPROVALLEVELSTAFF = model.ignoreIfApprovalLevelStaff
                 };
 
                 context.TBL_APPROVAL_LEVEL.Add(data);
@@ -441,6 +444,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 //data.LASTUPDATEDBY = model.lastUpdatedBy;
                 data.ROLEIDTOROUTE = model.roleIdToRoute;
                 data.ISPOSTAPPROVALREVIEWER = model.isPostApprovalReviewer;
+                data.IGNOREIFAPPROVALLEVELSTAFF = model.ignoreIfApprovalLevelStaff;
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT

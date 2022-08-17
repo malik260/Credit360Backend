@@ -107,6 +107,7 @@ namespace FintrakBanking.Entities.Models
         public int? APPROVALBUSINESSRULEID { get; set; }
         public bool ISPOSTAPPROVALREVIEWER { get; set; }
         public bool ISSYNDICATED { get; set; }
+        public bool IGNOREIFAPPROVALLEVELSTAFF { get; set; }
 
         public virtual TBL_APPROVAL_GROUP TBL_APPROVAL_GROUP { get; set; }
 
@@ -139,5 +140,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_REVIEW_APPLICATN_CAM> TBL_LOAN_REVIEW_APPLICATN_CAM { get; set; }
+        
     }
 }
