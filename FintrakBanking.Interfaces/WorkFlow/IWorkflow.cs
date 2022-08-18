@@ -149,6 +149,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public decimal? StandardGradeLimit { get; set; }
         public decimal? RenewalLimit { get; set; }
         public bool IsSyndicated { get; set; }
+        public bool IgnoreWhenLevelIsApprovalLevelStaff { get; set; }
     }
 
 }

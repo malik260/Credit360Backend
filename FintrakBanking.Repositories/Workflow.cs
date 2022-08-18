@@ -1790,7 +1790,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                InvestmentGradeLimit = x.Level.INVESTMENTGRADEAMOUNT,
                                StandardGradeLimit = x.Level.STANDARDGRADEAMOUNT,
                                RenewalLimit = x.Level.RENEWALLIMIT,
-                               IsSyndicated = x.Level.ISSYNDICATED
+                               IsSyndicated = x.Level.ISSYNDICATED,
+                               IgnoreWhenLevelIsApprovalLevelStaff = x.Level.IGNOREIFAPPROVALLEVELSTAFF
                            })
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition)
@@ -1831,6 +1832,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) { continue; }
                 if (level.LevelBusinessRuleId != null && !ExecuteStandardBusinessRule(level.LevelBusinessRule)) { continue; }
+                if (ResolveApprovalGridFlow(levels, level)) { continue; }
                 //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
                 grid.Add(new WorkflowSetup
@@ -1953,6 +1955,18 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
 
+        public bool ResolveApprovalGridFlow(List<WorkflowSetup> levels, WorkflowSetup level)
+        {
+            var approvalStaffLevel = context.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFLEVELID == level.ApprovalLevelId).FirstOrDefault();
+
+            var helpLevel = levels.Where(x => x.IgnoreWhenLevelIsApprovalLevelStaff == true).FirstOrDefault();
+
+            if (approvalStaffLevel == null) return false;
+
+            if (helpLevel != null && helpLevel.ApprovalLevelId == approvalStaffLevel?.STAFFLEVELID && helpLevel.ApprovalLevelId == level.ApprovalLevelId) return true;
+
+            return false;
+        }
         private bool ExecuteStandardBusinessRule(TBL_APPROVAL_BUSINESS_RULE rule)
         {
             if (levelBusinessRule == null) return true;
