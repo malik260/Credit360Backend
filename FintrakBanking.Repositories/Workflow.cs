@@ -1957,13 +1957,13 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool ResolveApprovalGridFlow(List<WorkflowSetup> levels, WorkflowSetup level)
         {
-            var approvalStaffLevel = context.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFLEVELID == level.ApprovalLevelId).FirstOrDefault();
+            var approvalStaffLevel = context.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFLEVELID == level.ApprovalLevelId).Select(x=>x.STAFFLEVELID).ToList();
 
-            var helpLevel = levels.Where(x => x.IgnoreWhenLevelIsApprovalLevelStaff == true).FirstOrDefault();
+            var helpLevel = levels.Where(x => x.IgnoreWhenLevelIsApprovalLevelStaff == true && x.ApprovalLevelId == level.ApprovalLevelId).FirstOrDefault();
 
-            if (approvalStaffLevel == null) return false;
+            if (approvalStaffLevel.Count() == 0) return false;
 
-            if (helpLevel != null && helpLevel.ApprovalLevelId == approvalStaffLevel?.STAFFLEVELID && helpLevel.ApprovalLevelId == level.ApprovalLevelId) return true;
+            if (helpLevel != null && approvalStaffLevel.Contains(helpLevel.ApprovalLevelId) && helpLevel.ApprovalLevelId == level.ApprovalLevelId) return true;
 
             return false;
         }
