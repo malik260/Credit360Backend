@@ -951,7 +951,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               approvalStatus = context.TBL_APPROVAL_STATUS.Where(t => t.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(t => t.APPROVALSTATUSNAME).FirstOrDefault()
                           });
             var vr = result.Distinct();
-            var vr2 = vr.ToList();
+           // var vr2 = vr.ToList();
             return result;
         }
 
