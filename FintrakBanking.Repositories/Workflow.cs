@@ -1826,7 +1826,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 var testField = level.Level.LEVELNAME;
 
-                if (level.LevelBusinessRuleId != null && LevelBusinessRuleIsValid(level.LevelBusinessRule)) { continue; }
+                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) { continue; }
                 if (level.LevelBusinessRuleId != null && !ExecuteStandardBusinessRule(level.LevelBusinessRule)) { continue; }
                 //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
@@ -1867,11 +1867,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool LevelBusinessRuleIsValid(TBL_APPROVAL_BUSINESS_RULE rule)
         {
             
-            if (levelBusinessRule == null) return false;
+            if (levelBusinessRule == null) return true;
 
-            bool validity = true ;
-            bool flagChecked = true;
-            bool limitChecked = true;
+            bool validity = false ;
+            bool flagChecked = false;
+            bool limitChecked = false;
             decimal pepAmount = rule.PEPAMOUNT ?? 0;
             decimal minimumAmount = rule.MINIMUMAMOUNT ?? 0;
             decimal maximumAmount = rule.MAXIMUMAMOUNT ?? 0;
