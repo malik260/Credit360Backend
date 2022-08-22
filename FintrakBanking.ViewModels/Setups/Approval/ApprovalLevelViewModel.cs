@@ -86,6 +86,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
 
         public int? levelBusinessRuleId { get; set; }
         public bool isPostApprovalReviewer { get; set; }
+        public bool ignoreIfApprovalLevelStaff { get; set; }
     }
 
     public class PresetRouteViewModel : GeneralEntity
