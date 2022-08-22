@@ -1511,6 +1511,31 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (amount == 0) { return true; }
             if (investmentGrade == false) { return true; }
             if (level.INVESTMENTGRADEAMOUNT >= amount) { return true; }
+
+            var IndividualApprovers =  level.TBL_APPROVAL_LEVEL_STAFF.Where(x=>x.STAFFID == staffId && x.APPROVALLEVELID == level.APPROVALLEVELID).FirstOrDefault();
+            if (IndividualApprovers != null && IndividualApprovers?.INVESTMENTGRADEAMOUNT >= amount) return true;
+            return false;
+        }
+
+        private bool WithinStandardGradeLimit(TBL_APPROVAL_LEVEL level)
+        {
+            if (amount == 0) { return true; }
+            if (investmentGrade == false) { return true; }
+            if (level.STANDARDGRADEAMOUNT >= amount) { return true; }
+
+            var IndividualApprovers = level.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId && x.APPROVALLEVELID == level.APPROVALLEVELID).FirstOrDefault();
+            if (IndividualApprovers != null && IndividualApprovers?.STANDARDGRADEAMOUNT >= amount) return true;
+            return false;
+        }
+
+        private bool WithinRenewalLimit(TBL_APPROVAL_LEVEL level)
+        {
+            if (amount == 0) { return true; }
+            if (investmentGrade == false) { return true; }
+            if (level.RENEWALLIMIT >= amount) { return true; }
+
+            var IndividualApprovers = level.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId && x.APPROVALLEVELID == level.APPROVALLEVELID).FirstOrDefault();
+            if (IndividualApprovers != null && IndividualApprovers?.RENEWALLIMIT >= amount) return true;
             return false;
         }
 
@@ -1540,6 +1565,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true
                 && WithinInvestmentGradeLimit(level) == true
+                //&& WithinStandardGradeLimit(level) == true
+                //&& WithinRenewalLimit(level) == true
                 && WithinPoliticallyExposedLimit(level) == true;
         }
 
