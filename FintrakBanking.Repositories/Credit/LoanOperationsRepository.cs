@@ -21040,6 +21040,7 @@ namespace FintrakBanking.Repositories.Credit
                             reviewRecord.REBOOKDATE = DateTime.Now;
                         }
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        reviewRecord.OPERATIONCOMPLETED = true;
                         output = context.SaveChanges() > 0;
                         if (entity.operationId == (int)OperationsEnum.OverdraftTenorExtension || entity.operationId == (int)OperationsEnum.TenorChange || entity.operationId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
                         {

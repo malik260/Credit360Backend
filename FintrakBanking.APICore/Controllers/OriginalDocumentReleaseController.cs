@@ -244,6 +244,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("security-release-go-for-approval")]
         public HttpResponseMessage GoForApproval([FromBody] IEnumerable< OriginalDocumentReleaseViewModel> model)
         {
+            if(model == null) { throw new SecureException("Please select a security/collateral to release"); }
             try
             {  foreach(var x in model)
                 {
