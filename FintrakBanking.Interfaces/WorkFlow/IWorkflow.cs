@@ -143,10 +143,13 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public TBL_APPROVAL_BUSINESS_RULE LevelBusinessRule { get; set; }
         public bool AllowMultipleInitiator { get; set; }
         public int? RoleIdToRoute { get; set; }
+        public int? ROLEIDTOROUTE { get; set; }
         public bool IsPostApprovalReviewer { get; set; }
-        public decimal InvestmentGradeLimit { get; set; }
-        public decimal StandardGradeLimit { get; set; }
-        public decimal RenewalLimit { get; set; }
+        public decimal? InvestmentGradeLimit { get; set; }
+        public decimal? StandardGradeLimit { get; set; }
+        public decimal? RenewalLimit { get; set; }
+        public bool IsSyndicated { get; set; }
+        public bool IgnoreWhenLevelIsApprovalLevelStaff { get; set; }
     }
 
 }
