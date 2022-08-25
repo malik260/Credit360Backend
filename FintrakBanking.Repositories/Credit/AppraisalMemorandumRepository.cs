@@ -2901,6 +2901,90 @@ namespace FintrakBanking.Repositories.Credit
             return grant;
         }
 
+        public PrivilegeViewModel GetUserPrivilegeByCode(AuthoritySignatureViewModel entity)
+        {
+            var appl = context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+            List<int> ExclusiveOperations = new List<int>(); // (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
+            List<int> levelIds = new List<int>();
+
+            //ExclusiveOperations.Add(entity.operationId);
+            if (appl != null)
+            {
+                ExclusiveOperations.Add(appl.OPERATIONID);
+            }
+
+            //var operationId = entity.operationId;
+            var staffRoleCode = entity.staffRoleCode;
+            var rank = context.TBL_STAFF_ROLE.Where(c => c.STAFFROLECODE == staffRoleCode).FirstOrDefault();
+            if (rank == null)
+            {
+                throw new SecureException("Staff role " + staffRoleCode + " cannot be found");
+            }
+            IQueryable<PrivilegeViewModel> grants;
+            PrivilegeViewModel grant;
+
+            // check default role
+            // var rank = context.TBL_STAFF_ROLE.Find(staffRole);
+
+            //grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
+            //    .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
+            //        m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+            //    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
+            //        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
+            //    .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false ),
+            //        gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
+            //        {
+            //            viewCamDocument = s.CANVIEWDOCUMENT,
+            //            canMakeChanges = s.CANEDIT,
+            //            canAppendTemplate = s.CANEDIT,
+            //            viewUploadedFiles = s.CANVIEWUPLOAD,
+            //            canUploadFile = s.CANUPLOAD,
+            //            viewApproval = s.CANVIEWAPPROVAL,
+            //            canApprove = s.CANAPPROVE,
+            //            approvalLimit = s.MAXIMUMAMOUNT,
+            //            approvalLevelId = s.APPROVALLEVELID,
+            //            groupRoleId = gl.mg.g.ROLEID,
+            //            canEscalate = gl.l.CANESCALATE,
+            //            levelTypeId = gl.l.LEVELTYPEID,
+            //            staffId = entity.createdBy,
+            //            roleId = rank.STAFFROLEID,
+            //            //userBranchId = (short)entity.BRANCHID
+            //        });
+
+            //if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
+            //{
+            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
+                .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
+                    m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == rank.STAFFROLEID),
+                    mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
+                    {
+                        viewCamDocument = l.CANVIEWDOCUMENT,
+                        canMakeChanges = l.CANEDIT,
+                        canAppendTemplate = l.CANEDIT,
+                        viewUploadedFiles = l.CANVIEWUPLOAD,
+                        canUploadFile = l.CANUPLOAD,
+                        viewApproval = l.CANVIEWAPPROVAL,
+                        canApprove = l.CANAPPROVE,
+                        approvalLimit = l.MAXIMUMAMOUNT,
+                        approvalLevelId = l.APPROVALLEVELID,
+                        groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
+                        canEscalate = l.CANESCALATE,
+                        levelTypeId = l.LEVELTYPEID,
+                        staffId = entity.createdBy,
+                        roleId = rank.STAFFROLEID,
+                        //userBranchId = (short)staff.BRANCHID
+                    });
+            //}
+
+            grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
+            if (grant == null) { return GetRelieverPrivilege(entity); }
+            grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
+            grant.owner = grant.userApprovalLevelIds.Contains((int)entity.levelId);
+
+            return grant;
+        }
+
         private IQueryable<OperationStaffViewModel> GetAllStaffNames()
         {
             return this.context.TBL_STAFF.Select(s => new OperationStaffViewModel
@@ -3423,27 +3507,28 @@ namespace FintrakBanking.Repositories.Credit
 
         #region FAM Pending Applications
 
-        public async Task<IQueryable<LoanApplicationViewModel>> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId, bool isSpecific)
+        public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId, bool isSpecific)
         {
             // var declarations
             List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
             List<int> levelIds = new List<int>();
             //List<int> levelIds2 = new List<int>();
-           
+
             ExclusiveOperations.Add(operationId);
-            foreach(var i in ExclusiveOperations)
+            var levIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+            foreach (var i in ExclusiveOperations)
             {
-                levelIds.AddRange(general.GetStaffApprovalLevelIds(staffId, operationId).ToList());
+                levelIds.AddRange(levIds);
             }
-            
+
             var staffs = general.GetStaffRlieved(staffId);
             //var currentStaff = context.TBL_STAFF.Find(staffs[0]);
 
-             IQueryable<LoanApplicationViewModel> applications = null;
+            IQueryable<LoanApplicationViewModel> applications = null;
 
             var query = new List<LoanApplicationViewModel>();
 
-            query = await context.TBL_LOAN_APPLICATION.Where(x =>
+            query = context.TBL_LOAN_APPLICATION.Where(x =>
                 x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.COMPANYID == companyId
@@ -3458,7 +3543,7 @@ namespace FintrakBanking.Repositories.Credit
                 && x.RESPONSESTAFFID == null
                 && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                 && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
-                //&& (staffs.Contains((int)x.TOSTAFFID))
+            //&& (staffs.Contains((int)x.TOSTAFFID))
             ),
             a => a.LOANAPPLICATIONID,
             b => b.TARGETID,
@@ -3546,10 +3631,8 @@ namespace FintrakBanking.Repositories.Credit
                                             .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA).Max(),
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
-            apiRequestId = x.a.APIREQUESTID,
-            creditGradeId = x.a.CREDITGRADEID,
-            approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f=>f.STAFFID == staffId)
-        }).ToListAsync();
+            apiRequestId = x.a.APIREQUESTID
+        }).ToList();
 
             if (isSpecific)
             {
@@ -3557,58 +3640,75 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             applications = query.AsQueryable()
-                .Where(x => x.currentApprovalLevelTypeId != 2 )
+                .Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
-
-            var investmentGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT < x.approvedAmount);
-            var standardGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT < x.approvedAmount);
-            var renewalLimitApp = applications.Where(x => x.approvalLevelStaff != null &&  x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT < x.approvedAmount);
-
-            applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp);
-
             //var test = applications.ToList();
             //applications = test.AsQueryable();
             return applications;
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
-        public async Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaryPendingLoanApplications()
+        public IEnumerable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, string staffRoleCode, bool isSpecific = false)
         {
-            var data = await (from a in stgContext.STG_SUB_BASICTRANSACTION
-                              select new SubsidiaryViewModel
-                              {
-                                  loanApplicationId = a.LOANAPPLICATIONID,
-                                  loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
-                                  applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                  relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
-                                  customerId = a.CUSTOMERID,
-                                  customerGlobalId = a.CUSTOMERGLOBALID,
-                                  countryCode = a.COUNTRYCODE,
-                                  productClassName = a.PRODUCTCLASSNAME,
-                                  productClassProcess = a.PRODUCT_CLASS_PROCESS,
-                                  subsidiaryId = a.SUBSIDIARYID,
-                                  applicationDate = a.APPLICATIONDATE,
-                                  systemDateTime = (DateTime)a.SYSTEMDATETIME,
-                                  applicationAmount = a.APPLICATIONAMOUNT,
-                                  totalExposureAmount = a.TOTALEXPOSUREAMOUNT,
-                                  interestRate = a.INTERESTRATE,
-                                  applicationTenor = a.APPLICATIONTENOR,
-                                  currentApprovalLevelId = a.APPROVALLEVELID,
-                                  currentApprovalLevelTypeId = a.APPROVALLEVELGLOBALCODE,
-                                  toStaffId = a.TOSTAFFID,
-                                  divisionCode = a.BUSINESSUNITSHORTCODE,
-                                  timeIn = a.SYSTEMARRIVALDATETIME,
-                                  approvalStatusId = (short)a.APPROVALSTATUSID,
-                                  applicationStatusId = (short)a.APPLICATIONSTATUSID,
-                                  operationName = a.OPERATIONNAME,
-                                  customerName = a.CUSTOMERID.HasValue ? a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME : "",
-                                  dateTimeCreated = a.DATETIMECREATED,
-                                  createdBy = a.CREATEDBY,
-                                  createdByName = a.CREATEDBYNAME
-                              }).ToListAsync();
+            try
+            {
+                var data = (from a in context.TBL_SUB_BASICTRANSACTION
+                            where
+                            (a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                            || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            || a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                            || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            && a.STAFFROLECODE == staffRoleCode && a.ACTEDON == false
 
-            return data;
+                            select new SubsidiaryViewModel
+                            {
+                                subBasicId = a.ID,
+                                loanApplicationId = a.LOANAPPLICATIONID,
+                                loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
+                                customerId = a.CUSTOMERID,
+                                customerGlobalId = a.CUSTOMERGLOBALID,
+                                countryCode = a.COUNTRYCODE,
+                                productClassName = a.PRODUCTCLASSNAME,
+                                productClassProcess = a.PRODUCT_CLASS_PROCESS,
+                                subsidiaryId = a.SUBSIDIARYID,
+                                applicationDate = a.APPLICATIONDATE,
+                                systemDateTime = (DateTime)a.SYSTEMDATETIME,
+                                applicationAmount = a.APPLICATIONAMOUNT,
+                                totalExposureAmount = a.TOTALEXPOSUREAMOUNT,
+                                interestRate = a.INTERESTRATE,
+                                applicationTenor = a.APPLICATIONTENOR,
+                                currentApprovalLevelId = a.APPROVALLEVELID,
+                                currentApprovalLevelTypeId = a.APPROVALLEVELGLOBALCODE,
+                                toStaffId = a.TOSTAFFID,
+                                divisionCode = a.BUSINESSUNITSHORTCODE,
+                                timeIn = a.SYSTEMARRIVALDATETIME,
+                                approvalStatusId = (short)a.APPROVALSTATUSID,
+                                applicationStatusId = (short)a.APPLICATIONSTATUSID,
+                                operationName = a.OPERATIONNAME,
+                                customerName = a.CUSTOMERID.HasValue ? a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME : "",
+                                dateTimeCreated = a.DATETIMECREATED,
+                                createdBy = a.CREATEDBY,
+                                createdByName = a.CREATEDBYNAME,
+                                targetId = a.TARGETID,
+                                operationId = a.OPERATIONID,
+                                actedOn = a.ACTEDON,
+                                loanTypeName = a.LOANAPPLICATIONTYPENAME,
+                                facility = a.PRODUCTNAME,
+                                divisionShortCode = a.BUSINESSUNITSHORTCODE
+
+                            }).ToList();
+
+                return data;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
         }
 
         public async Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaries()
@@ -5190,7 +5290,18 @@ namespace FintrakBanking.Repositories.Credit
                 throw ex;
             }
         }
+         public bool UpdateSubsidiaryBasicTransaction(int id, ForwardViewModel entity)
+        {
+            bool status = false;
+            var subData = context.TBL_SUB_BASICTRANSACTION.Find(id);
+            if (subData != null)
+            {
+                subData.ACTEDON = true;
 
+            }
+            status = context.SaveChanges() > 0;
+            return status;
+        }
     }
 
 

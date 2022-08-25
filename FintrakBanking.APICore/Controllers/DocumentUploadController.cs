@@ -104,22 +104,24 @@ namespace FintrakBanking.APICore.Controllers
         [ClaimsAuthorization]
         [Route("document-upload")]
         public async Task<HttpResponseMessage> AddDocumentUploadAsync()
-        {
-
-            if (!Request.Content.IsMimeMultipartContent())
-            {
-                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
-            }
-
-            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-            await Request.Content.ReadAsMultipartAsync(provider);
-
-            if (!provider.FileStreams.Any())
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
-            }
+        {   
             try
             {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                try
+                {
+                    await Request.Content.ReadAsMultipartAsync(provider);
+                }
+                catch (Exception e) { throw e; }
+                
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
                 var entity = new DocumentUploadViewModel();
                 entity.fileName = provider.FormData["fileName"];
                 entity.fileExtension = provider.FormData["fileExtension"];
