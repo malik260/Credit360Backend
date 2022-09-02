@@ -19,6 +19,7 @@ using FintrakBanking.Common.CustomException;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.ViewModels.Credit;
+using System.Threading;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -2695,7 +2696,12 @@ namespace FintrakBanking.APICore.Controllers
             }
 
             MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-            await Request.Content.ReadAsMultipartAsync(provider);
+            Task.Factory
+                .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning, // guarantees separate thread
+                    TaskScheduler.Default)
+                .Wait();
 
 
             var isFinal = Convert.ToBoolean(provider.FormData["isFinal"]);

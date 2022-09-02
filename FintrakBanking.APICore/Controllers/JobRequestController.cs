@@ -12,6 +12,7 @@ using FintrakBanking.ViewModels.Credit;
 using System.Threading.Tasks;
 using System.Linq;
 using FintrakBanking.Common.CustomException;
+using System.Threading;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -509,7 +510,12 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+                Task.Factory
+                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning, // guarantees separate thread
+                        TaskScheduler.Default)
+                    .Wait();
                 //if(documentList)
 
                 int uploadType;
@@ -602,7 +608,12 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+                Task.Factory
+                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning, // guarantees separate thread
+                        TaskScheduler.Default)
+                    .Wait();
 
                 int uploadType;
                 if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
@@ -670,7 +681,12 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+                Task.Factory
+                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning, // guarantees separate thread
+                        TaskScheduler.Default)
+                    .Wait();
 
                 //int uploadType;
                 //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))

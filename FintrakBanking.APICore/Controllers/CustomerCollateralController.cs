@@ -19,6 +19,7 @@ using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Interfaces.Credit;
+using System.Threading;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -79,7 +80,12 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+                Task.Factory
+                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning, // guarantees separate thread
+                        TaskScheduler.Default)
+                    .Wait();
 
                 int uploadType;
                 //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
@@ -396,7 +402,12 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
                 }
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+                Task.Factory
+                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning, // guarantees separate thread
+                        TaskScheduler.Default)
+                    .Wait();
 
                 var formData = provider.FormData["formData"];
 
@@ -1175,7 +1186,12 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+                Task.Factory
+                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning, // guarantees separate thread
+                        TaskScheduler.Default)
+                    .Wait();
 
                 int collateralCustomerId;
                 if (!Int32.TryParse(provider.FormData["collateralCustomerId"], out collateralCustomerId))
@@ -1242,7 +1258,12 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+                Task.Factory
+                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning, // guarantees separate thread
+                        TaskScheduler.Default)
+                    .Wait();
 
                 int collateralCustomerId;
                 if (!Int32.TryParse(provider.FormData["collateralCustomerId"], out collateralCustomerId))
@@ -1327,7 +1348,12 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+                Task.Factory
+                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning, // guarantees separate thread
+                        TaskScheduler.Default)
+                    .Wait();
 
                 int collateralId;
                 if (!Int32.TryParse(provider.FormData["collateralId"], out collateralId))
@@ -1386,7 +1412,12 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+                Task.Factory
+                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning, // guarantees separate thread
+                        TaskScheduler.Default)
+                    .Wait();
 
                 int collateralId;
                 if (!Int32.TryParse(provider.FormData["collateralId"], out collateralId))
