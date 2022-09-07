@@ -1724,9 +1724,12 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var e in chargeFeeIds)
                 {
                     n++;
-                    var name = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().DESCRIPTION;
-                    result = result + $@"
+                    var name = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault()?.DESCRIPTION;
+                    if (name != null)
+                    {
+                        result = result + $@"
                     <tr><td>{n}</td><td>{name.ToUpper()}:</td><td>{e.RECOMMENDED_FEERATEVALUE}</td></tr>";
+                    }
                 }
             }
             result = result + $"</table> <br />";
