@@ -75,6 +75,9 @@ namespace FintrakBanking.AccessSubsediary
            excemptedUrls.Add("/api/v1/credit/update-subsidiary-basic-transaction/");
             if (countryCode != null && countryCode != "NG" && !excemptedUrls.Contains(HttpContext.Current.Request.CurrentExecutionFilePath)
                 && !HttpContext.Current.Request.CurrentExecutionFilePath.Contains("/api/v1/credit/update-subsidiary-basic-transaction/"))
+           excemptedUrls.Add("/api/v1/credit/get-subsidiary-basic-approvalLevelId/");
+            if (countryCode != null && countryCode != "NG" && !excemptedUrls.Contains(HttpContext.Current.Request.CurrentExecutionFilePath)
+                && !HttpContext.Current.Request.CurrentExecutionFilePath.Contains("/api/v1/credit/get-subsidiary-basic-approvalLevelId/"))
             {
 
 

@@ -1118,5 +1118,15 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.UpdateSubsidiaryBasicTransaction(id, entity);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response });
         }
+
+        [HttpGet]
+        //[ClaimsAuthorization]
+        [Route("get-subsidiary-basic-approvalLevelId/{id}")]
+        public HttpResponseMessage GetSubsidiaryBasicApprovalLevel(int id)
+        {
+
+            var response = repo.GetSubsidiaryBasicApprovalLevel(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response });
+        }
     }
 }
