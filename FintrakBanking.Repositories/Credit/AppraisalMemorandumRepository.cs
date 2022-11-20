@@ -3631,7 +3631,8 @@ namespace FintrakBanking.Repositories.Credit
                                             .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA).Max(),
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
-            apiRequestId = x.a.APIREQUESTID
+            apiRequestId = x.a.APIREQUESTID,
+            creditGradeId = x.a.CREDITGRADEID
         }).ToList();
 
             if (isSpecific)
