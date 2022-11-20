@@ -1990,7 +1990,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (approvalStaffLevel.Count() == 0) return false;
 
-            if (helpLevel != null && approvalStaffLevel.Contains(helpLevel.ApprovalLevelId) && helpLevel.ApprovalLevelId == level.ApprovalLevelId) return true;
+            if (helpLevel != null && approvalStaffLevel.Contains(helpLevel.ApprovalLevelId) && helpLevel.ApprovalLevelId == level.ApprovalLevelId) return false; //change to true and revisit flow
 
             return false;
         }
