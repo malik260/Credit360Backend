@@ -11,6 +11,8 @@ using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using System.Globalization;
+using System.Threading.Tasks;
+using System.Threading;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -202,7 +204,12 @@ namespace FintrakBanking.APICore.Controllers
             }
 
             MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-            await Request.Content.ReadAsMultipartAsync(provider);
+            Task.Factory
+                .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning, // guarantees separate thread
+                    TaskScheduler.Default)
+                .Wait();
 
             if (!provider.FileStreams.Any())
             {

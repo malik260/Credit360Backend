@@ -474,12 +474,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("approval-level/workflow-notification/{id}")]
-        public async Task<HttpResponseMessage> UpdateWorkflowMappingNotification([FromBody] WorkflowNotificationViewModel model, int id)
+        public HttpResponseMessage UpdateWorkflowMappingNotification([FromBody] WorkflowNotificationViewModel model, int id)
         {
             try
             {
                 model.createdBy = token.GetStaffId;
-                var data = await repo.UpdateWorkflowMappingNotification(model, id);
+                var data = repo.UpdateWorkflowMappingNotification(model, id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = data, message = "Workflow notification updated successfully" });
             }
             catch (SecureException ex)

@@ -1625,6 +1625,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string divisionShortCode { get; set; }
         public string facility { get; set; }
+        public int subApprovalLevelId { get; set; }
     }
 }
 
