@@ -34183,6 +34183,7 @@ namespace FintrakBanking.Repositories.Credit
                                     !loansId.Contains(ln.REFERENCENUMBER)
                                     && ln.NPL != null
                                     && ln.UNPODAYSOVERDUE >= 30
+                                    && ln.TOTALUNSETTLEDAMOUNT > 0
                                     && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
                                     orderby ln.ID descending
@@ -34227,6 +34228,7 @@ namespace FintrakBanking.Repositories.Credit
                                     !loansId.Contains(ln.REFERENCENUMBER)
                                     && ln.NPL != null
                                     && ln.UNPODAYSOVERDUE >= 30
+                                    && ln.TOTALUNSETTLEDAMOUNT > 0
                                     && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
                                            orderby ln.ID descending
