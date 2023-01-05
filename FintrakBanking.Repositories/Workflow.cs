@@ -1828,6 +1828,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) { continue; }
                 if (level.LevelBusinessRuleId != null && !ExecuteStandardBusinessRule(level.LevelBusinessRule)) { continue; }
+                if (ResolveApprovalGridFlow(levels, level)) { continue; }
                 //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
                 grid.Add(new WorkflowSetup
@@ -2055,6 +2056,49 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             return op(value1, value2);
+        }
+
+        public bool ResolveApprovalGridFlow(List<WorkflowSetup> levels, WorkflowSetup level)
+        {
+            {
+                int? approvalLevelReportingStaffId = null;
+                var workfloGroupIds = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.GROUPOPERATIONMAPPINGID == level.Mapping.GROUPOPERATIONMAPPINGID).Select(t => t.GROUPID).ToList();
+                if (this.currentStateId != (int)ApprovalState.Initiation)
+                {
+                    var lastLevelRecord = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == lastOpenRequest.TOAPPROVALLEVELID).FirstOrDefault();
+                }
+                var currentLevelRecord = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == level.ApprovalLevelId).FirstOrDefault();
+
+                if (currentLevelRecord.ROUTEVIASTAFFORGANOGRAM == true)
+                {
+                    approvalLevelReportingStaffId = context.TBL_STAFF.Where(x => x.STAFFID == lastOpenRequest.TOSTAFFID).Select(s => s.SUPERVISOR_STAFFID).FirstOrDefault();
+                }
+                List<int> approvalStaffLevelIds;
+                if (currentLevelRecord.ROUTEVIASTAFFORGANOGRAM == true && approvalLevelReportingStaffId == null) return false;
+                if (currentLevelRecord.ROUTEVIASTAFFORGANOGRAM == true && approvalLevelReportingStaffId != null)
+                {
+                    var approvalStaffLevel = context.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == approvalLevelReportingStaffId);
+                    if (context.TBL_APPROVAL_GROUP_MAPPING.Where(x => workfloGroupIds.Contains(x.GROUPID)).Any())
+                    {
+                        approvalStaffLevelIds = approvalStaffLevel.Select(x => x.STAFFLEVELID).ToList();
+                        if (approvalStaffLevelIds.Count() == 0) return false;
+                    }
+                    else return false;
+                }
+                else
+                {
+                    // approvalStaffLevelIds = context.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.APPROVALLEVELID == level.ApprovalLevelId).Select(x => x.STAFFLEVELID).ToList();
+                    //if (approvalStaffLevelIds.Count() == 0) return false;
+                    return false;
+                }
+                TBL_APPROVAL_LEVEL helpLevel = null;
+                if (currentLevelRecord.IGNOREIFAPPROVALLEVELSTAFF) helpLevel = currentLevelRecord;
+
+
+                if (helpLevel != null && helpLevel.APPROVALLEVELID == level.ApprovalLevelId) return true;
+
+                return false;
+            }
         }
 
         //private void SendNotifications()
