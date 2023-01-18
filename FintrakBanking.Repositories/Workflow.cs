@@ -2071,7 +2071,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if (currentLevelRecord.ROUTEVIASTAFFORGANOGRAM == true)
                 {
-                    approvalLevelReportingStaffId = context.TBL_STAFF.Where(x => x.STAFFID == lastOpenRequest.TOSTAFFID).Select(s => s.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (this.currentStateId != (int)ApprovalState.Initiation)
+                    {
+                        approvalLevelReportingStaffId = context.TBL_STAFF.Where(x => x.STAFFID == lastOpenRequest.TOSTAFFID).Select(s => s.SUPERVISOR_STAFFID).FirstOrDefault();
+                    }
+                        
                 }
                 List<int> approvalStaffLevelIds;
                 if (currentLevelRecord.ROUTEVIASTAFFORGANOGRAM == true && approvalLevelReportingStaffId == null) return false;
