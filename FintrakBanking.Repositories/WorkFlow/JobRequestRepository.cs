@@ -609,7 +609,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
                 if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfTreasuryBills) item.jobSubTypeName = "Treasury Bill confirm..";
-                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfFBNQUEST) item.jobSubTypeName = "FBN Quest confirm..";
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.CreditRisk) item.jobSubTypeName = "Credit Risk..";
                 if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfDealSlip) item.jobSubTypeName = "Deal Slip confirm..";
                 if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfStock) item.jobSubTypeName = "Stock confirmation";
                 if (item.jobSubTypeId == null || item.jobSubTypeId < 1) item.jobSubTypeName = "n/a";
@@ -2549,7 +2549,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 JOBTYPEHUBID = model.jobTypeHubId,
                 ISTEAMLEAD = model.isTeamLead,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = model.dateTimeCreated,
+                DATETIMECREATED = DateTime.Now,
                 DELETED = false,
 
             };
