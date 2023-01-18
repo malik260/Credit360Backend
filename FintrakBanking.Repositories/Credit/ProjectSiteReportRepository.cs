@@ -354,7 +354,7 @@ namespace FintrakBanking.Repositories.credit
                                     join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                     join r in context.TBL_LOAN on p.LOANID equals r.TERMLOANID 
                                     let loan_application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                    where p.PROJECTSITEREPORTID  == id && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
+                                    where p.PROJECTSITEREPORTID  == id && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
 
                                      select new LoanApplicationViewModel
                                     {
@@ -387,7 +387,7 @@ namespace FintrakBanking.Repositories.credit
                                 join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                 join r in context.TBL_LOAN_REVOLVING on p.LOANID equals r.REVOLVINGLOANID 
                                 let loan_application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                where p.PROJECTSITEREPORTID == id && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
+                                where p.PROJECTSITEREPORTID == id && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
 
                                  select new LoanApplicationViewModel
                                 {
@@ -420,7 +420,7 @@ namespace FintrakBanking.Repositories.credit
                                     join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                     join r in context.TBL_LOAN_CONTINGENT on p.LOANID equals r.CONTINGENTLOANID 
                                     let loan_application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                    where p.PROJECTSITEREPORTID == id && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
+                                    where p.PROJECTSITEREPORTID == id && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
 
                                      select new LoanApplicationViewModel
                                     {
@@ -452,7 +452,7 @@ namespace FintrakBanking.Repositories.credit
                                 join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
                                 join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                 let loan_application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                where p.PROJECTSITEREPORTID == id && p.LOANID == null && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
+                                where p.PROJECTSITEREPORTID == id && p.LOANID == null && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
 
                                 select new LoanApplicationViewModel
                                 {
@@ -484,7 +484,7 @@ namespace FintrakBanking.Repositories.credit
                                  join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
                                  join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                  let loan_application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                 where p.PROJECTSITEREPORTID == id && p.LOANID == null && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
+                                 where p.PROJECTSITEREPORTID == id && p.LOANID == null && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
 
                                   select new LoanApplicationViewModel
                                  {
@@ -516,7 +516,7 @@ namespace FintrakBanking.Repositories.credit
                                   join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
                                   join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                                   let loan_application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                                  where p.PROJECTSITEREPORTID == id && p.LOANID == null && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
+                                  where p.PROJECTSITEREPORTID == id && p.LOANID == null && p.LANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
 
                                    select new LoanApplicationViewModel
                                   {
@@ -899,7 +899,7 @@ namespace FintrakBanking.Repositories.credit
                             LOANAPPLICATIONID = x.loanApplicationId,
                             LOANAPPLICATIONDETAILID = x.loanApplicationDetailId,
                             LOANID = x.loanId,
-                            LOANSYSTEMTYPEID = x.loanSystemTypeId,
+                            LANSYSTEMTYPEID = x.loanSystemTypeId,
                             DELETED = false,
                             PROJECTSITEREPORTID = entity.PROJECTSITEREPORTID
                         };

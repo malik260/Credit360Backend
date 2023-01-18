@@ -1361,7 +1361,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return saved;
         }
 
-        public async Task<bool> UpdateWorkflowMappingNotification(WorkflowNotificationViewModel model, int workflowNotificationId)
+        public bool UpdateWorkflowMappingNotification(WorkflowNotificationViewModel model, int workflowNotificationId)
         {
             var notification = context.TBL_WORKFLOW_NOTIFICATION.FirstOrDefault(x => x.WORKFLOWNOTIFICATIONID == workflowNotificationId);
             if (notification != null)
@@ -1378,7 +1378,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 notification.LASTUPDATEDBY = model.createdBy;
             }
 
-            var saved = await context.SaveChangesAsync() > 0;
+            var saved = context.SaveChanges() > 0;
             return saved;
         }
 

@@ -2839,34 +2839,34 @@ namespace FintrakBanking.Repositories.Credit
             // check default role
             // var rank = context.TBL_STAFF_ROLE.Find(staffRole);
 
-            //grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
-            //    .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
-            //        m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-            //    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
-            //        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-            //    .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false ),
-            //        gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
-            //        {
-            //            viewCamDocument = s.CANVIEWDOCUMENT,
-            //            canMakeChanges = s.CANEDIT,
-            //            canAppendTemplate = s.CANEDIT,
-            //            viewUploadedFiles = s.CANVIEWUPLOAD,
-            //            canUploadFile = s.CANUPLOAD,
-            //            viewApproval = s.CANVIEWAPPROVAL,
-            //            canApprove = s.CANAPPROVE,
-            //            approvalLimit = s.MAXIMUMAMOUNT,
-            //            approvalLevelId = s.APPROVALLEVELID,
-            //            groupRoleId = gl.mg.g.ROLEID,
-            //            canEscalate = gl.l.CANESCALATE,
-            //            levelTypeId = gl.l.LEVELTYPEID,
-            //            staffId = entity.createdBy,
-            //            roleId = rank.STAFFROLEID,
-            //            //userBranchId = (short)entity.BRANCHID
-            //        });
-
-            //if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
-            //{
             grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
+                .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
+                    m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
+                    mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
+                .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false),
+                    gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
+                    {
+                        viewCamDocument = s.CANVIEWDOCUMENT,
+                        canMakeChanges = s.CANEDIT,
+                        canAppendTemplate = s.CANEDIT,
+                        viewUploadedFiles = s.CANVIEWUPLOAD,
+                        canUploadFile = s.CANUPLOAD,
+                        viewApproval = s.CANVIEWAPPROVAL,
+                        canApprove = s.CANAPPROVE,
+                        approvalLimit = s.MAXIMUMAMOUNT,
+                        approvalLevelId = s.APPROVALLEVELID,
+                        groupRoleId = gl.mg.g.ROLEID,
+                        canEscalate = gl.l.CANESCALATE,
+                        levelTypeId = gl.l.LEVELTYPEID,
+                        staffId = entity.createdBy,
+                        roleId = rank.STAFFROLEID,
+                        //userBranchId = (short)entity.BRANCHID
+                    });
+
+            if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
+            {
+                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
                 .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
                     m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == rank.STAFFROLEID),
@@ -2888,7 +2888,7 @@ namespace FintrakBanking.Repositories.Credit
                         roleId = rank.STAFFROLEID,
                             //userBranchId = (short)staff.BRANCHID
                         });
-            //}
+            }
 
             grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
             if (grant == null) { return GetRelieverPrivilege(entity); }
@@ -3636,7 +3636,9 @@ namespace FintrakBanking.Repositories.Credit
                                             .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA).Max(),
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
-            apiRequestId = x.a.APIREQUESTID
+            apiRequestId = x.a.APIREQUESTID,
+            creditGradeId = x.a.CREDITGRADEID,
+            approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f => f.STAFFID == staffId)
         }).ToList();
 
             if (isSpecific)
@@ -3648,10 +3650,28 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+
+            var investmentGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT < x.approvedAmount);
+            var standardGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT < x.approvedAmount);
+            var renewalLimitApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT < x.approvedAmount);
+
+            applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp);
             //var test = applications.ToList();
             //applications = test.AsQueryable();
             return applications;
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
+        }
+
+        public SubsidiaryViewModel GetSubsidiaryBasicApprovalLevel(int id)
+        {
+            var data = (from a in context.TBL_SUB_BASICTRANSACTION
+                        where a.ID == id && a.ACTEDON == false
+                        select new SubsidiaryViewModel
+                        {
+                            subApprovalLevelId = a.APPROVALLEVELID
+                        }).FirstOrDefault();
+
+            return data;
         }
 
         public IEnumerable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, string staffRoleCode, bool isSpecific = false)

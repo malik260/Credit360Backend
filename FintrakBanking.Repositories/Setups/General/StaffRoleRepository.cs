@@ -510,7 +510,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var flowTypes = (from x in context.TBL_APPROVAL_FLOW_TYPE
                              select new ApprovalFlowTypeViewModel
                              {
-                                 approvalFlowTypeId = x.APPROVALFLOWTYPEID,
+                                 approvalFlowTypeId = (short)x.APPROVALFLOWTYPEID,
                                  flowTypeName = x.FLOWTYPENAME,
                              }).ToList();
 

@@ -9062,6 +9062,22 @@ namespace FintrakBanking.Repositories.Credit
                 entity.LASTUPDATEDBY = user.createdBy;
                 entity.DATETIMEUPDATED = DateTime.Now;
             }
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.staffId).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationTagChange,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_LOAN_APPLICATN Loan Application tag Updated by '{auditStaff}' with Id  {user.createdBy}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            });
+            // Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
         }

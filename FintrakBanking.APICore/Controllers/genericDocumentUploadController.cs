@@ -10,6 +10,7 @@ using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using System.Threading.Tasks;
 using FintrakBanking.APICore.core;
+using System.Threading;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -36,10 +37,15 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
                 }
 
-                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            Task.Factory
+                .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning, // guarantees separate thread
+                    TaskScheduler.Default)
+                .Wait();
 
-                int uploadType;
+            int uploadType;
                 if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");

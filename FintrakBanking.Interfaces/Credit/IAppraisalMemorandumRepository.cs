@@ -130,5 +130,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateSubsidiaryBasicTransaction(int id,ForwardViewModel entity);
 
+        SubsidiaryViewModel GetSubsidiaryBasicApprovalLevel(int id);
+
     }
 }

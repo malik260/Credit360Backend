@@ -482,8 +482,8 @@ namespace FintrakBanking.Common.Enum
         WorkflowMappingNotificationsDeleted = 577,
         InsuranceBulkUpload = 578,
         FsCaptionBulkUpload = 579,
-
-    };
+        LoanApplicationTagChange = 580,
+    }
     public enum RegulatoryTypeEnum
     {
         LoanType = 1,

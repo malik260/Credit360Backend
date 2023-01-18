@@ -5183,31 +5183,32 @@ namespace FintrakBanking.ReportObjects
                     join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                     join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                     join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
-                    join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
+                    //join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
                     //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                     join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                     join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
-                    join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
+                    /*join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
                     from es in esr.DefaultIfEmpty()
                     join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE into scr
-                    from sc in scr.DefaultIfEmpty()
+                    from sc in scr.DefaultIfEmpty()*/
 
                     where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                     DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                     && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
-                    && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
-                    && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
+                    //&& (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                    //&& (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
+                    
                     select new CustomerCompanyInfomationViewModels
                     {
                         customerId = c.CUSTOMERID,
-                        companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
-                        fullName = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.SURNAME).FirstOrDefault(),
-                        birthDate = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.DATEOFBIRTH).FirstOrDefault(),
-                        gender = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.GENDER).FirstOrDefault(),
-                        field1 = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.ISTHEPROMOTER).FirstOrDefault() ? "Yes" : "No",
+                        companyName = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.COMPANYNAME).FirstOrDefault(),
+                        
+                        fullName = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd=>cd.CUSTOMERID == c.CUSTOMERID).Select(cd=>cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME).FirstOrDefault(),
+                        birthDate = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.DATEOFBIRTH).FirstOrDefault(),
+                        gender = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.GENDER).FirstOrDefault(),
+                        field1 = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.ISTHEPROMOTER).FirstOrDefault() == true? "Yes" : "No",
+                        bvn = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.CUSTOMERBVN).FirstOrDefault(),
+
                         address = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ADDRESS).FirstOrDefault(),
                         state = (from a in context.TBL_CUSTOMER_ADDRESS join b in context.TBL_STATE on a.STATEID equals b.STATEID where a.CUSTOMERID == c.CUSTOMERID select b.STATENAME).FirstOrDefault(),
                         phoneNo = context.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault(ph => ph.CUSTOMERID == c.CUSTOMERID).PHONENUMBER,
@@ -5227,12 +5228,23 @@ namespace FintrakBanking.ReportObjects
                         sector = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                         natureOfBusiness = ln.TBL_SUB_SECTOR.NAME,
                         moratorium = d.MORATORIUM,
-                        esRating = sc.GRADE,
+                        esRating = (from es in context.TBL_ESG_CHECKLIST_SUMMARY
+                                    join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE where  es.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID
+                                    && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null
+                                    && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null))
+                                    select sc.GRADE).FirstOrDefault(),   //sc.GRADE,
                         wpower = pc.PRODUCTCLASSID == 31 ? "Yes" : "No",
                         facilityType = p.PRODUCTNAME,
                         refNo = l.APPLICATIONREFERENCENUMBER,
                         customerCode = c.CUSTOMERCODE,
-                        bvn = cd.CUSTOMERBVN,
+                       
+                        firstTimeAccessToCredit = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ISFIRSTTIMECREDIT).FirstOrDefault() ? "Yes" : "No",
+                        startUp = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ISSTARTUP).FirstOrDefault() ? "Yes" : "No",
+                        msmeAnnualTurnover = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ANNUALTURNOVER).FirstOrDefault(),
+                        noOfEmployees = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.NUMBEROFEMPLOYEES).FirstOrDefault() ?? 0,
+                        noOfFemaleEmployees = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.NOOFFEMALEEMPLOYEES).FirstOrDefault(),
+                        totalAsset = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.TOTALASSETS).FirstOrDefault() ?? 0,
+
                     }).ToList();
 
             var revolving = (from ln in context.TBL_LOAN_REVOLVING
@@ -5240,32 +5252,31 @@ namespace FintrakBanking.ReportObjects
                              join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                              join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                              join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
-                             join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
+                             //join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
                              //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                              join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                              join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
-                             join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
+                             /*join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
                              from es in esr.DefaultIfEmpty()
                              join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE into scr
-                             from sc in scr.DefaultIfEmpty()
+                             from sc in scr.DefaultIfEmpty()*/
 
                              where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                              DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                              && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
-                             && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
-                             && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
+                             //&& (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                             //&& (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
+                             //&& cd.ISTHEPROMOTER == true
                              select new CustomerCompanyInfomationViewModels
                              {
                                  customerId = c.CUSTOMERID,
-                                 companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
-                                 fullName = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.SURNAME).FirstOrDefault(),
-                                 birthDate = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.DATEOFBIRTH).FirstOrDefault(),
-                                 gender = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.GENDER).FirstOrDefault(),
-                                 field1 = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.ISTHEPROMOTER).FirstOrDefault() ? "Yes" : "No",
+                                 companyName = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.COMPANYNAME).FirstOrDefault(),
+                                 fullName = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME).FirstOrDefault(),
+                                 birthDate = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.DATEOFBIRTH).FirstOrDefault(),
+                                 gender = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.GENDER).FirstOrDefault(),
+                                 field1 = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.ISTHEPROMOTER).FirstOrDefault() == true ? "Yes" : "No",
+                                 bvn = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.CUSTOMERBVN).FirstOrDefault(),
+
                                  address = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ADDRESS).FirstOrDefault(),
                                  state = (from a in context.TBL_CUSTOMER_ADDRESS join b in context.TBL_STATE on a.STATEID equals b.STATEID where a.CUSTOMERID == c.CUSTOMERID select b.STATENAME).FirstOrDefault(),
                                  phoneNo = context.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault(ph => ph.CUSTOMERID == c.CUSTOMERID).PHONENUMBER,
@@ -5285,12 +5296,23 @@ namespace FintrakBanking.ReportObjects
                                  sector = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                  natureOfBusiness = ln.TBL_SUB_SECTOR.NAME,
                                  moratorium = d.MORATORIUM,
-                                 esRating = sc.GRADE,
+                                 esRating = (from es in context.TBL_ESG_CHECKLIST_SUMMARY
+                                             join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE
+                                             where es.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID
+                                                && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null
+                                                && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null))
+                                             select sc.GRADE).FirstOrDefault(),   //sc.GRADE,
                                  wpower = pc.PRODUCTCLASSID == 31 ? "Yes" : "No",
                                  facilityType = p.PRODUCTNAME,
                                  refNo = l.APPLICATIONREFERENCENUMBER,
                                  customerCode = c.CUSTOMERCODE,
-                                 bvn = cd.CUSTOMERBVN,
+                                 firstTimeAccessToCredit = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ISFIRSTTIMECREDIT).FirstOrDefault() ? "Yes" : "No",
+                                 startUp = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ISSTARTUP).FirstOrDefault() ? "Yes" : "No",
+                                 msmeAnnualTurnover = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ANNUALTURNOVER).FirstOrDefault(),
+                                 noOfEmployees = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.NUMBEROFEMPLOYEES).FirstOrDefault() ?? 0,
+                                 noOfFemaleEmployees = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.NOOFFEMALEEMPLOYEES).FirstOrDefault(),
+                                 totalAsset = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.TOTALASSETS).FirstOrDefault() ?? 0,
+
                              }).ToList();
 
             var contingent = (from ln in context.TBL_LOAN_CONTINGENT
@@ -5298,32 +5320,31 @@ namespace FintrakBanking.ReportObjects
                               join d in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                               join l in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                               join c in context.TBL_CUSTOMER on r.CUSTOMERID equals c.CUSTOMERID
-                              join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
+                              //join cd in context.TBL_CUSTOMER_COMPANY_DIRECTOR on c.CUSTOMERID equals cd.CUSTOMERID
                               //join ci in context.TBL_CUSTOMER_COMPANYINFOMATION on cd.CUSTOMERID equals ci.CUSTOMERID
                               join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                               join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
-                              join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
+                              /*join es in context.TBL_ESG_CHECKLIST_SUMMARY on d.LOANAPPLICATIONDETAILID equals es.LOANAPPLICATIONDETAILID into esr
                               from es in esr.DefaultIfEmpty()
                               join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE into scr
-                              from sc in scr.DefaultIfEmpty()
+                              from sc in scr.DefaultIfEmpty()*/
 
                               where DbFunctions.TruncateTime(ln.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                               DbFunctions.TruncateTime(ln.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                               && c.CUSTOMERTYPEID == (int)CustomerTypeEnum.Corporate
-                              && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
-                              && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
+                              //&& (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null)
+                              //&& (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null)
+                              //&& cd.ISTHEPROMOTER == true
                               select new CustomerCompanyInfomationViewModels
                               {
                                   customerId = c.CUSTOMERID,
-                                  companyName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
-                                  fullName = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.SURNAME).FirstOrDefault(),
-                                  birthDate = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.DATEOFBIRTH).FirstOrDefault(),
-                                  gender = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.GENDER).FirstOrDefault(),
-                                  field1 = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == c.CUSTOMERID && x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                                    .Select(x => x.ISTHEPROMOTER).FirstOrDefault() ? "Yes" : "No",
+                                  companyName = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.COMPANYNAME).FirstOrDefault(),
+                                  fullName = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.FIRSTNAME + " " + cd.MIDDLENAME + " " + cd.SURNAME).FirstOrDefault(),
+                                  birthDate = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.DATEOFBIRTH).FirstOrDefault(),
+                                  gender = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.GENDER).FirstOrDefault(),
+                                  field1 = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.ISTHEPROMOTER).FirstOrDefault() == true ? "Yes" : "No",
+                                  bvn = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(cd => cd.CUSTOMERID == c.CUSTOMERID).Select(cd => cd.CUSTOMERBVN).FirstOrDefault(),
+
                                   address = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ADDRESS).FirstOrDefault(),
                                   state = (from a in context.TBL_CUSTOMER_ADDRESS join b in context.TBL_STATE on a.STATEID equals b.STATEID where a.CUSTOMERID == c.CUSTOMERID select b.STATENAME).FirstOrDefault(),
                                   phoneNo = context.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault(ph => ph.CUSTOMERID == c.CUSTOMERID).PHONENUMBER,
@@ -5343,38 +5364,25 @@ namespace FintrakBanking.ReportObjects
                                   sector = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                   natureOfBusiness = ln.TBL_SUB_SECTOR.NAME,
                                   moratorium = d.MORATORIUM,
-                                  esRating = sc.GRADE,
+                                  esRating = (from es in context.TBL_ESG_CHECKLIST_SUMMARY
+                                              join sc in context.TBL_ESG_CHECKLIST_SCORES on es.RATINGID equals sc.SCORE
+                                              where es.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID
+                                                && (es.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || es == null
+                                                && (sc.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist || sc == null))
+                                              select sc.GRADE).FirstOrDefault(),   //sc.GRADE,
                                   wpower = pc.PRODUCTCLASSID == 31 ? "Yes" : "No",
                                   facilityType = p.PRODUCTNAME,
                                   refNo = l.APPLICATIONREFERENCENUMBER,
                                   customerCode = c.CUSTOMERCODE,
-                                  bvn = cd.CUSTOMERBVN,
+                                  firstTimeAccessToCredit = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x=>x.ISFIRSTTIMECREDIT).FirstOrDefault() ? "Yes" : "No",
+                                  startUp = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ISSTARTUP).FirstOrDefault() ? "Yes" : "No",
+                                  msmeAnnualTurnover = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.ANNUALTURNOVER).FirstOrDefault(),
+                                  noOfEmployees = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.NUMBEROFEMPLOYEES).FirstOrDefault() ?? 0,
+                                  noOfFemaleEmployees = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.NOOFFEMALEEMPLOYEES).FirstOrDefault(),
+                                  totalAsset = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == c.CUSTOMERID).Select(x => x.TOTALASSETS).FirstOrDefault() ?? 0,
                               }).ToList();
             var result = data.Union(revolving).Union(contingent).Distinct().ToList();
-
-            foreach (var i in result)
-            {
-                var ci = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(x => x.CUSTOMERID == i.customerId).FirstOrDefault();
-                if (ci != null)
-                {
-                    i.firstTimeAccessToCredit = ci.ISFIRSTTIMECREDIT ? "Yes" : "No";
-                    i.startUp = ci.ISSTARTUP ? "Yes" : "No";
-                    i.msmeAnnualTurnover = ci.ANNUALTURNOVER;
-                    i.noOfEmployees = ci.NUMBEROFEMPLOYEES ?? 0;
-                    i.noOfFemaleEmployees = ci.NOOFFEMALEEMPLOYEES;
-                    i.totalAsset = ci.TOTALASSETS ?? 0;
-                }
-                else
-                {
-                    i.firstTimeAccessToCredit = "Nil";
-                    i.startUp = "Nil";
-                    i.msmeAnnualTurnover = "0.00";
-                    i.noOfEmployees = 0;
-                    i.noOfFemaleEmployees = 0;
-                    i.totalAsset = 0;
-                }
-
-            }
+            
             return result;
         }
 

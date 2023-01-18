@@ -2513,7 +2513,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         this.auditTrail.AddAuditTrail(audit);
                         //end of Audit section -------------------------------
 
-                        output = await context.SaveChangesAsync() > 0;
+                        output = context.SaveChanges() > 0;
 
                         if (existingTempProduct == null) { tempProductBehaviour.TEMP_PRODUCTID = tempProduct.TEMP_PRODUCTID; }
 

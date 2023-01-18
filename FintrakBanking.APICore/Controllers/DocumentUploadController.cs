@@ -11,6 +11,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -105,21 +106,29 @@ namespace FintrakBanking.APICore.Controllers
         [Route("document-upload")]
         public async Task<HttpResponseMessage> AddDocumentUploadAsync()
         {
-
-            if (!Request.Content.IsMimeMultipartContent())
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
             {
                 return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
             }
 
-            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-            await Request.Content.ReadAsMultipartAsync(provider);
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                Task.Factory
+                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning, // guarantees separate thread
+                        TaskScheduler.Default)
+                    .Wait();
+                //MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider(); ---OLD Code
+                //await Request.Content.ReadAsMultipartAsync(provider);
 
-            if (!provider.FileStreams.Any())
+
+                if (!provider.FileStreams.Any())
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
             }
-            try
-            {
+           
                 var entity = new DocumentUploadViewModel();
                 entity.fileName = provider.FormData["fileName"];
                 entity.fileExtension = provider.FormData["fileExtension"];
@@ -279,9 +288,14 @@ namespace FintrakBanking.APICore.Controllers
             }
 
             MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-            await Request.Content.ReadAsMultipartAsync(provider);
+            Task.Factory
+                .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning, // guarantees separate thread
+                    TaskScheduler.Default)
+                .Wait();
 
-        
+
             var entity = new DocumentUploadViewModel();
             entity.fileName = provider.FormData["fileName"];
             entity.fileExtension = provider.FormData["fileExtension"];
@@ -295,10 +309,10 @@ namespace FintrakBanking.APICore.Controllers
             entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
             entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
             entity.overwrite = provider.FormData["overwrite"] == "true";
-            entity.source = (int) DocUploadSourceEnum.InApp;
+            entity.source = (int)DocUploadSourceEnum.InApp;
             entity.edmsDocumentId = Convert.ToInt32(provider.FormData["edmsDocumentId"]);
             entity.countryCode = provider.FormData["X-COUNTRYCODE"];
-           // entity.targetId = Convert.ToInt32(provider.FormData["targetId"]);
+            // entity.targetId = Convert.ToInt32(provider.FormData["targetId"]);
 
 
 
@@ -315,16 +329,16 @@ namespace FintrakBanking.APICore.Controllers
             entity.createdBy = token.GetStaffId;
             entity.companyId = token.GetCompanyId;
 
-          
-            
-                var buffer = new byte[] { };
-                int response = repo.AddDocumentUpload(entity, buffer);
-                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
-                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
-                //}
-                //catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
-                
-        
+
+
+            var buffer = new byte[] { };
+            int response = repo.AddDocumentUpload(entity, buffer);
+            if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+            if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+            //}
+            //catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+
+
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
 
@@ -350,7 +364,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.UpdateDocumentUpload(model,id, user);
+            bool response = repo.UpdateDocumentUpload(model, id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
@@ -455,7 +469,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            CustomerDocumentSearchViewModel response = repo.GetCustomerDocuments(model,user);
+            CustomerDocumentSearchViewModel response = repo.GetCustomerDocuments(model, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.documents.Count() });
         }
 
@@ -471,14 +485,19 @@ namespace FintrakBanking.APICore.Controllers
             }
 
             MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-            await Request.Content.ReadAsMultipartAsync(provider);
+            Task.Factory
+                .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning, // guarantees separate thread
+                    TaskScheduler.Default)
+                .Wait();
 
             if (!provider.FileStreams.Any())
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
             }
-            
-            var entity = new RecoveryReportingDocumentViewModel(); 
+
+            var entity = new RecoveryReportingDocumentViewModel();
             entity.description = provider.FormData["description"];
             entity.fileName = provider.FormData["fileName"];
             entity.fileExtension = provider.FormData["fileExtension"];

@@ -13999,11 +13999,11 @@ namespace FintrakBanking.Repositories.Credit
                                    where a.ISDISBURSED == true
                                    //&& (b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook) 
                                    && b.OPERATIONID != (int)OperationsEnum.APSReleaseApproval
-                                   && b.LOANSYSTEMTYPEID == (int)OperationsEnum.ContigentLoanBooking
+                                   && b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
                                    && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                    && b.OPERATIONPERFORMED == false
                                    && a.LOANSTATUSID != (short)LoanStatusEnum.Terminated
-                                   && !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID)
+                                   //&& !operationsRecords.Contains(b.LOANREVIEWAPPLICATIONID)
                                    && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                    && e.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
 
@@ -14199,17 +14199,17 @@ namespace FintrakBanking.Repositories.Credit
             var isLCYUser = activities.Contains("lcy-user");
             var isFCYUser = activities.Contains("fcy-user");
 
-            if (isLCYUser == true)
-            {
-                lcyLoans = allFilteredLoan.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
-            }
+            //if (isLCYUser == true)
+            //{
+            //    lcyLoans = allFilteredLoan.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+            //}
 
-            if (isFCYUser == true)
-            {
-                fcyLoans = allFilteredLoan.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
-            }
+            //if (isFCYUser == true)
+            //{
+            //    fcyLoans = allFilteredLoan.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+            //}
 
-            allFilteredLoan = lcyLoans.Union(fcyLoans).ToList();
+            //allFilteredLoan = lcyLoans.Union(fcyLoans).ToList();
             return allFilteredLoan;
 
         }
@@ -14436,7 +14436,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public async Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId)
         {
-            var result = await GetApprovalTrail(companyId, staffId, targetId, operationId).ToListAsync();
+            var result = GetApprovalTrail(companyId, staffId, targetId, operationId).ToList();
             return result.Distinct();
         }
 

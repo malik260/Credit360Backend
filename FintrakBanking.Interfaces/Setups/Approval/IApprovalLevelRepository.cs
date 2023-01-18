@@ -47,7 +47,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 
         IQueryable<WorkflowNotificationViewModel> GetWorkflowMappingNotifications(int MappingId);
         Task<bool> AddWorkflowMappingNotification(WorkflowNotificationViewModel model);
-        Task<bool> UpdateWorkflowMappingNotification(WorkflowNotificationViewModel model, int workflowNotificationId);
+        bool UpdateWorkflowMappingNotification(WorkflowNotificationViewModel model, int workflowNotificationId);
         Task<bool> DeleteWorkflowMappingNotification(int MappingId, UserInfo user);
         IEnumerable<DynamicWorkflowViewModel> GetDynamicWorkflowContext();
         IEnumerable<OperatorsViewModel> GetAllOperators();
