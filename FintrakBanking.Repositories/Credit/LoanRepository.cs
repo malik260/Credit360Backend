@@ -22010,7 +22010,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var updateRecord = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(models.loanAssignId);
-                if (updateRecord != null)
+                /*if (updateRecord != null)
                 {
                     if (updateRecord.TOTALAMOUNTRECOVERY == models.amountRecovered)
                     {
@@ -22022,7 +22022,7 @@ namespace FintrakBanking.Repositories.Credit
                         updateRecord.TOTALAMOUNTRECOVERY = (updateRecord.TOTALAMOUNTRECOVERY - models.amountRecovered);
                     }
                    
-                }
+                }*/
 
 
                 var record = new TBL_LOAN_RECOVERY_REPORT_COLLECTION

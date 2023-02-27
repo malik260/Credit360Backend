@@ -34214,7 +34214,7 @@ namespace FintrakBanking.Repositories.Credit
                                         maturityRevDate = ln.MATURITYDATE,
                                         overduePrincipalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
                                         overdueInterestAmount = (decimal)ln.INTERESTRECIEVABLETCY
-                                    }).ToList();
+                                    }).Take(100).ToList();
 
                 foreach (var xx in exposureData)
                 {
@@ -34260,7 +34260,7 @@ namespace FintrakBanking.Repositories.Credit
                                                maturityRevDate = ln.MATURITYDATE,
                                                overduePrincipalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
                                                overdueInterestAmount = (decimal)ln.INTERESTRECIEVABLETCY
-                                           }).ToList();
+                                           }).Take(100).ToList();
 
                 foreach (var xx in exposureDigitalData)
                 {
@@ -37116,7 +37116,7 @@ namespace FintrakBanking.Repositories.Credit
                                     category = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY.ToUpper()).FirstOrDefault(),
                                 }).ToList();
 
-            var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_REPORT_COLLECTION
+            /*var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_REPORT_COLLECTION
                             join l in context.TBL_LOAN_RECOVERY_ASSIGNMENT on lr.LOANASSIGNID equals l.LOANASSIGNID
                             join ln in context.TBL_LOAN on lr.LOANREFERENCE equals ln.LOANREFERENCENUMBER
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -37214,11 +37214,12 @@ namespace FintrakBanking.Repositories.Credit
                                          productName = pr.PRODUCTNAME,
                                          comment = "",
                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
-                                     }).ToList();
+                                     }).ToList();*/
 
-            var termLoanData = dataLoan.OrderByDescending(x => x.accreditedConsultantName);
-            var revolvingLoanData = dataRevolvingLoan.OrderByDescending(x => x.accreditedConsultantName);
-            var unionAll = termLoanData.Union(revolvingLoanData).Union(exposureData).Union(exposureDigitalData);
+            //var termLoanData = dataLoan.OrderByDescending(x => x.accreditedConsultantName);
+            //var revolvingLoanData = dataRevolvingLoan.OrderByDescending(x => x.accreditedConsultantName);
+            //var unionAll = termLoanData.Union(revolvingLoanData).Union(exposureData).Union(exposureDigitalData);
+            var unionAll = exposureData.Union(exposureDigitalData);
 
             var data = unionAll;
 
