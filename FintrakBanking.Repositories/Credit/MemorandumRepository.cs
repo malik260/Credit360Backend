@@ -489,8 +489,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.branchName = loanApplication.TBL_BRANCH?.BRANCHNAME;
                 if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
                 {
-                    var custId = loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID;
-                    this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == custId).ADDRESS;
+                    var custId = loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault()?.CUSTOMERID;
+                    this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == custId)?.ADDRESS;
                 }
                 else
                 if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)

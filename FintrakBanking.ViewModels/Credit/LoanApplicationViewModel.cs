@@ -114,7 +114,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerGroupName { get; set; }
         public int? termSheetCode { get; set; }
 
-    public string loanTypeName { get; set; }
+        public string loanTypeName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string tenorModeName { get; set; }
@@ -177,7 +177,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? timeIn { get; set; }
         public DateTime? slaTime { get; set; }
         public string cancellationReason { get; set; }
-        public int globalsla { get; set; }
+        public int globalsla { get; set; } 
         public int currentApprovalLevelSlaInterval { get; set; }
         public bool isadhocapplication { get; set; }
         public bool isSkipAppraisalEnabled { get; set; }
@@ -268,8 +268,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal standardGradeLimit { get; set; }
         public decimal renewalLimit { get; set; }
         public TBL_APPROVAL_LEVEL_STAFF approvalLevelStaff { get; set; }
-
-
+        
     }
 
     public class InterestIncomeViewModel

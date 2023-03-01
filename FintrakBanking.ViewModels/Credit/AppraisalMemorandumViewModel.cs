@@ -172,6 +172,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string conditionSubsequent { get; set; }
         public string transactionDynamics { get; set; }
         public short proposedProductClassId { get; set; }
+        public int? creditGradeId { get; set; }
+        public bool isSyndicated { get; set; }
     }
 
     public class LoanApplicationDetailsViewModel : GeneralEntity // TO CARRY ALL APPLICATION DETAILS PAYLOAD IN ONE API CALL

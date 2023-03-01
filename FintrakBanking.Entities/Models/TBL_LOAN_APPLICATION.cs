@@ -169,7 +169,7 @@ namespace FintrakBanking.Entities.Models
         public int? LOANAPPROVEDLIMITID { get; set; }
 
         public int? FLOWCHANGEID { get; set; }
-        public int? CREDITGRAGEID { get; set; }
+        public int? CREDITGRADEID { get; set; }
 
         public bool? ISMULTIPLEPRODUCTDRAWDOWN { get; set; }
         public short? APPROVEDLINESTATUSID { get; set; }
@@ -228,7 +228,7 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_APPLTN_CREDIT_BUREAU> TBL_LOAN_APPLTN_CREDIT_BUREAU { get; set; }
-        public int? CREDITGRADEID { get; set; }
+       
 
         //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         //public virtual ICollection<TBL_RISK_ASSESSMENT> TBL_RISK_ASSESSMENT { get; set; }

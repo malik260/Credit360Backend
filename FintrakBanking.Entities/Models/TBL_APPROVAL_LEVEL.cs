@@ -106,6 +106,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? APPROVALBUSINESSRULEID { get; set; }
         public bool ISPOSTAPPROVALREVIEWER { get; set; }
+        public bool ISSYNDICATED { get; set; }
         public bool IGNOREIFAPPROVALLEVELSTAFF { get; set; }
 
         public virtual TBL_APPROVAL_GROUP TBL_APPROVAL_GROUP { get; set; }
