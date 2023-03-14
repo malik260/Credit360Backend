@@ -2765,7 +2765,7 @@ namespace FintrakBanking.Repositories.Credit
             //(int)OperationsEnum.NPLoanReviewApprovalAppraisal,(int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal};
             var staffs = context.TBL_STAFF.ToList();
             var operations = context.TBL_OPERATIONS.Where(o => o.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication).Select(o => o.OPERATIONID).ToList();
-            var operations2 = context.TBL_OPERATIONS.Where(o => o.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement).Select(o => o.OPERATIONID).ToList();
+            var operations2 = context.TBL_OPERATIONS.Where(o => o.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement || o.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft).Select(o => o.OPERATIONID).ToList();
             int staffId = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault();
 
             var applications = (from a in context.TBL_LMSR_APPLICATION
@@ -3018,7 +3018,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (x.approvalStatusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    var operationRec = context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(op => op.LOANID == x.loanApplicationIdForOperation.Value);
+                    var operationRec = context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(op => op.LOANID == x.loanApplicationIdForOperation.Value && op.LOANREVIEWAPPLICATIONID == x.loanApplicationId);
                     if(operationRec != null)
                     {
                         var appRecord2 = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == operationRec.LOANREVIEWOPERATIONID && operations2.Contains(o.OPERATIONID)).OrderByDescending(r => r.APPROVALTRAILID).FirstOrDefault();
