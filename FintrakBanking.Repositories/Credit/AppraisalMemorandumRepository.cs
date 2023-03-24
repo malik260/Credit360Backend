@@ -980,6 +980,7 @@ namespace FintrakBanking.Repositories.Credit
                              customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                              operationId = a.OPERATIONID,
                              productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
+                             productClassProcess = context.TBL_PRODUCT_CLASS_PROCESS.Where(x=>x.PRODUCT_CLASS_PROCESSID == a.PRODUCT_CLASS_PROCESSID).FirstOrDefault().PRODUCT_CLASS_PROCESS_NAME,
                              tranchLevelId = a.TRANCHEAPPROVAL_LEVELID,
                              isEmployerRelated = a.ISEMPLOYERRELATED,
                              employer = context.TBL_CUSTOMER_EMPLOYER.FirstOrDefault(e => e.EMPLOYERID == a.RELATEDEMPLOYERID).EMPLOYER_NAME,
@@ -3754,8 +3755,8 @@ namespace FintrakBanking.Repositories.Credit
                                 actedOn = a.ACTEDON,
                                 loanTypeName = a.LOANAPPLICATIONTYPENAME,
                                 facility = a.PRODUCTNAME,
-                                divisionShortCode = a.BUSINESSUNITSHORTCODE
-
+                                divisionShortCode = a.BUSINESSUNITSHORTCODE,
+                                submitted = true
                             }).ToList();
 
                 return data;
