@@ -3633,6 +3633,7 @@ namespace FintrakBanking.Repositories.Credit
                 requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
                 operationId = x.a.OPERATIONID,
                 productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
+                productClassProcess = context.TBL_PRODUCT_CLASS_PROCESS.Where(p => p.PRODUCT_CLASS_PROCESSID == x.a.PRODUCT_CLASS_PROCESSID).FirstOrDefault().PRODUCT_CLASS_PROCESS_NAME,
                 tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
                 countryId = context.TBL_COUNTRY.FirstOrDefault().COUNTRYID,
                 globalsla = context.TBL_LOAN_APPLICATION_DETAIL
