@@ -1859,7 +1859,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) { continue; }
                 if (level.LevelBusinessRuleId != null && !ExecuteStandardBusinessRule(level.LevelBusinessRule)) { continue; }
-                if (ResolveApprovalGridFlow(levels, level)) { continue; }
+                //if (ResolveApprovalGridFlow(levels, level)) { continue; }
                 //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
                 grid.Add(new WorkflowSetup
@@ -2121,7 +2121,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         //            {
         //                approvalLevelReportingStaffId = context.TBL_STAFF.Where(x => x.STAFFID == lastOpenRequest.TOSTAFFID).Select(s => s.SUPERVISOR_STAFFID).FirstOrDefault();
         //            }
-                        
+
         //        }
         //        List<int> approvalStaffLevelIds;
         //        if (currentLevelRecord.ROUTEVIASTAFFORGANOGRAM == true && approvalLevelReportingStaffId == null) return false;

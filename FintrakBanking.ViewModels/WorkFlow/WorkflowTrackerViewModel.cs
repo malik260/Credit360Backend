@@ -66,5 +66,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string accountNumber { get; set; }
         public int customerId { get; set; }
         public int loanId { get; set; }
+        public decimal? disbursedAmount { get; set; }
+        public string currencyCode { get; set; }
     }
 }
