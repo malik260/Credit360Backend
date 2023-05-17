@@ -17,64 +17,72 @@ namespace FintrakBanking.ReportObjects.Credit
     {
         public IEnumerable<OfferLetterViewModel> GenerateOfferLetter(string applicationRefNumber)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
-            FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
-
-            var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).CUSTOMERID;
-
-            var offerLetterDetails = (from a in context.TBL_LOAN_APPLICATION
-                                      join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                      join b in context.TBL_CUSTOMER on d.CUSTOMERID equals b.CUSTOMERID into cc
-                                      from b in cc.DefaultIfEmpty()
-                                      join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
-                                      from c in cg.DefaultIfEmpty()
-                                      join e in context.TBL_CUSTOMER_ADDRESS on d.CUSTOMERID equals e.CUSTOMERID into dg
-                                      from e in dg.DefaultIfEmpty()
-                                      join g in context.TBL_CUSTOMER_PHONECONTACT on d.CUSTOMERID equals g.CUSTOMERID into gg
-                                      from g in gg.DefaultIfEmpty()
-                                      join h in context.TBL_LOAN_OFFER_LETTER on a.LOANAPPLICATIONID equals h.LOANAPPLICATIONID into hh
-                                      from h in hh.DefaultIfEmpty()
-                                          //join i in context.TBL_CUSTOMER_GROUP_MAPPING on b.CUSTOMERID equals i.CUSTOMERID into ii
-                                          //from i in ii.DefaultIfEmpty()
-                                          //join j in context.TBL_CUSTOMER_GROUP_MAPPING on c.CUSTOMERGROUPID equals j.CUSTOMERGROUPID into jj
-                                          //from j in jj.DefaultIfEmpty()
-                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
-                                      a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                      && d.STATUSID == (int)ApprovalStatusEnum.Approved
-                                      select new OfferLetterViewModel
-                                      {
-                                          companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
-                                          customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
-                                          customerAddress = e.ADDRESS ?? " ",
-                                          customerEmailAddress = b.EMAILADDRESS,
-                                          customerPhoneNumber = g.PHONENUMBER,
-                                          isFinal = (h.ISFINAL == false) ? false : h.ISFINAL,
-                                          producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
-                                          loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
-                                          offerLetterTitle = b.OFFERLETTERTITLE,
-                                          offerLetterSalutation = b.OFFERLETTERSALUTATION,
-                                          offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
-                                          offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
-
-                                      }).ToList();
-
-            var isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Any();
-            if (isOfferLetterAvailable == true)
+            try
             {
-                var offerLetter = offerLetterDetails.Select(o => o).FirstOrDefault();
+                FinTrakBankingContext context = new FinTrakBankingContext();
+                FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
-                if (offerLetter != null)
+                var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).CUSTOMERID;
+
+                var offerLetterDetails = (from a in context.TBL_LOAN_APPLICATION
+                                          join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                          join b in context.TBL_CUSTOMER on d.CUSTOMERID equals b.CUSTOMERID into cc
+                                          from b in cc.DefaultIfEmpty()
+                                          join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
+                                          from c in cg.DefaultIfEmpty()
+                                          join e in context.TBL_CUSTOMER_ADDRESS on d.CUSTOMERID equals e.CUSTOMERID into dg
+                                          from e in dg.DefaultIfEmpty()
+                                          join g in context.TBL_CUSTOMER_PHONECONTACT on d.CUSTOMERID equals g.CUSTOMERID into gg
+                                          from g in gg.DefaultIfEmpty()
+                                          join h in context.TBL_LOAN_OFFER_LETTER on a.LOANAPPLICATIONID equals h.LOANAPPLICATIONID into hh
+                                          from h in hh.DefaultIfEmpty()
+                                              //join i in context.TBL_CUSTOMER_GROUP_MAPPING on b.CUSTOMERID equals i.CUSTOMERID into ii
+                                              //from i in ii.DefaultIfEmpty()
+                                              //join j in context.TBL_CUSTOMER_GROUP_MAPPING on c.CUSTOMERGROUPID equals j.CUSTOMERGROUPID into jj
+                                              //from j in jj.DefaultIfEmpty()
+                                          where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
+                                          a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                          && d.STATUSID == (int)ApprovalStatusEnum.Approved
+                                          select new OfferLetterViewModel
+                                          {
+                                              companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
+                                              customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
+                                              customerAddress = e.ADDRESS ?? " ",
+                                              customerEmailAddress = b.EMAILADDRESS,
+                                              customerPhoneNumber = g.PHONENUMBER,
+                                              isFinal = (h.ISFINAL == false) ? false : h.ISFINAL,
+                                              producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
+                                              loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                              offerLetterTitle = b.OFFERLETTERTITLE,
+                                              offerLetterSalutation = b.OFFERLETTERSALUTATION,
+                                              offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
+                                              offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
+
+                                          }).ToList();
+
+                var isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Any();
+                if (isOfferLetterAvailable == true)
                 {
-                    if (offerLetter.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
+                    var offerLetter = offerLetterDetails.Select(o => o).FirstOrDefault();
+
+                    if (offerLetter != null)
                     {
-                        offerLetter.isFinal = true;
+                        if (offerLetter.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
+                        {
+                            offerLetter.isFinal = true;
+                        }
                     }
+
+
                 }
 
-               
+                return offerLetterDetails;
             }
-        
-            return offerLetterDetails;
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            
         }
 
 
