@@ -2,6 +2,7 @@
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.CreditLimitValidations;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -75,6 +76,7 @@ namespace FintrakBanking.Interfaces.Customer
 
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search);
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
+        CustomerEligibilityViewModels EligibilitySearch(int companyId, CustomerEligibilityViewModels search);
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
         IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery);
         IEnumerable<CustomerViewModels> SearchRandomCustomersBySearchQuery(string searchQuery);

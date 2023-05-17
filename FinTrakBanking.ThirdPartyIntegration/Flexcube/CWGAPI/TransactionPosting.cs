@@ -1,6 +1,7 @@
 ﻿namespace FinTrakBanking.ThirdPartyIntegration
 {
     using FintrakBanking.Common.CustomException;
+    using FintrakBanking.Common.Enum;
     using FintrakBanking.Entities.Models;
     using FintrakBanking.ViewModels.CASA;
     using FintrakBanking.ViewModels.Credit;
@@ -160,7 +161,124 @@
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
                     logContext.SaveChanges();
                 }
-            }         
+            }
+
+            public async Task<CustomerEligibilityViewModels> GetCustomerEligibility(string phone_number, string account_number)
+            {
+                IRestResponse response = null;
+                DateTime requestDatetime = DateTime.Now, responseDateTime = new DateTime();
+                string responseMessage = "";
+                RestRequest req = new RestRequest(Method.POST);
+                CustomerEligibilityViewModels records = new CustomerEligibilityViewModels();
+                CustomerEligibilityViewModels status = new CustomerEligibilityViewModels();
+                List<CustomerEligibilityViewModels> customers = new List<CustomerEligibilityViewModels>();
+                CustomerEligibilityViewModels reqbody = null;
+                try
+                {
+                    getAPIURLSettings("Default");
+
+                    var baseURL = API_URL;
+                    string fullURL = baseURL + "GetCustomerAcctsDetail";
+                    RestClient client = new RestClient(fullURL);
+
+                    reqbody = new CustomerEligibilityViewModels()
+                    {
+                        phone_number = phone_number,
+                        account_number = account_number
+                    };
+
+                    requestDatetime = DateTime.Now;
+                    responseDateTime = DateTime.Now;
+
+                    var jsonbody = new JavaScriptSerializer().Serialize(reqbody);
+                    req.AddParameter("application/json", jsonbody, ParameterType.RequestBody);
+                    req.AddHeader("Content-Type", "application/json");
+                    req.AddHeader("Accept", "application/json");
+                    req.AddHeader("Authorization", API_KEY);
+
+                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
+                    response = await client.ExecuteAsync<CustomerEligibilityViewModels>(req);
+                    var responbody = JsonConvert.DeserializeObject<CustomerEligibilityViewModels>(response.Content);
+
+                    if (response.IsSuccessful)
+                    {
+
+                        if (responbody == null || !responbody.response_descr.ToLower().Contains("successfully"))
+                        {
+                            status = responbody;
+                            records.response_code = status.response_code;
+                            records.response_descr = status.response_descr;
+                            records.MaximumAmount = status.MinimumAmount;
+                            records.MinimumAmount = status.MinimumAmount;
+                            records.IsEligible = status.IsEligible;
+                            records.full_description = status.full_description;
+
+                            //throw new APIErrorException("API call error - " + responbody.response_message + " " + responbody.response_code + " " + DateTime.Now);
+                        }
+
+                        status = responbody;
+                        records.response_code = status.response_code;
+                        records.response_descr = status.response_descr;
+                        records.MaximumAmount = status.MinimumAmount;
+                        records.MinimumAmount = status.MinimumAmount;
+                        records.IsEligible = status.IsEligible;
+                        records.full_description = status.full_description;
+                    }
+                    else
+                    {
+                        var log = new TBL_CUSTOM_API_LOGS
+                        {
+                            APIURL = fullURL,
+                            LOGTYPEID = 8,
+                            REFERENCENUMBER = account_number + " " + phone_number,
+                            REQUESTDATETIME = requestDatetime,
+                            REQUESTMESSAGE = new JavaScriptSerializer().Serialize(reqbody),
+                            RESPONSEDATETIME = responseDateTime,
+                            RESPONSEMESSAGE = "Failed " + response + " " + responbody?.response_descr + " " + responbody?.response_code + " " + response.Content,
+                        };
+
+                        FinTrakBankingContext logContext = new FinTrakBankingContext();
+                        logContext.TBL_CUSTOM_API_LOGS.Add(log);
+                        logContext.SaveChanges();
+
+                        throw new APIErrorException($"Core Banking API Error - GetCustomerAcctsDetail API is Currently Unavailable. Contact IT Admin for Support!");
+                    }
+
+                    responseMessage = responbody?.response_descr;
+                    return status;
+                }
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    throw new APIErrorException($"Error 202 " + ex.Message);
+                }
+                finally
+                {
+                    if (customers.Count() > 0)
+                    {
+                        var logs = new TBL_CUSTOM_API_LOGS
+                        {
+                            APIURL = "GetCustomerAcctsDetail",
+                            LOGTYPEID = 8,
+                            REFERENCENUMBER = account_number + " " + phone_number,
+                            REQUESTDATETIME = requestDatetime,
+                            REQUESTMESSAGE = new JavaScriptSerializer().Serialize(reqbody),
+                            RESPONSEDATETIME = responseDateTime,
+                            RESPONSEMESSAGE = "Success " + records.response_descr + " " + response.Content
+                        };
+
+                        FinTrakBankingContext logContext = new FinTrakBankingContext();
+                        logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                        logContext.SaveChanges();
+                    }
+                }
+            }
+
             private bool AddCustomLien(LienProcessViewModel entity)
             {
                 bool output = false;

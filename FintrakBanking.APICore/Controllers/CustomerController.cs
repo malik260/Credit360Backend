@@ -733,6 +733,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("eligibility-search")]
+        public HttpResponseMessage EligibilitySearch([FromBody] CustomerEligibilityViewModels search)
+        {
+            try
+            {
+                var data = repo.EligibilitySearch(token.GetCompanyId, search);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("customer-by-company/{companyId}")]

@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 
 namespace FintrakBanking.ViewModels.Customer
 {
@@ -251,6 +252,29 @@ namespace FintrakBanking.ViewModels.Customer
         public string customerName { get { return this.firstName + " " + this.middleName + " " + this.lastName; } }
         public int customerTypeId { get; set; }
         public DateTime dateOfBirth { get; set; }
+    }
+
+
+    public class CustomerEligibilityViewModels
+    {
+        public string request_id { get; set; }
+        public string phone_number { get; set; }
+        public string account_number { get; set; }
+        public string response_descr { get; set; }
+        public string response_code { get; set; }
+        public string full_description { get; set; }
+        public string tenor { get; set; }
+        public string amount { get; set; }
+        public string response_id { get; set; }
+        public string sal_account { get; set; }
+        public decimal MinimumAmount { get; set; }
+        public decimal MaximumAmount { get; set; }
+        public double interest { get; set; }
+        public double maintenance { get; set; }
+        public string module { get; set; }
+        public bool isFixedTenor { get; set; }
+        public bool IsEligible { get; set; }
+        public int customerId { get; set; }
     }
 
     public class CustomerSearchItemViewModels

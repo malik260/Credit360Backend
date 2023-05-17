@@ -27,6 +27,7 @@ using FintrakBanking.ViewModels.Credit;
 using GemBox.Spreadsheet;
 using System.IO;
 using System.Transactions;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -3426,6 +3427,37 @@ namespace FintrakBanking.Repositories.Customer
             }
 
             return customers;
+        }
+
+        public CustomerEligibilityViewModels EligibilitySearch(int companyId, CustomerEligibilityViewModels search)
+        {
+            var customerEligibility = new CustomerEligibilityViewModels();
+            if (search.account_number != null && search.phone_number != null)
+            {
+                if (USE_THIRD_PARTY_INTEGRATION)
+                {
+                    customerEligibility = finacle.GetCustomerEligibility(search.account_number, search.phone_number);
+                    
+                }
+            }
+
+            if(customerEligibility != null)
+            {
+                var eligibility = new TBL_CUSTOMER_ELIGIBILITY();
+                eligibility.CUSTOMERID = search.customerId;
+                eligibility.RESPONSEDESCRIPTION = search.response_descr;
+                eligibility.MAXIMUMAMOUNT = search.MinimumAmount;
+                eligibility.MINIMUMAMOUNT = search.MinimumAmount;
+                eligibility.ISELIGIBLE = search.IsEligible;
+                eligibility.FULLDESCRIPTION = search.full_description;
+
+                context.TBL_CUSTOMER_ELIGIBILITY.Add(eligibility);
+                context.SaveChanges();
+            }
+
+
+            return customerEligibility;
+
         }
 
         public IEnumerable<CustomerSectorViewModel> GetCustomerSectors()
