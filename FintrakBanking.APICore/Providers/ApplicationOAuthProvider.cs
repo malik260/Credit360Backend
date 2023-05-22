@@ -257,20 +257,21 @@ namespace FintrakBanking.APICore.Providers
                 string ipAddress = GetIpAddress();
                 UserViewModel user = null;
 
+                //var sanitizdPassword = context.Password.Replace(" ", "+");
+
+                var keybytes = Encoding.UTF8.GetBytes("7061737323313233");
+                var iv = Encoding.UTF8.GetBytes("7061737323313233");
                 var sanitizdPassword = context.Password.Replace(" ", "+");
 
-                /***  Recent Logic
-                //var keybytes = Encoding.UTF8.GetBytes("7061737323313233");
-                //var iv = Encoding.UTF8.GetBytes("7061737323313233");
-                               
-                //var encrypted = Convert.FromBase64String(sanitizdPassword);//Encoding.ASCII.GetBytes(context.Password);
-                //var decriptedFromJavascript = DecryptStringFromBytes(encrypted, keybytes, iv);
 
-                //string password = decriptedFromJavascript;// Encoding.UTF8.GetString(pass);
-                ******/
+                var encrypted = Convert.FromBase64String(sanitizdPassword);//Encoding.ASCII.GetBytes(context.Password);
+                var decriptedFromJavascript = DecryptStringFromBytes(encrypted, keybytes, iv);
 
-                byte[] pass = Convert.FromBase64String(sanitizdPassword);
-                string password = Encoding.UTF8.GetString(pass);
+
+                string password = decriptedFromJavascript;// Encoding.UTF8.GetString(pass);
+
+                //byte[] pass = Convert.FromBase64String(sanitizdPassword);
+                //string password = Encoding.UTF8.GetString(pass);
 
                 //var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);                
                 //var exipredSec = int.Parse(ConfigurationManager.AppSettings["tokenExpirySecond"]);

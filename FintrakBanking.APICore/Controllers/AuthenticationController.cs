@@ -20,6 +20,8 @@ using System.Web;
 using FintrakBanking.Common.CustomException;
 using System.Text;
 using Microsoft.AspNet.Identity;
+using System.IO;
+using System.Security.Cryptography;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -181,8 +183,19 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
+                var keybytes = Encoding.UTF8.GetBytes("7061737323313233");
+                var iv = Encoding.UTF8.GetBytes("7061737323313233");
+                var sanitizdPassword = user.password.Replace(" ", "+");
+
+                var encrypted = Convert.FromBase64String(sanitizdPassword);//Encoding.ASCII.GetBytes(context.Password);
+                var decriptedFromJavascript = DecryptStringFromBytes(encrypted, keybytes, iv);
+
+
+                //byte[] pass = Convert.FromBase64String(context.Password);
+                string password = decriptedFromJavascript;// Encoding.UTF8.GetString(pass);
+
                 byte[] pass = Convert.FromBase64String(user.password);
-                string password = Encoding.UTF8.GetString(pass);
+                //string password = Encoding.UTF8.GetString(pass);
 
 
                 user.password = StaticHelpers.EncryptSha512(password, StaticHelpers.EncryptionKey);
@@ -250,12 +263,48 @@ namespace FintrakBanking.APICore.Controllers
 
                 //var ttttt = HttpUtility.HtmlDecode(user.encodedToken);
                 //var dat = HttpUtility.HtmlDecode(user.validTo);
-                byte[] data = Convert.FromBase64String(user.encodedToken);
-                string encodedToken = Encoding.UTF8.GetString(data);
-                byte[] data2 = Convert.FromBase64String(user.validTo);
-                string validTo = Encoding.UTF8.GetString(data2);
+                //byte[] data = Convert.FromBase64String(user.encodedToken);
+                //string encodedToken = Encoding.UTF8.GetString(data);
+                //byte[] data2 = Convert.FromBase64String(user.validTo);
+                //string validTo = Encoding.UTF8.GetString(data2);
+                var sanitizdToken = user.encodedToken.Replace(" ", "+");
+
+                byte[] data = Convert.FromBase64String(sanitizdToken);
+                var tokenEncode = DecryptStringFromBytes(data, keybytes, iv);
+                string encodedToken = tokenEncode;// Encoding.UTF8.GetString(data);
+
+                var sanitizdvalidTo = user.validTo.Replace(" ", "+");
+
+                byte[] data2 = Convert.FromBase64String(sanitizdvalidTo);
+                var validDate = DecryptStringFromBytes(data2, keybytes, iv);
+
+                string validTo = validDate;
                 // build the json response
-                return Request.CreateResponse(HttpStatusCode.OK, new
+                //return Request.CreateResponse(HttpStatusCode.OK, new
+                //{
+                //    success = true,
+                //    access_token = encodedToken,
+                //    expiration = validTo,
+                //    userInfo = new UserInfo
+                //    {
+                //        branchName = currUser.branchName,
+                //        companyName = currUser.companyName,
+                //        userName = currUser.username,
+                //        activities = userActivities,
+                //        staffId = currUser.staffId,
+                //        staffName = currUser.staffName,
+                //        sessionStatusInfo = currUser.sessionStatusInfo,
+                //        applicationDate = _genSetup.GetApplicationDate(),
+                //        lastLoginDate = currUser.lastLoginDate,
+                //        staffRole = userRole.lookupName,
+                //        corrMatrixId = currUser.corrMatrixId,
+                //        corrMatrixDescription = currUser.corrMatrixDescription,
+                //        businessUnitName = currUser.businessUnitName,
+                //        staffRoleId = userRole.lookupId
+                //    }
+                //});
+
+                var result = new
                 {
                     success = true,
                     access_token = encodedToken,
@@ -277,8 +326,12 @@ namespace FintrakBanking.APICore.Controllers
                         businessUnitName = currUser.businessUnitName,
                         staffRoleId = userRole.lookupId
                     }
-                });
+                };
 
+                var sResult = Newtonsoft.Json.JsonConvert.SerializeObject(result);
+                //var dResult = Newtonsoft.Json.JsonConvert.DeserializeObject(sResult);
+                var encryptedResult = Common.Crypto.Crypto.NgEncrypt(sResult, "SSljsdkkdlo4454M", "kljsdkkdlo4454GG");
+                return Request.CreateResponse(HttpStatusCode.OK, encryptedResult);
             }
             catch (SecureException ex)
             {
@@ -293,6 +346,59 @@ namespace FintrakBanking.APICore.Controllers
             
         }
     }
+
+        private static string DecryptStringFromBytes(byte[] cipherText, byte[] key, byte[] iv)
+        {
+            // Check arguments.
+            if (cipherText == null || cipherText.Length <= 0)
+            {
+                throw new ArgumentNullException("cipherText");
+            }
+            if (key == null || key.Length <= 0)
+            {
+                throw new ArgumentNullException("key");
+            }
+            if (iv == null || iv.Length <= 0)
+            {
+                throw new ArgumentNullException("key");
+            }
+
+            // Declare the string used to hold
+            // the decrypted text.
+            string plaintext = null;
+
+            // Create an RijndaelManaged object
+            // with the specified key and IV.
+            using (var rijAlg = new RijndaelManaged())
+            {
+                //Settings
+                rijAlg.Mode = CipherMode.CBC;
+                rijAlg.Padding = PaddingMode.PKCS7;
+                rijAlg.FeedbackSize = 128;
+
+                rijAlg.Key = key;
+                rijAlg.IV = iv;
+
+                // Create a decrytor to perform the stream transform.
+                var decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
+
+                // Create the streams used for decryption.
+                using (var msDecrypt = new MemoryStream(cipherText))
+                {
+                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (var srDecrypt = new StreamReader(csDecrypt))
+                        {
+                            // Read the decrypted bytes from the decrypting stream
+                            // and place them in a string.
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+            }
+
+            return plaintext;
+        }
 
         [HttpPost] //[ClaimsAuthorization]
         [Route("endpendingsession")]

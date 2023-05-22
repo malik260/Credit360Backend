@@ -1856,6 +1856,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     // levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
                 }
                 var testField = level.Level.LEVELNAME;
+                
 
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) { continue; }
                 if (level.LevelBusinessRuleId != null && !ExecuteStandardBusinessRule(level.LevelBusinessRule)) { continue; }
@@ -1899,7 +1900,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool LevelBusinessRuleIsValid(TBL_APPROVAL_BUSINESS_RULE rule)
         {
             
-            if (levelBusinessRule == null) return false;
+            //if (levelBusinessRule == null) return false;
+            if (levelBusinessRule == null) return true;
 
             bool validity = false;
             bool flagChecked = false;
