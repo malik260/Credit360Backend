@@ -175,10 +175,10 @@
                 CustomerEligibilityViewModels reqbody = null;
                 try
                 {
-                    getAPIURLSettings("Default");
+                    getAPIURLSettings("IBL");
 
                     var baseURL = API_URL;
-                    string fullURL = baseURL + "GetCustomerAcctsDetail";
+                    string fullURL = baseURL + "FetchIBLEligibility";
                     RestClient client = new RestClient(fullURL);
 
                     reqbody = new CustomerEligibilityViewModels()
@@ -217,14 +217,18 @@
 
                             //throw new APIErrorException("API call error - " + responbody.response_message + " " + responbody.response_code + " " + DateTime.Now);
                         }
+                        else
+                        {
+                            status = responbody;
+                            records.response_code = status.response_code;
+                            records.response_descr = status.response_descr;
+                            records.MaximumAmount = status.MinimumAmount;
+                            records.MinimumAmount = status.MinimumAmount;
+                            records.IsEligible = status.IsEligible;
+                            records.full_description = status.full_description;
+                        }
 
-                        status = responbody;
-                        records.response_code = status.response_code;
-                        records.response_descr = status.response_descr;
-                        records.MaximumAmount = status.MinimumAmount;
-                        records.MinimumAmount = status.MinimumAmount;
-                        records.IsEligible = status.IsEligible;
-                        records.full_description = status.full_description;
+                       
                     }
                     else
                     {
@@ -243,7 +247,7 @@
                         logContext.TBL_CUSTOM_API_LOGS.Add(log);
                         logContext.SaveChanges();
 
-                        throw new APIErrorException($"Core Banking API Error - GetCustomerAcctsDetail API is Currently Unavailable. Contact IT Admin for Support!");
+                        throw new APIErrorException($"Core Banking API Error - FetchIBLEligibility API is Currently Unavailable. Contact IT Admin for Support!");
                     }
 
                     responseMessage = responbody?.response_descr;
@@ -263,7 +267,7 @@
                     {
                         var logs = new TBL_CUSTOM_API_LOGS
                         {
-                            APIURL = "GetCustomerAcctsDetail",
+                            APIURL = "FetchIBLEligibility",
                             LOGTYPEID = 8,
                             REFERENCENUMBER = account_number + " " + phone_number,
                             REQUESTDATETIME = requestDatetime,

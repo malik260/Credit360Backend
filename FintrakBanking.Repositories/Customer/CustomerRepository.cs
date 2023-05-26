@@ -3432,6 +3432,8 @@ namespace FintrakBanking.Repositories.Customer
         public CustomerEligibilityViewModels EligibilitySearch(int companyId, CustomerEligibilityViewModels search)
         {
             var customerEligibility = new CustomerEligibilityViewModels();
+            search.account_number = search.accountNumber;
+            search.phone_number = search.phoneNumber;
             if (search.account_number != null && search.phone_number != null)
             {
                 if (USE_THIRD_PARTY_INTEGRATION)
@@ -3441,7 +3443,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
             }
 
-            if(customerEligibility != null)
+            if(customerEligibility.account_number != null)
             {
                 var eligibility = new TBL_CUSTOMER_ELIGIBILITY();
                 eligibility.CUSTOMERID = search.customerId;

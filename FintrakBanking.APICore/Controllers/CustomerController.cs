@@ -741,7 +741,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.EligibilitySearch(token.GetCompanyId, search);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = data.response_descr });
             }
             catch (SecureException e)
             {

@@ -275,6 +275,8 @@ namespace FintrakBanking.ViewModels.Customer
         public bool isFixedTenor { get; set; }
         public bool IsEligible { get; set; }
         public int customerId { get; set; }
+        public string accountNumber { get; set; }
+        public string phoneNumber { get; set; }
     }
 
     public class CustomerSearchItemViewModels
