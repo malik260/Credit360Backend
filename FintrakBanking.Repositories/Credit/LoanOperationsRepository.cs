@@ -36,6 +36,7 @@ using FintrakBanking.Repositories.WorkFlow;
 using System.Diagnostics;
 using System.Transactions;
 using FintrakBanking.ViewModels;
+using System.Globalization;
 
 namespace FintrakBanking.Repositories.Credit
 
@@ -34184,7 +34185,7 @@ namespace FintrakBanking.Repositories.Credit
                                     !loansId.Contains(ln.REFERENCENUMBER)
                                     && ln.NPL != null
                                     && ln.UNPODAYSOVERDUE >= 30
-                                    && ln.TOTALUNSETTLEDAMOUNT > 0
+                                    && (ln.TOTALUNSETTLEDAMOUNT > 0 && ln.TOTALUNSETTLEDAMOUNT <= 50000000)
                                     && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
 
                                     orderby ln.ID descending
@@ -35502,7 +35503,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<GlobalExposureApplicationViewModel> getAllLoansForRecoveryAnalysisByAgent(string source, int staffId, int companyId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
-
+            
             var exposureData = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                 join c in context.TBL_ACCREDITEDCONSULTANT on lr.ACCREDITEDCONSULTANT equals c.ACCREDITEDCONSULTANTID
                                 join ln in context.TBL_GLOBAL_EXPOSURE on lr.LOANREFERENCE equals ln.REFERENCENUMBER
@@ -41282,11 +41283,14 @@ namespace FintrakBanking.Repositories.Credit
                 monthInWord = "December, " + month.Year;
             }
 
+            DateTime collectionDate = DateTime.ParseExact(monthInWord, "MMMM, yyyy", CultureInfo.InvariantCulture);
             var data = (from ln in context.TBL_ACCREDITEDCONSULTANT
                         join a in context.TBL_LOAN_RECOVERY_REPORT_COLLECTION on ln.ACCREDITEDCONSULTANTID equals a.ACCREDITEDCONSULTANT
                         where
                         ln.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent
                         && ln.CATEGORY.ToLower() == "internal"
+                        && a.COLLECTIONDATE.Value.Month == collectionDate.Month
+                        && a.COLLECTIONDATE.Value.Year == collectionDate.Year
 
                         select new AccreditedConsultantsViewModel
                         {
