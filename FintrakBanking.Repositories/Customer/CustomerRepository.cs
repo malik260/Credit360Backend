@@ -3443,7 +3443,12 @@ namespace FintrakBanking.Repositories.Customer
                 }
             }
 
-            if(customerEligibility.account_number != null)
+            var eligibilityExist = context.TBL_CUSTOMER_ELIGIBILITY.Where(e => e.CUSTOMERID == search.customerId).FirstOrDefault();
+            if(eligibilityExist != null)
+            {
+                context.TBL_CUSTOMER_ELIGIBILITY.Remove(eligibilityExist);
+            }
+            //if(customerEligibility.account_number != null)
             {
                 var eligibility = new TBL_CUSTOMER_ELIGIBILITY();
                 eligibility.CUSTOMERID = search.customerId;
@@ -3452,6 +3457,7 @@ namespace FintrakBanking.Repositories.Customer
                 eligibility.MINIMUMAMOUNT = search.MinimumAmount;
                 eligibility.ISELIGIBLE = search.IsEligible;
                 eligibility.FULLDESCRIPTION = search.full_description;
+                eligibility.ACCOUNTNUMBER = search.account_number;
 
                 context.TBL_CUSTOMER_ELIGIBILITY.Add(eligibility);
                 context.SaveChanges();
@@ -3460,6 +3466,23 @@ namespace FintrakBanking.Repositories.Customer
 
             return customerEligibility;
 
+        }
+
+        public IEnumerable<CustomerEligibilityViewModels> GetCustomerIBLEligibility(int customerId)
+        {
+            var data = (from e in context.TBL_CUSTOMER_ELIGIBILITY
+                        where e.CUSTOMERID == customerId
+                        select new CustomerEligibilityViewModels()
+                        {
+                            customerId = e.CUSTOMERID,
+                            IsEligible = e.ISELIGIBLE ? true : false,
+                            MaximumAmount = e.MAXIMUMAMOUNT,
+                            full_description = e.FULLDESCRIPTION,
+                            account_number = e.ACCOUNTNUMBER,
+                            customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == e.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault()
+                        }); ;
+
+            return data;
         }
 
         public IEnumerable<CustomerSectorViewModel> GetCustomerSectors()

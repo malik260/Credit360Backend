@@ -733,6 +733,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-ibl-eligibility/{customerId}")]
+        public HttpResponseMessage GetCustomerIBLEligibility(int customerId)
+        {
+            try
+            {
+                var data = repo.GetCustomerIBLEligibility(customerId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("eligibility-search")]

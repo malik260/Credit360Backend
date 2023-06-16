@@ -277,6 +277,7 @@ namespace FintrakBanking.ViewModels.Customer
         public int customerId { get; set; }
         public string accountNumber { get; set; }
         public string phoneNumber { get; set; }
+        public string customerName { get; set; }
     }
 
     public class CustomerSearchItemViewModels

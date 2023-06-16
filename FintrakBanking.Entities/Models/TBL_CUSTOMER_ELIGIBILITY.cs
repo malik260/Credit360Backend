@@ -17,5 +17,6 @@ namespace FintrakBanking.Entities.Models
         public decimal MINIMUMAMOUNT { get; set; }
         public bool ISELIGIBLE { get; set; }
         public string FULLDESCRIPTION { get; set; }
+        public string ACCOUNTNUMBER { get; set; }
     }
 }
