@@ -1105,7 +1105,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   approvalTrailId = a.APPROVALTRAILID,
                                   toStaffId = a.TOSTAFFID,
                                   customerCode = cust.CUSTOMERCODE,
-                                  accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == cust.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault()
+                                  //accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == cust.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault()
+                                  accountNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CUSTOMERID == cust.CUSTOMERID).Join(context.TBL_CASA, loan => loan.CASAACCOUNTID, casa => casa.CASAACCOUNTID,(loan, casa) => casa.PRODUCTACCOUNTNUMBER).FirstOrDefault()
                                })
                               ).ToList()
                               
@@ -1239,7 +1240,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             toStaffId = a.TOSTAFFID,
                                             customerCode = d.TBL_CUSTOMER.CUSTOMERCODE,
                                             customerId = d.CUSTOMERID,
-                                            accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                            accountNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CUSTOMERID == cust.CUSTOMERID).Join(context.TBL_CASA, loan => loan.CASAACCOUNTID, casa => casa.CASAACCOUNTID, (loan, casa) => casa.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                            productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                         })
                            );
