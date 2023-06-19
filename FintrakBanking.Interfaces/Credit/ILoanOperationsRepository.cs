@@ -29,7 +29,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureApplicationViewModel> getAllLoansRecoveryAnalysisByAgentRemedial(int staffId, int companyId, int accreditedConsultantId, string referenceId);
         IEnumerable<GlobalExposureApplicationViewModel> getAllLoansForRecoveryAnalysisBySingleAgent(string source, int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> getAllLoansForExternalRecoveryAnalysisByAgent(string source, int staffId, int companyId);
-        IEnumerable<GlobalExposureApplicationViewModel> getAllLoansForRecoveryAnalysisByAgent(string source, int staffId, int companyId);
+        IEnumerable<GlobalExposureApplicationViewModel> getAllLoansForRecoveryAnalysisByAgent(string source, int staffId, int companyId, DateTime month);
         IEnumerable<RetailLoanRecoveryCommissionViewModel> getAllInternalRecoveryCommissonByAgents(int staffId, int companyId);
         IEnumerable<AccreditedConsultantsViewModel> GetAllInternalRecoveryAgents(int staffId, int companyId, DateTime month);
         IEnumerable<AccreditedConsultantsViewModel> GetAllRecoveryAgents(int staffId, int companyId);

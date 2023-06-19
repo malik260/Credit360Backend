@@ -35500,20 +35500,73 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-        public IEnumerable<GlobalExposureApplicationViewModel> getAllLoansForRecoveryAnalysisByAgent(string source, int staffId, int companyId)
+        public IEnumerable<GlobalExposureApplicationViewModel> getAllLoansForRecoveryAnalysisByAgent(string source, int staffId, int companyId, DateTime month)
         {
             var applicationDate = generalSetup.GetApplicationDate();
-            
+            var monthInWord = "";
+            if (month.Month == 1)
+            {
+                monthInWord = "January, " + month.Year;
+            }
+            if (month.Month == 2)
+            {
+                monthInWord = "February, " + month.Year;
+            }
+            if (month.Month == 3)
+            {
+                monthInWord = "March, " + month.Year;
+            }
+            if (month.Month == 4)
+            {
+                monthInWord = "April, " + month.Year;
+            }
+            if (month.Month == 5)
+            {
+                monthInWord = "May, " + month.Year;
+            }
+            if (month.Month == 6)
+            {
+                monthInWord = "June, " + month.Year;
+            }
+            if (month.Month == 7)
+            {
+                monthInWord = "July, " + month.Year;
+            }
+            if (month.Month == 8)
+            {
+                monthInWord = "August, " + month.Year;
+            }
+            if (month.Month == 9)
+            {
+                monthInWord = "September, " + month.Year;
+            }
+            if (month.Month == 10)
+            {
+                monthInWord = "October, " + month.Year;
+            }
+            if (month.Month == 11)
+            {
+                monthInWord = "November, " + month.Year;
+            }
+            if (month.Month == 12)
+            {
+                monthInWord = "December, " + month.Year;
+            }
+
+            DateTime collectionDate = DateTime.ParseExact(monthInWord, "MMMM, yyyy", CultureInfo.InvariantCulture);
+
             var exposureData = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                 join c in context.TBL_ACCREDITEDCONSULTANT on lr.ACCREDITEDCONSULTANT equals c.ACCREDITEDCONSULTANTID
                                 join ln in context.TBL_GLOBAL_EXPOSURE on lr.LOANREFERENCE equals ln.REFERENCENUMBER
                                 
                                 where
                                 lr.ISFULLYRECOVERED == false
-                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                     && lr.SOURCE.ToLower() == source.ToLower()
-                                     && c.CATEGORY.ToLower() == "internal"
-                                     && lr.DELETED == false
+                                && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                && lr.SOURCE.ToLower() == source.ToLower()
+                                && c.CATEGORY.ToLower() == "internal"
+                                && lr.DELETED == false
+                                && lr.DATEASSIGNED.Month == collectionDate.Month
+                                && lr.DATEASSIGNED.Year == collectionDate.Year
 
                                 orderby ln.ID descending
                                 select new GlobalExposureApplicationViewModel
@@ -35561,10 +35614,12 @@ namespace FintrakBanking.Repositories.Credit
                                 
                                 where
                                 lr.ISFULLYRECOVERED == false
-                                     && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                     && lr.SOURCE.ToLower() == source.ToLower()
-                                     && c.CATEGORY.ToLower() == "internal"
-                                     && lr.DELETED == false
+                                && lr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                && lr.SOURCE.ToLower() == source.ToLower()
+                                && c.CATEGORY.ToLower() == "internal"
+                                && lr.DELETED == false
+                                && lr.DATEASSIGNED.Month == collectionDate.Month
+                                && lr.DATEASSIGNED.Year == collectionDate.Year
 
                                 orderby ln.ID descending
                                 select new GlobalExposureApplicationViewModel
@@ -41256,7 +41311,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             if (month.Month == 6)
             {
-                monthInWord = "February, " + month.Year;
+                monthInWord = "June, " + month.Year;
             }
             if (month.Month == 7)
             {
