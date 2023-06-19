@@ -1065,6 +1065,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
                               join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
                               join d in context.TBL_LOAN_APPLICATION on a.TARGETID equals d.LOANAPPLICATIONID
+                              join e in context.TBL_LOAN_APPLICATION_DETAIL on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                               join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                               where ((DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
                                  && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)))
@@ -1240,7 +1241,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             toStaffId = a.TOSTAFFID,
                                             customerCode = d.TBL_CUSTOMER.CUSTOMERCODE,
                                             customerId = d.CUSTOMERID,
-                                            accountNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CUSTOMERID == cust.CUSTOMERID).Join(context.TBL_CASA, loan => loan.CASAACCOUNTID, casa => casa.CASAACCOUNTID, (loan, casa) => casa.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                            accountNumber = context.TBL_CASA.Where(x => x.CUSTOMERID == d.CUSTOMERID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                            //accountNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CUSTOMERID == cust.CUSTOMERID).Join(context.TBL_CASA, loan => loan.CASAACCOUNTID, casa => casa.CASAACCOUNTID, (loan, casa) => casa.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                            productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                         })
                            );
