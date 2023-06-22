@@ -3452,11 +3452,11 @@ namespace FintrakBanking.Repositories.Customer
             {
                 var eligibility = new TBL_CUSTOMER_ELIGIBILITY();
                 eligibility.CUSTOMERID = search.customerId;
-                eligibility.RESPONSEDESCRIPTION = search.response_descr;
-                eligibility.MAXIMUMAMOUNT = search.MinimumAmount;
-                eligibility.MINIMUMAMOUNT = search.MinimumAmount;
-                eligibility.ISELIGIBLE = search.IsEligible;
-                eligibility.FULLDESCRIPTION = search.full_description;
+                eligibility.RESPONSEDESCRIPTION = customerEligibility.response_descr;
+                eligibility.MAXIMUMAMOUNT = customerEligibility.MinimumAmount;
+                eligibility.MINIMUMAMOUNT = customerEligibility.MinimumAmount;
+                eligibility.ISELIGIBLE = customerEligibility.IsEligible;
+                eligibility.FULLDESCRIPTION = customerEligibility.full_description;
                 eligibility.ACCOUNTNUMBER = search.account_number;
 
                 context.TBL_CUSTOMER_ELIGIBILITY.Add(eligibility);
@@ -3476,6 +3476,7 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             customerId = e.CUSTOMERID,
                             IsEligible = e.ISELIGIBLE ? true : false,
+                            MinimumAmount = e.MINIMUMAMOUNT,
                             MaximumAmount = e.MAXIMUMAMOUNT,
                             full_description = e.FULLDESCRIPTION,
                             account_number = e.ACCOUNTNUMBER,
