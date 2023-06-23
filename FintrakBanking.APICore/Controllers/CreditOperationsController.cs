@@ -1403,6 +1403,38 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-operation/get-delinquent-accounts")]
+        public HttpResponseMessage GetDelinquentAccounts()
+        {
+            var data = repo.GetDelinquentAccounts(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/get-delinquent-digital-accounts")]
+        public HttpResponseMessage GetDelinquentDigitalAccounts()
+        {
+            var data = repo.GetDelinquentDigitalAccounts(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-operation/recovery-analysis-agents/{source}")]
         public HttpResponseMessage getAllLoansOperationRecoveryAnalysisByAgent(string source)
         {

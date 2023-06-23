@@ -84,6 +84,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureApplicationViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> getAllLoansOperationRecoveryAnalysisByAgent(string source, int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> GetLoanOperationRecoveryAnalysis(int staffId, int companyId);
+        IEnumerable<GlobalExposureApplicationViewModel> GetDelinquentAccounts(int staffId, int companyId);
+        IEnumerable<GlobalExposureApplicationViewModel> GetDelinquentDigitalAccounts(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentation(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentationSearch(int staffId, int companyId, string searchString);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetCompletedLoanOperationDocumentation(int staffId, int companyId, DateTime startDate, DateTime endDate);

@@ -34812,6 +34812,124 @@ namespace FintrakBanking.Repositories.Credit
             
         }
 
+        public IEnumerable<GlobalExposureApplicationViewModel> GetDelinquentAccounts(int staffId, int companyId)
+        {
+
+            var applicationDate = generalSetup.GetApplicationDate();
+            var loansId = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.DELETED == false).Select(x => x.LOANREFERENCE).ToList();
+
+            var exposureData = (from ln in context.TBL_GLOBAL_EXPOSURE
+                                where
+                                !loansId.Contains(ln.REFERENCENUMBER)
+                                && ln.NPL != null
+                                && ln.UNPODAYSOVERDUE >= 30
+                                && (ln.TOTALUNSETTLEDAMOUNT > 0 && ln.TOTALUNSETTLEDAMOUNT <= 50000000)
+                                && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
+
+                                orderby ln.ID descending
+                                select new GlobalExposureApplicationViewModel
+                                {
+                                    loanId = ln.ID,
+                                    customerCode = ln.CUSTOMERID,
+                                    productCode = ln.PRODUCTID,
+                                    applicationReferenceNumber = ln.REFERENCENUMBER,
+                                    loanReferenceNumber = ln.REFERENCENUMBER,
+                                    customerName = ln.CUSTOMERNAME,
+                                    productName = ln.PRODUCTNAME,
+                                    relationshipManagerName = ln.ACCOUNTOFFICERNAME,
+                                    exposureType = ln.EXPOSURETYPE,
+                                    expiryBand = ln.EXPIRINGBAND,
+                                    divisionName = ln.DIVISIONNAME,
+                                    totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                    dpdExposure = ln.UNPODAYSOVERDUE,
+                                    loanCategory = ln.CBNCLASSIFICATION,
+                                    casaAccount = ln.ACCOUNTNUMBER,
+                                    branchName = ln.BRANCHNAME,
+                                    divisionCode = ln.DIVISIONCODE,
+                                    region = ln.REGIONCODE + " " + ln.REGIONNAME,
+                                    phoneNo = ln.PHONENO,
+                                    valueDate = ln.VALUEDATE,
+                                    maturityRevDate = ln.MATURITYDATE,
+                                    overduePrincipalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
+                                    overdueInterestAmount = (decimal)ln.INTERESTRECIEVABLETCY
+                                }).Take(100).ToList();
+
+            foreach (var xx in exposureData)
+            {
+                xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+                xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
+                xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
+            }
+
+            var allData = exposureData;
+            var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
+
+            return data;
+
+        }
+
+        public IEnumerable<GlobalExposureApplicationViewModel> GetDelinquentDigitalAccounts(int staffId, int companyId)
+        {
+
+            var applicationDate = generalSetup.GetApplicationDate();
+            var loansId = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.DELETED == false).Select(x => x.LOANREFERENCE).ToList();
+       
+            var exposureDigitalData = (from ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
+                                       where
+                                !loansId.Contains(ln.REFERENCENUMBER)
+                                && ln.NPL != null
+                                && ln.UNPODAYSOVERDUE >= 30
+                                && ln.TOTALUNSETTLEDAMOUNT > 0
+                                && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
+
+                                       orderby ln.ID descending
+                                       select new GlobalExposureApplicationViewModel
+                                       {
+                                           loanId = ln.ID,
+                                           customerCode = ln.CUSTOMERID,
+                                           productCode = ln.PRODUCTID,
+                                           applicationReferenceNumber = ln.REFERENCENUMBER,
+                                           loanReferenceNumber = ln.REFERENCENUMBER,
+                                           customerName = ln.CUSTOMERNAME,
+                                           productName = ln.PRODUCTNAME,
+                                           relationshipManagerName = ln.ACCOUNTOFFICERNAME,
+                                           exposureType = ln.EXPOSURETYPE,
+                                           expiryBand = ln.EXPIRINGBAND,
+                                           divisionName = ln.DIVISIONNAME,
+                                           totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
+                                           totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                           dpdExposure = ln.UNPODAYSOVERDUE,
+                                           loanCategory = ln.CBNCLASSIFICATION,
+                                           casaAccount = ln.ACCOUNTNUMBER,
+                                           branchName = ln.BRANCHNAME,
+                                           divisionCode = ln.DIVISIONCODE,
+                                           region = ln.REGIONCODE + " " + ln.REGIONNAME,
+                                           phoneNo = ln.PHONENO,
+
+                                           valueDate = ln.VALUEDATE,
+                                           maturityRevDate = ln.MATURITYDATE,
+                                           overduePrincipalAmount = (decimal)ln.PRINCIPALOUTSTANDINGBALLCY,
+                                           overdueInterestAmount = (decimal)ln.INTERESTRECIEVABLETCY
+                                       }).Take(100).ToList();
+
+            foreach (var xx in exposureDigitalData)
+            {
+                xx.branchId = context.TBL_BRANCH.Where(x => x.BRANCHCODE == xx.branchCode).Select(x => x.BRANCHID).FirstOrDefault();
+                xx.customerId = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == xx.customerCode).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+                xx.productId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTID).FirstOrDefault();
+                xx.productClassId = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == xx.productCode).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
+            }
+
+            var allData = exposureDigitalData;
+            var data = allData.GroupBy(x => x.loanReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanReferenceNumber).ToList();
+
+            return data;
+
+        }
+
+
         public IEnumerable<GlobalExposureApplicationViewModel> getAllLoansOperationRecoveryAnalysisByAgent(string source, int staffId, int companyId)
             {
                 var applicationDate = generalSetup.GetApplicationDate();
