@@ -482,13 +482,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public CustomerEligibilityViewModels GetCustomerEligibility(string phone_number, string account_number)
         {
             var data = new CustomerEligibilityViewModels();
-            Task.Run(async () => { data = await transaction.GetCustomerEligibility(phone_number, phone_number); }).GetAwaiter().GetResult();
+            Task.Run(async () => { data = await transaction.GetCustomerEligibility(phone_number, account_number); }).GetAwaiter().GetResult();
 
             return new CustomerEligibilityViewModels
             {
                 response_code = data.response_code,
                 response_descr = data.response_descr,
-                MaximumAmount = data.MinimumAmount,
+                MaximumAmount = data.MaximumAmount,
                 MinimumAmount = data.MinimumAmount,
                 IsEligible = data.IsEligible,
                 full_description = data.full_description

@@ -3438,7 +3438,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    customerEligibility = finacle.GetCustomerEligibility(search.account_number, search.phone_number);
+                    customerEligibility = finacle.GetCustomerEligibility(search.phone_number, search.account_number);
                     
                 }
             }
@@ -3453,7 +3453,7 @@ namespace FintrakBanking.Repositories.Customer
                 var eligibility = new TBL_CUSTOMER_ELIGIBILITY();
                 eligibility.CUSTOMERID = search.customerId;
                 eligibility.RESPONSEDESCRIPTION = customerEligibility.response_descr;
-                eligibility.MAXIMUMAMOUNT = customerEligibility.MinimumAmount;
+                eligibility.MAXIMUMAMOUNT = customerEligibility.MaximumAmount;
                 eligibility.MINIMUMAMOUNT = customerEligibility.MinimumAmount;
                 eligibility.ISELIGIBLE = customerEligibility.IsEligible;
                 eligibility.FULLDESCRIPTION = customerEligibility.full_description;

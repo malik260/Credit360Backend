@@ -295,32 +295,32 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.companyDirectors != null)
             {
-                foreach (var director in entity.companyDirectors)
-                {
-                    customer.TBL_CUSTOMER_COMPANY_DIRECTOR.Add(new TBL_CUSTOMER_COMPANY_DIRECTOR()
-                    {
-                        FIRSTNAME = director.firstName,
-                        CUSTOMERID = customer.CUSTOMERID,
-                        CUSTOMERTYPEID = short.Parse(model.customerType),
-                        COMPANYDIRECTORTYPEID = 1,
-                        SHAREHOLDINGPERCENTAGE = 0,
-                        ISPOLITICALLYEXPOSED = director.politicallyExposed == "1" ? true : false,
-                        CREATEDBY = entity.staffId.Value,
-                        DATECREATED = DateTime.Now,
-                        SURNAME = director.lastName,
-                        MIDDLENAME = director.otherNames,
-                        GENDER = director.gender,
-                        MARITALSTATUSID = director.maritalStatus.ToLower() == "single" ? 1 : director.maritalStatus.ToLower() == "married" ? 2 : 0,
-                        CUSTOMERBVN = director.bvn,
-                        CUSTOMERNIN = director.nin,
-                        ADDRESS = director.address,
-                        EMAILADDRESS = director.email,
-                        PHONENUMBER = director.phoneNumber,
-                        //REGISTRATION_NUMBER = null,
-                        //TAX_NUMBER = null,
-                        DATEOFBIRTH = DateTime.Parse(director.dateOfBirth)
-                    });
-                }
+                //foreach (var director in entity.companyDirectors)
+                //{
+                //    customer.TBL_CUSTOMER_COMPANY_DIRECTOR.Add(new TBL_CUSTOMER_COMPANY_DIRECTOR()
+                //    {
+                //        FIRSTNAME = director.firstName,
+                //        CUSTOMERID = customer.CUSTOMERID,
+                //        CUSTOMERTYPEID = short.Parse(model.customerType),
+                //        COMPANYDIRECTORTYPEID = 1,
+                //        SHAREHOLDINGPERCENTAGE = 0,
+                //        ISPOLITICALLYEXPOSED = director.politicallyExposed == "1" ? true : false,
+                //        CREATEDBY = entity.staffId.Value,
+                //        DATECREATED = DateTime.Now,
+                //        SURNAME = director.lastName,
+                //        MIDDLENAME = director.otherNames,
+                //        GENDER = director.gender,
+                //        MARITALSTATUSID = director.maritalStatus.ToLower() == "single" ? 1 : director.maritalStatus.ToLower() == "married" ? 2 : 0,
+                //        CUSTOMERBVN = director.bvn,
+                //        CUSTOMERNIN = director.nin,
+                //        ADDRESS = director.address,
+                //        EMAILADDRESS = director.email,
+                //        PHONENUMBER = director.phoneNumber,
+                //        //REGISTRATION_NUMBER = null,
+                //        //TAX_NUMBER = null,
+                //        DATEOFBIRTH = DateTime.Parse(director.dateOfBirth)
+                //    });
+                //}
 
             }
 
