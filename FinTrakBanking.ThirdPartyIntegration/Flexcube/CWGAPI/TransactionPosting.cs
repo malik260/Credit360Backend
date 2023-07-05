@@ -214,6 +214,7 @@
                             records.MinimumAmount = status.MinimumAmount;
                             records.IsEligible = status.IsEligible;
                             records.full_description = status.full_description;
+                            records.amount = status.amount;
 
                             //throw new APIErrorException("API call error - " + responbody.response_message + " " + responbody.response_code + " " + DateTime.Now);
                         }

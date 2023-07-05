@@ -18,5 +18,6 @@ namespace FintrakBanking.Entities.Models
         public bool ISELIGIBLE { get; set; }
         public string FULLDESCRIPTION { get; set; }
         public string ACCOUNTNUMBER { get; set; }
+        public string AMOUNT { get; set; }
     }
 }

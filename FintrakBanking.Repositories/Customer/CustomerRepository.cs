@@ -3458,6 +3458,7 @@ namespace FintrakBanking.Repositories.Customer
                 eligibility.ISELIGIBLE = customerEligibility.IsEligible;
                 eligibility.FULLDESCRIPTION = customerEligibility.full_description;
                 eligibility.ACCOUNTNUMBER = search.account_number;
+                eligibility.AMOUNT = customerEligibility.amount;
 
                 context.TBL_CUSTOMER_ELIGIBILITY.Add(eligibility);
                 context.SaveChanges();
@@ -3480,8 +3481,9 @@ namespace FintrakBanking.Repositories.Customer
                             MaximumAmount = e.MAXIMUMAMOUNT,
                             full_description = e.FULLDESCRIPTION,
                             account_number = e.ACCOUNTNUMBER,
-                            customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == e.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault()
-                        }); ;
+                            customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == e.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
+                            amount = e.AMOUNT
+                        }); 
 
             return data;
         }

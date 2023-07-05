@@ -491,7 +491,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 MaximumAmount = data.MaximumAmount,
                 MinimumAmount = data.MinimumAmount,
                 IsEligible = data.IsEligible,
-                full_description = data.full_description
+                full_description = data.full_description,
+                amount = data.amount,
             };
         }
 
