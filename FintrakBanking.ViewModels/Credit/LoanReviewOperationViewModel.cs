@@ -1007,6 +1007,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool operationCompleted { get; set; }
         public decimal? totalAmountRecovery { get; set; }
         public decimal? amountRecovered { get; set; }
+        public DateTime? recoveryMonth { get; set; }
 
         public string accountNumber { get; set; }
         public string accountName { get; set; }

@@ -1403,6 +1403,38 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-operation/get-delinquent-accounts")]
+        public HttpResponseMessage GetDelinquentAccounts()
+        {
+            var data = repo.GetDelinquentAccounts(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/get-delinquent-digital-accounts")]
+        public HttpResponseMessage GetDelinquentDigitalAccounts()
+        {
+            var data = repo.GetDelinquentDigitalAccounts(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-operation/recovery-analysis-agents/{source}")]
         public HttpResponseMessage getAllLoansOperationRecoveryAnalysisByAgent(string source)
         {
@@ -1448,10 +1480,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-report-collection-analysis-agents/{source}")]
-        public HttpResponseMessage getAllLoansForRecoveryAnalysisByAgent(string source)
+        [Route("loan-operation/recovery-report-collection-analysis-agents/{source}/{start}")]
+        public HttpResponseMessage getAllLoansForRecoveryAnalysisByAgent(string source, DateTime start)
         {
-            var data = repo.getAllLoansForRecoveryAnalysisByAgent(source, token.GetStaffId, token.GetCompanyId);
+            var data = repo.getAllLoansForRecoveryAnalysisByAgent(source, token.GetStaffId, token.GetCompanyId, start);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1480,10 +1512,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-commission-external-analysis-agents/{source}")]
-        public HttpResponseMessage getAllLoansForExternalRecoveryAnalysisByAgent(string source)
+        [Route("loan-operation/recovery-commission-external-analysis-agents/{source}/{start}")]
+        public HttpResponseMessage getAllLoansForExternalRecoveryAnalysisByAgent(string source, DateTime start)
         {
-            var data = repo.getAllLoansForExternalRecoveryAnalysisByAgent(source, token.GetStaffId, token.GetCompanyId);
+            var data = repo.getAllLoansForExternalRecoveryAnalysisByAgent(source, token.GetStaffId, token.GetCompanyId, start);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1529,10 +1561,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-commission-agents-retail")]
-        public HttpResponseMessage getAllRecoveryCommissonByAgents()
+        [Route("loan-operation/recovery-commission-agents-retail/{start}")]
+        public HttpResponseMessage getAllRecoveryCommissonByAgents(DateTime start)
         {
-            var data = repo.getAllRecoveryCommissonByAgents(token.GetStaffId, token.GetCompanyId);
+            var data = repo.getAllRecoveryCommissonByAgents(token.GetStaffId, token.GetCompanyId, start);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1545,10 +1577,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-commission-agents-internal")]
-        public HttpResponseMessage getAllInternalRecoveryCommissonByAgents()
+        [Route("loan-operation/recovery-commission-agents-internal/{start}")]
+        public HttpResponseMessage getAllInternalRecoveryCommissonByAgents(DateTime start)
         {
-            var data = repo.getAllInternalRecoveryCommissonByAgents(token.GetStaffId, token.GetCompanyId);
+            var data = repo.getAllInternalRecoveryCommissonByAgents(token.GetStaffId, token.GetCompanyId, start);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1562,10 +1594,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-report-collection-agents-retail")]
-        public HttpResponseMessage getAllRecoveryReportCollectionByAgents()
+        [Route("loan-operation/recovery-report-collection-agents-retail/{start}")]
+        public HttpResponseMessage getAllRecoveryReportCollectionByAgents(DateTime start)
         {
-            var data = repo.getAllRecoveryReportCollectionByAgents(token.GetStaffId, token.GetCompanyId);
+            var data = repo.getAllRecoveryReportCollectionByAgents(token.GetStaffId, token.GetCompanyId, start);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
