@@ -21966,7 +21966,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (models != null)
             {
-                bool validate = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(x => x.AMOUNTRECOVERED == models.amountRecovered && x.TOTALRECOVERYAMOUNT == models.totalAmountRecovery && x.DATETIMECREATED.Month == DateTime.Now.Month && x.CREATEDBY == user.createdBy && x.ACCREDITEDCONSULTANT == models.accreditedConsultant).Any();
+                //bool validate = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(x => x.AMOUNTRECOVERED == models.amountRecovered && x.TOTALRECOVERYAMOUNT == models.totalAmountRecovery && x.DATETIMECREATED.Month == DateTime.Now.Month && x.CREATEDBY == user.createdBy && x.ACCREDITEDCONSULTANT == models.accreditedConsultant).Any();
+                bool validate = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL
+                .Where(x => x.AMOUNTRECOVERED == models.amountRecovered && x.TOTALRECOVERYAMOUNT == models.totalAmountRecovery &&
+                context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Any(rc => rc.COLLECTIONDATE.Value.Month == models.recoveryMonth.Value.Month)).Any();
                 if (validate)
                 {
                     throw new ConditionNotMetException("It looks like same commission has already been captured for this Agent");
