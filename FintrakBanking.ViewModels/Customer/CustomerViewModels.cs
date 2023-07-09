@@ -278,6 +278,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string accountNumber { get; set; }
         public string phoneNumber { get; set; }
         public string customerName { get; set; }
+        public bool isIblRequest { get; set; }
+        public int eliigibilityId { get; set; }
     }
 
     public class CustomerSearchItemViewModels

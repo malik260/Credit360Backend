@@ -753,6 +753,18 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut, Route("customer-ibl-eligibility-update")]
+        public HttpResponseMessage AssignApplication([FromBody] int iblEligibilityId)
+        {
+
+            var updated = repo.updateIBLEligibility(iblEligibilityId);
+            if (updated)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "updated successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("eligibility-search")]

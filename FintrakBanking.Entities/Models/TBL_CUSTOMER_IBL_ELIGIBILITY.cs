@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    public class TBL_CUSTOMER_ELIGIBILITY
+    public class TBL_CUSTOMER_IBL_ELIGIBILITY
     {
         [Key]
         public int ELIGIBILITYID { get; set; }
@@ -19,5 +19,7 @@ namespace FintrakBanking.Entities.Models
         public string FULLDESCRIPTION { get; set; }
         public string ACCOUNTNUMBER { get; set; }
         public string AMOUNT { get; set; }
+        public bool ISIBLREQUEST { get; set; }
+        public string PHONENUMBER { get; set; }
     }
 }

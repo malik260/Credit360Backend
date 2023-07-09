@@ -28,6 +28,7 @@ using GemBox.Spreadsheet;
 using System.IO;
 using System.Transactions;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using System.Runtime.Remoting.Channels;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -3443,14 +3444,14 @@ namespace FintrakBanking.Repositories.Customer
                 }
             }
 
-            var eligibilityExist = context.TBL_CUSTOMER_ELIGIBILITY.Where(e => e.CUSTOMERID == search.customerId).FirstOrDefault();
+            var eligibilityExist = context.TBL_CUSTOMER_IBL_ELIGIBILITY.Where(e => e.CUSTOMERID == search.customerId).FirstOrDefault();
             if(eligibilityExist != null)
             {
-                context.TBL_CUSTOMER_ELIGIBILITY.Remove(eligibilityExist);
+                context.TBL_CUSTOMER_IBL_ELIGIBILITY.Remove(eligibilityExist);
             }
             //if(customerEligibility.account_number != null)
             {
-                var eligibility = new TBL_CUSTOMER_ELIGIBILITY();
+                var eligibility = new TBL_CUSTOMER_IBL_ELIGIBILITY();
                 eligibility.CUSTOMERID = search.customerId;
                 eligibility.RESPONSEDESCRIPTION = customerEligibility.response_descr;
                 eligibility.MAXIMUMAMOUNT = customerEligibility.MaximumAmount;
@@ -3459,8 +3460,10 @@ namespace FintrakBanking.Repositories.Customer
                 eligibility.FULLDESCRIPTION = customerEligibility.full_description;
                 eligibility.ACCOUNTNUMBER = search.account_number;
                 eligibility.AMOUNT = customerEligibility.amount;
+                eligibility.ISIBLREQUEST = search.isIblRequest;
+                eligibility.PHONENUMBER = search.phone_number;
 
-                context.TBL_CUSTOMER_ELIGIBILITY.Add(eligibility);
+                context.TBL_CUSTOMER_IBL_ELIGIBILITY.Add(eligibility);
                 context.SaveChanges();
             }
 
@@ -3471,10 +3474,11 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerEligibilityViewModels> GetCustomerIBLEligibility(int customerId)
         {
-            var data = (from e in context.TBL_CUSTOMER_ELIGIBILITY
+            var data = (from e in context.TBL_CUSTOMER_IBL_ELIGIBILITY
                         where e.CUSTOMERID == customerId
                         select new CustomerEligibilityViewModels()
                         {
+                            eliigibilityId = e.ELIGIBILITYID,
                             customerId = e.CUSTOMERID,
                             IsEligible = e.ISELIGIBLE ? true : false,
                             MinimumAmount = e.MINIMUMAMOUNT,
@@ -3482,10 +3486,22 @@ namespace FintrakBanking.Repositories.Customer
                             full_description = e.FULLDESCRIPTION,
                             account_number = e.ACCOUNTNUMBER,
                             customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == e.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
-                            amount = e.AMOUNT
+                            amount = e.AMOUNT,
+                            isIblRequest = e.ISIBLREQUEST ? true : false,
+                            phone_number = e.PHONENUMBER,
                         }); 
 
             return data;
+        }
+
+        public  bool updateIBLEligibility(int iblEligibilityId)
+        {
+            var iblEligibility = context.TBL_CUSTOMER_IBL_ELIGIBILITY.Find(iblEligibilityId);
+            if (iblEligibility != null)
+            {
+                iblEligibility.ISIBLREQUEST = false;
+            }
+            return context.SaveChanges() > 0;
         }
 
         public IEnumerable<CustomerSectorViewModel> GetCustomerSectors()

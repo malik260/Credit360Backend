@@ -64,6 +64,8 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool AddCustomerCompanyDirector(CustomerCompanyDirectorsViewModels entity);
 
+       
+
         bool AddCustomerAddresses(CustomerAddressViewModels entity);
 
         bool AddCustomerPhoneContact(CustomerPhoneContactViewModels entity);
@@ -77,6 +79,7 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search);
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
         IEnumerable<CustomerEligibilityViewModels> GetCustomerIBLEligibility(int customerId);
+        bool updateIBLEligibility(int iblEligibilityId);
         CustomerEligibilityViewModels EligibilitySearch(int companyId, CustomerEligibilityViewModels search);
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
         IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery);
