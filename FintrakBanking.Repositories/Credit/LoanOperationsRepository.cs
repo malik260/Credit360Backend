@@ -34820,8 +34820,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var exposureData = (from ln in context.TBL_GLOBAL_EXPOSURE
                                 where
-                                !loansId.Contains(ln.REFERENCENUMBER)
-                                && ln.NPL != null
+                                //!loansId.Contains(ln.REFERENCENUMBER)
+                                ln.NPL != null
                                 && ln.UNPODAYSOVERDUE >= 30
                                 && (ln.TOTALUNSETTLEDAMOUNT > 0 && ln.TOTALUNSETTLEDAMOUNT <= 50000000)
                                 && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
@@ -34878,8 +34878,8 @@ namespace FintrakBanking.Repositories.Credit
        
             var exposureDigitalData = (from ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
                                        where
-                                !loansId.Contains(ln.REFERENCENUMBER)
-                                && ln.NPL != null
+                                //!loansId.Contains(ln.REFERENCENUMBER)
+                                ln.NPL != null
                                 && ln.UNPODAYSOVERDUE >= 30
                                 && ln.TOTALUNSETTLEDAMOUNT > 0
                                 && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
