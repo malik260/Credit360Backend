@@ -4388,33 +4388,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             var data = new List<CasaViewModel>();
 
-            if (USE_THIRD_PARTY_INTEGRATION)
-            {
-                var customerinfo = (from a in context.TBL_CUSTOMER
-                                    where a.CUSTOMERID == customerId
-                                    select new CasaViewModel
-                                    {
-                                        customerCode = a.CUSTOMERCODE,
-                                    }).ToList();
-
-                if (customerinfo.Count > 0)
-                {
-                    data = finacle.GetCustomerAccountsBalanceByCustomerCode(customerinfo[0].customerCode);
-
-                    //Task.Run(async () =>
-                    //{
-                    //    data = await _customer.GetCustomerAccountsBalanceByCustomerCode(
-                    //        customerinfo[0].customerCode);
-                    //}).GetAwaiter().GetResult();
-                    // return data.ToList();
-
-                }
-
-                return data;
-            }
-            else
-            {
-                var casaInformation = context.TBL_CASA.Where(a => a.CUSTOMERID == customerId).Select(x =>
+            var casaInformation = context.TBL_CASA.Where(a => a.CUSTOMERID == customerId).Select(x =>
                     new CasaViewModel()
                     {
                         casaAccountId = x.CASAACCOUNTID,
@@ -4438,10 +4412,67 @@ namespace FintrakBanking.Repositories.Customer
                         hasOverdraft = x.HASOVERDRAFT,
                         hasLien = x.HASLIEN
                     }).ToList();
-                return casaInformation;
 
+            if(casaInformation.Count() <= 0)
+            {
+                if (USE_THIRD_PARTY_INTEGRATION)
+                {
+                    var customerinfo = (from a in context.TBL_CUSTOMER
+                                        where a.CUSTOMERID == customerId
+                                        select new CasaViewModel
+                                        {
+                                            customerCode = a.CUSTOMERCODE,
+                                        }).ToList();
+
+                    if (customerinfo.Count > 0)
+                    {
+                        data = finacle.GetCustomerAccountsBalanceByCustomerCode(customerinfo[0].customerCode);
+
+                        //Task.Run(async () =>
+                        //{
+                        //    data = await _customer.GetCustomerAccountsBalanceByCustomerCode(
+                        //        customerinfo[0].customerCode);
+                        //}).GetAwaiter().GetResult();
+                        // return data.ToList();
+
+                    }
+
+                    return data;
+                }
+                else
+                {
+                    var casaInformation2 = context.TBL_CASA.Where(a => a.CUSTOMERID == customerId).Select(x =>
+                        new CasaViewModel()
+                        {
+                            casaAccountId = x.CASAACCOUNTID,
+                            productAccountNumber = x.PRODUCTACCOUNTNUMBER,
+                            productAccountName = x.PRODUCTACCOUNTNAME,
+                            isCurrentAccount = x.ISCURRENTACCOUNT,
+                            customerId = x.CUSTOMERID,
+                            productId = x.PRODUCTID,
+                            productCode = x.TBL_PRODUCT.PRODUCTCODE,
+                            productName = x.TBL_PRODUCT.PRODUCTNAME,
+                            branchId = x.BRANCHID,
+                            branchCode = x.TBL_BRANCH.BRANCHCODE,
+                            branchName = x.TBL_BRANCH.BRANCHNAME,
+                            currencyId = x.CURRENCYID,
+                            currency = x.TBL_CURRENCY.CURRENCYNAME,
+                            availableBalance = x.AVAILABLEBALANCE,
+                            ledgerBalance = x.LEDGERBALANCE,
+                            accountStatusName = x.TBL_CASA_ACCOUNTSTATUS.ACCOUNTSTATUSNAME,
+                            relationshipManagerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                            relationshipOfficerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+                            hasOverdraft = x.HASOVERDRAFT,
+                            hasLien = x.HASLIEN
+                        }).ToList();
+                    return casaInformation2;
+
+                }
             }
+            return casaInformation;
         }
+
+           
 
         public IEnumerable<CasaViewModel> GetCustomerCASAInformation(string customerCode)
         {

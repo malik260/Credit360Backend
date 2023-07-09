@@ -37347,9 +37347,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from lr in context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL
                             where
                             lr.AMOUNTRECOVERED > 0
-                            && lr.DATETIMECREATED.Month == collectionDate.Month
-                            && lr.DATETIMECREATED.Year == collectionDate.Year
-
+                            && context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Any(rc => rc.COLLECTIONDATE.Value.Month == collectionDate.Month && rc.COLLECTIONDATE.Value.Year == collectionDate.Year)
                             select new RetailLoanRecoveryCommissionViewModel
                             {
                                 loanRecoveryCommissionId = lr.LOANRECOVERYCOMMISSIONID,
@@ -41709,9 +41707,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 i.currentDate = monthInWord;
                 //i.totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m) + i.amountRecovered ?? 0m;
-                i.totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m);
+                i.totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.OPERATIONCOMPLETED == true).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m);
                 //var totalRecoveryAssign = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m) + i.amountRecovered ?? 0m;
-                var totalRecoveryAssign = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m);
+                var totalRecoveryAssign = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.OPERATIONCOMPLETED == true).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m);
                 if (i.totalRecoveryAmount == null || i.totalRecoveryAmount < 1)
                 {
                     i.totalRecoveryAssigned = i.amountRecovered;
