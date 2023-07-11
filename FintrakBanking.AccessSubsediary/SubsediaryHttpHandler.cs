@@ -83,6 +83,24 @@ namespace FintrakBanking.AccessSubsediary
 
                 if (method == "GET")
                 {
+                    if (countryCode != null && countryCode != "NG" 
+                    && HttpContext.Current.Request.RawUrl.Contains("/api/v1/credit/documentation/operation/"))
+                    {
+                        var _absoluteURL = getUrl(countryCode);
+                        httpClient.DefaultRequestHeaders.Clear();
+                        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        httpClient.DefaultRequestHeaders.Add("Authorization", token);
+                        httpClient.DefaultRequestHeaders.Add("isRemote", "1");
+                        string _remoteURL = $"{_absoluteURL}{HttpContext.Current.Request.RawUrl}";
+                        var _responseString = await httpClient.GetAsync(_remoteURL);
+                        var _result = await _responseString.Content.ReadAsAsync<object>();
+                        var _tsc = new TaskCompletionSource<HttpResponseMessage>();
+                        HttpResponseMessage _message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+                        _message.Content = new StringContent(JsonConvert.SerializeObject(_result), Encoding.UTF8, "application/json");
+                        //_message.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
+                        _tsc.SetResult(_message);
+                        return _tsc.Task.Result;
+                    }
 
 
                     var absoluteURL = getUrl(countryCode);
