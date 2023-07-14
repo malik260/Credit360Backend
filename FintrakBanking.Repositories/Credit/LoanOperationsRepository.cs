@@ -37345,10 +37345,12 @@ namespace FintrakBanking.Repositories.Credit
             DateTime collectionDate = DateTime.ParseExact(monthInWord, "MMMM, yyyy", CultureInfo.InvariantCulture);
 
             var data = (from lr in context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL
-                            where
-                            lr.AMOUNTRECOVERED > 0
-                            && context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Any(rc => rc.COLLECTIONDATE.Value.Month == collectionDate.Month && rc.COLLECTIONDATE.Value.Year == collectionDate.Year)
-                            select new RetailLoanRecoveryCommissionViewModel
+                        where lr.AMOUNTRECOVERED > 0
+                        && (from rc in context.TBL_LOAN_RECOVERY_REPORT_COLLECTION
+                        where rc.COLLECTIONDATE.Value.Month == collectionDate.Month && rc.COLLECTIONDATE.Value.Year == collectionDate.Year
+                        select rc.ACCREDITEDCONSULTANT).Distinct().Contains(lr.ACCREDITEDCONSULTANT)
+
+                        select new RetailLoanRecoveryCommissionViewModel
                             {
                                 loanRecoveryCommissionId = lr.LOANRECOVERYCOMMISSIONID,
                                 agentAccountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.ACCOUNTNUMBER).FirstOrDefault(),
