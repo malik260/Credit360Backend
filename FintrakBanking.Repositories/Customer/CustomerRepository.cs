@@ -3496,12 +3496,24 @@ namespace FintrakBanking.Repositories.Customer
 
         public  bool updateIBLEligibility(int iblEligibilityId)
         {
-            var iblEligibility = context.TBL_CUSTOMER_IBL_ELIGIBILITY.Find(iblEligibilityId);
-            if (iblEligibility != null)
+            try
             {
-                iblEligibility.ISIBLREQUEST = false;
+                var iblEligibility = context.TBL_CUSTOMER_IBL_ELIGIBILITY.Find(iblEligibilityId);
+                if (iblEligibility != null)
+                {
+                    iblEligibility.ISIBLREQUEST = false;
+                }
+                context.SaveChanges();
+
+               
+                return true;
+               
             }
-            return context.SaveChanges() > 0;
+            catch(Exception e)
+            {
+                throw e;
+            }
+           
         }
 
         public IEnumerable<CustomerSectorViewModel> GetCustomerSectors()
