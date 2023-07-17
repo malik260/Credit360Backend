@@ -35714,6 +35714,7 @@ namespace FintrakBanking.Repositories.Credit
                                     accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
                                     category = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY.ToUpper()).FirstOrDefault(),
                                     accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
+                                    assignedDate = lr.DATEASSIGNED,
                                     expCompletionDate = lr.EXPCOMPLETIONDATE,
                                     loanAssignId = lr.LOANASSIGNID,
                                     agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
@@ -35767,6 +35768,7 @@ namespace FintrakBanking.Repositories.Credit
                                     accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
                                     category = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY.ToUpper()).FirstOrDefault(),
                                     accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
+                                    assignedDate = lr.DATEASSIGNED,
                                     expCompletionDate = lr.EXPCOMPLETIONDATE,
                                     loanAssignId = lr.LOANASSIGNID,
                                     agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
@@ -37366,7 +37368,9 @@ namespace FintrakBanking.Repositories.Credit
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == lr.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
                             }).ToList();
 
-            return data;
+            var record = data.GroupBy(x => x.accreditedConsultantId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.accreditedConsultantId);
+
+            return record;
         }
 
 

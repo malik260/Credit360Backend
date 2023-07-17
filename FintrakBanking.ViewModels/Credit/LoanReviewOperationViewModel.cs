@@ -1812,6 +1812,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string source { get; set; }
         public string assignmentType { get; set; }
 
+        public DateTime? assignedDate { get; set; }
         public DateTime? expCompletionDate { get; set; }
         public int loanAssignId { get; set; }
         public int loanChargeFeeId { get; set; }
