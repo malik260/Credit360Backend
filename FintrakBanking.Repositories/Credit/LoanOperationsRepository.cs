@@ -35714,6 +35714,7 @@ namespace FintrakBanking.Repositories.Credit
                                     accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
                                     category = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY.ToUpper()).FirstOrDefault(),
                                     accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
+                                    assignedDate = lr.DATEASSIGNED,
                                     expCompletionDate = lr.EXPCOMPLETIONDATE,
                                     loanAssignId = lr.LOANASSIGNID,
                                     agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
@@ -35767,6 +35768,7 @@ namespace FintrakBanking.Repositories.Credit
                                     accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
                                     category = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY.ToUpper()).FirstOrDefault(),
                                     accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
+                                    assignedDate = lr.DATEASSIGNED,
                                     expCompletionDate = lr.EXPCOMPLETIONDATE,
                                     loanAssignId = lr.LOANASSIGNID,
                                     agentCategory = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.CATEGORY).FirstOrDefault(),
@@ -37345,10 +37347,10 @@ namespace FintrakBanking.Repositories.Credit
             DateTime collectionDate = DateTime.ParseExact(monthInWord, "MMMM, yyyy", CultureInfo.InvariantCulture);
 
             var data = (from lr in context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL
-                        where lr.AMOUNTRECOVERED > 0
-                        && (from rc in context.TBL_LOAN_RECOVERY_REPORT_COLLECTION
-                        where rc.COLLECTIONDATE.Value.Month == collectionDate.Month && rc.COLLECTIONDATE.Value.Year == collectionDate.Year
-                        select rc.ACCREDITEDCONSULTANT).Distinct().Contains(lr.ACCREDITEDCONSULTANT)
+                        where 
+                        lr.AMOUNTRECOVERED > 0
+                        && lr.VALIDATERECOVERYMONTH.Value.Month == collectionDate.Month
+                        && lr.VALIDATERECOVERYMONTH.Value.Year == collectionDate.Year
 
                         select new RetailLoanRecoveryCommissionViewModel
                             {
@@ -37366,7 +37368,9 @@ namespace FintrakBanking.Repositories.Credit
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == lr.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
                             }).ToList();
 
-            return data;
+            var record = data.GroupBy(x => x.accreditedConsultantId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.accreditedConsultantId);
+
+            return record;
         }
 
 
@@ -41709,9 +41713,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 i.currentDate = monthInWord;
                 //i.totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m) + i.amountRecovered ?? 0m;
-                i.totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.OPERATIONCOMPLETED == true).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m);
+                i.totalRecoveryAmount = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.OPERATIONCOMPLETED == true && (x.DATEASSIGNED.Month == collectionDate.Month && x.DATEASSIGNED.Year == collectionDate.Year)).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m);
                 //var totalRecoveryAssign = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m) + i.amountRecovered ?? 0m;
-                var totalRecoveryAssign = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.OPERATIONCOMPLETED == true).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m);
+                var totalRecoveryAssign = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultantId && x.ISFULLYRECOVERED == false && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.OPERATIONCOMPLETED == true && (x.DATEASSIGNED.Month == collectionDate.Month && x.DATEASSIGNED.Year == collectionDate.Year)).Sum(x => x.TOTALAMOUNTRECOVERY ?? 0m);
                 if (i.totalRecoveryAmount == null || i.totalRecoveryAmount < 1)
                 {
                     i.totalRecoveryAssigned = i.amountRecovered;

@@ -22,5 +22,6 @@ namespace FintrakBanking.Entities.Models
         public int? ACCREDITEDCONSULTANT { get; set; }
         public decimal? TOTALRECOVERYAMOUNT { get; set; }
         public decimal? AMOUNTRECOVERED { get; set; }
+        public DateTime? VALIDATERECOVERYMONTH { get; set; }
     }
 }

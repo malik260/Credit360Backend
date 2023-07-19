@@ -45,6 +45,7 @@ using System.Configuration;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using System.Transactions;
 using FintrakBanking.ViewModels.Reports;
+using System.Globalization;
 
 namespace FintrakBanking.Repositories.Credit 
 {
@@ -21967,9 +21968,10 @@ namespace FintrakBanking.Repositories.Credit
             if (models != null)
             {
                 //bool validate = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(x => x.AMOUNTRECOVERED == models.amountRecovered && x.TOTALRECOVERYAMOUNT == models.totalAmountRecovery && x.DATETIMECREATED.Month == DateTime.Now.Month && x.CREATEDBY == user.createdBy && x.ACCREDITEDCONSULTANT == models.accreditedConsultant).Any();
-                bool validate = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL
-                .Where(x => x.AMOUNTRECOVERED == models.amountRecovered && x.TOTALRECOVERYAMOUNT == models.totalAmountRecovery &&
-                context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Any(rc => rc.COLLECTIONDATE.Value.Month == models.recoveryMonth.Value.Month)).Any();
+                bool validate = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(x => x.AMOUNTRECOVERED == models.amountRecovered 
+                && x.TOTALRECOVERYAMOUNT == models.totalAmountRecovery 
+                && x.CREATEDBY == user.createdBy && x.ACCREDITEDCONSULTANT == models.accreditedConsultant
+                && context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Any(rc => rc.COLLECTIONDATE.Value.Month == models.recoveryMonth.Value.Month)).Any();
                 if (validate)
                 {
                     throw new ConditionNotMetException("It looks like same commission has already been captured for this Agent");
@@ -21979,19 +21981,43 @@ namespace FintrakBanking.Repositories.Credit
 
             try
             {
-                var record = new TBL_LOAN_RECOVERY_COMMISSION_INTERNAL
+                //bool validation = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(x => x.ACCREDITEDCONSULTANT == models.accreditedConsultant && x.CREATEDBY == user.createdBy).Any();
+
+                bool validation = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(x => x.ACCREDITEDCONSULTANT == models.accreditedConsultant && x.CREATEDBY == user.createdBy && (x.VALIDATERECOVERYMONTH.Value.Month == models.recoveryMonth.Value.Month && x.VALIDATERECOVERYMONTH.Value.Year == models.recoveryMonth.Value.Year)).Any();
+
+
+                if (validation) {
+                    var validateRecord = context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Where(x => x.ACCREDITEDCONSULTANT == models.accreditedConsultant && x.CREATEDBY == user.createdBy && (x.VALIDATERECOVERYMONTH.Value.Month == models.recoveryMonth.Value.Month && x.VALIDATERECOVERYMONTH.Value.Year == models.recoveryMonth.Value.Year)).FirstOrDefault();
+
+                    validateRecord.AGENTACCOUNTNUMBER = models.agentAccountNumber;
+                    validateRecord.COMMENT = models.comment;
+                    validateRecord.CREATEDBY = user.createdBy;
+                    validateRecord.COMMISSIONRATE = models.commissionRate;
+                    validateRecord.DATETIMECREATED = DateTime.Now;
+                    validateRecord.COMMISSIONPAYABLE = models.commissionPayable;
+                    validateRecord.TOTALRECOVERYAMOUNT = models.totalAmountRecovery;
+                    validateRecord.AMOUNTRECOVERED = models.amountRecovered;
+                    validateRecord.ACCREDITEDCONSULTANT = models.accreditedConsultant;
+                    validateRecord.VALIDATERECOVERYMONTH = models.recoveryMonth;
+                }
+                else
                 {
-                    AGENTACCOUNTNUMBER = models.agentAccountNumber,
-                    COMMENT = models.comment,
-                    CREATEDBY = user.createdBy,
-                    COMMISSIONRATE = models.commissionRate,
-                    DATETIMECREATED = DateTime.Now,
-                    COMMISSIONPAYABLE = models.commissionPayable,
-                    TOTALRECOVERYAMOUNT = models.totalAmountRecovery,
-                    AMOUNTRECOVERED = models.amountRecovered,
-                    ACCREDITEDCONSULTANT = models.accreditedConsultant,
-                };
-                context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Add(record);
+                    var record = new TBL_LOAN_RECOVERY_COMMISSION_INTERNAL
+                    {
+                        AGENTACCOUNTNUMBER = models.agentAccountNumber,
+                        COMMENT = models.comment,
+                        CREATEDBY = user.createdBy,
+                        COMMISSIONRATE = models.commissionRate,
+                        DATETIMECREATED = DateTime.Now,
+                        COMMISSIONPAYABLE = models.commissionPayable,
+                        TOTALRECOVERYAMOUNT = models.totalAmountRecovery,
+                        AMOUNTRECOVERED = models.amountRecovered,
+                        ACCREDITEDCONSULTANT = models.accreditedConsultant,
+                        VALIDATERECOVERYMONTH = models.recoveryMonth
+                    };
+                    context.TBL_LOAN_RECOVERY_COMMISSION_INTERNAL.Add(record);
+                   
+                }
                 var status = context.SaveChanges() != 0;
                 return status;
             }
