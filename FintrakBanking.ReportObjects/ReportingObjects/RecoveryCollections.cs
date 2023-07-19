@@ -587,7 +587,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 var dataExposure = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                              join ra in context.TBL_ACCREDITEDCONSULTANT on lr.ACCREDITEDCONSULTANT equals ra.ACCREDITEDCONSULTANTID
-                                             join ln in context.TBL_GLOBAL_EXPOSURE on lr.LOANREFERENCE equals ln.REFERENCENUMBER
+                                             join ln in context.TBL_GLOBAL_EXPOSURE on lr.LOANREFERENCE equals ln.REFERENCENUMBER into r
+                                             from ln in r.DefaultIfEmpty()
+                                             join p in context.TBL_PRODUCT on ln.PRODUCTCODE equals p.PRODUCTCODE
                                              where
                                              (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                              && lr.ISFULLYRECOVERED == false
@@ -652,7 +654,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 var dataDigitalExposure = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
                                     join ra in context.TBL_ACCREDITEDCONSULTANT on lr.ACCREDITEDCONSULTANT equals ra.ACCREDITEDCONSULTANTID
-                                    join ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN on lr.LOANREFERENCE equals ln.REFERENCENUMBER
+                                    join ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN on lr.LOANREFERENCE equals ln.REFERENCENUMBER into r
+                                    from ln in r.DefaultIfEmpty()
+                                    join p in context.TBL_PRODUCT on ln.PRODUCTCODE equals p.PRODUCTCODE
                                     where
                                     (DbFunctions.TruncateTime(lr.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(lr.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                     && lr.ISFULLYRECOVERED == false
