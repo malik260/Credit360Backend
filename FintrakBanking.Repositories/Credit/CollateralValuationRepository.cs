@@ -1015,7 +1015,7 @@ namespace FintrakBanking.Repositories.Credit
                         customerCollateral.COLLATERALVALUE = (decimal)valuerReport.FSV;
 
                         var staffFullName = accountOfficer?.FIRSTNAME + " " + accountOfficer?.LASTNAME +" "+ accountOfficer?.PHONE;
-                        var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationNotification").Select(x => x).FirstOrDefault();
+                        var letter = _context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "CollateralValuationSecondNotification").Select(x => x).FirstOrDefault();
                         var letterBody = letter?.TEMPLATE;
                         var letterTitle = letter?.TITLE;
                         letterBody = letterBody.Replace("@{{month}}", DateTime.Now.Month.ToString());

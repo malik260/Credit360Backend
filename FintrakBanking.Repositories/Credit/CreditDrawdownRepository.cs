@@ -493,6 +493,7 @@ namespace FintrakBanking.Repositories.Credit
             operationIds.Add((int)OperationsEnum.IndividualDrawdownRequest);
             operationIds.Add((int)OperationsEnum.CreditCardDrawdownRequest);
             operationIds.Add((int)OperationsEnum.RevolvingTranchDisbursement);
+            operationIds.Add((int)OperationsEnum.IBLAvailmentInProgress);
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
             List<int> levelIds = new List<int>();
@@ -501,6 +502,7 @@ namespace FintrakBanking.Repositories.Credit
             levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CorporateDrawdownRequest).ToList());
             levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IndividualDrawdownRequest).ToList());
             levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditCardDrawdownRequest).ToList());
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IBLAvailmentInProgress).ToList());
 
             List<CamProcessedLoanViewModel> data = new List<CamProcessedLoanViewModel>();
 
@@ -2021,37 +2023,45 @@ namespace FintrakBanking.Repositories.Credit
                 toStaffId = entity.toStaffId,
             };
 
-            if (requestedFacility.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
-            {
-                LogApproval(approvalModel, (short)OperationsEnum.CreditCardDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
-                request.OPERATIONID = (short)OperationsEnum.CreditCardDrawdownRequest;
-            }
-            else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
-            {
-                if (requestedFacility.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased || requestedFacility.TBL_PRODUCT_CLASS.PRODUCTCLASSID== (short)ProductClassEnum.MortgageLoan)
+                if (entity.productId == 156)
+                 {
+                    LogApproval(approvalModel, (short)OperationsEnum.IBLAvailmentInProgress, true, (int)ApprovalStatusEnum.Pending);
+                    request.OPERATIONID = (short)OperationsEnum.IBLAvailmentInProgress;
+                 }
+                else if (requestedFacility.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
                 {
-                    LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
-                    request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
+                    LogApproval(approvalModel, (short)OperationsEnum.CreditCardDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    request.OPERATIONID = (short)OperationsEnum.CreditCardDrawdownRequest;
                 }
-                else
+                else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
                 {
+                    if (requestedFacility.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased || requestedFacility.TBL_PRODUCT_CLASS.PRODUCTCLASSID == (short)ProductClassEnum.MortgageLoan)
+                    {
+                        LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                        request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
+                    }
+                    else
+                    {
                         LogApproval(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
                         request.OPERATIONID = (short)OperationsEnum.IndividualDrawdownRequest;
+                    }
                 }
-            }
-            else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
-            {
-                if (GetRevolvingTrancheDisbursementOperationId(loanApplicationDetails.LOANAPPLICATIONDETAILID))
+                else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
                 {
-                    LogApproval(approvalModel, (short)OperationsEnum.RevolvingTranchDisbursement, true, (int)ApprovalStatusEnum.Pending);
-                    request.OPERATIONID = (short)OperationsEnum.RevolvingTranchDisbursement;
+                    if (GetRevolvingTrancheDisbursementOperationId(loanApplicationDetails.LOANAPPLICATIONDETAILID))
+                    {
+                        LogApproval(approvalModel, (short)OperationsEnum.RevolvingTranchDisbursement, true, (int)ApprovalStatusEnum.Pending);
+                        request.OPERATIONID = (short)OperationsEnum.RevolvingTranchDisbursement;
+                    }
+                    else
+                    {
+                        LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                        request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
+                    }
                 }
-                else
-                {
-                    LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
-                    request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
-                }
-            }
+            
+            
+
 
             if (entity.chargeFeeOnce == true) { loanApplicationDetails.TAKEFEETYPEID = (short)TakeFeeTypeEnum.ApprovedAmount; }
             else loanApplicationDetails.TAKEFEETYPEID = (short)TakeFeeTypeEnum.UtilisedAmount;

@@ -32,6 +32,7 @@ using System.Text;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.ThridPartyIntegration;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -50,6 +51,7 @@ namespace FintrakBanking.Repositories.Credit
         private ILoanApplicationRepository loanApp;
         private IMemorandumRepository memo;
         private TransactionPosting transaction;
+        private ICreditDrawdownRepository drawdown;
         FinTrakBankingStagingContext stgContext;
         IHeadOfficeToSubIntegration headOfficeToSub;
 
@@ -65,7 +67,8 @@ namespace FintrakBanking.Repositories.Credit
             IMemorandumRepository _memo,
             TransactionPosting _transaction,
             FinTrakBankingStagingContext _stgContext,
-            IHeadOfficeToSubIntegration _headOfficeToSub
+            IHeadOfficeToSubIntegration _headOfficeToSub,
+            ICreditDrawdownRepository _drawdown
             )
         {
             this.context = context;
@@ -80,6 +83,7 @@ namespace FintrakBanking.Repositories.Credit
             this.transaction = _transaction;
             this.stgContext = _stgContext;
             this.headOfficeToSub = _headOfficeToSub;
+            this.drawdown = _drawdown;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -701,15 +705,60 @@ namespace FintrakBanking.Repositories.Credit
                     //workflow.ProductId = null;
                     workflow.ExclusiveFlowChangeId = null;
                         var productId = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
-                    //The null passed in place of appl.FlowchangeId should be made generic 07/08/2021 after enum.offerletappr.
-                        workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, 
-                            model.applicationId, appl.PRODUCTCLASSID, "New approved application", true, false, false, 
-                            model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
-                    //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
+                    if (productId == 156 && model.isFlowTest == false) //for IBL - 50M Workflow
+                    {
+                        appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
+                        //The null passed in place of appl.FlowchangeId should be made generic 07/08/2021 after enum.offerletappr.
+                       // workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IBLAvailmentInProgress, null,
+                            //    model.applicationId, appl.PRODUCTCLASSID, "New approved IBL application", true, false, false,
+                           //     model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
+                        //worked on by  zino on 18/07/2023 for IBL - 50M Workflow ("if" statement was added )
+                       
                     }
+                    else
+                    {
+                        //The null passed in place of appl.FlowchangeId should be made generic 07/08/2021 after enum.offerletappr.
+                        workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null,
+                                model.applicationId, appl.PRODUCTCLASSID, "New approved application", true, false, false,
+                                model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
+                        //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
+
+                    }
+
+
+                }
 
                 if (model.isFlowTest == false) { trans.Commit(); }
                 else { trans.Rollback(); }
+                var product = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
+                if (product == 156 && model.isFlowTest == false)
+                {
+                
+                    List<LoanBookingRequestViewModel> models = new List<LoanBookingRequestViewModel>();
+                
+                        var mdls = new LoanBookingRequestViewModel
+                        {
+                            staffId = appl.CREATEDBY,
+                            isUsed = false,
+                            deleted = false,
+                            amount_Requested = appl.APPROVEDAMOUNT,
+                            approvalStatusId = 2,
+                            casaAccountId = appl.TBL_LOAN_APPLICATION_DETAIL.First()?.CASAACCOUNTID,
+                            comment = "IBL automatic drawdown",
+                            companyId = 1,
+                            productId = (short)product,
+                            operationId = (int)OperationsEnum.IBLAvailmentInProgress,
+                            createdBy = appl.CREATEDBY,
+                            loanApplicationDetailId = appl.TBL_LOAN_APPLICATION_DETAIL.First().LOANAPPLICATIONDETAILID,
+                            dateTimeCreated = general.GetApplicationDate(),
+                            loanApplicationId = appl.LOANAPPLICATIONID,
+                            userBranchId = appl.BRANCHID,
+                        };
+                        models.Add(mdls);
+
+                    
+                    drawdown.AddLoanBookingRequest(appl.LOANAPPLICATIONID, models);
+                }
 
                 //workflow.Response.success = true;
                 workflow.Response.isFinal = generateOutPutDocument;
