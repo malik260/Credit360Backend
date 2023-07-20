@@ -741,7 +741,7 @@ namespace FintrakBanking.Repositories.Credit
                             staffId = appl.CREATEDBY,
                             isUsed = false,
                             deleted = false,
-                            amount_Requested = appl.APPROVEDAMOUNT,
+                            amount_Requested = appl.APPLICATIONAMOUNT,
                             approvalStatusId = 2,
                             casaAccountId = appl.TBL_LOAN_APPLICATION_DETAIL.First()?.CASAACCOUNTID,
                             comment = "IBL automatic drawdown",
@@ -753,6 +753,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = general.GetApplicationDate(),
                             loanApplicationId = appl.LOANAPPLICATIONID,
                             userBranchId = appl.BRANCHID,
+                            //amount_Requested = appl.APPROVEDAMOUNT,
                         };
                         models.Add(mdls);
 

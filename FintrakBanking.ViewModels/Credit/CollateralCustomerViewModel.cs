@@ -1205,6 +1205,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalStatusId { get; set; }
         public bool isMapped { get; set; }
         public bool isUsed { get; set; }
+        public DateTime? valuationDate { get; set; }
     }
     public class CollateralUsageStatus
     {
