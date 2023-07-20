@@ -2342,7 +2342,8 @@ namespace FintrakBanking.Repositories.Credit
                                    approvalStatusId = x.APPROVALSTATUSID,
                                    currencyId = c.CURRENCYID,
                                    customerId = (int)x.CUSTOMERID,
-                                   collateralOwnerId = (int)c.CUSTOMERID
+                                   collateralOwnerId = (int)c.CUSTOMERID,
+                                   valuationDate = context.TBL_COLLATERAL_VALUATION.Where(v=>v.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).FirstOrDefault().DATETIMECREATED
                                })?.ToList();
 
 
