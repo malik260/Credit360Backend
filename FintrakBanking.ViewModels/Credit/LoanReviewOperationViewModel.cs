@@ -1487,6 +1487,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReference { get; set; }
         public string agentAssigned { get; set; }
         public string settlementAccount { get; set; }
+        public string category { get; set; }
         public decimal principalOutstandingBalLcy { get; set; }
         public DateTime? valueDate { get; set; }
         public DateTime? referenceDate { get; set; }
