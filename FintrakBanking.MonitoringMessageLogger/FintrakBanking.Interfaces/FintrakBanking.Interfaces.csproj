@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6A7C3564-00B2-45D4-A40C-4B52A06C296A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FintrakBanking.Interfaces</RootNamespace>
+    <AssemblyName>FintrakBanking.Interfaces</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.SqlServerCompact.6.2.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Admin\IAdminRepository.cs" />
+    <Compile Include="Admin\IAPIErrorLog.cs" />
+    <Compile Include="Admin\IAuditTrailRepository.cs" />
+    <Compile Include="Admin\ICanAuthorizationRepository.cs" />
+    <Compile Include="Admin\ICompanyInformationRepository.cs" />
+    <Compile Include="Admin\ICurrencyRateRepository.cs" />
+    <Compile Include="Admin\IProfileSetupRepository.cs" />
+    <Compile Include="AlertMonitoring\IAlertMessagesEngine.cs" />
+    <Compile Include="AlertMonitoring\IAlertMessageLogger.cs" />
+    <Compile Include="AlertMonitoring\IEmailAlertLogger.cs" />
+    <Compile Include="AlertMonitoring\IEmailSender.cs" />
+    <Compile Include="AlertMonitoring\IExchangeRate.cs" />
+    <Compile Include="AlertMonitoring\ISLANotification.cs" />
+    <Compile Include="AppEmail\IEmailRepository.cs" />
+    <Compile Include="CASA\ICasaLienRepository.cs" />
+    <Compile Include="CASA\ICasaRepository.cs" />
+    <Compile Include="CASA\IOverRideRepository.cs" />
+    <Compile Include="Credit\IAtcLodgmentDetailRepository.cs" />
+    <Compile Include="Credit\IAtcLodgmentRepository.cs" />
+    <Compile Include="Credit\ICashBackRepository.cs" />
+    <Compile Include="Credit\ICashFlowLendingRepository.cs" />
+    <Compile Include="Credit\ICollateralValuationRepository.cs" />
+    <Compile Include="Credit\ICreditDrawdownRepository.cs" />
+    <Compile Include="Credit\IDeferredFeeRepository.cs" />
+    <Compile Include="Credit\IExternalAlertRepository.cs" />
+    <Compile Include="Credit\IFacilityModificationRepository.cs" />
+    <Compile Include="Credit\ILcCashBuildUpPlanRepository.cs" />
+    <Compile Include="Credit\ILcConditionRepository.cs" />
+    <Compile Include="Credit\ILcDocumentRepository.cs" />
+    <Compile Include="Credit\ILcIssuanceRepository.cs" />
+    <Compile Include="Credit\ILcShippingRepository.cs" />
+    <Compile Include="Credit\ILcUssanceRepository.cs" />
+    <Compile Include="Credit\ILetterGenerationRequestRepository.cs" />
+    <Compile Include="Credit\ILoanArchiveRepository.cs" />
+    <Compile Include="Credit\ILoanPrepayment.cs" />
+    <Compile Include="Credit\IOriginalDocumentReleaseRepository.cs" />
+    <Compile Include="Credit\IProjectSiteReportRepository.cs" />
+    <Compile Include="Credit\ISupportUtilityRepository.cs" />
+    <Compile Include="Credit\ITestCollateralRepository.cs" />
+    <Compile Include="Credit\IValuationReportRepository.cs" />
+    <Compile Include="Credit\IValuationRequestTypeRepository.cs" />
+    <Compile Include="Media\IDocumentCategoryRepository.cs" />
+    <Compile Include="Media\IDocumentCategoryTypeRepository.cs" />
+    <Compile Include="Media\IDocumentTypeRepository.cs" />
+    <Compile Include="Media\IDocumentUploadRepository.cs" />
+    <Compile Include="Media\IDocumentUsageRepository.cs" />
+    <Compile Include="Credit\ILoanFeeChargeRepository.cs" />
+    <Compile Include="Credit\ITermSheetRepository.cs" />
+    <Compile Include="CRMS\ICRMSCodeBookRepository.cs" />
+    <Compile Include="CRMS\ICRMSRegulatories.cs" />
+    <Compile Include="Credit\IDashboardRepository.cs" />
+    <Compile Include="Credit\IFacilityDetailSummary.cs" />
+    <Compile Include="Credit\ILaonCamSolRepository.cs" />
+    <Compile Include="Credit\IMemorandumRepository.cs" />
+    <Compile Include="Media\IOriginalDocumentApprovalRepository.cs" />
+    <Compile Include="Risk\ICreditOfficerRiskRepository.cs" />
+    <Compile Include="Risk\IRiskAcceptanceCriteriaRepository.cs" />
+    <Compile Include="Setups\Credit\IBulkDisbursementPackageRepository.cs" />
+    <Compile Include="Setups\Credit\ICrmsRegulatoryRepository.cs" />
+    <Compile Include="Setups\Credit\IFXAccountCreationRepository.cs" />
+    <Compile Include="Setups\Credit\IRepaymentTermsRepository.cs" />
+    <Compile Include="Setups\Finance\ICustomChartOfAccountRepository.cs" />
+    <Compile Include="Setups\General\IAuthourisedSignatoryRepository.cs" />
+    <Compile Include="Setups\General\IAlertRepository.cs" />
+    <Compile Include="Setups\General\IStaffMIS.cs" />
+    <Compile Include="Setups\General\IStaffRoleRepository.cs" />
+    <Compile Include="ThridPartyIntegration\IFinacleIntegrationRepository.cs" />
+    <Compile Include="ThridPartyIntegration\IHeadOfficeToSubIntegration.cs" />
+    <Compile Include="Validation\ICreditLimitValidationsRepository.cs" />
+    <Compile Include="Credit\IIntegrationWithFinacle.cs" />
+    <Compile Include="Credit\ILoanPerformanceRepository.cs" />
+    <Compile Include="Credit\IStaffAccountHistoryRepository.cs" />
+    <Compile Include="Credit\IAppraisalMemorandumRepository.cs" />
+    <Compile Include="Credit\ICallMemoRepository.cs" />
+    <Compile Include="Credit\ICollateralDocumentRepository.cs" />
+    <Compile Include="Credit\IConditionPrecedentRepository.cs" />
+    <Compile Include="Credit\ICreditBureauProcess.cs" />
+    <Compile Include="Credit\ICreditTemplateRepository.cs" />
+    <Compile Include="Credit\ICustomerCollateralRepository.cs" />
+    <Compile Include="Credit\ICustomerCreditBureauRepository.cs" />
+    <Compile Include="Credit\IFeeConcessionRepository.cs" />
+    <Compile Include="Credit\ILimitRepository.cs" />
+    <Compile Include="Credit\ILoanApplicationRepository.cs" />
+    <Compile Include="Credit\ILoanMarketRepository.cs" />
+    <Compile Include="Credit\ILoanPreliminaryEvaluationRepository.cs" />
+    <Compile Include="Credit\ILoanDocumentRepository.cs" />
+    <Compile Include="Credit\ILoanPrincipalRepository.cs" />
+    <Compile Include="Credit\ILoanRepository.cs" />
+    <Compile Include="Credit\ILoanReviewApplicationRepository.cs" />
+    <Compile Include="Credit\ILoanScheduleRepository.cs" />
+    <Compile Include="Credit\IOfferLetterAndAvailmentRepository.cs" />
+    <Compile Include="Credit\ITransactionDynamicsRepository.cs" />
+    <Compile Include="Customer\ICustomerFSCaptionDetailRepository.cs" />
+    <Compile Include="Customer\ICustomerFSCaptionGroupRepository.cs" />
+    <Compile Include="Customer\ICustomerFSCaptionRepository.cs" />
+    <Compile Include="Customer\ICustomerFSRatioRepository.cs" />
+    <Compile Include="Customer\ICustomerGroupRepository.cs" />
+    <Compile Include="Customer\ICustomerRepository.cs" />
+    <Compile Include="Credit\ILoanCovenantRepository.cs" />
+    <Compile Include="Customer\ICustomerStagingRepository.cs" />
+    <Compile Include="Customer\IKYCDocumentUploadRepository.cs" />
+    <Compile Include="ErrorLogger\IErrorLogRepository.cs" />
+    <Compile Include="Finance\IEndOfDayRepository.cs" />
+    <Compile Include="Finance\IFinanceTransactionRepository.cs" />
+    <Compile Include="Helper\ICultureHelper.cs" />
+    <Compile Include="Credit\IContingentLoanUsageRepository.cs" />
+    <Compile Include="Reports\IFinanceTransactionsReport.cs" />
+    <Compile Include="Reports\ILimitAndMonitoringRepository.cs" />
+    <Compile Include="Reports\IReportingObjects.cs" />
+    <Compile Include="Reports\IReportRoutes.cs" />
+    <Compile Include="Notification\INotificationRepository.cs" />
+    <Compile Include="Media\IMediaRepository.cs" />
+    <Compile Include="Credit\ILoanOperationsRepository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Risk\IRiskImplementation.cs" />
+    <Compile Include="Setups\Approval\IApprovalGroupMappingRepository.cs" />
+    <Compile Include="Setups\Approval\IApprovalGroupRepository.cs" />
+    <Compile Include="Setups\Approval\IApprovalLevelRepository.cs" />
+    <Compile Include="Setups\Approval\IApprovalLevelStaffRepository.cs" />
+    <Compile Include="Setups\Approval\IApprovalReliefRepository.cs" />
+    <Compile Include="Setups\Credit\IChecklistRepository.cs" />
+    <Compile Include="Setups\Credit\ICollateralTypeRepository.cs" />
+    <Compile Include="Setups\Credit\IPrudentialGuidelineSetupRepository.cs" />
+    <Compile Include="Setups\Finance\IAccountCategoryRepository.cs" />
+    <Compile Include="Setups\Finance\IAccountTypeRepository.cs" />
+    <Compile Include="Setups\Finance\IChargeFeeRepository.cs" />
+    <Compile Include="Setups\Finance\IChartOfAccountRepository.cs" />
+    <Compile Include="Setups\Finance\ITaxRepository.cs" />
+    <Compile Include="Setups\General\IAccountSensitivityRepository.cs" />
+    <Compile Include="Setups\General\IAccreditedConsultantsRepository.cs" />
+    <Compile Include="Setups\General\IAuthenticationRepository.cs" />
+    <Compile Include="Setups\General\IAuthorizationRepository.cs" />
+    <Compile Include="Setups\General\IBranchRepository.cs" />
+    <Compile Include="Setups\General\ICompanyRepository.cs" />
+    <Compile Include="Setups\General\ICountryRepository.cs" />
+    <Compile Include="Setups\General\ICustomFieldsRepository.cs" />
+    <Compile Include="Setups\General\IEmployerRepository.cs" />
+    <Compile Include="Setups\General\ILoanRecoverySetupRepository.cs" />
+    <Compile Include="Setups\General\IMonitoringSetupRepository.cs" />
+    <Compile Include="Setups\General\IDepartmentRepository.cs" />
+    <Compile Include="Setups\General\IEmailAndAlertsRepository.cs" />
+    <Compile Include="Setups\General\IGeneralSetupRepository.cs" />
+    <Compile Include="Setups\General\IJobTitleRepository.cs" />
+    <Compile Include="Setups\General\IMisInfoRepository.cs" />
+    <Compile Include="Setups\General\IProductCollateralTypeRepository.cs" />
+    <Compile Include="Setups\General\IProductFeeRepository.cs" />
+    <Compile Include="Setups\General\IProductRepository.cs" />
+    <Compile Include="Setups\General\IPublicHolidayRepository.cs" />
+    <Compile Include="Setups\General\IStaffRepository.cs" />
+    <Compile Include="Setups\Credit\ICustomerProductFeeRepository.cs" />
+    <Compile Include="Setups\Risk\IRiskSetupRepository.cs" />
+    <Compile Include="ThridPartyIntegration\IXDSServiceRepository.cs" />
+    <Compile Include="Validation\IOverDraftValidation.cs" />
+    <Compile Include="Setups\Approval\IBusinessRuleRepository.cs" />
+    <Compile Include="WorkFlow\IJobRequestRepository.cs" />
+    <Compile Include="WorkFlow\IWorkflow.cs" />
+    <Compile Include="WorkFlow\IWorkFlowRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Operations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">
+      <Project>{18cefc20-2662-4757-94de-23d623ffc98d}</Project>
+      <Name>FintrakBanking.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
+      <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
+      <Name>FintrakBanking.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
+      <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
+      <Name>FintrakBanking.ViewModels</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+</Project>
