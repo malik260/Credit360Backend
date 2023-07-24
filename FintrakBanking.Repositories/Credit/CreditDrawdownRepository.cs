@@ -19,6 +19,7 @@ using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Common.CustomException;
 using FinTrakBanking.ThirdPartyIntegration;
 using FintrakBanking.ViewModels.Flexcube;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -2022,9 +2023,8 @@ namespace FintrakBanking.Repositories.Credit
                 amount = entity.amount_Requested,
                 toStaffId = entity.toStaffId,
             };
-
-                if (entity.productId == 156)
-                 {
+            if (entity.productId == 156 || entity.productId == 228 || entity.productId == 297 || entity.productId == 354)
+            {
                     LogApproval(approvalModel, (short)OperationsEnum.IBLAvailmentInProgress, true, (int)ApprovalStatusEnum.Pending);
                     request.OPERATIONID = (short)OperationsEnum.IBLAvailmentInProgress;
                  }

@@ -705,7 +705,7 @@ namespace FintrakBanking.Repositories.Credit
                     //workflow.ProductId = null;
                     workflow.ExclusiveFlowChangeId = null;
                         var productId = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
-                    if (productId == 156 && model.isFlowTest == false) //for IBL - 50M Workflow
+                    if ((productId == 156 || productId == 228 || productId == 297 || productId == 354) && model.isFlowTest == false) //for IBL - 50M Workflow
                     {
                         appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
                         //The null passed in place of appl.FlowchangeId should be made generic 07/08/2021 after enum.offerletappr.
@@ -731,7 +731,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (model.isFlowTest == false) { trans.Commit(); }
                 else { trans.Rollback(); }
                 var product = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
-                if (product == 156 && model.isFlowTest == false)
+                if ((product == 156 || product == 228 || product == 297 || product == 354) && model.isFlowTest == false)
                 {
                 
                     List<LoanBookingRequestViewModel> models = new List<LoanBookingRequestViewModel>();

@@ -2315,6 +2315,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (isRacRelated == true)
                 {
                     defaultTierItems = allTierRacs.Where(x => x.ISRACTIERCONTROLKEY == true).ToList();
+                    
                     if (defaultTierItems.Count() <= 0) { throw new ConditionNotMetException("Control keys have not been setup for the RAC Tiers"); }
 
                     List<TBL_RAC_DEFINITION> matchedTierRac = new List<TBL_RAC_DEFINITION>();
@@ -2761,10 +2762,12 @@ namespace FintrakBanking.Repositories.Credit
 
             if (integerValue != null) // selects
             {
+
                 var optionItem = context.TBL_RAC_OPTION_ITEM.FirstOrDefault(x => x.RACOPTIONITEMID == definition.CONTROLOPTIONID);
                 if (optionItem != null) {
                     if (integerValue == optionItem.KEY) return true; }
-                return false;
+                //return false;
+                return true; //changed to true for IBL RAC
             }
             else if (decimalValue != null) // amount
             {
