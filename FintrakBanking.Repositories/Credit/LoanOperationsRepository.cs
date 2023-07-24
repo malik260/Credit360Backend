@@ -35313,7 +35313,7 @@ namespace FintrakBanking.Repositories.Credit
             #endregion
             var unionAll = exposureData.Union(exposureDigitalData);
 
-                var data = unionAll;
+                var data = unionAll; 
 
                 return data;
             
