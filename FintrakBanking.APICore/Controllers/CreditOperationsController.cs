@@ -1435,10 +1435,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-analysis-agents/{source}")]
-        public HttpResponseMessage getAllLoansOperationRecoveryAnalysisByAgent(string source)
+        [Route("loan-operation/recovery-analysis-agents/{source}/{start}")]
+        public HttpResponseMessage getAllLoansOperationRecoveryAnalysisByAgent(string source, DateTime start)
         {
-            var data = repo.getAllLoansOperationRecoveryAnalysisByAgent(source, token.GetStaffId, token.GetCompanyId);
+            var data = repo.getAllLoansOperationRecoveryAnalysisByAgent(source, token.GetStaffId, token.GetCompanyId, start );
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,

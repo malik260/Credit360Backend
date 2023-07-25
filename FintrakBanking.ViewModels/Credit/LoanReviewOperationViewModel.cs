@@ -1512,6 +1512,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? paydayLoanMinimumAssigned { get; set; }
         public decimal? amountRecoveredPaydayLoan { get; set; }
         public decimal? initialAssigned { get; set; }
+        public string category { get; set; }
     }
 
 
@@ -1780,6 +1781,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string agentAccountNumber { get; set; }
         public int? stateId { get; set; }
         public bool operationCompleted { get; set; }
+
     }
 
     public class GlobalExposureApplicationViewModel : GeneralEntity

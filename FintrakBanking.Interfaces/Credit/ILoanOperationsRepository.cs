@@ -82,7 +82,7 @@ namespace FintrakBanking.Interfaces.Credit
         string GetTransactionReferenceNo();
         CollectionsRetailComputationVariableSetupViewModel getAllRecoveryComputationVariables(int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId);
-        IEnumerable<GlobalExposureApplicationViewModel> getAllLoansOperationRecoveryAnalysisByAgent(string source, int staffId, int companyId);
+        IEnumerable<GlobalExposureApplicationViewModel> getAllLoansOperationRecoveryAnalysisByAgent(string source, int staffId, int companyId, DateTime month);
         IEnumerable<GlobalExposureApplicationViewModel> GetLoanOperationRecoveryAnalysis(int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> GetDelinquentAccounts(int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> GetDelinquentDigitalAccounts(int staffId, int companyId);
