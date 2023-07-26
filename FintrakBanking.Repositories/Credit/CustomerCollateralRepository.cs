@@ -2343,7 +2343,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = c.CURRENCYID,
                                    customerId = (int)x.CUSTOMERID,
                                    collateralOwnerId = (int)c.CUSTOMERID,
-                                   valuationDate = context.TBL_COLLATERAL_VALUATION.Where(v=>v.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).FirstOrDefault().DATETIMECREATED
+                                   valuationDate = c.DATETIMECREATED //context.TBL_COLLATERAL_VALUATION.Where(v=>v.COLLATERALCUSTOMERID == c.COLLATERALCUSTOMERID).Select(v=>v.DATETIMECREATED).FirstOrDefault()
                                })?.ToList();
 
 
@@ -12341,7 +12341,7 @@ namespace FintrakBanking.Repositories.Credit
                     LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
                     COLLATERALCOVERAGE = model.actualCollateralCoverage,
                     BALANCEAVAILABLE = model.availableCollateralValue - model.actualCollateralCoverage,
-                    CREATEDBY = model.createdBy,
+                    CREATEDBY = (int)model.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     CUSTOMERID = obligorId,
                     DELETED = false,

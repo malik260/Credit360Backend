@@ -233,6 +233,24 @@ namespace FintrakBanking.Repositories.CRMS
                 }
                 else
                 {
+                    if(loan.PRODUCTID == 156)
+                    {
+                        var approvalModel = new LoanAvailmentApprovalViewModel
+                        {
+                            createdBy = param.createdBy,
+                            staffId = param.createdBy,
+                            companyId = param.companyId,
+                            targetId = loan.LOAN_BOOKING_REQUESTID,
+                            comment = "Captured CRMS code",
+                            approvalStatusId = (short)ApprovalStatusEnum.Approved,
+                            // amount = entity.principalAmount,
+                            operationId = (short)loan.OPERATIONID,
+                        };
+                        //throw new Exception("");
+
+                        response = drawdown.GoForBookingRequestApproval(approvalModel, loan.LOAN_BOOKING_REQUESTID);
+                        return response.responseMessage;
+                    }
                     var saved = context.SaveChanges() > 0;
                     if (saved)
                     {

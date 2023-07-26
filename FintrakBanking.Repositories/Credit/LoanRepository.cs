@@ -9355,6 +9355,7 @@ namespace FintrakBanking.Repositories.Credit
             operationIds.Add((int)OperationsEnum.IndividualDrawdownRequest);
             operationIds.Add((int)OperationsEnum.CreditCardDrawdownRequest);
             operationIds.Add((int)OperationsEnum.RevolvingTranchDisbursement);
+            operationIds.Add((int)OperationsEnum.IBLAvailmentInProgress);
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
             List<int> levelIds = new List<int>();
@@ -9363,6 +9364,7 @@ namespace FintrakBanking.Repositories.Credit
             levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CorporateDrawdownRequest).ToList());
             levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IndividualDrawdownRequest).ToList());
             levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditCardDrawdownRequest).ToList());
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IBLAvailmentInProgress).ToList()); 
 
             //TEMPORARY CODE LINES TO HOLD PREVIOUS TRANSACTION BEFORE DELETE
             List<int> clpdOperationIds = new List<int>();
@@ -9370,6 +9372,7 @@ namespace FintrakBanking.Repositories.Credit
             clpdOperationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
             clpdOperationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
             clpdOperationIds.Add((int)OperationsEnum.CommercialLoanBooking);
+            clpdOperationIds.Add((int)OperationsEnum.IBLAvailmentInProgress);
             //END OF TEMPORARY CODE LINES TO HOLD PREVIOUS TRANSACTION BEFORE DELETE
 
             var company = context.TBL_COMPANY.Find(companyId);
@@ -9495,6 +9498,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
                 operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
                 operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
+                operationIds.Add((int)OperationsEnum.IBLAvailmentInProgress);
             }
 
             var bAndGStaffRoleLevelIds = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();

@@ -360,7 +360,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-        public async Task<bool> AddCollateralSubTypes(CollateralSubTypeViewModel entity)
+        public bool AddCollateralSubTypes(CollateralSubTypeViewModel entity)
         {
             if (entity.GPScollateralType == "0")
             {
@@ -398,7 +398,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
-            var respose = await context.SaveChangesAsync() != 0;
+            var respose = context.SaveChanges() != 0;
 
             return respose;
         }

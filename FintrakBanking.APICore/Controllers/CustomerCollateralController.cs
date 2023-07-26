@@ -1773,7 +1773,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("collateral-sub-type")]
-        public async Task<HttpResponseMessage> AddCollateralSubType([FromBody] CollateralSubTypeViewModel entity)
+        public HttpResponseMessage AddCollateralSubType([FromBody] CollateralSubTypeViewModel entity)
         {
             try
             {
@@ -1782,7 +1782,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.companyId = token.GetCompanyId;
 
-                var response = await type.AddCollateralSubTypes(entity);
+                var response = type.AddCollateralSubTypes(entity);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });

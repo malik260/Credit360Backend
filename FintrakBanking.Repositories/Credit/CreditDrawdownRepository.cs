@@ -314,6 +314,7 @@ namespace FintrakBanking.Repositories.Credit
                             application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
 
                             if (operationId > 0) LogApproval(approvalModel, classifiedTrail.DESTINATIONOPERATIONID ?? 0, true, (short)ApprovalStatusEnum.Pending);
+                        if (request.PRODUCTID == 156) request.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                             context.SaveChanges();
                             trans.Commit();
 
@@ -443,6 +444,7 @@ namespace FintrakBanking.Repositories.Credit
                         return workflow.Response;
                     }
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestInitiated;
+                    if (request.PRODUCTID == 156) request.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     context.SaveChanges();
                     trans.Commit();
                     return workflow.Response;

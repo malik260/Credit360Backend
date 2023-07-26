@@ -1155,6 +1155,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralCoverageViewModel : GeneralEntity
     {
+        //public int companyId { get; set; }
         public bool coverAll { get; set; }
         public int? currencyId { get; set; }
         public int loanAppCollateralId { get; set; }
@@ -1205,7 +1206,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalStatusId { get; set; }
         public bool isMapped { get; set; }
         public bool isUsed { get; set; }
-        public DateTime? valuationDate { get; set; }
+        public DateTime valuationDate { get; set; }
+       
     }
     public class CollateralUsageStatus
     {
