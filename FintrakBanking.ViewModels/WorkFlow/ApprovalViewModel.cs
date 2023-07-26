@@ -16,6 +16,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public bool isFromPc { get; set; }
         public int? approvalLevelId { get; set; }
         public int operationId { get; set; }
+        public int trailId { get; set; }
         public int? nextOperation { get; set; }
         public bool isClassified { get; set; }
         public int? productId { get; set; }

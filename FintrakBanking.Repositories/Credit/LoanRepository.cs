@@ -16710,6 +16710,59 @@ namespace FintrakBanking.Repositories.Credit
                     .ThenBy(x => x.levelPosition)
                     .ToList();
 
+            if(model.operationId == (int)OperationsEnum.IBLAvailmentInProgress)
+            {
+                var operationId = 6;
+                
+                var book = context.TBL_LOAN_BOOKING_REQUEST.Find(model.targetId);
+                var appdtl = context.TBL_LOAN_APPLICATION_DETAIL.Find(book.LOANAPPLICATIONDETAILID);
+                var app = context.TBL_LOAN_APPLICATION.Find(appdtl.LOANAPPLICATIONID);
+                var o = context.TBL_APPROVAL_TRAIL.Find(model.targetId); // here we try to get the staffid on the trail row
+
+                var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                    x.OPERATIONID == operationId
+                    && x.TARGETID == app.LOANAPPLICATIONID
+                    //&& x.REQUESTSTAFFID == o.REQUESTSTAFFID
+                );
+
+                workflow.StaffId = model.createdBy;
+                workflow.OperationId = operationId;
+                workflow.TargetId = app.LOANAPPLICATIONID;
+                workflow.CompanyId = app.COMPANYID;
+                workflow.ProductClassId = app.PRODUCTCLASSID;
+                workflow.ProductId = 156;
+                workflow.NextLevelId = trail.FROMAPPROVALLEVELID;//
+                workflow.ToStaffId = app.CREATEDBY;
+                workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+                workflow.DestinationOperationId = (int)OperationsEnum.IBLAvailmentInProgress;
+                workflow.Comment = model.comment;
+                workflow.DeferredExecution = true;
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                // Take out of offer letter screen
+                var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                    x.OPERATIONID == (int)OperationsEnum.IBLAvailmentInProgress
+                    && x.RESPONSESTAFFID == null
+                    && x.TARGETID == model.targetId
+                );
+                if (currentTrail != null)
+                {
+                    currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                    currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    currentTrail.COMMENT = model.comment;
+                    currentTrail.RESPONSESTAFFID = model.createdBy;
+                    currentTrail.RESPONSEDATE = DateTime.Now;
+                    //currentTrail.TOAPPROVALLEVELID = null;
+                    //currentTrail.TOSTAFFID = null;
+                }
+                app.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+                app.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
+
+                context.SaveChanges();
+                return workflow.Response; 
+            }
+
             if (model.myLevelId > 0)
             {
                 currentLevelIndex = levels.FindIndex(p => p.levelId == model.myLevelId);
