@@ -66,7 +66,7 @@ namespace FintrakBanking.Repositories.Risk
             List<string> allEmployeeType = new List<string> { "EMPLOYER", "SELFEMPLOYED", "EMPLOYEE" };
             List<TBL_RAC_DEFINITION> racDefinitionOnEmployer = new List<TBL_RAC_DEFINITION>();
 
-            if (model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS" && !model.isOperationbased && model.isAgricRac == false)
+            if (model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS" || model.searchBasePlaceholder == "RENEWAL" && !model.isOperationbased && model.isAgricRac == false)
             {
                 var productClass = context.TBL_PRODUCT.Where(x => x.PRODUCTID == model.productId).FirstOrDefault();
                 var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
@@ -83,7 +83,15 @@ namespace FintrakBanking.Repositories.Risk
                                                                                                   && !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
                                                                                                   && (x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID < 1)
                                                                                                   && x.ISACTIVE == true && x.DELETED == false).ToList();
-                    var productRac = racDefinitionOnProduct.Union(racDefinitionOnProductClass);
+
+                var racDefinitionOnRenewal = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
+                                                                                                && x.SEARCHPLACEHOLDER == "RENEWAL"
+                                                                                                && (x.CUSTOMERTYPEID == null || (short)x.CUSTOMERTYPEID < 1)
+                                                                                                && !allEmployeeType.Contains(x.EMPLOYMENTTYPE)
+                                                                                                && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                                && x.ISACTIVE == true
+                                                                                                && x.DELETED == false).ToList();
+                var productRac = racDefinitionOnProduct.Union(racDefinitionOnProductClass).Union(racDefinitionOnRenewal);
                     racDefinition.AddRange(productRac);
 
                    // racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
@@ -104,7 +112,14 @@ namespace FintrakBanking.Repositories.Risk
                                                                                                && x.ISACTIVE == true
                                                                                                && x.DELETED == false).ToList();
 
-                    var employerRac = racDefinitionOnEmployerByProduct.Union(racDefinitionOnEmployerByProductClass);
+                    var racDefinitionOnEmployerByRenewal = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "RENEWAL"
+                                                                                               && (x.EMPLOYMENTTYPE == employeeType)
+                                                                                               && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                               && (x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
+                                                                                               && x.ISACTIVE == true
+                                                                                               && x.DELETED == false).ToList();
+
+                    var employerRac = racDefinitionOnEmployerByProduct.Union(racDefinitionOnEmployerByProductClass).Union(racDefinitionOnEmployerByRenewal);
                     //racDefinitionOnEmployer = racDefinitionOnEmployerByProduct.Count() > 0 ? racDefinitionOnEmployerByProduct : racDefinitionOnEmployerByProductClass;
                     racDefinition.AddRange(employerRac);
 
@@ -125,8 +140,15 @@ namespace FintrakBanking.Repositories.Risk
                                                                                         && x.ISACTIVE == true
                                                                                         && x.DELETED == false).ToList();
 
+                    var racDefinitionOnEmployeeByRenewal = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "RENEWAL"
+                                                                                          && (x.EMPLOYMENTTYPE == employeeType)
+                                                                                          && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                          && (x.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
+                                                                                          && x.ISACTIVE == true
+                                                                                          && x.DELETED == false).ToList();
+
                     //racDefinitionOnEmployer = racDefinitionOnEmployeeByProduct.Count() > 0 ? racDefinitionOnEmployeeByProduct : racDefinitionOnEmployeeByProductClass;
-                    var employerRac = racDefinitionOnEmployeeByProduct.Union(racDefinitionOnEmployeeByProductClass);
+                    var employerRac = racDefinitionOnEmployeeByProduct.Union(racDefinitionOnEmployeeByProductClass).Union(racDefinitionOnEmployeeByRenewal);
                     racDefinition.AddRange(employerRac);
 
                 }
