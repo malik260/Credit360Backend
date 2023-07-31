@@ -920,7 +920,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Amount Due</Value>
+                                  <Value>Team Name</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1025,7 +1025,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Collections/Recovery</Value>
+                                  <Value>Location</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1200,7 +1200,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Team Name</Value>
+                                  <Value>Amount Due</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1235,7 +1235,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Location</Value>
+                                  <Value>Collections/Recovery</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1814,14 +1814,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="amountDue">
+                        <Textbox Name="teamName1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!amountDue.Value</Value>
+                                  <Value>=Fields!teamName.Value</Value>
                                   <Style>
                                     <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
@@ -1830,7 +1830,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>amountDue</rd:DefaultName>
+                          <rd:DefaultName>teamName1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1910,14 +1910,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="collections">
+                        <Textbox Name="location1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!collections.Value</Value>
+                                  <Value>=Fields!location.Value</Value>
                                   <Style>
                                     <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
@@ -1926,7 +1926,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>collections</rd:DefaultName>
+                          <rd:DefaultName>location1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2062,21 +2062,21 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="teamName">
+                        <Textbox Name="amountDue">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!teamName.Value</Value>
+                                  <Value>=Fields!amountDue.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>teamName</rd:DefaultName>
+                          <rd:DefaultName>amountDue</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2092,21 +2092,21 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="location">
+                        <Textbox Name="collections">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!location.Value</Value>
+                                  <Value>=Fields!collections.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>location</rd:DefaultName>
+                          <rd:DefaultName>collections</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
