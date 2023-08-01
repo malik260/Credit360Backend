@@ -1,22 +1,20 @@
-﻿using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Admin;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using FintrakBanking.Interfaces.Customer;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.CreditLimitValidations;
+using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using FintrakBanking.Common.CustomException;
 using System.Data;
-using FintrakBanking.Common.Enum;
-using FintrakBanking.ViewModels.Setups.General;
-using FintrakBanking.Interfaces.CASA;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels.Customer;
+using System.Linq;
 //using System.Math;
 
 namespace FintrakBanking.Repositories.CreditLimitValidations
@@ -2066,6 +2064,24 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return contractorCriteria;
         }
 
+        public IEnumerable<IBLChecklistViewModel> getAllIBLChecklist()
+        {
+            var iblChecklist = (from a in context.TBL_IBL_CHECKLIST
+                                select new IBLChecklistViewModel
+                                      {
+                                          iblChecklistId = a.IBLCHECKLISTID,
+                                          checklist = a.CHECKLIST,
+                                          
+                                          options = context.TBL_IBL_CHECKLIST_OPTION.Where(x => x.IBLCHECKLISTID == a.IBLCHECKLISTID).Select(x => new IBLChecklistViewModel
+                                          {
+                                              optionName = x.OPTIONNAME,
+                                              //optionValue = x.OPTIONVALUE
+                                          }).ToList(),
+                                      }).ToList();
+
+            return iblChecklist;
+        }
+
         public IEnumerable<ContractorCriteriaOptionViewModel> getAllContractorCriteriaOption()
         {
             var contractorCriteria = (from a in context.TBL_CONTRACTOR_CRITERIA_OPTION
@@ -2077,6 +2093,21 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                           optionName = a.OPTIONNAME,
                                           optionValue = a.OPTIONVALUE,
                                           criteria = context.TBL_CONTRACTOR_CRITERIA.Where(c => c.CRITERIAID == a.CRITERIAID).Select(c => c.CRITERIA).FirstOrDefault(),
+                                      }).ToList();
+
+            return contractorCriteria;
+        }
+        public IEnumerable<IBLChecklistViewModel> getAllIBLCheclistOption()
+        {
+            var contractorCriteria = (from a in context.TBL_IBL_CHECKLIST_OPTION
+
+                                      select new IBLChecklistViewModel
+                                      {
+                                          iblChecklistId = a.IBLCHECKLISTID,
+                                          optionId = a.OPTIONID,
+                                          optionName = a.OPTIONNAME,
+                                          //optionValue = a.OPTIONVALUE,
+                                          checklist = context.TBL_IBL_CHECKLIST.Where(c => c.IBLCHECKLISTID == a.IBLCHECKLISTID).Select(c => c.CHECKLIST).FirstOrDefault(),
                                       }).ToList();
 
             return contractorCriteria;
@@ -2095,6 +2126,21 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                      }).ToList();
 
             return contractorTiering;
+        }
+
+        public IEnumerable<IBLChecklistViewModel> getIBLChecklistDetailByApplication(int loanApplicationId, int customerId)
+        {
+            var iblCheclistDetail = (from a in context.TBL_IBL_CHECKLIST_DETAIL
+                                     where a.LOANAPPLICATIONID == loanApplicationId && a.CUSTOMERID == customerId
+                                     select new IBLChecklistViewModel
+                                     {
+                                         iblChecklistDetailId = a.IBLCHECKLISTDETAILID,
+                                         loanApplicationId = a.LOANAPPLICATIONID,
+                                         customerId = a.CUSTOMERID,
+                                         //actualValue = a.ACTUALVALUE
+                                     }).ToList();
+
+            return iblCheclistDetail;
         }
 
         public IEnumerable<ContractorTieringViewModel> getContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId)
@@ -2126,6 +2172,39 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 criteria = a.criteria,
                 actualValue = a.actualValue,
                 computation = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == a.loanApplicationId).Sum(d => d.ACTUALVALUE),
+            }).ToList();
+
+            return result;
+        }
+
+        public IEnumerable<IBLChecklistViewModel> getIBLChecklistDetailByApplicationAndCustomer(int loanApplicationId, int customerId)
+        {
+            var contractorTiering = (from a in context.TBL_IBL_CHECKLIST_DETAIL
+                                     join c in context.TBL_IBL_CHECKLIST on a.IBLCHECKLISTID equals c.IBLCHECKLISTID
+                                     where a.LOANAPPLICATIONID == loanApplicationId && a.CUSTOMERID == customerId
+                                     select new
+                                     {
+                                         iblChecklistDetailId = a.IBLCHECKLISTDETAILID,
+                                         loanApplicationId = a.LOANAPPLICATIONID,
+                                         customerId = a.CUSTOMERID,
+                                         checklist = c.CHECKLIST,
+                                         //actualValue = a.ACTUALVALUE
+                                     }).AsEnumerable().Select(a => new IBLChecklistViewModel
+                                     {
+                                         iblChecklistDetailId = a.iblChecklistDetailId,
+                                         loanApplicationId = a.loanApplicationId,
+                                         customerId = a.customerId,
+                                         checklist = a.checklist,
+                                         //actualValue = a.actualValue
+                                     }).ToList();
+
+            var result = contractorTiering.Select(a => new IBLChecklistViewModel
+            {
+                iblChecklistDetailId = a.iblChecklistDetailId,
+                loanApplicationId = a.loanApplicationId,
+                customerId = a.customerId,
+                checklist = a.checklist,
+                
             }).ToList();
 
             return result;

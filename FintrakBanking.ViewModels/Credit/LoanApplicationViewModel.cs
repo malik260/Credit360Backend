@@ -1213,6 +1213,17 @@ namespace FintrakBanking.ViewModels.Credit
         public object options { get; set; }
         public int contractorTieringId { get; set; }
     }
+    public class IBLChecklistViewModel : GeneralEntity
+    {
+        public int iblChecklistId { get; set; }
+        public string checklist { get; set; }
+        public string optionName { get; set; }
+        public List<IBLChecklistViewModel> options { get; set; }
+        public int optionId { get; set; }
+        public int iblChecklistDetailId { get; set; }
+        public int loanApplicationId { get; set; }
+        public int customerId { get; set; }
+    }
 
     public class ContractorCriteriaOptionViewModel : GeneralEntity
     {

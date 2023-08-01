@@ -12,6 +12,7 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
     {
         IEnumerable<ContractorCriteriaViewModel> getContractorTieringForEdit(int contractorTieringId);
         IEnumerable<ContractorCriteriaOptionViewModel> getAllContractorCriteriaOption();
+        IEnumerable<IBLChecklistViewModel> getAllIBLCheclistOption();
         bool UpdateContractorCriteriaOption(ContractorCriteriaOptionViewModel entity);
         bool AddContractorCriteriaOption(ContractorCriteriaOptionViewModel entity);
         IEnumerable<ContractorCriteriaViewModel> getAllCriteriaList();
@@ -19,8 +20,11 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId);
         IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingByCategories();
         IEnumerable<ContractorTieringViewModel> getContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId);
+        IEnumerable<IBLChecklistViewModel> getIBLChecklistDetailByApplicationAndCustomer(int loanApplicationId, int customerId);
         IEnumerable<ContractorTieringViewModel> getContractorTieringByApplication(int loanApplicationId, int customerId);
+        IEnumerable<IBLChecklistViewModel> getIBLChecklistDetailByApplication(int loanApplicationId, int customerId);
         IEnumerable<ContractorCriteriaViewModel> getAllContractorCriteria();
+        IEnumerable<IBLChecklistViewModel> getAllIBLChecklist();
         IEnumerable<ProjectRiskRatingCriteriaViewModel> getAllProjectRiskRatingCriteria();
         bool UpdateProjectRiskCategory(ProjectRiskRatingCategoryViewModel entity);
         bool AddProjectRiskCategory(ProjectRiskRatingCategoryViewModel entity);

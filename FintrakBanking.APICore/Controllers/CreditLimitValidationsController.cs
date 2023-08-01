@@ -963,10 +963,37 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("ibl-checklist")]
+        public HttpResponseMessage GetAllIBLChecklist()
+        {
+            var response = repo.getAllIBLChecklist();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpGet]
         [Route("contractor-criteria-option")]
         public HttpResponseMessage GetAllContractorCriteriaOption()
         {
             var response = repo.getAllContractorCriteriaOption();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+        [HttpGet]
+        [Route("ibl-checlist-option")]
+        public HttpResponseMessage GetAllIBLChecklistOption()
+        {
+            var response = repo.getAllIBLCheclistOption();
             if (response != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
@@ -1003,12 +1030,38 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
         }
+        [HttpGet]
+        [Route("ibl-checklist/{loanApplicationId}/{customerId}")]
+        public HttpResponseMessage GetIBLChecklistDetailByApplication(int loanApplicationId, int customerId)
+        {
+            var response = repo.getIBLChecklistDetailByApplication(loanApplicationId, customerId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
 
         [HttpGet]
         [Route("contractor-tiering-computation/{loanApplicationId}/{customerId}")]
         public HttpResponseMessage GettContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId)
         {
             var response = repo.getContractorTieringByApplicationAndCustomer(loanApplicationId, customerId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+        [HttpGet]
+        [Route("ibl-checklist-detail/{loanApplicationId}/{customerId}")]
+        public HttpResponseMessage GettIBLChecklistDetailByApplicationAndCustomer(int loanApplicationId, int customerId)
+        {
+            var response = repo.getIBLChecklistDetailByApplicationAndCustomer(loanApplicationId, customerId);
             if (response != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });

@@ -1951,7 +1951,17 @@ namespace FintrakBanking.Repositories.Credit
 
             if (context.TBL_LOAN_BOOKING_REQUEST.Any(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.CUSTOMERID == entity.customerId && !(x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && x.ISUSED == true) && (x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved) && x.DELETED == false))
             {
-                throw new ConditionNotMetException("This facility already has a tranche disbursement request for this customer currently undergoing approval.");
+                var loanReq = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.CUSTOMERID == entity.customerId && 
+                !(x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && x.ISUSED == true) && (x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved) && x.DELETED == false).FirstOrDefault();
+                if (entity.productId == 156)
+                {
+                    context.TBL_LOAN_BOOKING_REQUEST.Remove(loanReq);
+                }
+                else
+                {
+                    throw new ConditionNotMetException("This facility already has a tranche disbursement request for this customer currently undergoing approval.");
+                }
+                
             }
 
             //if ((loanApplicationDetails.ISLINEFACILITY ?? false))

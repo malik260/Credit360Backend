@@ -5,6 +5,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using FintrakBanking.Entities.AlertReportingModels;
+    using System.Collections.Generic;
 
     //[DbConfigurationType(typeof(OracleDatabaseConfiguration))]
     [DbConfigurationType(typeof(SqlDatabaseConfiguration))]
@@ -673,6 +674,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_EXCEPTIONAL_RAC_DETAIL> TBL_EXCEPTIONAL_RAC_DETAIL { get; set; }
         public virtual DbSet<TBL_CUSTOMER_ARCHIVE> TBL_CUSTOMER_ARCHIVE { get; set; }
         public virtual DbSet<TBL_USER_CLAIMS> TBL_USER_CLAIMS { get; set; }
+        public virtual DbSet<TBL_IBL_CHECKLIST_OPTION> TBL_IBL_CHECKLIST_OPTION { get; set; }
+        public virtual DbSet<TBL_IBL_CHECKLIST> TBL_IBL_CHECKLIST { get; set; }
+        public virtual DbSet<TBL_IBL_CHECKLIST_DETAIL> TBL_IBL_CHECKLIST_DETAIL { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

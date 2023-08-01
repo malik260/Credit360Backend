@@ -439,7 +439,38 @@ namespace FintrakBanking.Repositories.Credit
                             //workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
                             context.SaveChanges();
                             if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
-                            return workflow.Response;
+
+                        var produc = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
+                        if ((produc == 156 || produc == 228 || produc == 297 || produc == 354) && model.isFlowTest == false)
+                        {
+                            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
+                            List<LoanBookingRequestViewModel> models = new List<LoanBookingRequestViewModel>();
+
+                            var mdls = new LoanBookingRequestViewModel
+                            {
+                                staffId = appl.CREATEDBY,
+                                isUsed = false,
+                                deleted = false,
+                                amount_Requested = appl.APPLICATIONAMOUNT,
+                                approvalStatusId = 2,
+                                casaAccountId = appl.TBL_LOAN_APPLICATION_DETAIL.First()?.CASAACCOUNTID,
+                                comment = "IBL automatic drawdown",
+                                companyId = 1,
+                                productId = (short)produc,
+                                operationId = (int)OperationsEnum.IBLAvailmentInProgress,
+                                createdBy = appl.CREATEDBY,
+                                loanApplicationDetailId = appl.TBL_LOAN_APPLICATION_DETAIL.First().LOANAPPLICATIONDETAILID,
+                                dateTimeCreated = general.GetApplicationDate(),
+                                loanApplicationId = appl.LOANAPPLICATIONID,
+                                userBranchId = appl.BRANCHID,
+                                //amount_Requested = appl.APPROVEDAMOUNT,
+                            };
+                            models.Add(mdls);
+
+
+                            drawdown.AddLoanBookingRequest(appl.LOANAPPLICATIONID, models);
+                        }
+                        return workflow.Response;
                         }
 
 
