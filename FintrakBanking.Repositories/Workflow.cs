@@ -1042,7 +1042,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.nextLevelId != null) next = approvalLevels.FirstOrDefault(x => x.ApprovalLevelId == (int)this.nextLevelId);
             SaveFlowLog("After Initial Next is Set");
-
+            if (this.operationId == (int)OperationsEnum.IBLAvailmentInProgress) this.currentStateId = (int)ApprovalState.Initiation;
             if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
             {
                 if (next != null)
