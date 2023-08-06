@@ -2071,8 +2071,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                       {
                                           iblChecklistId = a.IBLCHECKLISTID,
                                           checklist = a.CHECKLIST,
-                                          
-                                          options = context.TBL_IBL_CHECKLIST_OPTION.Where(x => x.IBLCHECKLISTID == a.IBLCHECKLISTID).Select(x => new IBLChecklistViewModel
+                                          options = context.TBL_IBL_CHECKLIST_OPTION.Where(x => x.IBLCHECKLISTID == a.IBLCHECKLISTID).Select(x => new IBLChecklistOptionViewModel
                                           {
                                               optionName = x.OPTIONNAME,
                                               //optionValue = x.OPTIONVALUE
@@ -2137,7 +2136,8 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                          iblChecklistDetailId = a.IBLCHECKLISTDETAILID,
                                          loanApplicationId = a.LOANAPPLICATIONID,
                                          customerId = a.CUSTOMERID,
-                                         //actualValue = a.ACTUALVALUE
+                                         checklist = context.TBL_IBL_CHECKLIST.Where(c=>c.IBLCHECKLISTID == a.IBLCHECKLISTID).FirstOrDefault().CHECKLIST,
+                                         actualValue = context.TBL_IBL_CHECKLIST_OPTION.Where(o=>o.IBLCHECKLISTID == a.IBLCHECKLISTID).FirstOrDefault().OPTIONNAME
                                      }).ToList();
 
             return iblCheclistDetail;

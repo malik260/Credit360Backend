@@ -4953,6 +4953,70 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public bool AddIBLCheclistDetail(IBLChecklistViewModel iblChecklistDetail)
+        {
+            List<TBL_IBL_CHECKLIST> definitions = new List<TBL_IBL_CHECKLIST>();
+            var msg = new IBLChecklistViewModel();
+            if (iblChecklistDetail.form == null || iblChecklistDetail.form.Count == 0) return false;
+            var ids = iblChecklistDetail.form.Select(x => x.iblChecklistId);
+            definitions = context.TBL_IBL_CHECKLIST.Where(x => ids.Contains(x.IBLCHECKLISTID)
+              ).ToList();
+            var submission = new IBLChecklistFormControlValue();
+
+            List<TBL_IBL_CHECKLIST_DETAIL> details = new List<TBL_IBL_CHECKLIST_DETAIL>();
+
+            var validateExisting = context.TBL_IBL_CHECKLIST_DETAIL.Where(c => c.LOANAPPLICATIONID == iblChecklistDetail.loanApplicationId && c.CUSTOMERID == iblChecklistDetail.customerId).ToList();
+            if (validateExisting != null && validateExisting.Count() > 0)
+            {
+                for (int i = 0; i < definitions.Count; i++)
+                {
+                    var definition = definitions[i];
+                    submission = iblChecklistDetail.form.FirstOrDefault(x => x.iblChecklistId == definition.IBLCHECKLISTID);
+                    if (submission == null) continue;
+                    var updateRecord = context.TBL_IBL_CHECKLIST_DETAIL.Where(c => c.IBLCHECKLISTID == definition.IBLCHECKLISTID && c.LOANAPPLICATIONID == iblChecklistDetail.loanApplicationId).FirstOrDefault();
+                    //updateRecord.ACTUALVALUE = submission.value;
+                    updateRecord.IBLCHECKLISTID = submission.iblChecklistId;
+                    updateRecord.DATETIMEUPDATED = DateTime.Now;
+                    updateRecord.LASTUPDATEDBY = iblChecklistDetail.createdBy;
+                }
+                if (context.SaveChanges() > 0) return true;
+
+                return false;
+            }
+            else
+            {
+                try
+                {
+                    for (int i = 0; i < definitions.Count; i++)
+                    {
+                        var definition = definitions[i];
+                        submission = iblChecklistDetail.form.FirstOrDefault(x => x.iblChecklistId == definition.IBLCHECKLISTID);
+                        if (submission == null) continue;
+                        details.Add(new TBL_IBL_CHECKLIST_DETAIL
+                        {
+                            LOANAPPLICATIONID = iblChecklistDetail.loanApplicationId,
+                            CUSTOMERID = iblChecklistDetail.customerId,
+                            IBLCHECKLISTID = submission.iblChecklistId,
+                           // ACTUALVALUE = submission.value,
+                            CREATEDBY = iblChecklistDetail.createdBy,
+                            DATETIMECREATED = DateTime.Now,
+                            DATETIMEUPDATED = null
+                        });
+
+                    }
+
+                    context.TBL_IBL_CHECKLIST_DETAIL.AddRange(details);
+                    if (context.SaveChanges() > 0) return true;
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
         public List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity)
         {
             var recommendation = context.TBL_LOAN_APPLICATION_COLLATRL2.Find(entity.id);

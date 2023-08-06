@@ -17,6 +17,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         ProjectRiskRatingViewModel AddProjectRiskRating(ProjectRiskRatingViewModel projectRiskRating);
         bool AddContractorTiering(ContractorTieringViewModel contractorCriteria);
+        bool AddIBLCheclistDetail(IBLChecklistViewModel iblChecklistDetail);
         //IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId);
         IEnumerable<ApprovalTrailViewModel> GetGlobalInterestRateChangeTrail(int applicationId, int operationid);
         IEnumerable<ApprovalTrailViewModel> GetCallmemoApprovalTrail(int applicationId, int operationId);

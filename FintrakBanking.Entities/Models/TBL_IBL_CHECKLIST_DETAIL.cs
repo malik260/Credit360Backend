@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FintrakBanking.Entities.Models
@@ -11,6 +12,9 @@ namespace FintrakBanking.Entities.Models
         public int CUSTOMERID { get; set; }
         public int LOANAPPLICATIONID { get; set; }
         public int IBLCHECKLISTID { get; set; }
-       
+        public DateTime? DATETIMEUPDATED { get; set; }
+        public int LASTUPDATEDBY { get; set; }
+        public int CREATEDBY { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
     }
 }

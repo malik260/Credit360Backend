@@ -1084,6 +1084,22 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Error saving Contractor criteria" });
         }
 
+        [HttpPost]
+        [Route("ibl-checklist")]
+        public HttpResponseMessage PostIBLCheclistDetail([FromBody] IBLChecklistViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            bool response = repo.AddIBLCheclistDetail(entity);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Error saving Contractor criteria" });
+        }
+
         [HttpGet]
         [Route("global-interest-rate-change-comments/trail/{applicationId}/operation/{operationId}")]
         public HttpResponseMessage GetGlobalInterestRateChangeTrail(int applicationId, int operationId)

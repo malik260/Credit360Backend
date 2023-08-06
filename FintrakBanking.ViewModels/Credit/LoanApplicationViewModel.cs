@@ -1167,6 +1167,12 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal value { get; set; }
     }
 
+    public class IBLChecklistFormControlValue
+    {
+        public int iblChecklistId { get; set; }
+        public decimal value { get; set; }
+    }
+
     public class ProjectRistratingFormControlValue
     {
         public int categoryId { get; set; }
@@ -1218,11 +1224,17 @@ namespace FintrakBanking.ViewModels.Credit
         public int iblChecklistId { get; set; }
         public string checklist { get; set; }
         public string optionName { get; set; }
-        public List<IBLChecklistViewModel> options { get; set; }
+        public List<IBLChecklistOptionViewModel> options { get; set; }
         public int optionId { get; set; }
         public int iblChecklistDetailId { get; set; }
         public int loanApplicationId { get; set; }
         public int customerId { get; set; }
+        public List<IBLChecklistFormControlValue> form { get; set; }
+        public string actualValue { get; set; }
+    }
+    public class IBLChecklistOptionViewModel
+    {
+        public string optionName { get; set; }
     }
 
     public class ContractorCriteriaOptionViewModel : GeneralEntity
