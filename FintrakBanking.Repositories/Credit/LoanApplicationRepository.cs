@@ -9062,6 +9062,7 @@ namespace FintrakBanking.Repositories.Credit
                 entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
                 entity.ISAGRICRELATED = model.isAgricRelated;
                 entity.ISSYNDICATED = model.isSyndicated;
+                entity.IBLRENEWAL = model.iblRenewal;
                 entity.LASTUPDATEDBY = user.createdBy;
                 entity.DATETIMEUPDATED = DateTime.Now;
             }
@@ -9098,6 +9099,7 @@ namespace FintrakBanking.Repositories.Credit
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
                 isAgricRelated = entity.ISAGRICRELATED,
                 isSyndicated = entity.ISSYNDICATED,
+                iblRenewal = entity.IBLRENEWAL
             };
         }
 

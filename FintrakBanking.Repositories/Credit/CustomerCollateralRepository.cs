@@ -2318,12 +2318,14 @@ namespace FintrakBanking.Repositories.Credit
             decimal remainingCoverageToCover = 0;
             decimal actualCollateralCoverage = 0;
             decimal totalCoverage = 0;
+            DateTime valuationDate;
             //  decimal sumOfMultipleCollateralValues = 0;
 
             var collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
                                join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
                                join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
+                              // join v in context.TBL_COLLATERAL_VALUATION on c.COLLATERALCUSTOMERID equals v.COLLATERALCUSTOMERID
                                where x.LOANAPPLICATIONID == loanApplicationId && x.DELETED == false
                                orderby x.LOANAPPCOLLATERALID
                                select new CollateralCoverageViewModel
@@ -2343,7 +2345,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = c.CURRENCYID,
                                    customerId = (int)x.CUSTOMERID,
                                    collateralOwnerId = (int)c.CUSTOMERID,
-                                   valuationDate = c.DATETIMECREATED //context.TBL_COLLATERAL_VALUATION.Where(v=>v.COLLATERALCUSTOMERID == c.COLLATERALCUSTOMERID).Select(v=>v.DATETIMECREATED).FirstOrDefault()
+                                   //valuationDate = v.DATETIMECREATED,// context.TBL_COLLATERAL_VALUATION.Where(v=>v.COLLATERALCUSTOMERID == c.COLLATERALCUSTOMERID).Select(v=>v.DATETIMECREATED).FirstOrDefault()
                                })?.ToList();
 
 
@@ -2362,7 +2364,12 @@ namespace FintrakBanking.Repositories.Credit
                 var facilityExchangeRate = repo.GetExchangeRate(DateTime.Now, facility.CURRENCYID, facility.TBL_LOAN_APPLICATION.COMPANYID);
                 var collateralExchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, facility.TBL_LOAN_APPLICATION.COMPANYID);
                 var exchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, companyId);
-
+                valuationDate = context.TBL_COLLATERAL_CUSTOMER.Where(v => v.COLLATERALCUSTOMERID == collateral.collateralId).Select(v => v.DATETIMECREATED).FirstOrDefault();
+                var vlation = context.TBL_COLLATERAL_VALUATION.Where(v => v.COLLATERALCUSTOMERID == collateral.collateralId).FirstOrDefault();
+                if(vlation != null)
+                {
+                    valuationDate = vlation.DATETIMECREATED;
+                }
                 coveragePercentage = data.COVERAGE;
                 decimal coverage = decimal.Divide(data.COVERAGE, 100);
                 collateralValue = collateral.collateralValue * (decimal)collateralExchangeRate.sellingRate;
@@ -2432,7 +2439,8 @@ namespace FintrakBanking.Repositories.Credit
                     productName = facility.TBL_PRODUCT.PRODUCTNAME,
                     customerId = collateral.customerId,
                     customerName = obligorName,
-                    collateralOwnerName = collateralOwnerName
+                    collateralOwnerName = collateralOwnerName,
+                    valuationDate = valuationDate,
                 };
 
                 list.Add(cov);

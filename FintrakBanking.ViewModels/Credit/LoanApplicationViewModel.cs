@@ -1050,6 +1050,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isInterventionFunds { get; set; }
         public bool isAgricRelated { get; set; }
         public bool isSyndicated { get; set; }  
+        public bool iblRenewal { get; set; }  
     }
 
     public class LoanApplicationTagsLMSViewModel : GeneralEntity
