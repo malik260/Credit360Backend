@@ -791,6 +791,28 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
+        [Route("add-ibl-checklist")]
+        public HttpResponseMessage AddIBLChecklist([FromBody] IBLChecklistViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.AddIBLChecklist(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpPost]
         [Route("add-contractor-criteria-option")]
         public HttpResponseMessage AddContractorCriteriaOption([FromBody] ContractorCriteriaOptionViewModel entity)
         {
@@ -802,6 +824,23 @@ namespace FintrakBanking.APICore.Controllers
             entity.createdBy = token.GetStaffId;
 
             var data = repo.AddContractorCriteriaOption(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+        [HttpPost]
+        [Route("add-ibl-checklist-option")]
+        public HttpResponseMessage AddIBLChecklistOption([FromBody] IBLChecklistOptionViewModel entity)
+        {
+
+            
+
+            var data = repo.AddIBLChecklistOption(entity);
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -834,6 +873,28 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                new { success = false, message = $"Saved Record not Successfull" });
         }
+        [HttpPut]
+        [Route("update-ibl-checklist/{iblChecklistId}")]
+        public HttpResponseMessage UpdateIBLChecklist(int iblChecklistId, [FromBody] IBLChecklistViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.iblChecklistId = iblChecklistId;
+
+            var data = repo.UpdateIBLChecklist(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
 
         [HttpPut]
         [Route("update-contractor-criteria-option/{optionId}")]
@@ -848,6 +909,24 @@ namespace FintrakBanking.APICore.Controllers
             entity.optionId = optionId;
 
             var data = repo.UpdateContractorCriteriaOption(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+        [HttpPut]
+        [Route("update-ibl-checklist-option/{optionId}")]
+        public HttpResponseMessage UpdateIBLChecklistOption(int optionId, [FromBody] IBLChecklistOptionViewModel entity)
+        {
+
+          
+            entity.optionId = optionId;
+
+            var data = repo.UpdateIBLChecklistOption(entity);
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,

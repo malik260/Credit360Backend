@@ -1850,6 +1850,30 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return false;
         }
 
+        public bool AddIBLChecklist(IBLChecklistViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_IBL_CHECKLIST checks;
+                    checks = new TBL_IBL_CHECKLIST
+                    {
+                        CHECKLIST = entity.checklist,
+                        
+                    };
+                    context.TBL_IBL_CHECKLIST.Add(checks);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
         public bool AddContractorCriteriaOption(ContractorCriteriaOptionViewModel entity)
         {
             if (entity != null)
@@ -1864,6 +1888,31 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                         OPTIONVALUE = entity.optionValue,
                     };
                     context.TBL_CONTRACTOR_CRITERIA_OPTION.Add(cONTRACTOR_CRITERIA);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+        
+        public bool AddIBLChecklistOption(IBLChecklistOptionViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_IBL_CHECKLIST_OPTION cHECKLIST_OPTION;
+                    cHECKLIST_OPTION = new TBL_IBL_CHECKLIST_OPTION
+                    {
+                        IBLCHECKLISTID = entity.iblChecklistId,
+                        OPTIONNAME = entity.optionName,
+                        //OPTIONVALUE = entity.optionValue,
+                    };
+                    context.TBL_IBL_CHECKLIST_OPTION.Add(cHECKLIST_OPTION);
                     var response = context.SaveChanges() != 0;
                     return response;
                 }
@@ -1905,6 +1954,34 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             }
             return false;
         }
+        public bool UpdateIBLChecklist(IBLChecklistViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_IBL_CHECKLIST cHECKLIST;
+                    if (entity.iblChecklistId > 0)
+                    {
+                        cHECKLIST = context.TBL_IBL_CHECKLIST.Find(entity.iblChecklistId);
+                        if (cHECKLIST != null)
+                        {
+                            cHECKLIST.CHECKLIST = entity.checklist;
+                            
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
 
         public bool UpdateContractorCriteriaOption(ContractorCriteriaOptionViewModel entity)
         {
@@ -1921,6 +1998,35 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                             _CRITERIA.CRITERIAID = entity.criteriaId;
                             _CRITERIA.OPTIONVALUE = entity.optionValue;
                             _CRITERIA.OPTIONNAME = entity.optionName;
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+        public bool UpdateIBLChecklistOption(IBLChecklistOptionViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_IBL_CHECKLIST_OPTION cHECKLIST_OPTION;
+                    if (entity.optionId > 0)
+                    {
+                        cHECKLIST_OPTION = context.TBL_IBL_CHECKLIST_OPTION.Find(entity.optionId);
+                        if (cHECKLIST_OPTION != null)
+                        {
+                            cHECKLIST_OPTION.IBLCHECKLISTID = entity.iblChecklistId;
+                            //cHECKLIST_OPTION.OPTIONVALUE = entity.optionValue;
+                            cHECKLIST_OPTION.OPTIONNAME = entity.optionName;
                         }
 
                     }

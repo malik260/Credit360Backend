@@ -1234,7 +1234,9 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class IBLChecklistOptionViewModel
     {
+        public int optionId { get; set; }
         public string optionName { get; set; }
+        public int iblChecklistId { get; set; }
     }
 
     public class ContractorCriteriaOptionViewModel : GeneralEntity

@@ -14,7 +14,9 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         IEnumerable<ContractorCriteriaOptionViewModel> getAllContractorCriteriaOption();
         IEnumerable<IBLChecklistViewModel> getAllIBLCheclistOption();
         bool UpdateContractorCriteriaOption(ContractorCriteriaOptionViewModel entity);
+        bool UpdateIBLChecklistOption(IBLChecklistOptionViewModel entity);
         bool AddContractorCriteriaOption(ContractorCriteriaOptionViewModel entity);
+        bool AddIBLChecklistOption(IBLChecklistOptionViewModel entity);
         IEnumerable<ContractorCriteriaViewModel> getAllCriteriaList();
         IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId);
         IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId);
@@ -31,8 +33,10 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         bool UpdateProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity);
         bool AddProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity);
         bool UpdateContractorCriteria(ContractorCriteriaViewModel entity);
+        bool UpdateIBLChecklist(IBLChecklistViewModel entity);
         IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingCategories();
         bool AddContractorCriteria(ContractorCriteriaViewModel entity);
+        bool AddIBLChecklist(IBLChecklistViewModel entity);
         CreditLimitValidationsModel ValidateAmountFacilityBySector(int sectorId);
         CreditLimitValidationsModel ValidateNPLByGroupFirstTwenty(LoanApplicationViewModel application);
         CreditLimitValidationsModel ValidateNPLByGroupFirstHundred(LoanApplicationViewModel application);
