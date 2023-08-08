@@ -1164,6 +1164,19 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
         }
+        [HttpGet]
+        [Route("ibl-checklist-detail-update/{iblChecklistDetailId}")]
+        public HttpResponseMessage getIBLChecklistDetailForEdit(int iblChecklistDetailId)
+        {
+            var response = repo.getIBLChecklistDetailForEdit(iblChecklistDetailId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
 
 
         [HttpGet]

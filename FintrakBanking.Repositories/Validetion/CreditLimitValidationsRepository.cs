@@ -2180,7 +2180,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                           options = context.TBL_IBL_CHECKLIST_OPTION.Where(x => x.IBLCHECKLISTID == a.IBLCHECKLISTID).Select(x => new IBLChecklistOptionViewModel
                                           {
                                               optionName = x.OPTIONNAME,
-                                              //optionValue = x.OPTIONVALUE
+                                              optionId = x.OPTIONID
                                           }).ToList(),
                                       }).ToList();
 
@@ -2243,7 +2243,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                          loanApplicationId = a.LOANAPPLICATIONID,
                                          customerId = a.CUSTOMERID,
                                          checklist = context.TBL_IBL_CHECKLIST.Where(c=>c.IBLCHECKLISTID == a.IBLCHECKLISTID).FirstOrDefault().CHECKLIST,
-                                         actualValue = context.TBL_IBL_CHECKLIST_OPTION.Where(o=>o.IBLCHECKLISTID == a.IBLCHECKLISTID).FirstOrDefault().OPTIONNAME
+                                         actualValue = context.TBL_IBL_CHECKLIST_OPTION.Where(o=>o.OPTIONID == a.OPTIONID).FirstOrDefault().OPTIONNAME
                                      }).ToList();
 
             return iblCheclistDetail;
@@ -2338,6 +2338,26 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                       }).ToList();
 
             return contractorCriteria;
+        }
+        public IEnumerable<IBLChecklistViewModel> getIBLChecklistDetailForEdit(int iblChecklistDetailId)
+        {
+            var iblDetail = context.TBL_IBL_CHECKLIST_DETAIL.Find(iblChecklistDetailId);
+            var checklisDetail = (from a in context.TBL_IBL_CHECKLIST
+                                      where a.IBLCHECKLISTID == iblDetail.IBLCHECKLISTID
+                                      select new IBLChecklistViewModel
+                                      {
+                                          iblChecklistDetailId = iblChecklistDetailId,
+                                          iblChecklistId = a.IBLCHECKLISTID,
+                                          checklist = a.CHECKLIST,
+                                          
+                                          options = context.TBL_IBL_CHECKLIST_OPTION.Where(x => x.IBLCHECKLISTID == a.IBLCHECKLISTID).Select(x => new IBLChecklistOptionViewModel
+                                          {
+                                              optionName = x.OPTIONNAME,
+                                              optionId = x.OPTIONID
+                                          }).ToList(),
+                                      }).ToList();
+
+            return checklisDetail;
         }
 
         public IEnumerable<ProjectRiskRatingCriteriaViewModel> getAllProjectRiskRatingCriteria()

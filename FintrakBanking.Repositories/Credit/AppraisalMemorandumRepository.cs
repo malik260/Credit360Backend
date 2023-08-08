@@ -4977,6 +4977,7 @@ namespace FintrakBanking.Repositories.Credit
                     //updateRecord.ACTUALVALUE = submission.value;
                     updateRecord.IBLCHECKLISTID = submission.iblChecklistId;
                     updateRecord.DATETIMEUPDATED = DateTime.Now;
+                    updateRecord.OPTIONID = submission.optionId;
                     updateRecord.LASTUPDATEDBY = iblChecklistDetail.createdBy;
                 }
                 if (context.SaveChanges() > 0) return true;
@@ -5000,7 +5001,8 @@ namespace FintrakBanking.Repositories.Credit
                            // ACTUALVALUE = submission.value,
                             CREATEDBY = iblChecklistDetail.createdBy,
                             DATETIMECREATED = DateTime.Now,
-                            DATETIMEUPDATED = null
+                            DATETIMEUPDATED = null,
+                            OPTIONID = submission.optionId
                         });
 
                     }

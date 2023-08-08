@@ -1172,6 +1172,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int iblChecklistId { get; set; }
         public decimal value { get; set; }
+        public int optionId { get; set; }
     }
 
     public class ProjectRistratingFormControlValue
