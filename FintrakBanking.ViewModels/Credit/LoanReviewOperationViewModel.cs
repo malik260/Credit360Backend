@@ -1203,7 +1203,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
         //public int dpd { get { return (DateTime.Now - this.maturityDate).Days; } }
-        public int dpd { get; set; }
+        public int? dpd { get; set; }
         public string dpdRange
         {
             get
@@ -1225,6 +1225,7 @@ namespace FintrakBanking.ViewModels.Credit
                 return newRange;
             }
         }
+        public bool isDigital { get; set; }
         public int? maturityBand { get; set; } //{ get { return (this.maturityDate - DateTime.Now).Days; } }
         public short principalFrequencyTypeId { get; set; }
         public short interestFrequencyTypeId { get; set; }
@@ -2091,6 +2092,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool operationCompleted { get; set; }
         public string branchCode { get; set; }
         public string productCode { get; set; }
+        public string facilityType { get; set; }
         public string phoneNo { get; set; }
         public DateTime? valueDate { get; set; }
         public DateTime? maturityRevDate { get; set; }

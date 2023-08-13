@@ -34183,10 +34183,13 @@ namespace FintrakBanking.Repositories.Credit
                 var exposureData = (from ln in context.TBL_GLOBAL_EXPOSURE
                                     where
                                     !loansId.Contains(ln.REFERENCENUMBER)
-                                    && ln.NPL != null
-                                    && ln.UNPODAYSOVERDUE >= 30
-                                    && (ln.TOTALUNSETTLEDAMOUNT > 0 && ln.TOTALUNSETTLEDAMOUNT <= 50000000)
-                                    && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
+                                    && 
+                                    ((ln.UNPODAYSOVERDUE > 30
+                                    && (ln.TOTALUNSETTLEDAMOUNT > 0 && ln.TOTALUNSETTLEDAMOUNT <= 50000000))
+                                    ||
+                                    (ln.ADJFACILITYTYPE.Contains("OVERDRAFT")
+                                    && (ln.TOTALEXPOSURE > 0 && ln.TOTALEXPOSURE <= 50000000)
+                                    && DbFunctions.DiffDays(ln.MATURITYDATE, ln.DATE) > 30))
 
                                     orderby ln.ID descending
                                     select new GlobalExposureApplicationViewModel
@@ -34194,6 +34197,7 @@ namespace FintrakBanking.Repositories.Credit
                                         loanId = ln.ID,
                                         customerCode = ln.CUSTOMERID,
                                         productCode = ln.PRODUCTID,
+                                        facilityType = ln.ADJFACILITYTYPE,
                                         applicationReferenceNumber = ln.REFERENCENUMBER,
                                         loanReferenceNumber = ln.REFERENCENUMBER,
                                         customerName = ln.CUSTOMERNAME,
@@ -34203,8 +34207,10 @@ namespace FintrakBanking.Repositories.Credit
                                         expiryBand = ln.EXPIRINGBAND,
                                         divisionName = ln.DIVISIONNAME,
                                         totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                        totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
-                                        dpdExposure = ln.UNPODAYSOVERDUE,
+                                        //totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                        totalUnsettledAmount = ln.ADJFACILITYTYPE == "OVERDRAFT" ? ln.TOTALEXPOSURE : ln.TOTALUNSETTLEDAMOUNT,
+                                        //dpdExposure = ln.UNPODAYSOVERDUE,
+                                        dpdExposure = ln.ADJFACILITYTYPE == "OVERDRAFT" ? (DbFunctions.DiffDays(ln.MATURITYDATE, ln.DATE)) : ln.UNPODAYSOVERDUE,
                                         loanCategory = ln.CBNCLASSIFICATION,
                                         casaAccount = ln.ACCOUNTNUMBER,
                                         branchName = ln.BRANCHNAME,
@@ -34227,11 +34233,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 var exposureDigitalData = (from ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
                                            where
-                                    !loansId.Contains(ln.REFERENCENUMBER)
-                                    && ln.NPL != null
-                                    && ln.UNPODAYSOVERDUE >= 30
-                                    && ln.TOTALUNSETTLEDAMOUNT > 0
-                                    && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
+                                           !loansId.Contains(ln.REFERENCENUMBER)
+                                           && ln.UNPODAYSOVERDUE > 30
+                                           && ln.TOTALUNSETTLEDAMOUNT > 0
 
                                            orderby ln.ID descending
                                            select new GlobalExposureApplicationViewModel
@@ -34239,6 +34243,7 @@ namespace FintrakBanking.Repositories.Credit
                                                loanId = ln.ID,
                                                customerCode = ln.CUSTOMERID,
                                                productCode = ln.PRODUCTID,
+                                               facilityType = ln.ADJFACILITYTYPE == "N/A" ? "DIGITAL" : "DIGITAL - " + ln.ADJFACILITYTYPE,
                                                applicationReferenceNumber = ln.REFERENCENUMBER,
                                                loanReferenceNumber = ln.REFERENCENUMBER,
                                                customerName = ln.CUSTOMERNAME,
@@ -34821,10 +34826,12 @@ namespace FintrakBanking.Repositories.Credit
             var exposureData = (from ln in context.TBL_GLOBAL_EXPOSURE
                                 where
                                 //!loansId.Contains(ln.REFERENCENUMBER)
-                                ln.NPL != null
-                                && ln.UNPODAYSOVERDUE >= 30
-                                && (ln.TOTALUNSETTLEDAMOUNT > 0 && ln.TOTALUNSETTLEDAMOUNT <= 50000000)
-                                && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
+                                ((ln.UNPODAYSOVERDUE > 30
+                                && (ln.TOTALUNSETTLEDAMOUNT > 0 && ln.TOTALUNSETTLEDAMOUNT <= 50000000))
+                                ||
+                                (ln.ADJFACILITYTYPE.Contains("OVERDRAFT")
+                                && (ln.TOTALEXPOSURE > 0 && ln.TOTALEXPOSURE <= 50000000)
+                                && DbFunctions.DiffDays(ln.MATURITYDATE, ln.DATE) > 30))
 
                                 orderby ln.ID descending
                                 select new GlobalExposureApplicationViewModel
@@ -34832,6 +34839,7 @@ namespace FintrakBanking.Repositories.Credit
                                     loanId = ln.ID,
                                     customerCode = ln.CUSTOMERID,
                                     productCode = ln.PRODUCTID,
+                                    facilityType = ln.ADJFACILITYTYPE,
                                     applicationReferenceNumber = ln.REFERENCENUMBER,
                                     loanReferenceNumber = ln.REFERENCENUMBER,
                                     customerName = ln.CUSTOMERNAME,
@@ -34841,8 +34849,10 @@ namespace FintrakBanking.Repositories.Credit
                                     expiryBand = ln.EXPIRINGBAND,
                                     divisionName = ln.DIVISIONNAME,
                                     totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                    totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
-                                    dpdExposure = ln.UNPODAYSOVERDUE,
+                                    //totalUnsettledAmount = ln.TOTALUNSETTLEDAMOUNT,
+                                    totalUnsettledAmount = ln.ADJFACILITYTYPE == "OVERDRAFT" ? ln.TOTALEXPOSURE : ln.TOTALUNSETTLEDAMOUNT,
+                                    //dpdExposure = ln.UNPODAYSOVERDUE,
+                                    dpdExposure = ln.ADJFACILITYTYPE == "OVERDRAFT" ? (DbFunctions.DiffDays(ln.MATURITYDATE, ln.DATE)) : ln.UNPODAYSOVERDUE,
                                     loanCategory = ln.CBNCLASSIFICATION,
                                     casaAccount = ln.ACCOUNTNUMBER,
                                     branchName = ln.BRANCHNAME,
@@ -34878,11 +34888,9 @@ namespace FintrakBanking.Repositories.Credit
        
             var exposureDigitalData = (from ln in context.TBL_GLOBAL_EXPOSURE_DIGITAL_LOAN
                                        where
-                                //!loansId.Contains(ln.REFERENCENUMBER)
-                                ln.NPL != null
-                                && ln.UNPODAYSOVERDUE >= 30
-                                && ln.TOTALUNSETTLEDAMOUNT > 0
-                                && ln.CBNCLASSIFICATION.Trim() != "PERFORMING"
+                                       //!loansId.Contains(ln.REFERENCENUMBER)
+                                       ln.UNPODAYSOVERDUE > 30
+                                       && ln.TOTALUNSETTLEDAMOUNT > 0
 
                                        orderby ln.ID descending
                                        select new GlobalExposureApplicationViewModel
@@ -34890,6 +34898,7 @@ namespace FintrakBanking.Repositories.Credit
                                            loanId = ln.ID,
                                            customerCode = ln.CUSTOMERID,
                                            productCode = ln.PRODUCTID,
+                                           facilityType = ln.ADJFACILITYTYPE == "N/A" ? "DIGITAL" : "DIGITAL - " + ln.ADJFACILITYTYPE,
                                            applicationReferenceNumber = ln.REFERENCENUMBER,
                                            loanReferenceNumber = ln.REFERENCENUMBER,
                                            customerName = ln.CUSTOMERNAME,
@@ -35761,7 +35770,7 @@ namespace FintrakBanking.Repositories.Credit
                                     divisionName = ln.DIVISIONNAME,
                                     totalAmountRecovery = (decimal?)lr.TOTALAMOUNTRECOVERY ?? 0,
                                     totalUnsettledAmount = lr.TOTALAMOUNTRECOVERY,
-                                    dpdExposure = ln.UNPODAYSOVERDUE,
+                                    dpdExposure = ln.ADJFACILITYTYPE == "OVERDRAFT" ? (DbFunctions.DiffDays(ln.MATURITYDATE, ln.DATE)) : ln.UNPODAYSOVERDUE,
                                     loanCategory = ln.CBNCLASSIFICATION,
                                     casaAccount = ln.ACCOUNTNUMBER,
                                     branchName = ln.BRANCHNAME,
@@ -37528,7 +37537,7 @@ namespace FintrakBanking.Repositories.Credit
                                     relationshipManagerName = ln.ACCOUNTOFFICERNAME,
                                     relationshipOfficerName = ln.ACCOUNTOFFICERNAME,
                                     totalAmountRecovery = (decimal)ln.TOTALEXPOSURE,
-                                    dpdExposure = ln.UNPODAYSOVERDUE,
+                                    dpdExposure = ln.ADJFACILITYTYPE == "OVERDRAFT" ? (DbFunctions.DiffDays(ln.MATURITYDATE, ln.DATE)) : ln.UNPODAYSOVERDUE,
                                     loanCategory = ln.CBNCLASSIFICATION,
                                     casaAccount = ln.ACCOUNTNUMBER,
                                     branchName = ln.BRANCHNAME,
