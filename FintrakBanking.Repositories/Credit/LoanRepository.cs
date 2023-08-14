@@ -19661,6 +19661,7 @@ namespace FintrakBanking.Repositories.Credit
                     assignOperations.customerId = customerRequest.customerCode == null ? customerRequest.customerId : customerRequest.customerCode;
                     assignOperations.productClassId = customerRequest.productClassId;
                     assignOperations.applicationReferenceNumber = customerRequest.applicationReferenceNumber;
+                    assignOperations.isDigital = customerRequest.isDigital;
                     var loanData = addBulkLoanAssignmentToAgent(assignOperations);
                     bulkLoanTable.Add(loanData);
                 }
@@ -21470,7 +21471,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTID = entity.productId,
                 ASSIGNMENTTYPE = entity.assignmentType,
                 APPLICATIONREFERENCENUMBER = entity.applicationReferenceNumber,
-                PRODUCTCLASSID = entity.productClassId
+                PRODUCTCLASSID = entity.productClassId,
+                ISDIGITAL = entity.isDigital
             };
             return data;
         }
@@ -22072,6 +22074,8 @@ namespace FintrakBanking.Repositories.Credit
                     REFERENCEID = referenceNumber,
                     PRODUCTCLASSID = models.productClassId,
                     PRODUCTID = (int)models.productId,
+                    ISDIGITAL = updateRecord.ISDIGITAL,
+
                 };
                 context.TBL_LOAN_RECOVERY_REPORT_COLLECTION.Add(record);
                 var status = context.SaveChanges() != 0;

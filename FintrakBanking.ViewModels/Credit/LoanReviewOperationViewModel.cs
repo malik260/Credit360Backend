@@ -1808,6 +1808,7 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
         public int? dpdExposure { get; set; }
+        public bool isDigital { get; set; }
         public int mgtOperationId { get; set; }
         public decimal? prepaymentAmount { get; set; }
         public decimal? TotalExposure { get; set; }

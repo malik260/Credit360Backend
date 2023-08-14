@@ -35,5 +35,6 @@ namespace FintrakBanking.Entities.Models
         public int? PRODUCTCLASSID { get; set; }
         public string ASSIGNMENTTYPE { get; set; }
         public bool ISMAILSENT { get; set; }
+        public bool ISDIGITAL { get; set; } 
     }
 }
