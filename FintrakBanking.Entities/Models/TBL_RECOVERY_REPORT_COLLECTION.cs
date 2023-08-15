@@ -30,5 +30,6 @@ namespace FintrakBanking.Entities.Models
         public string LOANREFERENCE { get; set; }
         public int? PRODUCTID { get; set; }
         public int? PRODUCTCLASSID { get; set; }
+        public bool ISDIGITAL { get; set; }
     }
 }
