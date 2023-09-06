@@ -3243,7 +3243,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (isLMS)
             {
+                var currency = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Select(x=>x.CURRENCYID).FirstOrDefault();
+                var exchngeRat = context.TBL_CURRENCY_EXCHANGERATE.Where(x => x.CURRENCYID == currency).FirstOrDefault()?.EXCHANGERATE;
                 obligorGFSProposedAmount = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT) > 0 ? this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT) : (this.lmsrApplication.APPROVEDAMOUNT ?? 0);
+                if (exchngeRat != null) obligorGFSProposedAmount = obligorGFSProposedAmount * (decimal)exchngeRat;
             }
             else
             {
