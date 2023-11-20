@@ -781,4 +781,29 @@ namespace FintrakBanking.ViewModels.Customer
         public string Message { get; set; }
 
     }
+
+    public class LoanStatusResponse
+    {
+      
+        public string statusCode { get; set; }
+        public string requestId { get; set; }
+        public string workflowStage { get; set; }
+        public string reasonForRejection { get; set; }
+        public string actionByName { get; set; }
+        public string comment { get; set; }
+        public string message { get; set; }
+        public string responseCode { get; set; }
+        public string responseMessage { get; set; }
+        public string responseTime { get; set; }
+    }
+
+    public class CFLTokenModel
+    {
+        public string username { get; set; }
+        public string password { get; set; }
+        public string token { get; set; }
+        public string message { get; set; }
+        public string errors { get; set; }
+        public bool hasError { get; set; }
+    }
 }

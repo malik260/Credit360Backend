@@ -388,7 +388,13 @@ namespace FintrakBanking.Repositories.Credit
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                     var operationId = 0;
                     var restrictBooking = false;
-                    if (request.PRODUCTID == 156 && (request.AMOUNT_REQUESTED <= 10000000)) restrictBooking = true;
+                    var amendWorkflow = context.TBL_WORKFLOW_AMEND.Where(w => w.PRODUCTID == request.PRODUCTID).FirstOrDefault();
+                    if (amendWorkflow != null)
+                    {
+                        if (request.PRODUCTID == 156 && (request.AMOUNT_REQUESTED <= amendWorkflow.AMOUNT)) restrictBooking = true;
+                    }
+                   
+                   
                     if(restrictBooking == false)
                     {
                         

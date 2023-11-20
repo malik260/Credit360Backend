@@ -677,6 +677,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_IBL_CHECKLIST_OPTION> TBL_IBL_CHECKLIST_OPTION { get; set; }
         public virtual DbSet<TBL_IBL_CHECKLIST> TBL_IBL_CHECKLIST { get; set; }
         public virtual DbSet<TBL_IBL_CHECKLIST_DETAIL> TBL_IBL_CHECKLIST_DETAIL { get; set; }
+        public virtual DbSet<TBL_WORKFLOW_AMEND> TBL_WORKFLOW_AMEND { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

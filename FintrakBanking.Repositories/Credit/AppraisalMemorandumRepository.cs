@@ -816,12 +816,13 @@ namespace FintrakBanking.Repositories.Credit
 
             }
         }
-        public void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode)
+        public async void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode)
         {
             //string cflReport = builder.ToString();
             string WorkflowStageName = "";
             var staff = context.TBL_STAFF.Where(s => s.STAFFID == staffId).FirstOrDefault();
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
+            var applDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID).FirstOrDefault();
 
             if (WorkflowStage == "RM")
             {
@@ -848,9 +849,28 @@ namespace FintrakBanking.Repositories.Credit
             //offerLetters.Attachment.FileType = "pdf";
             //offerLetters.ReasonForRejection = ReasonForRejection;
             offerLetters.ActionByName = staffFullName;
+            
+
+            LoanStatusResponse statusResponse  = new LoanStatusResponse();
+            statusResponse.statusCode = statusCode; 
+            statusResponse.comment = comment;
+            statusResponse.requestId = loanApplication.APIREQUESTID;
+            statusResponse.workflowStage = WorkflowStageName;
+            
+
+
+            var amendWorkflow = context.TBL_WORKFLOW_AMEND.Where(w => w.PRODUCTID == applDetail.APPROVEDPRODUCTID).FirstOrDefault();
+            if (amendWorkflow != null)
+            {
+                if (loanApplication.APIREQUESTID != null && (applDetail.PROPOSEDAMOUNT <= amendWorkflow.AMOUNT))
+                {
+                    await transaction.UpdateLoanStatus(statusResponse, loanApplication.APPLICATIONREFERENCENUMBER);
+                }
+
+            }
 
             if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
-               transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+               await transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
             }
 
         }

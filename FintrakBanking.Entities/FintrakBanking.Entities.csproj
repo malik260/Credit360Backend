@@ -737,6 +737,7 @@
     <Compile Include="Models\TBL_VALUATION_REPORT.cs" />
     <Compile Include="Models\TBL_VALUATION_REQUEST_TYPE.cs" />
     <Compile Include="Models\TBL_WFCONTEXT_VALUE_TYPE.cs" />
+    <Compile Include="Models\TBL_WORKFLOW_AMEND.cs" />
     <Compile Include="Models\TBL_WORKFLOW_CONTEXT.cs" />
     <Compile Include="Models\TBL_WORKFLOW_DATA_ITEM_DEFINITION.cs" />
     <Compile Include="Models\TBL_WORKFLOW_ITEM_EXPRESSION.cs" />

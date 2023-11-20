@@ -270,6 +270,7 @@ public class LienProcessViewModel //: GeneralEntity
     {
         public ResponseMessageViewModel APIResponse { get; set; }
         public OfferLetterResponse APIOffetResponse { get; set; }
+        public LoanStatusResponse LoanStatResponse { get; set; }
         public bool APIStatus { get; set; }
         public HttpResponseMessage Message { get; set; }
         public bool TransactionIsSuccessfull { get; set; }

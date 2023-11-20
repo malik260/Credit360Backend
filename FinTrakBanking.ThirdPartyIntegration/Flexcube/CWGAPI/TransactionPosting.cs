@@ -18,6 +18,8 @@
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Runtime.InteropServices;
+    using System.Security.Cryptography;
     using System.Text;
     using System.Text.Json;
     using System.Threading.Tasks;
@@ -1425,6 +1427,191 @@
                         responseMsg = new ResponseMessage
                         {
                             APIOffetResponse = res,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+
+                    responseJson = await response.Content.ReadAsStringAsync();
+                    responseMsg.responseMessage = responseJson;
+                    //handler.Dispose();
+                    //client.Dispose();
+
+                    return responseMsg;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+                    //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = API_URL + apiUrl,
+                        LOGTYPEID = 14,
+                        REFERENCENUMBER = refNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = inputJson,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseJson,
+                    };
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    logContext.SaveChanges();
+                }
+
+            }
+
+            private async Task<string> getAPIToken(string username, string password)
+            {
+                IRestResponse response = null;
+                DateTime requestDatetime = DateTime.Now, responseDateTime = new DateTime();
+                string responseMessage = "";
+                RestRequest req = new RestRequest(Method.POST);
+                CFLTokenModel token = new CFLTokenModel();
+                CFLTokenModel reqbody = null;
+                username = "fintracktest";
+                password = "Fintrack123456!";
+
+                try
+                {
+                    getAPIURLSettings("CFLToken");
+                    var baseURL = API_URL;
+                    string fullURL = baseURL + "account/getaccesstoken";
+                    RestClient client = new RestClient(fullURL);
+                    reqbody = new CFLTokenModel()
+                    {
+                        username = username,
+                        password = password,
+                    };
+                    requestDatetime = DateTime.Now;
+
+                    var jsonbody = new JavaScriptSerializer().Serialize(reqbody);
+                    req.AddParameter("application/json", jsonbody, ParameterType.RequestBody);
+                    req.AddHeader("Content-Type", "application/json");
+                    req.AddHeader("Accept", "application/json");
+
+                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
+                    response = await client.ExecuteAsync<CFLTokenModel>(req);
+                    var responbody = JsonConvert.DeserializeObject<CFLTokenModel>(response.Content);
+
+                    responseDateTime = DateTime.Now;
+
+                    if (response.IsSuccessful)
+                    {
+                        var rep = responbody;
+                        rep.hasError = responbody.hasError;
+                        rep.token = responbody.token;
+                    }
+                    return token.token;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+                    //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+
+                finally
+                {
+                    //handler.Dispose();
+                    //client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = API_URL + "account/getaccesstoken",
+                        LOGTYPEID = 14,
+                       
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = reqbody.ToString(),
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = token.token,
+                    };
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    logContext.SaveChanges();
+                }
+
+            }
+            
+
+            public async Task<ResponseMessage> UpdateLoanStatus(LoanStatusResponse model, string refNumber)
+            {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+                
+                HttpClient client = new HttpClient(handler);
+                var inputJson = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                LoanStatusResponse responseApi = new LoanStatusResponse();
+                ResponseMessage responseMsg = null;
+                string responseJson = "";
+                var auth =  await getAPIToken("","");
+                getAPIURLSettings("CASHFLOW");
+                string apiUrl = "CallBack/notify-status-change";
+
+                try
+                {
+                    var token = new AuthenticationHeaderValue("Bearer", auth);
+                    handler.UseDefaultCredentials = true;
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Authorization = token;
+
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+
+                    response = client.PostAsync(apiUrl, new StringContent(
+                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                    responseDateTime = DateTime.Now;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+
+                        responseApi = await response.Content.ReadAsAsync<LoanStatusResponse>();
+
+                        var res = new LoanStatusResponse
+                        {
+                            statusCode = responseApi.responseCode,
+                            responseMessage = responseApi.responseMessage,
+                            responseTime = responseApi.responseTime,
+
+                        };
+                        responseMsg = new ResponseMessage
+                        {
+                            LoanStatResponse = res,
                             APIStatus = response.IsSuccessStatusCode,
                             Message = response
                         };
