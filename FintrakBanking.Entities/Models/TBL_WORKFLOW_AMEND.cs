@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FintrakBanking.Entities.Models
 {
+    [Table("TBL_WORKFLOW_AMEND")]
     public class TBL_WORKFLOW_AMEND
     {
          [Key]

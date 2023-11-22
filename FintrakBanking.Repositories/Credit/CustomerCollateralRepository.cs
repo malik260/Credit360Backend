@@ -12207,7 +12207,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal facilitiesValue = 0m;
             decimal availableCollateralValues = 0m;
             var data = new TBL_LOAN_APPLICATION_COLLATERL();
-
+            var sdApplicable = false;
             //var proposedCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Any(o => o.COLLATERALCUSTOMERID == model.collateralId
             //                                && o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && o.DELETED == false);
 
@@ -12249,6 +12249,28 @@ namespace FintrakBanking.Repositories.Credit
                 context.TBL_LOAN_APPLICATION_COLLATERL.Add(data);
 
                 if (context.SaveChanges() > 0)
+                {
+                    sdApplicable = ValidateStampDutyApplicable(facility);
+                }
+                if (sdApplicable)
+                {
+                    
+                        var sdoCode = GenerateSDCode(facility.CUSTOMERID);
+                        sdoCode = "SDO" + sdoCode;
+
+                    var facilityStampDuty = new TBL_FACILITY_STAMP_DUTY
+                    {
+                        LOANAPPLICATIONDETAILID = facility.LOANAPPLICATIONDETAILID,
+                        COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
+                        CURRENTSTATUS = 2,
+                        OSDC = sdoCode,
+                        DATETIMECREATED = DateTime.Now
+                    };
+                    context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
+                    context.SaveChanges();
+                }
+               
+
                     return true;
             }
             else
@@ -12321,6 +12343,88 @@ namespace FintrakBanking.Repositories.Credit
                     throw new Exception("It's fully in use");
             }
             return false;
+        }
+        private string GenerateSDCode(int customerId)
+        {
+            string code = "";
+            int data = 0;
+            if (customerId > 2)
+            {
+                var grp = this.context.TBL_CUSTOMER_GROUP.Where(x => x.CUSTOMERGROUPID == customerId);
+                if (grp.Any())
+                {
+                    code = grp.First().GROUPCODE;
+                }
+                data = ((this.context.TBL_LOAN_APPLICATION.Count(x => x.CUSTOMERID == customerId)) + 1);
+            }
+            else
+            {
+                var cust = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId);
+                if (cust.Any())
+                {
+                    code = cust.First().CUSTOMERCODE;
+                }
+                data = ((context.TBL_LOAN_APPLICATION.Count(x => x.CUSTOMERID == customerId)) + 1);
+            }
+
+            //return $"{code}{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+            return $"{code}{CommonHelpers.GenerateUniqueIntergers(4).ToString()}";
+
+        }
+
+        private bool ValidateStampDutyApplicable(TBL_LOAN_APPLICATION_DETAIL loan)
+        {
+            var collateralDutiable = ValidateCollateralCondition(loan);
+            var tenorDutiable = ValidateTenorCondition(loan);
+            if (collateralDutiable && tenorDutiable) return true;
+            return false;
+
+        }
+
+        private bool ValidateCollateralCondition(TBL_LOAN_APPLICATION_DETAIL loan)
+        {
+            var collateralSubtypeIds = new List<int>();
+            var collateralCondition = new List<TBL_STAMP_DUTY_CONDITION>();
+            var proposedCollateralIds = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONDETAILID == loan.LOANAPPLICATIONDETAILID).Select(c => c.COLLATERALCUSTOMERID).ToList();
+            if (proposedCollateralIds.Any())
+            {
+                foreach (var collateralId in proposedCollateralIds)
+                {
+                    var subtypeId = context.TBL_COLLATERAL_CUSTOMER.Where(col => col.COLLATERALCUSTOMERID == collateralId && col.DELETED == false).FirstOrDefault().COLLATERALSUBTYPEID;
+                    collateralSubtypeIds.Add(subtypeId);
+                }
+                if (collateralSubtypeIds.Count() > 0)
+                {
+                    foreach(var subId in collateralSubtypeIds)
+                    {
+                        var condition = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.COLLATERALSUBTYPEID ==  subId).FirstOrDefault();
+                        collateralCondition.Add(condition);
+                    }
+                }
+                if (collateralCondition.Count > 0) return true;
+                
+            }
+
+            return false;
+        }
+
+        private bool ValidateTenorCondition(TBL_LOAN_APPLICATION_DETAIL loan)
+        {
+            int tenor = ConvertTenorToDays(loan.PROPOSEDTENOR, loan.TENORFREQUENCYTYPEID);
+            if (tenor >= 360) return true;
+            return false;
+        }
+
+        private int ConvertTenorToDays(int proposedTenor, int? tenorModeId = 1)
+        {
+            int tenor = 0;
+            switch (tenorModeId) // UPDATED
+            {
+                case (int)TenorMode.Daily: tenor = proposedTenor; break;
+                case (int)TenorMode.Monthly: tenor = proposedTenor * 30; break;
+                case (int)TenorMode.Yearly: tenor = proposedTenor * 365; break;
+            }
+            return tenor;
         }
 
         public bool ProposeCollateralForUsageLMS(CollateralCoverageViewModel model)
