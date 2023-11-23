@@ -9052,7 +9052,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
         {
+            
             var entity = this.context.TBL_LOAN_APPLICATION.Find(id);
+            var loanApplicationdetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == id).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
+            var facilityStampDutyIds = new List<int>();
             if (entity != null)
             {
                 entity.ISPROJECTRELATED = model.isProjectRelated;
@@ -9066,6 +9069,36 @@ namespace FintrakBanking.Repositories.Credit
                 entity.LASTUPDATEDBY = user.createdBy;
                 entity.DATETIMEUPDATED = DateTime.Now;
             }
+
+            if (loanApplicationdetailIds.Count > 0)
+            {
+                foreach (var detailId in loanApplicationdetailIds)
+                {
+                    var stampDutyId = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.LOANAPPLICATIONDETAILID == detailId).FirstOrDefault().FACILITYSTAMPDUTYID;
+                    facilityStampDutyIds.Add(stampDutyId);
+                }
+                if(facilityStampDutyIds.Count > 0)
+                {
+                    foreach (var dutyId in facilityStampDutyIds)
+                    {
+                        var facilityDuty = context.TBL_FACILITY_STAMP_DUTY.Find(dutyId);
+                        if (facilityDuty != null)
+                        {
+                            if ( model.isOnLending == true)
+                            {                         
+                              facilityDuty.DELETED = true;
+                            }
+                            else
+                            {
+                                facilityDuty.DELETED = false;
+                            }
+                            
+                        }
+                        
+                    }
+                }
+            }
+            
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.staffId).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.auditTrail.AddAuditTrail(new TBL_AUDIT

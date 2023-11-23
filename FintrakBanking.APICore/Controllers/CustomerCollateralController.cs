@@ -3097,6 +3097,39 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
         #endregion collateral-swap
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-facility-stamp-duty/{loanApplicationId}")]
+        public HttpResponseMessage GetFacilityStampDuty(int loanApplicationId)
+        {
+            var response = repo.GetFacilityStampDuty(loanApplicationId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("save-facility-stamp-sharing")]
+        public HttpResponseMessage AddFacilityStampDutySharing([FromBody] FacilityStampDutyViewModel entity)
+        {
+            try
+            {              
+                var data = repo.AddFacilityStampDutySharing(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
     }
 
 }

@@ -12255,16 +12255,20 @@ namespace FintrakBanking.Repositories.Credit
                 if (sdApplicable)
                 {
                     
-                        var sdoCode = GenerateSDCode(facility.CUSTOMERID);
-                        sdoCode = "SDO" + sdoCode;
+                        var sdoCode = GenerateSDCode();
+                        sdoCode = "SDO"  + sdoCode;
 
                     var facilityStampDuty = new TBL_FACILITY_STAMP_DUTY
                     {
                         LOANAPPLICATIONDETAILID = facility.LOANAPPLICATIONDETAILID,
                         COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
-                        CURRENTSTATUS = 2,
+                        CURRENTSTATUS = 1,
                         OSDC = sdoCode,
-                        DATETIMECREATED = DateTime.Now
+                        DATETIMECREATED = DateTime.Now,
+                        DATETIMEUPDATED = DateTime.Now,
+                        ISSHARED = false,
+                        CUSTOMERPERCENTAGE = 100,
+                        BANKPERCENTAGE = 0 
                     };
                     context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
                     context.SaveChanges();
@@ -12331,7 +12335,31 @@ namespace FintrakBanking.Repositories.Credit
                     try
                     {
                         if (context.SaveChanges() > 0)
-                            return true;
+                        {
+                            sdApplicable = ValidateStampDutyApplicable(facility);
+                        }
+                        if (sdApplicable)
+                        {
+
+                            var sdoCode = GenerateSDCode();
+                            sdoCode = "SDO" + sdoCode;
+
+                            var facilityStampDuty = new TBL_FACILITY_STAMP_DUTY
+                            {
+                                LOANAPPLICATIONDETAILID = facility.LOANAPPLICATIONDETAILID,
+                                COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
+                                CURRENTSTATUS = 1,
+                                OSDC = sdoCode,
+                                DATETIMECREATED = DateTime.Now,
+                                DATETIMEUPDATED = DateTime.Now,
+                                ISSHARED = false,
+                                CUSTOMERPERCENTAGE = 100,
+                                BANKPERCENTAGE = 0
+                            };
+                            context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
+                            context.SaveChanges();
+                        }
+                        return true;
                     }
                     catch (Exception ex)
                     {
@@ -12344,36 +12372,63 @@ namespace FintrakBanking.Repositories.Credit
             }
             return false;
         }
-        private string GenerateSDCode(int customerId)
+        private string GenerateSDCode()
         {
-            string code = "";
-            int data = 0;
-            if (customerId > 2)
+            //string code = "";
+            //int data = 0;
+            //if (customerId > 2)
+            //{
+            //    var grp = this.context.TBL_CUSTOMER_GROUP.Where(x => x.CUSTOMERGROUPID == customerId);
+            //    if (grp.Any())
+            //    {
+            //        code = grp.First().GROUPCODE;
+            //    }
+            //    data = ((this.context.TBL_LOAN_APPLICATION.Count(x => x.CUSTOMERID == customerId)) + 1);
+            //}
+            //else
+            //{
+            //    var cust = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId);
+            //    if (cust.Any())
+            //    {
+            //        code = cust.First().CUSTOMERCODE;
+            //    }
+            //    data = ((context.TBL_LOAN_APPLICATION.Count(x => x.CUSTOMERID == customerId)) + 1);
+            //}
+
+            ////return $"{code}{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+            //return $"{code}{CommonHelpers.GenerateUniqueIntergers(4).ToString()}";
+
+            DateTime lastGeneratedDate = DateTime.MinValue;
+            int lastGeneratedNumber = 0;
+
+       
+            DateTime currentDate = DateTime.Now;
+
+            // Check if it's a new year
+            if (currentDate.Year > lastGeneratedDate.Year)
             {
-                var grp = this.context.TBL_CUSTOMER_GROUP.Where(x => x.CUSTOMERGROUPID == customerId);
-                if (grp.Any())
-                {
-                    code = grp.First().GROUPCODE;
-                }
-                data = ((this.context.TBL_LOAN_APPLICATION.Count(x => x.CUSTOMERID == customerId)) + 1);
-            }
-            else
-            {
-                var cust = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId);
-                if (cust.Any())
-                {
-                    code = cust.First().CUSTOMERCODE;
-                }
-                data = ((context.TBL_LOAN_APPLICATION.Count(x => x.CUSTOMERID == customerId)) + 1);
+                // Reset the number to 1 for the new year
+                lastGeneratedNumber = 0;
             }
 
-            //return $"{code}{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
-            return $"{code}{CommonHelpers.GenerateUniqueIntergers(4).ToString()}";
+            // Increment the number
+            lastGeneratedNumber++;
+
+            // Format the serial number
+            string serialNumber = $"{currentDate.Year}/{currentDate.Month:D2}/{currentDate.Day:D2}/{lastGeneratedNumber:D4}";
+
+            // Update the last generated date
+            lastGeneratedDate = currentDate;
+
+            return serialNumber;
+
 
         }
 
         private bool ValidateStampDutyApplicable(TBL_LOAN_APPLICATION_DETAIL loan)
         {
+            var loanApplication = context.TBL_LOAN_APPLICATION.Find(loan.LOANAPPLICATIONID);
+            if (loanApplication.ISONLENDING) return false;
             var collateralDutiable = ValidateCollateralCondition(loan);
             var tenorDutiable = ValidateTenorCondition(loan);
             if (collateralDutiable && tenorDutiable) return true;
@@ -13803,6 +13858,90 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
         #endregion collateralswap
+
+
+        public IEnumerable <FacilityStampDutyViewModel> GetFacilityStampDuty(int loanApplicationId)
+        {
+
+            var result = new List<FacilityStampDutyViewModel>();
+            var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
+
+            foreach (var loanApplicationDetailId in loanApplicationDetailIds)
+            {
+               var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId && x.DELETED == false)
+                    .Select(x => new FacilityStampDutyViewModel
+                    {
+                        facilityStampDutyId = x.FACILITYSTAMPDUTYID,
+                        loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                        collateralCustomerId = x.COLLATERALCUSTOMERID,
+                        osdc = x.OSDC,
+                        dateTimeCreated = x.DATETIMEUPDATED,
+                        isShared = x.ISSHARED,
+                        customerPercentage = x.CUSTOMERPERCENTAGE,
+                        bankPercentage = x.BANKPERCENTAGE
+                    }).ToList();
+                //if (stampDuty != null)
+                //{
+
+                //    facilityStampDutyId = stampDuty.FACILITYSTAMPDUTYID;
+                //    loanApplicationDetailId = stampDuty.LOANAPPLICATIONDETAILID;
+                //    collateralCustomerId = stampDuty.COLLATERALCUSTOMERID;
+                //    osdc = stampDuty.OSDC;
+                //    dateTimeCreated = stampDuty.DATETIMEUPDATED;
+                //    isShared = stampDuty.ISSHARED;
+                //    customerPercentage = stampDuty.CUSTOMERPERCENTAGE;
+                //    bankPercentage = stampDuty.BANKPERCENTAGE;
+
+
+                //}
+                result = stampDuty;
+                return result;
+            }
+            return result;
+            
+        }
+
+        public bool AddFacilityStampDutySharing(FacilityStampDutyViewModel model)
+        {
+            try
+            {
+                var entity = context.TBL_FACILITY_STAMP_DUTY.Find(model.facilityStampDutyId);
+
+                if (entity != null)
+                {
+                    entity.ISSHARED = true;
+                    entity.CUSTOMERPERCENTAGE = model.customerPercentage;
+                    entity.BANKPERCENTAGE = model.bankPercentage;
+                    entity.DATETIMEUPDATED = DateTime.Now;
+                    return context.SaveChanges() != 0;
+                };
+                context.SaveChanges();
+
+                //var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+                //// Audit Section ---------------------------
+                //this.audit.AddAuditTrail(new TBL_AUDIT
+                //{
+                //    AUDITTYPEID = (short)AuditTypeEnum.CashbackSectionAdded,
+                //    STAFFID = model.createdBy,
+                //    BRANCHID = (short)model.userBranchId,
+                //    DETAIL = $"TBL_FACILITY_STAMP_DUTY '{entity.ToString()}' created by {auditStaff}",
+                //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                //    URL = model.applicationUrl,
+                //    APPLICATIONDATE = general.GetApplicationDate(),
+                //    SYSTEMDATETIME = DateTime.Now,
+                //    DEVICENAME = CommonHelpers.GetDeviceName(),
+                //    OSNAME = CommonHelpers.FriendlyName(),
+                //});
+                //// Audit Section end ------------------------
+
+                return context.SaveChanges() != 0;
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+            
+        }
 
     }
 

@@ -15,5 +15,10 @@ namespace FintrakBanking.Entities.Models
         public int CURRENTSTATUS { get; set; }
         public string OSDC { get; set; }
         public DateTime DATETIMECREATED { get; set; }
+        public DateTime DATETIMEUPDATED { get; set;}
+        public bool ISSHARED { get; set; }
+        public bool DELETED { get; set; }
+        public decimal CUSTOMERPERCENTAGE { get; set; }
+        public decimal BANKPERCENTAGE { get; set; }
     }
 }

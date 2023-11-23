@@ -1374,5 +1374,21 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManager { get; set; }
         public string relationshipManagerEmail { get; set; }
     }
-
+    
+    public class FacilityStampDutyViewModel
+    {
+        public int facilityStampDutyId { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public int collateralCustomerId { get; set; }
+        public int currentstatus { get; set; }
+        public string osdc { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public DateTime dateTimeUpdated { get; set; }
+        public bool isShared { get; set; }
+        public bool deleted { get; set; }
+        public decimal customerPercentage { get; set; }
+        public decimal bankPercentage { get; set; }
     }
+
+
+  }
