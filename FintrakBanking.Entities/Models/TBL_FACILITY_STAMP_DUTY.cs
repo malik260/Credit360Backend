@@ -20,5 +20,7 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public decimal CUSTOMERPERCENTAGE { get; set; }
         public decimal BANKPERCENTAGE { get; set; }
+        public string CSDC { get; set; }
+        public string ASDC { get; set; }
     }
 }

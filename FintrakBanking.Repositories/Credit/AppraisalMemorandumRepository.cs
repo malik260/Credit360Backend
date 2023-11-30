@@ -662,6 +662,23 @@ namespace FintrakBanking.Repositories.Credit
                             //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
 
                             generateOutPutDocument = true;
+
+                             foreach (var detail in details)
+                             {
+                                if (detail.STAMPDUTYAPPLICABLE)
+                                {
+                                    var sdaCode = GenerateSDCode();
+                                    sdaCode = "SDA" + sdaCode;
+
+                                    var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                                    if (stampDuty != null)
+                                    {
+                                        stampDuty.ASDC = sdaCode;
+                                        stampDuty.DATETIMEUPDATED = DateTime.Now;
+                                    }
+                                }
+                             }
+
                         }
                         else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                         {
@@ -798,6 +815,36 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
              
+        }
+
+        private string GenerateSDCode()
+        {
+
+            DateTime lastGeneratedDate = DateTime.MinValue;
+            int lastGeneratedNumber = 0;
+
+
+            DateTime currentDate = DateTime.Now;
+
+            // Check if it's a new year
+            if (currentDate.Year > lastGeneratedDate.Year)
+            {
+                // Reset the number to 1 for the new year
+                lastGeneratedNumber = 0;
+            }
+
+            // Increment the number
+            lastGeneratedNumber++;
+
+            // Format the serial number
+            string serialNumber = $"{currentDate.Year}/{currentDate.Month:D2}/{currentDate.Day:D2}/{lastGeneratedNumber:D4}";
+
+            // Update the last generated date
+            lastGeneratedDate = currentDate;
+
+            return serialNumber;
+
+
         }
 
         private void ResolveBusinessUnitForED(TBL_LOAN_APPLICATION appl)

@@ -3107,6 +3107,15 @@ namespace FintrakBanking.APICore.Controllers
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-facility-stamp-duty-by-id/{loanApplicationId}")]
+        public HttpResponseMessage GetFacilityStampDutyById(int loanApplicationId)
+        {
+            var response = repo.GetFacilityStampDutyById(loanApplicationId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
 
         [Route("get-all-facility-stamp-duty")]
         public HttpResponseMessage GetAllFacilityStampDuty()

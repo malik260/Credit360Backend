@@ -12377,30 +12377,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         private string GenerateSDCode()
         {
-            //string code = "";
-            //int data = 0;
-            //if (customerId > 2)
-            //{
-            //    var grp = this.context.TBL_CUSTOMER_GROUP.Where(x => x.CUSTOMERGROUPID == customerId);
-            //    if (grp.Any())
-            //    {
-            //        code = grp.First().GROUPCODE;
-            //    }
-            //    data = ((this.context.TBL_LOAN_APPLICATION.Count(x => x.CUSTOMERID == customerId)) + 1);
-            //}
-            //else
-            //{
-            //    var cust = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId);
-            //    if (cust.Any())
-            //    {
-            //        code = cust.First().CUSTOMERCODE;
-            //    }
-            //    data = ((context.TBL_LOAN_APPLICATION.Count(x => x.CUSTOMERID == customerId)) + 1);
-            //}
-
-            ////return $"{code}{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
-            //return $"{code}{CommonHelpers.GenerateUniqueIntergers(4).ToString()}";
-
+           
             DateTime lastGeneratedDate = DateTime.MinValue;
             int lastGeneratedNumber = 0;
 
@@ -13930,6 +13907,47 @@ namespace FintrakBanking.Repositories.Credit
 
             return record;
                           
+        }
+
+        public FacilityStampDutyViewModel GetFacilityStampDutyById(int loanApplicationDetailId)
+        {
+            var loanApplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetailId).FirstOrDefault().LOANAPPLICATIONID;
+            var loanApplication = context.TBL_LOAN_APPLICATION.Find(loanApplicationId);
+            var record = (from x in context.TBL_FACILITY_STAMP_DUTY
+                          join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                          join cl in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals cl.COLLATERALCUSTOMERID
+                          where x.DELETED == false && x.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+
+                          select new FacilityStampDutyViewModel
+                          {
+                              facilityStampDutyId = x.FACILITYSTAMPDUTYID,
+                              loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                              collateralCustomerId = x.COLLATERALCUSTOMERID,
+                              osdc = x.OSDC,
+                              applicationReferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER,
+                              dateTimeCreated = x.DATETIMECREATED,
+                              isShared = x.ISSHARED,
+                              currentstatus = x.CURRENTSTATUS,
+                              customerPercentage = x.CUSTOMERPERCENTAGE,
+                              bankPercentage = x.BANKPERCENTAGE,
+                              customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
+                              loanAmount = a.PROPOSEDAMOUNT,
+                              approvedTenor = a.APPROVEDTENOR,
+                              asdc = x.ASDC,
+                              csdc = x.CSDC,
+                              collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s => s.COLLATERALSUBTYPEID == cl.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                          }).FirstOrDefault();
+            if (record.currentstatus == 1)
+            {
+                record.status = "Open";
+            }
+            else if( record.currentstatus == 2)
+            {
+                record.status = "Approved";
+            }
+            else { record.status = "Closed"; }
+            return record;
+
         }
 
         public bool AddFacilityStampDutySharing(FacilityStampDutyViewModel model)

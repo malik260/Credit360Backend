@@ -1382,6 +1382,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralCustomerId { get; set; }
         public int currentstatus { get; set; }
         public string osdc { get; set; }
+        public string asdc { get; set; }
+        public string csdc { get; set; }
         public DateTime dateTimeCreated { get; set; }
         public DateTime dateTimeUpdated { get; set; }
         public bool isShared { get; set; }
@@ -1392,6 +1394,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal loanAmount { get; set; }
         public int approvedTenor { get; set; }
         public string collateralSubType { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string status { get; set; }
     }
 
 
