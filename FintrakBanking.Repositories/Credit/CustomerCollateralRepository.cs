@@ -29,6 +29,9 @@ using FintrakBanking.Common;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Configuration;
 using FintrakBanking.Entities.StagingModels;
+using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
+using System.ComponentModel.Design;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -13899,6 +13902,34 @@ namespace FintrakBanking.Repositories.Credit
             }
             return result;
             
+        }
+
+        public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDuty()
+        {
+
+            var record = (from x in context.TBL_FACILITY_STAMP_DUTY
+                          join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                          join cl in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals cl.COLLATERALCUSTOMERID
+                          where x.DELETED == false
+
+                          select new FacilityStampDutyViewModel
+                          {
+                              facilityStampDutyId = x.FACILITYSTAMPDUTYID,
+                              loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                              collateralCustomerId = x.COLLATERALCUSTOMERID,
+                              osdc = x.OSDC,
+                              dateTimeCreated = x.DATETIMECREATED,
+                              isShared = x.ISSHARED,
+                              customerPercentage = x.CUSTOMERPERCENTAGE,
+                              bankPercentage = x.BANKPERCENTAGE,
+                              customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
+                              loanAmount = a.PROPOSEDAMOUNT,
+                              approvedTenor = a.APPROVEDTENOR,
+                              collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s=>s.COLLATERALSUBTYPEID == cl.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                          }).ToList();
+
+            return record;
+                          
         }
 
         public bool AddFacilityStampDutySharing(FacilityStampDutyViewModel model)

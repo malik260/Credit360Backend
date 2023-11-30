@@ -1388,6 +1388,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool deleted { get; set; }
         public decimal customerPercentage { get; set; }
         public decimal bankPercentage { get; set; }
+        public string customerName { get; set; }
+        public decimal loanAmount { get; set; }
+        public int approvedTenor { get; set; }
+        public string collateralSubType { get; set; }
     }
 
 
