@@ -1031,6 +1031,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             SaveFlowLog("After Get Approval Levels");
 
             next = approvalLevels.FirstOrDefault();
+            
 
             if (sameDesk) 
             {
@@ -1123,7 +1124,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                     (x.GroupPosition > currentLevel.GroupPosition) // next group
                     || (x.LevelPosition > currentLevel.LevelPosition && x.GroupPosition == currentLevel.GroupPosition) // same group
                     );
-            SaveFlowLog("if this.nextLevelId == null && fromLevelId != null");
+
+                if (this.productId == 20 && (amount <= 5000000))
+                {
+                    next = approvalLevels.Where(a => a.Level.LEVELNAME == "CREDIT ANALYST").FirstOrDefault();
+                }
+                SaveFlowLog("if this.nextLevelId == null && fromLevelId != null");
             }
             else
             {
