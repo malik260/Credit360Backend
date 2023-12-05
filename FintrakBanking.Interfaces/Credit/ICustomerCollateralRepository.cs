@@ -2,6 +2,7 @@
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -204,6 +205,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<FacilityStampDutyViewModel> GetFacilityStampDuty(int loanApplicationId);
         IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDuty();
         FacilityStampDutyViewModel GetFacilityStampDutyById(int loanApplicationId);
+        IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyReport(DateRange param);
         bool AddFacilityStampDutySharing(FacilityStampDutyViewModel model);
         WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 

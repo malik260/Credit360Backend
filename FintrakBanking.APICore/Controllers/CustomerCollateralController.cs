@@ -20,6 +20,8 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Interfaces.Credit;
 using System.Threading;
+using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -3145,6 +3147,25 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("get-all-facility-stamp-duty-report")]
+        public HttpResponseMessage GetAllFacilityStampDutyReport(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+
+            dateRange.companyId = token.GetCompanyId;
+            var data = repo.GetAllFacilityStampDutyReport(dateRange);
+
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+
         }
     }
 

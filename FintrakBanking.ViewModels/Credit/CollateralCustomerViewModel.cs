@@ -1396,6 +1396,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralSubType { get; set; }
         public string applicationReferenceNumber { get; set; }
         public string status { get; set; }
+        public int operationId { get; set; }
+        public int customerId { get; set; }
+        public int? documentTypeId { get; set; }
     }
 
 

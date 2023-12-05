@@ -675,6 +675,7 @@ namespace FintrakBanking.Repositories.Credit
                                     {
                                         stampDuty.ASDC = sdaCode;
                                         stampDuty.DATETIMEUPDATED = DateTime.Now;
+                                        stampDuty.CURRENTSTATUS = 2;
                                     }
                                 }
                              }

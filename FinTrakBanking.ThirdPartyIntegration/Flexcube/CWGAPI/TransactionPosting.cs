@@ -24,6 +24,7 @@
     using System.Text.Json;
     using System.Threading.Tasks;
     using System.Web.Script.Serialization;
+    using static System.Runtime.CompilerServices.RuntimeHelpers;
 
     namespace Finacle 
     {
@@ -1928,6 +1929,118 @@
                         APIURL = $"{API_URL}GetLoanDetails",
                         LOGTYPEID = 8,
                         REFERENCENUMBER = model.loan_accountno,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = new JavaScriptSerializer().Serialize(model),
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    logContext.SaveChanges();
+                }
+            }
+
+            public async Task<StampDutyPostingViewModel> PostStampDutyFee(StampDutyPostingViewModel model)
+            {
+                IRestResponse response = null;
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                string responseMessage = "";
+                RestRequest req = new RestRequest(Method.POST);
+                StampDutyPostingViewModel records = new StampDutyPostingViewModel();
+                try
+                {
+                    getAPIURLSettings("StampDuty");
+
+                    var baseURL = API_URL;
+                    string fullURL = baseURL + "posting/v1/Batch";
+                    RestClient client = new RestClient(fullURL);
+
+                    List<StampDutyEntryViewModel> entries = new List<StampDutyEntryViewModel>()
+                    {
+                        new StampDutyEntryViewModel ()
+                        {
+                            tranCode = "PSD",
+                            tranType = "D",
+                            reference = "00000" + model.applicationReferenceNumber,
+                            accountNumber = model.entries[0].accountNumber,
+                            accountName = model.entries[0].accountName,
+                            narration = "SD/Stamp Duty Fee Posting",
+                            amount = model.entries[0].amount,
+                        },
+                        new StampDutyEntryViewModel()
+                        {
+                            tranCode = "PSD",
+                            tranType = "C",
+                            reference = "00000" + model.applicationReferenceNumber,
+                            accountNumber = model.entries[0].accountNumber,
+                            accountName = model.entries[0].accountName,
+                            narration = "SD/Stamp Duty Fee Posting",
+                            amount = model.entries[0].amount,
+                        }
+                    };
+
+
+                    StampDutyPostingViewModel reqbody = new StampDutyPostingViewModel()
+
+                    {
+                        reference = "00000" + model.applicationReferenceNumber,
+                        appId = "FINTRAK", 
+                        userId = "STAMPDUTY",
+                        currency = "NGN",
+                        branchCode = model.branchCode,// branch code
+                        tranCode = "PSD",
+                        entries = entries
+                    };
+
+
+                    requestDatetime = DateTime.Now;
+                    responseDateTime = DateTime.Now;
+
+                    var jsonbody = new JavaScriptSerializer().Serialize(reqbody);
+                    req.AddParameter("application/json", jsonbody, ParameterType.RequestBody);
+                    req.AddHeader("Content-Type", "application/json");
+                    req.AddHeader("Accept", "application/json");
+                    req.AddHeader("Authorization", API_KEY);
+
+                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
+                    response = await client.ExecuteAsync<StampDutyPostingViewModel>(req);
+                    var responbody = JsonConvert.DeserializeObject<StampDutyPostingViewModel>(response.Content);
+
+                    if (response.IsSuccessful)
+                    {
+                        if (responbody == null || !responbody.message.ToLower().Contains("successful"))
+                        {
+                            throw new APIErrorException("API call error - " + responbody.message + " " + responbody.status + " " + DateTime.Now);
+                        }
+                        var rep = responbody;
+                        records.status = rep.status;
+                        records.message = rep.message;
+                        records.tranId = rep.tranId;
+                        records.postedEntries = rep.postedEntries;
+                        
+                    }
+
+                    responseMessage = responbody?.message;
+                    return records;
+                }
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    throw new APIErrorException($"Error 202 " + ex.Message);
+                }
+                finally
+                {
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = $"{API_URL}GetLoanDetails",
+                        LOGTYPEID = 8,
+                        REFERENCENUMBER = model.entries[0].accountNumber,
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = new JavaScriptSerializer().Serialize(model),
                         RESPONSEDATETIME = responseDateTime,

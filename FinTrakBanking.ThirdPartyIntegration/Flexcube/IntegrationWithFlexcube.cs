@@ -724,6 +724,37 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
         }
 
+        public PostingResult PostStampDutyInputs(StampDutyPostingViewModel model)
+        {
+            {
+                StampDutyPostingViewModel result = null;
+                Task.Run(async () => result = await transaction.PostStampDutyFee(model)).GetAwaiter().GetResult();
+
+                if (result.status != null)
+                {
+                    if (result.status == "success")
+                    {
+                        string str = result.status;
+                       
+
+                        //return new PostingResult { posted = true, responseCode = str.Trim() };
+                        return new PostingResult { posted = true, responseCode = result.status };
+                    }
+                    else
+                    {
+                        //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.status + ". Response Message:" + result.message);
+                    }
+                }
+                else
+                {
+                    //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+                }
+
+            }
+        }
+
         public PostingResult GetCreditCheck(CreditCheckViewModel model)
         {
             ResponseMessage result = null;

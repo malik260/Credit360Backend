@@ -22,6 +22,7 @@ namespace FintrakBanking.Interfaces.Media
         IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId);
 
         int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer);
+        int AddSDDocumentUpload(DocumentUploadViewModel model, byte[] buffer);
 
         DocumentUploadViewModelResut AddDocumentUploadToSubsidiaryResult(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent);
 

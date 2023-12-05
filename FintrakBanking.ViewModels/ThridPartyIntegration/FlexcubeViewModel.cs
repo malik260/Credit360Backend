@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace FintrakBanking.ViewModels.Flexcube
 {
 
@@ -185,5 +187,37 @@ namespace FintrakBanking.ViewModels.Flexcube
         public string disbursement_type { get; set; }
 
     }
+
+    public class StampDutyEntryViewModel
+    {
+        public string tranCode { get; set; }
+        public string tranType { get; set; }
+        public string reference { get; set; }
+        public string accountNumber { get; set; }
+        public string accountName { get; set; }
+        public string narration { get; set; }
+        public string amount { get; set; }
+
+        
+    }
+
+    public class StampDutyPostingViewModel
+    {
+        public string reference { get; set; }
+        public string appId { get; set; }
+        public string userId { get; set; }
+        public string currency { get; set; }
+        public string branchCode { get; set; }
+        public string tranCode { get; set; }
+        public List<StampDutyEntryViewModel> entries { get; set; }
+        public string message { get; set; }
+        public string status { get; set; }
+        public string tranId { get; set; }
+        public string postedEntries { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string custAccNumber { get; set; }
+        public string bankTillAccount { get; set; }
+    }
+
 }
 

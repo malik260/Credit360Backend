@@ -32,6 +32,7 @@ using FintrakBanking.Entities.StagingModels;
 using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
 using System.ComponentModel.Design;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -13887,7 +13888,7 @@ namespace FintrakBanking.Repositories.Credit
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                           join cl in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals cl.COLLATERALCUSTOMERID
-                          where x.DELETED == false
+                          where x.DELETED == false && x.CURRENTSTATUS == 2
 
                           select new FacilityStampDutyViewModel
                           {
@@ -13903,8 +13904,15 @@ namespace FintrakBanking.Repositories.Credit
                               loanAmount = a.PROPOSEDAMOUNT,
                               approvedTenor = a.APPROVEDTENOR,
                               collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s=>s.COLLATERALSUBTYPEID == cl.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                              customerId = a.CUSTOMERID,
+                              operationId = (int)OperationsEnum.StampDutyClosure,
+                              //documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID
                           }).ToList();
-
+            foreach(var rec in record)
+            {
+                rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
+            }
+            
             return record;
                           
         }
@@ -13936,7 +13944,11 @@ namespace FintrakBanking.Repositories.Credit
                               asdc = x.ASDC,
                               csdc = x.CSDC,
                               collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s => s.COLLATERALSUBTYPEID == cl.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                              customerId = a.CUSTOMERID,
                           }).FirstOrDefault();
+            record.operationId = (int)OperationsEnum.StampDutyClosure;
+            record.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
+
             if (record.currentstatus == 1)
             {
                 record.status = "Open";
@@ -13990,6 +14002,45 @@ namespace FintrakBanking.Repositories.Credit
                 throw e;
             }
             
+        }
+
+        public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyReport(DateRange param)
+        {
+            param.endDate = param.endDate.AddHours(23);
+            param.endDate = param.endDate.AddMinutes(59);
+            param.endDate = param.endDate.AddSeconds(59); 
+
+            var record = (from x in context.TBL_FACILITY_STAMP_DUTY
+                          join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                          join cl in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals cl.COLLATERALCUSTOMERID
+                          where x.DELETED == false && ((DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)))
+
+                          select new FacilityStampDutyViewModel
+                          {
+                              facilityStampDutyId = x.FACILITYSTAMPDUTYID,
+                              loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                              collateralCustomerId = x.COLLATERALCUSTOMERID,
+                              osdc = x.OSDC,
+                              dateTimeCreated = x.DATETIMECREATED,
+                              isShared = x.ISSHARED,
+                              customerPercentage = x.CUSTOMERPERCENTAGE,
+                              bankPercentage = x.BANKPERCENTAGE,
+                              customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
+                              loanAmount = a.PROPOSEDAMOUNT,
+                              approvedTenor = a.APPROVEDTENOR,
+                              collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s => s.COLLATERALSUBTYPEID == cl.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                              customerId = a.CUSTOMERID,
+                              operationId = (int)OperationsEnum.StampDutyClosure,
+                              //documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID
+                          }).ToList();
+            //foreach (var rec in record)
+            //{
+            //    rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
+            //}
+
+            return record;
+
         }
 
     }

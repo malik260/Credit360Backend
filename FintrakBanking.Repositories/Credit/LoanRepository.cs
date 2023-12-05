@@ -1601,6 +1601,27 @@ namespace FintrakBanking.Repositories.Credit
                             //if (!entity.feeOverride) PostLoanFees(entity);
                             context.SaveChanges();
 
+                        if (applicationDetail.STAMPDUTYAPPLICABLE)
+                        {
+                            StampDutyPostingViewModel stampDutyModel = new StampDutyPostingViewModel()
+                            {
+                               reference = application.APPLICATIONREFERENCENUMBER,
+                               appId = "FINTRAK",
+                               userId = "STAMPDUTY",
+                               currency = "NGN",
+                               branchCode = entity.branchCode,
+                               tranCode  = "PSD",
+                               custAccNumber = entity.casaAccountNumber,
+                               bankTillAccount = "",//To be provided,
+                            };
+                            var apiResult = new PostingResult();
+                            if (USE_THIRD_PARTY_INTEGRATION)
+                            {
+                                apiResult = integration.PostStampDutyInputs(stampDutyModel);
+                            }
+
+                        }
+
                             trans.Commit();
                         }
 

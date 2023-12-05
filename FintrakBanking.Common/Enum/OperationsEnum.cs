@@ -214,6 +214,7 @@
     LmsLoanApplicationCancellation = 285,
     InsuranceBulkUploadApproval = 286,
     IBLAvailmentInProgress = 287,
+    StampDutyClosure = 288
 }
 
 

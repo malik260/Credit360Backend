@@ -819,6 +819,183 @@ namespace FintrakBanking.Repositories.Media
                 return 2;
            
         }
+
+
+        public int AddSDDocumentUpload(DocumentUploadViewModel model, byte[] buffer)
+        {
+
+            var customerCode = String.Empty;
+            if (model.customerId > 0)
+            {
+                customerCode = GetCustomerCode(model.customerId);
+            }
+            else
+            {
+                customerCode = GetCustomerGroupCode(model.customerGroupId);
+            }
+
+            var existing = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
+                    && x.OPERATIONID == model.operationId
+                    && x.TARGETID == model.targetId
+                    && x.CUSTOMERCODE == customerCode)
+                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false && x.FILENAME == model.fileName)
+                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) => new { us, up }
+            )
+            .Select(x => new DocumentUploadViewModel
+            {
+                documentUploadId = x.up.DOCUMENTUPLOADID,
+                documentUsageId = x.us.DOCUMENTUSAGEID,
+                fileName = x.up.FILENAME,
+                fileExtension = x.up.FILEEXTENSION,
+                fileSize = x.up.FILESIZE,
+                fileSizeUnit = x.up.FILESIZEUNIT,
+                companyId = x.up.COMPANYID,
+                issueDate = x.up.ISSUEDATE,
+                expiryDate = x.up.EXPIRYDATE,
+                createdBy = (int)x.up.CREATEDBY
+            })
+                .FirstOrDefault();
+
+            if (existing != null && model.overwrite == false) return 3;
+
+
+            var entity = new TBL_DOCUMENT_UPLOAD
+            {
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension.ToLower(),
+                FILESIZE = model.fileSize,
+                FILESIZEUNIT = model.fileSizeUnit,
+                FILEDATA = buffer,
+                COMPANYID = model.companyId,
+                ISSUEDATE = model.issueDate,
+                EXPIRYDATE = model.expiryDate,
+                PHYSICALFILENUMBER = model.physicalFilenumber,
+                PHYSICALLOCATION = model.physicalLocation,
+                ISORIGINALCOPY = model.isOriginalCopy,
+                DOCUMENTTYPEID = model.documentTypeId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+                SOURCE = model.source
+            };
+            if (model.edmsDocumentId != null)
+            {
+                entity.EDMSDOCID = model.edmsDocumentId;
+            }
+
+
+
+            docContext.TBL_DOCUMENT_UPLOAD.Add(entity);
+
+            if (docContext.SaveChanges() > 0)
+            {
+                var usage = new TBL_DOCUMENT_USAGE
+                {
+                    DOCUMENTUPLOADID = entity.DOCUMENTUPLOADID,
+                    TARGETID = model.targetId,
+                    TARGETCODE = model.targetCode,
+                    TARGETREFERENCENUMBER = model.targetReferenceNumber,
+                    DOCUMENTCODE = model.documentCode,
+                    DOCUMENTTITLE = model.documentTitle,
+                    CUSTOMERCODE = customerCode,
+                    OPERATIONID = model.operationId,
+                    APPROVALSTATUSID = model.approvalStatusId,
+                    DOCUMENTSTATUSID = model.documentStatusId,
+                    ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = general.GetApplicationDate(),
+                };
+
+                if (model.overwrite == true)
+                {
+                    usage.DATETIMEUPDATED = DateTime.Now;
+                    usage.LASTUPDATEDBY = model.createdBy;
+                }
+
+                docContext.TBL_DOCUMENT_USAGE.Add(usage);
+
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+                // Audit Section ---------------------------
+                //this.audit.AddAuditTrail(new TBL_AUDIT
+                //{
+                //    AUDITTYPEID = (short)AuditTypeEnum.DocumentUploadAdded,
+                //    STAFFID = model.createdBy,
+                //    BRANCHID = (short)model.userBranchId,
+                //    DETAIL = $"TBL_Document Upload '{model.targetCode}' created by {auditStaff}",
+                //    IPADDRESS = model.userIPAddress,
+                //    URL = model.applicationUrl,
+                //    APPLICATIONDATE = general.GetApplicationDate(),
+                //    SYSTEMDATETIME = DateTime.Now
+                //});
+
+                if (existing != null && model.overwrite == true)
+                {
+                    var oldUpload = docContext.TBL_DOCUMENT_UPLOAD.Find(existing.documentUploadId);
+                    var oldUsage = docContext.TBL_DOCUMENT_USAGE.Find(existing.documentUsageId);
+
+                    oldUpload.DELETED = true;
+                    oldUpload.DELETEDBY = model.createdBy;
+                    oldUpload.DATETIMEDELETED = DateTime.Now;
+
+                    oldUsage.DELETED = true;
+                    oldUsage.DELETEDBY = model.createdBy;
+                    oldUsage.DATETIMEDELETED = DateTime.Now;
+                }
+
+            }
+            
+
+            if (docContext.SaveChanges() < 1)
+            {
+                var file = docContext.TBL_DOCUMENT_UPLOAD.Where(o => o.DOCUMENTUPLOADID == entity.DOCUMENTUPLOADID).Select(o => o).FirstOrDefault();
+                if (file != null)
+                {
+                    docContext.TBL_DOCUMENT_UPLOAD.Remove(file);
+                    docContext.SaveChanges();
+                }
+                return 1;
+            }
+
+            var sdcCode = GenerateSDCode();
+            sdcCode = "SDC" + sdcCode;
+
+            var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.FACILITYSTAMPDUTYID == model.targetId).FirstOrDefault();
+            if (stampDuty != null)
+            {
+                stampDuty.CSDC = sdcCode;
+                stampDuty.DATETIMEUPDATED = DateTime.Now;
+                stampDuty.CURRENTSTATUS = 3;
+            }
+
+
+            return 2;
+
+        }
+
+        private string GenerateSDCode()
+        {
+
+            DateTime lastGeneratedDate = DateTime.MinValue;
+            int lastGeneratedNumber = 0;
+
+            DateTime currentDate = DateTime.Now;
+            // Check if it's a new year
+            if (currentDate.Year > lastGeneratedDate.Year)
+            {
+                // Reset the number to 1 for the new year
+                lastGeneratedNumber = 0;
+            }
+            // Increment the number
+            lastGeneratedNumber++;
+            // Format the serial number
+            string serialNumber = $"{currentDate.Year}/{currentDate.Month:D2}/{currentDate.Day:D2}/{lastGeneratedNumber:D4}";
+            // Update the last generated date
+            lastGeneratedDate = currentDate;
+
+            return serialNumber;
+
+
+        }
+
         private  async Task<DocumentUploadViewModelResut> AddDocumentUploadToSubsidiary(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent)
         {
             var response = new DocumentUploadViewModelResut();
