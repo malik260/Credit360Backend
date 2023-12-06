@@ -680,6 +680,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_WORKFLOW_AMEND> TBL_WORKFLOW_AMEND { get; set; }
         public virtual DbSet<TBL_STAMP_DUTY_CONDITION> TBL_STAMP_DUTY_CONDITION { get; set; }
         public virtual DbSet<TBL_FACILITY_STAMP_DUTY> TBL_FACILITY_STAMP_DUTY { get; set; }
+        public virtual DbSet<TBL_CODE_TRACKER> TBL_CODE_TRACKER { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

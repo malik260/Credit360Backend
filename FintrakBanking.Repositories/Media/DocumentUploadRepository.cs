@@ -965,17 +965,22 @@ namespace FintrakBanking.Repositories.Media
                 stampDuty.DATETIMEUPDATED = DateTime.Now;
                 stampDuty.CURRENTSTATUS = 3;
             }
+            context.SaveChanges();
 
 
             return 2;
 
         }
 
+
+
         private string GenerateSDCode()
         {
+            var fsd = context.TBL_CODE_TRACKER.OrderByDescending(x => x.CODEID).FirstOrDefault();
 
-            DateTime lastGeneratedDate = DateTime.MinValue;
-            int lastGeneratedNumber = 0;
+            DateTime lastGeneratedDate = fsd.CURRENTDATE;//DateTime.MinValue;
+            int lastGeneratedNumber = 0 ;
+            if (fsd != null) { lastGeneratedNumber = fsd.CSDC; }
 
             DateTime currentDate = DateTime.Now;
             // Check if it's a new year
@@ -990,6 +995,10 @@ namespace FintrakBanking.Repositories.Media
             string serialNumber = $"{currentDate.Year}/{currentDate.Month:D2}/{currentDate.Day:D2}/{lastGeneratedNumber:D4}";
             // Update the last generated date
             lastGeneratedDate = currentDate;
+
+            fsd.CSDC = lastGeneratedNumber;
+            fsd.CURRENTDATE = lastGeneratedDate;
+            context.SaveChanges();
 
             return serialNumber;
 

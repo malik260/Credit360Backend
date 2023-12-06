@@ -12361,6 +12361,10 @@ namespace FintrakBanking.Repositories.Credit
                                 BANKPERCENTAGE = 0
                             };
                             context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
+
+                            facility.STAMPDUTYAPPLICABLE = true;
+
+
                             context.SaveChanges();
                         }
                         return true;
@@ -12378,9 +12382,11 @@ namespace FintrakBanking.Repositories.Credit
         }
         private string GenerateSDCode()
         {
-           
-            DateTime lastGeneratedDate = DateTime.MinValue;
+            var fsd = context.TBL_CODE_TRACKER.OrderByDescending(x => x.CODEID).FirstOrDefault();
+
+            DateTime lastGeneratedDate = fsd.CURRENTDATE;
             int lastGeneratedNumber = 0;
+            if (fsd != null) lastGeneratedNumber = fsd.OSDC;
 
        
             DateTime currentDate = DateTime.Now;
@@ -12400,6 +12406,9 @@ namespace FintrakBanking.Repositories.Credit
 
             // Update the last generated date
             lastGeneratedDate = currentDate;
+            fsd.OSDC = lastGeneratedNumber;
+            fsd.CURRENTDATE = lastGeneratedDate;
+            context.SaveChanges();
 
             return serialNumber;
 

@@ -679,6 +679,7 @@ namespace FintrakBanking.Repositories.Credit
                                     }
                                 }
                              }
+                            context.SaveChanges();
 
                         }
                         else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
@@ -818,11 +819,18 @@ namespace FintrakBanking.Repositories.Credit
              
         }
 
+
+        
+
+
         private string GenerateSDCode()
         {
+            
+            var fsd = context.TBL_CODE_TRACKER.OrderByDescending(x => x.CODEID).FirstOrDefault();
 
-            DateTime lastGeneratedDate = DateTime.MinValue;
+            DateTime lastGeneratedDate = fsd.CURRENTDATE;
             int lastGeneratedNumber = 0;
+            if (fsd != null) lastGeneratedNumber = fsd.ASDC;
 
 
             DateTime currentDate = DateTime.Now;
@@ -842,6 +850,10 @@ namespace FintrakBanking.Repositories.Credit
 
             // Update the last generated date
             lastGeneratedDate = currentDate;
+
+            fsd.ASDC = lastGeneratedNumber;
+            fsd.CURRENTDATE = lastGeneratedDate;
+            context.SaveChanges();
 
             return serialNumber;
 
