@@ -27,6 +27,7 @@ using System.IO;
 using System.Data.Entity.Validation;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Entities.StagingModels;
+using Microsoft.Office.Interop.Excel;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -3364,6 +3365,38 @@ namespace FintrakBanking.Repositories.Credit
 
             if (context.SaveChanges() > 0)
             {
+                var loanApplicationdetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
+                var facilityStampDutyIds = new List<int>();
+                if (loanApplicationdetailIds.Count > 0)
+                {
+                    foreach (var detailId in loanApplicationdetailIds)
+                    {
+                        var stampDutyId = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.LOANAPPLICATIONDETAILID == detailId).FirstOrDefault().FACILITYSTAMPDUTYID;
+                        facilityStampDutyIds.Add(stampDutyId);
+                    }
+                    if (facilityStampDutyIds.Count > 0)
+                    {
+                        foreach (var dutyId in facilityStampDutyIds)
+                        {
+                            var facilityDuty = context.TBL_FACILITY_STAMP_DUTY.Find(dutyId);
+                            if (facilityDuty != null)
+                            {
+                                if (detail.PROPOSEDTENOR >= 360)
+                                {
+                                    facilityDuty.DELETED = true;
+                                }
+                                else
+                                {
+                                    facilityDuty.DELETED = false;
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+
+
                 var racDetail = context.TBL_RAC_DETAIL.Where(r => r.TARGETID == detail.LOANAPPLICATIONDETAILID).ToList();
                 if (loan.rac != null && racDetail.Count() == 0)
                 {

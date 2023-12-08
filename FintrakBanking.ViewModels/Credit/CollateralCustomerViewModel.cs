@@ -1399,6 +1399,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationId { get; set; }
         public int customerId { get; set; }
         public int? documentTypeId { get; set; }
+        public DateTime? bookingDate { get; set; }
+        public DateTime? maturityDate { get; set; }
     }
 
 

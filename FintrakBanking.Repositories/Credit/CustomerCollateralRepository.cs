@@ -7612,6 +7612,13 @@ namespace FintrakBanking.Repositories.Credit
             data.DATETIMEDELETED = genSetup.GetApplicationDate();
             context.Entry(data).State = EntityState.Modified;
             //context.TBL_LOAN_APPLICATION_COLLATERL.Remove(data);
+
+            var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+            if(fsdExists != null)
+            {
+                fsdExists.DELETED = true;
+            }
+            //context.SaveChanges();
             return context.SaveChanges() > 0;
 
         }
@@ -12256,25 +12263,51 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     sdApplicable = ValidateStampDutyApplicable(facility);
                 }
-                if (sdApplicable)
+                if (sdApplicable == true)
                 {
-                    
-                        var sdoCode = GenerateSDCode();
-                        sdoCode = "SDO"  + sdoCode;
-
-                    var facilityStampDuty = new TBL_FACILITY_STAMP_DUTY
+                    facility.STAMPDUTYAPPLICABLE = true;
+                    var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                    var fsdDetailExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                    if (fsdExists != null)
                     {
-                        LOANAPPLICATIONDETAILID = facility.LOANAPPLICATIONDETAILID,
-                        COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
-                        CURRENTSTATUS = 1,
-                        OSDC = sdoCode,
-                        DATETIMECREATED = DateTime.Now,
-                        DATETIMEUPDATED = DateTime.Now,
-                        ISSHARED = false,
-                        CUSTOMERPERCENTAGE = 100,
-                        BANKPERCENTAGE = 0 
-                    };
-                    context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
+                        var appl = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
+                        if (!appl.ISONLENDING)
+                        {
+                            fsdExists.DELETED = false;
+                        }
+                        
+                    }
+                    else if(fsdDetailExists != null)
+                    {
+                        var appl = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
+                        if (!appl.ISONLENDING)
+                        {
+                            
+                        }
+                    }
+                    else
+                    {
+                        var sdoCode = GenerateSDCode();
+                        sdoCode = "SDO" + sdoCode;
+
+                        var facilityStampDuty = new TBL_FACILITY_STAMP_DUTY
+                        {
+                            LOANAPPLICATIONDETAILID = facility.LOANAPPLICATIONDETAILID,
+                            COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
+                            CURRENTSTATUS = 1,
+                            OSDC = sdoCode,
+                            DATETIMECREATED = DateTime.Now,
+                            DATETIMEUPDATED = DateTime.Now,
+                            ISSHARED = false,
+                            CUSTOMERPERCENTAGE = 100,
+                            BANKPERCENTAGE = 0
+                        };
+                        context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
+                    }
+
+                    
+                    
+                       
                     context.SaveChanges();
                 }
                
@@ -12344,25 +12377,45 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         if (sdApplicable)
                         {
-
-                            var sdoCode = GenerateSDCode();
-                            sdoCode = "SDO" + sdoCode;
-
-                            var facilityStampDuty = new TBL_FACILITY_STAMP_DUTY
-                            {
-                                LOANAPPLICATIONDETAILID = facility.LOANAPPLICATIONDETAILID,
-                                COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
-                                CURRENTSTATUS = 1,
-                                OSDC = sdoCode,
-                                DATETIMECREATED = DateTime.Now,
-                                DATETIMEUPDATED = DateTime.Now,
-                                ISSHARED = false,
-                                CUSTOMERPERCENTAGE = 100,
-                                BANKPERCENTAGE = 0
-                            };
-                            context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
-
                             facility.STAMPDUTYAPPLICABLE = true;
+                            var fsdDetailExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                            var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                            if (fsdExists != null)
+                            {
+                                var appl = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
+                                if (!appl.ISONLENDING)
+                                {
+                                    fsdExists.DELETED = false;
+                                }
+                            }
+                            else if (fsdDetailExists != null)
+                            {
+                                var appl = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
+                                if (!appl.ISONLENDING)
+                                {
+                                    
+                                }
+                            }
+                            else
+                            {
+                                var sdoCode = GenerateSDCode();
+                                sdoCode = "SDO" + sdoCode;
+
+                                var facilityStampDuty = new TBL_FACILITY_STAMP_DUTY
+                                {
+                                    LOANAPPLICATIONDETAILID = facility.LOANAPPLICATIONDETAILID,
+                                    COLLATERALCUSTOMERID = collateral.COLLATERALCUSTOMERID,
+                                    CURRENTSTATUS = 1,
+                                    OSDC = sdoCode,
+                                    DATETIMECREATED = DateTime.Now,
+                                    DATETIMEUPDATED = DateTime.Now,
+                                    ISSHARED = false,
+                                    CUSTOMERPERCENTAGE = 100,
+                                    BANKPERCENTAGE = 0
+                                };
+                                context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
+                            }
+
 
 
                             context.SaveChanges();
@@ -12419,8 +12472,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loanApplication = context.TBL_LOAN_APPLICATION.Find(loan.LOANAPPLICATIONID);
             if (loanApplication.ISONLENDING) return false;
-            var collateralDutiable = ValidateCollateralCondition(loan);
             var tenorDutiable = ValidateTenorCondition(loan);
+            var collateralDutiable = ValidateCollateralCondition(loan);
+            
             if (collateralDutiable && tenorDutiable) return true;
             return false;
 
@@ -12430,7 +12484,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var collateralSubtypeIds = new List<int>();
             var collateralCondition = new List<TBL_STAMP_DUTY_CONDITION>();
-            var proposedCollateralIds = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONDETAILID == loan.LOANAPPLICATIONDETAILID).Select(c => c.COLLATERALCUSTOMERID).ToList();
+            var collateralConditionIds = context.TBL_STAMP_DUTY_CONDITION.Select(c => c.COLLATERALSUBTYPEID).ToList();
+            var proposedCollateralIds = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONDETAILID == loan.LOANAPPLICATIONDETAILID && c.DELETED == false).Select(c => c.COLLATERALCUSTOMERID).ToList();
             if (proposedCollateralIds.Any())
             {
                 foreach (var collateralId in proposedCollateralIds)
@@ -12446,8 +12501,11 @@ namespace FintrakBanking.Repositories.Credit
                         collateralCondition.Add(condition);
                     }
                 }
-                if (collateralCondition.Count > 0) return true;
-                
+                foreach(var subtyp in collateralSubtypeIds)
+                {
+                    if (collateralConditionIds.Contains(subtyp)) return true;
+                }
+                              
             }
 
             return false;
@@ -12455,7 +12513,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool ValidateTenorCondition(TBL_LOAN_APPLICATION_DETAIL loan)
         {
-            int tenor = ConvertTenorToDays(loan.PROPOSEDTENOR, loan.TENORFREQUENCYTYPEID);
+            int tenor = loan.PROPOSEDTENOR;
             if (tenor >= 360) return true;
             return false;
         }
@@ -13920,6 +13978,11 @@ namespace FintrakBanking.Repositories.Credit
             foreach(var rec in record)
             {
                 rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
+                rec.bookingDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId).FirstOrDefault()?.BOOKINGDATE;
+                if (rec.bookingDate != null)
+                {
+                    rec.maturityDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId).FirstOrDefault()?.MATURITYDATE;
+                }
             }
             
             return record;
@@ -13957,16 +14020,20 @@ namespace FintrakBanking.Repositories.Credit
                           }).FirstOrDefault();
             record.operationId = (int)OperationsEnum.StampDutyClosure;
             record.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
-
+            record.bookingDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == record.loanApplicationDetailId).FirstOrDefault()?.BOOKINGDATE;
+            if (record.bookingDate != null)
+            {
+                record.maturityDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == record.loanApplicationDetailId).FirstOrDefault()?.MATURITYDATE;
+            }
             if (record.currentstatus == 1)
             {
-                record.status = "Open";
+                record.status = "Not yet remitted";
             }
             else if( record.currentstatus == 2)
             {
-                record.status = "Approved";
+                record.status = "Not yet remitted";
             }
-            else { record.status = "Closed"; }
+            else { record.status = "Remitted"; }
             return record;
 
         }
@@ -13976,10 +14043,12 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var entity = context.TBL_FACILITY_STAMP_DUTY.Find(model.facilityStampDutyId);
+                model.isShared = true;
+                if (model.customerPercentage == 100) model.isShared = false;
 
                 if (entity != null)
                 {
-                    entity.ISSHARED = true;
+                    entity.ISSHARED = model.isShared;
                     entity.CUSTOMERPERCENTAGE = model.customerPercentage;
                     entity.BANKPERCENTAGE = model.bankPercentage;
                     entity.DATETIMEUPDATED = DateTime.Now;

@@ -4455,7 +4455,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             int staffId = user.staffId;
             int operationId = (int)OperationsEnum.CreditAppraisal;
-            var levelIds = general.GetStaffApprovalLevelIds(user.staffId, operationId);// new int[] {3,1,5};
+            var levelIds = general.GetStaffApprovalLevelIds(user.staffId, operationId);// new int[] {3,1,5};delete-proposed-collateral-coverage
             int productBasedId = (int)ProductClassProcessEnum.ProductBased;
             //int[] productBasedIds = { (int)ProductClassProcessEnum.ProductBased, (int)ProductClassProcessEnum.CAMBased };
 
