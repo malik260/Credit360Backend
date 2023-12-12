@@ -14037,6 +14037,48 @@ namespace FintrakBanking.Repositories.Credit
             
         }
 
+        public IEnumerable<FacilityStampDutyViewModel> GetFacilityStampDutyId(int loanApplicationId)
+        {
+            //for loan information only
+            var result = new List<FacilityStampDutyViewModel>();
+            var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
+
+            foreach (var loanApplicationDetailId in loanApplicationDetailIds)
+            {
+                var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId && x.DELETED == false)
+                     .Select(x => new FacilityStampDutyViewModel
+                     {
+                         facilityStampDutyId = x.FACILITYSTAMPDUTYID,
+                         loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                         collateralCustomerId = x.COLLATERALCUSTOMERID,
+                         osdc = x.OSDC,
+                         dateTimeCreated = x.DATETIMEUPDATED,
+                         isShared = x.ISSHARED,
+                         customerPercentage = x.CUSTOMERPERCENTAGE,
+                         bankPercentage = x.BANKPERCENTAGE
+                     }).ToList();
+                //if (stampDuty != null)
+                //{
+
+                //    facilityStampDutyId = stampDuty.FACILITYSTAMPDUTYID;
+                //    loanApplicationDetailId = stampDuty.LOANAPPLICATIONDETAILID;
+                //    collateralCustomerId = stampDuty.COLLATERALCUSTOMERID;
+                //    osdc = stampDuty.OSDC;
+                //    dateTimeCreated = stampDuty.DATETIMEUPDATED;
+                //    isShared = stampDuty.ISSHARED;
+                //    customerPercentage = stampDuty.CUSTOMERPERCENTAGE;
+                //    bankPercentage = stampDuty.BANKPERCENTAGE;
+
+
+                //}
+                result = stampDuty;
+                return result;
+            }
+            return result;
+
+        }
+
+
         public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDuty()
         {
 

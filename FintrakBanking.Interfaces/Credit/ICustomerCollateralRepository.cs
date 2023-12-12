@@ -203,6 +203,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanApplicationDetailViewModel> GetCollateralMappingDetails(int id);
         CollateralInsurancePolicyViewModel GetAddedInsuranceById(int id);
         IEnumerable<FacilityStampDutyViewModel> GetFacilityStampDuty(int loanApplicationId);
+        IEnumerable<FacilityStampDutyViewModel> GetFacilityStampDutyId(int loanApplicationId);
         IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDuty();
         FacilityStampDutyViewModel GetFacilityStampDutyById(int loanApplicationId);
         IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyReport(DateRange param);
