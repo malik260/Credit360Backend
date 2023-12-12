@@ -627,6 +627,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int feeId { get; set; }
         public string feeName { get; set; }
         public decimal rate { get; set; }
+        public int createdBy { get; set; }
     }
 
     public class BondsAndGuranty

@@ -3167,6 +3167,142 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
 
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("get-all-facility-stamp-duty-filtered")]
+        public HttpResponseMessage GetAllFacilityStampDutyFiltered(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+
+            dateRange.companyId = token.GetCompanyId;
+            var data = repo.GetAllFacilityStampDutyFiltered(dateRange);
+
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("stamp-setup")]
+        public HttpResponseMessage AddStampSetup([FromBody] StampDutyConditionViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.AddStampSetup(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                //_errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"{"There was an error creating this record"} {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("stamp-setup")]
+        public HttpResponseMessage GetStampSetup()
+        {
+            try
+            {
+                var data = repo.GetStampSetup();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No Record Found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException ex)
+            {
+                //_errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"{"Error"}: {ex.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("stamp-setup/{conditionId}")]
+        public HttpResponseMessage UpdateTATSetup(short conditionId, [FromBody] StampDutyConditionViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.UpdateStampSetup(conditionId, entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException ex)
+            {
+                //_errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"{"There was an error updating this record"} {ex.Message}" });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-stamp/{conditionId}")]
+        public HttpResponseMessage DeleteStampSetup(int conditionId)
+        {
+            try
+            {
+                var user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host,
+                    createdBy = token.GetStaffId
+                };
+
+                 repo.DeleteStampSetup(conditionId, user);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = conditionId, message = "Record has been deleted successfully"});
+            }
+            catch (SecureException ex)
+            {
+                //_errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 
 }

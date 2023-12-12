@@ -206,7 +206,13 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDuty();
         FacilityStampDutyViewModel GetFacilityStampDutyById(int loanApplicationId);
         IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyReport(DateRange param);
+        IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyFiltered(DateRange param);
         bool AddFacilityStampDutySharing(FacilityStampDutyViewModel model);
+
+        bool AddStampSetup(StampDutyConditionViewModel entity);
+        IEnumerable<StampDutyConditionViewModel> GetStampSetup();
+        bool UpdateStampSetup(int conditionId, StampDutyConditionViewModel entity);
+        bool DeleteStampSetup(int conditionId, UserInfo user);
         WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 
         String ResponseMessage(WorkflowResponse response, string itemHeading);

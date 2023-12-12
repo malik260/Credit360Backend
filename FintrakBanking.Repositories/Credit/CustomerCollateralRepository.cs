@@ -7618,6 +7618,14 @@ namespace FintrakBanking.Repositories.Credit
             {
                 fsdExists.DELETED = true;
             }
+
+            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+
+            var fees = dat.TBL_LOAN_APPLICATION_DETL_FEE;
+            if (fees.Count > 0)
+            {
+                context.TBL_LOAN_APPLICATION_DETL_FEE.RemoveRange(fees);
+            }
             //context.SaveChanges();
             return context.SaveChanges() > 0;
 
@@ -12261,7 +12269,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (context.SaveChanges() > 0)
                 {
-                    sdApplicable = ValidateStampDutyApplicable(facility);
+                    var condition = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
+                    sdApplicable = ValidateStampDutyApplicable(facility, condition);
                 }
                 if (sdApplicable == true)
                 {
@@ -12274,6 +12283,24 @@ namespace FintrakBanking.Repositories.Credit
                         if (!appl.ISONLENDING)
                         {
                             fsdExists.DELETED = false;
+
+                            var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
+                            var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge").FirstOrDefault();
+
+                            List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
+
+                            var fee = new ProductFeesViewModel()
+                            {
+                                loanChargeFeeId = stampFee.CHARGEFEEID,
+                                rate = cond.DUTIABLEVALUE,
+                                createdBy = model.createdBy,
+                                loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
+
+                            };
+
+                            fees.Add(fee);
+
+                            ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
                         }
                         
                     }
@@ -12303,6 +12330,25 @@ namespace FintrakBanking.Repositories.Credit
                             BANKPERCENTAGE = 0
                         };
                         context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
+
+                        var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
+                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge").FirstOrDefault();
+
+                        List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
+
+                        var fee = new ProductFeesViewModel()
+                        {
+                            loanChargeFeeId = stampFee.CHARGEFEEID,
+                            rate = cond.DUTIABLEVALUE,
+                            createdBy = model.createdBy,
+                            loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
+                           
+                        };
+
+                        fees.Add(fee);
+
+                        ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+
                     }
 
                     
@@ -12373,7 +12419,8 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (context.SaveChanges() > 0)
                         {
-                            sdApplicable = ValidateStampDutyApplicable(facility);
+                            var condition = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
+                            sdApplicable = ValidateStampDutyApplicable(facility, condition);
                         }
                         if (sdApplicable)
                         {
@@ -12414,6 +12461,24 @@ namespace FintrakBanking.Repositories.Credit
                                     BANKPERCENTAGE = 0
                                 };
                                 context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
+
+                                var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
+                                var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge").FirstOrDefault();
+
+                                List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
+
+                                var fee = new ProductFeesViewModel()
+                                {
+                                    loanChargeFeeId = stampFee.CHARGEFEEID,
+                                    rate = cond.DUTIABLEVALUE,
+                                    createdBy = model.createdBy,
+                                    loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
+
+                                };
+
+                                fees.Add(fee);
+
+                                ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
                             }
 
 
@@ -12468,11 +12533,29 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private bool ValidateStampDutyApplicable(TBL_LOAN_APPLICATION_DETAIL loan)
+        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationDetailId, int createdBy)
+        {
+            var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
+            {
+                CHARGEFEEID = c.loanChargeFeeId,
+                RECOMMENDED_FEERATEVALUE = c.rate,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = createdBy,
+                HASCONSESSION = false,
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+                LOANAPPLICATIONDETAILID = loanApplicationDetailId,
+                DEFAULT_FEERATEVALUE = c.rate
+            });
+
+            context.TBL_LOAN_APPLICATION_DETL_FEE.AddRange(data);
+
+        }
+
+        private bool ValidateStampDutyApplicable(TBL_LOAN_APPLICATION_DETAIL loan, TBL_STAMP_DUTY_CONDITION condition)
         {
             var loanApplication = context.TBL_LOAN_APPLICATION.Find(loan.LOANAPPLICATIONID);
             if (loanApplication.ISONLENDING) return false;
-            var tenorDutiable = ValidateTenorCondition(loan);
+            var tenorDutiable = ValidateTenorCondition(loan, condition);
             var collateralDutiable = ValidateCollateralCondition(loan);
             
             if (collateralDutiable && tenorDutiable) return true;
@@ -12497,8 +12580,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     foreach(var subId in collateralSubtypeIds)
                     {
-                        var condition = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.COLLATERALSUBTYPEID ==  subId).FirstOrDefault();
-                        collateralCondition.Add(condition);
+                        var conditn = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.COLLATERALSUBTYPEID ==  subId).FirstOrDefault();
+                        collateralCondition.Add(conditn);
                     }
                 }
                 foreach(var subtyp in collateralSubtypeIds)
@@ -12511,10 +12594,15 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
 
-        private bool ValidateTenorCondition(TBL_LOAN_APPLICATION_DETAIL loan)
+        private bool ValidateTenorCondition(TBL_LOAN_APPLICATION_DETAIL loan, TBL_STAMP_DUTY_CONDITION condition)
         {
-            int tenor = loan.PROPOSEDTENOR;
-            if (tenor >= 360) return true;
+            if (condition.USETENOR == false) return true;
+            if( condition.USETENOR == true)
+            {
+                int tenor = loan.PROPOSEDTENOR;
+                if (tenor >= condition.TENOR) return true;
+            }
+            
             return false;
         }
 
@@ -13991,6 +14079,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public FacilityStampDutyViewModel GetFacilityStampDutyById(int loanApplicationDetailId)
         {
+            var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
             var loanApplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationDetailId).FirstOrDefault().LOANAPPLICATIONID;
             var loanApplication = context.TBL_LOAN_APPLICATION.Find(loanApplicationId);
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
@@ -14013,6 +14102,7 @@ namespace FintrakBanking.Repositories.Credit
                               customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
                               loanAmount = a.PROPOSEDAMOUNT,
                               approvedTenor = a.APPROVEDTENOR,
+                              collateralsubTypeId = cl.COLLATERALSUBTYPEID,
                               asdc = x.ASDC,
                               csdc = x.CSDC,
                               collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s => s.COLLATERALSUBTYPEID == cl.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
@@ -14021,6 +14111,10 @@ namespace FintrakBanking.Repositories.Credit
             record.operationId = (int)OperationsEnum.StampDutyClosure;
             record.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
             record.bookingDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == record.loanApplicationDetailId).FirstOrDefault()?.BOOKINGDATE;
+            var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == record.collateralsubTypeId).FirstOrDefault();
+            var dutyCharge = record.loanAmount * (condValue.DUTIABLEVALUE / 100);
+            record.stampDutyAmount = dutyCharge;
+            record.dutiableValue = condValue.DUTIABLEVALUE;
             if (record.bookingDate != null)
             {
                 record.maturityDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == record.loanApplicationDetailId).FirstOrDefault()?.MATURITYDATE;
@@ -14086,7 +14180,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             param.endDate = param.endDate.AddHours(23);
             param.endDate = param.endDate.AddMinutes(59);
-            param.endDate = param.endDate.AddSeconds(59); 
+            param.endDate = param.endDate.AddSeconds(59);
+
+            var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
 
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
@@ -14107,18 +14203,215 @@ namespace FintrakBanking.Repositories.Credit
                               customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
                               loanAmount = a.PROPOSEDAMOUNT,
                               approvedTenor = a.APPROVEDTENOR,
+                              collateralsubTypeId = cl.COLLATERALSUBTYPEID,
                               collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s => s.COLLATERALSUBTYPEID == cl.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
                               customerId = a.CUSTOMERID,
                               operationId = (int)OperationsEnum.StampDutyClosure,
                               //documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID
                           }).ToList();
-            //foreach (var rec in record)
-            //{
-            //    rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
-            //}
+            
 
             return record;
 
+        }
+
+        public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyFiltered(DateRange param)
+        {
+            param.endDate = param.endDate.AddHours(23);
+            param.endDate = param.endDate.AddMinutes(59);
+            param.endDate = param.endDate.AddSeconds(59);
+
+            var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
+
+            var record = (from x in context.TBL_FACILITY_STAMP_DUTY
+                          join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                          join cl in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals cl.COLLATERALCUSTOMERID
+                          where x.DELETED == false && ((DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)))
+
+                          select new FacilityStampDutyViewModel
+                          {
+                              facilityStampDutyId = x.FACILITYSTAMPDUTYID,
+                              loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                              collateralCustomerId = x.COLLATERALCUSTOMERID,
+                              osdc = x.OSDC,
+                              dateTimeCreated = x.DATETIMECREATED,
+                              isShared = x.ISSHARED,
+                              customerPercentage = x.CUSTOMERPERCENTAGE,
+                              bankPercentage = x.BANKPERCENTAGE,
+                              customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
+                              loanAmount = a.PROPOSEDAMOUNT,
+                              approvedTenor = a.APPROVEDTENOR,
+                              collateralsubTypeId = cl.COLLATERALSUBTYPEID,
+                              collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s => s.COLLATERALSUBTYPEID == cl.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                              customerId = a.CUSTOMERID,
+                              operationId = (int)OperationsEnum.StampDutyClosure,
+                              //documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID
+                          }).ToList();
+            foreach (var rec in record)
+            {
+                var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralsubTypeId).FirstOrDefault();
+                var dutyCharge = rec.loanAmount * (condValue.DUTIABLEVALUE / 100);
+                rec.stampDutyAmount = dutyCharge;
+                rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
+                rec.dutiableValue = condValue.DUTIABLEVALUE;
+            }
+            decimal totalDutyCharge = record.Sum(x => x.stampDutyAmount);
+            record[0].totalDutyAmount = totalDutyCharge;
+
+            return record;
+
+        }
+
+        public bool AddStampSetup(StampDutyConditionViewModel entity)
+        {
+            entity.tenor = ConvertTenorToDays(entity.tenor, entity.tenorModeId);
+            try
+            {
+                var data = context.TBL_STAMP_DUTY_CONDITION.Add(new TBL_STAMP_DUTY_CONDITION
+                {
+                    COLLATERALSUBTYPEID = entity.collateralSubTypeId,
+                    TENOR = entity.tenor,
+                    USETENOR = entity.useTenor,
+                    DUTIABLEVALUE = entity.dutiableValue,
+                    ISPERCENTAGE = entity.isPercentage
+
+                });
+
+                context.SaveChanges();
+
+                // Audit Section ---------------------------
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ChargeFeeAdded,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = $"{"Added Stamp duty condition setup"}",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = entity.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = data.CONDITIONID
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+                //end of Audit section -------------------------------
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return context.SaveChanges() != 0;
+        }
+
+        public IEnumerable<StampDutyConditionViewModel> GetStampSetup()
+        {
+            try
+            {
+                var data = (from a in context.TBL_STAMP_DUTY_CONDITION
+                            where a.DUTIABLEVALUE != null
+                            select new StampDutyConditionViewModel
+                            {
+                                conditionId = a.CONDITIONID,
+                                collateralSubTypeId = a.COLLATERALSUBTYPEID,
+                                dutiableValue = a.DUTIABLEVALUE,
+                                collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s => s.COLLATERALSUBTYPEID == a.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                                tenor = a.TENOR,
+                                useTenor = a.USETENOR,
+
+                            }).ToList();
+                return data;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+
+        }
+
+        public bool UpdateStampSetup(int conditionId, StampDutyConditionViewModel entity)
+        {
+            try
+            {
+
+                var tat = context.TBL_STAMP_DUTY_CONDITION.FirstOrDefault(x => x.CONDITIONID == conditionId);
+                if (tat == null) return false;
+
+                tat.COLLATERALSUBTYPEID = entity.collateralSubTypeId;
+                tat.TENOR = entity.tenor;
+                tat.USETENOR = entity.useTenor;
+                tat.DUTIABLEVALUE = entity.dutiableValue;
+                //tat.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ChargeFeeUpdated,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = $"{"Updated stamp duty condition"}",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = entity.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+
+                //end of Audit section -----------------------
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteStampSetup(int conditionId, UserInfo user)
+        {
+            try
+            {
+
+                var tat = context.TBL_STAMP_DUTY_CONDITION.FirstOrDefault(x => x.CONDITIONID == conditionId);
+                if (tat == null) return false;
+
+                context.TBL_STAMP_DUTY_CONDITION.Remove(tat);
+
+                context.SaveChanges();
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ChargeFeeDeleted,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"{"Deleted Stamp duty condition"}",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+
+                //end of Audit section -----------------------
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return context.SaveChanges() > 0;
         }
 
     }

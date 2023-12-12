@@ -1401,7 +1401,28 @@ namespace FintrakBanking.ViewModels.Credit
         public int? documentTypeId { get; set; }
         public DateTime? bookingDate { get; set; }
         public DateTime? maturityDate { get; set; }
+        public short collateralsubTypeId { get; set; }
+        public decimal stampDutyAmount { get; set; }
+        public decimal totalDutyAmount { get; set; }
+        public decimal dutiableValue { get; set; }
+    }
+
+    public class StampDutyConditionViewModel
+    {
+        public short userBranchId { get; set; }
+        public string userIPAddress { get; set; }
+        public string applicationUrl { get; set; }
+        public int createdBy { get; set; }
+        public int companyId { get; set; }
+        public int collateralSubTypeId { get; set; }
+        public int tenor { get; set; }
+        public int tenorModeId { get; set; }
+        public bool useTenor { get; set; }
+        public decimal dutiableValue { get; set; }
+        public bool isPercentage { get; set; }
+        public int conditionId { get; set; }
+        public string collateralSubType { get; set; }
     }
 
 
-  }
+}

@@ -9,5 +9,9 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CONDITIONID { get; set; }
         public int COLLATERALSUBTYPEID { get; set; }
+        public decimal DUTIABLEVALUE { get; set; }
+        public bool ISPERCENTAGE { get; set; }
+        public bool USETENOR { get; set; }
+        public int TENOR { get;set; }
     }
 }
