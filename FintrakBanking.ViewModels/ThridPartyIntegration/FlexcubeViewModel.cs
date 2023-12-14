@@ -217,6 +217,9 @@ namespace FintrakBanking.ViewModels.Flexcube
         public string applicationReferenceNumber { get; set; }
         public string custAccNumber { get; set; }
         public string bankTillAccount { get; set; }
+        public string custAccName { get; set; }
+        public string bankTillName { get; set; }
+        public decimal amount { get; set; }
     }
 
 }

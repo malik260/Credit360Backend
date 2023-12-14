@@ -1603,18 +1603,56 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (applicationDetail.STAMPDUTYAPPLICABLE)
                         {
+                            var apiResult = new PostingResult();
+                            var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(f=>f.LOANAPPLICATIONDETAILID == applicationDetail.LOANAPPLICATIONDETAILID && f.DELETED == false).FirstOrDefault();
+                            var appCol = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONDETAILID == stampDuty.LOANAPPLICATIONDETAILID && c.DELETED == false).FirstOrDefault();
+                            var col = context.TBL_COLLATERAL_CUSTOMER.Where(co => co.COLLATERALCUSTOMERID == stampDuty.COLLATERALCUSTOMERID).FirstOrDefault();
+                            var stampCon = context.TBL_STAMP_DUTY_CONDITION.Where(s => s.COLLATERALSUBTYPEID == col.COLLATERALSUBTYPEID).FirstOrDefault();
+                            var stampDutyAmount = applicationDetail.APPROVEDAMOUNT * (stampCon.DUTIABLEVALUE / 100);
+                            decimal bankShare = 0;
+                            decimal customerShare = stampDutyAmount * (stampDuty.CUSTOMERPERCENTAGE / 100);
+
+                            if (stampDuty.ISSHARED)
+                            {
+                                bankShare = stampDutyAmount * (stampDuty.BANKPERCENTAGE / 100);
+                                //customerShare = stampDutyAmount * (stampDuty.CUSTOMERPERCENTAGE / 100);
+
+                                StampDutyPostingViewModel stampDutySharedModel = new StampDutyPostingViewModel()
+                                {
+                                    reference = application.APPLICATIONREFERENCENUMBER,
+                                    appId = "FINTRAK",
+                                    userId = "STAMPDUTY",
+                                    currency = "NGN",
+                                    branchCode = entity.branchCode,
+                                    tranCode = "PSD",
+                                    custAccNumber = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME.ToLower() == "till account").FirstOrDefault().ACCOUNTCODE,
+                                    custAccName = "TILL ACCOUNT",
+                                    bankTillName = "STAMP DUTY PAYABLE",
+                                    bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME.ToLower() == "stamp duty payable").FirstOrDefault().ACCOUNTCODE,//To be provided,
+                                    amount = bankShare,
+                                };
+                                
+                                if (USE_THIRD_PARTY_INTEGRATION)
+                                {
+                                    apiResult = integration.PostStampDutyInputs(stampDutySharedModel);
+                                }
+                            }
+
                             StampDutyPostingViewModel stampDutyModel = new StampDutyPostingViewModel()
                             {
-                               reference = application.APPLICATIONREFERENCENUMBER,
-                               appId = "FINTRAK",
-                               userId = "STAMPDUTY",
-                               currency = "NGN",
-                               branchCode = entity.branchCode,
-                               tranCode  = "PSD",
-                               custAccNumber = entity.casaAccountNumber,
-                               bankTillAccount = "",//To be provided,
+                                reference = application.APPLICATIONREFERENCENUMBER,
+                                appId = "FINTRAK",
+                                userId = "STAMPDUTY",
+                                currency = "NGN",
+                                branchCode = entity.branchCode,
+                                tranCode = "PSD",
+                                custAccNumber = entity.casaAccountNumber,
+                                custAccName = entity.casaAccountDetails,
+                                bankTillName = "STAMP DUTY PAYABLE",
+                                bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME.ToLower() == "stamp duty payable").FirstOrDefault().ACCOUNTCODE,//To be provided,
+                                amount = customerShare,
                             };
-                            var apiResult = new PostingResult();
+                            //var apiResult = new PostingResult();
                             if (USE_THIRD_PARTY_INTEGRATION)
                             {
                                 apiResult = integration.PostStampDutyInputs(stampDutyModel);

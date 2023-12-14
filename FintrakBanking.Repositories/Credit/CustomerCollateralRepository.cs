@@ -12270,7 +12270,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (context.SaveChanges() > 0)
                 {
                     var condition = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                    sdApplicable = ValidateStampDutyApplicable(facility, condition);
+                    if (condition != null) sdApplicable = ValidateStampDutyApplicable(facility, condition);
                 }
                 if (sdApplicable == true)
                 {
@@ -12420,7 +12420,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (context.SaveChanges() > 0)
                         {
                             var condition = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                            sdApplicable = ValidateStampDutyApplicable(facility, condition);
+                            if(condition != null) sdApplicable = ValidateStampDutyApplicable(facility, condition);
                         }
                         if (sdApplicable)
                         {

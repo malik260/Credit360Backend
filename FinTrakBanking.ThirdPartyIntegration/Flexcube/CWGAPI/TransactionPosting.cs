@@ -1963,20 +1963,20 @@
                             tranCode = "PSD",
                             tranType = "D",
                             reference = "00000" + model.applicationReferenceNumber,
-                            accountNumber = model.entries[0].accountNumber,
-                            accountName = model.entries[0].accountName,
+                            accountNumber = model.custAccNumber,
+                            accountName = model.custAccName,
                             narration = "SD/Stamp Duty Fee Posting",
-                            amount = model.entries[0].amount,
+                            amount = model.amount.ToString(),
                         },
                         new StampDutyEntryViewModel()
                         {
                             tranCode = "PSD",
                             tranType = "C",
                             reference = "00000" + model.applicationReferenceNumber,
-                            accountNumber = model.entries[0].accountNumber,
-                            accountName = model.entries[0].accountName,
+                            accountNumber = model.bankTillAccount,
+                            accountName = model.bankTillName,
                             narration = "SD/Stamp Duty Fee Posting",
-                            amount = model.entries[0].amount,
+                            amount = model.amount.ToString(),
                         }
                     };
 
