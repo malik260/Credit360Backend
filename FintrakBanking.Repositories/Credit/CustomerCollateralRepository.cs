@@ -12286,21 +12286,24 @@ namespace FintrakBanking.Repositories.Credit
 
                             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
                             var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge").FirstOrDefault();
-
-                            List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
-
-                            var fee = new ProductFeesViewModel()
+                            if (stampFee !=null)
                             {
-                                loanChargeFeeId = stampFee.CHARGEFEEID,
-                                rate = cond.DUTIABLEVALUE,
-                                createdBy = model.createdBy,
-                                loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
+                                List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
 
-                            };
+                                var fee = new ProductFeesViewModel()
+                                {
+                                    loanChargeFeeId = stampFee.CHARGEFEEID,
+                                    rate = cond.DUTIABLEVALUE,
+                                    createdBy = model.createdBy,
+                                    loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
 
-                            fees.Add(fee);
+                                };
 
-                            ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+                                fees.Add(fee);
+
+                                ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+                            }
+                            
                         }
                         
                     }
@@ -12333,21 +12336,23 @@ namespace FintrakBanking.Repositories.Credit
 
                         var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
                         var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge").FirstOrDefault();
-
-                        List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
-
-                        var fee = new ProductFeesViewModel()
+                        if (stampFee != null)
                         {
-                            loanChargeFeeId = stampFee.CHARGEFEEID,
-                            rate = cond.DUTIABLEVALUE,
-                            createdBy = model.createdBy,
-                            loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
-                           
-                        };
+                            List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
 
-                        fees.Add(fee);
+                            var fee = new ProductFeesViewModel()
+                            {
+                                loanChargeFeeId = stampFee.CHARGEFEEID,
+                                rate = cond.DUTIABLEVALUE,
+                                createdBy = model.createdBy,
+                                loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
 
-                        ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+                            };
+
+                            fees.Add(fee);
+
+                            ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+                        }
 
                     }
 
@@ -14011,6 +14016,8 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                         collateralCustomerId = x.COLLATERALCUSTOMERID,
                         osdc = x.OSDC,
+                        asdc = x.ASDC,
+                        csdc = x.CSDC,
                         dateTimeCreated = x.DATETIMEUPDATED,
                         isShared = x.ISSHARED,
                         customerPercentage = x.CUSTOMERPERCENTAGE,
@@ -14052,6 +14059,8 @@ namespace FintrakBanking.Repositories.Credit
                          loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                          collateralCustomerId = x.COLLATERALCUSTOMERID,
                          osdc = x.OSDC,
+                         asdc = x.ASDC,
+                         csdc = x.CSDC,
                          dateTimeCreated = x.DATETIMEUPDATED,
                          isShared = x.ISSHARED,
                          customerPercentage = x.CUSTOMERPERCENTAGE,
@@ -14081,7 +14090,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDuty()
         {
-
+            var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                           join cl in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals cl.COLLATERALCUSTOMERID
@@ -14093,6 +14102,8 @@ namespace FintrakBanking.Repositories.Credit
                               loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                               collateralCustomerId = x.COLLATERALCUSTOMERID,
                               osdc = x.OSDC,
+                              asdc = x.ASDC,
+                              csdc = x.CSDC,
                               dateTimeCreated = x.DATETIMECREATED,
                               isShared = x.ISSHARED,
                               customerPercentage = x.CUSTOMERPERCENTAGE,
@@ -14100,6 +14111,7 @@ namespace FintrakBanking.Repositories.Credit
                               customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
                               loanAmount = a.PROPOSEDAMOUNT,
                               approvedTenor = a.APPROVEDTENOR,
+                              collateralsubTypeId = cl.COLLATERALSUBTYPEID,
                               collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s=>s.COLLATERALSUBTYPEID == cl.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
                               customerId = a.CUSTOMERID,
                               operationId = (int)OperationsEnum.StampDutyClosure,
@@ -14107,7 +14119,11 @@ namespace FintrakBanking.Repositories.Credit
                           }).ToList();
             foreach(var rec in record)
             {
+                var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralsubTypeId).FirstOrDefault();
+                var dutyCharge = rec.loanAmount * (condValue.DUTIABLEVALUE / 100);
+                rec.stampDutyAmount = dutyCharge;
                 rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
+                rec.dutiableValue = condValue.DUTIABLEVALUE;
                 rec.bookingDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId).FirstOrDefault()?.BOOKINGDATE;
                 if (rec.bookingDate != null)
                 {
@@ -14238,6 +14254,8 @@ namespace FintrakBanking.Repositories.Credit
                               loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                               collateralCustomerId = x.COLLATERALCUSTOMERID,
                               osdc = x.OSDC,
+                              asdc = x.ASDC,
+                              csdc = x.CSDC,
                               dateTimeCreated = x.DATETIMECREATED,
                               isShared = x.ISSHARED,
                               customerPercentage = x.CUSTOMERPERCENTAGE,
@@ -14277,6 +14295,8 @@ namespace FintrakBanking.Repositories.Credit
                               loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                               collateralCustomerId = x.COLLATERALCUSTOMERID,
                               osdc = x.OSDC,
+                              asdc = x.ASDC,
+                              csdc = x.CSDC,
                               dateTimeCreated = x.DATETIMECREATED,
                               isShared = x.ISSHARED,
                               customerPercentage = x.CUSTOMERPERCENTAGE,
