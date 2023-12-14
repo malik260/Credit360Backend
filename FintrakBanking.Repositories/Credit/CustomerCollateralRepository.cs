@@ -12335,23 +12335,28 @@ namespace FintrakBanking.Repositories.Credit
                         context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
 
                         var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge").FirstOrDefault();
+                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("stamp duty charge")).ToList();
                         if (stampFee != null)
                         {
-                            List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
-
-                            var fee = new ProductFeesViewModel()
+                            foreach(var fe in stampFee)
                             {
-                                loanChargeFeeId = stampFee.CHARGEFEEID,
-                                rate = cond.DUTIABLEVALUE,
-                                createdBy = model.createdBy,
-                                loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
+                                List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
 
-                            };
+                                var fee = new ProductFeesViewModel()
+                                {
+                                    loanChargeFeeId = stampFee[0].CHARGEFEEID,
+                                    rate = cond.DUTIABLEVALUE,
+                                    createdBy = model.createdBy,
+                                    loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
 
-                            fees.Add(fee);
+                                };
 
-                            ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+                                fees.Add(fee);
+                                ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+                            }
+                            
+
+                            
                         }
 
                     }
@@ -12468,22 +12473,30 @@ namespace FintrakBanking.Repositories.Credit
                                 context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
 
                                 var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                                var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge").FirstOrDefault();
-
-                                List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
-
-                                var fee = new ProductFeesViewModel()
+                                var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("stamp duty charge")).ToList();
+                                if (stampFee != null)
                                 {
-                                    loanChargeFeeId = stampFee.CHARGEFEEID,
-                                    rate = cond.DUTIABLEVALUE,
-                                    createdBy = model.createdBy,
-                                    loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
+                                    foreach (var fe in stampFee)
+                                    {
+                                        List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
 
-                                };
+                                        var fee = new ProductFeesViewModel()
+                                        {
+                                            loanChargeFeeId = stampFee[0].CHARGEFEEID,
+                                            rate = cond.DUTIABLEVALUE,
+                                            createdBy = model.createdBy,
+                                            loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
 
-                                fees.Add(fee);
+                                        };
 
-                                ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+                                        fees.Add(fee);
+                                        ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+                                    }
+
+
+
+                                }
+
                             }
 
 
@@ -12503,6 +12516,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return false;
         }
+
         private string GenerateSDCode()
         {
             var fsd = context.TBL_CODE_TRACKER.OrderByDescending(x => x.CODEID).FirstOrDefault();

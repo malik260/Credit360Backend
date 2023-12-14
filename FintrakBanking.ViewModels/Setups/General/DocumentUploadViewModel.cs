@@ -82,7 +82,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int customerGroupId { get; set; }
         public bool overwrite { get; set; }
         public int customerCreditBureauId { get; set; }
-        
+        public bool isBulk { get; set; }
     }
 
     public class CustomerDocumentSearchViewModel
