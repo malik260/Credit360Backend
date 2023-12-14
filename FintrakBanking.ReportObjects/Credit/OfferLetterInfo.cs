@@ -192,7 +192,54 @@ namespace FintrakBanking.ReportObjects.Credit
 
         }
 
-        
+        public List<FacilityStampDutyViewModel> GetLoanApplicationContractCode(string applicationRefNumber)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            try
+            {
+                var result = new List<FacilityStampDutyViewModel>();
+                var loanApplicationId = context.TBL_LOAN_APPLICATION.Where(l => l.APPLICATIONREFERENCENUMBER == applicationRefNumber).FirstOrDefault().LOANAPPLICATIONID;
+                var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
+
+                foreach (var loanApplicationDetailId in loanApplicationDetailIds)
+                {
+                    var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId && x.DELETED == false)
+                         .Select(x => new FacilityStampDutyViewModel
+                         {
+                             
+                             contractCode = x.CONTRACTCODE
+                            
+                         }).ToList();
+
+                    if (stampDuty.Count > 0)
+                    {
+                        result = stampDuty;
+                        return result;
+                    }
+                    
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return new List<FacilityStampDutyViewModel>()
+            {
+                new FacilityStampDutyViewModel
+                {
+                    contractCode = "N/A"
+                }
+            };
+
+
+        }
+
+
         public List<OfferLetterDetailViewModel> GetLoanApplicationDetail(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();

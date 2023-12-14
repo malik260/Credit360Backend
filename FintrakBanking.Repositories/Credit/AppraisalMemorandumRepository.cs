@@ -669,13 +669,15 @@ namespace FintrakBanking.Repositories.Credit
                                 {
                                     var sdaCode = GenerateSDCode();
                                     sdaCode = "SDA" + sdaCode;
-
+                                    var cCode = GenerateSDCode();
+                                    cCode = "CC" + cCode;
                                     var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID).FirstOrDefault();
                                     if (stampDuty != null)
                                     {
                                         stampDuty.ASDC = sdaCode;
                                         stampDuty.DATETIMEUPDATED = DateTime.Now;
                                         stampDuty.CURRENTSTATUS = 2;
+                                        stampDuty.CONTRACTCODE = cCode;
                                     }
                                 }
                              }

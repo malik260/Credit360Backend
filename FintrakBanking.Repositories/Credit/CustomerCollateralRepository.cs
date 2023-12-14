@@ -14286,7 +14286,8 @@ namespace FintrakBanking.Repositories.Credit
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                           join cl in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals cl.COLLATERALCUSTOMERID
-                          where x.DELETED == false && ((DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                          where x.DELETED == false && x.CURRENTSTATUS == 2 
+                          && ((DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                                  && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)))
 
                           select new FacilityStampDutyViewModel

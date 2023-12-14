@@ -22,5 +22,6 @@ namespace FintrakBanking.Entities.Models
         public decimal BANKPERCENTAGE { get; set; }
         public string CSDC { get; set; }
         public string ASDC { get; set; }
+        public string CONTRACTCODE { get; set; }
     }
 }

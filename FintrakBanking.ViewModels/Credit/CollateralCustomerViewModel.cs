@@ -1405,6 +1405,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal stampDutyAmount { get; set; }
         public decimal totalDutyAmount { get; set; }
         public decimal dutiableValue { get; set; }
+        public string contractCode { get; set; }
     }
 
     public class StampDutyConditionViewModel
