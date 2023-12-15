@@ -17,6 +17,7 @@ using FintrakBanking.Interfaces.Credit;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Configuration;
+using Microsoft.Office.Interop.Excel;
 
 namespace FintrakBanking.Repositories.Media
 {
@@ -1003,6 +1004,73 @@ namespace FintrakBanking.Repositories.Media
             return serialNumber;
 
 
+        }
+
+        public bool GoForBulkApproval(FacilityStampDutyViewModel data)
+        {
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    
+
+                   
+                        var response = CloseStampDuty(data);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                            return true;
+                        }
+                       
+                    
+                    else
+                    {
+                        trans.Rollback();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                   
+                    throw new SecureException(ex.Message);
+                }
+            }
+        }
+
+        private bool CloseStampDuty(FacilityStampDutyViewModel data)
+        {
+            
+            try
+            {
+                var sdcCode = GenerateSDCode();
+                sdcCode = "SDC" + sdcCode;
+
+                var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.FACILITYSTAMPDUTYID == data.facilityStampDutyId).FirstOrDefault();
+                if (stampDuty != null)
+                {
+                    stampDuty.CSDC = sdcCode;
+                    stampDuty.DATETIMEUPDATED = DateTime.Now;
+                    stampDuty.CURRENTSTATUS = 3;
+                }
+                context.SaveChanges();
+
+
+                var response = context.SaveChanges() >= 0;
+               
+
+                context.SaveChanges();
+                if (response)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
         }
 
         private  async Task<DocumentUploadViewModelResut> AddDocumentUploadToSubsidiary(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent)

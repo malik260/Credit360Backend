@@ -23,6 +23,7 @@ namespace FintrakBanking.Interfaces.Media
 
         int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer);
         int AddSDDocumentUpload(DocumentUploadViewModel model, byte[] buffer);
+        bool GoForBulkApproval(FacilityStampDutyViewModel data);
 
         DocumentUploadViewModelResut AddDocumentUploadToSubsidiaryResult(DocumentUploadViewModel model, byte[] buffer, string token, MultipartFormDataContent formContent);
 
