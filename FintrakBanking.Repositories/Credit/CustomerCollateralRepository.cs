@@ -14283,7 +14283,15 @@ namespace FintrakBanking.Repositories.Credit
                               operationId = (int)OperationsEnum.StampDutyClosure,
                               //documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID
                           }).ToList();
-            
+            foreach (var rec in record)
+            {
+                var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralsubTypeId).FirstOrDefault();
+                var dutyCharge = rec.loanAmount * (condValue.DUTIABLEVALUE / 100);
+                rec.stampDutyAmount = dutyCharge;
+                rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
+                rec.dutiableValue = condValue.DUTIABLEVALUE;
+            }
+
 
             return record;
 
