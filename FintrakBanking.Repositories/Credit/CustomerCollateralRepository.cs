@@ -12285,21 +12285,25 @@ namespace FintrakBanking.Repositories.Credit
                             fsdExists.DELETED = false;
 
                             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                            var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge").FirstOrDefault();
+                            var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge" && s.DELETED == false).ToList();
                             if (stampFee !=null)
                             {
                                 List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
-
-                                var fee = new ProductFeesViewModel()
+                                foreach( var f in stampFee)
                                 {
-                                    loanChargeFeeId = stampFee.CHARGEFEEID,
-                                    rate = cond.DUTIABLEVALUE,
-                                    createdBy = model.createdBy,
-                                    loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
+                                    var fee = new ProductFeesViewModel()
+                                    {
+                                        loanChargeFeeId = f.CHARGEFEEID,
+                                        rate = cond.DUTIABLEVALUE,
+                                        createdBy = model.createdBy,
+                                        loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
 
-                                };
+                                    };
 
-                                fees.Add(fee);
+                                    fees.Add(fee);
+
+                                }
+                                
 
                                 ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
                             }
@@ -12335,16 +12339,15 @@ namespace FintrakBanking.Repositories.Credit
                         context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
 
                         var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("stamp duty charge")).ToList();
+                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge" && s.DELETED == false).ToList();
                         if (stampFee != null)
                         {
-                            foreach(var fe in stampFee)
+                            List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
+                            foreach (var f in stampFee)
                             {
-                                List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
-
                                 var fee = new ProductFeesViewModel()
                                 {
-                                    loanChargeFeeId = stampFee[0].CHARGEFEEID,
+                                    loanChargeFeeId = f.CHARGEFEEID,
                                     rate = cond.DUTIABLEVALUE,
                                     createdBy = model.createdBy,
                                     loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
@@ -12352,11 +12355,11 @@ namespace FintrakBanking.Repositories.Credit
                                 };
 
                                 fees.Add(fee);
-                                ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
-                            }
-                            
 
-                            
+                            }
+
+
+                            ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
                         }
 
                     }

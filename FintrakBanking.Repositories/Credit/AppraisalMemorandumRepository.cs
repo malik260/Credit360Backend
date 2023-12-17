@@ -662,8 +662,8 @@ namespace FintrakBanking.Repositories.Credit
                             //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
 
                             generateOutPutDocument = true;
-
-                             foreach (var detail in details)
+                        var applDet = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).ToList();
+                             foreach (var detail in applDet)
                              {
                                 if (detail.STAMPDUTYAPPLICABLE)
                                 {
@@ -705,7 +705,27 @@ namespace FintrakBanking.Repositories.Credit
                                 trans.Rollback();
                             }
                         }
-                    }
+
+                        //    foreach (var detail in details)
+                        //    {
+                        //        if (detail.STAMPDUTYAPPLICABLE)
+                        //        {
+                        //            var sdaCode = GenerateSDCode();
+                        //            sdaCode = "SDA" + sdaCode;
+                        //            var cCode = GenerateSDCode();
+                        //            cCode = "CC" + cCode;
+                        //            var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                        //            if (stampDuty != null)
+                        //            {
+                        //                stampDuty.ASDC = sdaCode;
+                        //                stampDuty.DATETIMEUPDATED = DateTime.Now;
+                        //                stampDuty.CURRENTSTATUS = 2;
+                        //                stampDuty.CONTRACTCODE = cCode;
+                        //            }
+                        //        }
+                        //    }
+                        //context.SaveChanges();
+                }
 
                     // UPDATE APPROVED AMOUNT
                     if (updateApprovedAmount == true && items != null) appl.APPROVEDAMOUNT = totalApprovedAmount;
