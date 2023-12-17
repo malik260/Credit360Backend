@@ -275,10 +275,10 @@ namespace FintrakBanking.APICore.Controllers
                
                     var file = provider.Contents.FirstOrDefault();
                     var buffer = await file.ReadAsByteArrayAsync();
-                    int response = repo.AddSDDocumentUpload(entity, buffer);
+                    int response = repo. AddSDDocumentUpload(entity, buffer);
 
 
-                    if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+                    if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Stamp duty closed successfully. Stamp duty code " + entity.csdc});
                     if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
 
                 
@@ -394,7 +394,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (val.Count() != 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Stamp duty clossed successfully" });
+                    new { success = true, message = "Stamp duty closed successfully. Stamp duty code " + entity[0].csdc });
                     // return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = val });
                 }
 

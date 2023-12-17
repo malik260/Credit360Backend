@@ -966,6 +966,7 @@ namespace FintrakBanking.Repositories.Media
                 stampDuty.DATETIMEUPDATED = DateTime.Now;
                 stampDuty.CURRENTSTATUS = 3;
             }
+            model.csdc = sdcCode;
             context.SaveChanges();
 
 
@@ -1054,6 +1055,7 @@ namespace FintrakBanking.Repositories.Media
                     stampDuty.DATETIMEUPDATED = DateTime.Now;
                     stampDuty.CURRENTSTATUS = 3;
                 }
+                data.csdc = sdcCode;
                 context.SaveChanges();
 
 
