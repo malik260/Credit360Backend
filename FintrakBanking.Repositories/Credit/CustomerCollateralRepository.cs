@@ -12339,7 +12339,7 @@ namespace FintrakBanking.Repositories.Credit
                         context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
 
                         var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge" && s.DELETED == false).ToList();
+                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("stamp duty charge") && s.DELETED == false).ToList();
                         if (stampFee != null)
                         {
                             List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
@@ -12476,7 +12476,7 @@ namespace FintrakBanking.Repositories.Credit
                                 context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
 
                                 var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                                var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("stamp duty charge")).ToList();
+                                var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("stamp duty charge") && s.DELETED == false).ToList();
                                 if (stampFee != null)
                                 {
                                     foreach (var fe in stampFee)
