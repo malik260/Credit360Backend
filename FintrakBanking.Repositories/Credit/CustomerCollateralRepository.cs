@@ -12291,10 +12291,11 @@ namespace FintrakBanking.Repositories.Credit
                                 List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
                                 foreach( var f in stampFee)
                                 {
+                                    var feeDetails = context.TBL_CHARGE_FEE_DETAIL.Where(fd => fd.CHARGEFEEID == f.CHARGEFEEID).FirstOrDefault();
                                     var fee = new ProductFeesViewModel()
                                     {
                                         loanChargeFeeId = f.CHARGEFEEID,
-                                        rate = cond.DUTIABLEVALUE,
+                                        rate = (decimal)feeDetails.VALUE,//cond.DUTIABLEVALUE,
                                         createdBy = model.createdBy,
                                         loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
 
@@ -12345,10 +12346,11 @@ namespace FintrakBanking.Repositories.Credit
                             List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
                             foreach (var f in stampFee)
                             {
+                                var feeDetails = context.TBL_CHARGE_FEE_DETAIL.Where(fd => fd.CHARGEFEEID == f.CHARGEFEEID).FirstOrDefault();
                                 var fee = new ProductFeesViewModel()
                                 {
                                     loanChargeFeeId = f.CHARGEFEEID,
-                                    rate = cond.DUTIABLEVALUE,
+                                    rate = (decimal)feeDetails.VALUE,//cond.DUTIABLEVALUE,
                                     createdBy = model.createdBy,
                                     loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
 
