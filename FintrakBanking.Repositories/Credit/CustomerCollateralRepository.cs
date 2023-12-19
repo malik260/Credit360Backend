@@ -7619,17 +7619,17 @@ namespace FintrakBanking.Repositories.Credit
                 fsdExists.DELETED = true;
             }
 
-            var stampFees = context.TBL_CHARGE_FEE.Where(f => f.CHARGEFEENAME.ToLower().Contains("stamp duty charge")).ToList();
+            var stampFees = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
             if (stampFees.Count > 0)
             {
                 foreach(var fee in stampFees)
                 {
-                    var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                    var dat = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID && d.CHARGEFEEID == fee.CHARGEFEEID).FirstOrDefault();
 
-                    var fees = dat.TBL_LOAN_APPLICATION_DETL_FEE;
-                    if (fees.Count > 0)
+                    var fees = dat;
+                    if (fees != null)
                     {
-                        context.TBL_LOAN_APPLICATION_DETL_FEE.RemoveRange(fees);
+                        context.TBL_LOAN_APPLICATION_DETL_FEE.Remove(fees);
                     }
                 }
                
