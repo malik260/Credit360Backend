@@ -957,7 +957,7 @@ namespace FintrakBanking.Repositories.Media
             }
 
             var sdcCode = GenerateSDCode();
-            sdcCode = "SDC" + sdcCode;
+            sdcCode = "CSD" + sdcCode;
 
             var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.FACILITYSTAMPDUTYID == model.targetId).FirstOrDefault();
             if (stampDuty != null)
@@ -1046,7 +1046,7 @@ namespace FintrakBanking.Repositories.Media
             try
             {
                 var sdcCode = GenerateSDCode();
-                sdcCode = "SDC" + sdcCode;
+                sdcCode = "CSD" + sdcCode;
 
                 var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.FACILITYSTAMPDUTYID == data.facilityStampDutyId).FirstOrDefault();
                 if (stampDuty != null)

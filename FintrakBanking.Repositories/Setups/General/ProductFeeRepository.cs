@@ -300,6 +300,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         createdBy = data.CREATEDBY,
                         dateTimeCreated = data.DATETIMECREATED,
+                        feeDisplay = data.TBL_CHARGE_FEE.FEETYPEID == 1 ? "%" : "Amt"
                     });
         }
 
@@ -478,7 +479,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     feeId = c.feeId,
                     feeName = c.feeName,
                     rate = c.rateValue,
-                    feeTypeId= c.feeTypeId
+                    feeTypeId= c.feeTypeId,
+                    feeDisplay = c.feeDisplay
                 });
         }
         

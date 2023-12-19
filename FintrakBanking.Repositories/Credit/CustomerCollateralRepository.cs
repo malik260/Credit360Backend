@@ -7619,13 +7619,23 @@ namespace FintrakBanking.Repositories.Credit
                 fsdExists.DELETED = true;
             }
 
-            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
-
-            var fees = dat.TBL_LOAN_APPLICATION_DETL_FEE;
-            if (fees.Count > 0)
+            var stampFees = context.TBL_CHARGE_FEE.Where(f => f.CHARGEFEENAME.ToLower().Contains("stamp duty charge")).ToList();
+            if (stampFees.Count > 0)
             {
-                context.TBL_LOAN_APPLICATION_DETL_FEE.RemoveRange(fees);
+                foreach(var fee in stampFees)
+                {
+                    var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+
+                    var fees = dat.TBL_LOAN_APPLICATION_DETL_FEE;
+                    if (fees.Count > 0)
+                    {
+                        context.TBL_LOAN_APPLICATION_DETL_FEE.RemoveRange(fees);
+                    }
+                }
+               
             }
+
+            
             //context.SaveChanges();
             return context.SaveChanges() > 0;
 
@@ -12285,7 +12295,7 @@ namespace FintrakBanking.Repositories.Credit
                             fsdExists.DELETED = false;
 
                             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                            var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower() == "stamp duty charge" && s.DELETED == false).ToList();
+                            var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
                             if (stampFee !=null)
                             {
                                 List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
@@ -12295,7 +12305,7 @@ namespace FintrakBanking.Repositories.Credit
                                     var fee = new ProductFeesViewModel()
                                     {
                                         loanChargeFeeId = f.CHARGEFEEID,
-                                        rate = (decimal)feeDetails.VALUE,//cond.DUTIABLEVALUE,
+                                        rate = cond.DUTIABLEVALUE,
                                         createdBy = model.createdBy,
                                         loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
 
@@ -12340,7 +12350,7 @@ namespace FintrakBanking.Repositories.Credit
                         context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
 
                         var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("stamp duty charge") && s.DELETED == false).ToList();
+                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
                         if (stampFee != null)
                         {
                             List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
@@ -12350,7 +12360,7 @@ namespace FintrakBanking.Repositories.Credit
                                 var fee = new ProductFeesViewModel()
                                 {
                                     loanChargeFeeId = f.CHARGEFEEID,
-                                    rate = (decimal)feeDetails.VALUE,//cond.DUTIABLEVALUE,
+                                    rate = cond.DUTIABLEVALUE,
                                     createdBy = model.createdBy,
                                     loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
 
@@ -12448,6 +12458,30 @@ namespace FintrakBanking.Repositories.Credit
                                 if (!appl.ISONLENDING)
                                 {
                                     fsdExists.DELETED = false;
+                                    var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
+                                    var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
+                                    if (stampFee != null)
+                                    {
+                                        List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
+                                        foreach (var f in stampFee)
+                                        {
+                                            var feeDetails = context.TBL_CHARGE_FEE_DETAIL.Where(fd => fd.CHARGEFEEID == f.CHARGEFEEID).FirstOrDefault();
+                                            var fee = new ProductFeesViewModel()
+                                            {
+                                                loanChargeFeeId = f.CHARGEFEEID,
+                                                rate = cond.DUTIABLEVALUE,
+                                                createdBy = model.createdBy,
+                                                loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
+
+                                            };
+
+                                            fees.Add(fee);
+
+                                        }
+
+
+                                        ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+                                    }
                                 }
                             }
                             else if (fsdDetailExists != null)
@@ -12478,7 +12512,7 @@ namespace FintrakBanking.Repositories.Credit
                                 context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
 
                                 var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                                var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("stamp duty charge") && s.DELETED == false).ToList();
+                                var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
                                 if (stampFee != null)
                                 {
                                     foreach (var fe in stampFee)

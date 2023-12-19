@@ -38,6 +38,7 @@
         public decimal? dependentAmount { get; set; }
         public short feeTypeId { get; set; }
         public double SN { get; set; }
+        public string feeDisplay { get; set; }
 
         //public int companyId { get; set; }
         //public int createdBy { get; set; }
