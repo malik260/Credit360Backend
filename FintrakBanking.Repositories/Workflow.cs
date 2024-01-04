@@ -1125,7 +1125,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     || (x.LevelPosition > currentLevel.LevelPosition && x.GroupPosition == currentLevel.GroupPosition) // same group
                     );
 
-                if (this.productId == 20 && (amount <= 5000000))
+                if (this.productId == 20 && (amount <= 5000000) && currentLevel.Level.LEVELNAME == "ACCOUNT OFFICER")
                 {
                     next = approvalLevels.Where(a => a.Level.LEVELNAME == "CREDIT ANALYST").FirstOrDefault();
                 }

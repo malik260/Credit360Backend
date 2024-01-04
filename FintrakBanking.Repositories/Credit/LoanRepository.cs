@@ -284,20 +284,45 @@ namespace FintrakBanking.Repositories.Credit
                                       defaultfeeRateValue = fa.DEFAULT_FEERATEVALUE,
                                       recommededFeeRateValue = fa.RECOMMENDED_FEERATEVALUE,
                                       feeRateValue = fa.RECOMMENDED_FEERATEVALUE,
-                                      feeAmount = (bookingRequest.AMOUNT_REQUESTED * fa.RECOMMENDED_FEERATEVALUE) / 100,
+                                      feeAmount =  fa.RECOMMENDED_FEERATEVALUE,
                                       feeIntervalName = fa.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
                                       isIntegralFee = fa.TBL_CHARGE_FEE.ISINTEGRALFEE,
                                       isRecurring = fa.TBL_CHARGE_FEE.RECURRING,
-                                      valueBase = "Rate(%)",
+                                      valueBase = fa.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,//"Rate(%)",
+                                      feeTypeId = fa.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPEID,
                                       dealTypeId = 0
                                   }).ToList();
 
             var lisProdFeeViewModel = new List<ProductFeeViewModel>();
             foreach (var item in loanAppProdFee)
             {
+                if(item.feeTypeId == 1 || item.feeTypeId == 3 || item.feeTypeId == 5)
+                {
+                    item.feeAmount = (bookingRequest.AMOUNT_REQUESTED * item.feeAmount) / 100;
+                }
+                if(item.feeName.ToLower().Contains("(Ad valorem)") && item.deleted == false)
+                {
+                    item.isDutiable = true;
+                    decimal bankShare = 0;
+                    var stampFees = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && s.DELETED == false).FirstOrDefault();
+
+                    if (stampFees != null && stampFees.ISSHARED)
+                    {
+                        bankShare = item.feeAmount * (stampFees.BANKPERCENTAGE / 100);
+                        decimal customerShare = item.feeAmount * (stampFees.CUSTOMERPERCENTAGE / 100);
+                        item.bankShare = bankShare;
+                        item.customerShare = customerShare;
+                    }
+                    else
+                    {
+                        item.customerShare = item.feeAmount;
+                    }
+
+                }
                 var chargeFeeDetail = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == item.chargeFeeId && x.DETAILTYPEID == (short)ChargeFeeDetailTypeEnum.Tax).FirstOrDefault();
                 if (chargeFeeDetail != null)
                 {
+
                     var prodFeeView = new ProductFeeViewModel()
                     {
                         feeName = chargeFeeDetail.DESCRIPTION,
@@ -309,7 +334,7 @@ namespace FintrakBanking.Repositories.Credit
                         feeIntervalName = chargeFeeDetail.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
                         isIntegralFee = chargeFeeDetail.TBL_CHARGE_FEE.ISINTEGRALFEE,
                         isRecurring = chargeFeeDetail.TBL_CHARGE_FEE.RECURRING,
-                        valueBase = "Rate(%)",
+                        valueBase = chargeFeeDetail.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,//"Rate(%)",
                         dealTypeId = (short)ChargeFeeDetailTypeEnum.Tax
                     };
 

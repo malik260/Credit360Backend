@@ -39,6 +39,9 @@
         public short feeTypeId { get; set; }
         public double SN { get; set; }
         public string feeDisplay { get; set; }
+        public decimal customerShare { get; set; }
+        public decimal bankShare { get; set; }
+        public bool isDutiable { get; set; }
 
         //public int companyId { get; set; }
         //public int createdBy { get; set; }
