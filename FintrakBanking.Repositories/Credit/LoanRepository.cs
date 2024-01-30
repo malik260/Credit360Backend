@@ -300,7 +300,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     item.feeAmount = (bookingRequest.AMOUNT_REQUESTED * item.feeAmount) / 100;
                 }
-                if(item.feeName.ToLower().Contains("(Ad valorem)") && item.deleted == false)
+                if(item.feeName.ToLower().Contains("(ad valorem)") && item.deleted == false)
                 {
                     item.isDutiable = true;
                     decimal bankShare = 0;
@@ -1671,8 +1671,8 @@ namespace FintrakBanking.Repositories.Credit
                                 currency = "NGN",
                                 branchCode = entity.branchCode,
                                 tranCode = "PSD",
-                                custAccNumber = entity.casaAccountNumber,
-                                custAccName = entity.casaAccountDetails,
+                                custAccNumber = context.TBL_CASA.Where(c=>c.CASAACCOUNTID == entity.casaAccountId).FirstOrDefault().PRODUCTACCOUNTNUMBER,// entity.casaAccountNumber,
+                                custAccName = context.TBL_CASA.Where(c => c.CASAACCOUNTID == entity.casaAccountId).FirstOrDefault().PRODUCTACCOUNTNAME,//   entity.casaAccountDetails,
                                 bankTillName = "STAMP DUTY PAYABLE",
                                 bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME.ToLower() == "stamp duty payable").FirstOrDefault().ACCOUNTCODE,//To be provided,
                                 amount = customerShare,

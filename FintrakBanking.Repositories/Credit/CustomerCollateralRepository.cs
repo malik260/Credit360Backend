@@ -14143,6 +14143,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDuty()
         {
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
@@ -14172,12 +14173,14 @@ namespace FintrakBanking.Repositories.Credit
                           }).ToList();
             foreach(var rec in record)
             {
+                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault().RECOMMENDED_FEERATEVALUE;
                 var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralsubTypeId).FirstOrDefault();
-                var dutyCharge = rec.loanAmount * (condValue.DUTIABLEVALUE / 100);
+                var dutyCharge = (rec.loanAmount * (condValue.DUTIABLEVALUE / 100)) + rec.fixedDutyCharge;
                 rec.stampDutyAmount = dutyCharge;
                 rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
                 rec.dutiableValue = condValue.DUTIABLEVALUE;
                 rec.bookingDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId).FirstOrDefault()?.BOOKINGDATE;
+
                 if (rec.bookingDate != null)
                 {
                     rec.maturityDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId).FirstOrDefault()?.MATURITYDATE;
@@ -14292,7 +14295,7 @@ namespace FintrakBanking.Repositories.Credit
             param.endDate = param.endDate.AddHours(23);
             param.endDate = param.endDate.AddMinutes(59);
             param.endDate = param.endDate.AddSeconds(59);
-
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c=>c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
 
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
@@ -14324,10 +14327,12 @@ namespace FintrakBanking.Repositories.Credit
                           }).ToList();
             foreach (var rec in record)
             {
+                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault().RECOMMENDED_FEERATEVALUE;
                 var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralsubTypeId).FirstOrDefault();
-                var dutyCharge = rec.loanAmount * (condValue.DUTIABLEVALUE / 100);
+                var dutyCharge = (rec.loanAmount * (condValue.DUTIABLEVALUE / 100)) + rec.fixedDutyCharge;
                 rec.stampDutyAmount = dutyCharge;
                 rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
+                
                 rec.dutiableValue = condValue.DUTIABLEVALUE;
             }
 
@@ -14343,7 +14348,7 @@ namespace FintrakBanking.Repositories.Credit
             param.endDate = param.endDate.AddSeconds(59);
 
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
-
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                           join cl in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals cl.COLLATERALCUSTOMERID
@@ -14374,13 +14379,14 @@ namespace FintrakBanking.Repositories.Credit
                           }).ToList();
             foreach (var rec in record)
             {
+                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault().RECOMMENDED_FEERATEVALUE;
                 var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralsubTypeId).FirstOrDefault();
-                var dutyCharge = rec.loanAmount * (condValue.DUTIABLEVALUE / 100);
+                var dutyCharge = (rec.loanAmount * (condValue.DUTIABLEVALUE / 100)) + rec.fixedDutyCharge;
                 rec.stampDutyAmount = dutyCharge;
                 rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
                 rec.dutiableValue = condValue.DUTIABLEVALUE;
             }
-            decimal totalDutyCharge = record.Sum(x => x.stampDutyAmount);
+            decimal totalDutyCharge = (decimal)record.Sum(x => x.stampDutyAmount);
             record[0].totalDutyAmount = totalDutyCharge;
 
             return record;

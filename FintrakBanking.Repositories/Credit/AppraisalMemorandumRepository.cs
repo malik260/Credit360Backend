@@ -635,7 +635,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (workflow.StatusId == (short)ApprovalStatusEnum.Processing || workflow.StatusId == (short)ApprovalStatusEnum.Approved || workflow.StatusId == (short)ApprovalStatusEnum.Disapproved)
                     {
                         var statusCode = ""; // Approved = "90", Rejected = "99"
-                        statusCode = workflow.StatusId == (short)ApprovalStatusEnum.Disapproved ? "99" : "90";
+                        statusCode = workflow.StatusId == (short)ApprovalStatusEnum.Disapproved ? "02" : "01";
                         if (model.isFlowTest == false) LoanStatusChangeThroughAPI(appl, model.comment, staff.STAFFID, statusCode);
                     }
                     ////////////////////// Call Status Change API /////////////////
@@ -911,6 +911,10 @@ namespace FintrakBanking.Repositories.Credit
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
             var applDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID).FirstOrDefault();
 
+            if (WorkflowStage == "AO")
+            {
+                WorkflowStageName = "01";
+            }
             if (WorkflowStage == "RM")
             {
                 WorkflowStageName = "11";
@@ -918,7 +922,7 @@ namespace FintrakBanking.Repositories.Credit
             //if (WorkflowStage.Substring(0, 2) == "CR")
             if (WorkflowStage == "CA")
             {
-                WorkflowStageName = "12";
+                WorkflowStageName = "02";
             }
             if (WorkflowStage == "GH")
             {
@@ -946,19 +950,19 @@ namespace FintrakBanking.Repositories.Credit
             
 
 
-            var amendWorkflow = context.TBL_WORKFLOW_AMEND.Where(w => w.PRODUCTID == applDetail.APPROVEDPRODUCTID).FirstOrDefault();
-            if (amendWorkflow != null)
-            {
-                if (loanApplication.APIREQUESTID != null && (applDetail.PROPOSEDAMOUNT <= amendWorkflow.AMOUNT))
+            //var amendWorkflow = context.TBL_WORKFLOW_AMEND.Where(w => w.PRODUCTID == applDetail.APPROVEDPRODUCTID).FirstOrDefault();
+            //if (amendWorkflow != null)
+            //{
+                if (loanApplication.APIREQUESTID != null)// && (applDetail.PROPOSEDAMOUNT <= amendWorkflow.AMOUNT)
                 {
                     await transaction.UpdateLoanStatus(statusResponse, loanApplication.APPLICATIONREFERENCENUMBER);
                 }
 
-            }
+           // }
 
-            if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
-               await transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
-            }
+            //if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
+            //   await transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+            //}
 
         }
 

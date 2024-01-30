@@ -1347,7 +1347,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
 
             var getCronSetup = context.TBL_COLLECTION_RETAIL_CRON_SETUP.Where(x => x.DELETED == false).ToList();
-            if (getCronSetup.Count() > 0)
+            /*if (getCronSetup.Count() > 0)
             {
                 foreach (var c in getCronSetup)
                 {
@@ -1392,7 +1392,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 }
 
-            }
+            }*/
 
 
             CheckFailedAlertByDate();
@@ -2031,7 +2031,7 @@ namespace FintrakBanking.Repositories.Setups.General
             // GetLoanRepaymentReminder method
 
             List<int> days = new List<int> { 30, 21, 14, 7, 5, 2, 1 };
-            List<string> customerList = new List<string> { "000000183",
+            /*List<string> customerList = new List<string> { "000000183",
 "000063647",
 "026541817",
 "004912877",
@@ -33879,8 +33879,10 @@ namespace FintrakBanking.Repositories.Setups.General
 "028721469",
 "028776321",
 "040465431"
- };
+ };*/
+            List<string> customerList = context.TBL_CUSTOMER.Select(c => c.CUSTOMERCODE).ToList();
 
+            //var loanRepaymentReminder = context.TBL_NEXT_PRINCIPAL_REPAYMENT.Where(d => d.AMOUNTDUE.Value > 0 && days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value) && customerList.Contains(d.CUSTOMERID)).ToList();
             var loanRepaymentReminder = context.TBL_NEXT_PRINCIPAL_REPAYMENT.Where(d => d.AMOUNTDUE.Value > 0 && days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value) && customerList.Contains(d.CUSTOMERID)).ToList();
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentReminder" && a.ISACTIVE == true).FirstOrDefault();
             int numberOfDays = 0;
@@ -33955,7 +33957,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetLoanRepaymentReminder method
 
-            List<string> customerList = new List<string> { "000000183",
+            /*List<string> customerList = new List<string> { "000000183",
 "000063647",
 "026541817",
 "004912877",
@@ -65803,7 +65805,8 @@ namespace FintrakBanking.Repositories.Setups.General
 "028721469",
 "028776321",
 "040465431"
- };
+ };*/
+            List<string> customerList = context.TBL_CUSTOMER.Select(c => c.CUSTOMERCODE).ToList();
 
             var loanRepaymentReminder = context.TBL_NEXT_PRINCIPAL_REPAYMENT.Where(d => d.AMOUNTDUE.Value > 0 && DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value < 1 && customerList.Contains(d.CUSTOMERID)).ToList();
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentOverdueReminder" && a.ISACTIVE == true).FirstOrDefault();
