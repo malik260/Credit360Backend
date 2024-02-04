@@ -111,6 +111,7 @@
     <Compile Include="Models\TBL_CUSTOMER_ARCHIVE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_IBL_ELIGIBILITY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EMAIL.cs" />
+    <Compile Include="Models\TBL_DIGITAL_STAMP.cs" />
     <Compile Include="Models\TBL_DOCUMENTATION_FILLING_APPROVAL.cs" />
     <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPLICATION.cs" />
     <Compile Include="Models\TBL_EXCEPTIONAL_LOAN_APPLICATION_DETAIL.cs" />

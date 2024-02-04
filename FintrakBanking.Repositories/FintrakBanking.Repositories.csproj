@@ -181,6 +181,7 @@
     <Compile Include="Media\OriginalDocumentApprovalRepository.cs" />
     <Compile Include="Risk\CreditOfficerRiskRepository.cs" />
     <Compile Include="Risk\RiskAcceptanceCriteriaRepository.cs" />
+    <Compile Include="Setups\Approval\DigitalStampRepository.cs" />
     <Compile Include="Setups\Credit\BulkDisbursementPackageRepository.cs" />
     <Compile Include="Setups\Credit\CrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\FXAccountCreationRepository.cs" />

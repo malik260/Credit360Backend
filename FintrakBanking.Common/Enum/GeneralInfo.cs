@@ -483,6 +483,7 @@ namespace FintrakBanking.Common.Enum
         InsuranceBulkUpload = 578,
         FsCaptionBulkUpload = 579,
         LoanApplicationTagChange = 580,
+        DigitalStampUpload = 581,
     }
     public enum RegulatoryTypeEnum
     {
