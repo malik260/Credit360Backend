@@ -816,11 +816,11 @@ namespace FintrakBanking.Repositories.Credit
         {
             var approvalLevel = context.TBL_APPROVAL_LEVEL.Find(entity.approvalLevelId);
             var stamp = context.TBL_DIGITAL_STAMP.Where(d => d.STAFFROLEID == approvalLevel.STAFFROLEID).FirstOrDefault();
-            var templateId = context.TBL_DOC_TEMPLATE_DETAIL.Where(s => s.TARGETID == entity.targetId && s.TITLE == stamp.DIGITALSTAMP).FirstOrDefault().TEMPLATESECTIONID;
+           // var templateId = context.TBL_DOC_TEMPLATE_DETAIL.Where(s => s.TARGETID == entity.targetId && s.TITLE == stamp.DIGITALSTAMP).FirstOrDefault().TEMPLATESECTIONID;
             var detail = context.TBL_DOC_TEMPLATE_DETAIL.Find(entity.sectionId);
             if(detail == null)
             {
-                detail = context.TBL_DOC_TEMPLATE_DETAIL.Find(templateId);
+               // detail = context.TBL_DOC_TEMPLATE_DETAIL.Find(templateId);
             }
             var section = context.TBL_DOC_TEMPLATE_SECTION.Find(detail.TEMPLATESECTIONID);
             
@@ -836,6 +836,41 @@ namespace FintrakBanking.Repositories.Credit
             if (stamp != null && detail != null)
             {
                 detail.TEMPLATEDOCUMENT = stamp.DIGITALSTAMP;
+                detail.LASTUPDATEDBY = entity.staffId;
+                detail.DATETIMEUPDATED = DateTime.Now;
+
+                return context.SaveChanges() > 0;
+
+            }
+
+            return true;
+        }
+
+        public bool RemoveDigitalStamp(LoadedDocumentSectionViewModel entity) // dont call if not editable
+        {
+            var approvalLevel = context.TBL_APPROVAL_LEVEL.Find(entity.approvalLevelId);
+            var stamp = context.TBL_DIGITAL_STAMP.Where(d => d.STAFFROLEID == approvalLevel.STAFFROLEID).FirstOrDefault();
+            // var templateId = context.TBL_DOC_TEMPLATE_DETAIL.Where(s => s.TARGETID == entity.targetId && s.TITLE == stamp.DIGITALSTAMP).FirstOrDefault().TEMPLATESECTIONID;
+            var detail = context.TBL_DOC_TEMPLATE_DETAIL.Find(entity.sectionId);
+            if (detail == null)
+            {
+                // detail = context.TBL_DOC_TEMPLATE_DETAIL.Find(templateId);
+            }
+            var section = context.TBL_DOC_TEMPLATE_SECTION.Find(detail.TEMPLATESECTIONID);
+
+            if (detail == null) return true;
+            if (section.CANEDIT == false) return true;
+            //if (section.CANEDIT == false) return true;
+
+
+            if (stamp == null) return false;
+            //var stamp = ByteToImage(image);
+            //System.Drawing.Image digitalStamp = BinaryToImage(image);
+
+            if (stamp != null && detail != null)
+            {
+                entity.templateDocument = "<p></P>";
+                detail.TEMPLATEDOCUMENT = entity.templateDocument;
                 detail.LASTUPDATEDBY = entity.staffId;
                 detail.DATETIMEUPDATED = DateTime.Now;
 

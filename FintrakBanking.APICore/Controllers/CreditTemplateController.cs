@@ -929,6 +929,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("remove-digital-stamp")]
+        public HttpResponseMessage RemoveDigitalStamp([FromBody] LoadedDocumentSectionViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                bool response = repo.RemoveDigitalStamp(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("isLLLViolated/operation/{operationId}/target/{targetId}")]
