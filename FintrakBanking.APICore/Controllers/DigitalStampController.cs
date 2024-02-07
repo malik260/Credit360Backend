@@ -17,6 +17,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Threading;
 using FintrakBanking.ViewModels.Setups.Approval;
+using FintrakBanking.ViewModels.Setups.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -35,54 +36,28 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("add-digital-stamp")]
-        public async Task<HttpResponseMessage> AddDigitalStampAsync()
+        public HttpResponseMessage AddDigitalStamp([FromBody] DigitalStampViewModel model)
         {
             try
             {
-                if (!Request.Content.IsMimeMultipartContent())
-                {
-                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
-                }
-
-                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                Task.Factory
-                    .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
-                        CancellationToken.None,
-                        TaskCreationOptions.LongRunning, // guarantees separate thread
-                        TaskScheduler.Default)
-                    .Wait();
+                model.userBranchId = (short)token.GetBranchId;
                 
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = Request.RequestUri.Host;
 
-
-                if (!provider.FileStreams.Any())
+                var data = repo.AddDigitalStamp(model);
+                if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
                 }
 
-                var entity = new DigitalStampViewModel();
-               
-                entity.createdBy = Convert.ToInt32(provider.FormData["createdBy"]);
-                entity.staffRoleId = Convert.ToInt32(provider.FormData["staffRoleId"]);
-                entity.approvalLevelId = Convert.ToInt32(provider.FormData["approvalLevelId"]);
-             
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
-                
-                {
-                    var file = provider.Contents.FirstOrDefault();
-                    var buffer = await file.ReadAsByteArrayAsync();
-                    var response = repo.AddDigitalStamp(entity, buffer);
-
-
-                    if (response == true) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
-                    //if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Error saving record" });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
-
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
 
@@ -107,18 +82,18 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("digital-stamp/{id}")]
-        public HttpResponseMessage GetDigitalStampByApprovalLevel(int approvalLevelId)
+        [Route("digital-stamp/{staffRoleId}")]
+        public HttpResponseMessage GetDigitalStampByApprovalLevel(int staffRoleId)
         {
             try
             {
-                var data = repo.GetDigitalStampByApprovalLevel(approvalLevelId);
+                var data = repo.GetDigitalStampByApprovalLevel(staffRoleId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException e)
             {
@@ -129,7 +104,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("delete-digital-stamp/{id}")]
+        [Route("delete-digital-stamp/{digitalStampid}")]
         public HttpResponseMessage DeleteDigitalStamp(int digitalStampid)
         {
             try

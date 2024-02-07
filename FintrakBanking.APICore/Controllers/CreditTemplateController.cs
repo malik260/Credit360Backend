@@ -908,6 +908,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("append-digital-stamp")]
+        public HttpResponseMessage AppendDigitalStamp([FromBody] LoadedDocumentSectionViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                bool response = repo.AppendDigitalStamp(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [ClaimsAuthorization]

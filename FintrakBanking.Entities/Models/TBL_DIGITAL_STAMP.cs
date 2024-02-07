@@ -14,15 +14,16 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int DIGITALSTAMPID { get; set; }
         public int STAFFROLEID { get; set; }
-        public int APPROVALLEVELID { get; set; }
-        public byte[] DIGITALSTAMP { get; set; }
+        public string STAMPNAME { get; set; }
+        public string DIGITALSTAMP { get; set; }
         public bool DELETED { get; set; }
         public int DELETEDBY { get; set; }
-        public DateTime DATETIMEDELETED { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
         public int CREATEDBY { get; set; }
-        public DateTime DATETIMECREATED { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
         public int UPDATEDBY { get; set; }
-        public DateTime DATETIMEUPDATED { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
+       
 
     }
 }

@@ -36,24 +36,33 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         }
 
-        public bool AddDigitalStamp(DigitalStampViewModel model, byte[] buffer)
+        public bool AddDigitalStamp(DigitalStampViewModel model)
         {
             var existing = context.TBL_DIGITAL_STAMP.Where(x => x.DELETED == false
-                       && x.APPROVALLEVELID == model.approvalLevelId
+                       && x.STAFFROLEID == model.staffRoleId
                        && x.STAFFROLEID == model.staffRoleId);
-            if (existing.Any()) { this.UpdateDigitalStamp(model.digitalStampId, model, buffer); }
-
-
-            var stamp = new TBL_DIGITAL_STAMP
+            if (existing.Any()) 
+            { 
+                this.UpdateDigitalStamp(model.digitalStampId, model); 
+                return true;
+            }
+            else
             {
-                STAFFROLEID = model.staffRoleId,
-                APPROVALLEVELID = model.approvalLevelId,
-                DIGITALSTAMP = buffer,
-                DELETED = false,
-                CREATEDBY = model.createdBy,
-                DATETIMECREATED = DateTime.Now
-            };
-            context.TBL_DIGITAL_STAMP.Add(stamp);
+                model.datetimeCreated = DateTime.Now;
+
+                var stamp = new TBL_DIGITAL_STAMP
+                {
+                    STAFFROLEID = model.staffRoleId,
+                    STAMPNAME = model.stampName,
+                    DIGITALSTAMP = model.digitalStamp,
+                    DELETED = false,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = model.datetimeCreated,
+                   
+                };
+                context.TBL_DIGITAL_STAMP.Add(stamp);
+            }
+           
 
             if(context.SaveChanges()> 0 )
             {
@@ -84,7 +93,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if(digitalStamp != null)
             {
                 digitalStamp.DELETED = true;
-                digitalStamp.DELETEDBY = user.staffId;
+                digitalStamp.DELETEDBY = user.createdBy;
                 digitalStamp.DATETIMEDELETED = DateTime.Now;
 
                 var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
@@ -99,7 +108,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = digitalStamp.APPROVALLEVELID,
+                    TARGETID = digitalStamp.STAFFROLEID,
                     DEVICENAME = CommonHelpers.GetDeviceName(),
                     OSNAME = CommonHelpers.FriendlyName()
                 };
@@ -118,7 +127,32 @@ namespace FintrakBanking.Repositories.Setups.Approval
                           {
                               digitalStampId = x.DIGITALSTAMPID,
                               staffRoleId = x.STAFFROLEID,
-                              approvalLevelId = x.APPROVALLEVELID,
+                              staffRoleName = context.TBL_STAFF_ROLE.Where(r =>r.STAFFROLEID == x.STAFFROLEID).FirstOrDefault().STAFFROLENAME,
+                              stampName = x.STAMPNAME,
+                              digitalStamp = x.DIGITALSTAMP,
+                              deleted = x.DELETED,
+                              deletedBy = x.DELETEDBY,
+                              datetimeDeleted = x.DATETIMEDELETED,
+                              createdBy = x.CREATEDBY,
+                              datetimeCreated = x.DATETIMECREATED,
+                              updatedBy = x.UPDATEDBY,
+                              datetimeUpdated = x.DATETIMEUPDATED,
+                             
+                              
+                          }).ToList();
+
+            return stamps;
+        }
+
+        public DigitalStampViewModel GetDigitalStampByApprovalLevel(int staffRoleId)
+        {
+            var stamps = (from x in context.TBL_DIGITAL_STAMP
+                          where x.DELETED == false && x.STAFFROLEID == staffRoleId
+                          select new DigitalStampViewModel
+                          {
+                              digitalStampId = x.DIGITALSTAMPID,
+                              staffRoleId = x.STAFFROLEID,
+                              stampName = x.STAMPNAME,
                               digitalStamp = x.DIGITALSTAMP,
                               deleted = x.DELETED,
                               deletedBy = x.DELETEDBY,
@@ -128,46 +162,24 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               updatedBy = x.UPDATEDBY,
                               datetimeUpdated = x.DATETIMEUPDATED,
                               
-                          }).ToList();
+                          }).FirstOrDefault();
 
             return stamps;
         }
 
-        public IEnumerable<DigitalStampViewModel> GetDigitalStampByApprovalLevel(int approvalLevelId)
-        {
-            var stamps = (from x in context.TBL_DIGITAL_STAMP
-                          where x.DELETED == false && x.APPROVALLEVELID == approvalLevelId
-                          select new DigitalStampViewModel
-                          {
-                              digitalStampId = x.DIGITALSTAMPID,
-                              staffRoleId = x.STAFFROLEID,
-                              approvalLevelId = x.APPROVALLEVELID,
-                              digitalStamp = x.DIGITALSTAMP,
-                              deleted = x.DELETED,
-                              deletedBy = x.DELETEDBY,
-                              datetimeDeleted = x.DATETIMEDELETED,
-                              createdBy = x.CREATEDBY,
-                              datetimeCreated = x.DATETIMECREATED,
-                              updatedBy = x.UPDATEDBY,
-                              datetimeUpdated = x.DATETIMEUPDATED,
-
-                          }).ToList();
-
-            return stamps;
-        }
-
-        public bool UpdateDigitalStamp(int digitalStampid, DigitalStampViewModel model, byte[] buffer)
+        public bool UpdateDigitalStamp(int digitalStampid, DigitalStampViewModel model)
         {
             var digitalStamp = context.TBL_DIGITAL_STAMP.Find(digitalStampid);
             if (digitalStamp == null)
             {
-                digitalStamp = context.TBL_DIGITAL_STAMP.Where(s=>s.APPROVALLEVELID == model.approvalLevelId && s.STAFFROLEID == model.staffRoleId).FirstOrDefault();
+                digitalStamp = context.TBL_DIGITAL_STAMP.Where(s=> s.STAFFROLEID == model.staffRoleId).FirstOrDefault();
             }
             if (digitalStamp != null)
             {
-                digitalStamp.DIGITALSTAMP = buffer;
+                digitalStamp.DIGITALSTAMP = model.digitalStamp;
                 digitalStamp.UPDATEDBY = model.createdBy;
                 digitalStamp.DATETIMEUPDATED = DateTime.Now;
+                
 
                 var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
 
@@ -181,7 +193,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = digitalStamp.APPROVALLEVELID,
+                    TARGETID = digitalStamp.STAFFROLEID,
                     DEVICENAME = CommonHelpers.GetDeviceName(),
                     OSNAME = CommonHelpers.FriendlyName()
                 };

@@ -163,17 +163,19 @@ namespace FintrakBanking.ViewModels.Setups.Approval
     {
         public int digitalStampId { get; set; }
         public int staffRoleId { get; set; }
-        public int approvalLevelId { get; set; }
-        public byte[] digitalStamp { get; set; }
+        public string stampName { get; set; }
+        public string digitalStamp { get; set; }
         public bool deleted { get; set; }
         public int deletedBy { get; set; }
-        public DateTime datetimeDeleted { get; set; }
+        public DateTime? datetimeDeleted { get; set; }
         public int createdBy { get; set; }
-        public DateTime datetimeCreated { get; set; }
+        public DateTime? datetimeCreated { get; set; }
         public int updatedBy { get; set; }
-        public DateTime datetimeUpdated { get; set; }
+        public DateTime? datetimeUpdated { get; set; }
         public short userBranchId { get; set; }
         public string applicationUrl { get; set; }
         public string userIPAddress { get; set; }
+        public string staffRoleName { get; set; }
+        public string fileExtension { get; set; }
     }
 }

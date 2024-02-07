@@ -12,10 +12,10 @@ namespace FintrakBanking.Interfaces.Setups.Approval
     public interface IDigitalStampRepository
     {
         IEnumerable<DigitalStampViewModel> GetAllDigitalStamp();
-        bool AddDigitalStamp(DigitalStampViewModel model, byte[] buffer);
-        bool UpdateDigitalStamp(int digitalStampid, DigitalStampViewModel model, byte[] buffer);
+        bool AddDigitalStamp(DigitalStampViewModel model);
+        bool UpdateDigitalStamp(int digitalStampid, DigitalStampViewModel model);
         bool DeleteDigitalStamp(int digitalStampid, UserInfo user);
-        IEnumerable<DigitalStampViewModel> GetDigitalStampByApprovalLevel(int approvalLevelId);
+        DigitalStampViewModel GetDigitalStampByApprovalLevel(int staffRoleId);
 
     }
 }
