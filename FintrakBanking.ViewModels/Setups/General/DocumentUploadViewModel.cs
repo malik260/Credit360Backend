@@ -121,4 +121,30 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public string message { get; set; }
     }
+
+    public class DeferredDocumentsViewModel
+    {
+        public int deferredDodId { get; set; }
+        public int documentCategoryId { get; set; }
+        public int documentTypeId { get; set; }
+        public int loanApplicationId { get; set; }
+        public DateTime dueDate { get; set; }
+        public int createdBy { get; set; }
+        public DateTime datetimeCreated { get; set; }
+        public bool submitted { get; set; }
+        public DateTime datetimeSubmited { get; set; }
+        public int lastUpdatedBy { get; set; }
+        public DateTime datetimeUpdated { get; set; }
+        public bool deleted { get; set; }
+        public int deletedBy { get; set; }
+        public DateTime datetimeDeleted { get; set; }
+        public int tenor { get; set; }
+        public string applicationUrl { get; set; }
+        public string documentCategoryName { get; set; }
+        public string documentTypeName { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public short facilityTypeId { get; set; }
+        public string facilityTypeName { get; set; }
     }
+
+}

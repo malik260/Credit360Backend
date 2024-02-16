@@ -45,6 +45,7 @@ namespace FintrakBanking.Entities.DocumentModels
         public virtual DbSet<TBL_DOCUMENT_CATEGORY> TBL_DOCUMENT_CATEGORY { get; set; }
         public virtual DbSet<TBL_DOCUMENT_TYPE> TBL_DOCUMENT_TYPE { get; set; }
         public virtual DbSet<TBL_DOC_MAPPING> TBL_DOC_MAPPING { get; set; }
+        public virtual DbSet<TBL_DEFERRED_DOC_TRACKER> TBL_DEFERRED_DOC_TRACKER { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

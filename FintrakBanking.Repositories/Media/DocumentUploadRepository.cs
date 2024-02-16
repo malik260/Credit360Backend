@@ -18,6 +18,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Configuration;
 using Microsoft.Office.Interop.Excel;
+using ServiceStack;
+using FintrakBanking.ViewModels.Setups.Approval;
 
 namespace FintrakBanking.Repositories.Media
 {
@@ -804,6 +806,31 @@ namespace FintrakBanking.Repositories.Media
                         oldUsage.DATETIMEDELETED = DateTime.Now;
                     }
 
+                        var documentCategory = docContext.TBL_DOCUMENT_TYPE.Where(t => t.DOCUMENTTYPEID == model.documentTypeId).FirstOrDefault().DOCUMENTCATEGORYID;
+                        model.documentCategoryId = documentCategory;
+                        var docDeffered = docContext.TBL_DEFERRED_DOC_TRACKER.Where(x => x.DELETED == false
+                        && x.DOCUMENTCATEGORYID == model.documentCategoryId
+                        && x.DOCUMENTTYPEID == model.documentTypeId && x.LOANAPPLICATIONID == model.targetId);
+                        if (docDeffered.Any())
+                        {
+                             var deferredDoc = docContext.TBL_DEFERRED_DOC_TRACKER.Where(x => x.DELETED == false
+                             && x.DOCUMENTCATEGORYID == model.documentCategoryId
+                             && x.DOCUMENTTYPEID == model.documentTypeId && x.LOANAPPLICATIONID == model.targetId).FirstOrDefault();
+
+                            if (deferredDoc != null)
+                            {
+                                deferredDoc.DOCUMENTCATEGORYID = model.documentCategoryId;
+                                deferredDoc.DOCUMENTTYPEID = model.documentTypeId;
+                                deferredDoc.DATETIMESUBMITTED = DateTime.Now;
+                                deferredDoc.SUBMITTED = true;
+                                deferredDoc.CREATEDBY = model.createdBy;
+
+                            }
+
+                         }
+
+
+
                 }
 
                 if (docContext.SaveChanges() < 1)
@@ -1513,6 +1540,203 @@ namespace FintrakBanking.Repositories.Media
                             }).FirstOrDefault();
         }
 
+        public bool AddDeferredDocument(DeferredDocumentsViewModel model, UserInfo user)
+        {
+            try
+            {
+                var existing = docContext.TBL_DEFERRED_DOC_TRACKER.Where(x => x.DELETED == false
+                        && x.DOCUMENTCATEGORYID == model.documentCategoryId
+                        && x.DOCUMENTTYPEID == model.documentTypeId);
+                if (existing.Any())
+                {
+                    this.UpdateDeferredDocument(model, model.deferredDodId, user);
+                    return true;
+                }
+                else
+                {
+                    model.datetimeCreated = DateTime.Now;
+
+                    var deferredDoc = new TBL_DEFERRED_DOC_TRACKER
+                    {
+                        DOCUMENTCATEGORYID = model.documentCategoryId,
+                        DOCUMENTTYPEID = model.documentTypeId,
+                        LOANAPPLICATIONID = model.loanApplicationId,
+                        DUEDATE = DateTime.Now.AddDays(model.tenor),
+                        CREATEDBY = user.createdBy,
+                        DATETIMECREATED = model.datetimeCreated,
+
+                    };
+                    docContext.TBL_DEFERRED_DOC_TRACKER.Add(deferredDoc);
+
+                }
+
+
+                if (docContext.SaveChanges() > 0)
+                {
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.DigitalStampUpload,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)user.BranchId,
+                        DETAIL = $"Deferred Document added successfully by staff with STAFFID {model.createdBy}",
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
+                    };
+
+                    this.audit.AddAuditTrail(audit);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex) { throw ex; }
+            
+        }
+
+        public bool UpdateDeferredDocument(DeferredDocumentsViewModel model, int id, UserInfo user)
+        {
+            var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            var deferredDoc = docContext.TBL_DEFERRED_DOC_TRACKER.Find(id);
+            
+            if (deferredDoc != null)
+            {
+                deferredDoc.DOCUMENTCATEGORYID = model.documentCategoryId;
+                deferredDoc.DOCUMENTTYPEID = model.documentTypeId;
+                deferredDoc.DATETIMEUPDATED = DateTime.Now;
+                deferredDoc.DUEDATE = DateTime.Now.AddDays(model.tenor);
+                deferredDoc.LASTUPDATEDBY = user.createdBy;
+
+
+                
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Deferred Document was updated by {audit_staff}",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = model.loanApplicationId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                this.audit.AddAuditTrail(audit);
+            }
+            if (docContext.SaveChanges() > 0) return true;
+            return false;
+        }
+
+        private bool SubmitDeferredDocument(DocumentUploadViewModel model)
+        {
+            var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            var deferredDoc = docContext.TBL_DEFERRED_DOC_TRACKER.Where(x => x.DELETED == false
+                        && x.DOCUMENTCATEGORYID == model.documentCategoryId
+                        && x.DOCUMENTTYPEID == model.documentTypeId && x.LOANAPPLICATIONID == model.targetId).FirstOrDefault();
+
+            if (deferredDoc != null)
+            {
+                deferredDoc.DOCUMENTCATEGORYID = model.documentCategoryId;
+                deferredDoc.DOCUMENTTYPEID = model.documentTypeId;
+                deferredDoc.DATETIMEDELETED = DateTime.Now;
+                deferredDoc.SUBMITTED = true;
+                deferredDoc.CREATEDBY = model.createdBy;
+
+            }
+            if (docContext.SaveChanges() > 0) return true;
+            return false;
+        }
+
+        public IEnumerable<DeferredDocumentsViewModel> GetAllDeferredDocuments()
+        {
+            var deferredDocs = (from x in docContext.TBL_DEFERRED_DOC_TRACKER
+                                where x.DELETED == false 
+                                && x.SUBMITTED == false
+                                select new DeferredDocumentsViewModel
+                                {
+                                    deferredDodId = x.DEFERREDDOCID,
+                                    documentCategoryId = x.DOCUMENTCATEGORYID,
+                                    documentCategoryName = docContext.TBL_DOCUMENT_CATEGORY.Where(c => c.DOCUMENTCATEGORYID == x.DOCUMENTCATEGORYID).FirstOrDefault().DOCUMENTCATEGORYNAME,
+                                    documentTypeId = x.DOCUMENTTYPEID,
+                                    documentTypeName = docContext.TBL_DOCUMENT_TYPE.Where(t => t.DOCUMENTTYPEID == x.DOCUMENTTYPEID).FirstOrDefault().DOCUMENTTYPENAME,
+                                    loanApplicationId = x.LOANAPPLICATIONID,
+                                    dueDate = x.DUEDATE,
+                                    datetimeCreated = x.DATETIMECREATED,
+                                }).ToList();
+            foreach (var doc in deferredDocs)
+            {
+                doc.applicationReferenceNumber = context.TBL_LOAN_APPLICATION.Where(l => l.LOANAPPLICATIONID == doc.loanApplicationId).FirstOrDefault().APPLICATIONREFERENCENUMBER;
+                var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == doc.loanApplicationId).ToList();
+                doc.facilityTypeId = appDetail[0].PROPOSEDPRODUCTID;
+                doc.facilityTypeName = context.TBL_PRODUCT.Where(p => p.PRODUCTID == doc.facilityTypeId).FirstOrDefault().PRODUCTNAME;
+            }
+            return deferredDocs;
+        }
+
+        public IEnumerable<DeferredDocumentsViewModel> GetDeferredDocumentsByLoandApplicationId(int loanApplicationId)
+        {
+            var deferredDocs = (from x in docContext.TBL_DEFERRED_DOC_TRACKER
+                                where x.DELETED == false && x.LOANAPPLICATIONID == loanApplicationId
+                                && x.SUBMITTED == false
+                                select new DeferredDocumentsViewModel
+                                {
+                                    deferredDodId = x.DEFERREDDOCID,
+                                    documentCategoryId = x.DOCUMENTCATEGORYID,
+                                    documentCategoryName = docContext.TBL_DOCUMENT_CATEGORY.Where(c => c.DOCUMENTCATEGORYID == x.DOCUMENTCATEGORYID).FirstOrDefault().DOCUMENTCATEGORYNAME,
+                                    documentTypeId = x.DOCUMENTTYPEID,
+                                    documentTypeName = docContext.TBL_DOCUMENT_TYPE.Where(t => t.DOCUMENTTYPEID == x.DOCUMENTTYPEID).FirstOrDefault().DOCUMENTTYPENAME,
+                                    loanApplicationId = x.LOANAPPLICATIONID,
+                                    dueDate = x.DUEDATE,
+                                    datetimeCreated = x.DATETIMECREATED,
+                                }).ToList();
+            foreach(var doc in deferredDocs)
+            {
+                doc.applicationReferenceNumber = context.TBL_LOAN_APPLICATION.Where(l => l.LOANAPPLICATIONID == doc.loanApplicationId).FirstOrDefault().APPLICATIONREFERENCENUMBER;
+                var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == doc.loanApplicationId).ToList();
+                doc.facilityTypeId = appDetail[0].PROPOSEDPRODUCTID;
+                doc.facilityTypeName = context.TBL_PRODUCT.Where(p => p.PRODUCTID == doc.facilityTypeId).FirstOrDefault().PRODUCTNAME;
+            }
+            return deferredDocs;
+        }
+
+        public bool DeleteDeferredDocument(int id, UserInfo user)
+        {
+            var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            var deferredDoc = docContext.TBL_DEFERRED_DOC_TRACKER.Find(id);
+            if (deferredDoc != null)
+            {
+                deferredDoc.DELETED = true;
+                deferredDoc.DELETEDBY = user.createdBy;
+                deferredDoc.DATETIMEDELETED = DateTime.Now;
+
+               
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Deferred Document was deleted by {audit_staff}",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = deferredDoc.LOANAPPLICATIONID,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                this.audit.AddAuditTrail(audit);
+            }
+            if (docContext.SaveChanges() > 0) return true;
+            return false;
+        }
     }
 }
 

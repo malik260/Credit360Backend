@@ -34,6 +34,11 @@ namespace FintrakBanking.Interfaces.Media
         IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int getStaffId, int operationId, int targetId, bool isOperationSpecific);
         IEnumerable<DocumentUploadViewModel> GetDocumentUploadsLms(int getStaffId, int operationId, int targetId, bool isOperationSpecific, bool isLms = false);
         IEnumerable<DocumentUploadViewModel> GetDocumentDeleted(int staffId, int operationId, int targetId);
+        bool AddDeferredDocument(DeferredDocumentsViewModel model, UserInfo user);
+        bool UpdateDeferredDocument(DeferredDocumentsViewModel model, int id, UserInfo user);
+        IEnumerable<DeferredDocumentsViewModel> GetAllDeferredDocuments();
+        IEnumerable<DeferredDocumentsViewModel> GetDeferredDocumentsByLoandApplicationId( int loanApplicationId);
+        bool DeleteDeferredDocument(int id, UserInfo user);
         IEnumerable<DocumentCategoryViewModel> GetDocumentCategories();
         IEnumerable<DocumentTypeViewModel> GetDocumentTypes(int id);
         CustomerDocumentSearchViewModel GetCustomerDocuments(DocumentUploadViewModel model, UserInfo user);

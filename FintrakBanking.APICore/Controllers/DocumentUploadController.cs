@@ -56,6 +56,24 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("deferred-document/{loanApplicationId}")]
+        public HttpResponseMessage GetDeferredDocuments(int loanApplicationId)
+        {
+            IEnumerable<DeferredDocumentsViewModel> response = repo.GetDeferredDocumentsByLoandApplicationId(loanApplicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("deferred-document-all")]
+        public HttpResponseMessage GetDeferredDocuments()
+        {
+            IEnumerable<DeferredDocumentsViewModel> response = repo.GetAllDeferredDocuments();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("document-upload/operation/{operationId}/target/{targetId}/isOperationSpecific/{isOperationSpecific}/isLms/{isLms}")]
         public HttpResponseMessage GetDocumentUploads(int operationId, int targetId, bool isOperationSpecific, bool isLms = false)
         {
@@ -99,6 +117,24 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetDocumentUpload(model);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-deferred-document")]
+        public HttpResponseMessage AddDeferredDocument([FromBody] DeferredDocumentsViewModel model)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            var response = repo.AddDeferredDocument(model, user);
+            if (!response) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Saving record failed" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record saved successfully" });
         }
 
 
@@ -561,6 +597,24 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("deferred-document-update/{id}")]
+        public HttpResponseMessage UpdateDeferredDocument([FromBody] DeferredDocumentsViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdateDeferredDocument(model, id, user);
+            if (!response) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Updating record failed" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record updated successfully" });
+        }
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("document-upload/{id}/{documentTypeId}")]
@@ -576,6 +630,24 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = repo.DeleteDocumentUpload(id, documentTypeId, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-deferred-document/{id}")]
+        public HttpResponseMessage DeleteDeferredDocument(int id)
+        {
+
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteDeferredDocument(id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
