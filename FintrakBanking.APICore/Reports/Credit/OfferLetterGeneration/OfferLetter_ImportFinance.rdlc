@@ -391,6 +391,26 @@
         <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
+    <DataSet Name="OfferLetterContractCode">
+      <Query>
+        <DataSourceName>Credit</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="contractCode">
+          <DataField>contractCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Credit</rd:DataSetName>
+        <rd:SchemaPath>C:\Projects\Access\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:TableName>OfferLetterContractCode</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -438,8 +458,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>7.81816cm</Top>
-            <Left>0.51492cm</Left>
+            <Top>6.95033cm</Top>
+            <Left>0.47315cm</Left>
             <Height>1.01528cm</Height>
             <Width>16.73762cm</Width>
             <Style>
@@ -503,8 +523,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>7.1476cm</Top>
-            <Left>0.51717cm</Left>
+            <Top>6.17393cm</Top>
+            <Left>0.47315cm</Left>
             <Height>0.67056cm</Height>
             <Width>9.50516cm</Width>
             <ZIndex>1</ZIndex>
@@ -539,7 +559,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>currentDate</rd:DefaultName>
-            <Top>2.80186cm</Top>
+            <Top>1.93403cm</Top>
             <Left>0.51718cm</Left>
             <Height>0.70583cm</Height>
             <Width>5.7897cm</Width>
@@ -1461,7 +1481,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>4.06107in</Top>
+            <Top>3.74718in</Top>
             <Left>0.20361in</Left>
             <Height>1.98622in</Height>
             <Width>6.58873in</Width>
@@ -1766,8 +1786,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>3.47336in</Top>
-            <Left>0.22935in</Left>
+            <Top>3.19162in</Top>
+            <Left>0.18628in</Left>
             <Height>0.5in</Height>
             <Width>6.56299in</Width>
             <ZIndex>6</ZIndex>
@@ -1812,7 +1832,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>1.49209in</Top>
+            <Top>1.10876in</Top>
             <Left>0.18628in</Left>
             <Height>1.25248in</Height>
             <Width>6.60606in</Width>
@@ -2448,6 +2468,115 @@
             <Height>1.2cm</Height>
             <Width>16.63056cm</Width>
             <ZIndex>15</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Tablix Name="Tablix4">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>7.09568cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>9.59791cm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox16">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Contract Code</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox16</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="contractCode">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!contractCode.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>contractCode</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Details4" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>OfferLetterContractCode</DataSetName>
+            <Top>14.70394cm</Top>
+            <Left>0.51718cm</Left>
+            <Height>0.6cm</Height>
+            <Width>16.69359cm</Width>
+            <ZIndex>16</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>

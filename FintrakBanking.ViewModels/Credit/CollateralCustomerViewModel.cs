@@ -1401,11 +1401,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int? documentTypeId { get; set; }
         public DateTime? bookingDate { get; set; }
         public DateTime? maturityDate { get; set; }
-        public short collateralsubTypeId { get; set; }
+        //public short collateralsubTypeId { get; set; }
+        public short collateralSubTypeId { get; set; }
         public decimal stampDutyAmount { get; set; }
         public decimal totalDutyAmount { get; set; }
         public decimal dutiableValue { get; set; }
         public string contractCode { get; set; }
+        public decimal? fixedDutyCharge { get; set; }
+        public int collateralId { get; set; }
     }
 
     public class StampDutyConditionViewModel

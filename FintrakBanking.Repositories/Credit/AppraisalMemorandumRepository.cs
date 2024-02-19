@@ -635,7 +635,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (workflow.StatusId == (short)ApprovalStatusEnum.Processing || workflow.StatusId == (short)ApprovalStatusEnum.Approved || workflow.StatusId == (short)ApprovalStatusEnum.Disapproved)
                     {
                         var statusCode = ""; // Approved = "90", Rejected = "99"
-                        statusCode = workflow.StatusId == (short)ApprovalStatusEnum.Disapproved ? "99" : "90";
+                        statusCode = workflow.StatusId == (short)ApprovalStatusEnum.Disapproved ? "02" : "01";
                         if (model.isFlowTest == false) LoanStatusChangeThroughAPI(appl, model.comment, staff.STAFFID, statusCode);
                     }
                     ////////////////////// Call Status Change API /////////////////
@@ -773,32 +773,37 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
                         workflow.SetResponse = false;
-                    //workflow.ProductClassId = null;
-                    //workflow.ProductId = null;
-                    workflow.ExclusiveFlowChangeId = null;
+                        //workflow.ProductClassId = null;
+                        //workflow.ProductId = null;
+                        workflow.ExclusiveFlowChangeId = null;
                         var productId = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
-                    if ((productId == 156 || productId == 228 || productId == 297 || productId == 354) && model.isFlowTest == false) //for IBL - 50M Workflow
-                    {
-                        appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
-                        //The null passed in place of appl.FlowchangeId should be made generic 07/08/2021 after enum.offerletappr.
-                       // workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IBLAvailmentInProgress, null,
-                            //    model.applicationId, appl.PRODUCTCLASSID, "New approved IBL application", true, false, false,
-                           //     model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
-                        //worked on by  zino on 18/07/2023 for IBL - 50M Workflow ("if" statement was added )
+                        if( productId == 20 && (appl.APPLICATIONAMOUNT <= 5000000)) //Cashflow streamline
+                            {
+                                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
+                            }
+                            
+                        if ((productId == 156 || productId == 228 || productId == 297 || productId == 354) && model.isFlowTest == false) //for IBL - 50M Workflow
+                        {
+                            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
+                            //The null passed in place of appl.FlowchangeId should be made generic 07/08/2021 after enum.offerletappr.
+                           // workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IBLAvailmentInProgress, null,
+                                //    model.applicationId, appl.PRODUCTCLASSID, "New approved IBL application", true, false, false,
+                               //     model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
+                            //worked on by  zino on 18/07/2023 for IBL - 50M Workflow ("if" statement was added )
                        
-                    }
-                    else
-                    {
-                        //The null passed in place of appl.FlowchangeId should be made generic 07/08/2021 after enum.offerletappr.
-                        workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null,
-                                model.applicationId, appl.PRODUCTCLASSID, "New approved application", true, false, false,
-                                model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
-                        //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
+                        }
+                        else
+                        {
+                            //The null passed in place of appl.FlowchangeId should be made generic 07/08/2021 after enum.offerletappr.
+                            workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null,
+                                    model.applicationId, appl.PRODUCTCLASSID, "New approved application", true, false, false,
+                                    model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID, null, 0, productId);
+                            //worked on by ifeanyi and zino on 23/06/2021 for account officer offer letter (productId was added)
+
+                        }
+
 
                     }
-
-
-                }
 
                 if (model.isFlowTest == false) { trans.Commit(); }
                 else { trans.Rollback(); }
@@ -906,6 +911,10 @@ namespace FintrakBanking.Repositories.Credit
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
             var applDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID).FirstOrDefault();
 
+            if (WorkflowStage == "AO")
+            {
+                WorkflowStageName = "01";
+            }
             if (WorkflowStage == "RM")
             {
                 WorkflowStageName = "11";
@@ -913,7 +922,7 @@ namespace FintrakBanking.Repositories.Credit
             //if (WorkflowStage.Substring(0, 2) == "CR")
             if (WorkflowStage == "CA")
             {
-                WorkflowStageName = "12";
+                WorkflowStageName = "02";
             }
             if (WorkflowStage == "GH")
             {
@@ -941,19 +950,19 @@ namespace FintrakBanking.Repositories.Credit
             
 
 
-            var amendWorkflow = context.TBL_WORKFLOW_AMEND.Where(w => w.PRODUCTID == applDetail.APPROVEDPRODUCTID).FirstOrDefault();
-            if (amendWorkflow != null)
-            {
-                if (loanApplication.APIREQUESTID != null && (applDetail.PROPOSEDAMOUNT <= amendWorkflow.AMOUNT))
+            //var amendWorkflow = context.TBL_WORKFLOW_AMEND.Where(w => w.PRODUCTID == applDetail.APPROVEDPRODUCTID).FirstOrDefault();
+            //if (amendWorkflow != null)
+            //{
+                if (loanApplication.APIREQUESTID != null)// && (applDetail.PROPOSEDAMOUNT <= amendWorkflow.AMOUNT)
                 {
                     await transaction.UpdateLoanStatus(statusResponse, loanApplication.APPLICATIONREFERENCENUMBER);
                 }
 
-            }
+           // }
 
-            if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
-               await transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
-            }
+            //if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
+            //   await transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+            //}
 
         }
 

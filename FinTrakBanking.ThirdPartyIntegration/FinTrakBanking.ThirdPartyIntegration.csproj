@@ -134,6 +134,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Basel\BaselIntegration.cs" />
+    <Compile Include="Connected Services\CRCWebServiceNew\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\ESBCRCService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -207,6 +212,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\CRCWebServiceNew\crcweb.wsdl" />
+    <None Include="Connected Services\CRCWebServiceNew\crcweb.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\CRCWebService\liverequestinvoker.wsdl" />
@@ -460,6 +469,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\CRCWebServiceNew\" />
     <WCFMetadataStorage Include="Connected Services\CRCWebService\" />
     <WCFMetadataStorage Include="Connected Services\ESBCRCService\" />
     <WCFMetadataStorage Include="Connected Services\ESBFirstCentralService\" />
@@ -560,6 +570,12 @@
     <None Include="Connected Services\ESBCRCService\configuration91.svcinfo" />
     <None Include="Connected Services\ESBCRCService\configuration.svcinfo" />
     <None Include="Connected Services\ESBCRCService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\CRCWebServiceNew\configuration91.svcinfo" />
+    <None Include="Connected Services\CRCWebServiceNew\configuration.svcinfo" />
+    <None Include="Connected Services\CRCWebServiceNew\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

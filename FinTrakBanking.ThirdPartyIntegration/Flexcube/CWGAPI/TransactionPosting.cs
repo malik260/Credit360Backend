@@ -1523,7 +1523,8 @@
                     {
                         var rep = responbody;
                         rep.hasError = responbody.hasError;
-                        rep.token = responbody.token;
+                        rep.token = responbody.result;
+                        token.token = rep.token;
                     }
                     return token.token;
                 }
@@ -1563,6 +1564,7 @@
 
             public async Task<ResponseMessage> UpdateLoanStatus(LoanStatusResponse model, string refNumber)
             {
+                var auth = await getAPIToken("", "");
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
                 
@@ -1573,9 +1575,11 @@
                 LoanStatusResponse responseApi = new LoanStatusResponse();
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
-                var auth =  await getAPIToken("","");
-                getAPIURLSettings("CASHFLOW");
-                string apiUrl = "CallBack/notify-status-change";
+               
+                //getAPIURLSettings("CFLToken");
+                var baseURL = API_URL;
+                string fullURL = baseURL + "customer/fintrackupdateloanstatus";
+                //string apiUrl = "CallBack/notify-status-change";
 
                 try
                 {
@@ -1594,7 +1598,7 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
 
-                    response = client.PostAsync(apiUrl, new StringContent(
+                    response = client.PostAsync(fullURL, new StringContent(
                                                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
                     responseDateTime = DateTime.Now;
 
@@ -1646,12 +1650,12 @@
 
                 finally
                 {
-                    handler.Dispose();
-                    client.Dispose();
+                   // handler.Dispose();
+                    //client.Dispose();
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = API_URL + apiUrl,
+                        APIURL = fullURL,
                         LOGTYPEID = 14,
                         REFERENCENUMBER = refNumber,
                         REQUESTDATETIME = requestDatetime,
@@ -1946,6 +1950,11 @@
                 IRestResponse response = null;
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 string responseMessage = "";
+                string refr1 = DateTime.Now.ToString("HH");
+                string refr2 = DateTime.Now.ToString("mm");
+                string refr3 = DateTime.Now.ToString("ss");
+                string refr = refr1 + refr2 + refr3;
+                StampDutyPostingViewModel logModel = new StampDutyPostingViewModel();
                 RestRequest req = new RestRequest(Method.POST);
                 StampDutyPostingViewModel records = new StampDutyPostingViewModel();
                 try
@@ -1955,6 +1964,7 @@
                     var baseURL = API_URL;
                     string fullURL = baseURL + "posting/v1/Batch";
                     RestClient client = new RestClient(fullURL);
+                    model.branchCode = "099";
 
                     List<StampDutyEntryViewModel> entries = new List<StampDutyEntryViewModel>()
                     {
@@ -1962,7 +1972,7 @@
                         {
                             tranCode = "PSD",
                             tranType = "D",
-                            reference = "00000" + model.applicationReferenceNumber,
+                            reference = refr + model.reference,
                             accountNumber = model.custAccNumber,
                             accountName = model.custAccName,
                             narration = "SD/Stamp Duty Fee Posting",
@@ -1972,7 +1982,7 @@
                         {
                             tranCode = "PSD",
                             tranType = "C",
-                            reference = "00000" + model.applicationReferenceNumber,
+                            reference = refr + model.reference,
                             accountNumber = model.bankTillAccount,
                             accountName = model.bankTillName,
                             narration = "SD/Stamp Duty Fee Posting",
@@ -1984,7 +1994,7 @@
                     StampDutyPostingViewModel reqbody = new StampDutyPostingViewModel()
 
                     {
-                        reference = "00000" + model.applicationReferenceNumber,
+                        reference = refr + model.reference,
                         appId = "FINTRAK", 
                         userId = "STAMPDUTY",
                         currency = "NGN",
@@ -1995,20 +2005,20 @@
 
 
                     requestDatetime = DateTime.Now;
-                    responseDateTime = DateTime.Now;
+                    
 
                     var jsonbody = new JavaScriptSerializer().Serialize(reqbody);
                     req.AddParameter("application/json", jsonbody, ParameterType.RequestBody);
                     req.AddHeader("Content-Type", "application/json");
                     req.AddHeader("Accept", "application/json");
-                    req.AddHeader("Authorization", API_KEY);
-
+                    req.AddHeader("Subscription-Key", API_KEY);
+                    logModel = reqbody;
                     ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
                     response = await client.ExecuteAsync<StampDutyPostingViewModel>(req);
                     var responbody = JsonConvert.DeserializeObject<StampDutyPostingViewModel>(response.Content);
-
+                    responseDateTime = DateTime.Now;
                     if (response.IsSuccessful)
                     {
                         if (responbody == null || !responbody.message.ToLower().Contains("successful"))
@@ -2038,11 +2048,11 @@
                 {
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"{API_URL}GetLoanDetails",
+                        APIURL = "http://api.dev.accessbankplc.com/posting/v1/Batch",
                         LOGTYPEID = 8,
-                        REFERENCENUMBER = model.entries[0].accountNumber,
+                        REFERENCENUMBER = model.custAccNumber,
                         REQUESTDATETIME = requestDatetime,
-                        REQUESTMESSAGE = new JavaScriptSerializer().Serialize(model),
+                        REQUESTMESSAGE = new JavaScriptSerializer().Serialize(logModel),
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };

@@ -805,5 +805,6 @@ namespace FintrakBanking.ViewModels.Customer
         public string message { get; set; }
         public string errors { get; set; }
         public bool hasError { get; set; }
+        public string result { get; set; }
     }
 }
