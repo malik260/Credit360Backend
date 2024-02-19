@@ -97,7 +97,7 @@ namespace FintrakBanking.AccessSubsediary
                         var _tsc = new TaskCompletionSource<HttpResponseMessage>();
                         HttpResponseMessage _message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
                         _message.Content = new StringContent(JsonConvert.SerializeObject(_result), Encoding.UTF8, "application/json");
-                        //_message.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
+                        _message.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
                         _tsc.SetResult(_message);
                         return _tsc.Task.Result;
                     }
