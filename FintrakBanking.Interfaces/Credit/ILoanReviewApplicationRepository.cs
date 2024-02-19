@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
         
         IEnumerable<LoanReviewOperationApprovalViewModel> SearchLien(string searchString);
         IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? productClassId);
+        IEnumerable<SubsidiaryViewModel> GetSubsidiaryApplications(UserInfo user, int operationId, int? productClassId, string staffRoleCode);
         List<applicationDetails> GetApplicationsById(UserInfo user, int lmsApplicationId);
         List<LoanReviewApplicationViewModel> CalculateSLA(List<LoanReviewApplicationViewModel> apps);
         IQueryable<LoanReviewApplicationViewModel> GetLoanReviewAvailmentAwaitingApproval(UserInfo user, int operationId, int? classId);

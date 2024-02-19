@@ -709,6 +709,67 @@ namespace FintrakBanking.Repositories.Credit
             return applications;
         }
 
+        public IEnumerable<SubsidiaryViewModel> GetSubsidiaryApplications(UserInfo user, int operationId, int? classId, string staffRoleCode)
+        {
+            try
+            {
+                var data = (from a in context.TBL_SUB_BASICTRANSACTION_LMS
+                            where
+                            (a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                            || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            || a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                            || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            && a.STAFFROLECODE == staffRoleCode && a.ACTEDON == false
+
+                            select new SubsidiaryViewModel
+                            {
+                                subBasicId = a.ID,
+                                loanApplicationId = a.LOANAPPLICATIONID,
+                                loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
+                                customerId = a.CUSTOMERID,
+                                customerGlobalId = a.CUSTOMERGLOBALID,
+                                countryCode = a.COUNTRYCODE,
+                                productClassName = a.PRODUCTCLASSNAME,
+                                productClassProcess = a.PRODUCT_CLASS_PROCESS,
+                                subsidiaryId = a.SUBSIDIARYID,
+                                applicationDate = a.APPLICATIONDATE,
+                                systemDateTime = (DateTime)a.SYSTEMDATETIME,
+                                applicationAmount = a.APPLICATIONAMOUNT,
+                                totalExposureAmount = a.TOTALEXPOSUREAMOUNT,
+                                interestRate = a.INTERESTRATE,
+                                applicationTenor = a.APPLICATIONTENOR,
+                                currentApprovalLevelId = a.APPROVALLEVELID,
+                                currentApprovalLevelTypeId = a.APPROVALLEVELGLOBALCODE,
+                                toStaffId = a.TOSTAFFID,
+                                divisionCode = a.BUSINESSUNITSHORTCODE,
+                                timeIn = a.SYSTEMARRIVALDATETIME,
+                                approvalStatusId = (short)a.APPROVALSTATUSID,
+                                applicationStatusId = (short)a.APPLICATIONSTATUSID,
+                                operationName = a.OPERATIONNAME,
+                                customerName = a.CUSTOMERID.HasValue ? a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME : "",
+                                dateTimeCreated = a.DATETIMECREATED,
+                                createdBy = a.CREATEDBY,
+                                createdByName = a.CREATEDBYNAME,
+                                targetId = a.TARGETID,
+                                operationId = a.OPERATIONID,
+                                actedOn = a.ACTEDON,
+                                loanTypeName = a.LOANAPPLICATIONTYPENAME,
+                                facility = a.PRODUCTNAME,
+                                divisionShortCode = a.BUSINESSUNITSHORTCODE,
+                                submitted = true
+                            }).ToList();
+
+                return data;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public List<applicationDetails> GetApplicationsById(UserInfo user, int lmsApplicationId)
         {
 

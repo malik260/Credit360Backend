@@ -77,6 +77,53 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
             
         }
+        [HttpGet, Route("review-subsidiary-application")]
+        [ClaimsAuthorization]
+
+        public HttpResponseMessage GetSubsidiaryApplications(
+            [FromUri] int page,
+            [FromUri] int itemsPerPage,
+            [FromUri] int operationId,
+            [FromUri] int? classId,
+            [FromUri] string searchString
+            )
+        {
+            var staffRoleCode = token.GetStaffRoleCode;
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+
+            
+                IEnumerable<SubsidiaryViewModel> items;
+                items = repo.GetSubsidiaryApplications(user, operationId, classId, staffRoleCode);
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    searchString = searchString.Trim().ToLower();
+                    items = items.Where(x =>
+                        x.referenceNumber.Contains(searchString)
+                        || x.customerName.Contains(searchString)
+                        ).Take(itemsPerPage);
+                }
+
+                var data = items
+                    .OrderByDescending(x => x.subBasicId) 
+                    //.OrderByDescending(x => x.loanReviewApplicationId)
+                    .Skip(page).Take(itemsPerPage).ToList();
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            /*data =*/ //repo.CalculateSLA(data);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            
+        }
 
         [HttpGet, Route("review-application/id/{lmsApplicationId}")]
         [ClaimsAuthorization]

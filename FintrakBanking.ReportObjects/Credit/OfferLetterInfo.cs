@@ -130,7 +130,7 @@ namespace FintrakBanking.ReportObjects.Credit
                 var collateral  = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
                        join b in context.TBL_COLLATERAL_CUSTOMER  on x.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
                        where b.LOANAPPLICATIONID == loanAppId
-                                   select new LoanApplicationCollateralViewModel
+                       select new LoanApplicationCollateralViewModel
                        {
                            collateralDetail = b.COLLATERALSUMMARY,
                        }).ToList();

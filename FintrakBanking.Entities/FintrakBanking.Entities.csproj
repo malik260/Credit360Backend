@@ -286,6 +286,7 @@
     <Compile Include="Models\TBL_SECTOR_GLOBAL_LIMIT.cs" />
     <Compile Include="Models\TBL_STAMP_DUTY_CONDITION.cs" />
     <Compile Include="Models\TBL_SUB_BASICTRANSACTION.cs" />
+    <Compile Include="Models\TBL_SUB_BASICTRANSACTION_LMS.cs" />
     <Compile Include="Models\TBL_SUPPORTISSUETYPE.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_INDEMNITY.cs" />

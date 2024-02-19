@@ -1654,6 +1654,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string facility { get; set; }
         public int subApprovalLevelId { get; set; }
         public bool submitted { get; set; }
+        public string referenceNumber { get; set; }
     }
 }
 
