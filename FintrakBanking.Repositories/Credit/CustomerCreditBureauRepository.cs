@@ -279,7 +279,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public int AddCustomerCreditBureauUpload(LoanCreditBureauViewModel entity, LoanDocumentViewModel docModel, byte[] file)
         {
-            string[] chanelArray = new string[] { "docx", "pdf", "jpg", "jpeg", "png", "txt", "xlsx", "xls", "doc", "xml" };
+            string[] chanelArray = new string[] { "docx", "pdf", "jpg", "jpeg", "png", "PNG", "txt", "xlsx", "xls", "doc", "xml" };
             if (!chanelArray.Contains(docModel.fileExtension))
             {
                 throw new ConditionNotMetException("Kindly Upload Valid File with Accepted Extention " + chanelArray);
@@ -357,7 +357,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCreditBureauReportDocument(LoanDocumentViewModel model, byte[] file)
         {
-            string[] chanelArray = new string[] { "docx", "pdf", "jpg", "jpeg", "png", "txt", "xlsx", "xls", "doc", "xml" };
+            string[] chanelArray = new string[] { "docx", "pdf", "jpg", "jpeg", "png","PNG", "txt", "xlsx", "xls", "doc", "xml" };
             if (!chanelArray.Contains(model.fileExtension))
             {
                 throw new ConditionNotMetException("Kindly Upload Valid File with Accepted Extention " + chanelArray);
