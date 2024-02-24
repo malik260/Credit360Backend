@@ -45,6 +45,7 @@
 
                         if (searchInfo.searchType == (int)CreditBureauTypeEnum.ConsumerSearch)
                         {
+                            ticket = xds.Login(searchInfo.userName, searchInfo.password);
                             return DoXDSIndividualSearch(searchInfo);
                         }
                     }
@@ -108,7 +109,7 @@
 
                 if (!xds.IsticketActive(searchInput.userName))
                 {
-                    xds.Login(searchInput.userName, searchInput.password);
+                    ticket = xds.Login(searchInput.userName, searchInput.password);
                 }
 
                 if (searchInput.creditBureauId == (short) CreditBureauEnum.XDSCreditBureau)

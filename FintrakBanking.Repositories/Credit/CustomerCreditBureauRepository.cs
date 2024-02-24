@@ -614,6 +614,7 @@ namespace FintrakBanking.Repositories.Credit
                 resultData.errorOccured = true;
                 resultData.status = 3;
             }
+            //var task = Task.Run(() => binaryData = creditBureauProcess.GetXDSFullSearchResultInPDF(searchInput));
 
             return resultData;
 

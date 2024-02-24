@@ -5442,8 +5442,12 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                     <td>{GetAllCustomerFacilitiesMarkup()}</td>
                     <td>{GetAllCustomerCollateralsMarkup()}</td>
+                    
                     </tr>
+                    <tr></tr>
                 </table>
+
+                
             ";
             
             return result;
@@ -5794,6 +5798,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{currency}</td>
                         <td>{product.Max(p => p.maturityDate)}</td>
                     </tr>
+                    <tr><td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td><tr>
                     ";
                         }
                     }

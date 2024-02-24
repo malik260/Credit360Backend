@@ -18,7 +18,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
     {
         // XDSWebService.FirstCentralNigeriaWebServiceSoapClient proxy = new XDSWebService.FirstCentralNigeriaWebServiceSoapClient();
         //ESBFirstCentralService.FirstCentralNigeriaWebServiceSoapClient proxy = new ESBFirstCentralService.FirstCentralNigeriaWebServiceSoapClient();
-        TestESBFirstCentralService.FirstCentralNigeriaWebServiceSoapClient proxy = new TestESBFirstCentralService.FirstCentralNigeriaWebServiceSoapClient();
+        FirstCentralCRB.FirstCentralNigeriaWebServiceSoapClient proxy = new FirstCentralCRB.FirstCentralNigeriaWebServiceSoapClient();
 
         CreditBureauHelp helper = new CreditBureauHelp();
         FinTrakBankingContext innerContext = new FinTrakBankingContext();
