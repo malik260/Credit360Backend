@@ -40,7 +40,7 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
-
-        
+        public bool SHOWMCCSTAMP { get; set; }
+        public bool SHOWBCCSTAMP { get; set; }
     }
 }

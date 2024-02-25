@@ -770,6 +770,46 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("documentation/operation/{operationId}/target/{targetId}/approvalLevelId/{approvalLevelId}/{isThirdPartyFacility}")]
+        public HttpResponseMessage GetLoadedDocumentationStamped(int operationId, int targetId, int approvalLevelId, bool isThirdPartyFacility)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentationStamped(token.GetStaffId, operationId, targetId, user, approvalLevelId, isThirdPartyFacility);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("remove-documentation/operation/{operationId}/target/{targetId}/approvalLevelId/{approvalLevelId}/{isThirdPartyFacility}")]
+        public HttpResponseMessage RemoveLoadedDocumentationStamped(int operationId, int targetId, int approvalLevelId, bool isThirdPartyFacility)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
+                List<LoadedDocumentSectionViewModel> response = repo.RemoveLoadedDocumentationStamped(token.GetStaffId, operationId, targetId, user, approvalLevelId, isThirdPartyFacility);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("documentation/operation/{operationId}/target/{targetId}/targetIdForWorkFlow/{targetIdForWorkFlow}/generic/{customerId}")]
         public HttpResponseMessage GetLoadedDocumentationGeneric(int operationId, int targetId, int targetIdForWorkFlow, int customerId)
         {

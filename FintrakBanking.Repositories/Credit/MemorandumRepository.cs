@@ -105,6 +105,8 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string businessSectorsHolder = "@{{BusinessSectors}}";
         private readonly string exchangeRateHolder = "@{{ExchangeRate}}";
         private readonly string groupFacilitySummaryHolder = "@{{GroupFacilitySummary}}";
+        private readonly string mccStampHolder = "@{{MCCDigitalStamp}}";
+        private readonly string bccStampHolder = "@{{BCCDigitalStamp}}";
 
         private readonly string recoveryAnalysisHolder = "@{{RecoveryAnalysisData}}";
         private readonly string recoveryAnalysisFirmNameHolder = "@{{firmName}}";
@@ -243,6 +245,8 @@ namespace FintrakBanking.Repositories.Credit
         private string businessSectors;
         private string exchangeRate;
         private string groupFacilitySummary;
+        private string mccDigitalStamp;
+        private string bccDigitalStamp;
         private string groupFacilitySummaryFcy;
         private string companyLogo;
         //private string directFacilities;
@@ -444,7 +448,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
         // init
-        public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
+        public bool Init(int operationId, int targetId, bool showMccStamp = false, bool showBccStamp = false, bool isDrawdwon = false) // feeder
         {
             if (isDrawdwon)
             {
@@ -550,6 +554,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.managementProfile = GetManagementProfileMarkup();
                 this.ownership = GetOwnershipMarkup();
                 this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
+                if(showMccStamp)this.mccDigitalStamp = GetMccStamp();
+                if(showBccStamp)this.bccDigitalStamp = GetBccStamp();
                 this.tenor = context.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).Select(t => t.APPROVEDTENOR).FirstOrDefault();
                 
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
@@ -1063,6 +1069,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.ownership = GetOwnershipMarkup();
                 this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
+                
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
 
                 
@@ -2250,6 +2257,16 @@ namespace FintrakBanking.Repositories.Credit
             //    result = result + loanDetail.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
             //}
             return result;
+        }
+
+        private string GetMccStamp()
+        {
+            return context.TBL_DIGITAL_STAMP.Where(d => d.STAMPNAME.ToLower().Contains("mcc") && d.DELETED == false).Select(d => d.DIGITALSTAMP).FirstOrDefault();
+        }
+
+        private string GetBccStamp()
+        {
+            return context.TBL_DIGITAL_STAMP.Where(d => d.STAMPNAME.ToLower().Contains("bcc") && d.DELETED == false).Select(d => d.DIGITALSTAMP).FirstOrDefault();
         }
 
         private string GetGroupFacilitySummaryMarkupLOS()
@@ -6078,6 +6095,8 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(businessSectorsHolder, businessSectors);
             content = content.Replace(exchangeRateHolder, exchangeRate);
             content = content.Replace(groupFacilitySummaryHolder, groupFacilitySummary);
+            content = content.Replace(mccStampHolder, mccDigitalStamp);
+            content = content.Replace(bccStampHolder, bccDigitalStamp);
             //content = content.Replace(groupFacilitySummaryFcyHolder, groupFacilitySummaryFcy);
             //content = content.Replace(directFacilitiesHolder, directFacilities);
             //content = content.Replace(totalDirectsHolder, totalDirectFacilities);

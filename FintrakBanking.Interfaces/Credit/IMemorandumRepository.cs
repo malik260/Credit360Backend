@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
         decimal getTotalLLLImpact();
         decimal GetApprovalAmount(bool isLMS = false);
         string GetCallMemoMarkup(int id);
-        bool Init(int operationId, int targetId, bool isDrawdwon = false);
+        bool Init(int operationId, int targetId,bool showMccStamp = false, bool showBccStamp = false, bool isDrawdwon = false);
         bool InitGenericMemo(int operationId, int targetId, int targetIdForWorkFlow, int customerId);
         bool InitForThirdpartyLoans(int operationId, int targetId);
         string Replace(string content);

@@ -413,6 +413,10 @@ namespace FintrakBanking.Repositories.Credit
             }*/
 
             var printedDoc = "";
+            var docSections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+                .OrderBy(x => x.POSITION).FirstOrDefault();
+
             var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId )
                 .OrderBy(x => x.POSITION)
@@ -448,7 +452,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                memo.Init(operationId, targetId); //content = memo.Replace(content);
+                memo.Init(operationId, targetId, docSections.SHOWMCCSTAMP, docSections.SHOWBCCSTAMP); //content = memo.Replace(content);
                 foreach (var raw in rawSections)
                 {
                     var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
@@ -481,6 +485,217 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             context.SaveChanges();
            
+            return replacedSections;
+        }
+
+        public List<LoadedDocumentSectionViewModel> GetLoadedDocumentationStamped(int staffId, int operationId, int targetId, UserInfo user, int approvalLevelId, bool isThirdPartyFacility)
+        {
+
+            var showMccStamp = false;
+            var showBccStamp = false;
+            
+            var approvalLevel = context.TBL_APPROVAL_LEVEL.Find(approvalLevelId);
+            var staffRoleId = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == approvalLevel.STAFFROLEID && (approvalLevel.DELETED == false && approvalLevel.ISACTIVE == true)).FirstOrDefault().STAFFROLEID;
+            var digitalStamp = context.TBL_DIGITAL_STAMP.Where(d => d.STAFFROLEID == approvalLevel.STAFFROLEID && d.DELETED == false).FirstOrDefault();
+
+            var printedDoc = "";
+            var docSections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+                .OrderBy(x => x.POSITION).ToList();
+            showMccStamp = docSections[0].SHOWMCCSTAMP;
+            showBccStamp = docSections[0].SHOWBCCSTAMP;
+
+            var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId )
+                .OrderBy(x => x.POSITION)
+                .Select(x => new LoadedDocumentSectionViewModel
+                {
+                    position = x.POSITION,
+                    sectionId = x.DOCUMENTDETAILID,
+                    title = x.TITLE,
+                    description = x.DESCRIPTION,
+                    canEdit = x.CANEDIT, // system
+                    // editable = sectionIds.Contains(x.TEMPLATESECTIONID),
+                    templateSectionId = x.TEMPLATESECTIONID,
+                    templateDocument = x.TEMPLATEDOCUMENT, // placeholder find replace
+                })
+                .ToList();
+
+            List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
+            if(digitalStamp != null)
+            {
+                if (digitalStamp.STAMPNAME.ToLower().Contains("mcc")) showMccStamp = true;
+                if (digitalStamp.STAMPNAME.ToLower().Contains("bcc")) showBccStamp = true;
+                if (isThirdPartyFacility)
+                {
+                    memo.InitForThirdpartyLoans(operationId, targetId);
+                    foreach (var raw in rawSections)
+                    {
+                        var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
+                        raw.templateDocument = memo.Replace(raw.templateDocument);
+                        //if (templateId == 1)
+                        //{
+                        //    raw.templateDocument = memo.UpdateEsg(raw.templateDocument);
+                        //    raw.templateDocument = memo.UpdateGreenRating(raw.templateDocument);
+                        //}
+                        replacedSections.Add(raw);
+                        printedDoc = raw.title;
+                    }
+                }
+                else
+                {
+                    memo.Init(operationId, targetId, showMccStamp, showBccStamp); //content = memo.Replace(content);
+                    foreach (var raw in rawSections)
+                    {
+                        var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
+                        raw.templateDocument = memo.Replace(raw.templateDocument);
+                        if (templateId == 1)
+                        {
+                            raw.templateDocument = memo.UpdateEsg(raw.templateDocument);
+                            raw.templateDocument = memo.UpdateGreenRating(raw.templateDocument);
+                        }
+                        
+                        
+                        replacedSections.Add(raw);
+                        printedDoc = raw.title;
+                    }
+                    foreach (var section in docSections)
+                    {
+                        section.SHOWMCCSTAMP = showMccStamp;
+                        section.SHOWBCCSTAMP = showBccStamp;
+                    }
+                }
+            }
+            
+
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplatePrinted,
+                STAFFID = staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Printed Document Template '{ printedDoc }' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = "localhost",//model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            };
+            this.audit.AddAuditTrail(audit);
+            context.SaveChanges();
+           
+            return replacedSections;
+        }
+
+        public List<LoadedDocumentSectionViewModel> RemoveLoadedDocumentationStamped(int staffId, int operationId, int targetId, UserInfo user, int approvalLevelId, bool isThirdPartyFacility)
+        {
+
+            var showMccStamp = false;
+            var showBccStamp = false;
+
+            var approvalLevel = context.TBL_APPROVAL_LEVEL.Find(approvalLevelId);
+            var staffRoleId = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == approvalLevel.STAFFROLEID && (approvalLevel.DELETED == false && approvalLevel.ISACTIVE == true)).FirstOrDefault().STAFFROLEID;
+            var digitalStamp = context.TBL_DIGITAL_STAMP.Where(d => d.STAFFROLEID == approvalLevel.STAFFROLEID && d.DELETED == false).FirstOrDefault();
+
+            var printedDoc = "";
+            var docSections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+                .OrderBy(x => x.POSITION).ToList();
+
+            var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+                .OrderBy(x => x.POSITION)
+                .Select(x => new LoadedDocumentSectionViewModel
+                {
+                    position = x.POSITION,
+                    sectionId = x.DOCUMENTDETAILID,
+                    title = x.TITLE,
+                    description = x.DESCRIPTION,
+                    canEdit = x.CANEDIT, // system
+                    // editable = sectionIds.Contains(x.TEMPLATESECTIONID),
+                    templateSectionId = x.TEMPLATESECTIONID,
+                    templateDocument = x.TEMPLATEDOCUMENT, // placeholder find replace
+                })
+                .ToList();
+
+            List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
+            if (digitalStamp != null)
+            {
+                if (digitalStamp.STAMPNAME.ToLower().Contains("mcc"))
+                { 
+                    showMccStamp = false;
+                    foreach (var section in docSections)
+                    {
+                        section.SHOWMCCSTAMP = showMccStamp;
+
+                    }
+                }
+                if (digitalStamp.STAMPNAME.ToLower().Contains("bcc"))
+                {
+                    showBccStamp = false;
+                    foreach (var section in docSections)
+                    {
+                       section.SHOWBCCSTAMP = showBccStamp;
+                    }
+                }
+
+                if (isThirdPartyFacility)
+                {
+                    memo.InitForThirdpartyLoans(operationId, targetId);
+                    foreach (var raw in rawSections)
+                    {
+                        var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
+                        raw.templateDocument = memo.Replace(raw.templateDocument);
+                        //if (templateId == 1)
+                        //{
+                        //    raw.templateDocument = memo.UpdateEsg(raw.templateDocument);
+                        //    raw.templateDocument = memo.UpdateGreenRating(raw.templateDocument);
+                        //}
+                        replacedSections.Add(raw);
+                        printedDoc = raw.title;
+                    }
+                }
+                else
+                {
+                    memo.Init(operationId, targetId, showMccStamp, showBccStamp); //content = memo.Replace(content);
+                    foreach (var raw in rawSections)
+                    {
+                        var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
+                        raw.templateDocument = memo.Replace(raw.templateDocument);
+                        if (templateId == 1)
+                        {
+                            raw.templateDocument = memo.UpdateEsg(raw.templateDocument);
+                            raw.templateDocument = memo.UpdateGreenRating(raw.templateDocument);
+                        }
+                       
+
+                        replacedSections.Add(raw);
+                        printedDoc = raw.title;
+                    }
+                }
+            }
+
+
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplatePrinted,
+                STAFFID = staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Printed Document Template '{printedDoc}' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = "localhost",//model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            };
+            this.audit.AddAuditTrail(audit);
+            context.SaveChanges();
+
             return replacedSections;
         }
 
