@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Common;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Credit;
@@ -26,6 +27,7 @@ namespace FintrakBanking.Repositories.Credit
         // dependencies
         private FinTrakBankingContext context;
         private FinTrakBankingStagingContext context2;
+        private FinTrakBankingDocumentsContext docContext;
         private IAppraisalMemorandumRepository memo;
         private ILoanRepository loanRepo;
         private IFinanceTransactionRepository financeTransaction;
@@ -39,6 +41,7 @@ namespace FintrakBanking.Repositories.Credit
         public ExternalAlertRepository(
             FinTrakBankingContext context,
             FinTrakBankingStagingContext context2,
+            FinTrakBankingDocumentsContext docContext,
             IAppraisalMemorandumRepository memo,
             ILoanRepository loanRepo,
             IFinanceTransactionRepository financeTransaction,
@@ -53,6 +56,7 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = _workflow;
             this.context = context;
             this.context2 = context2;
+            this.docContext = docContext;
             this.memo = memo;
             this.loanRepo = loanRepo;
             this.financeTransaction = financeTransaction;
@@ -81,6 +85,27 @@ namespace FintrakBanking.Repositories.Credit
                                  supervisorStaffId = s.SUPERVISOR_STAFFID,
                                  Email = s.EMAIL,
                                  misCode = s.MISCODE,
+                             }).ToList();
+
+            return staffList;
+        }
+        public IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentDocumentMaturities() //done
+        {
+            List<int> days = new List<int> { 30, 14, 7, 3, 1 };
+            var immenentDocMaturities = docContext.TBL_DEFERRED_DOC_TRACKER.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.DUEDATE).Value)).Select(d => d.CREATEDBY).ToList();
+            //var immenentMaturities = context.TBL_GLOBAL_EXPOSURE.Where(d => d.PRINCIPALOUTSTANDINGBALLCY > 0).Select(d => d.ACCOUNTOFFICERCODE).ToList();
+
+            var staffList = (from s in context.TBL_STAFF
+                             where immenentDocMaturities.Contains(s.STAFFID)
+                             && s.EMAIL.ToLower() != "herbert.wigwe@accessbankplc.com"
+                             && s.EMAIL.ToLower() != "wigweh@accessbankplc.com"
+                             && s.DELETED == false
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 StaffCode = s.STAFFCODE,
                              }).ToList();
 
             return staffList;

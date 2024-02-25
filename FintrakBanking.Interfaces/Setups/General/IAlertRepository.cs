@@ -19,6 +19,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         string GetBusinessTeamEmails(string accountOfficerMIsCode);
         bool validateAlertCheck();
         void GetImminentMaturities();
+        void GetImminentDocumentMaturities();
         void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMethod);
         IEnumerable<AlertTitleViewModel> GetAllAlerts();
         IEnumerable<AlertTitleViewModel> GetAllAlertsForDropdown();

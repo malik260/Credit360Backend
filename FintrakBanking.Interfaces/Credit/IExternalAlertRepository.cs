@@ -34,6 +34,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<StaffInfoViewModel> GetImminentMaturitiesGroupHeads();
         IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturitiesCustomers();
         IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturities();
+        IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentDocumentMaturities();
         IEnumerable<StaffInfoViewModel> GetCreditCardDelinquencyMonitoringReport();
         IEnumerable<StaffInfoViewModel> GetOverlineMonitoringReport();
         IEnumerable<GlobalExposureViewModel> GetUnAuthorizedOverdraftReport();
