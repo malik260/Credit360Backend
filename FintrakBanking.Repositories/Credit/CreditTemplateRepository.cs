@@ -295,26 +295,31 @@ namespace FintrakBanking.Repositories.Credit
         {
             // int staffId, is REDUNDANT!
             //var printedDoc = "";
-            var sections = context.TBL_DOC_TEMPLATE_SAVED
-                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
-                .OrderBy(x => x.POSITION)
-                .Select(x => new LoadedDocumentSectionViewModel
-                {
-                    position = x.POSITION,
-                    sectionId = x.DOCUMENTDETAILID,
-                    title = x.TITLE,
-                    description = x.DESCRIPTION,
-                    canEdit = x.CANEDIT, // system
-                    // editable = sectionIds.Contains(x.TEMPLATESECTIONID),
-                    templateDocument = x.TEMPLATEDOCUMENT, // placeholder find replace
-                })
-                .ToList();
 
-            return sections;
-            //List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
+            //var docSections = context.TBL_DOC_TEMPLATE_DETAIL
+            //    .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+            //    .OrderBy(x => x.POSITION).FirstOrDefault();
 
-            //memo.Init(operationId, targetId); //content = memo.Replace(content);
-            //foreach (var raw in rawSections)
+            //var sections = context.TBL_DOC_TEMPLATE_SAVED
+            //    .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+            //    .OrderBy(x => x.POSITION)
+            //    .Select(x => new LoadedDocumentSectionViewModel
+            //    {
+            //        position = x.POSITION,
+            //        sectionId = x.DOCUMENTDETAILID,
+            //        title = x.TITLE,
+            //        description = x.DESCRIPTION,
+            //        canEdit = x.CANEDIT, // system
+            //        // editable = sectionIds.Contains(x.TEMPLATESECTIONID),
+            //        templateDocument = x.TEMPLATEDOCUMENT, // placeholder find replace
+            //    })
+            //    .ToList();
+
+            // return sections;
+            List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
+
+            //memo.Init(operationId, targetId, docSections.SHOWMCCSTAMP, docSections.SHOWBCCSTAMP); //content = memo.Replace(content);
+            //foreach (var raw in sections)
             //{
             //    raw.templateDocument = memo.Replace(raw.templateDocument);
             //    replacedSections.Add(raw);
@@ -337,7 +342,7 @@ namespace FintrakBanking.Repositories.Credit
             //this.audit.AddAuditTrail(audit);
             //context.SaveChanges();
 
-            //return replacedSections;
+            return replacedSections;
         }
 
         public List<LoadedDocumentSectionViewModel> GetLoadedDocumentBulkLiquidation(int staffId, int operationId, int targetId, UserInfo user)
@@ -603,6 +608,8 @@ namespace FintrakBanking.Repositories.Credit
             var docSections = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .OrderBy(x => x.POSITION).ToList();
+            showMccStamp = docSections[0].SHOWMCCSTAMP;
+            showBccStamp = docSections[0].SHOWBCCSTAMP;
 
             var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
