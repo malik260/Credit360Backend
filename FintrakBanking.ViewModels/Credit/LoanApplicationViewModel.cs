@@ -19,8 +19,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int bookingRequestId { get; set; }
 
         public string divisionCode { get; set; }
-        
 
+        public bool iblRequest { get; set; }
+        public int iblRequestMark { get; set; }
         public string approvedProductName { get; set; }
         public decimal? equityControl { get; set; }
         public int? moratrium { get; set; }
@@ -551,6 +552,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? interestRepaymentId { get; set; }
         public string moratorium { get; set; }
         public bool? isMoratorium { get; set; }
+        public bool iblRequest { get; set; }
         public decimal? approvedLineLimit { get; set; }
         
 
@@ -1052,6 +1054,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isAgricRelated { get; set; }
         public bool isSyndicated { get; set; }  
         public bool iblRenewal { get; set; }  
+         
     }
 
     public class LoanApplicationTagsLMSViewModel : GeneralEntity

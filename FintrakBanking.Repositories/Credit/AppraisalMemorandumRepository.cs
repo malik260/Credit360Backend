@@ -1126,6 +1126,7 @@ namespace FintrakBanking.Repositories.Credit
                              applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                              relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
                              branchId = a.BRANCHID,
+                             iblRequest = a.IBLREQUEST,
                              productClassId = a.PRODUCTCLASSID,
                              productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                              //currencyCode = c.TBL_CURRENCY.CURRENCYCODE,
@@ -3316,6 +3317,7 @@ namespace FintrakBanking.Repositories.Credit
                         interestRepayment = x.d.INTERESTREPAYMENTID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.INTERESTREPAYMENTID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
                         interestRepaymentId = x.d.INTERESTREPAYMENTID,
                         moratorium = x.d.MORATORIUM,
+                        iblRequest = x.a.IBLREQUEST
                         //approvedTradeCycleDays = context.TBL_APPROVED_TRADE_CYCLE.Where(T => T.APPROVEDTRADECYCLEID == x.d.APPROVEDTRADECYCLEID).FirstOrDefault().APPROVEDTRADECYCLEDAYS : null,
                         //approvedTradeCycleId = x.d.APPROVEDTRADECYCLEID
                     })
@@ -3756,6 +3758,7 @@ namespace FintrakBanking.Repositories.Credit
                 termSheetCode = x.a.TERMSHEETID,
                 //loanApplicationDetailId = x.a.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                iblRequest = x.a.IBLREQUEST,
                 relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
                 customerId = x.a.CUSTOMERID,
                 branchId = x.a.BRANCHID,
@@ -4241,6 +4244,7 @@ namespace FintrakBanking.Repositories.Credit
             //loanApplicationDetailId = x.a.LOANAPPLICATIONID,
             applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
             relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
+            iblRequest = x.a.IBLREQUEST,
             customerId = x.a.CUSTOMERID,
             branchId = x.a.BRANCHID,
             currencyId = context.TBL_LOAN_APPLICATION_DETAIL

@@ -124,6 +124,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchId = a.BRANCHID,
                             companyId = a.COMPANYID,
                             relatedReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            iblRequest = a.IBLREQUEST,
                             casaAccountId = a.CASAACCOUNTID,
                             requireCollateral = a.REQUIRECOLLATERAL,
                             interestRate = a.INTERESTRATE,
@@ -3151,6 +3152,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
 
+
                 loanData = new TBL_LOAN_APPLICATION
                 {
                     REQUIRECOLLATERAL = loan.requireCollateral,
@@ -3197,7 +3199,8 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTID = workflowProductId,
                     ISEMPLOYERRELATED = loan.isEmployerRelated,
                     RELATEDEMPLOYERID = loan.relatedEmployerId,
-                    TERMSHEETID = loan.loantermSheetId
+                    TERMSHEETID = loan.loantermSheetId,
+                    IBLREQUEST = loan.iblRequest
                 };
                 loanData.TOTALEXPOSUREAMOUNT = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount) + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
 
@@ -3367,7 +3370,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanApplicationdetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
                 var facilityStampDutyIds = new List<int>();
-                if (loanApplicationdetailIds.Count > 0)
+               /* if (loanApplicationdetailIds.Count > 0)
                 {
                     foreach (var detailId in loanApplicationdetailIds)
                     {
@@ -3394,7 +3397,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         }
                     }
-                }
+                }*/
 
 
                 var racDetail = context.TBL_RAC_DETAIL.Where(r => r.TARGETID == detail.LOANAPPLICATIONDETAILID).ToList();
@@ -3477,6 +3480,8 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.PRODUCT_CLASS_PROCESSID = context.TBL_PRODUCT.FirstOrDefault(p => facility.APPROVEDPRODUCTID == p.PRODUCTID).TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID;
             this.loanData.ISEMPLOYERRELATED = loan.isEmployerRelated;
             this.loanData.RELATEDEMPLOYERID = loan.relatedEmployerId;
+            //this.loanData.IBLREQUEST = loan.iblRequest;
+
             if (loan.LoanApplicationDetail.Count > 0)
             {
                 var exclusiveOperationId = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == loan.flowchangeId)?.OPERATIONID;
@@ -4326,6 +4331,7 @@ namespace FintrakBanking.Repositories.Credit
                 tenorModeId = d.TENORFREQUENCYTYPEID,
                 flowChangeId = d.TBL_LOAN_APPLICATION.FLOWCHANGEID,
                 isLineFacility = d.ISLINEFACILITY,
+                iblRequest = d.TBL_LOAN_APPLICATION.IBLREQUEST,
                 approvedLineLimit = d.APPROVEDLINELIMIT,
                 interestRepaymentId = d.INTERESTREPAYMENTID,
                 interestRepayment = d.INTERESTREPAYMENT,
@@ -7005,6 +7011,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationId = x.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                 relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
+                iblRequest = x.IBLREQUEST,
                 customerId = x.CUSTOMERID,
                 branchId = x.BRANCHID,
                 branchName = x.TBL_BRANCH.BRANCHNAME,
@@ -7088,6 +7095,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanReviewApplicationId = x.LOANAPPLICATIONID,
                 referenceNumber = x.APPLICATIONREFERENCENUMBER,
                 relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
+                
                 branchId = x.BRANCHID,
                 branchName = x.TBL_BRANCH.BRANCHNAME,
                 customerId = (int)x.CUSTOMERID,
@@ -7169,6 +7177,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationId = x.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                 relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
+                
                 customerId = x.CUSTOMERID,
                 branchId = x.BRANCHID,
                 branchName = x.TBL_BRANCH.BRANCHNAME,
@@ -9099,6 +9108,7 @@ namespace FintrakBanking.Repositories.Credit
                 entity.ISAGRICRELATED = model.isAgricRelated;
                 entity.ISSYNDICATED = model.isSyndicated;
                 entity.IBLRENEWAL = model.iblRenewal;
+                
                 entity.LASTUPDATEDBY = user.createdBy;
                 entity.DATETIMEUPDATED = DateTime.Now;
             }
