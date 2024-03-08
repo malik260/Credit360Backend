@@ -3343,11 +3343,13 @@ namespace FintrakBanking.Repositories.Credit
                     productName = x.d.TBL_PRODUCT.PRODUCTNAME,
                 })
                 .ToList();
-
+            
             details.duplications = duplications;
             details.facilities = facilities;
+            
             details.application = GetLoanApplicationInformation(applicationId);
-
+            if (facilities[0].proposedProductId == 156 || facilities[0].proposedProductId == 228 || facilities[0].proposedProductId == 297
+                || facilities[0].proposedProductId == 354) details.facilities[0].iblRequest = true;
             return details;
         }
 
