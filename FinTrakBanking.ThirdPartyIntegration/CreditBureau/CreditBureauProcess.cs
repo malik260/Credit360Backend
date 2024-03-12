@@ -13,6 +13,7 @@
     using System.Threading.Tasks;
     using System.Xml;
     using FintrakBanking.Common.CustomException;
+    using System.Web.UI.WebControls;
 
 
     namespace CreditBureau
@@ -45,6 +46,7 @@
 
                         if (searchInfo.searchType == (int)CreditBureauTypeEnum.ConsumerSearch)
                         {
+                            ticket = xds.Login(searchInfo.userName, searchInfo.password);
                             return DoXDSIndividualSearch(searchInfo);
                         }
                     }
@@ -108,7 +110,7 @@
 
                 if (!xds.IsticketActive(searchInput.userName))
                 {
-                    xds.Login(searchInput.userName, searchInput.password);
+                    ticket = xds.Login(searchInput.userName, searchInput.password);
                 }
 
                 if (searchInput.creditBureauId == (short) CreditBureauEnum.XDSCreditBureau)
@@ -244,6 +246,16 @@
 
                 return str;
             }
+            private int MergeListInt(List<string> mergeId)
+            {
+                int str = 0;
+                foreach (var item in mergeId)
+                {
+                    str = Int32.Parse(item);
+                }
+
+                return str;
+            }
 
             private string DoXDSCommercialSearch(CreditBureauSearchViewModel searchInfo)
             {
@@ -324,9 +336,11 @@
                     string result = string.Empty;
                     string mergeLst = MergeListToString(searchInput.mergeList);
                     XDSService xds = new XDSService();
+                    var idString = mergeLst.TrimEnd(',');
+                    var id = Int32.Parse(idString);
                     var data = new SearchFullResultViewModel
                     {
-                        ConsumerID = searchInput.consumerID,
+                        ConsumerID = id,
                         MergeList = mergeLst.TrimEnd(','),
                         DataTicket = string.Empty,
                         EnquiryID = searchInput.enquiryID,

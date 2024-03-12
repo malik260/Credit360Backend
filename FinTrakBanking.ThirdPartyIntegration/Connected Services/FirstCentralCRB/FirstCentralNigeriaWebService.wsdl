@@ -1,0 +1,950 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService">
+      <s:element name="Login">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LoginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LoginResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsTicketValid">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="FirstCentralNigeriaWebServiceTicket" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsTicketValidResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsTicketValidResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConnectConsumerMatch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EnquiryReason" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ConsumerName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateOfBirth" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Identification" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AccountNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ProductID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConnectConsumerMatchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConnectConsumerMatchResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConnectCommercialMatch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EnquiryReason" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BusinessName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BusinessRegistrationNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AccountNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ProductID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConnectCommercialMatchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConnectCommercialMatchResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerAccountMatch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AccountNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Subscriberid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerAccountMatchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetConsumerAccountMatchResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerEnquiryReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="ProductID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerEnquiryReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetConsumerEnquiryReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCommercialEnquiryReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="CommercialID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="ProductID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCommercialEnquiryReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCommercialEnquiryReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerBasicTraceReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerBasicTraceReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetConsumerBasicTraceReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerXscorePrimereport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerXscorePrimereportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetConsumerXscorePrimereportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerPrimeReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerPrimeReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetConsumerPrimeReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerBasicCreditReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerBasicCreditReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetConsumerBasicCreditReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetXSCoreConsumerFullCreditReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetXSCoreConsumerFullCreditReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetXSCoreConsumerFullCreditReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerFullCreditReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerFullCreditReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetConsumerFullCreditReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCommercialBasicCreditReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="CommercialID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="commercialMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCommercialBasicCreditReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCommercialBasicCreditReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCommercialFullCreditReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="CommercialID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="commercialMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCommercialFullCreditReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCommercialFullCreditReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetXScoreCommercialFullCreditReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="CommercialID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="commercialMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetXScoreCommercialFullCreditReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetXScoreCommercialFullCreditReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetXSCoreConsumerFullCreditReportBinary">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetXSCoreConsumerFullCreditReportBinaryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetXSCoreConsumerFullCreditReportBinaryResult" type="s:base64Binary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerFullCreditReportBinary">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerFullCreditReportBinaryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetConsumerFullCreditReportBinaryResult" type="s:base64Binary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCommercialFullCreditReportBinary">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="CommercialID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="commercialMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCommercialFullCreditReportBinaryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCommercialFullCreditReportBinaryResult" type="s:base64Binary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="SubscriberEnquiryResultID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="LoginSoapIn">
+    <wsdl:part name="parameters" element="tns:Login" />
+  </wsdl:message>
+  <wsdl:message name="LoginSoapOut">
+    <wsdl:part name="parameters" element="tns:LoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsTicketValidSoapIn">
+    <wsdl:part name="parameters" element="tns:IsTicketValid" />
+  </wsdl:message>
+  <wsdl:message name="IsTicketValidSoapOut">
+    <wsdl:part name="parameters" element="tns:IsTicketValidResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConnectConsumerMatchSoapIn">
+    <wsdl:part name="parameters" element="tns:ConnectConsumerMatch" />
+  </wsdl:message>
+  <wsdl:message name="ConnectConsumerMatchSoapOut">
+    <wsdl:part name="parameters" element="tns:ConnectConsumerMatchResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConnectCommercialMatchSoapIn">
+    <wsdl:part name="parameters" element="tns:ConnectCommercialMatch" />
+  </wsdl:message>
+  <wsdl:message name="ConnectCommercialMatchSoapOut">
+    <wsdl:part name="parameters" element="tns:ConnectCommercialMatchResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerAccountMatchSoapIn">
+    <wsdl:part name="parameters" element="tns:GetConsumerAccountMatch" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerAccountMatchSoapOut">
+    <wsdl:part name="parameters" element="tns:GetConsumerAccountMatchResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerEnquiryReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetConsumerEnquiryReport" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerEnquiryReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetConsumerEnquiryReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCommercialEnquiryReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCommercialEnquiryReport" />
+  </wsdl:message>
+  <wsdl:message name="GetCommercialEnquiryReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCommercialEnquiryReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerBasicTraceReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetConsumerBasicTraceReport" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerBasicTraceReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetConsumerBasicTraceReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerXscorePrimereportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetConsumerXscorePrimereport" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerXscorePrimereportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetConsumerXscorePrimereportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerPrimeReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetConsumerPrimeReport" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerPrimeReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetConsumerPrimeReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerBasicCreditReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetConsumerBasicCreditReport" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerBasicCreditReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetConsumerBasicCreditReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetXSCoreConsumerFullCreditReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetXSCoreConsumerFullCreditReport" />
+  </wsdl:message>
+  <wsdl:message name="GetXSCoreConsumerFullCreditReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetXSCoreConsumerFullCreditReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerFullCreditReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetConsumerFullCreditReport" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerFullCreditReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetConsumerFullCreditReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCommercialBasicCreditReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCommercialBasicCreditReport" />
+  </wsdl:message>
+  <wsdl:message name="GetCommercialBasicCreditReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCommercialBasicCreditReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCommercialFullCreditReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCommercialFullCreditReport" />
+  </wsdl:message>
+  <wsdl:message name="GetCommercialFullCreditReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCommercialFullCreditReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetXScoreCommercialFullCreditReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetXScoreCommercialFullCreditReport" />
+  </wsdl:message>
+  <wsdl:message name="GetXScoreCommercialFullCreditReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetXScoreCommercialFullCreditReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetXSCoreConsumerFullCreditReportBinarySoapIn">
+    <wsdl:part name="parameters" element="tns:GetXSCoreConsumerFullCreditReportBinary" />
+  </wsdl:message>
+  <wsdl:message name="GetXSCoreConsumerFullCreditReportBinarySoapOut">
+    <wsdl:part name="parameters" element="tns:GetXSCoreConsumerFullCreditReportBinaryResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerFullCreditReportBinarySoapIn">
+    <wsdl:part name="parameters" element="tns:GetConsumerFullCreditReportBinary" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerFullCreditReportBinarySoapOut">
+    <wsdl:part name="parameters" element="tns:GetConsumerFullCreditReportBinaryResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCommercialFullCreditReportBinarySoapIn">
+    <wsdl:part name="parameters" element="tns:GetCommercialFullCreditReportBinary" />
+  </wsdl:message>
+  <wsdl:message name="GetCommercialFullCreditReportBinarySoapOut">
+    <wsdl:part name="parameters" element="tns:GetCommercialFullCreditReportBinaryResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetReport" />
+  </wsdl:message>
+  <wsdl:message name="GetReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetReportResponse" />
+  </wsdl:message>
+  <wsdl:portType name="FirstCentralNigeriaWebServiceSoap">
+    <wsdl:operation name="Login">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Log in FirstCentral Nigeria WebService and returns a Ticket.</wsdl:documentation>
+      <wsdl:input message="tns:LoginSoapIn" />
+      <wsdl:output message="tns:LoginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsTicketValid">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Checks Validity of your FirstCentral Nigeria WebService Ticket.</wsdl:documentation>
+      <wsdl:input message="tns:IsTicketValidSoapIn" />
+      <wsdl:output message="tns:IsTicketValidSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConnectConsumerMatch">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria for Consumer Matching based on ConsumerID.</wsdl:documentation>
+      <wsdl:input message="tns:ConnectConsumerMatchSoapIn" />
+      <wsdl:output message="tns:ConnectConsumerMatchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConnectCommercialMatch">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria for Commercial Matching based on CommercialID.</wsdl:documentation>
+      <wsdl:input message="tns:ConnectCommercialMatchSoapIn" />
+      <wsdl:output message="tns:ConnectCommercialMatchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerAccountMatch">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Match based on Account Number.</wsdl:documentation>
+      <wsdl:input message="tns:GetConsumerAccountMatchSoapIn" />
+      <wsdl:output message="tns:GetConsumerAccountMatchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerEnquiryReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria based on ConsumerID.</wsdl:documentation>
+      <wsdl:input message="tns:GetConsumerEnquiryReportSoapIn" />
+      <wsdl:output message="tns:GetConsumerEnquiryReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialEnquiryReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria based on CommercialID.</wsdl:documentation>
+      <wsdl:input message="tns:GetCommercialEnquiryReportSoapIn" />
+      <wsdl:output message="tns:GetCommercialEnquiryReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerBasicTraceReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria for Consumer Basic Trace Report based on ConsumerID.</wsdl:documentation>
+      <wsdl:input message="tns:GetConsumerBasicTraceReportSoapIn" />
+      <wsdl:output message="tns:GetConsumerBasicTraceReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerXscorePrimereport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Return Full XML Nigeria for X-Score Prime Report based on ConsumerID</wsdl:documentation>
+      <wsdl:input message="tns:GetConsumerXscorePrimereportSoapIn" />
+      <wsdl:output message="tns:GetConsumerXscorePrimereportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerPrimeReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Return Full XML Nigeria for Prime Report based on ConsumerID</wsdl:documentation>
+      <wsdl:input message="tns:GetConsumerPrimeReportSoapIn" />
+      <wsdl:output message="tns:GetConsumerPrimeReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerBasicCreditReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria for Consumer Basic Credit Report based on ConsumerID.</wsdl:documentation>
+      <wsdl:input message="tns:GetConsumerBasicCreditReportSoapIn" />
+      <wsdl:output message="tns:GetConsumerBasicCreditReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetXSCoreConsumerFullCreditReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML for X-SCore Consumer Full Credit Report based on ConsumerID.</wsdl:documentation>
+      <wsdl:input message="tns:GetXSCoreConsumerFullCreditReportSoapIn" />
+      <wsdl:output message="tns:GetXSCoreConsumerFullCreditReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerFullCreditReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria for Consumer Full Credit Report based on ConsumerID.</wsdl:documentation>
+      <wsdl:input message="tns:GetConsumerFullCreditReportSoapIn" />
+      <wsdl:output message="tns:GetConsumerFullCreditReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialBasicCreditReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria for Commercial Basic Credit Report based on CommercialID.</wsdl:documentation>
+      <wsdl:input message="tns:GetCommercialBasicCreditReportSoapIn" />
+      <wsdl:output message="tns:GetCommercialBasicCreditReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialFullCreditReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria for Commercial Full Credit Report based on CommercialID.</wsdl:documentation>
+      <wsdl:input message="tns:GetCommercialFullCreditReportSoapIn" />
+      <wsdl:output message="tns:GetCommercialFullCreditReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetXScoreCommercialFullCreditReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria for X-Score Commercial Full Credit Report based on CommercialID.</wsdl:documentation>
+      <wsdl:input message="tns:GetXScoreCommercialFullCreditReportSoapIn" />
+      <wsdl:output message="tns:GetXScoreCommercialFullCreditReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetXSCoreConsumerFullCreditReportBinary">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Base 64 string for X-Score Consumer Full Credit Report based on ConsumerID.</wsdl:documentation>
+      <wsdl:input message="tns:GetXSCoreConsumerFullCreditReportBinarySoapIn" />
+      <wsdl:output message="tns:GetXSCoreConsumerFullCreditReportBinarySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerFullCreditReportBinary">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Base 64 string for Consumer Full Credit Report based on ConsumerID.</wsdl:documentation>
+      <wsdl:input message="tns:GetConsumerFullCreditReportBinarySoapIn" />
+      <wsdl:output message="tns:GetConsumerFullCreditReportBinarySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialFullCreditReportBinary">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Base 64 string for Commercial Full Credit Report based on CommercialID.</wsdl:documentation>
+      <wsdl:input message="tns:GetCommercialFullCreditReportBinarySoapIn" />
+      <wsdl:output message="tns:GetCommercialFullCreditReportBinarySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML for Consumer or Commercial Report based on EnquiryResultID.</wsdl:documentation>
+      <wsdl:input message="tns:GetReportSoapIn" />
+      <wsdl:output message="tns:GetReportSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="FirstCentralNigeriaWebServiceSoap" type="tns:FirstCentralNigeriaWebServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Login">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/Login" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsTicketValid">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/IsTicketValid" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConnectConsumerMatch">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/ConnectConsumerMatch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConnectCommercialMatch">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/ConnectCommercialMatch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerAccountMatch">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerAccountMatch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerEnquiryReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerEnquiryReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialEnquiryReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCommercialEnquiryReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerBasicTraceReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerBasicTraceReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerXscorePrimereport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerXscorePrimereport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerPrimeReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerPrimeReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerBasicCreditReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerBasicCreditReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetXSCoreConsumerFullCreditReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetXSCoreConsumerFullCreditReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerFullCreditReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerFullCreditReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialBasicCreditReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCommercialBasicCreditReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialFullCreditReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCommercialFullCreditReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetXScoreCommercialFullCreditReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetXScoreCommercialFullCreditReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetXSCoreConsumerFullCreditReportBinary">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetXSCoreConsumerFullCreditReportBinary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerFullCreditReportBinary">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerFullCreditReportBinary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialFullCreditReportBinary">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCommercialFullCreditReportBinary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReport">
+      <soap:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="FirstCentralNigeriaWebServiceSoap12" type="tns:FirstCentralNigeriaWebServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Login">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/Login" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsTicketValid">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/IsTicketValid" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConnectConsumerMatch">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/ConnectConsumerMatch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConnectCommercialMatch">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/ConnectCommercialMatch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerAccountMatch">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerAccountMatch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerEnquiryReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerEnquiryReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialEnquiryReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCommercialEnquiryReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerBasicTraceReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerBasicTraceReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerXscorePrimereport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerXscorePrimereport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerPrimeReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerPrimeReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerBasicCreditReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerBasicCreditReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetXSCoreConsumerFullCreditReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetXSCoreConsumerFullCreditReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerFullCreditReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerFullCreditReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialBasicCreditReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCommercialBasicCreditReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialFullCreditReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCommercialFullCreditReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetXScoreCommercialFullCreditReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetXScoreCommercialFullCreditReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetXSCoreConsumerFullCreditReportBinary">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetXSCoreConsumerFullCreditReportBinary" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerFullCreditReportBinary">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerFullCreditReportBinary" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCommercialFullCreditReportBinary">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCommercialFullCreditReportBinary" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReport">
+      <soap12:operation soapAction="https://uat.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="FirstCentralNigeriaWebService">
+    <wsdl:port name="FirstCentralNigeriaWebServiceSoap" binding="tns:FirstCentralNigeriaWebServiceSoap">
+      <soap:address location="https://uat.firstcentralcreditbureau.com/firstcentralNigeriaWebservice/FirstCentralNigeriaWebService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="FirstCentralNigeriaWebServiceSoap12" binding="tns:FirstCentralNigeriaWebServiceSoap12">
+      <soap12:address location="https://uat.firstcentralcreditbureau.com/firstcentralNigeriaWebservice/FirstCentralNigeriaWebService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

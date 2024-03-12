@@ -27,7 +27,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ALERT_BINDING_METHODS> TBL_ALERT_BINDING_METHODS { get; set; }
         public virtual DbSet<TBL_ALERT_SCHEDULE> TBL_ALERT_SCHEDULE { get; set; }
         public virtual DbSet<TBL_SUB_BASICTRANSACTION> TBL_SUB_BASICTRANSACTION { get; set; }
-        public virtual DbSet<TBL_SUB_BASICTRANSACTION_LMS> TBL_SUB_BASICTRANSACTION_LMS { get; set; }
+        public virtual DbSet<TBL_LMS_SUB_BASICTRANSACTION> TBL_LMS_SUB_BASICTRANSACTION { get; set; }
         public virtual DbSet<TBL_ALERT_PLACEHOLDER> TBL_ALERT_PLACEHOLDER { get; set; }
         public virtual DbSet<TBL_COLLATERAL_INSURANCE_STATUS> TBL_COLLATERAL_INSURANCE_STATUS { get; set; }
         public virtual DbSet<TBL_COLLATERAL_INSURANCE_TRACKING> TBL_COLLATERAL_INSURANCE_TRACKING { get; set; }
@@ -682,8 +682,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STAMP_DUTY_CONDITION> TBL_STAMP_DUTY_CONDITION { get; set; }
         public virtual DbSet<TBL_FACILITY_STAMP_DUTY> TBL_FACILITY_STAMP_DUTY { get; set; }
         public virtual DbSet<TBL_CODE_TRACKER> TBL_CODE_TRACKER { get; set; }
-        public virtual DbSet<TBL_DIGITAL_STAMP> TBL_DIGITAL_STAMP { get; set; }
-
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

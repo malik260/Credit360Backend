@@ -1626,7 +1626,7 @@ namespace FintrakBanking.Repositories.Credit
                             //if (!entity.feeOverride) PostLoanFees(entity);
                             context.SaveChanges();
 
-                        if (applicationDetail.STAMPDUTYAPPLICABLE)
+                        /* if (applicationDetail.STAMPDUTYAPPLICABLE)
                         {
                             var apiResult = new PostingResult();
                             var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(f=>f.LOANAPPLICATIONDETAILID == applicationDetail.LOANAPPLICATIONDETAILID && f.DELETED == false).FirstOrDefault();
@@ -1683,7 +1683,7 @@ namespace FintrakBanking.Repositories.Credit
                                 apiResult = integration.PostStampDutyInputs(stampDutyModel);
                             }
 
-                        }
+                        }*/
 
                             trans.Commit();
                         }

@@ -149,6 +149,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\FirstCentralCRB\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\TestESBFirstCentralService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -297,6 +302,67 @@
     <None Include="Connected Services\FbnAlertWS\Service2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.ConnectCommercialMatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.ConnectConsumerMatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetCommercialBasicCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetCommercialEnquiryReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetCommercialFullCreditReportBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetCommercialFullCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetConsumerAccountMatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetConsumerBasicCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetConsumerBasicTraceReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetConsumerEnquiryReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetConsumerFullCreditReportBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetConsumerFullCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetConsumerPrimeReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetConsumerXscorePrimereportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetXScoreCommercialFullCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetXSCoreConsumerFullCreditReportBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.GetXSCoreConsumerFullCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.IsTicketValidResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.LoginResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\FirstCentralNigeriaWebService.wsdl" />
     <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.ConnectCommercialMatchResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -474,6 +540,7 @@
     <WCFMetadataStorage Include="Connected Services\ESBCRCService\" />
     <WCFMetadataStorage Include="Connected Services\ESBFirstCentralService\" />
     <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
+    <WCFMetadataStorage Include="Connected Services\FirstCentralCRB\" />
     <WCFMetadataStorage Include="Connected Services\TestESBFirstCentralService\" />
     <WCFMetadataStorage Include="Connected Services\TestService\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthService\" />
@@ -576,6 +643,12 @@
     <None Include="Connected Services\CRCWebServiceNew\configuration91.svcinfo" />
     <None Include="Connected Services\CRCWebServiceNew\configuration.svcinfo" />
     <None Include="Connected Services\CRCWebServiceNew\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\FirstCentralCRB\configuration91.svcinfo" />
+    <None Include="Connected Services\FirstCentralCRB\configuration.svcinfo" />
+    <None Include="Connected Services\FirstCentralCRB\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

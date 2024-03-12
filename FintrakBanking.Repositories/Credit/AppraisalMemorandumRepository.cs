@@ -663,7 +663,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             generateOutPutDocument = true;
                         var applDet = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).ToList();
-                             foreach (var detail in applDet)
+                            /* foreach (var detail in applDet)
                              {
                                 if (detail.STAMPDUTYAPPLICABLE)
                                 {
@@ -680,7 +680,7 @@ namespace FintrakBanking.Repositories.Credit
                                         stampDuty.CONTRACTCODE = cCode;
                                     }
                                 }
-                             }
+                             }*/
                             context.SaveChanges();
 
                         }
@@ -1126,6 +1126,7 @@ namespace FintrakBanking.Repositories.Credit
                              applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                              relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
                              branchId = a.BRANCHID,
+                             iblRequest = a.IBLREQUEST,
                              productClassId = a.PRODUCTCLASSID,
                              productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                              //currencyCode = c.TBL_CURRENCY.CURRENCYCODE,
@@ -3316,6 +3317,7 @@ namespace FintrakBanking.Repositories.Credit
                         interestRepayment = x.d.INTERESTREPAYMENTID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.INTERESTREPAYMENTID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
                         interestRepaymentId = x.d.INTERESTREPAYMENTID,
                         moratorium = x.d.MORATORIUM,
+                        iblRequest = x.a.IBLREQUEST
                         //approvedTradeCycleDays = context.TBL_APPROVED_TRADE_CYCLE.Where(T => T.APPROVEDTRADECYCLEID == x.d.APPROVEDTRADECYCLEID).FirstOrDefault().APPROVEDTRADECYCLEDAYS : null,
                         //approvedTradeCycleId = x.d.APPROVEDTRADECYCLEID
                     })
@@ -3341,11 +3343,13 @@ namespace FintrakBanking.Repositories.Credit
                     productName = x.d.TBL_PRODUCT.PRODUCTNAME,
                 })
                 .ToList();
-
+            
             details.duplications = duplications;
             details.facilities = facilities;
+            
             details.application = GetLoanApplicationInformation(applicationId);
-
+            if (facilities[0].proposedProductId == 156 || facilities[0].proposedProductId == 228 || facilities[0].proposedProductId == 297
+                || facilities[0].proposedProductId == 354) details.facilities[0].iblRequest = true;
             return details;
         }
 
@@ -3756,6 +3760,7 @@ namespace FintrakBanking.Repositories.Credit
                 termSheetCode = x.a.TERMSHEETID,
                 //loanApplicationDetailId = x.a.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                iblRequest = x.a.IBLREQUEST,
                 relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
                 customerId = x.a.CUSTOMERID,
                 branchId = x.a.BRANCHID,
@@ -4241,6 +4246,7 @@ namespace FintrakBanking.Repositories.Credit
             //loanApplicationDetailId = x.a.LOANAPPLICATIONID,
             applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
             relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
+            iblRequest = x.a.IBLREQUEST,
             customerId = x.a.CUSTOMERID,
             branchId = x.a.BRANCHID,
             currencyId = context.TBL_LOAN_APPLICATION_DETAIL
