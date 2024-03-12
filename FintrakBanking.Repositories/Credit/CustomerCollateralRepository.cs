@@ -14059,7 +14059,7 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             var result = new List<FacilityStampDutyViewModel>();
-            var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
+           /* var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
 
             foreach (var loanApplicationDetailId in loanApplicationDetailIds)
             {
@@ -14093,7 +14093,7 @@ namespace FintrakBanking.Repositories.Credit
                 //}
                 result = stampDuty;
                 return result;
-            }
+            }*/
             return result;
             
         }
@@ -14102,7 +14102,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             //for loan information only
             var result = new List<FacilityStampDutyViewModel>();
-            var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
+            /*var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
 
             foreach (var loanApplicationDetailId in loanApplicationDetailIds)
             {
@@ -14136,7 +14136,7 @@ namespace FintrakBanking.Repositories.Credit
                 //}
                 result = stampDuty;
                 return result;
-            }
+            }*/
             return result;
 
         }

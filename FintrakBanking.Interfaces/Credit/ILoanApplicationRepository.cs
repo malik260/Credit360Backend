@@ -20,6 +20,7 @@ namespace FintrakBanking.Interfaces.Credit
     public interface ILoanApplicationRepository
     {
         bool AddApprovalFromSubsidiary(HeadOfficeFacilityApprovalViewModel model);
+        bool AddLMSApprovalFromSubsidiary(HeadOfficeFacilityApprovalViewModel model);
         
         LoanApplicationViewModel GetFacilityByApplicationDetailIdLos(int loanApplicationDetailId);
         LoanApplicationViewModel GetFacilityByApplicationDetailIdLms(int loanApplicationDetailId);
