@@ -62,39 +62,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [Route("subsidiary-loan-approval-inputs-lms")]
-        public HttpResponseMessage AddLMSApprovalFromSubsidiary([FromBody] HeadOfficeFacilityApprovalViewModel entity)
-        {
-            try
-            {
-                var data = repo.AddLMSApprovalFromSubsidiary(entity);
-                if(data == true)
-                {
-                    APIResponse response = new APIResponse();
-                    response.responseMessage = $"Record submitted successfully";
-                    response.responseCode = "00";
-                    return Request.CreateResponse(HttpStatusCode.OK, response);
-                }
-                else
-                {
-                    APIResponse response = new APIResponse();
-                    response.responseMessage = $"There was an error creating this record, confirm all requested parameters are captured";
-                    response.responseCode = "400";
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, response);
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                APIResponse response = new APIResponse();
-                response.Message = $"There was an error creating this record, confirm all requested parameters are captured "+ex.Message;
-                response.requestId = null;
-                response.StatusCode = "99";
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
-            }
-        }
-
-        [HttpPost]
         [Route("subsidiary-lms-approval-inputs")]
         public HttpResponseMessage AddLMSApprovalFromSubsidiary([FromBody] HeadOfficeFacilityApprovalViewModel entity)
         {
@@ -126,8 +93,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
-
-        
 
     }
 }

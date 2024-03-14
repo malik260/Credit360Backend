@@ -10432,70 +10432,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
-        public bool AddLMSApprovalFromSubsidiary(HeadOfficeFacilityApprovalViewModel model)
-        {
-            try {
-                bool response = false;
-
-                if (model != null)
-                {
-                    var inputRecords = new TBL_SUB_BASICTRANSACTION_LMS()
-                    {
-                        LOANAPPLICATIONID = model.loanApplicationId,
-                        LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
-                        APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
-                        RELATEDREFERENCENUMBER = model.relatedReferenceNumber,
-                        SUBSIDIARYID = model.subsidiaryId,
-                        CUSTOMERID = model.customerId,
-                        CUSTOMERGLOBALID = model.customerGlobalId,
-                        APPLICATIONDATE = model.applicationDate,
-                        INTERESTRATE = model.interestRate,
-                        APPLICATIONTENOR = model.applicationTenor,
-                        APPROVALSTATUSID = model.approvalStatusId,
-                        APPROVALLEVELID = model.approvalLevelId,
-                        APPROVALLEVELGLOBALCODE = model.approvalLevelGlobalCode,
-                        TOSTAFFID = model.toStaffId,
-                        APPLICATIONSTATUSID = model.applicationStatusId,
-                        OPERATIONNAME = model.operationName,
-                        PRODUCTCLASSNAME = model.productClassName,
-                        PRODUCTNAME = model.productName,
-                        PRODUCT_CLASS_PROCESS = model.productClassProcess,
-                        LOANAPPLICATIONTYPENAME = model.loanApplicationTypeName,
-                        FIRSTNAME = model.firstName,
-                        MIDDLENAME = model.middleName,
-                        LASTNAME = model.lastName,
-                        SYSTEMARRIVALDATETIME = model.systemArrivalDateTime,
-                        BUSINESSUNITSHORTCODE = model.businessUnitShortCode,
-                        APPLICATIONAMOUNT = model.applicationAmount,
-                        TOTALEXPOSUREAMOUNT = model.totalExposureAmount,
-                        CREATEDBY = model.createdBy,
-                        DATETIMECREATED = model.dateTimeCreated,
-                        LASTUPDATEDBY = model.loanApplicationId,
-                        DATETIMEUPDATED = model.dateTimeUpdated,
-                        DELETED = model.deleted,
-                        DELETEDBY = model.deletedBy,
-                        DATETIMEDELETED = model.dateTimeDeleted,
-                        SYSTEMDATETIME = model.systemDateTime,
-                        CREATEDBYNAME = model.createdByName,
-                        COUNTRYCODE = model.countryCode,
-                        STAFFROLECODE = model.staffRoleCode,
-                        TARGETID = model.targetId,
-                        OPERATIONID = model.operationId,
-                        ACTEDON = model.actedOn
-                    };
-
-                    context.TBL_SUB_BASICTRANSACTION_LMS.Add(inputRecords);
-                    response = context.SaveChanges() > 0;
-                }
-
-                return response;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
-        }
+       
 
         public bool AddLMSApprovalFromSubsidiary(HeadOfficeFacilityApprovalViewModel model)
         {

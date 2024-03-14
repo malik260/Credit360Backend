@@ -130,6 +130,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_INSURANCE_COMPANY> TBL_INSURANCE_COMPANY { get; set; }
         public virtual DbSet<TBL_LOAN_BULK_DISBURSE_SCHEME> TBL_LOAN_BULK_DISBURSE_SCHEME { get; set; }
         public virtual DbSet<TBL_LOAN_BULK_DISBURSEMENT> TBL_LOAN_BULK_DISBURSEMENT { get; set; }
+        public virtual DbSet<TBL_DIGITAL_STAMP> TBL_DIGITAL_STAMP { get; set; }
 
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL_STAFF> TBL_TEMP_APPROVAL_LEVEL_STAFF { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATE> TBL_APPROVAL_STATE { get; set; }

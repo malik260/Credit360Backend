@@ -713,7 +713,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var data = (from a in context.TBL_SUB_BASICTRANSACTION_LMS
+                var data = (from a in context.TBL_LMS_SUB_BASICTRANSACTION
                             where
                             (a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                             || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
