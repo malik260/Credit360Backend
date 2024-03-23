@@ -1543,9 +1543,16 @@ namespace FintrakBanking.Repositories.Media
         public bool AddDeferredDocument(DeferredDocumentsViewModel model, UserInfo user)
         {
             try
-            {
+            {   var provided = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
+                    && x.TARGETID == model.loanApplicationId)
+                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false && x.DOCUMENTTYPEID == model.documentTypeId)
+                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) => new { us, up }
+            ).FirstOrDefault();
+
+                if(provided != null) { throw new SecureException(" Cannot defer already provided document"); }
+
+
                 var existing = docContext.TBL_DEFERRED_DOC_TRACKER.Where(x => x.DELETED == false
-                        && x.DOCUMENTCATEGORYID == model.documentCategoryId
                         && x.DOCUMENTTYPEID == model.documentTypeId);
                 if (existing.Any())
                 {
