@@ -319,9 +319,8 @@
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="XLeratorDLL-financial, Version=1.17.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\XLeratorDLL-financial.dll</HintPath>
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>.\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
