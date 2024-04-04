@@ -53,17 +53,17 @@ namespace FintrakBanking.Repositories.Risk
             bool isCorporate = customerTypeId == (short)CustomerTypeEnum.Corporate;
 
             var employeeType = string.Empty;
-            if(employerType != null && employerType?.EMPLOYERNAME?.ToLower() == "self employed" )
+            if(employerType != null && employerType?.EMPLOYERNAME?.ToLower() == "selfemployed" )
             {
                  employeeType = "SELFEMPLOYED";
             }
             else
             {
-                if (isCorporate) { employeeType = "EMPLOYER"; }
+                if (isCorporate) { employeeType = "SELFEMPLOYED"; }
                 else { employeeType = "EMPLOYEE";}
             }
 
-            List<string> allEmployeeType = new List<string> { "EMPLOYER", "SELFEMPLOYED", "EMPLOYEE" };
+            List<string> allEmployeeType = new List<string> { "BUSINESS OWNER", "SELFEMPLOYED", "EMPLOYEE" };
             List<TBL_RAC_DEFINITION> racDefinitionOnEmployer = new List<TBL_RAC_DEFINITION>();
 
             if (model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS" && !model.isOperationbased && model.isAgricRac == false)

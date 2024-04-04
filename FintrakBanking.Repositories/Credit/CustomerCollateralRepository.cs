@@ -7613,29 +7613,29 @@ namespace FintrakBanking.Repositories.Credit
             context.Entry(data).State = EntityState.Modified;
             //context.TBL_LOAN_APPLICATION_COLLATERL.Remove(data);
 
-            //var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
-            //if(fsdExists != null)
-            //{
-            //    fsdExists.DELETED = true;
-            //}
+            var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+            if (fsdExists != null)
+            {
+                fsdExists.DELETED = true;
+            }
 
-            //var stampFees = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
-            //if (stampFees.Count > 0)
-            //{
-            //    foreach(var fee in stampFees)
-            //    {
-            //        var dat = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID && d.CHARGEFEEID == fee.CHARGEFEEID).FirstOrDefault();
+            var stampFees = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
+            if (stampFees.Count > 0)
+            {
+                foreach (var fee in stampFees)
+                {
+                    var dat = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID && d.CHARGEFEEID == fee.CHARGEFEEID).FirstOrDefault();
 
-            //        var fees = dat;
-            //        if (fees != null)
-            //        {
-            //            context.TBL_LOAN_APPLICATION_DETL_FEE.Remove(fees);
-            //        }
-            //    }
-               
-            //}
+                    var fees = dat;
+                    if (fees != null)
+                    {
+                        context.TBL_LOAN_APPLICATION_DETL_FEE.Remove(fees);
+                    }
+                }
 
-            
+            }
+
+
             //context.SaveChanges();
             return context.SaveChanges() > 0;
 
@@ -12277,7 +12277,7 @@ namespace FintrakBanking.Repositories.Credit
                 };
                 context.TBL_LOAN_APPLICATION_COLLATERL.Add(data);
 
-                /* if (context.SaveChanges() > 0)
+                 if (context.SaveChanges() > 0)
                 {
                     var condition = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
                     if (condition != null) sdApplicable = ValidateStampDutyApplicable(facility, condition);
@@ -12285,8 +12285,8 @@ namespace FintrakBanking.Repositories.Credit
                 if (sdApplicable == true)
                 {
                     facility.STAMPDUTYAPPLICABLE = true;
-                    var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
-                    var fsdDetailExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                    var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID && f.DELETED == true).FirstOrDefault();
+                    var fsdDetailExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID && f.DELETED == true).FirstOrDefault();
                     if (fsdExists != null)
                     {
                         var appl = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
@@ -12295,7 +12295,7 @@ namespace FintrakBanking.Repositories.Credit
                             fsdExists.DELETED = false;
 
                             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                            var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
+                            var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(fixed)") && s.DELETED == false).ToList();
                             if (stampFee !=null)
                             {
                                 List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
@@ -12327,7 +12327,33 @@ namespace FintrakBanking.Repositories.Credit
                         var appl = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
                         if (!appl.ISONLENDING)
                         {
-                            
+                            fsdDetailExists.DELETED = false;
+
+                            var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
+                            var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(fixed)") && s.DELETED == false).ToList();
+                            if (stampFee != null)
+                            {
+                                List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
+                                foreach (var f in stampFee)
+                                {
+                                    var feeDetails = context.TBL_CHARGE_FEE_DETAIL.Where(fd => fd.CHARGEFEEID == f.CHARGEFEEID).FirstOrDefault();
+                                    var fee = new ProductFeesViewModel()
+                                    {
+                                        loanChargeFeeId = f.CHARGEFEEID,
+                                        rate = cond.DUTIABLEVALUE,
+                                        createdBy = model.createdBy,
+                                        loanApplicationDetailId = facility.LOANAPPLICATIONDETAILID,
+
+                                    };
+
+                                    fees.Add(fee);
+
+                                }
+
+
+                                ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
+                            }
+
                         }
                     }
                     else
@@ -12350,7 +12376,7 @@ namespace FintrakBanking.Repositories.Credit
                         context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
 
                         var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
+                        var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(fixed)") && s.DELETED == false).ToList();
                         if (stampFee != null)
                         {
                             List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
@@ -12380,7 +12406,7 @@ namespace FintrakBanking.Repositories.Credit
                     
                        
                     context.SaveChanges();
-                }*/
+                }
                 context.SaveChanges();
 
                 return true;
@@ -12439,7 +12465,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     };
                     context.TBL_LOAN_APPLICATION_COLLATERL.Add(data);
-                    /*
+                    
                     try
                     {
                         if (context.SaveChanges() > 0)
@@ -12459,7 +12485,7 @@ namespace FintrakBanking.Repositories.Credit
                                 {
                                     fsdExists.DELETED = false;
                                     var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                                    var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
+                                    var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(fixed)") && s.DELETED == false).ToList();
                                     if (stampFee != null)
                                     {
                                         List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
@@ -12512,7 +12538,7 @@ namespace FintrakBanking.Repositories.Credit
                                 context.TBL_FACILITY_STAMP_DUTY.Add(facilityStampDuty);
 
                                 var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                                var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
+                                var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(fixed)") && s.DELETED == false).ToList();
                                 if (stampFee != null)
                                 {
                                     foreach (var fe in stampFee)
@@ -12548,7 +12574,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         throw;
                     }
-                    */
+                    
                     context.SaveChanges();
                          return true;
                 }
@@ -14059,7 +14085,7 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             var result = new List<FacilityStampDutyViewModel>();
-           /* var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
+            var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
 
             foreach (var loanApplicationDetailId in loanApplicationDetailIds)
             {
@@ -14093,7 +14119,7 @@ namespace FintrakBanking.Repositories.Credit
                 //}
                 result = stampDuty;
                 return result;
-            }*/
+            }
             return result;
             
         }
@@ -14102,7 +14128,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             //for loan information only
             var result = new List<FacilityStampDutyViewModel>();
-            /*var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
+            var loanApplicationDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == loanApplicationId).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
 
             foreach (var loanApplicationDetailId in loanApplicationDetailIds)
             {
@@ -14136,7 +14162,7 @@ namespace FintrakBanking.Repositories.Credit
                 //}
                 result = stampDuty;
                 return result;
-            }*/
+            }
             return result;
 
         }
