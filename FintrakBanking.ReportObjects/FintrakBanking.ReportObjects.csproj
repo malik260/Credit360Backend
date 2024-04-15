@@ -66,6 +66,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>..\FintrakBanking.APICore\XLeratorDLL-financial.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BranchInfo.cs" />

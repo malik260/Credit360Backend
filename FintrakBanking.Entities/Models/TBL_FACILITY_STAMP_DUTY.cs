@@ -23,5 +23,6 @@ namespace FintrakBanking.Entities.Models
         public string CSDC { get; set; }
         public string ASDC { get; set; }
         public string CONTRACTCODE { get; set; }
+        public bool COLLECTED { get; set; }
     }
 }

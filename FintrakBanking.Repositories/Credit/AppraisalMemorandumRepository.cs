@@ -663,7 +663,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             generateOutPutDocument = true;
                         var applDet = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).ToList();
-                            /* foreach (var detail in applDet)
+                             foreach (var detail in applDet)
                              {
                                 if (detail.STAMPDUTYAPPLICABLE)
                                 {
@@ -680,7 +680,7 @@ namespace FintrakBanking.Repositories.Credit
                                         stampDuty.CONTRACTCODE = cCode;
                                     }
                                 }
-                             }*/
+                             }
                             context.SaveChanges();
 
                         }
