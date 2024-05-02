@@ -1970,7 +1970,7 @@
                     {
                         new StampDutyEntryViewModel ()
                         {
-                            tranCode = "PSD",
+                            tranCode = "LSD",
                             tranType = "D",
                             reference = refr + model.reference,
                             accountNumber = model.custAccNumber,
@@ -1980,7 +1980,7 @@
                         },
                         new StampDutyEntryViewModel()
                         {
-                            tranCode = "PSD",
+                            tranCode = "LSD",
                             tranType = "C",
                             reference = refr + model.reference,
                             accountNumber = model.bankTillAccount,
@@ -1999,7 +1999,7 @@
                         userId = "STAMPDUTY",
                         currency = "NGN",
                         branchCode = model.branchCode,// branch code
-                        tranCode = "PSD",
+                        tranCode = "LSD",
                         entries = entries
                     };
 
