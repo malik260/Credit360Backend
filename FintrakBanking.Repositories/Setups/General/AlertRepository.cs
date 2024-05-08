@@ -1329,6 +1329,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetImminentMaturities();
                     GetPastDueObligationsReminder();
                     GetPastDueObligationsReminderByGroupHeads();
+                    GetRepaymentPastDueForCustomers(); // to be removed if not needed
                     GroupImminentMaturitiesByGroupHeads();
                     GetImminentDocumentMaturities();
                     state = true;
