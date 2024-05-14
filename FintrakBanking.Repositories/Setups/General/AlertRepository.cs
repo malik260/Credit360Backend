@@ -1147,6 +1147,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool validateAlertCheck()
         {
+            GetRepaymentPastDueForCustomers();
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
             // int users = Convert.ToInt32(maxUsers);
@@ -65902,7 +65903,9 @@ namespace FintrakBanking.Repositories.Setups.General
  };*/
             List<string> customerList = context.TBL_CUSTOMER.Select(c => c.CUSTOMERCODE).ToList();
 
-            var loanRepaymentReminder = context.TBL_NEXT_PRINCIPAL_REPAYMENT.Where(d => d.AMOUNTDUE.Value > 0 && DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value < 1 && customerList.Contains(d.CUSTOMERID)).ToList();
+            var loanRepaymentReminder = context.TBL_NEXT_PRINCIPAL_REPAYMENT.Where(d => d.AMOUNTDUE.Value > 0 && DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value < 1 && customerList.Contains(d.CUSTOMERID)).ToList().Take(30);
+            // var loanRepaymentReminder = context.TBL_NEXT_PRINCIPAL_REPAYMENT.Where(d => d.AMOUNTDUE > 0 && d.SCHEDULEDUEDATE > DateTime.UtcNow && customerList.Contains(d.CUSTOMERID)).OrderBy(d => d.SCHEDULEDUEDATE).Take(30).ToList();
+
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentOverdueReminder" && a.ISACTIVE == true).FirstOrDefault();
             int numberOfDays = 0;
             int daysToUse = 0;
@@ -65932,7 +65935,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     else
                     {
-                        numberOfDays = (i.SCHEDULEDUEDATE.Value - DateTime.Now).Days;
+                        numberOfDays = (i.SCHEDULEDUEDATE.Value - DateTime.Now).Days;  // this is the correct method
+                        //numberOfDays = (DateTime.Now - i.SCHEDULEDUEDATE.Value).Days; // for test purpose only sind date is in the past
                         numberOfInterestDays = (interestDetail.SCHEDULEDUEDATE.Value - DateTime.Now).Days;
                         interestDueDate = interestDetail.SCHEDULEDUEDATE?.ToString("dd-MM-yyyy");
                         interestAmountDue = interestDetail.CURRENCY + "" + string.Format("{0:#,##.00}", Convert.ToDecimal(interestDetail.OUTSTANDINGBALANCE.Value));
@@ -65949,7 +65953,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     AlertsViewModel alert = new AlertsViewModel();
                     var alertTitle = alertTitleInfo.TITLE;
                     var alertTemplate = alertTitleInfo.TEMPLATE;
-                    if (numberOfDays > 0)
+                    //if (numberOfDays > 0)
                     {
                         string emailList = "";
                         alertTemplate = alertTemplate.Replace("@{{customerName}}", i.CUSTOMERNAME);
