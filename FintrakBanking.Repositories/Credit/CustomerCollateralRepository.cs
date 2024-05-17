@@ -7602,43 +7602,57 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteProposedCollateral(CollateralCoverageViewModel model)
         {
-            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPCOLLATERALID == model.loanAppCollateralId).Select(o => o).FirstOrDefault();
-            if (data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
+            try
             {
-                throw new Exception("Cannot Delete An Already Approved Collateral Mapping");
-            }
-            data.DELETED = true;
-            data.DELETEDBY = model.createdBy;
-            data.DATETIMEDELETED = genSetup.GetApplicationDate();
-            context.Entry(data).State = EntityState.Modified;
-            //context.TBL_LOAN_APPLICATION_COLLATERL.Remove(data);
-
-            var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
-            if (fsdExists != null)
-            {
-                fsdExists.DELETED = true;
-            }
-
-            var stampFees = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
-            if (stampFees.Count > 0)
-            {
-                foreach (var fee in stampFees)
+                var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPCOLLATERALID == model.loanAppCollateralId).Select(o => o).FirstOrDefault();
+                if (data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                 {
-                    var dat = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID && d.CHARGEFEEID == fee.CHARGEFEEID).FirstOrDefault();
+                    throw new Exception("Cannot Delete An Already Approved Collateral Mapping");
+                }
+                data.DELETED = true;
+                data.DELETEDBY = model.createdBy;
+                data.DATETIMEDELETED = genSetup.GetApplicationDate();
+                context.Entry(data).State = EntityState.Modified;
+                //context.TBL_LOAN_APPLICATION_COLLATERL.Remove(data);
 
-                    var fees = dat;
-                    if (fees != null)
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_FEE.Remove(fees);
-                    }
+                var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                if (fsdExists != null)
+                {
+                    fsdExists.DELETED = true;
                 }
 
+                var stampFees = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(fixed)") && s.DELETED == false).ToList();
+                if (stampFees.Count > 0)
+                {
+                    foreach (var fee in stampFees)
+                    {
+                        var dat = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID && d.CHARGEFEEID == fee.CHARGEFEEID).ToList();
+
+                        var fees = dat;
+                        if (fees != null)
+                        {
+                            foreach (var f in fees)
+                            {
+                                context.TBL_LOAN_APPLICATION_DETL_FEE.Remove(f);
+                            }
+
+                        }
+                    }
+
+                }
+
+
+                var  isGood = context.SaveChanges();
+                if (isGood > 0)
+                {
+                    return true;
+                } 
+                return context.SaveChanges() > 0;
             }
-
-
-            context.SaveChanges();
-            return context.SaveChanges() > 0;
-
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public bool DeleteDuplicatedCollateral(CollateralViewModel model)

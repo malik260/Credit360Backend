@@ -149,6 +149,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\FCBCreditBureau\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\FirstCentralCRB\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -302,6 +307,73 @@
     <None Include="Connected Services\FbnAlertWS\Service2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.ConnectCommercialMatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.ConnectConsumerMatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetCommercialBasicCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetCommercialEnquiryReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetCommercialFullCreditReportBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetCommercialFullCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerAccountMatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerBasicCreditReportBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerBasicCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerBasicTraceReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerEnquiryReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerFullCreditReportBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerFullCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerPrimeReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerSnapCheckBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerSnapCheckResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetConsumerXscorePrimereportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetXSCoreConsumerFullCreditReportBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.GetXSCoreConsumerFullCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.IsTicketValidResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FinTrakBanking.ThirdPartyIntegration.FCBCreditBureau.LoginResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\FirstCentralNigeriaWebService.wsdl" />
     <None Include="Connected Services\FirstCentralCRB\FinTrakBanking.ThirdPartyIntegration.FirstCentralCRB.ConnectCommercialMatchResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -540,6 +612,7 @@
     <WCFMetadataStorage Include="Connected Services\ESBCRCService\" />
     <WCFMetadataStorage Include="Connected Services\ESBFirstCentralService\" />
     <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
+    <WCFMetadataStorage Include="Connected Services\FCBCreditBureau\" />
     <WCFMetadataStorage Include="Connected Services\FirstCentralCRB\" />
     <WCFMetadataStorage Include="Connected Services\TestESBFirstCentralService\" />
     <WCFMetadataStorage Include="Connected Services\TestService\" />
@@ -649,6 +722,12 @@
     <None Include="Connected Services\FirstCentralCRB\configuration91.svcinfo" />
     <None Include="Connected Services\FirstCentralCRB\configuration.svcinfo" />
     <None Include="Connected Services\FirstCentralCRB\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\FCBCreditBureau\configuration91.svcinfo" />
+    <None Include="Connected Services\FCBCreditBureau\configuration.svcinfo" />
+    <None Include="Connected Services\FCBCreditBureau\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
