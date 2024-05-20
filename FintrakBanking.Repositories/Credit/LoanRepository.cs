@@ -1653,10 +1653,10 @@ namespace FintrakBanking.Repositories.Credit
                                         currency = "NGN",
                                         branchCode = entity.branchCode,
                                         tranCode = "LSD",
-                                        custAccNumber = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME.ToLower() == "till account").FirstOrDefault().ACCOUNTCODE,
-                                        custAccName = "TILL ACCOUNT",
+                                        custAccNumber = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME == "STAMP DUTY ON LOANS COLLECTION GL").FirstOrDefault().ACCOUNTCODE,
+                                        custAccName = "STAMP DUTY ON LOANS COLLECTION GL",
                                         bankTillName = "STAMP DUTY PAYABLE",
-                                        bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME.ToLower() == "stamp duty payable").FirstOrDefault().ACCOUNTCODE,//To be provided,
+                                        bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME == "STAMP DUTY ON LOANS PAYABLE GL").FirstOrDefault().ACCOUNTCODE,//To be provided,
                                         amount = bankShare,
                                     };
 
@@ -1677,7 +1677,7 @@ namespace FintrakBanking.Repositories.Credit
                                     custAccNumber = context.TBL_CASA.Where(c => c.CASAACCOUNTID == entity.casaAccountId).FirstOrDefault().PRODUCTACCOUNTNUMBER,// entity.casaAccountNumber,
                                     custAccName = context.TBL_CASA.Where(c => c.CASAACCOUNTID == entity.casaAccountId).FirstOrDefault().PRODUCTACCOUNTNAME,//   entity.casaAccountDetails,
                                     bankTillName = "STAMP DUTY PAYABLE",
-                                    bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME.ToLower() == "stamp duty payable").FirstOrDefault().ACCOUNTCODE,//To be provided,
+                                    bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME == "STAMP DUTY ON LOANS PAYABLE GL").FirstOrDefault().ACCOUNTCODE,//To be provided,
                                     amount = customerShare,
                                 };
                                 //var apiResult = new PostingResult();

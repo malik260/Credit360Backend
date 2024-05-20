@@ -1147,6 +1147,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool validateAlertCheck()
         {
+
+            GetRepaymentPastDueForCustomers();
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
             // int users = Convert.ToInt32(maxUsers);
@@ -65838,8 +65840,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     else
                     {
-                        numberOfDays = (i.SCHEDULEDUEDATE.Value - DateTime.Now).Days;
-                        numberOfInterestDays = (interestDetail.SCHEDULEDUEDATE.Value - DateTime.Now).Days;
+                        numberOfDays = (DateTime.Now - i.SCHEDULEDUEDATE.Value).Days;
+                        numberOfInterestDays = (DateTime.Now - interestDetail.SCHEDULEDUEDATE.Value ).Days;
                         interestDueDate = interestDetail.SCHEDULEDUEDATE?.ToString("dd-MM-yyyy");
                         interestAmountDue = interestDetail.CURRENCY + "" + string.Format("{0:#,##.00}", Convert.ToDecimal(interestDetail.OUTSTANDINGBALANCE.Value));
 
