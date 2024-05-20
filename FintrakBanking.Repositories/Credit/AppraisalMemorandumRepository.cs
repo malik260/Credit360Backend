@@ -3959,11 +3959,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 return data;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
-            
+
         }
 
         public async Task<IEnumerable<SubsidiaryViewModel>> GetSubsidiaries()

@@ -533,7 +533,7 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetSubsidiaryPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
         {
             var staffRoleCode = token.GetStaffRoleCode;
-            var items =  repo.GetSubsidiaryPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, staffRoleCode, isSpecific);
+            var items = repo.GetSubsidiaryPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, staffRoleCode, isSpecific);
             if (items != null)
             {
                 if (!String.IsNullOrEmpty(searchString))
@@ -542,18 +542,18 @@ namespace FintrakBanking.APICore.Controllers
                     searchString = searchString.Trim().ToLower();
                     items = (from x in items
                              where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
-                            
+
                              || x.applicationAmount.ToString() == searchString
                              select x);
                     items = items.Take(itemsPerPage);
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.timeIn) 
+                    .OrderByDescending(x => x.timeIn)
                     .Skip(page)
                     .Take(itemsPerPage)
                     .ToList();
-                
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
             else
@@ -561,7 +561,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
         }
-
         [HttpGet, Route("subsidiaries")]
         public async Task<HttpResponseMessage> GetSubsidiaries()
         {
