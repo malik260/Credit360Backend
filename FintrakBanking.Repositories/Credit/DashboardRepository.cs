@@ -214,6 +214,43 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        public List<DashboardViewModel> SubsLoanOnThePipeline(DateTime startDate, DateTime endDate, int companyId, int staffId)
+        {
+            var staff = context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o).FirstOrDefault();
+            var staffRole = context.TBL_STAFF_ROLE.Where(o => o.STAFFROLEID == staff.STAFFROLEID).Select(o => o).FirstOrDefault();
+            
+            var reliefStaff = general.GetStaffRlieved(staffId);
+            List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
+
+            
+
+            var data = (from x in context.TBL_SUB_BASICTRANSACTION
+                        
+                        where x.DELETED == false
+                        && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                        && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                       // && x.SYSTEMARRIVALDATETIME >= startDate && x.SYSTEMARRIVALDATETIME <= endDate
+                        && (x.STAFFROLECODE == staffRole.STAFFROLECODE)
+                        && x.ACTEDON == false
+                        select new { x })?.ToList();
+
+            List<DashboardViewModel> result = new List<DashboardViewModel>();
+
+            if (data != null && data.Count() > 0)
+            {
+                result = (from rec in data
+                          group rec by new { rec.x.STAFFROLECODE } into gg
+                          select new DashboardViewModel
+                          {
+                              loanCount = gg?.Select(O => O.x.LOANAPPLICATIONID).Distinct().Count() ?? 0,
+                              sumOfProposedAmount = gg?.Sum(g => (double)g.x.TOTALEXPOSUREAMOUNT ) ?? 0,
+                          })?.ToList();
+            }
+            return result;
+        }
+
 
         public DashboardViewModel GetLoanInThePipelineLms(int operationId, int staffId, int companyId, int branchId, int? classId)
         {
