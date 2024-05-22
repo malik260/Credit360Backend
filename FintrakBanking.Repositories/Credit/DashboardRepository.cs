@@ -231,7 +231,7 @@ namespace FintrakBanking.Repositories.Credit
                         && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                         && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                         && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                       // && x.SYSTEMARRIVALDATETIME >= startDate && x.SYSTEMARRIVALDATETIME <= endDate
+                        && x.SYSTEMARRIVALDATETIME >= startDate && x.SYSTEMARRIVALDATETIME <= endDate
                         && (x.STAFFROLECODE == staffRole.STAFFROLECODE)
                         && x.ACTEDON == false
                         select new { x })?.ToList();
