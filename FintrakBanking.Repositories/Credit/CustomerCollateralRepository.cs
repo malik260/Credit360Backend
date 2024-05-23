@@ -14282,6 +14282,60 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyFixedFiltered(DateRange param)
+        {
+            param.endDate = param.endDate.AddHours(23);
+            param.endDate = param.endDate.AddMinutes(59);
+            param.endDate = param.endDate.AddSeconds(59);
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
+            var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
+            var record = (from x in context.TBL_LOAN_APPLICATION_DETL_FEE
+                          join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                          //join f in context.TBL_FACILITY_STAMP_DUTY on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
+                          join cl in context.TBL_LOAN_APPLICATION_COLLATERL on x.LOANAPPLICATIONDETAILID equals cl.LOANAPPLICATIONDETAILID
+                          where x.DELETED == false && x.CHARGEFEEID == fixedCharge.CHARGEFEEID && ((DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)))
+
+                          select new FacilityStampDutyViewModel
+                          {
+                              facilityStampDutyId = x.LOANCHARGEFEEID,
+                              loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                              //collateralCustomerId = f.COLLATERALCUSTOMERID,
+
+                              dateTimeCreated = x.DATETIMECREATED,
+
+
+                              customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
+                              loanAmount = a.PROPOSEDAMOUNT,
+                              approvedTenor = a.APPROVEDTENOR,
+                              collateralId = cl.COLLATERALCUSTOMERID,
+                              collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Where(s => s.COLLATERALCUSTOMERID == cl.COLLATERALCUSTOMERID).FirstOrDefault().COLLATERALSUBTYPEID,
+                              customerId = a.CUSTOMERID,
+                              operationId = (int)OperationsEnum.StampDutyClosure,
+                              //documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID
+                          }).OrderByDescending(x => x.facilityStampDutyId).ToList().Take(200);
+            foreach (var rec in record)
+            {
+                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE;
+                var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralSubTypeId).FirstOrDefault();
+                var dutyCharge = rec.fixedDutyCharge;
+                if (rec.fixedDutyCharge == null) dutyCharge = 0;
+                rec.stampDutyAmount = (decimal)dutyCharge;
+                rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
+                //rec.dutiableValue = condValue.DUTIABLEVALUE;
+                rec.bookingDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId).FirstOrDefault()?.BOOKINGDATE;
+                rec.collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s => s.COLLATERALSUBTYPEID == rec.collateralSubTypeId).FirstOrDefault()?.COLLATERALSUBTYPENAME;
+
+                if (rec.bookingDate != null)
+                {
+                    rec.maturityDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId).FirstOrDefault()?.MATURITYDATE;
+                }
+            }
+
+            return record;
+
+        }
+
         public FacilityStampDutyViewModel GetFacilityStampDutyById(int loanApplicationDetailId)
         {
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();

@@ -3131,6 +3131,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
+        [HttpGet]
         [Route("get-all-facility-stamp-duty")]
         public HttpResponseMessage GetAllFacilityStampDuty()
         {
@@ -3143,6 +3144,15 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetAllFacilityStampDutyFixed()
         {
             var response = repo.GetAllFacilityStampDutyFixed();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [Route("get-all-facility-stamp-duty-fixed-filtered")]
+        public HttpResponseMessage GetAllFacilityStampDutyFixedFiltered(DateRange dateRange)
+        {
+            var response = repo.GetAllFacilityStampDutyFixedFiltered(dateRange);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
