@@ -3904,7 +3904,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, string staffRoleCode, bool isSpecific = false)
+        public IQueryable<SubsidiaryViewModel> GetSubsidiaryPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId, string staffRoleCode, bool isSpecific = false)
         {
             try
             {
@@ -3957,7 +3957,7 @@ namespace FintrakBanking.Repositories.Credit
                                 submitted = true
                             }).ToList();
 
-                return data;
+                return data.AsQueryable();
             }
             catch (Exception e)
             {

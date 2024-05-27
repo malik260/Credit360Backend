@@ -640,7 +640,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("customer-collateral/customer")]
-        public HttpResponseMessage GetCustomerCollateralRepo([FromBody]NewCollateralViewModel data)
+        public HttpResponseMessage GetCustomerCollateralRepo([FromBody] NewCollateralViewModel data)
         {
             try
             {
@@ -671,7 +671,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("customer-collateral-by-collateralId")]
-        public HttpResponseMessage GetCustomerCollateral([FromBody]int collateralId)
+        public HttpResponseMessage GetCustomerCollateral([FromBody] int collateralId)
         {
             try
             {
@@ -693,8 +693,8 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 bool response = repo.AddCollateralInsuranceTrackingForm(token.GetStaffId, data);
-                
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
@@ -822,11 +822,11 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("collateral-insurance-policy-list")]
-        public HttpResponseMessage GetCollateralInsurancePolicyList([FromBody]InsurancePolicy model)
+        public HttpResponseMessage GetCollateralInsurancePolicyList([FromBody] InsurancePolicy model)
         {
             try
             {
-                var response = repo.GetCollateralInsurancePolicyReport(model.startDate, model.expiryDate, model.valueCode,  model?.businessUnitId);
+                var response = repo.GetCollateralInsurancePolicyReport(model.startDate, model.expiryDate, model.valueCode, model?.businessUnitId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -850,7 +850,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("temp/customer-collateral-approval")]
-        public HttpResponseMessage PostCustomerCollateralApproval([FromBody]ApprovalViewModel model)
+        public HttpResponseMessage PostCustomerCollateralApproval([FromBody] ApprovalViewModel model)
         {
             try
             {
@@ -881,7 +881,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("temp/policy-approval")]
-        public HttpResponseMessage PostItemPolicyApproval([FromBody]ApprovalViewModel model)
+        public HttpResponseMessage PostItemPolicyApproval([FromBody] ApprovalViewModel model)
         {
             try
             {
@@ -907,7 +907,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("insurance-policy-approval")]
-        public HttpResponseMessage GoForInsurancePolicyApproval([FromBody]ApprovalViewModel model)
+        public HttpResponseMessage GoForInsurancePolicyApproval([FromBody] ApprovalViewModel model)
         {
             try
             {
@@ -2080,7 +2080,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("get-fixeddeposit-lien-amount")]
-        public HttpResponseMessage GetLienAmountForFD([FromBody]string accountNumber)
+        public HttpResponseMessage GetLienAmountForFD([FromBody] string accountNumber)
         {
             try
             {
@@ -2915,7 +2915,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("policy-insurance-doc")]
-        public HttpResponseMessage SaveInsurancePolicy([FromBody]   InsurancePolicy model)
+        public HttpResponseMessage SaveInsurancePolicy([FromBody] InsurancePolicy model)
         {
             model.userBranchId = (short)token.GetBranchId;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -3140,6 +3140,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
+        [HttpGet]
         [Route("get-all-facility-stamp-duty-fixed")]
         public HttpResponseMessage GetAllFacilityStampDutyFixed()
         {

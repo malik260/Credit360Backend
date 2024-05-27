@@ -14234,7 +14234,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyFixed()
         {
-            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower().Contains("(fixed)")).FirstOrDefault();
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
             var record = (from x in context.TBL_LOAN_APPLICATION_DETL_FEE
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
@@ -14259,7 +14259,7 @@ namespace FintrakBanking.Repositories.Credit
                               customerId = a.CUSTOMERID,
                               operationId = (int)OperationsEnum.StampDutyClosure,
                               //documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID
-                          }).OrderByDescending(x => x.facilityStampDutyId).ToList().Take(200);
+                          }).OrderByDescending(x => x.facilityStampDutyId).ToList()?.Take(200);
             foreach (var rec in record)
             {
                 rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE;
@@ -14287,7 +14287,7 @@ namespace FintrakBanking.Repositories.Credit
             param.endDate = param.endDate.AddHours(23);
             param.endDate = param.endDate.AddMinutes(59);
             param.endDate = param.endDate.AddSeconds(59);
-            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower().Contains("(fixed)")).FirstOrDefault();
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
             var record = (from x in context.TBL_LOAN_APPLICATION_DETL_FEE
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
@@ -14440,7 +14440,7 @@ namespace FintrakBanking.Repositories.Credit
             param.endDate = param.endDate.AddHours(23);
             param.endDate = param.endDate.AddMinutes(59);
             param.endDate = param.endDate.AddSeconds(59);
-            var fixedCharge = context.TBL_CHARGE_FEE.Where(c=>c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c=>c.CHARGEFEENAME.ToLower().Contains("(fixed)")).FirstOrDefault();
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
 
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
@@ -14493,7 +14493,7 @@ namespace FintrakBanking.Repositories.Credit
             param.endDate = param.endDate.AddSeconds(59);
 
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
-            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower().Contains("(fixed)")).FirstOrDefault();
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                           join cl in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals cl.COLLATERALCUSTOMERID
@@ -14532,7 +14532,7 @@ namespace FintrakBanking.Repositories.Credit
                 rec.dutiableValue = condValue.DUTIABLEVALUE;
             }
             decimal totalDutyCharge = (decimal)record.Sum(x => x.stampDutyAmount);
-            record[0].totalDutyAmount = totalDutyCharge;
+            if (record.Count() > 0) record[0].totalDutyAmount = totalDutyCharge;
 
             return record;
 

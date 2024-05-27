@@ -522,6 +522,7 @@ namespace FintrakBanking.APICore.Controllers
                          || x.applicationAmount.ToString() == searchString
                          //|| x.customerGroupName.ToLower().StartsWith(searchString)
                          select x);
+
             }
 
             var data = items.OrderByDescending(x => x.timeIn).ToList();
@@ -533,7 +534,8 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetSubsidiaryPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
         {
             var staffRoleCode = token.GetStaffRoleCode;
-            var items = repo.GetSubsidiaryPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, staffRoleCode, isSpecific);
+            IQueryable<SubsidiaryViewModel> items;
+            items = repo.GetSubsidiaryPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, staffRoleCode, isSpecific);
             if (items != null)
             {
                 if (!String.IsNullOrEmpty(searchString))
@@ -554,7 +556,7 @@ namespace FintrakBanking.APICore.Controllers
                     .Take(itemsPerPage)
                     .ToList();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
             }
             else
             {
