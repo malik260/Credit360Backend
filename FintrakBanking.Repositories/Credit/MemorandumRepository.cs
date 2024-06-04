@@ -3849,9 +3849,22 @@ namespace FintrakBanking.Repositories.Credit
                 //                                && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
                 //overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                 //                                                    && l.ISDISBURSED == true).ToList();
-                if(this.isThirdPartyFacility ==false)appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN &&
-                                                                                     d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
-                                                                                     d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                //if(this.isThirdPartyFacility ==false)appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN &&
+                //                                                                     d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
+                //                                                                     d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+
+                if (!this.isThirdPartyFacility)
+                {
+                    var ngnCurrencyId = (int)CurrencyEnum.NGN;
+                    var nonContingentProductTypeId = (int)LoanProductTypeEnum.ContingentLiability;
+                    var nonImportFinanceProductClassId = (int)ProductClassEnum.ImportFinanceFacilities;
+
+                    appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL
+                        .Where(d => d.TBL_CURRENCY.CURRENCYID == ngnCurrencyId &&
+                                    d.TBL_PRODUCT.PRODUCTTYPEID != nonContingentProductTypeId &&
+                                    d.TBL_PRODUCT.PRODUCTCLASSID != nonImportFinanceProductClassId)
+                    .ToList();
+                }
             }
             else
             {
