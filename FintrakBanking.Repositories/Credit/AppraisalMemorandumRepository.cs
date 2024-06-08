@@ -3716,7 +3716,7 @@ namespace FintrakBanking.Repositories.Credit
                 // var declarations
                 List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
                 List<int> levelIds = new List<int>();
-                //List<int> levelIds2 = new List<int>();
+                List<int> levelIds2 = new List<int>();
 
                 ExclusiveOperations.Add(operationId);
                 var levIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
@@ -3727,7 +3727,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var staffs = general.GetStaffRlieved(staffId);
                 var levelStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId && x.DELETED == false).Select(x=>x.APPROVALLEVELID).ToList();
-                //var currentStaff = context.TBL_STAFF.Find(staffs[0]);
+                var currentStaff = context.TBL_STAFF.Find(staffs[0]);
 
                 IQueryable<LoanApplicationViewModel> applications = null;
 
@@ -3747,8 +3747,8 @@ namespace FintrakBanking.Repositories.Credit
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
-                    && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID)) //|| levelStaff.Contains((int)x.TOAPPROVALLEVELID))
-                //&& (staffs.Contains((int)x.TOSTAFFID))
+                    && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID) || levelStaff.Contains((int)x.TOAPPROVALLEVELID))
+                && (staffs.Contains((int)x.TOSTAFFID))
                 ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,
@@ -3841,7 +3841,7 @@ namespace FintrakBanking.Repositories.Credit
                 dateTimeCreated = x.a.DATETIMECREATED,
                 apiRequestId = x.a.APIREQUESTID,
                 creditGradeId = x.a.CREDITGRADEID,
-                //approvalLevelStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(s=>s.STAFFID == staffId && s.APPROVALLEVELID == x.b.TOAPPROVALLEVELID && s.DELETED == false).FirstOrDefault()
+                //approvalLevelStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(s=>s.STAFFID == staffId && s.APPROVALLEVELID == x.b.TOAPPROVALLEVELID && s.DELETED == false).FirstOrDefault(),
                 //approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f => f.STAFFID == staffId)
             }).ToList();
 
@@ -3856,21 +3856,21 @@ namespace FintrakBanking.Repositories.Credit
                     .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
                 var targetId = applications.Select(x => x.loanApplicationId).FirstOrDefault();
-                //var currentLevel = /*context.TBL_APPROVAL_TRAIL.Where(x =>
-                //                 x.OPERATIONID == operationId
-                //                && x.TARGETID == targetId
-                //                && x.RESPONSESTAFFID == null
-                //            && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Closed)
-                //            )
-                //    .Select(x => x.TOAPPROVALLEVELID).ToList();*/ 31;
-                //var approvalLevelStaf = context.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId && s.APPROVALLEVELID == currentLevel && s.DELETED == false).FirstOrDefault();
-                //if (approvalLevelStaf != null)
-                //{
-                //    var investmentGradeApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && approvalLevelStaf.INVESTMENTGRADEAMOUNT <= x.approvedAmount).ToList();
-                //    var standardGradeApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && approvalLevelStaf.STANDARDGRADEAMOUNT <= x.approvedAmount).ToList();
-                //    var renewalLimitApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && approvalLevelStaf.RENEWALLIMIT <= x.approvedAmount).ToList();
-                //    applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp);
-                //}
+                var currentLevel = /*context.TBL_APPROVAL_TRAIL.Where(x =>
+                                 x.OPERATIONID == operationId
+                                && x.TARGETID == targetId
+                                && x.RESPONSESTAFFID == null
+                            && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Closed)
+                            )
+                    .Select(x => x.TOAPPROVALLEVELID).ToList();*/ 31;
+                var approvalLevelStaf = context.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId && s.APPROVALLEVELID == currentLevel && s.DELETED == false).FirstOrDefault();
+                if (approvalLevelStaf != null)
+                {
+                    var investmentGradeApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && approvalLevelStaf.INVESTMENTGRADEAMOUNT <= x.approvedAmount).ToList();
+                    var standardGradeApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && approvalLevelStaf.STANDARDGRADEAMOUNT <= x.approvedAmount).ToList();
+                    var renewalLimitApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && approvalLevelStaf.RENEWALLIMIT <= x.approvedAmount).ToList();
+                    applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp);
+                }
 
                 //var investmentGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT > x.approvedAmount).ToList();
                 //var standardGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT > x.approvedAmount).ToList();
