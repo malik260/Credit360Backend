@@ -21,7 +21,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
             var emailMessageBody = emailBody;
             string templateUrl = @"~/EmailTemplates/Monitoring.html";
-            string mailBody = EmailHelpers.PopulateBody(emailMessageBody, templateUrl);
+            //string mailBody = EmailHelpers.PopulateBody(emailMessageBody, templateUrl);
+            string mailBody = emailMessageBody;
 
             MessageLogViewModel messageModel = new MessageLogViewModel
             {

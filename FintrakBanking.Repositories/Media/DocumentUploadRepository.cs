@@ -20,6 +20,7 @@ using System.Configuration;
 using Microsoft.Office.Interop.Excel;
 using ServiceStack;
 using FintrakBanking.ViewModels.Setups.Approval;
+using FintrakBanking.Interfaces.AlertMonitoring;
 
 namespace FintrakBanking.Repositories.Media
 {
@@ -32,6 +33,7 @@ namespace FintrakBanking.Repositories.Media
         private IAdminRepository admin;
         private IWorkflow workflow;
         private ICustomerCreditBureauRepository creditBureau;
+        private IEmailAlertLogger emailLogger;
 
         public DocumentUploadRepository(
                 FinTrakBankingDocumentsContext _docContext,
@@ -40,7 +42,8 @@ namespace FintrakBanking.Repositories.Media
                 IAuditTrailRepository _audit,
                 IAdminRepository _admin,
                 IWorkflow _workflow,
-                ICustomerCreditBureauRepository _creditBureau
+                ICustomerCreditBureauRepository _creditBureau,
+                 IEmailAlertLogger _emailLogger
             )
         {
             this.docContext = _docContext;
@@ -50,6 +53,7 @@ namespace FintrakBanking.Repositories.Media
             this.admin = _admin;
             this.workflow = _workflow;
             this.creditBureau = _creditBureau;
+            this.emailLogger = _emailLogger;
         }
 
         private string getUrl(string countryCode)
@@ -1562,6 +1566,7 @@ namespace FintrakBanking.Repositories.Media
                 else
                 {
                     model.datetimeCreated = DateTime.Now;
+                    
 
                     var deferredDoc = new TBL_DEFERRED_DOC_TRACKER
                     {
@@ -1579,6 +1584,10 @@ namespace FintrakBanking.Repositories.Media
 
 
                 if (docContext.SaveChanges() > 0)
+
+                {
+                    SendEmailToOfficersforDeferredDoc(model.loanApplicationId,  model);
+                }
                 {
                     // Audit Section ---------------------------
                     var audit = new TBL_AUDIT
@@ -1601,6 +1610,87 @@ namespace FintrakBanking.Repositories.Media
             }
             catch (Exception ex) { throw ex; }
             
+        }
+
+        private void SendEmailToOfficersforDeferredDoc(int loanApplicationId, DeferredDocumentsViewModel model)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION
+                        join s in context.TBL_STAFF on a.CREATEDBY equals s.STAFFID
+                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                        where a.DELETED == false && a.LOANAPPLICATIONID == loanApplicationId
+                        select new LoanApplicationDetailViewModel
+                        {
+                            customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                            email = s.EMAIL.Trim(),
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            customerId = (int)a.CUSTOMERID,
+                            approvalStatusId = a.APPROVALSTATUSID,
+                            accountOfficerName = s.FIRSTNAME + " " + s.LASTNAME,
+                        }).ToList();
+
+            //var data2 = (from a in context.TBL_LOAN_APPLICATION
+            //            join s in context.TBL_STAFF on a.CREATEDBY equals s.STAFFID
+            //            join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+            //            where a.COMPANYID == companyId && a.DELETED == false
+                        
+            //            && a.LOANAPPLICATIONID == loanApplicationId
+            //            select new LoanApplicationDetailViewModel
+            //            {
+            //                customerName = c.FIRSTNAME + " " + c.LASTNAME,
+            //                email = s.EMAIL.Trim(),
+            //                applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+            //                customerId = (int)a.CUSTOMERID,
+            //                approvalStatusId = a.APPROVALSTATUSID
+            //            }).ToList();
+
+
+
+
+            foreach (var staff in data)
+            {
+
+                string referenceNo = staff.applicationReferenceNumber;
+                //var successEmailBody = "Dear Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                //string messageSubject = "DEFERRED DOCUMENT";
+
+                var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "SendDeferredDocumentAlert" && a.ISACTIVE == true).FirstOrDefault();
+                             
+
+                if (alertTitleInfo != null)
+                {
+
+                    List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                    foreach (var i in data)
+                    {
+                        model.documentTypeName = docContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPEID == model.documentTypeId).FirstOrDefault()?.DOCUMENTTYPENAME;
+
+                        AlertsViewModel alert = new AlertsViewModel();
+                        var alertTitle = alertTitleInfo.TITLE;
+                        var alertTemplate = alertTitleInfo.TEMPLATE;
+                        if (staff != null)
+                        {
+                            string emailList = "";
+                            alertTemplate = alertTemplate.Replace("@{{customerName}}", staff.customerName);
+                            alertTemplate = alertTemplate.Replace("@{{referenceNo}}", staff.applicationReferenceNumber);
+                            alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staff.accountOfficerName);
+                            alertTemplate = alertTemplate.Replace("@{{documentType}}", model.documentTypeName);
+                            alertTemplate = alertTemplate.Replace("@{{dueDate}}", DateTime.Now.AddDays(model.tenor).ToString("dd-MMM-yyyy"));
+                            
+                            emailList = staff?.email;
+                           
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                            alerts.Add(alert);
+                        }
+                        emailLogger.ComposeEmail(referenceNo, alert.template, alert.alertTitle, staff.email, true);
+                    }
+
+                }
+
+            }
         }
 
         public bool UpdateDeferredDocument(DeferredDocumentsViewModel model, int id, UserInfo user)
@@ -1635,6 +1725,10 @@ namespace FintrakBanking.Repositories.Media
                 };
 
                 this.audit.AddAuditTrail(audit);
+            }
+            
+            {
+                SendEmailToOfficersforDeferredDoc(model.loanApplicationId,  model);
             }
             if (docContext.SaveChanges() > 0) return true;
             return false;

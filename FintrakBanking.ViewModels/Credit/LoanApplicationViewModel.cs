@@ -612,6 +612,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public bool isTemplateUploaded { get; set; }
         public string oldApplicationRefForRenewal { get; set; }
+        public string accountOfficerName { get; set; }
 
         // public int? loanreViewApplicationId { get; set; }
     }
