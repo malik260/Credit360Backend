@@ -1147,6 +1147,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool validateAlertCheck()
         {
+
             GetRepaymentPastDueForCustomers();
             bool state = false;
             TimeSpan now = DateTime.Now.TimeOfDay;
@@ -1330,9 +1331,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetImminentMaturities();
                     GetPastDueObligationsReminder();
                     GetPastDueObligationsReminderByGroupHeads();
-                    GetRepaymentPastDueForCustomers(); // to be removed if not needed
                     GroupImminentMaturitiesByGroupHeads();
-                    GetImminentDocumentMaturities();
                     state = true;
                 }
             }
@@ -1969,98 +1968,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
                     var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.TOTALUNSETTLEDAMOUNT > 0).ToList();
                     
-                    if (loanInformation != null && loanInformation.Count() > 0)
-                    {
-                        var n = 0;
-                        var result = $@"
-                     <table cellpadding='0' cellspacing='0' border='1' width='800px'>
-                        <tr>
-                            <td><b>S/N</b></td>
-                            <td><b>Customer Name</b></td>
-                            <td><b>Reference Number</b></td>
-                            <td><b>Amount</b></td>
-                            <td><b>Maturity Date</b></td>
-                            <td><b>Number Of Days</b></td>
-                        </tr>
-                     ";
-
-                        foreach (var t in loanInformation)
-                        {
-                            n++;
-
-                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.TOTALUNSETTLEDAMOUNT));
-                            var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
-                            int numberOfDays = (t.MATURITYDATE.Value - DateTime.Now).Days;
-
-                            result = result + $@"
-                        <tr>
-                            <td>{n}</td>
-                            <td>{t.CUSTOMERNAME}</td>
-                            <td>{t.REFERENCENUMBER}</td>
-                            <td>{$"{amount}"}</td>
-                            <td>{$"{maturityDate}"}</td>
-                            <td>{numberOfDays}</td>
-                        </tr>
-                        ";
-                        }
-
-                        result = result + $"</table>";
-
-                        if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
-                        {
-                            alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
-                            alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
-                            emailList = emailList.Replace("wigweh@accessbankplc.com", "") + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID).Replace("wigweh@accessbankplc.com", "") + defaultEmail.Replace("wigweh@accessbankplc.com", "");
-                            alert.receiverEmailList.Add(emailList);
-                            alert.template = alertTemplate;
-                            alert.alertTitle = alertTitle;
-                            alert.canFire = true;
-                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
-
-                            alerts.Add(alert);
-                        }
-                    }
-                }
-
-                if (alerts.Count() > 0)
-                {
-                    SendAlertNotification(alerts);
-                }
-            }
-        }
-
-        public void GetImminentDocumentMaturities()
-        {
-            // Maturing Obligations/GetImminentMaturities method
-            var staffList = externalAlertRepository.GetAccountOfficersWithImminentDocumentMaturities();
-            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities" && a.ISACTIVE == true).FirstOrDefault();
-
-            var defaultEmail = "";
-            if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
-            {
-                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL.ToLower();
-            }
-            if (alertTitleInfo != null && staffList != null && staffList.Count() > 0)
-            {
-
-                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
-                foreach (var staff in staffList)
-                {
-                    AlertsViewModel alert = new AlertsViewModel();
-                    var alertTitle = alertTitleInfo.TITLE;
-                    var alertTemplate = alertTitleInfo.TEMPLATE;
-                    var staffMain = context.TBL_STAFF.Where(b => b.STAFFID == staff.staffId).FirstOrDefault();
-                    string emailList = "";
-                    var staffFullName = context.TBL_STAFF.Where(b => b.STAFFID == staff.staffId).Select(b => b.FIRSTNAME + ' ' + b.LASTNAME).FirstOrDefault();
-                    if (staffFullName == "vacant" || staffFullName == "")
-                    {
-                        staffFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == staff.misCode && b.DELETED == false).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
-                    }
-                    emailList = GetBusinessUsersEmails(staffMain.MISCODE);
-
-                    List<int> days = new List<int> { 30, 21, 14, 7, 3, 1 };
-                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.TOTALUNSETTLEDAMOUNT > 0).ToList();
-
                     if (loanInformation != null && loanInformation.Count() > 0)
                     {
                         var n = 0;
@@ -65903,9 +65810,7 @@ namespace FintrakBanking.Repositories.Setups.General
  };*/
             List<string> customerList = context.TBL_CUSTOMER.Select(c => c.CUSTOMERCODE).ToList();
 
-            var loanRepaymentReminder = context.TBL_NEXT_PRINCIPAL_REPAYMENT.Where(d => d.AMOUNTDUE.Value > 0 && DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value < 1 && customerList.Contains(d.CUSTOMERID)).ToList().Take(30);
-            // var loanRepaymentReminder = context.TBL_NEXT_PRINCIPAL_REPAYMENT.Where(d => d.AMOUNTDUE > 0 && d.SCHEDULEDUEDATE > DateTime.UtcNow && customerList.Contains(d.CUSTOMERID)).OrderBy(d => d.SCHEDULEDUEDATE).Take(30).ToList();
-
+            var loanRepaymentReminder = context.TBL_NEXT_PRINCIPAL_REPAYMENT.Where(d => d.AMOUNTDUE.Value > 0 && DbFunctions.DiffDays(DateTime.UtcNow, d.SCHEDULEDUEDATE).Value < 1 && customerList.Contains(d.CUSTOMERID)).ToList();
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentOverdueReminder" && a.ISACTIVE == true).FirstOrDefault();
             int numberOfDays = 0;
             int daysToUse = 0;
@@ -65935,9 +65840,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     else
                     {
-                        numberOfDays = (i.SCHEDULEDUEDATE.Value - DateTime.Now).Days;  // this is the correct method
-                        //numberOfDays = (DateTime.Now - i.SCHEDULEDUEDATE.Value).Days; // for test purpose only sind date is in the past
-                        numberOfInterestDays = (interestDetail.SCHEDULEDUEDATE.Value - DateTime.Now).Days;
+                        numberOfDays = (DateTime.Now - i.SCHEDULEDUEDATE.Value).Days;
+                        numberOfInterestDays = (DateTime.Now - interestDetail.SCHEDULEDUEDATE.Value ).Days;
                         interestDueDate = interestDetail.SCHEDULEDUEDATE?.ToString("dd-MM-yyyy");
                         interestAmountDue = interestDetail.CURRENCY + "" + string.Format("{0:#,##.00}", Convert.ToDecimal(interestDetail.OUTSTANDINGBALANCE.Value));
 
@@ -65953,7 +65857,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     AlertsViewModel alert = new AlertsViewModel();
                     var alertTitle = alertTitleInfo.TITLE;
                     var alertTemplate = alertTitleInfo.TEMPLATE;
-                    //if (numberOfDays > 0)
+                    if (numberOfDays > 0)
                     {
                         string emailList = "";
                         alertTemplate = alertTemplate.Replace("@{{customerName}}", i.CUSTOMERNAME);

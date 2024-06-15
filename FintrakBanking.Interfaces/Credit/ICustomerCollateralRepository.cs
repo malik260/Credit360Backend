@@ -206,6 +206,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<FacilityStampDutyViewModel> GetFacilityStampDutyId(int loanApplicationId);
         IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDuty();
         IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyFixed();
+        IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyFixedFiltered(DateRange dateRange);
         FacilityStampDutyViewModel GetFacilityStampDutyById(int loanApplicationId);
         IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyReport(DateRange param);
         IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyFiltered(DateRange param);

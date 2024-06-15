@@ -18,8 +18,8 @@ namespace FintrakBanking.Common.Enum
 
     public enum CreditGradeEnum
     {
-        InvestmentGrade = 1,
-        StandardGrade = 2,
+        StandardGrade = 1,
+        InvestmentGrade = 2,
         RenewalGrade = 3,
     }
    

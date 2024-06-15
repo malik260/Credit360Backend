@@ -12,6 +12,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<DashboardViewModel> LoanApplicationsBySector(DateTime startDate, DateTime endDate,int companyId, int staffId);
         List<DashboardReportItem>     LoanPerformance(DateTime startDate, DateTime endDate,int companyId, int staffId);
         List<DashboardViewModel> LoanOnThePipeline(DateTime startDate, DateTime endDate, int companyId, int staffId);
+        List<DashboardViewModel> SubsLoanOnThePipeline(DateTime startDate, DateTime endDate, int companyId, int staffId);
         List<DashboardViewModel> ExpotureByRiskRating(DateTime startDate, DateTime endDate, int companyId, int staffId);
         List<DashboardViewModel> CollateralCoverage(DateTime startDate, DateTime endDate, int companyId, int staffId);
         List<DashboardViewModel> ApprovedLoan(DateTime startDate, DateTime endDate, int companyId, int staffId);

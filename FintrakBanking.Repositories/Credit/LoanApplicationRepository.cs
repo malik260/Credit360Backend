@@ -3370,7 +3370,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanApplicationdetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID).Select(l => l.LOANAPPLICATIONDETAILID).ToList();
                 var facilityStampDutyIds = new List<int>();
-               /* if (loanApplicationdetailIds.Count > 0)
+                if (loanApplicationdetailIds.Count > 0)
                 {
                     foreach (var detailId in loanApplicationdetailIds)
                     {
@@ -3397,7 +3397,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         }
                     }
-                }*/
+                }
 
 
                 var racDetail = context.TBL_RAC_DETAIL.Where(r => r.TARGETID == detail.LOANAPPLICATIONDETAILID).ToList();

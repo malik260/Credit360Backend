@@ -1395,7 +1395,7 @@ namespace FintrakBanking.Repositories.Credit
             return loanApplication?.OWNERSHIPSTRUCTURE;
         }
 
-        private List<TotalFacilitiesSummaryViewModel> GetTotalFacilitiesNGNLOS()
+        private List<TotalFacilitiesSummaryViewModel> GetTotalFacilitiesNGNLOS2()
         {
             var totalSummary = new List<TotalFacilitiesSummaryViewModel>();
             var totalDirectFacilities = GetTotalDirectFacilitiesSummaryLOS((int)CurrencyEnum.NGN);
@@ -1405,10 +1405,28 @@ namespace FintrakBanking.Repositories.Credit
             //var totalImportFinanceFacilities
             var totalIFFSummaryNGN = GetTotalImportFinanceFacilitiesSummaryLOS((int)CurrencyEnum.NGN);
             if (totalIFFSummaryNGN != null) totalSummary.Add(totalIFFSummaryNGN);
+
             return totalSummary;
         }
 
-        private List<TotalFacilitiesSummaryViewModel> GetTotalForeignFacilitiesLOS()
+        private List<TotalFacilitiesSummaryViewModel> GetTotalFacilitiesNGNLOS()
+        {
+            var totalSummary = new List<TotalFacilitiesSummaryViewModel>();
+            var currencyId = (int)CurrencyEnum.NGN;
+
+            var facilities = new[]
+            {
+                GetTotalDirectFacilitiesSummaryLOS(currencyId),
+                GetTotalContingentFacilitiesSummaryLOS(currencyId),
+                GetTotalImportFinanceFacilitiesSummaryLOS(currencyId)
+             };
+
+            totalSummary.AddRange(facilities.Where(f => f != null));
+
+            return totalSummary;
+        }
+
+        private List<TotalFacilitiesSummaryViewModel> GetTotalForeignFacilitiesLOS2()
         {
             var totalSummary = new List<TotalFacilitiesSummaryViewModel>();
             var totalDirectFacilities = GetTotalDirectFacilitiesSummaryLOS((int)CurrencyEnum.USD);
@@ -1418,6 +1436,23 @@ namespace FintrakBanking.Repositories.Credit
             //var totalImportFinanceFacilities
             var totalIFFSummaryFCY = GetTotalImportFinanceFacilitiesSummaryLOS((int)CurrencyEnum.USD);
             if (totalIFFSummaryFCY != null) totalSummary.Add(totalIFFSummaryFCY);
+            return totalSummary;
+        }
+
+        private List<TotalFacilitiesSummaryViewModel> GetTotalForeignFacilitiesLOS()
+        {
+            var totalSummary = new List<TotalFacilitiesSummaryViewModel>();
+            var currencyId = (int)CurrencyEnum.USD;
+
+            var facilities = new[]
+            {
+                GetTotalDirectFacilitiesSummaryLOS(currencyId),
+                GetTotalContingentFacilitiesSummaryLOS(currencyId),
+                GetTotalImportFinanceFacilitiesSummaryLOS(currencyId)
+            };
+
+            totalSummary.AddRange(facilities.Where(f => f != null));
+
             return totalSummary;
         }
 
@@ -3253,97 +3288,170 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        //public decimal GetApprovalAmount(bool isLMS = false)
+        //{
+        //    decimal obligorGFSProposedAmount = 0;
+        //    var custCode = "";
+
+        //    if (isLMS)
+        //    {
+        //        var currencyId = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.CURRENCYID;
+        //        var exchngeRat = context.TBL_CURRENCY_EXCHANGERATE.Where(x => x.CURRENCYID == currencyId).FirstOrDefault()?.EXCHANGERATE;
+        //        obligorGFSProposedAmount = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT) > 0 ? this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT) : (this.lmsrApplication.APPROVEDAMOUNT ?? 0);
+        //        if (exchngeRat != null) obligorGFSProposedAmount = obligorGFSProposedAmount * (decimal)exchngeRat;
+        //    }
+        //    else
+        //    {
+        //        var totalSummary = GetTotalFacilitiesNGNLOS();
+        //        var totalSumaryFCY = GetTotalForeignFacilitiesLOS();
+        //        totalSummary.AddRange(totalSumaryFCY);
+        //        obligorGFSProposedAmount = totalSummary.Sum(f => f.totalProposedAmount);
+        //    }
+
+        //    if (isLMS)
+        //    {
+        //        custCode = context.TBL_CUSTOMER.Find(this.lmsrApplication?.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID)?.CUSTOMERCODE;
+        //    }
+        //    else
+        //    {
+        //        custCode = context.TBL_CUSTOMER.Find(loanApplication?.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID)?.CUSTOMERCODE;
+        //    }
+        //    //var exposures = this.globalExposure.Where(e => e.customerCode != custCode).ToList();
+        //    //var currentAmount = new decimal();
+        //    //var approvedAmount = new decimal();
+        //    //var amountForLLL = new decimal();
+        //    //var LLLImpact = new decimal();
+        //    //var directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+        //    //var loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+        //    //var overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+        //    //var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+        //    //var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
+        //    //var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+
+        //    foreach (var product in loanExposures)
+        //    {
+        //        currentAmount = product.outstandingsLcy;
+        //        amountForLLL = currentAmount;
+        //        LLLImpact += amountForLLL;
+        //    }
+
+        //    foreach (var product in overdraftExposures)
+        //    {
+        //        currentAmount = product.outstandingsLcy;
+        //        approvedAmount = product.approvedAmountLcy;
+        //        amountForLLL = approvedAmount;
+        //        //LLLImpact += amountForLLL;
+        //        amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+        //    }
+
+        //    foreach (var product in contingents)
+        //    {
+        //        currentAmount = product.outstandingsLcy;
+        //        approvedAmount = product.approvedAmountLcy;
+        //        amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+        //        LLLImpact += amountForLLL;
+        //        //approvedAmount = product.approvedAmountLcy;
+        //        //amountForLLL = approvedAmount;
+        //        //LLLImpact += amountForLLL;
+        //    }
+
+        //    foreach (var product in lcs)
+        //    {
+        //        currentAmount = product.outstandingsLcy;
+        //        approvedAmount = product.approvedAmountLcy;
+        //        amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+        //        LLLImpact += amountForLLL;
+        //        //approvedAmount = product.approvedAmountLcy;
+        //        //amountForLLL = approvedAmount;
+        //        //LLLImpact += amountForLLL;
+        //        //LLLImpact += (amountForLLL / 3);
+        //    }
+
+        //    foreach (var product in tradeLoans)
+        //    {
+        //        currentAmount = product.outstandingsLcy;
+        //        approvedAmount = product.approvedAmountLcy;
+        //        amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+        //        LLLImpact += amountForLLL;
+        //        //approvedAmount = product.approvedAmountLcy;
+        //        //amountForLLL = approvedAmount;
+        //        //LLLImpact += amountForLLL;
+        //    }
+
+        //    var approvalAmount = obligorGFSProposedAmount + LLLImpact;
+        //    return approvalAmount;
+        //}
+
         public decimal GetApprovalAmount(bool isLMS = false)
         {
-            decimal obligorGFSProposedAmount = 0;
-            var custCode = "";
+            decimal obligorGFSProposedAmount = 0m;
+            string custCode;
 
             if (isLMS)
             {
-                var currency = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Select(x=>x.CURRENCYID).FirstOrDefault();
-                var exchngeRat = context.TBL_CURRENCY_EXCHANGERATE.Where(x => x.CURRENCYID == currency).FirstOrDefault()?.EXCHANGERATE;
-                obligorGFSProposedAmount = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT) > 0 ? this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT) : (this.lmsrApplication.APPROVEDAMOUNT ?? 0);
-                if (exchngeRat != null) obligorGFSProposedAmount = obligorGFSProposedAmount * (decimal)exchngeRat;
+                var lmsrDetails = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL;
+                var currencyId = lmsrDetails.FirstOrDefault()?.CURRENCYID;
+                var exchangeRate = context.TBL_CURRENCY_EXCHANGERATE.FirstOrDefault(x => x.CURRENCYID == currencyId)?.EXCHANGERATE;
+
+                obligorGFSProposedAmount = lmsrDetails.Sum(x => x.CUSTOMERPROPOSEDAMOUNT ?? x.APPROVEDAMOUNT);
+                if (obligorGFSProposedAmount <= 0)
+                {
+                    obligorGFSProposedAmount = this.lmsrApplication.APPROVEDAMOUNT ?? 0;
+                }
+               
+                obligorGFSProposedAmount *= (decimal)exchangeRate;
             }
             else
             {
                 var totalSummary = GetTotalFacilitiesNGNLOS();
-                var totalSumaryFCY = GetTotalForeignFacilitiesLOS();
-                totalSummary.AddRange(totalSumaryFCY);
+                totalSummary.AddRange(GetTotalForeignFacilitiesLOS());
                 obligorGFSProposedAmount = totalSummary.Sum(f => f.totalProposedAmount);
             }
 
-            if (isLMS)
-            {
-                custCode = context.TBL_CUSTOMER.Find(this.lmsrApplication?.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID)?.CUSTOMERCODE;
-            }
-            else
-            {
-                custCode = context.TBL_CUSTOMER.Find(loanApplication?.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID)?.CUSTOMERCODE;
-            }
+            custCode = isLMS
+                ? context.TBL_CUSTOMER.Find(this.lmsrApplication?.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.CUSTOMERID)?.CUSTOMERCODE
+                : context.TBL_CUSTOMER.Find(loanApplication?.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault()?.CUSTOMERID)?.CUSTOMERCODE;
+
             var exposures = this.globalExposure.Where(e => e.customerCode != custCode).ToList();
-            var currentAmount = new decimal();
-            var approvedAmount = new decimal();
-            var amountForLLL = new decimal();
-            var LLLImpact = new decimal();
-            var directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
-            var loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
-            var overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
-            var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
-            var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
-            var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
-            foreach (var product in loanExposures)
+            decimal LLLImpact = 0m;
+
+            foreach (var exposure in exposures)
             {
-                currentAmount = product.outstandingsLcy;
-                amountForLLL = currentAmount;
-                LLLImpact += amountForLLL;
+                var currentAmount = exposure.outstandingsLcy;
+                var approvedAmount = exposure.approvedAmountLcy;
+                decimal amountForLLL;
+
+                switch (exposure.exposureTypeId)
+                {
+                    case (int)ExposureTypeEnum.Direct:
+                        if (exposure.adjFacilityTypeString.Contains("TRADE LOAN"))
+                        {
+                            amountForLLL = Math.Max(currentAmount, approvedAmount);
+                            LLLImpact += amountForLLL;
+                        }
+                        else if (!exposure.adjFacilityTypeString.Contains("LC"))
+                        {
+                            amountForLLL = exposure.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT ? Math.Max(currentAmount, approvedAmount) : currentAmount;
+                            LLLImpact += amountForLLL;
+                        }
+                        break;
+
+                    case (int)ExposureTypeEnum.Contingent:
+                        if (exposure.adjFacilityTypeString.Contains("LC"))
+                        {
+                            amountForLLL = Math.Max(currentAmount, approvedAmount);
+                            LLLImpact += amountForLLL;
+                        }
+                        else if (!exposure.adjFacilityTypeString.Contains("TRADE LOAN"))
+                        {
+                            amountForLLL = Math.Max(currentAmount, approvedAmount);
+                            LLLImpact += amountForLLL;
+                        }
+                        break;
+                }
             }
 
-            foreach (var product in overdraftExposures)
-            {
-                currentAmount = product.outstandingsLcy;
-                approvedAmount = product.approvedAmountLcy;
-                amountForLLL = approvedAmount;
-                //LLLImpact += amountForLLL;
-                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
-            }
-
-            foreach (var product in contingents)
-            {
-                currentAmount = product.outstandingsLcy;
-                approvedAmount = product.approvedAmountLcy;
-                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
-                LLLImpact += amountForLLL;
-                //approvedAmount = product.approvedAmountLcy;
-                //amountForLLL = approvedAmount;
-                //LLLImpact += amountForLLL;
-            }
-
-            foreach (var product in lcs)
-            {
-                currentAmount = product.outstandingsLcy;
-                approvedAmount = product.approvedAmountLcy;
-                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
-                LLLImpact += amountForLLL;
-                //approvedAmount = product.approvedAmountLcy;
-                //amountForLLL = approvedAmount;
-                //LLLImpact += amountForLLL;
-                //LLLImpact += (amountForLLL / 3);
-            }
-
-            foreach (var product in tradeLoans)
-            {
-                currentAmount = product.outstandingsLcy;
-                approvedAmount = product.approvedAmountLcy;
-                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
-                LLLImpact += amountForLLL;
-                //approvedAmount = product.approvedAmountLcy;
-                //amountForLLL = approvedAmount;
-                //LLLImpact += amountForLLL;
-            }
-
-            var approvalAmount = obligorGFSProposedAmount + LLLImpact;
-            return approvalAmount;
+            return obligorGFSProposedAmount + LLLImpact;
         }
 
         private string GetTotalFacilitiesMarkupLOS()
@@ -3758,9 +3866,22 @@ namespace FintrakBanking.Repositories.Credit
                 //                                && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
                 //overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                 //                                                    && l.ISDISBURSED == true).ToList();
-                if(this.isThirdPartyFacility ==false)appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN &&
-                                                                                     d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
-                                                                                     d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                //if(this.isThirdPartyFacility ==false)appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN &&
+                //                                                                     d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
+                //                                                                     d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+
+                if (!this.isThirdPartyFacility)
+                {
+                    var ngnCurrencyId = (int)CurrencyEnum.NGN;
+                    var nonContingentProductTypeId = (int)LoanProductTypeEnum.ContingentLiability;
+                    var nonImportFinanceProductClassId = (int)ProductClassEnum.ImportFinanceFacilities;
+
+                    appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL
+                        .Where(d => d.TBL_CURRENCY.CURRENCYID == ngnCurrencyId &&
+                                    d.TBL_PRODUCT.PRODUCTTYPEID != nonContingentProductTypeId &&
+                                    d.TBL_PRODUCT.PRODUCTCLASSID != nonImportFinanceProductClassId)
+                    .ToList();
+                }
             }
             else
             {

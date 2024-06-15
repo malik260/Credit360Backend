@@ -70,6 +70,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("subs-loans-on-pipeline")]
+        public HttpResponseMessage GetSubLoansOnPipeline(DateRange val)
+        {
+            try
+            {
+                var data = dashboard.SubsLoanOnThePipeline(val.startDate, val.endDate, token.GetCompanyId, token.GetStaffId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpGet]
         [Route("get-loans-in-pipeline-Lms/operationId/{operationId}/classId/{classId}")]
         public HttpResponseMessage GetLoanInThePipelineLms([FromUri] int operationId, [FromUri] int? classId)

@@ -7602,43 +7602,57 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteProposedCollateral(CollateralCoverageViewModel model)
         {
-            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPCOLLATERALID == model.loanAppCollateralId).Select(o => o).FirstOrDefault();
-            if (data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
+            try
             {
-                throw new Exception("Cannot Delete An Already Approved Collateral Mapping");
-            }
-            data.DELETED = true;
-            data.DELETEDBY = model.createdBy;
-            data.DATETIMEDELETED = genSetup.GetApplicationDate();
-            context.Entry(data).State = EntityState.Modified;
-            //context.TBL_LOAN_APPLICATION_COLLATERL.Remove(data);
-
-            var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
-            if (fsdExists != null)
-            {
-                fsdExists.DELETED = true;
-            }
-
-            var stampFees = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(Ad valorem)") && s.DELETED == false).ToList();
-            if (stampFees.Count > 0)
-            {
-                foreach (var fee in stampFees)
+                var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPCOLLATERALID == model.loanAppCollateralId).Select(o => o).FirstOrDefault();
+                if (data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                 {
-                    var dat = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID && d.CHARGEFEEID == fee.CHARGEFEEID).FirstOrDefault();
+                    throw new Exception("Cannot Delete An Already Approved Collateral Mapping");
+                }
+                data.DELETED = true;
+                data.DELETEDBY = model.createdBy;
+                data.DATETIMEDELETED = genSetup.GetApplicationDate();
+                context.Entry(data).State = EntityState.Modified;
+                //context.TBL_LOAN_APPLICATION_COLLATERL.Remove(data);
 
-                    var fees = dat;
-                    if (fees != null)
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_FEE.Remove(fees);
-                    }
+                var fsdExists = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID && f.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                if (fsdExists != null)
+                {
+                    fsdExists.DELETED = true;
                 }
 
+                var stampFees = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(fixed)") && s.DELETED == false).ToList();
+                if (stampFees.Count > 0)
+                {
+                    foreach (var fee in stampFees)
+                    {
+                        var dat = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(d => d.LOANAPPLICATIONDETAILID == data.LOANAPPLICATIONDETAILID && d.CHARGEFEEID == fee.CHARGEFEEID).ToList();
+
+                        var fees = dat;
+                        if (fees != null)
+                        {
+                            foreach (var f in fees)
+                            {
+                                context.TBL_LOAN_APPLICATION_DETL_FEE.Remove(f);
+                            }
+
+                        }
+                    }
+
+                }
+
+
+                var  isGood = context.SaveChanges();
+                if (isGood > 0)
+                {
+                    return true;
+                } 
+                return context.SaveChanges() > 0;
             }
-
-
-            //context.SaveChanges();
-            return context.SaveChanges() > 0;
-
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public bool DeleteDuplicatedCollateral(CollateralViewModel model)
@@ -12277,7 +12291,7 @@ namespace FintrakBanking.Repositories.Credit
                 };
                 context.TBL_LOAN_APPLICATION_COLLATERL.Add(data);
 
-                 if (context.SaveChanges() > 0)
+                if (context.SaveChanges() > 0)
                 {
                     var condition = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
                     if (condition != null) sdApplicable = ValidateStampDutyApplicable(facility, condition);
@@ -12296,10 +12310,10 @@ namespace FintrakBanking.Repositories.Credit
 
                             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
                             var stampFee = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(fixed)") && s.DELETED == false).ToList();
-                            if (stampFee !=null)
+                            if (stampFee != null)
                             {
                                 List<ProductFeesViewModel> fees = new List<ProductFeesViewModel>();
-                                foreach( var f in stampFee)
+                                foreach (var f in stampFee)
                                 {
                                     var feeDetails = context.TBL_CHARGE_FEE_DETAIL.Where(fd => fd.CHARGEFEEID == f.CHARGEFEEID).FirstOrDefault();
                                     var fee = new ProductFeesViewModel()
@@ -12314,15 +12328,15 @@ namespace FintrakBanking.Repositories.Credit
                                     fees.Add(fee);
 
                                 }
-                                
+
 
                                 ProductFees(fees, facility.LOANAPPLICATIONDETAILID, model.createdBy);
                             }
-                            
+
                         }
-                        
+
                     }
-                    else if(fsdDetailExists != null)
+                    else if (fsdDetailExists != null)
                     {
                         var appl = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
                         if (!appl.ISONLENDING)
@@ -12402,9 +12416,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     }
 
-                    
-                    
-                       
+
+
+
                     context.SaveChanges();
                 }
                 context.SaveChanges();
@@ -12465,13 +12479,13 @@ namespace FintrakBanking.Repositories.Credit
 
                     };
                     context.TBL_LOAN_APPLICATION_COLLATERL.Add(data);
-                    
+
                     try
                     {
                         if (context.SaveChanges() > 0)
                         {
                             var condition = context.TBL_STAMP_DUTY_CONDITION.Where(f => f.COLLATERALSUBTYPEID == collateral.COLLATERALSUBTYPEID).FirstOrDefault();
-                            if(condition != null) sdApplicable = ValidateStampDutyApplicable(facility, condition);
+                            if (condition != null) sdApplicable = ValidateStampDutyApplicable(facility, condition);
                         }
                         if (sdApplicable)
                         {
@@ -12515,7 +12529,7 @@ namespace FintrakBanking.Repositories.Credit
                                 var appl = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
                                 if (!appl.ISONLENDING)
                                 {
-                                    
+
                                 }
                             }
                             else
@@ -12574,7 +12588,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         throw;
                     }
-                    
+
                     context.SaveChanges();
                          return true;
                 }
@@ -14170,7 +14184,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDuty()
         {
-            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower().Contains("(fixed)")).FirstOrDefault();
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
@@ -14200,7 +14214,7 @@ namespace FintrakBanking.Repositories.Credit
                           }).ToList();
             foreach(var rec in record)
             {
-                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault().RECOMMENDED_FEERATEVALUE;
+                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE == null ? 0 : context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE;
                 var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralSubTypeId).FirstOrDefault();
                 var dutyCharge = (rec.loanAmount * (condValue.DUTIABLEVALUE / 100)) + rec.fixedDutyCharge;
                 rec.stampDutyAmount = (decimal)dutyCharge;
@@ -14220,7 +14234,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyFixed()
         {
-            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower().Contains("(fixed)")).FirstOrDefault();
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
             var record = (from x in context.TBL_LOAN_APPLICATION_DETL_FEE
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
@@ -14245,12 +14259,66 @@ namespace FintrakBanking.Repositories.Credit
                               customerId = a.CUSTOMERID,
                               operationId = (int)OperationsEnum.StampDutyClosure,
                               //documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID
-                          }).OrderByDescending(x => x.facilityStampDutyId).ToList().Take(200);
+                          }).OrderByDescending(x => x.facilityStampDutyId).ToList()?.Take(200);
             foreach (var rec in record)
             {
                 rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE;
                 var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralSubTypeId).FirstOrDefault();
                 var dutyCharge =  rec.fixedDutyCharge;
+                if (rec.fixedDutyCharge == null) dutyCharge = 0;
+                rec.stampDutyAmount = (decimal)dutyCharge;
+                rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
+                //rec.dutiableValue = condValue.DUTIABLEVALUE;
+                rec.bookingDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId).FirstOrDefault()?.BOOKINGDATE;
+                rec.collateralSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(s => s.COLLATERALSUBTYPEID == rec.collateralSubTypeId).FirstOrDefault()?.COLLATERALSUBTYPENAME;
+
+                if (rec.bookingDate != null)
+                {
+                    rec.maturityDate = context.TBL_LOAN.Where(b => b.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId).FirstOrDefault()?.MATURITYDATE;
+                }
+            }
+
+            return record;
+
+        }
+
+        public IEnumerable<FacilityStampDutyViewModel> GetAllFacilityStampDutyFixedFiltered(DateRange param)
+        {
+            param.endDate = param.endDate.AddHours(23);
+            param.endDate = param.endDate.AddMinutes(59);
+            param.endDate = param.endDate.AddSeconds(59);
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower().Contains("(fixed)")).FirstOrDefault();
+            var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
+            var record = (from x in context.TBL_LOAN_APPLICATION_DETL_FEE
+                          join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                          //join f in context.TBL_FACILITY_STAMP_DUTY on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
+                          join cl in context.TBL_LOAN_APPLICATION_COLLATERL on x.LOANAPPLICATIONDETAILID equals cl.LOANAPPLICATIONDETAILID
+                          where x.DELETED == false && x.CHARGEFEEID == fixedCharge.CHARGEFEEID && ((DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)))
+
+                          select new FacilityStampDutyViewModel
+                          {
+                              facilityStampDutyId = x.LOANCHARGEFEEID,
+                              loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                              //collateralCustomerId = f.COLLATERALCUSTOMERID,
+
+                              dateTimeCreated = x.DATETIMECREATED,
+
+
+                              customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.LASTNAME).FirstOrDefault(),
+                              loanAmount = a.PROPOSEDAMOUNT,
+                              approvedTenor = a.APPROVEDTENOR,
+                              collateralId = cl.COLLATERALCUSTOMERID,
+                              collateralSubTypeId = context.TBL_COLLATERAL_CUSTOMER.Where(s => s.COLLATERALCUSTOMERID == cl.COLLATERALCUSTOMERID).FirstOrDefault().COLLATERALSUBTYPEID,
+                              customerId = a.CUSTOMERID,
+                              operationId = (int)OperationsEnum.StampDutyClosure,
+                              //documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID
+                          }).OrderByDescending(x => x.facilityStampDutyId).ToList().Take(200);
+            foreach (var rec in record)
+            {
+                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE;
+                var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralSubTypeId).FirstOrDefault();
+                var dutyCharge = rec.fixedDutyCharge;
                 if (rec.fixedDutyCharge == null) dutyCharge = 0;
                 rec.stampDutyAmount = (decimal)dutyCharge;
                 rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
@@ -14372,7 +14440,7 @@ namespace FintrakBanking.Repositories.Credit
             param.endDate = param.endDate.AddHours(23);
             param.endDate = param.endDate.AddMinutes(59);
             param.endDate = param.endDate.AddSeconds(59);
-            var fixedCharge = context.TBL_CHARGE_FEE.Where(c=>c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c=>c.CHARGEFEENAME.ToLower().Contains("(fixed)")).FirstOrDefault();
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
 
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
@@ -14425,7 +14493,7 @@ namespace FintrakBanking.Repositories.Credit
             param.endDate = param.endDate.AddSeconds(59);
 
             var cond = context.TBL_STAMP_DUTY_CONDITION.Where(c => c.DUTIABLEVALUE != null).ToList();
-            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower() == "stamp duty charge (fixed)").FirstOrDefault();
+            var fixedCharge = context.TBL_CHARGE_FEE.Where(c => c.CHARGEFEENAME.ToLower().Contains("(fixed)")).FirstOrDefault();
             var record = (from x in context.TBL_FACILITY_STAMP_DUTY
                           join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                           join cl in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals cl.COLLATERALCUSTOMERID
@@ -14464,7 +14532,7 @@ namespace FintrakBanking.Repositories.Credit
                 rec.dutiableValue = condValue.DUTIABLEVALUE;
             }
             decimal totalDutyCharge = (decimal)record.Sum(x => x.stampDutyAmount);
-            record[0].totalDutyAmount = totalDutyCharge;
+            if (record.Count() > 0) record[0].totalDutyAmount = totalDutyCharge;
 
             return record;
 
