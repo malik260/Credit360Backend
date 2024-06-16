@@ -65822,7 +65822,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (alertTitleInfo != null && alertTitleInfo.DEFAULTEMAIL != null)
             {
                 defaultEmail = alertTitleInfo.DEFAULTEMAIL;
-            }
+            //}
 
             if (loanRepaymentReminder != null && loanRepaymentReminder.Count() > 0 && alertTitleInfo != null)
             {
@@ -65841,7 +65841,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     else
                     {
                         numberOfDays = (DateTime.Now - i.SCHEDULEDUEDATE.Value).Days;
-                        numberOfInterestDays = (DateTime.Now - interestDetail.SCHEDULEDUEDATE.Value ).Days;
+                        numberOfInterestDays = (DateTime.Now - interestDetail.SCHEDULEDUEDATE.Value).Days;
                         interestDueDate = interestDetail.SCHEDULEDUEDATE?.ToString("dd-MM-yyyy");
                         interestAmountDue = interestDetail.CURRENCY + "" + string.Format("{0:#,##.00}", Convert.ToDecimal(interestDetail.OUTSTANDINGBALANCE.Value));
 
@@ -65877,6 +65877,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                 }
                 SendAlertNotification(alerts);
+            }
             }
         }
 
