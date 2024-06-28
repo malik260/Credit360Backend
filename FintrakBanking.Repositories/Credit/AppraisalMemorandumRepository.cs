@@ -3727,7 +3727,14 @@ namespace FintrakBanking.Repositories.Credit
 
                 var staffs = general.GetStaffRlieved(staffId);
                 var levelStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId && x.DELETED == false).Select(x=>x.APPROVALLEVELID).ToList();
+                var staffRoleId = context.TBL_STAFF.Find(staffId).STAFFROLEID;
+                var currentStaffLevel = (from y in context.TBL_STAFF_ROLE
+                                         join e in context.TBL_APPROVAL_LEVEL on y.STAFFROLEID equals e.STAFFROLEID
+                                         where y.STAFFROLEID == staffRoleId
+                                         select e.APPROVALLEVELID).ToList();
+
                 var currentStaff = context.TBL_STAFF.Find(staffs[0]);
+                var currentLevelList = context.TBL_APPROVAL_GRID_LEVEL.Where(l => l.ISACTIVE == true).Select(l => l.APPROVALLEVELID).ToList();
 
                 IQueryable<LoanApplicationViewModel> applications = null;
 
@@ -3768,6 +3775,17 @@ namespace FintrakBanking.Repositories.Credit
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
                                             .Select(s => s.CURRENCYID)
                                             .FirstOrDefault(),
+                loanDetailReviewTypeId = context.TBL_LOAN_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
+                                            .Select(s => s.LOANDETAILREVIEWTYPEID)
+                                            .FirstOrDefault(), 
+                loanDetailReviewTypeName = ( from r in context.TBL_LOAN_APPLICATION_DETAIL join h in context.TBL_LOAN_DETAIL_REVIEW_TYPE
+                                             on r.LOANDETAILREVIEWTYPEID equals h.LOANDETAILREVIEWTYPEID where r.LOANAPPLICATIONID 
+                                             == x.a.LOANAPPLICATIONID select h.LOANDETAILREVIEWTYPENAME ).FirstOrDefault(),
+
+                                            // .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
+                                            //.Select(s => s.LOANDETAILREVIEWTYPEID)
+                                            //.FirstOrDefault(),
+                
                 productClassId = x.a.PRODUCTCLASSID,
                 productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                 proposedProductName = context.TBL_LOAN_APPLICATION_DETAIL
@@ -3841,6 +3859,7 @@ namespace FintrakBanking.Repositories.Credit
                 dateTimeCreated = x.a.DATETIMECREATED,
                 apiRequestId = x.a.APIREQUESTID,
                 creditGradeId = x.a.CREDITGRADEID,
+
                 //approvalLevelStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(s=>s.STAFFID == staffId && s.APPROVALLEVELID == x.b.TOAPPROVALLEVELID && s.DELETED == false).FirstOrDefault(),
                 //approvalLevelStaff = x.b.TBL_APPROVAL_LEVEL.TBL_APPROVAL_LEVEL_STAFF.FirstOrDefault(f => f.STAFFID == staffId)
             }).ToList();
@@ -3856,33 +3875,142 @@ namespace FintrakBanking.Repositories.Credit
                     .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
                 var targetId = applications.Select(x => x.loanApplicationId).FirstOrDefault();
-                /*var currentTrailList= context.TBL_APPROVAL_TRAIL.Where(x =>
-                                x.COMPANYID == 1
-                                && x.OPERATIONID == 6
-                                && x.TARGETID == applications[0].loanApplicationId
-                                && x.RESPONSESTAFFID == null
-                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Closed)
-                            ).ToList();*/
 
 
-                var currentLevel = /*currentTrailList.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault()*/31;
-                var approvalLevelStaf = context.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId && s.APPROVALLEVELID == currentLevel && s.DELETED == false).FirstOrDefault();
-                if (approvalLevelStaf != null)
+
+                var nonGridTransactions = applications.Where(x => currentStaffLevel.Contains((int)x.currentApprovalLevelId));
+                //var nonGridTransactions = applications;
+                var visibleApp = new List<LoanApplicationViewModel>();
+                var visibleAppDetail = new List<LoanApplicationViewModel>();
+                
+                foreach (var currentLevel in currentLevelList)
                 {
-                    var investmentGradeApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && approvalLevelStaf.INVESTMENTGRADEAMOUNT <= x.approvedAmount).ToList();
-                    var standardGradeApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && approvalLevelStaf.STANDARDGRADEAMOUNT <= x.approvedAmount).ToList();
-                    var renewalLimitApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && approvalLevelStaf.RENEWALLIMIT <= x.approvedAmount).ToList();
-                    //applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp);
-                    if (investmentGradeApp.Count() > 0 && standardGradeApp.Count() <= 0 && renewalLimitApp.Count() <=0 ) { applications = applications.Except(standardGradeApp).Except(renewalLimitApp); }
-                    if (investmentGradeApp.Count() > 0 && standardGradeApp.Count() > 0 && renewalLimitApp.Count() <= 0) { applications = applications.Except(renewalLimitApp); }
-                    if (investmentGradeApp.Count() > 0 && renewalLimitApp.Count() > 0 && standardGradeApp.Count() <= 0) { applications = applications.Except(standardGradeApp); }
-                    if (standardGradeApp.Count() > 0 && renewalLimitApp.Count() > 0 && investmentGradeApp.Count() <= 0) { applications = applications.Except(investmentGradeApp); }
-                    if (standardGradeApp.Count() > 0 && investmentGradeApp.Count() <= 0 && renewalLimitApp.Count() <= 0) { applications = applications.Except(investmentGradeApp).Except(renewalLimitApp); }
-                    if (renewalLimitApp.Count() > 0 && standardGradeApp.Count() <= 0 && investmentGradeApp.Count() <= 0) { applications = applications.Except(investmentGradeApp).Except(standardGradeApp); }
-                    if (renewalLimitApp.Count() > 0 && standardGradeApp.Count()> 0 && investmentGradeApp.Count> 0) { applications = applications;}
-                    //else { applications = applications.Except(investmentGradeApp).Except(standardGradeApp).Except(renewalLimitApp); }
+                   
+                    var approvalLevelStaf = context.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId && s.APPROVALLEVELID == currentLevel && s.DELETED == false).FirstOrDefault();
+                    if (approvalLevelStaf != null)
+                    {
+                        if (approvalLevelStaf.BASEMINIMUMAMOUNT == null) approvalLevelStaf.BASEMINIMUMAMOUNT = 0;
+                        var investmentGradeApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId 
+                        && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && approvalLevelStaf.BASEMINIMUMAMOUNT <= x.approvedAmount 
+                        && approvalLevelStaf.INVESTMENTGRADEAMOUNT >= x.approvedAmount 
+                        && (x.approvalStatusId != (int)ApprovalStatusEnum.Referred)).ToList();
+
+                        var standardGradeApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId 
+                        && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && approvalLevelStaf.BASEMINIMUMAMOUNT <= x.approvedAmount 
+                        && approvalLevelStaf.STANDARDGRADEAMOUNT >= x.approvedAmount 
+                        && (x.approvalStatusId != (int)ApprovalStatusEnum.Referred)).ToList();
+
+                        var renewalLimitApp = applications.Where(x => x.creditGradeId > 0 &&  approvalLevelStaf.STAFFID == staffId
+                        && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && approvalLevelStaf.BASEMINIMUMAMOUNT <= x.approvedAmount 
+                        && approvalLevelStaf.RENEWALLIMIT >= x.approvedAmount && (x.approvalStatusId != (int)ApprovalStatusEnum.Referred 
+                        && x.loanDetailReviewTypeName.ToLower() != ("initial"))).ToList();
+
+                        if (investmentGradeApp.Count() > 0) {
+                            visibleApp = investmentGradeApp; 
+                        }
+                        
+                        if (investmentGradeApp.Count() > 0 && standardGradeApp.Count() > 0 && renewalLimitApp.Count() == 0) {
+                            visibleApp.AddRange(standardGradeApp);
+                        }
+                        
+                        if (investmentGradeApp.Count() > 0 && renewalLimitApp.Count() > 0 && standardGradeApp.Count() == 0) {
+                            visibleApp.AddRange(renewalLimitApp);
+                        }
+
+                        if (standardGradeApp.Count() > 0 && investmentGradeApp.Count() == 0 && renewalLimitApp.Count() == 0)
+                        {
+                            visibleApp = standardGradeApp;
+                        }
+
+                        if (standardGradeApp.Count() > 0 && renewalLimitApp.Count() > 0 && investmentGradeApp.Count() == 0) {
+                            visibleApp.AddRange(renewalLimitApp);
+                        }
+                        
+                        if (renewalLimitApp.Count() > 0 && standardGradeApp.Count() == 0 && investmentGradeApp.Count() == 0) {
+                            visibleApp = renewalLimitApp;
+                        }
+                        
+                        if (renewalLimitApp.Count() > 0 && standardGradeApp.Count() > 0 && investmentGradeApp.Count > 0) {
+                            applications = applications; 
+                        }
+                        
+                       
+                        visibleAppDetail.AddRange(visibleApp);
+                    }
+                   
                 }
 
+                var approvalGridReferBacks = new List<LoanApplicationViewModel>();
+                foreach (var currentLevel in currentLevelList)
+                {
+
+                    var approvalLevelStaf = context.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId && s.APPROVALLEVELID == currentLevel && s.DELETED == false).FirstOrDefault();
+                    if (approvalLevelStaf != null)
+                    {
+                        if (approvalLevelStaf.BASEMINIMUMAMOUNT == null) approvalLevelStaf.BASEMINIMUMAMOUNT = 0;
+                        var investmentGradeApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId 
+                        && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && approvalLevelStaf.BASEMINIMUMAMOUNT <= x.approvedAmount 
+                        && approvalLevelStaf.INVESTMENTGRADEAMOUNT >= x.approvedAmount && (x.approvalStatusId == (int)ApprovalStatusEnum.Referred 
+                        && x.toStaffId == staffId)).ToList();
+
+                        var standardGradeApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId 
+                        && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && approvalLevelStaf.BASEMINIMUMAMOUNT <= x.approvedAmount 
+                        && approvalLevelStaf.STANDARDGRADEAMOUNT >= x.approvedAmount && (x.approvalStatusId == (int)ApprovalStatusEnum.Referred 
+                        && x.toStaffId == staffId)).ToList();
+
+                        var renewalLimitApp = applications.Where(x => x.creditGradeId > 0 && approvalLevelStaf.STAFFID == staffId 
+                        && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && approvalLevelStaf.BASEMINIMUMAMOUNT <= x.approvedAmount 
+                        && approvalLevelStaf.RENEWALLIMIT >= x.approvedAmount && (x.approvalStatusId == (int)ApprovalStatusEnum.Referred 
+                        && x.toStaffId == staffId && x.loanDetailReviewTypeName.ToLower() != ("initial"))).ToList();
+                       
+
+                        if (investmentGradeApp.Count() > 0)
+                        {
+                            visibleApp = investmentGradeApp; 
+                        }
+
+                        if (investmentGradeApp.Count() > 0 && standardGradeApp.Count() > 0 && renewalLimitApp.Count() == 0)
+                        {
+                            visibleApp.AddRange(standardGradeApp);
+                        }
+
+                        if (investmentGradeApp.Count() > 0 && renewalLimitApp.Count() > 0 && standardGradeApp.Count() == 0)
+                        {
+                            visibleApp.AddRange(renewalLimitApp);
+                        }
+
+                        if (standardGradeApp.Count() > 0 && investmentGradeApp.Count() == 0 && renewalLimitApp.Count() == 0)
+                        {
+                            visibleApp = standardGradeApp;
+                        }
+
+                        if (standardGradeApp.Count() > 0 && renewalLimitApp.Count() > 0 && investmentGradeApp.Count() == 0)
+                        {
+                            visibleApp.AddRange(renewalLimitApp);
+                        }
+
+                        if (renewalLimitApp.Count() > 0 && standardGradeApp.Count() == 0 && investmentGradeApp.Count() == 0)
+                        {
+                            visibleApp = renewalLimitApp;
+                        }
+
+                        if (renewalLimitApp.Count() > 0 && standardGradeApp.Count() > 0 && investmentGradeApp.Count > 0)
+                        {
+                            applications = applications;
+                        }
+
+                        
+                        approvalGridReferBacks.AddRange(visibleApp);
+                    }
+
+                }
+
+                var showApplications = nonGridTransactions;
+                if(visibleAppDetail.Count()> 0 && approvalGridReferBacks.Count()== 0) showApplications = nonGridTransactions.Union(visibleAppDetail);
+                if(visibleAppDetail.Count() > 0 && approvalGridReferBacks.Count() > 0) showApplications = nonGridTransactions.Union(visibleAppDetail).Union(approvalGridReferBacks);
+                if(approvalGridReferBacks.Count() > 0 && visibleAppDetail.Count() == 0) showApplications = nonGridTransactions.Union(approvalGridReferBacks);
+                
+                applications = showApplications.AsQueryable();
                 //var investmentGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.InvestmentGrade && x.approvalLevelStaff.INVESTMENTGRADEAMOUNT > x.approvedAmount).ToList();
                 //var standardGradeApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.StandardGrade && x.approvalLevelStaff.STANDARDGRADEAMOUNT > x.approvedAmount).ToList();
                 //var renewalLimitApp = applications.Where(x => x.approvalLevelStaff != null && x.creditGradeId > 0 && x.approvalLevelStaff.STAFFID == staffId && x.creditGradeId == (int)CreditGradeEnum.RenewalGrade && x.approvalLevelStaff.RENEWALLIMIT > x.approvedAmount).ToList();

@@ -269,7 +269,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal standardGradeLimit { get; set; }
         public decimal renewalLimit { get; set; }
         public TBL_APPROVAL_LEVEL_STAFF approvalLevelStaff { get; set; }
-        
+        public int loanDetailReviewTypeId { get; set; }
+        public string loanDetailReviewTypeName { get; set; }
     }
 
     public class InterestIncomeViewModel

@@ -87,6 +87,7 @@
     <Compile Include="Models\TBL_ALERT_PLACEHOLDER.cs" />
     <Compile Include="Models\TBL_ALERT_SCHEDULE.cs" />
     <Compile Include="Models\TBL_APPROVAL_FLOW_TYPE.cs" />
+    <Compile Include="Models\TBL_APPROVAL_GRID_LEVEL.cs" />
     <Compile Include="Models\TBL_APPROVAL_LEVEL_IDS.cs" />
     <Compile Include="Models\TBL_APPROVED_TRADE_CYCLE.cs" />
     <Compile Include="Models\TBL_ALERT_BINDING_METHODS.cs" />

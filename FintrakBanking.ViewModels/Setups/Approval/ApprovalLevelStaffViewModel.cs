@@ -19,6 +19,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         public decimal? investmentGradeAmount { get; set; }
         public decimal? standardGradeAmount { get; set; }
         public decimal? renewalLimit { get; set; }
+        public decimal? baseMinimumAmount { get; set; }
         public decimal minimumAmount { get; set; }
         public string staffLevelName {get; set; }
         public string approvalLevelName{ get; set; }
@@ -35,5 +36,6 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         public int tempStaffLevelId { get; set; }
         public short approvalStatusId { get; set; }
         public string comment { get; set; }
+        
     }
 }

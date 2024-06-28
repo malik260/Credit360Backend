@@ -5021,7 +5021,7 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
-                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{GetDecision(trail.approvalStatusId)}</td>
                         <td>{trail.comment}</td>
                         <td>{trail.systemArrivalDateTime}</td>
                     </tr>
@@ -5053,7 +5053,7 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
-                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{GetDecision(trail.approvalStatusId)}</td>
                         <td>{trail.comment}</td>
                         <td>{trail.systemArrivalDateTime}</td>
                     </tr>
@@ -5086,7 +5086,7 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
-                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{GetDecision(trail.approvalStatusId)}</td>
                         <td>{trail.comment}</td>
                         <td>{trail.systemArrivalDateTime}</td>
                     </tr>
@@ -5447,7 +5447,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
                         <td>{trail.comment}</td>
-                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{GetDecision(trail.approvalStatusId)}</td>
                         <td>{trail.systemArrivalDateTime}</td>
                     </tr>
                 ";
@@ -12559,7 +12559,7 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
-                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{GetDecision(trail.approvalStatusId)}</td>
                         <td>{trail.comment}</td>
                         <td>{trail.systemArrivalDateTime}</td>
                     </tr>";
@@ -12951,7 +12951,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{trail.fromStaffName}</td>
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.comment}</td>
-                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{GetDecision(trail.approvalStatusId)}</td>
                         <td>{trail.systemArrivalDateTime}</td>
                     </tr>
                 ";
@@ -13437,7 +13437,7 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
-                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{GetDecision(trail.approvalStatusId)}</td>
                         <td>{trail.comment}</td>
                         <td>{trail.systemArrivalDateTime}</td>
                     </tr>

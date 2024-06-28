@@ -26,6 +26,7 @@ namespace FintrakBanking.Entities.Models
         public decimal? INVESTMENTGRADEAMOUNT { get; set; }
         public decimal? STANDARDGRADEAMOUNT { get; set; }
         public decimal? RENEWALLIMIT { get; set; }
+        public decimal? BASEMINIMUMAMOUNT { get; set; }
 
         public short PROCESSVIEWSCOPEID { get; set; }
 
