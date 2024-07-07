@@ -94,6 +94,7 @@
     <Compile Include="Credit\ICollateralValuationRepository.cs" />
     <Compile Include="Credit\ICreditDrawdownRepository.cs" />
     <Compile Include="Credit\IDeferredFeeRepository.cs" />
+    <Compile Include="Credit\IExposureRepository.cs" />
     <Compile Include="Credit\IExternalAlertRepository.cs" />
     <Compile Include="Credit\IFacilityModificationRepository.cs" />
     <Compile Include="Credit\ILcCashBuildUpPlanRepository.cs" />

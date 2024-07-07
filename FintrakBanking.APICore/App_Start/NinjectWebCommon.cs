@@ -286,6 +286,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILcCashBuildUpPlanRepository>().To<LcCashBuildUpPlanRepository>();
             kernel.Bind<ISubsediaryParentController>().To<SubsediaryParentController>();
             kernel.Bind<IDigitalStampRepository>().To<DigitalStampRepository>();
+            kernel.Bind<IExposureRepository>().To<ExposureRepository>();
         }
     }
     

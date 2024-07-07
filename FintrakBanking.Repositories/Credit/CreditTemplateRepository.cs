@@ -418,7 +418,7 @@ namespace FintrakBanking.Repositories.Credit
             }*/
 
             var printedDoc = "";
-            var docSections = context.TBL_DOC_TEMPLATE_DETAIL
+           /* var docSections = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .OrderBy(x => x.POSITION).FirstOrDefault();
 
@@ -436,7 +436,27 @@ namespace FintrakBanking.Repositories.Credit
                     templateSectionId = x.TEMPLATESECTIONID,
                     templateDocument = x.TEMPLATEDOCUMENT, // placeholder find replace
                 })
-                .ToList();
+                .ToList(); */
+
+
+            var rawSectionsQuery = context.TBL_DOC_TEMPLATE_DETAIL
+            .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+            .OrderBy(x => x.POSITION);
+
+            var docSections = rawSectionsQuery.FirstOrDefault();
+
+            var rawSections = rawSectionsQuery
+                .Select(x => new LoadedDocumentSectionViewModel
+                {
+                    position = x.POSITION,
+                    sectionId = x.DOCUMENTDETAILID,
+                    title = x.TITLE,
+                    description = x.DESCRIPTION,
+                    canEdit = x.CANEDIT,
+                    templateSectionId = x.TEMPLATESECTIONID,
+                    templateDocument = x.TEMPLATEDOCUMENT
+                })
+            .ToList();
 
             List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
             if (isThirdPartyFacility)
@@ -1326,10 +1346,10 @@ namespace FintrakBanking.Repositories.Credit
             memo.Init(operationId, targetId);
             //return new ()
             //{
-            //    isLLLViolated = memo.IsLLLViolated(),
-            //    legalLendingLimit = memo.getTotalLLLImpact()
+            var isLLLViolated = memo.IsLLLViolated();
+            var legalLendingLimit = memo.getTotalLLLImpact();
             //}
-            Tuple<bool, decimal> result = new Tuple<bool, decimal>(memo.IsLLLViolated(), memo.getTotalLLLImpact());
+            Tuple<bool, decimal> result = new Tuple<bool, decimal>(isLLLViolated, legalLendingLimit);
             return result;
         }
 

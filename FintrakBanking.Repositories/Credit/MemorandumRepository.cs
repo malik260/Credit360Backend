@@ -24,7 +24,8 @@ namespace FintrakBanking.Repositories.Credit
         // dependencies
         private FinTrakBankingContext context;
         private ICreditLimitValidationsRepository limitValidation;
-        private ILoanRepository loanRepo;
+        //private ILoanRepository loanRepo;
+        private IExposureRepository expRepo;
         private IFinanceTransactionRepository financeTransaction;
         private ITransactionDynamicsRepository transactionsRepo;
         private IConditionPrecedentRepository conditionsRepo;
@@ -35,8 +36,9 @@ namespace FintrakBanking.Repositories.Credit
         public MemorandumRepository(
             FinTrakBankingContext context, 
             ICreditLimitValidationsRepository limitValidation,
-            ILoanRepository loanRepo,
-            IFinanceTransactionRepository financeTransaction,
+            //ILoanRepository loanRepo,
+            IExposureRepository expRepo,
+        IFinanceTransactionRepository financeTransaction,
             ITransactionDynamicsRepository transactionsRepo,
             IConditionPrecedentRepository conditionsRepo,
             ICustomerCollateralRepository collateralRepo,
@@ -46,7 +48,8 @@ namespace FintrakBanking.Repositories.Credit
             this.context = context;
             //this.memo = memo;
             this.limitValidation = limitValidation;
-            this.loanRepo = loanRepo;
+            //this.loanRepo = loanRepo;
+            this.expRepo = expRepo;
             this.financeTransaction = financeTransaction;
             //this.groupRepo = groupRepo;
             this.transactionsRepo = transactionsRepo;
@@ -1222,7 +1225,7 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        public List<DropDownSelect> GetConditionsPrecedentToDrawdown()
+        /*public List<DropDownSelect> GetConditionsPrecedentToDrawdown()
         {
             var result = new List<DropDownSelect>();
             if (this.loanApplication != null)
@@ -1265,7 +1268,65 @@ namespace FintrakBanking.Repositories.Credit
             }
            
             return result;
+        }*/
+        public List<DropDownSelect> GetConditionsPrecedentToDrawdown()
+        {
+            var result = new List<DropDownSelect>();
+
+            if (this.loanApplication != null)
+            {
+                var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL
+                    .Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false)
+                    .Select(x => new { x.LOANAPPLICATIONDETAILID, x.TBL_PRODUCT1.PRODUCTNAME })
+                    .ToList();
+
+                var detailIds = loanDetails.Select(x => x.LOANAPPLICATIONDETAILID).ToList();
+
+                var conditions = conditionsRepo.GetAllConditionPrecedent()
+                    .Where(x => detailIds.Contains(x.loanApplicationDetailId))
+                    .ToList();
+
+                foreach (var condition in conditions)
+                {
+                    if (condition.condition != null)
+                    {
+                        var detail = loanDetails.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == condition.loanApplicationDetailId);
+                        if (detail != null)
+                        {
+                            result.Add(new DropDownSelect { typeId = condition.loanApplicationDetailId, id = condition.conditionId, name = condition.condition, title = detail.PRODUCTNAME });
+                        }
+                    }
+                }
+            }
+            else if (this.lmsrApplication != null)
+            {
+                var lmsrDetails = context.TBL_LMSR_APPLICATION_DETAIL
+                    .Where(x => x.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID && x.DELETED == false)
+                    .Select(x => new { x.LOANREVIEWAPPLICATIONID, x.TBL_PRODUCT.PRODUCTNAME })
+                    .ToList();
+
+                var lmsrDetailIds = lmsrDetails.Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
+
+                var lmsrConditions = conditionsRepo.GetAllConditionPrecedent()
+                    .Where(x => lmsrDetailIds.Contains(x.loanApplicationDetailId))
+                    .ToList();
+
+                foreach (var condition in lmsrConditions)
+                {
+                    if (condition.condition != null)
+                    {
+                        var detail = lmsrDetails.FirstOrDefault(x => x.LOANREVIEWAPPLICATIONID == condition.loanApplicationDetailId);
+                        if (detail != null)
+                        {
+                            result.Add(new DropDownSelect { typeId = condition.loanApplicationDetailId, id = condition.conditionId, name = condition.condition, title = detail.PRODUCTNAME });
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
+
 
         public List<DropDownSelect> GetConditionsPrecedentToDrawdownFacility(int LOANAPPLICATIONDETAILID)
         {
@@ -6342,7 +6403,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<CurrentCustomerExposure> GetCustomerExposure(List<CustomerExposure> customerIds, int companyId) // not used!
         {
-            return loanRepo.GetCurrentCustomerExposure(customerIds, loanApplication.LOANAPPLICATIONTYPEID, companyId); // old ify impl
+            return expRepo.GetCurrentCustomerExposure(customerIds, loanApplication.LOANAPPLICATIONTYPEID, companyId); // old ify impl
         }
 
         public List<CurrentCustomerExposure> GetCustomerExposureLMS(List<CustomerExposure> customerIds, int companyId) // not used!
@@ -6356,7 +6417,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanType = (int)LoanTypeEnum.CustomerGroup;
             }
-            return loanRepo.GetCurrentCustomerExposure(customerIds, loanType, companyId); // old ify impl
+            return expRepo.GetCurrentCustomerExposure(customerIds, loanType, companyId); // old ify impl
         }
 
         // html markup
@@ -6476,7 +6537,7 @@ namespace FintrakBanking.Repositories.Credit
 
         // Environmental & Social Risk Assessment
 
-        public IEnumerable<ESGChecklistSummaryViewModel> GetEnvironmentalSocialRisk()
+        /*public IEnumerable<ESGChecklistSummaryViewModel> GetEnvironmentalSocialRisk()
         {
             return context.TBL_ESG_CHECKLIST_SUMMARY
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.targetId) 
@@ -6488,7 +6549,32 @@ namespace FintrakBanking.Repositories.Credit
                     ratingId = x.s.RATINGID,
                     productCustomerName = x.d.TBL_PRODUCT.PRODUCTNAME + " -- " + x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME
                 }).ToList();
+        }*/
+
+        public IEnumerable<ESGChecklistSummaryViewModel> GetEnvironmentalSocialRisk()
+        {
+            var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL
+                .Where(x => x.LOANAPPLICATIONID == this.targetId)
+                .Select(d => new { d.LOANAPPLICATIONDETAILID, d.TBL_PRODUCT.PRODUCTNAME, d.TBL_CUSTOMER.FIRSTNAME, d.TBL_CUSTOMER.MIDDLENAME, d.TBL_CUSTOMER.LASTNAME });
+
+            var summaries = context.TBL_ESG_CHECKLIST_SUMMARY
+                .Where(s => s.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist)
+                .Join(loanDetails,
+                      s => s.LOANAPPLICATIONDETAILID,
+                      d => d.LOANAPPLICATIONDETAILID,
+                      (s, d) => new { s.LOANAPPLICATIONDETAILID, s.COMMENT_, s.RATINGID, d.PRODUCTNAME, d.FIRSTNAME, d.MIDDLENAME, d.LASTNAME })
+                .AsEnumerable() // Brings data to memory for further operations
+                .Select(x => new ESGChecklistSummaryViewModel
+                {
+                    loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    comment = x.COMMENT_,
+                    ratingId = x.RATINGID,
+                    productCustomerName = String.Concat(x.PRODUCTNAME, " -- ", x.FIRSTNAME, " ", x.MIDDLENAME, " ", x.LASTNAME)
+                }).ToList();
+
+            return summaries;
         }
+
 
         public IEnumerable<ESGChecklistSummaryViewModel> GetGreenLoanIdentificationDetails()
         {
