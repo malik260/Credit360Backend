@@ -3380,7 +3380,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
                             crmsCode = s.CRMSCODE,
-
+                            accountToCredit = (from y in context.TBL_CASA.Where(i => i.CASAACCOUNTID == s.CASAACCOUNTID) select y.PRODUCTACCOUNTNUMBER).FirstOrDefault() +
+                            "(" + (from y in context.TBL_CASA.Where(i => i.CASAACCOUNTID == s.CASAACCOUNTID) select y.PRODUCTACCOUNTNAME).FirstOrDefault() + ")",
                         }).ToList().Take(60);
 
             //var books = data.Where(d => d.loanBookingRequestId == 1380).ToList();
