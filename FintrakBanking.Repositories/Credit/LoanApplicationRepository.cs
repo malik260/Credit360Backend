@@ -3374,8 +3374,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     foreach (var detailId in loanApplicationdetailIds)
                     {
-                        var stampDutyId = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.LOANAPPLICATIONDETAILID == detailId).FirstOrDefault().FACILITYSTAMPDUTYID;
-                        facilityStampDutyIds.Add(stampDutyId);
+                        var stampDutyId = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.LOANAPPLICATIONDETAILID == detailId).FirstOrDefault();
+                        if(stampDutyId != null) facilityStampDutyIds.Add(stampDutyId.FACILITYSTAMPDUTYID);
                     }
                     if (facilityStampDutyIds.Count > 0)
                     {

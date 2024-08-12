@@ -8,6 +8,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using System.Configuration;
 using System.Data.Entity.Validation;
+using System.Linq;
 
 namespace FintrakBanking.APICore.Filters
 {
@@ -82,7 +83,8 @@ namespace FintrakBanking.APICore.Filters
                 context.TBL_ERRORLOG.Add(log);
                 context.SaveChanges();
 
-            string recipients = "augustine.nwaka@fintraksoftware.com;benjamin.gbaaikye@fintraksoftware.com;chisom.okafor@fintraksoftware.com;";
+            string recipients = "augustine.nwaka@fintraksoftware.com;benjamin.gbaaikye@fintraksoftware.com;chisonm.okafor@fintraksoftware.com;";
+            string recipients2 = context.TBL_STAFF.Where(s=>s.STAFFCODE.ToLower() == "supportstaff").Select(s=>s.EMAIL).FirstOrDefault();
 
                 var message = new TBL_MESSAGE_LOG
                 {
@@ -100,7 +102,23 @@ namespace FintrakBanking.APICore.Filters
 
                 context.TBL_MESSAGE_LOG.Add(message);
 
-                context.SaveChanges();
+                var message2 = new TBL_MESSAGE_LOG
+                {
+                    FROMADDRESS = support,
+                    TOADDRESS = recipients,
+                    MESSAGESUBJECT = "UNHANDLED EXCEPTION",
+                    MESSAGEBODY = "<p><b>TIME:</b> " + time + "</p>< p><b>USERNAME:</b> " + (userName == null ? "SYSTEM" : userName) + "</p> <p><b>ENDPOINT:</b> " + endPoint + "</p> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p> <p><b>STACKTRACE:</b> " + ex.StackTrace + "</p> ", // MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                    MESSAGETYPEID = (short)MessageTypeEnum.Email,
+                    DATETIMERECEIVED = time,
+                    SENDONDATETIME = time,
+                    TARGETID = null,
+                    OPERATIONID = null,
+                    MESSAGESTATUSID = 1
+                };
+
+                context.TBL_MESSAGE_LOG.Add(message2);
+
+            context.SaveChanges();
             //  trans.Commit();
             //}
         }

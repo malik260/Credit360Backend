@@ -777,10 +777,10 @@ namespace FintrakBanking.Repositories.Credit
                         //workflow.ProductId = null;
                         workflow.ExclusiveFlowChangeId = null;
                         var productId = appl.PRODUCTID != null ? appl.PRODUCTID : appl.TBL_LOAN_APPLICATION_DETAIL.First().APPROVEDPRODUCTID;
-                    //if (productId == 20 && (appl.APPLICATIONAMOUNT <= 5000000)) //Cashflow streamline
-                    //{
-                    //    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
-                    //}
+                    if (productId == 416 && (appl.APPLICATIONAMOUNT <= 5000000)) //Cashflow streamline
+                    {
+                        appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
+                    }
 
                     if ((productId == 156 || productId == 228 || productId == 297 || productId == 354) && model.isFlowTest == false) //for IBL - 50M Workflow
                         {
