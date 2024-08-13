@@ -2591,12 +2591,17 @@ namespace FintrakBanking.APICore.Controllers
             entity.userIPAddress = Request.RequestUri.Host;
             entity.createdBy = token.GetStaffId;
 
-            bool data = repo.GoForDocumentationFillingApproval(entity);
+            var data = repo.GoForDocumentationFillingApproval(entity);
 
-            if (data)
+            if (data == 1)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Approved" });
+                new { success = true, message = "Approved" });
+            }
+            else if (data == 2)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, message = "Disapproved" });
             }
             else
             {

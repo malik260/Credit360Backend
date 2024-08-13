@@ -39804,7 +39804,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public bool GoForDocumentationFillingApproval(ApprovalViewModel entity)
+        public int GoForDocumentationFillingApproval(ApprovalViewModel entity)
         {
             var dataTermLoans = (from b in context.TBL_DOCUMENTATION_FILLING_APPROVAL
                                  join a in context.TBL_LOAN on b.LOANID equals a.TERMLOANID
@@ -40062,25 +40062,43 @@ namespace FintrakBanking.Repositories.Credit
 
                 var requestApproval = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Find(entity.targetId);
                 var termLoan = this.context.TBL_LOAN.Find(model.loanId);
-                if (termLoan != null && entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                if (termLoan != null)
                 {
-                    termLoan.ISPRINTED = true;
-                    requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
-
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                    {
+                        termLoan.ISPRINTED = true;
+                        requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
+                    }
+                    else
+                    {
+                        context.TBL_DOCUMENTATION_FILLING_APPROVAL.Remove(requestApproval);
+                    }
                 }
                 var contingentLoan = this.context.TBL_LOAN_CONTINGENT.Find(model.loanId);
-                if (contingentLoan != null && entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                if (contingentLoan != null)
                 {
-                    contingentLoan.ISPRINTED = true;
-                    requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
-
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                    {
+                        contingentLoan.ISPRINTED = true;
+                        requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
+                    }
+                    else
+                    {
+                        context.TBL_DOCUMENTATION_FILLING_APPROVAL.Remove(requestApproval);
+                    }
                 }
                 var revolvingLoan = this.context.TBL_LOAN_REVOLVING.Find(model.loanId);
-                if (revolvingLoan != null && entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                if (revolvingLoan != null)
                 {
-                    revolvingLoan.ISPRINTED = true;
-                    requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
-
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                    {
+                        revolvingLoan.ISPRINTED = true;
+                        requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
+                    }
+                    else
+                    {
+                        context.TBL_DOCUMENTATION_FILLING_APPROVAL.Remove(requestApproval);
+                    }
                 }
             }
             else
@@ -40092,25 +40110,43 @@ namespace FintrakBanking.Repositories.Credit
 
                 
                 var termLoan = this.context.TBL_LOAN.Find(model.loanId);
-                if (termLoan != null && entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                if (termLoan != null)
                 {
-                    reviewOperation.ISPRINTED = true;
-                    requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
-
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                    {
+                        reviewOperation.ISPRINTED = true;
+                        requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
+                    }
+                    else
+                    {
+                        context.TBL_DOCUMENTATION_FILLING_APPROVAL.Remove(requestApproval);
+                    }
                 }
                 var contingentLoan = this.context.TBL_LOAN_CONTINGENT.Find(model.loanId);
-                if (contingentLoan != null && entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                if (contingentLoan != null)
                 {
-                    reviewOperation.ISPRINTED = true;
-                    requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
-
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                    {
+                        reviewOperation.ISPRINTED = true;
+                        requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
+                    }
+                    else
+                    {
+                        context.TBL_DOCUMENTATION_FILLING_APPROVAL.Remove(requestApproval);
+                    }
                 }
                 var revolvingLoan = this.context.TBL_LOAN_REVOLVING.Find(model.loanId);
-                if (revolvingLoan != null && entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                if (revolvingLoan != null)
                 {
-                    reviewOperation.ISPRINTED = true;
-                    requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
-
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                    {
+                        reviewOperation.ISPRINTED = true;
+                        requestApproval.APPROVALSTATUSID = (int)entity.approvalStatusId;
+                    }
+                    else
+                    {
+                        context.TBL_DOCUMENTATION_FILLING_APPROVAL.Remove(requestApproval);
+                    }
                 }
             }
             var auditStaff = context.TBL_STAFF.Where(x => x.STAFFID == entity.createdBy).Select(x => x.STAFFCODE).FirstOrDefault();
@@ -40129,9 +40165,14 @@ namespace FintrakBanking.Repositories.Credit
                 SYSTEMDATETIME = DateTime.Now
             });
             // Audit Section end ------------------------
-            if (context.SaveChanges() > 0) return true;
-
-            return false;
+            //if (await context.SaveChangesAsync() > 0) return true;
+            if (context.SaveChanges() > 0)
+            {
+                if (entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) return 1;
+                else if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved) return 2;
+            }
+            return 3;
+            //return false;
 
         }
 
