@@ -35,12 +35,20 @@ namespace FintrakBanking.Repositories.Credit
         public int AddLoanDocument(LoanDocumentViewModel model, byte[] file)
         {
             var existing = docContext.TBL_MEDIA_LOAN_DOCUMENTS
-                .Where(x => x.FILENAME == model.fileName
+                .Where(x => x.DOCUMENTTITLE == model.documentTitle
+                    && x.FILENAME == model.fileName
                     && x.FILEEXTENSION == model.fileExtension
                     && x.LOANREFERENCENUMBER == model.loanReferenceNumber
-                    );
+                    && x.PHYSICALFILENUMBER == model.physicalFileNumber
+                    && x.PHYSICALLOCATION == model.physicalLocation
+                    ).ToList();
+
+            var existingFileNumber = docContext.TBL_MEDIA_LOAN_DOCUMENTS
+                .Where(x => x.PHYSICALFILENUMBER == model.physicalFileNumber).ToList();
 
             if (existing.Count() > 0 && model.overwrite == false) return 3;
+
+            if (existingFileNumber.Count() > 0 && model.overwrite == false) return 4;
 
             if (existing.Count() > 0 && model.overwrite == true)
             {
