@@ -2044,6 +2044,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.LogActivity();
                     }
                         data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    model.responseMessage = workflow.Response.responseMessage;
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)

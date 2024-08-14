@@ -1402,7 +1402,7 @@ namespace FintrakBanking.APICore.Controllers
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-             new { success = true, message = "The Checklist Status has been submitted successfully" });
+             new { success = true, message = "The Checklist Status has been submitted successfully " + models[0].responseMessage });
             }
 
             return Request.CreateResponse(HttpStatusCode.OK,

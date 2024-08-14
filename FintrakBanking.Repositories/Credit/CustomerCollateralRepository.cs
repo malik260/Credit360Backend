@@ -5353,7 +5353,7 @@ namespace FintrakBanking.Repositories.Credit
                 localGovtName = x.TBL_LOCALGOVERNMENT.NAME,
                 localGovernmentId = x.LOCALGOVERNMENTID,
                 bankShareOfCollateral = x.BANKSHAREOFCOLLATERAL,
-
+                propertyBaseType = context.TBL_COLLATERAL_VALUEBASE_TYPE.Where(t=>t.COLLATERALVALUEBASETYPEID == x.PROPERTYVALUEBASETYPEID).FirstOrDefault().VALUEBASETYPENAME,
                 description = x.PROPERTYNAME,
                 valuationDate = x.LASTVALUATIONDATE,
                 lastValuationAmount = x.VALUATIONAMOUNT,
