@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int bookingRequestId { get; set; }
 
         public string divisionCode { get; set; }
-
+        public string accountToCredit { get; set; }
         public bool iblRequest { get; set; }
         public int iblRequestMark { get; set; }
         public string approvedProductName { get; set; }
