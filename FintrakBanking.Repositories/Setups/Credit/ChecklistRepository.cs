@@ -20,6 +20,7 @@ using System.ServiceModel;
 using System.Data.Entity;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Configuration;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -4286,7 +4287,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationDetailViewModel> GetAllFacilityDetails(int loanApplicationId, int companyId)
         {
+            var dats = new List<LoanApplicationDetailViewModel>();
             var esgDetailIds = (from a in context.TBL_ESG_CHECKLIST_DETAIL select a.LOANAPPLICATIONDETAILID).ToList();
+            var loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == loanApplicationId).ToList();
+            var loanApplicationDetailIds = loanApplicationDetail.Select(d => d.LOANAPPLICATIONDETAILID).ToList();
+          if (!esgDetailIds.Contains(loanApplicationDetailIds[0])) { return dats;  }
 
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL

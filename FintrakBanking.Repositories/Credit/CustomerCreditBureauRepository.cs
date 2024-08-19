@@ -400,7 +400,9 @@ namespace FintrakBanking.Repositories.Credit
             if (data != null)
                 data.ISREPORTOKAY = status;
 
-            return context.SaveChanges() > 0;
+            context.SaveChanges();
+
+            return true;
         }
 
         public bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBureauViewModel> model)
