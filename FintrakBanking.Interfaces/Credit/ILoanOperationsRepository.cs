@@ -40,7 +40,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<RetailLoanRecoveryCommissionViewModel> getAllRecoveryCommissonByAgents(int staffId, int companyId, DateTime month);
         IEnumerable<MultipleInsuranceOutputApprovalViewModel> GetBulkInsuranceUploadRejectedApproval(int staffId, int companyId);
         IEnumerable<GlobalExposureApplicationViewModel> GetAllLoansRecoveredByAgents(int staffId, int companyId);
-        bool GoForDocumentationFillingApproval(ApprovalViewModel entity);
+        //bool GoForDocumentationFillingApproval(ApprovalViewModel entity);
+        int GoForDocumentationFillingApproval(ApprovalViewModel entity);
         WorkflowResponse GoForBulkInsuranceUploadApproval(ApprovalViewModel entity);
         WorkflowResponse GoForMultipleBulkInsuranceUploadApproval(List<MultipleInsuranceOutputViewModel> entity, UserInfo user, int approvalStatusId, string comment);
         IEnumerable<CamProcessedLoanViewModel> GetLoanOperationDocumentationLosApproval(int staffId, int companyId);

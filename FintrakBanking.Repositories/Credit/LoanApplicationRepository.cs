@@ -9117,8 +9117,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach (var detailId in loanApplicationdetailIds)
                 {
-                    var stampDutyId = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.LOANAPPLICATIONDETAILID == detailId).FirstOrDefault().FACILITYSTAMPDUTYID;
-                    facilityStampDutyIds.Add(stampDutyId);
+                    bool stampDutyApplicable = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == detailId).Select(l => l.STAMPDUTYAPPLICABLE == true).FirstOrDefault();
+                    if (stampDutyApplicable)
+                    {
+                        var stampDutyId = context.TBL_FACILITY_STAMP_DUTY.Where(s => s.LOANAPPLICATIONDETAILID == detailId).FirstOrDefault().FACILITYSTAMPDUTYID;
+                        facilityStampDutyIds.Add(stampDutyId);
+                    }
                 }
                 if(facilityStampDutyIds.Count > 0)
                 {
@@ -9141,7 +9145,16 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-            
+
+            if (model.isProjectRelated == false)
+            {
+                var existing_contractor_tiering = context.TBL_CONTRACTOR_TIERING.Where(x => x.LOANAPPLICATIONID == id).ToList();
+                if (existing_contractor_tiering != null)
+                {
+                    context.TBL_CONTRACTOR_TIERING.RemoveRange(existing_contractor_tiering);
+                };
+            }
+
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.staffId).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.auditTrail.AddAuditTrail(new TBL_AUDIT
