@@ -985,6 +985,72 @@ namespace FintrakBanking.Repositories.Credit
                         // CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
                     }
 
+                    if (applicationdetail.STAMPDUTYAPPLICABLE)
+                    {
+                        var apiResult = new PostingResult();
+                        var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.LOANAPPLICATIONDETAILID == applicationdetail.LOANAPPLICATIONDETAILID && f.DELETED == false).FirstOrDefault();
+                        var appCol = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONDETAILID == stampDuty.LOANAPPLICATIONDETAILID && c.DELETED == false).FirstOrDefault();
+                        var col = context.TBL_COLLATERAL_CUSTOMER.Where(co => co.COLLATERALCUSTOMERID == stampDuty.COLLATERALCUSTOMERID).FirstOrDefault();
+                        var stampCon = context.TBL_STAMP_DUTY_CONDITION.Where(s => s.COLLATERALSUBTYPEID == col.COLLATERALSUBTYPEID).FirstOrDefault();
+                        var stampFeeId = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(fixed)") && s.DELETED == false).FirstOrDefault().CHARGEFEEID;
+                        var stampFee = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == applicationdetail.LOANAPPLICATIONDETAILID && f.CHARGEFEEID == stampFeeId).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE;
+                        var stampDutyAmount = applicationdetail.APPROVEDAMOUNT * (stampCon.DUTIABLEVALUE / 100);
+                        decimal bankShare = 0;
+                        decimal customerShare = stampDutyAmount * (stampDuty.CUSTOMERPERCENTAGE / 100) + (decimal)stampFee;
+                        if (stampDuty.COLLECTED == false)
+                        {
+                            if (stampDuty.ISSHARED)
+                            {
+                                bankShare = stampDutyAmount * (stampDuty.BANKPERCENTAGE / 100);
+                                //customerShare = stampDutyAmount * (stampDuty.CUSTOMERPERCENTAGE / 100);
+
+                                StampDutyPostingViewModel stampDutySharedModel = new StampDutyPostingViewModel()
+                                {
+                                    reference = application.APPLICATIONREFERENCENUMBER,
+                                    appId = "FINTRAK",
+                                    userId = "STAMPDUTY",
+                                    currency = "NGN",
+                                    branchCode = model.branchCode,
+                                    tranCode = "LSD",
+                                    custAccNumber = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME == "STAMP DUTY ON LOANS COLLECTION GL").FirstOrDefault().ACCOUNTCODE,
+                                    custAccName = "STAMP DUTY ON LOANS COLLECTION GL",
+                                    bankTillName = "STAMP DUTY PAYABLE",
+                                    bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME == "STAMP DUTY ON LOANS PAYABLE GL").FirstOrDefault().ACCOUNTCODE,//To be provided,
+                                    amount = bankShare,
+                                };
+
+                                if (USE_THIRD_PARTY_INTEGRATION)
+                                {
+                                    apiResult = integration.PostStampDutyInputs(stampDutySharedModel);
+                                }
+                            }
+
+                            StampDutyPostingViewModel stampDutyModel = new StampDutyPostingViewModel()
+                            {
+                                reference = application.APPLICATIONREFERENCENUMBER,
+                                appId = "FINTRAK",
+                                userId = "STAMPDUTY",
+                                currency = "NGN",
+                                branchCode = model.branchCode,
+                                tranCode = "LSD",
+                                custAccNumber = context.TBL_CASA.Where(c => c.CASAACCOUNTID == model.casaAccountId).FirstOrDefault().PRODUCTACCOUNTNUMBER,// entity.casaAccountNumber,
+                                custAccName = context.TBL_CASA.Where(c => c.CASAACCOUNTID == model.casaAccountId).FirstOrDefault().PRODUCTACCOUNTNAME,//   entity.casaAccountDetails,
+                                bankTillName = "STAMP DUTY PAYABLE",
+                                bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME == "STAMP DUTY ON LOANS PAYABLE GL").FirstOrDefault().ACCOUNTCODE,//To be provided,
+                                amount = customerShare,
+                            };
+                            //var apiResult = new PostingResult();
+                            if (USE_THIRD_PARTY_INTEGRATION)
+                            {
+                                apiResult = integration.PostStampDutyInputs(stampDutyModel);
+                                stampDuty.COLLECTED = true;
+                            }
+
+
+                        }
+
+                    }
+
                     context.SaveChanges();
 
                     trans.Commit();
@@ -1230,6 +1296,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
                     //CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
+
+
 
                     context.SaveChanges();
 
@@ -1972,7 +2040,71 @@ namespace FintrakBanking.Repositories.Credit
 
                         var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
                         //CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
+                        if (applicationDetail.STAMPDUTYAPPLICABLE)
+                        {
+                            var apiResult = new PostingResult();
+                            var stampDuty = context.TBL_FACILITY_STAMP_DUTY.Where(f => f.LOANAPPLICATIONDETAILID == applicationDetail.LOANAPPLICATIONDETAILID && f.DELETED == false).FirstOrDefault();
+                            var appCol = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONDETAILID == stampDuty.LOANAPPLICATIONDETAILID && c.DELETED == false).FirstOrDefault();
+                            var col = context.TBL_COLLATERAL_CUSTOMER.Where(co => co.COLLATERALCUSTOMERID == stampDuty.COLLATERALCUSTOMERID).FirstOrDefault();
+                            var stampCon = context.TBL_STAMP_DUTY_CONDITION.Where(s => s.COLLATERALSUBTYPEID == col.COLLATERALSUBTYPEID).FirstOrDefault();
+                            var stampFeeId = context.TBL_CHARGE_FEE.Where(s => s.CHARGEFEENAME.ToLower().Contains("(fixed)") && s.DELETED == false).FirstOrDefault().CHARGEFEEID;
+                            var stampFee = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == applicationDetail.LOANAPPLICATIONDETAILID && f.CHARGEFEEID == stampFeeId).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE;
+                            var stampDutyAmount = applicationDetail.APPROVEDAMOUNT * (stampCon.DUTIABLEVALUE / 100);
+                            decimal bankShare = 0;
+                            decimal customerShare = stampDutyAmount * (stampDuty.CUSTOMERPERCENTAGE / 100) + (decimal)stampFee;
+                            if (stampDuty.COLLECTED == false)
+                            {
+                                if (stampDuty.ISSHARED)
+                                {
+                                    bankShare = stampDutyAmount * (stampDuty.BANKPERCENTAGE / 100);
+                                    //customerShare = stampDutyAmount * (stampDuty.CUSTOMERPERCENTAGE / 100);
 
+                                    StampDutyPostingViewModel stampDutySharedModel = new StampDutyPostingViewModel()
+                                    {
+                                        reference = application.APPLICATIONREFERENCENUMBER,
+                                        appId = "FINTRAK",
+                                        userId = "STAMPDUTY",
+                                        currency = "NGN",
+                                        branchCode = entity.branchCode,
+                                        tranCode = "LSD",
+                                        custAccNumber = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME == "STAMP DUTY ON LOANS COLLECTION GL").FirstOrDefault().ACCOUNTCODE,
+                                        custAccName = "STAMP DUTY ON LOANS COLLECTION GL",
+                                        bankTillName = "STAMP DUTY PAYABLE",
+                                        bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME == "STAMP DUTY ON LOANS PAYABLE GL").FirstOrDefault().ACCOUNTCODE,//To be provided,
+                                        amount = bankShare,
+                                    };
+
+                                    if (USE_THIRD_PARTY_INTEGRATION)
+                                    {
+                                        apiResult = integration.PostStampDutyInputs(stampDutySharedModel);
+                                    }
+                                }
+
+                                StampDutyPostingViewModel stampDutyModel = new StampDutyPostingViewModel()
+                                {
+                                    reference = application.APPLICATIONREFERENCENUMBER,
+                                    appId = "FINTRAK",
+                                    userId = "STAMPDUTY",
+                                    currency = "NGN",
+                                    branchCode = entity.branchCode,
+                                    tranCode = "LSD",
+                                    custAccNumber = context.TBL_CASA.Where(c => c.CASAACCOUNTID == entity.casaAccountId).FirstOrDefault().PRODUCTACCOUNTNUMBER,// entity.casaAccountNumber,
+                                    custAccName = context.TBL_CASA.Where(c => c.CASAACCOUNTID == entity.casaAccountId).FirstOrDefault().PRODUCTACCOUNTNAME,//   entity.casaAccountDetails,
+                                    bankTillName = "STAMP DUTY PAYABLE",
+                                    bankTillAccount = context.TBL_CHART_OF_ACCOUNT.Where(c => c.ACCOUNTNAME == "STAMP DUTY ON LOANS PAYABLE GL").FirstOrDefault().ACCOUNTCODE,//To be provided,
+                                    amount = customerShare,
+                                };
+                                //var apiResult = new PostingResult();
+                                if (USE_THIRD_PARTY_INTEGRATION)
+                                {
+                                    apiResult = integration.PostStampDutyInputs(stampDutyModel);
+                                    stampDuty.COLLECTED = true;
+                                }
+
+
+                            }
+
+                        }
                         context.SaveChanges();
 
                         //.....Commit transaction ............

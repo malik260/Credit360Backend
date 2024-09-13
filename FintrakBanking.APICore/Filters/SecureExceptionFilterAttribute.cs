@@ -105,7 +105,7 @@ namespace FintrakBanking.APICore.Filters
                 var message2 = new TBL_MESSAGE_LOG
                 {
                     FROMADDRESS = support,
-                    TOADDRESS = recipients,
+                    TOADDRESS = recipients2,
                     MESSAGESUBJECT = "UNHANDLED EXCEPTION",
                     MESSAGEBODY = "<p><b>TIME:</b> " + time + "</p>< p><b>USERNAME:</b> " + (userName == null ? "SYSTEM" : userName) + "</p> <p><b>ENDPOINT:</b> " + endPoint + "</p> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p> <p><b>STACKTRACE:</b> " + ex.StackTrace + "</p> ", // MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                     MESSAGETYPEID = (short)MessageTypeEnum.Email,
