@@ -14472,8 +14472,7 @@ namespace FintrakBanking.Repositories.Credit
                           }).ToList();
             foreach (var rec in record)
             {
-                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault().RECOMMENDED_FEERATEVALUE;
-                var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralSubTypeId).FirstOrDefault();
+                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE == null ? 0 : context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE; var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralSubTypeId).FirstOrDefault();
                 var dutyCharge = (rec.loanAmount * (condValue.DUTIABLEVALUE / 100)) + rec.fixedDutyCharge;
                 rec.stampDutyAmount = (decimal)dutyCharge;
                 rec.documentTypeId = documentContext.TBL_DOCUMENT_TYPE.Where(d => d.DOCUMENTTYPENAME == "STAMP DUTY CERTIFICATE").FirstOrDefault().DOCUMENTTYPEID;
@@ -14524,7 +14523,7 @@ namespace FintrakBanking.Repositories.Credit
                           }).ToList();
             foreach (var rec in record)
             {
-                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault().RECOMMENDED_FEERATEVALUE;
+                rec.fixedDutyCharge = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE == null ? 0 : context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == rec.loanApplicationDetailId && f.CHARGEFEEID == fixedCharge.CHARGEFEEID).FirstOrDefault()?.RECOMMENDED_FEERATEVALUE;
                 var condValue = cond.Where(c => c.COLLATERALSUBTYPEID == rec.collateralSubTypeId).FirstOrDefault();
                 var dutyCharge = (rec.loanAmount * (condValue.DUTIABLEVALUE / 100)) + rec.fixedDutyCharge;
                 rec.stampDutyAmount = (decimal)dutyCharge;
