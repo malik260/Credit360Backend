@@ -197,6 +197,31 @@
     <Compile Include="Customer\CustomerViewModels.cs" />
     <Compile Include="DataMigration\BranchViewModel.cs" />
     <Compile Include="ErrorLogger\ErrorViewModel.cs" />
+    <Compile Include="External\Customer\AffordabilityViewModel.cs" />
+    <Compile Include="External\Customer\ContactAddressForCustomer.cs" />
+    <Compile Include="External\Customer\ContactPhoneNoForCustomer.cs" />
+    <Compile Include="External\Customer\DirectorInfoForCustomerCreation.cs" />
+    <Compile Include="External\Customer\ExistingCorporateCustomerForCreation.cs" />
+    <Compile Include="External\Customer\ExistingIndividualCustomerForCreation.cs" />
+    <Compile Include="External\Customer\InsiderRelated.cs" />
+    <Compile Include="External\Customer\NextOfKin.cs" />
+    <Compile Include="External\Customer\ProspectCorporateCustomerForCreation.cs" />
+    <Compile Include="External\Customer\ProspectCustomerForCreation.cs" />
+    <Compile Include="External\Customer\ProspectIndividualCustomerForCreation.cs" />
+    <Compile Include="External\Customer\UpdateCustomer.cs" />
+    <Compile Include="External\Document\CustomerUploadedDocumentForReturn.cs" />
+    <Compile Include="External\Document\LoanUploadDocumentForReturn.cs" />
+    <Compile Include="External\General\LookupForReturn.cs" />
+    <Compile Include="External\Loan\InvoiceDetailForCreation.cs" />
+    <Compile Include="External\Loan\LoanApplicationDetailForCreation.cs" />
+    <Compile Include="External\Loan\LoanApplicationDetailForReturn.cs" />
+    <Compile Include="External\Loan\LoanApplicationForCreation.cs" />
+    <Compile Include="External\Loan\LoanApplicationForReturn.cs" />
+    <Compile Include="External\Loan\LoanEligibilityForInquiry.cs" />
+    <Compile Include="External\Loan\LoanEligibilityForReturn.cs" />
+    <Compile Include="External\Loan\LoanPaymentScheduleVM.cs" />
+    <Compile Include="External\Loan\TraderLoanForCreation.cs" />
+    <Compile Include="External\Product\ProductForReturn.cs" />
     <Compile Include="Finance\CurrencyExchangeRateViewModel.cs" />
     <Compile Include="CASA\CasaLienViewModel.cs" />
     <Compile Include="Finance\EndOfDayViewModel.cs" />
@@ -338,6 +363,7 @@
       <Name>FintrakBanking.Entities</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

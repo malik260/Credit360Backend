@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.External.Product;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -218,10 +219,31 @@ namespace FintrakBanking.Repositories.Setups.General
             }
 
 
+            public async Task<List<ProductForReturn>> GetAllExternalProductAsync()
+            {
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+                    var productData = await (from data in context.TBL_PRODUCT
+
+                                             where data.DELETED == false && data.ISEXTERNAL == true
+                                             orderby data.PRODUCTNAME ascending
+                                             select new ProductForReturn
+                                             {
+                                                 productId = data.PRODUCTID,
+                                                 productCode = data.PRODUCTCODE,
+                                                 productName = data.PRODUCTNAME,
+                                                 productDescription = data.PRODUCTDESCRIPTION,
+                                                 productTenor = data.MAXIMUMTENOR
+
+                                             }).ToListAsync();
+
+                    return productData;
+                }
+            }
 
 
-            #region Product Group
-            public IEnumerable<ProductGroupViewModel> GetAllProductGroup()
+        #region Product Group
+        public IEnumerable<ProductGroupViewModel> GetAllProductGroup()
             {
                 return (from p in context.TBL_PRODUCT_GROUP
                         where p.DELETED == false

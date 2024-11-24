@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.External.Product;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
@@ -128,5 +129,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateProductDocumentMapping(ProductDocumentMappingViewModel model);
 
         ProductDocumentMappingViewModel GetProductDocumenetMapping(int Id);
+        Task<List<ProductForReturn>> GetAllExternalProductAsync();
     }
 }

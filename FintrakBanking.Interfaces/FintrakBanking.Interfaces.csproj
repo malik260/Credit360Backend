@@ -112,6 +112,9 @@
     <Compile Include="Credit\ITestCollateralRepository.cs" />
     <Compile Include="Credit\IValuationReportRepository.cs" />
     <Compile Include="Credit\IValuationRequestTypeRepository.cs" />
+    <Compile Include="External\ICustomerRepositoryExternal.cs" />
+    <Compile Include="External\IGeneralRepositoryExternal.cs" />
+    <Compile Include="External\ILoanRepositoryExternal.cs" />
     <Compile Include="Media\IDocumentCategoryRepository.cs" />
     <Compile Include="Media\IDocumentCategoryTypeRepository.cs" />
     <Compile Include="Media\IDocumentTypeRepository.cs" />

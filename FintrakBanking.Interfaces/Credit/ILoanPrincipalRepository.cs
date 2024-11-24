@@ -18,5 +18,6 @@ namespace FintrakBanking.Interfaces.Credit
         string UpdateLoanPrincipal(LoanPrincipalViewModel loanPrincipal);
 
         string DeleteLoanPrincipal(LoanPrincipalViewModel loanPrincipal);
+        List<LoanPrincipalViewModel> GetLoanPrincipal();
     }
 }

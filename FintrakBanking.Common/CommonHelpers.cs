@@ -668,6 +668,15 @@ namespace FintrakBanking.Common
 
         }
 
+        public static string[] FileTypes
+        {
+            get
+            {
+                string[] fileTypes = { "docx", "pdf", "PDF", "JPG", "JPEG", "PNG", "TXT", "jpg", "jpeg", "png", "txt", "xlsx", "xls", "doc", "xml", "zip", "rar", "msg", "MSG" };
+
+                return fileTypes;
+            }
+        }
 
 
 

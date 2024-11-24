@@ -339,6 +339,24 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
+        public List<SectorViewModel> GetSubSectorsBySector(int sectorId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = (from cs in context.TBL_SUB_SECTOR
+                            where cs.SECTORID == sectorId
+                            orderby cs.NAME ascending
+                            select new SectorViewModel()
+                            {
+                                subSectorId = (short)cs.SUBSECTORID,
+                                sectorId = (short)cs.TBL_SECTOR.SECTORID,
+                                sectorName = cs.NAME,
+                                sectorCode = cs.CODE,
+                            }).Distinct();
+
+                return data.ToList();
+            }
+        }
         public void ValidateAgainstCompanyLimit(int companyId, decimal? limit)
         {
             var company = context.TBL_COMPANY.Find(companyId);

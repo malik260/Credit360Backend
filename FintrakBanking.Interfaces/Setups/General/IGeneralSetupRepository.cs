@@ -50,6 +50,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateGlobalSector(GlobalSectorViewModel model, int id);
 
         IEnumerable<SectorViewModel> GetSectorsBySubSectorId(short ssId);
+        List<SectorViewModel> GetSubSectorsBySector(int sectorId);
 
         IEnumerable<SectorViewModel> GetAllSubSectors();
 

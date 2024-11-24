@@ -11,4 +11,13 @@ namespace FintrakBanking.Common.Enum
         LoanApplicationApprovalOuputDocument =30,
         InsurancePolicy = 147
     }
+
+    public enum LoanDocumentTypeEnum
+    {
+        Legal = 1,
+        Collateral = 2,
+        BankStatement = 3,
+        Others = 4,
+        BookingRequest = 5
+    }
 }

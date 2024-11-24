@@ -188,6 +188,31 @@ namespace FintrakBanking.Repositories.Credit
             return "The record has not been updated";
         }
 
-        
+        public List<LoanPrincipalViewModel> GetLoanPrincipal()
+        {
+            using (var _context = new FinTrakBankingContext())
+            {
+
+                var data = (from o in _context.TBL_LOAN_PRINCIPAL
+                            where o.DELETED == false
+                            orderby o.NAME
+                            select new LoanPrincipalViewModel
+                            {
+
+                                accountNumber = o.ACCOUNTNUMBER,
+                                address = o.ADDRESS,
+                                emailAddress = o.EMAILADDRESS,
+                                name = o.NAME,
+                                phoneNumber = o.PHONENUMBER,
+                                principalsRegNumber = o.PRINCIPALSREGNUMBER,
+                                principalId = o.PRINCIPALID,
+
+                            }).ToList();
+
+                return data;
+
+
+            }
+        }
     }
 }

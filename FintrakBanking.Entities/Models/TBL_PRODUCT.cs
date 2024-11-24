@@ -159,6 +159,8 @@ namespace FintrakBanking.Entities.Models
         public bool USEDBYLOS { get; set; }
 
         public decimal? WRITEOFFRATE { get; set; }
+        public decimal? MAXIMUMAMOUNT { get; set; }
+        public bool? ISEXTERNAL { get; set; }
 
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

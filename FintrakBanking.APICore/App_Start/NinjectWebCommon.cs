@@ -81,6 +81,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Entities.AlertReportingModels;
     using FinTrakBanking.ThirdPartyIntegration.HeadOfficeToSub;
     using FintrakBanking.AccessSubsediary;
+    using FintrakBanking.Interfaces.External;
+    using FintrakBanking.Repositories.External;
 
     public static class NinjectWebCommon
     {
@@ -287,6 +289,9 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ISubsediaryParentController>().To<SubsediaryParentController>();
             kernel.Bind<IDigitalStampRepository>().To<DigitalStampRepository>();
             kernel.Bind<IExposureRepository>().To<ExposureRepository>();
+            kernel.Bind<ICustomerRepositoryExternal>().To<CustomerRepositoryExternal>();
+            kernel.Bind<IGeneralRepositoryExternal>().To<GeneralRepositoryExternal>();
+            kernel.Bind<ILoanRepositoryExternal>().To<LoanRepositoryExternal>();
         }
     }
     
