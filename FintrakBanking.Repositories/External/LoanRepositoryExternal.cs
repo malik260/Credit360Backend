@@ -259,11 +259,11 @@ namespace FintrakBanking.Repositories.External
 
                                 let atrail = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == x.LOANAPPLICATIONID && operations.Contains(o.OPERATIONID)).OrderByDescending(r => r.APPROVALTRAILID).ThenByDescending(w => w.SYSTEMARRIVALDATETIME).FirstOrDefault()
                                 let branchRegion = context.TBL_BRANCH_REGION.Where(o => o.REGIONID == x.CAPREGIONID).FirstOrDefault()
-                                let availmentRegion = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID2).FirstOrDefault() : null
+                                //let availmentRegion = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID2).FirstOrDefault() : null
                                 let houStaff = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID).FirstOrDefault() : null
-                                let availmentStaff = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID2).FirstOrDefault() : null
+                                //let availmentStaff = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID2).FirstOrDefault() : null
                                 let houStaffRec = x.CAPREGIONID != null ? context.TBL_STAFF.Where(o => o.STAFFID == houStaff.STAFFID).FirstOrDefault() : null
-                                let availmentStaffRec = x.CAPREGIONID != null ? context.TBL_STAFF.Where(o => o.STAFFID == availmentStaff.STAFFID).FirstOrDefault() : null
+                                //let availmentStaffRec = x.CAPREGIONID != null ? context.TBL_STAFF.Where(o => o.STAFFID == availmentStaff.STAFFID).FirstOrDefault() : null
 
                                 select new LoanApplicationForReturn
                                 {
@@ -346,11 +346,11 @@ namespace FintrakBanking.Repositories.External
 
                                 let atrail = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == x.LOANAPPLICATIONID && operations.Contains(o.OPERATIONID)).OrderByDescending(r => r.APPROVALTRAILID).ThenByDescending(w => w.SYSTEMARRIVALDATETIME).FirstOrDefault()
                                 let branchRegion = context.TBL_BRANCH_REGION.Where(o => o.REGIONID == x.CAPREGIONID).FirstOrDefault()
-                                let availmentRegion = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID2).FirstOrDefault() : null
+                                //let availmentRegion = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID2).FirstOrDefault() : null
                                 let houStaff = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID).FirstOrDefault() : null
-                                let availmentStaff = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID2).FirstOrDefault() : null
+                                //let availmentStaff = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID2).FirstOrDefault() : null
                                 let houStaffRec = x.CAPREGIONID != null ? context.TBL_STAFF.Where(o => o.STAFFID == houStaff.STAFFID).FirstOrDefault() : null
-                                let availmentStaffRec = x.CAPREGIONID != null ? context.TBL_STAFF.Where(o => o.STAFFID == availmentStaff.STAFFID).FirstOrDefault() : null
+                                //let availmentStaffRec = x.CAPREGIONID != null ? context.TBL_STAFF.Where(o => o.STAFFID == availmentStaff.STAFFID).FirstOrDefault() : null
 
                                 select new LoanApplicationForReturn
                                 {
@@ -597,15 +597,15 @@ namespace FintrakBanking.Repositories.External
                             throw new SecureException("Kindly capture the loan application detail.");
 
                         //validate affordability
-                        if (loan.affordabilityDetails == null)
-                        {
-                            throw new SecureException($"Kindly capture affordability details");
-                        }
+                        //if (loan.affordabilityDetails == null)
+                        //{
+                        //    throw new SecureException($"Kindly capture affordability details");
+                        //}
 
-                        if (loan.affordabilityDetails.affordableAmount != (double)loanDetail.proposedAmount)
-                        {
-                            throw new ConditionNotMetException($"Kindly process affordability amount as the proposed amount");
-                        }
+                        //if (loan.affordabilityDetails.affordableAmount != (double)loanDetail.proposedAmount)
+                        //{
+                        //    throw new ConditionNotMetException($"Kindly process affordability amount as the proposed amount");
+                        //}
 
                         //validate loan application source
                         if (loan.loanApplicationSourceId > 0)
@@ -741,7 +741,7 @@ namespace FintrakBanking.Repositories.External
                         var sectorIds = new List<short>();
                         sectorIds.Add(loanDetail.subSectorId);
 
-                        ValidateLoanApplicationLimits((int)loan.branchId, (int)loan.customerId, loanDetail.proposedAmount, sectorIds);
+                        //ValidateLoanApplicationLimits((int)loan.branchId, (int)loan.customerId, loanDetail.proposedAmount, sectorIds);
 
                         // get the summed exchange rate.
                         var additionalAmount = loanDetail.exchangeAmount;
@@ -1231,7 +1231,8 @@ namespace FintrakBanking.Repositories.External
                 //COLLATERALDETAIL = loan.collateralDetail, 
                 ISFROMEXTERNALSOURCE = true,
                 LOANINFORMATION = loanInformation,
-                LOANAPPLICATIONSOURCEID = loan.loanApplicationSourceId
+                OWNEDBY = loan.createdBy,
+                //LOANAPPLICATIONSOURCEID = loan.loanApplicationSourceId
             };
 
             //if (isGroupLoan)
@@ -1313,7 +1314,7 @@ namespace FintrakBanking.Repositories.External
                 //COLLATERALDETAIL = loan.collateralDetail, 
                 ISFROMEXTERNALSOURCE = true,
                 LOANINFORMATION = loanInformation,
-                LOANAPPLICATIONSOURCEID = loan.loanApplicationSourceId
+                //LOANAPPLICATIONSOURCEID = loan.loanApplicationSourceId
             };
 
             loanData.CUSTOMERID = loan.customerId;
@@ -1425,10 +1426,10 @@ namespace FintrakBanking.Repositories.External
                 //LOANDETAILTYPEID = (int)LoanApplicationDetailTypeEnum.NEW,
                 TAKEFEETYPEID = (int)TakeFeeTypeEnum.ApprovedAmount,
                 ISLINEFACILITY = entity.isLineFacility,
-                REQUESTEDAMOUNT = entity.requestedAmount,
-                REPAYMENTDATE = entity.repaymentDate,
-                CREDITSCORE = entity.creditScore,
-                CREDITRATING = entity.creditRating,
+                //REQUESTEDAMOUNT = entity.requestedAmount,
+                //REPAYMENTDATE = entity.repaymentDate,
+                //CREDITSCORE = entity.creditScore,
+                //CREDITRATING = entity.creditRating,
                 //OPERATION_TYPE = entity.operationType != null ? entity.operationType : 0,
 
                 //TEMPPRINCIPALNAME = entity.principalName,
@@ -1561,10 +1562,10 @@ namespace FintrakBanking.Repositories.External
                 //LOANDETAILTYPEID = (int)LoanApplicationDetailTypeEnum.NEW,
                 TAKEFEETYPEID = (int)TakeFeeTypeEnum.ApprovedAmount,
                 ISLINEFACILITY = entity.isLineFacility,
-                REQUESTEDAMOUNT = entity.requestedAmount,
-                REPAYMENTDATE = entity.repaymentDate,
-                CREDITSCORE = entity.creditScore,
-                CREDITRATING = entity.creditRating,
+                //REQUESTEDAMOUNT = entity.requestedAmount,
+                //REPAYMENTDATE = entity.repaymentDate,
+                //CREDITSCORE = entity.creditScore,
+                //CREDITRATING = entity.creditRating,
             };
 
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Add(newLoanDetail);

@@ -177,7 +177,7 @@ namespace FintrakBanking.Entities.Models
         public int? RELATEDEMPLOYERID { get; set; }
         public int CREATEDBY { get; set; }
         public bool? ISFROMEXTERNALSOURCE { get; set; }
-        public int? LOANAPPLICATIONSOURCEID { get; set; }
+        //public int? LOANAPPLICATIONSOURCEID { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

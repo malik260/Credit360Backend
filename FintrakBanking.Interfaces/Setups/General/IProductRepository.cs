@@ -130,5 +130,6 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         ProductDocumentMappingViewModel GetProductDocumenetMapping(int Id);
         Task<List<ProductForReturn>> GetAllExternalProductAsync();
+        List<ProductForReturn> GetAllExternalProduct();
     }
 }

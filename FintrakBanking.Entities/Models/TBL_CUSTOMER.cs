@@ -219,28 +219,28 @@ namespace FintrakBanking.Entities.Models
         public string NATIONALITY { get; set; }
         public bool? ISFROMEXTERNALSOURCE { get; set; }
 
-        public bool? ISBVNVALIDATED { get; set; }
+        //public bool? ISBVNVALIDATED { get; set; }
 
-        public bool? ISPHONEVALIDATED { get; set; }
+        //public bool? ISPHONEVALIDATED { get; set; }
 
-        public bool? ISEMAILVALIDATED { get; set; }
+        //public bool? ISEMAILVALIDATED { get; set; }
         public DateTime? DATEOFEMPLOYMENT { get; set; }
         public decimal? MONTHLYINCOME { get; set; }
         //public string OTHERBANKNAME { get; set; }
         public string OTHERBANKSORTCODE { get; set; }
         public string OTHERBANKACCOUNT { get; set; }
         //public string OTHERBANKNAME2 { get; set; }
-        public string OTHERBANKSORTCODE2 { get; set; }
-        public string OTHERBANKACCOUNT2 { get; set; }
-        //public string OTHERBANKNAME3 { get; set; }
-        public string OTHERBANKSORTCODE3 { get; set; }
-        public string OTHERBANKACCOUNT3 { get; set; }
-        public string EMPLOYERNUMBER { get; set; }
-        [StringLength(300)]
-        public string EMPLOYERNAME { get; set; }
-        public string CONTRIBUTIONCLASS { get; set; }
-        public decimal? MAXCLASSAMOUNT { get; set; }
-        public int? PROFILESOURCEID { get; set; }
+        //public string OTHERBANKSORTCODE2 { get; set; }
+        //public string OTHERBANKACCOUNT2 { get; set; }
+        ////public string OTHERBANKNAME3 { get; set; }
+        //public string OTHERBANKSORTCODE3 { get; set; }
+        //public string OTHERBANKACCOUNT3 { get; set; }
+        ////public string EMPLOYERNUMBER { get; set; }
+        //[StringLength(300)]
+        //public string EMPLOYERNAME { get; set; }
+        //public string CONTRIBUTIONCLASS { get; set; }
+        //public decimal? MAXCLASSAMOUNT { get; set; }
+        //public int? PROFILESOURCEID { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

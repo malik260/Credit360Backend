@@ -1524,6 +1524,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.casaAccountId2 = (entity.casaAccountId2 == 0 || entity.casaAccountId2 == null) ? entity.casaAccountId : entity.casaAccountId2;
             //var repricingIndexId = entity.loanScheduleInput.repricingModeId != 0 ? entity.loanScheduleInput.repricingModeId :  null;
             //var repricingIndexDuration = entity.loanScheduleInput.repricingDuration != 0 ? entity.loanScheduleInput.repricingDuration : null;
+            DateTime defaultDate = new DateTime(1753, 1, 1);
 
             var data = new TBL_LOAN
             {
@@ -1586,8 +1587,8 @@ namespace FintrakBanking.Repositories.Credit
                 EFFECTIVEDATE = entity.loanScheduleInput.effectiveDate,
                 MATURITYDATE = entity.loanScheduleInput.maturityDate,
                 LASTRESTRUCTUREDATE = entity.loanScheduleInput.effectiveDate,
-                FIRSTPRINCIPALPAYMENTDATE = entity.loanScheduleInput.principalFirstpaymentDate,
-                FIRSTINTERESTPAYMENTDATE = entity.loanScheduleInput.interestFirstpaymentDate,
+                FIRSTPRINCIPALPAYMENTDATE = entity.loanScheduleInput.principalFirstpaymentDate < defaultDate ? defaultDate : entity.loanScheduleInput.principalFirstpaymentDate,
+                FIRSTINTERESTPAYMENTDATE = entity.loanScheduleInput.interestFirstpaymentDate < defaultDate ? defaultDate : entity.loanScheduleInput.interestFirstpaymentDate,
                 ALLOWFORCEDEBITREPAYMENT = false,
                 SCHEDULEDAYCOUNTCONVENTIONID = entity.loanScheduleInput.accrualBasis,
                 USER_PRUDENTIAL_GUIDE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
@@ -9751,7 +9752,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                                    && operationIds.Contains(atrail.OPERATIONID)
                                    && atrail.RESPONSESTAFFID == null
-                                   && s.CRMSVALIDATED == true
+                                   //&& s.CRMSVALIDATED == true
 
                                    orderby atrail.SYSTEMARRIVALDATETIME descending
                                    select new CamProcessedLoanViewModel()

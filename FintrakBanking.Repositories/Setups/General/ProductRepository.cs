@@ -241,6 +241,27 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
 
+            public List<ProductForReturn> GetAllExternalProduct()
+            {
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+                    var productData =  (from data in context.TBL_PRODUCT
+                                             where data.DELETED == false && data.ISEXTERNAL == true
+                                             orderby data.PRODUCTNAME ascending
+                                             select new ProductForReturn
+                                             {
+                                                 productId = data.PRODUCTID,
+                                                 productCode = data.PRODUCTCODE,
+                                                 productName = data.PRODUCTNAME,
+                                                 productDescription = data.PRODUCTDESCRIPTION,
+                                                 productTenor = data.MAXIMUMTENOR
+
+                                             }).ToList();
+
+                    return productData;
+                }
+            }
+
 
         #region Product Group
         public IEnumerable<ProductGroupViewModel> GetAllProductGroup()

@@ -32,13 +32,46 @@ namespace FintrakBanking.APICore.ExternalControllers
 
 
 
-        [HttpGet] 
+        //[HttpGet] 
+        //[Route("iscustomer-exist/{customerCode}")]
+        //public async Task<HttpResponseMessage> IsCustomerCodeExist(string customerCode)
+        //{
+        //    try
+        //    {
+        //        if (await repo.ValidateCustomerCodeAsync(customerCode))
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                              new
+        //                              {
+        //                                  success = true,
+        //                                  status = true,
+        //                                  message = $"Customer with code {customerCode} exist"
+        //                              });
+        //        }
+        //        else
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                              new
+        //                              {
+        //                                  success = true,
+        //                                  status = false,
+        //                                  message = $"Customer with code {customerCode} does not exist"
+        //                              });
+        //        }
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        [HttpGet]
         [Route("iscustomer-exist/{customerCode}")]
-        public async Task<HttpResponseMessage> IsCustomerCodeExist(string customerCode)
+        public HttpResponseMessage IsCustomerCodeExist(string customerCode)
         {
             try
             {
-                if (await repo.ValidateCustomerCodeAsync(customerCode))
+                if ( repo.ValidateCustomerCode(customerCode))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                                       new
@@ -65,14 +98,37 @@ namespace FintrakBanking.APICore.ExternalControllers
             }
         }
 
+        //[HttpPost]
+        //[Route("update-customer")]
+        //public async Task<HttpResponseMessage> UpdateCustomerInformation(UpdateCustomer entity)
+        //{
+        //    try
+        //    {
+
+        //        var data = await repo.UpdateCustomerAsync(entity);
+        //        if (data != null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = true, message = $"The customer information has been updated successfully ." });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = $"There was an error updating this this customer." });
+
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
         [HttpPost]
         [Route("update-customer")]
-        public async Task<HttpResponseMessage> UpdateCustomerInformation(UpdateCustomer entity)
+        public HttpResponseMessage UpdateCustomerInformation(UpdateCustomer entity)
         {
             try
             {
 
-                var data = await repo.UpdateCustomerAsync(entity);
+                var data = repo.UpdateCustomer(entity);
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -242,14 +298,37 @@ namespace FintrakBanking.APICore.ExternalControllers
         }
 
 
+        //[HttpPost]
+        //[Route("individual-existing")]
+        //public async Task<HttpResponseMessage> CreateIndividualExistingCustomer(ExistingIndividualCustomerForCreation customerForCreation)
+        //{
+        //    try
+        //    {
+
+        //        var data = await repo.AddIndividualExistingCustomerAsync(customerForCreation);
+        //        if (data != null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = true, result = data, message = $"The customer has been created successfully with code {data}" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = $"There was an error creating this this customer." });
+
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
         [HttpPost]
         [Route("individual-existing")]
-        public async Task<HttpResponseMessage> CreateIndividualExistingCustomer(ExistingIndividualCustomerForCreation customerForCreation)
+        public HttpResponseMessage CreateIndividualExistingCustomer(ExistingIndividualCustomerForCreation customerForCreation)
         {
             try
             {
 
-                var data = await repo.AddIndividualExistingCustomerAsync(customerForCreation);
+                var data = repo.AddIndividualExistingCustomer(customerForCreation);
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

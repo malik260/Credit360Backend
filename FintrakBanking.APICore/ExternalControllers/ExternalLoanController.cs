@@ -102,13 +102,28 @@ namespace FintrakBanking.APICore.ExternalControllers
             }
         }
 
-        [HttpGet] 
+        //[HttpGet] 
+        //[Route("products")]
+        //public async Task<HttpResponseMessage> GetAllProduct()
+        //{
+        //    try
+        //    {
+        //        var data = await repoProduct.GetAllExternalProductAsync(); 
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        [HttpGet]
         [Route("products")]
-        public async Task<HttpResponseMessage> GetAllProduct()
+        public HttpResponseMessage GetAllProduct()
         {
             try
             {
-                var data = await repoProduct.GetAllExternalProductAsync(); 
+                var data = repoProduct.GetAllExternalProduct();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)
@@ -116,7 +131,6 @@ namespace FintrakBanking.APICore.ExternalControllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
 
         [HttpGet]
         [CacheOutputUntilToday(23, 55)]

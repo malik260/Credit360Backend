@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
 
         [Key]
         public int REGIONID { get; set; }
-        public int? REGIONID2 { get; set; }
+        //public int? REGIONID2 { get; set; }
 
         [Required]
         //[StringLength(200)]

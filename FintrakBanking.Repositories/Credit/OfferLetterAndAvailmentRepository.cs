@@ -383,7 +383,7 @@ namespace FintrakBanking.Repositories.Credit
                     relationshipOfficerId = x.c.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.c.a.RELATIONSHIPMANAGERID,
                     capRegionId = x.c.a.CAPREGIONID,
-                    regionId = context.TBL_BRANCH_REGION.FirstOrDefault(c => c.REGIONID == x.c.a.CAPREGIONID).REGIONID2.Value,
+                    //regionId = context.TBL_BRANCH_REGION.FirstOrDefault(c => c.REGIONID == x.c.a.CAPREGIONID).REGIONID2.Value,
                     timeIn = x.d.SYSTEMARRIVALDATETIME,
                     toStaffId = x.d.TOSTAFFID,
 

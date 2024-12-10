@@ -1745,7 +1745,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/logo2x.png' alt='' width='245' height='52'></td>
                         
                     </tr>
                     <tr>

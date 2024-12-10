@@ -449,6 +449,60 @@ namespace FintrakBanking.Repositories.Credit
                     //return 0;
                 }
 
+                else if (workflow.NewState == (int)ApprovalState.Ended && isContingent == false)
+                {
+                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                    var operationId = 0;
+
+                    if (drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
+                        operationId = (short)OperationsEnum.CommercialLoanBooking;
+                    if (drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                        operationId = (short)OperationsEnum.ContigentLoanBooking;
+                    if (drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                        operationId = (short)OperationsEnum.TermLoanBooking;
+                    if (drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
+                        operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
+                    if (drawdowProduct.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
+                        operationId = (short)OperationsEnum.RevolvingLoanBooking;
+
+                    var approvalModel = new ForwardViewModel
+                    {
+                        createdBy = entity.createdBy,
+                        companyId = entity.companyId,
+                        applicationId = request.LOAN_BOOKING_REQUESTID,
+                        comment = "A request for booking needs your attention",
+                        amount = request.AMOUNT_REQUESTED,
+                        ownerId = application.OWNEDBY,
+                    };
+
+                    if (operationId > 0) LogApproval(approvalModel, operationId, true, (short)ApprovalStatusEnum.Pending);
+
+
+                    application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+                    var loanLienDetail = context.TBL_APPLICATIONDETAIL_LIEN.FirstOrDefault(l => l.APPLICATIONDETAILID == request.LOANAPPLICATIONDETAILID && l.DELETED == false && l.ISRELEASED == false);
+                    if (loanLienDetail != null)
+                    {
+                        var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                        {
+                            username = "model.username",//for test, real value to be passed!!!
+                            passcode = "model.passCode",
+                            skipAuthentication = true
+                        };
+                        PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails, entity.createdBy);
+                    }
+
+                    //PlaceLien(request.LOANAPPLICATIONDETAILID, new TwoFactorAutheticationViewModel() { username = "model.username", passcode = "model.passCode" });
+
+                    context.SaveChanges();
+                    trans.Commit();
+                    if (operationId != (short)OperationsEnum.ContigentLoanBooking && workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        //workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
+                    }
+                    return workflow.Response;
+                    //return 0;
+                }
+
                 else
                 {
                     if (!isContingent && workflow.NewState == (int)ApprovalState.Ended)
