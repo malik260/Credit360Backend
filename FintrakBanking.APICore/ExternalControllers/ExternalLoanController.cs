@@ -537,5 +537,26 @@ namespace FintrakBanking.APICore.ExternalControllers
 
         }
 
+        [HttpGet]
+        [Route("get-disbursed-loans/")]
+        public HttpResponseMessage GetDisbursedLoans(int companyId)
+        {
+            try
+            {
+                var data = repoLoan.GetDisbursedLoans(companyId);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
     }
 }

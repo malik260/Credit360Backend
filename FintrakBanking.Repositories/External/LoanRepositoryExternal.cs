@@ -123,6 +123,33 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
+        public List<LoanVM> GetDisbursedLoans(int companyId)
+        {
+            using (var context = new FinTrakBankingContext())
+            {
+                var loans = (from a in context.TBL_COMPANY
+                                join b in context.TBL_LOAN on a.COMPANYID equals b.COMPANYID
+                                join c in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                                join d in context.TBL_LOAN_APPLICATION on c.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                join e in context.TBL_CUSTOMER on b.CUSTOMERID equals e.CUSTOMERID
+                                where a.COMPANYID == companyId && b.ISDISBURSED == true
+                                orderby b.TERMLOANID ascending
+                                select new LoanVM
+                                {
+                                    applicationReferenceNumber = d.APPLICATIONREFERENCENUMBER,
+                                    loanReferenceNumber = b.LOANREFERENCENUMBER,
+                                    accountNumber = b.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                    loanAmount = b.PRINCIPALAMOUNT,
+                                    interestRate = c.APPROVEDINTERESTRATE,
+                                    product = context.TBL_PRODUCT.Where(b => b.PRODUCTID == c.APPROVEDPRODUCTID).Select(p => p.PRODUCTNAME).FirstOrDefault(),
+                                    loanStatus = b.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                                    disbursedDate = b.DISBURSEDATE,
+                                    company = a.NAME,
+                                    customerName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME
+                                }).ToList();
+                return loans;
+            }
+        }
 
         public List<AffordabilityViewModel> AffordabilityChecks(AffordabilityViewModel model)
         {
