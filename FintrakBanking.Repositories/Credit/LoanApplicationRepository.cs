@@ -286,6 +286,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationTenor = a.APPLICATIONTENOR,
                             applicationAmount = a.APPLICATIONAMOUNT,
                             dateTimeCreated = a.DATETIMECREATED,
+                            isExternal = a.ISFROMEXTERNALSOURCE ?? false,
                             LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
                              .Select(c => new LoanApplicationDetailViewModel()
                              {
@@ -3298,6 +3299,10 @@ namespace FintrakBanking.Repositories.Credit
             detail.LASTUPDATEDBY = loan.createdBy;
             detail.APPROVEDTRADECYCLEID = update.approvedTradeCycleId;
             detail.OLDAPPLICATIONREFFORRENEWAL = update.oldApplicationRefForRenewal;
+            detail.PROPERTYTYPEID = update.propertyTypeId;
+            detail.PROPERTYTITLE = update.propertyTitle;
+            detail.PROPERTYPRICE = update.propertyPrice;
+            detail.DOWNPAYMENT = update.downPayment;
 
             var currentProduct = context.TBL_PRODUCT.Find(detail.APPROVEDPRODUCTID);
 
@@ -3864,7 +3869,11 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTREPAYMENTID = a.interestRepaymentId,
                 MORATORIUM = a.moratorium,
                 APPROVEDLINELIMIT = a.approvedLineLimit,
-                OLDAPPLICATIONREFFORRENEWAL = a.oldApplicationRefForRenewal
+                OLDAPPLICATIONREFFORRENEWAL = a.oldApplicationRefForRenewal,
+                PROPERTYTYPEID = a.propertyTypeId,
+                PROPERTYTITLE = a.propertyTitle,
+                PROPERTYPRICE = a.propertyPrice,
+                DOWNPAYMENT = a.downPayment
             };
 
             //var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
@@ -4339,7 +4348,11 @@ namespace FintrakBanking.Repositories.Credit
                 moratorium = d.MORATORIUM,
                 productClassId = product.PRODUCTCLASSID,
                 productTypeId = product.PRODUCTTYPEID,
-                approvedTradeCycleId = d.APPROVEDTRADECYCLEID
+                approvedTradeCycleId = d.APPROVEDTRADECYCLEID,
+                propertyTypeId = d.PROPERTYTYPEID,
+                propertyTitle = d.PROPERTYTITLE,
+                propertyPrice = d.PROPERTYPRICE,
+                downPayment = d.DOWNPAYMENT
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);

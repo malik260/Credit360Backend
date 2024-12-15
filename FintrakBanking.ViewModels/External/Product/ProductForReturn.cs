@@ -13,5 +13,9 @@ namespace FintrakBanking.ViewModels.External.Product
         public string productName { get; set; }
         public string productDescription { get; set; }
         public int? productTenor { get; set; }
+        public int? maxProductTenor { get; set; }
+        public int? minProductTenor { get; set; }
+        public decimal? maxProductAmount { get; set; }
+        public decimal? minProductAmount { get; set; }
     }
 }

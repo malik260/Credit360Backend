@@ -40,5 +40,10 @@ namespace FintrakBanking.ViewModels.External.Loan
         public bool isUnAdviced { get; set; } = false;
         public bool isLineFacility { get; set; } = false;
         public bool esgmsRequired { get; set; } = false;
+        public int? propertyTypeId { get; set; }
+        public string propertyTitle { get; set; }
+        public decimal? propertyPrice { get; set; }
+        public decimal? downPayment { get; set; }
+
     }
 }

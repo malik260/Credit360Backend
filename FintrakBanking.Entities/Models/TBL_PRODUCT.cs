@@ -160,6 +160,7 @@ namespace FintrakBanking.Entities.Models
 
         public decimal? WRITEOFFRATE { get; set; }
         public decimal? MAXIMUMAMOUNT { get; set; }
+        public decimal? MINIMUMAMOUNT { get; set; }
         public bool? ISEXTERNAL { get; set; }
 
 

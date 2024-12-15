@@ -1413,11 +1413,11 @@ namespace FintrakBanking.Repositories.External
                         if (branch == null)
                             throw new ConditionNotMetException($"The branch code {entity.branchCode.Trim()} does not exist.");
 
-                        //get the RM mapped to the selected branch
-                        var staff = dbContext.TBL_STAFF.Where(b => b.BRANCHID == branch.BRANCHID && b.STAFFROLEID == 1 && b.DELETED == false).FirstOrDefault();
+                        //get the Account Officer mapped to the selected branch
+                        var staff = dbContext.TBL_STAFF.Where(b => b.BRANCHID == branch.BRANCHID && b.STAFFROLEID == 6 && b.DELETED == false).FirstOrDefault();
 
                         if (staff == null)
-                            throw new ConditionNotMetException($"There is no Credit Officer mapped to this selected branch {branch.BRANCHNAME}.");
+                            throw new ConditionNotMetException($"There is no Account Officer mapped to this selected branch {branch.BRANCHNAME}.");
 
                         if (entity.contactAddress == null)
                             throw new ConditionNotMetException($"Contact address is compulsory.");

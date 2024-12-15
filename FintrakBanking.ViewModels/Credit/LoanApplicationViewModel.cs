@@ -271,6 +271,7 @@ namespace FintrakBanking.ViewModels.Credit
         public TBL_APPROVAL_LEVEL_STAFF approvalLevelStaff { get; set; }
         public int loanDetailReviewTypeId { get; set; }
         public string loanDetailReviewTypeName { get; set; }
+        public bool isExternal { get; set; }
     }
 
     public class InterestIncomeViewModel
@@ -616,6 +617,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountOfficerName { get; set; }
 
         // public int? loanreViewApplicationId { get; set; }
+        public int? propertyTypeId { get; set; }
+        public string propertyTitle { get; set; }
+        public decimal? propertyPrice { get; set; }
+        public decimal? downPayment { get; set; }
     }
 
     public class ProductFeesViewModel// : GeneralEntity

@@ -254,7 +254,10 @@ namespace FintrakBanking.Repositories.Setups.General
                                                  productCode = data.PRODUCTCODE,
                                                  productName = data.PRODUCTNAME,
                                                  productDescription = data.PRODUCTDESCRIPTION,
-                                                 productTenor = data.MAXIMUMTENOR
+                                                 maxProductTenor = data.MAXIMUMTENOR,
+                                                 minProductTenor = data.MINIMUMTENOR,
+                                                 maxProductAmount = data.MAXIMUMAMOUNT,
+                                                 minProductAmount= data.MINIMUMAMOUNT,
 
                                              }).ToList();
 

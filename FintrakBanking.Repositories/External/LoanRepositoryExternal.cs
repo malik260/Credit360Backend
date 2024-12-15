@@ -623,6 +623,31 @@ namespace FintrakBanking.Repositories.External
                         if (loanDetail == null)
                             throw new SecureException("Kindly capture the loan application detail.");
 
+                        // get and validate the selected product details
+                        var productInfo = context.TBL_PRODUCT.Where(q => q.PRODUCTID == loanDetail.proposedProductId).FirstOrDefault();
+                        if (productInfo == null)
+                            throw new SecureException("Kindly select an existing product.");
+
+                        if (loanDetail.proposedAmount > productInfo.MAXIMUMAMOUNT)
+                        {
+                            throw new SecureException($"Maximum product Amount Exceeded! The maximum product amount for {productInfo.PRODUCTNAME} is NGN{productInfo.MAXIMUMAMOUNT.Value.ToString("N")}");
+                        }
+
+                        if (loanDetail.proposedAmount < productInfo.MINIMUMAMOUNT)
+                        {
+                            throw new SecureException($"Minimum product Amount Not Met! The minimum product amount for {productInfo.PRODUCTNAME} is NGN{productInfo.MINIMUMAMOUNT.Value.ToString("N")}");
+                        }
+
+                        if (loanDetail.proposedTenor > productInfo.MAXIMUMTENOR)
+                        {
+                            throw new SecureException($"Maximum product Tenor Exceeded! The maximum product tenor for {productInfo.PRODUCTNAME} is NGN{productInfo.MAXIMUMTENOR} days");
+                        }
+
+                        if (loanDetail.proposedTenor < productInfo.MINIMUMTENOR)
+                        {
+                            throw new SecureException($"Minimum product Tenor Not Met! The minimum product tenor for {productInfo.PRODUCTNAME} is NGN{productInfo.MINIMUMTENOR} days");
+                        }
+
                         //validate affordability
                         //if (loan.affordabilityDetails == null)
                         //{
@@ -731,10 +756,6 @@ namespace FintrakBanking.Repositories.External
                         if (branch == null)
                             throw new SecureException($"There is no branch mapped to the credit officer of the customer.");
 
-                        // get the selected product details
-                        var productInfo = context.TBL_PRODUCT.Where(q => q.PRODUCTID == loanDetail.proposedProductId).FirstOrDefault();
-                        if (productInfo == null)
-                            throw new SecureException("Kindly select an existing product.");
 
                         loan.customerId = customer.CUSTOMERID;
                         loan.branchId = branch.BRANCHID;
@@ -1453,6 +1474,10 @@ namespace FintrakBanking.Repositories.External
                 //LOANDETAILTYPEID = (int)LoanApplicationDetailTypeEnum.NEW,
                 TAKEFEETYPEID = (int)TakeFeeTypeEnum.ApprovedAmount,
                 ISLINEFACILITY = entity.isLineFacility,
+                PROPERTYTYPEID = entity.propertyTypeId,
+                PROPERTYTITLE = entity.propertyTitle,
+                PROPERTYPRICE = entity.propertyPrice,
+                DOWNPAYMENT = entity.downPayment,
                 //REQUESTEDAMOUNT = entity.requestedAmount,
                 //REPAYMENTDATE = entity.repaymentDate,
                 //CREDITSCORE = entity.creditScore,

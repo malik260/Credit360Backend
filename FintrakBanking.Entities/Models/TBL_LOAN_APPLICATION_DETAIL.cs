@@ -169,6 +169,10 @@ namespace FintrakBanking.Entities.Models
         public bool? ISMORATORIUM { get; set; }
         public decimal? APPROVEDLINELIMIT { get; set; }
         public int? APPROVEDTRADECYCLEID { get; set; }
+        public int? PROPERTYTYPEID { get; set; }
+        public string PROPERTYTITLE { get; set; }
+        public decimal? PROPERTYPRICE { get; set; }
+        public decimal? DOWNPAYMENT { get; set; }
         //[StringLength(3999)]
         //public string REPAYMENTDATE { get; set; }
         //public decimal? REQUESTEDAMOUNT { get; set; }
