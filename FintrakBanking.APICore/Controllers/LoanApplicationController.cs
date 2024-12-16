@@ -2400,5 +2400,15 @@ namespace FintrakBanking.APICore.Controllers
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("property-type")]
+        public HttpResponseMessage GetAllPropertyTypes()
+        {
+            IEnumerable<PropertyTypeViewModel> response = repo.GetAllPropertyTypes();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
     }
 }

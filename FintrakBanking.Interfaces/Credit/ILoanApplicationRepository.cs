@@ -234,6 +234,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanDetailReviewTypeViewModel> GetAllLoanDetailReviewTypes();
         IEnumerable<ApprovedTradeCycleViewModel> GetAllApprovedTradeCycles();
         List<CurrentCustomerExposure> GetExposures(TBL_LOAN_APPLICATION loanApplication);
+        IEnumerable<PropertyTypeViewModel> GetAllPropertyTypes();
         //IEnumerable<LoanApplicationLienViewModel> GetRacDetails();
     }
 }

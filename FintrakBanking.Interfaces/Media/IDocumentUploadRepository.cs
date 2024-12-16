@@ -44,5 +44,6 @@ namespace FintrakBanking.Interfaces.Media
         CustomerDocumentSearchViewModel GetCustomerDocuments(DocumentUploadViewModel model, UserInfo user);
         //DocumentUploadViewModel GetUploadedDocument(DocumentUploadViewModel model);
         IEnumerable<DocumentUploadViewModel> GetDocumentUpload(IEnumerable<DocumentUploadViewModel> model);
+        IEnumerable<DocumentUploadViewModel> GetCustomerCreditBureauDocuments(int customerId);
     }
 }

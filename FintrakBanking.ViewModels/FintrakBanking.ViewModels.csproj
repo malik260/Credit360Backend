@@ -152,6 +152,7 @@
     <Compile Include="Credit\OperationSignatoryViewModel.cs" />
     <Compile Include="Credit\OriginalDocumentReleaseViewModel.cs" />
     <Compile Include="Credit\ProjectSiteReportViewModel.cs" />
+    <Compile Include="Credit\PropertyTypeViewModel.cs" />
     <Compile Include="Credit\PsrCommentViewModel.cs" />
     <Compile Include="Credit\PsrNextInspectionTaskViewModel.cs" />
     <Compile Include="Credit\PsrObservationViewModel.cs" />

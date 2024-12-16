@@ -9859,6 +9859,17 @@ namespace FintrakBanking.Repositories.Credit
             return reviewTypes;
         }
 
+        public IEnumerable<PropertyTypeViewModel> GetAllPropertyTypes()
+        {
+            var propertyTypes = (from x in context.TBL_PROPERTY_TYPE
+                               select new PropertyTypeViewModel
+                               {
+                                   propertyTypeId = x.PROPERTYTYPEID,
+                                   propertyTypeName = x.PROPERTYNAME,
+                               }).ToList();
+
+            return propertyTypes;
+        }
 
         public IEnumerable<ApprovedTradeCycleViewModel> GetAllApprovedTradeCycles()
         {

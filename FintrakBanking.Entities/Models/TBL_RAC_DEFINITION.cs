@@ -67,6 +67,7 @@ namespace FintrakBanking.Entities.Models
         public string SEARCHPLACEHOLDER { get; set; }
         public string EMPLOYMENTTYPE { get; set; }
         public short? CUSTOMERTYPEID { get; set; }
+        public bool? REQUIREDOCUMENTVIEW { get; set; }
         public virtual ICollection<TBL_RAC_DETAIL> TBL_RAC_DETAIL { get; set; }
 
         public virtual TBL_RAC_INPUT_TYPE TBL_RAC_INPUT_TYPE { get; set; }

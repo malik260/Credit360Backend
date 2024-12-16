@@ -1234,7 +1234,8 @@ namespace FintrakBanking.Repositories.External
 
 
             short productClassId = loan.productClassId;
-            short productClassProcessId = (short)ProductClassProcessEnum.CAMBased;
+            //short productClassProcessId = (short)ProductClassProcessEnum.CAMBased;
+            short productClassProcessId = context.TBL_PRODUCT_CLASS.Find(loan.productClassId).PRODUCT_CLASS_PROCESSID;
 
             string loanInformation = "New loan application";
             string tempMisInfo = "temp";

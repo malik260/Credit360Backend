@@ -42,7 +42,7 @@ namespace FintrakBanking.Repositories.Risk
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
             List<RacCategoryViewModel> productRacCategories = new List<RacCategoryViewModel>();
             List<TBL_RAC_DEFINITION> racDefinition = new List<TBL_RAC_DEFINITION>();
-
+            model.productId = 0;
             List<int> categoryIds = new List<int>();
 
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerId ).FirstOrDefault();
@@ -274,6 +274,7 @@ namespace FintrakBanking.Repositories.Risk
                         optionId = x.RACOPTIONID,
                         fileUpload = x.REQUIREUPLOAD,
                         hasException = x.ISREQUIRED == false,
+                        viewUpload = x.REQUIREDOCUMENTVIEW
                     })
                     .ToList();
                 }
@@ -292,6 +293,7 @@ namespace FintrakBanking.Repositories.Risk
                         optionId = x.RACOPTIONID,
                         fileUpload = x.REQUIREUPLOAD,
                         hasException = x.ISREQUIRED == false,
+                        viewUpload = x.REQUIREDOCUMENTVIEW
                     })
                     .ToList();
                 }

@@ -617,7 +617,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountOfficerName { get; set; }
 
         // public int? loanreViewApplicationId { get; set; }
-        public int? propertyTypeId { get; set; }
+        public short? propertyTypeId { get; set; }
         public string propertyTitle { get; set; }
         public decimal? propertyPrice { get; set; }
         public decimal? downPayment { get; set; }

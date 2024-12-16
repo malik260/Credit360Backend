@@ -812,32 +812,32 @@ namespace FintrakBanking.Repositories.Media
 
                         var documentCategory = docContext.TBL_DOCUMENT_TYPE.Where(t => t.DOCUMENTTYPEID == model.documentTypeId).FirstOrDefault().DOCUMENTCATEGORYID;
                         model.documentCategoryId = documentCategory;
-                        var docDeffered = docContext.TBL_DEFERRED_DOC_TRACKER.Where(x => x.DELETED == false
-                        && x.DOCUMENTCATEGORYID == model.documentCategoryId
-                        && x.DOCUMENTTYPEID == model.documentTypeId && x.LOANAPPLICATIONID == model.targetId);
-                        if (docDeffered.Any())
-                        {
-                             var deferredDoc = docContext.TBL_DEFERRED_DOC_TRACKER.Where(x => x.DELETED == false
-                             && x.DOCUMENTCATEGORYID == model.documentCategoryId
-                             && x.DOCUMENTTYPEID == model.documentTypeId && x.LOANAPPLICATIONID == model.targetId).FirstOrDefault();
+                var docDeffered = docContext.TBL_DEFERRED_DOC_TRACKER.Where(x => x.DELETED == false
+                && x.DOCUMENTCATEGORYID == model.documentCategoryId
+                && x.DOCUMENTTYPEID == model.documentTypeId && x.LOANAPPLICATIONID == model.targetId);
+                if (docDeffered.Any())
+                {
+                    var deferredDoc = docContext.TBL_DEFERRED_DOC_TRACKER.Where(x => x.DELETED == false
+                    && x.DOCUMENTCATEGORYID == model.documentCategoryId
+                    && x.DOCUMENTTYPEID == model.documentTypeId && x.LOANAPPLICATIONID == model.targetId).FirstOrDefault();
 
-                            if (deferredDoc != null)
-                            {
-                                deferredDoc.DOCUMENTCATEGORYID = model.documentCategoryId;
-                                deferredDoc.DOCUMENTTYPEID = model.documentTypeId;
-                                deferredDoc.DATETIMESUBMITTED = DateTime.Now;
-                                deferredDoc.SUBMITTED = true;
-                                deferredDoc.CREATEDBY = model.createdBy;
+                    if (deferredDoc != null)
+                    {
+                        deferredDoc.DOCUMENTCATEGORYID = model.documentCategoryId;
+                        deferredDoc.DOCUMENTTYPEID = model.documentTypeId;
+                        deferredDoc.DATETIMESUBMITTED = DateTime.Now;
+                        deferredDoc.SUBMITTED = true;
+                        deferredDoc.CREATEDBY = model.createdBy;
 
-                            }
-
-                         }
-
-
+                    }
 
                 }
 
-                if (docContext.SaveChanges() < 1)
+
+
+            }
+
+            if (docContext.SaveChanges() < 1)
                 {
                     var file = docContext.TBL_DOCUMENT_UPLOAD.Where(o => o.DOCUMENTUPLOADID == entity.DOCUMENTUPLOADID).Select(o => o).FirstOrDefault();
                     if (file != null)
@@ -1837,6 +1837,40 @@ namespace FintrakBanking.Repositories.Media
             }
             if (docContext.SaveChanges() > 0) return true;
             return false;
+        }
+
+        public IEnumerable<DocumentUploadViewModel> GetCustomerCreditBureauDocuments(int customerId)
+        {
+            var customerBureauLog = creditBureau.GetCustomerCreditBureauReportLog(customerId, null).Select(x => x.customerCreditBureauId).ToList();
+
+            var docs = new List<DocumentUploadViewModel>();
+
+            if (customerBureauLog.Count() > 0)
+            {
+                docs = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
+                               where customerBureauLog.Contains(d.CUSTOMERCREDITBUREAUID)
+                               select new DocumentUploadViewModel
+                               {
+                                   documentUploadId = d.DOCUMENTID,
+                                   documentTypeName = "CREDIT BUREAU",
+                                   documentCategoryName = "CREDIT BUREAU",
+                                   dateTimeCreated = d.DATETIMECREATED,
+                                   documentTitle = d.DOCUMENT_TITLE,
+                                   fileName = d.FILENAME,
+                                   fileExtension = d.FILEEXTENSION,
+                                   createdBy = d.CREATEDBY,
+                                   //fileData = d.FILEDATA,
+                                   //fileSize = d.fileSize,
+                               })?.ToList();
+            }
+
+            //docs.ForEach(d =>
+            //{
+            //    var createdBy = context.TBL_STAFF.Find(d.createdBy);
+            //    d.uploadedBy = createdBy.FIRSTNAME + " " + createdBy.LASTNAME;
+            //});
+
+            return docs;
         }
     }
 }

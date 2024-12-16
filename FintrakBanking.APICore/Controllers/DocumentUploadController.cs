@@ -175,7 +175,10 @@ namespace FintrakBanking.APICore.Controllers
                 entity.issueDate = GetCulture(provider.FormData["issueDate"]);
                 entity.expiryDate = GetCulture(provider.FormData["expiryDate"]);
                 entity.targetReferenceNumber = provider.FormData["targetReferenceNumber"];
-                entity.operationId = Convert.ToInt32(provider.FormData["operationId"]);
+                if (provider.FormData["operationId"] != null && provider.FormData["operationId"] != "undefined")
+                {
+                    entity.operationId = Convert.ToInt32(provider.FormData["operationId"]);
+                }               
                 entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
                 entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
                 entity.overwrite = provider.FormData["overwrite"] == "true";
@@ -811,6 +814,15 @@ namespace FintrakBanking.APICore.Controllers
             RecoveryReportingDocumentViewModel data = repo.GetRecoveryReportDocument(loanRecoveryReportApprovalId);
             if (data == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-customer-credit-bureau-documents/{customerId}")]
+        public HttpResponseMessage GetCustomerCreditBureauDocuments(int customerId)
+        {
+            IEnumerable<DocumentUploadViewModel> response = repo.GetCustomerCreditBureauDocuments(customerId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
     }
 }
