@@ -103,20 +103,20 @@ namespace FintrakBanking.Repositories.External
                 if (account != null)
                 {
                     var loans = (from a in context.TBL_CASA
-                                        join b in context.TBL_LOAN on a.CASAACCOUNTID equals b.CASAACCOUNTID
-                                        join c in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-                                        join d in context.TBL_LOAN_APPLICATION on c.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                        where a.PRODUCTACCOUNTNUMBER.ToLower() == nhfNo.Trim().ToLower()
-                                        orderby b.TERMLOANID ascending
-                                        select new ScheduleLoans
-                                        {
-                                            applicationReferenceNumber = d.APPLICATIONREFERENCENUMBER,
-                                            loanReferenceNumber = b.LOANREFERENCENUMBER,
-                                            nhfAccount = a.PRODUCTACCOUNTNUMBER,
-                                            loanAmount = b.PRINCIPALAMOUNT,
-                                            interestRate = (decimal)c.APPROVEDINTERESTRATE,
-                                            product = context.TBL_PRODUCT.Where(b => b.PRODUCTID == c.APPROVEDPRODUCTID).Select(p => p.PRODUCTNAME).FirstOrDefault()
-                                        }).ToList();
+                                 join b in context.TBL_LOAN on a.CASAACCOUNTID equals b.CASAACCOUNTID
+                                 join c in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                                 join d in context.TBL_LOAN_APPLICATION on c.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                 where a.PRODUCTACCOUNTNUMBER.ToLower() == nhfNo.Trim().ToLower()
+                                 orderby b.TERMLOANID ascending
+                                 select new ScheduleLoans
+                                 {
+                                     applicationReferenceNumber = d.APPLICATIONREFERENCENUMBER,
+                                     loanReferenceNumber = b.LOANREFERENCENUMBER,
+                                     nhfAccount = a.PRODUCTACCOUNTNUMBER,
+                                     loanAmount = b.PRINCIPALAMOUNT,
+                                     interestRate = (decimal)c.APPROVEDINTERESTRATE,
+                                     product = context.TBL_PRODUCT.Where(b => b.PRODUCTID == c.APPROVEDPRODUCTID).Select(p => p.PRODUCTNAME).FirstOrDefault()
+                                 }).ToList();
                     return loans;
                 }
                 return null;
@@ -128,25 +128,25 @@ namespace FintrakBanking.Repositories.External
             using (var context = new FinTrakBankingContext())
             {
                 var loans = (from a in context.TBL_COMPANY
-                                join b in context.TBL_LOAN on a.COMPANYID equals b.COMPANYID
-                                join c in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-                                join d in context.TBL_LOAN_APPLICATION on c.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                join e in context.TBL_CUSTOMER on b.CUSTOMERID equals e.CUSTOMERID
-                                where a.COMPANYID == companyId && b.ISDISBURSED == true
-                                orderby b.TERMLOANID ascending
-                                select new LoanVM
-                                {
-                                    applicationReferenceNumber = d.APPLICATIONREFERENCENUMBER,
-                                    loanReferenceNumber = b.LOANREFERENCENUMBER,
-                                    accountNumber = b.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                    loanAmount = b.PRINCIPALAMOUNT,
-                                    interestRate = c.APPROVEDINTERESTRATE,
-                                    product = context.TBL_PRODUCT.Where(b => b.PRODUCTID == c.APPROVEDPRODUCTID).Select(p => p.PRODUCTNAME).FirstOrDefault(),
-                                    loanStatus = b.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-                                    disbursedDate = b.DISBURSEDATE,
-                                    company = a.NAME,
-                                    customerName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME
-                                }).ToList();
+                             join b in context.TBL_LOAN on a.COMPANYID equals b.COMPANYID
+                             join c in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                             join d in context.TBL_LOAN_APPLICATION on c.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                             join e in context.TBL_CUSTOMER on b.CUSTOMERID equals e.CUSTOMERID
+                             where a.COMPANYID == companyId && b.ISDISBURSED == true
+                             orderby b.TERMLOANID ascending
+                             select new LoanVM
+                             {
+                                 applicationReferenceNumber = d.APPLICATIONREFERENCENUMBER,
+                                 loanReferenceNumber = b.LOANREFERENCENUMBER,
+                                 accountNumber = b.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                 loanAmount = b.PRINCIPALAMOUNT,
+                                 interestRate = c.APPROVEDINTERESTRATE,
+                                 product = context.TBL_PRODUCT.Where(b => b.PRODUCTID == c.APPROVEDPRODUCTID).Select(p => p.PRODUCTNAME).FirstOrDefault(),
+                                 loanStatus = b.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                                 disbursedDate = b.DISBURSEDATE,
+                                 company = a.NAME,
+                                 customerName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME
+                             }).ToList();
                 return loans;
             }
         }
@@ -687,7 +687,7 @@ namespace FintrakBanking.Repositories.External
                         if (loan.loanApplicationSourceId == 3)
                         {
                             account = context.TBL_CASA.Where(q => q.PRODUCTACCOUNTNUMBER == loanDetail.operatingAccountNo).FirstOrDefault(); //PMB NHF account set as operating account
-                            if (account ==  null)
+                            if (account == null)
                                 throw new SecureException($"Kindly profile PMB's account");
 
                             //integration.GetCustomerAccreditationStatus(loanDetail.operatingAccountNo); //PMB accreditation check
@@ -726,9 +726,9 @@ namespace FintrakBanking.Repositories.External
                                 //hasCustomerAppliedForNHFLoan(PmbSingleCustomerId, context);
                             }
                         }
-                        else 
+                        else
                         {
-                             account = context.TBL_CASA.Where(q => q.PRODUCTACCOUNTNUMBER == loanDetail.operatingAccountNo.Trim()).FirstOrDefault();
+                            account = context.TBL_CASA.Where(q => q.PRODUCTACCOUNTNUMBER == loanDetail.operatingAccountNo.Trim()).FirstOrDefault();
                             if (account == null)
                                 throw new SecureException($"Customer account {loanDetail.operatingAccountNo.Trim()} is not yet synced, kindly contact your credit officer.");
 
@@ -1026,7 +1026,7 @@ namespace FintrakBanking.Repositories.External
                                 var branch = context.TBL_BRANCH.Where(b => b.BRANCHID == staff.BRANCHID).FirstOrDefault();
                                 if (branch == null)
                                     throw new SecureException($"There is no branch mapped to the credit officer of the customer.");
-                                
+
                                 loan.customerId = customer.CUSTOMERID;
                                 loan.branchId = branch.BRANCHID;
                                 loan.relationshipOfficerId = staff.STAFFID;
@@ -1104,7 +1104,7 @@ namespace FintrakBanking.Repositories.External
                                     //var customerNHFContributionCheck = integration.CustomerNHFContributionCheck(customerCasa.PRODUCTACCOUNTNUMBER);
 
                                     //check if customer has a disbursed loan or an application is ongoing
-                                   //hasBatchedCustomerAppliedForNHFLoan(singleCustomer.CUSTOMERID, context);
+                                    //hasBatchedCustomerAppliedForNHFLoan(singleCustomer.CUSTOMERID, context);
 
 
                                     // get the selected product details
@@ -1426,10 +1426,10 @@ namespace FintrakBanking.Repositories.External
             var newLoanDetail = new TBL_LOAN_APPLICATION_DETAIL
             {
                 APPROVEDINTERESTRATE = (double)product.MAXIMUMRATE.Value, //(double)entity.proposedInterestRate, // COME IN AS ADDITIONAL PARAMETTER
-                                                                  //APR = entity.apr // COME IN AS ADDITIONAL PARAMETTER
-                                                                  //REPAYMENTDATE = entity.repaymentDate, // COME IN AS ADDITIONAL PARAMETTER
-                                                                  //EQUITYAMOUNT = entity.equityAmount, // COME IN AS ADDITIONAL PARAMETTER
-                                                                  //EQUITYCASAACCOUNTID = entity.equityCasaAccountId, // COME IN AS ADDITIONAL PARAMETTER
+                                                                          //APR = entity.apr // COME IN AS ADDITIONAL PARAMETTER
+                                                                          //REPAYMENTDATE = entity.repaymentDate, // COME IN AS ADDITIONAL PARAMETTER
+                                                                          //EQUITYAMOUNT = entity.equityAmount, // COME IN AS ADDITIONAL PARAMETTER
+                                                                          //EQUITYCASAACCOUNTID = entity.equityCasaAccountId, // COME IN AS ADDITIONAL PARAMETTER
 
                 CURRENCYID = entity.currencyId,
                 APPROVEDAMOUNT = entity.proposedAmount,
@@ -1581,7 +1581,7 @@ namespace FintrakBanking.Repositories.External
 
             var newLoanDetail = new TBL_LOAN_APPLICATION_DETAIL
             {
-                APPROVEDINTERESTRATE = (double)product.MAXIMUMRATE.Value, 
+                APPROVEDINTERESTRATE = (double)product.MAXIMUMRATE.Value,
                 CURRENCYID = entity.currencyId,
                 APPROVEDAMOUNT = entity.proposedAmount,
                 APPROVEDPRODUCTID = (short)entity.proposedProductId,
@@ -2035,19 +2035,19 @@ namespace FintrakBanking.Repositories.External
                     int[] loanStatus = { (int)LoanStatusEnum.Active, (int)LoanStatusEnum.Suspended };
 
                     var loans = await (from a in context.TBL_LOAN_APPLICATION
-                                 join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                                 join c in context.TBL_LOAN on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-                                 join d in context.TBL_CASA on c.CASAACCOUNTID equals d.CASAACCOUNTID
-                                 join e in context.TBL_CURRENCY on b.CURRENCYID equals e.CURRENCYID
+                                       join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                       join c in context.TBL_LOAN on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                                       join d in context.TBL_CASA on c.CASAACCOUNTID equals d.CASAACCOUNTID
+                                       join e in context.TBL_CURRENCY on b.CURRENCYID equals e.CURRENCYID
 
-                                 where d.PRODUCTACCOUNTNUMBER.ToLower() == nhfNo.Trim().ToLower() && loanStatus.Contains(c.LOANSTATUSID)
-                                 orderby c.TERMLOANID ascending
-                                 select new 
-                                 {
-                                     loanRefNumber = c.LOANREFERENCENUMBER,
-                                     outstandingBalance = c.OUTSTANDINGPRINCIPAL,
-                                     currency = e.CURRENCYCODE
-                                 }).ToListAsync();
+                                       where d.PRODUCTACCOUNTNUMBER.ToLower() == nhfNo.Trim().ToLower() && loanStatus.Contains(c.LOANSTATUSID)
+                                       orderby c.TERMLOANID ascending
+                                       select new
+                                       {
+                                           loanRefNumber = c.LOANREFERENCENUMBER,
+                                           outstandingBalance = c.OUTSTANDINGPRINCIPAL,
+                                           currency = e.CURRENCYCODE
+                                       }).ToListAsync();
 
                     if (loans.Count() > 0)
                     {
@@ -2189,5 +2189,80 @@ namespace FintrakBanking.Repositories.External
                 }
             }
         }
+
+
+        public RefinanceViewModel RefinanceLoan(RefinanceViewModel Model)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        // validations to be added
+                        var result = Model;
+                        var Loans = new TblNmrcRefinancing
+                        {
+                            TotalAmount = Model.TotalAmount,
+                            PmbId = long.Parse(Model.PmbId),
+                            RefinanceNumber = Model.RefinanceBatchNumber,
+                            Status = 0,
+                            ApplicationDate = DateTime.Now,
+                            ApplicationStatus = 0,
+                            Disbursed = 0,
+
+                        };
+                        context.TblNmrcRefinancings.Add(Loans);
+
+                        foreach (var item in Model.RefinanceDetails)
+                        {
+                            var LoanBreakdown = new TblNmrcRefinancingLoan
+                            {
+                                Amount = item.Amount,
+                                RefinanceNumber = item.RefinanceNumber,
+                                ProductCode = item.ProductCode,
+                                Nhfnumber = item.Nhfnumber,
+                                ApplicationDate = DateTime.Now,
+                                Approved = 0,
+                                Rate = item.Rate,
+                                Tenor = item.Tenor,
+                                ApplicationStatus = 0,
+                                LoanId = item.LoanId,
+                                Status = 0,
+                                Disbursed = 0,
+                            };
+                            context.TblNmrcRefinancingLoans.Add(LoanBreakdown);
+                        }
+
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return result;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+
+
+
     }
 }

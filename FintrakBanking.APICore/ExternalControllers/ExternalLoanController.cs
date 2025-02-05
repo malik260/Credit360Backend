@@ -558,5 +558,24 @@ namespace FintrakBanking.APICore.ExternalControllers
                       new { success = false, message = ex.Message });
             }
         }
+
+
+        [HttpPost]
+        [Route("Refinance-Loans")]
+        public HttpResponseMessage LoanRefinancing(RefinanceViewModel Model)
+        {
+            try
+            {
+                var data = repoLoan.RefinanceLoan(Model);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }

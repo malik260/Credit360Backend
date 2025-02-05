@@ -222,6 +222,7 @@
     <Compile Include="External\Loan\LoanEligibilityForReturn.cs" />
     <Compile Include="External\Loan\LoanPaymentScheduleVM.cs" />
     <Compile Include="External\Loan\LoanVM.cs" />
+    <Compile Include="External\Loan\RefinanceViewModel.cs" />
     <Compile Include="External\Loan\TraderLoanForCreation.cs" />
     <Compile Include="External\Product\ProductForReturn.cs" />
     <Compile Include="Finance\CurrencyExchangeRateViewModel.cs" />

@@ -22,6 +22,8 @@ using System.Globalization;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.External.Loan;
+using FintrakBanking.Interfaces.External;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -34,6 +36,8 @@ namespace FintrakBanking.APICore.Controllers
         private ILoanScheduleRepository scheduleRepo;
         private ILoanOperationsRepository loanoperations;
         private IProductRepository productRepo;
+        private ILoanRepositoryExternal repoLoan;
+
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
         private ExportDataTableToExcel export = new ExportDataTableToExcel();
 
@@ -45,7 +49,9 @@ namespace FintrakBanking.APICore.Controllers
                               ICustomerCollateralRepository _repoCollateral,
                               ICustomerRepository _repoCustomer,
                                ILoanScheduleRepository _scheduleRepo,
-                               IProductRepository _productRepo, ILoanOperationsRepository _loanoperations)
+                               IProductRepository _productRepo, 
+                               ILoanOperationsRepository _loanoperations,
+                               ILoanRepositoryExternal _repoLoan)
         {
             this.repo = _repo;
             this.repoCollateral = _repoCollateral;
@@ -53,7 +59,7 @@ namespace FintrakBanking.APICore.Controllers
             this.scheduleRepo = _scheduleRepo;
             this.productRepo = _productRepo;
             this.loanoperations = _loanoperations;
-
+            repoLoan = _repoLoan;
             //this._hostingEnvironment = hostingEnvironment;
         }
 
@@ -2361,5 +2367,48 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
             }
         }
+
+        [HttpGet]
+        [Route("get-disbursed-loans/")]
+        public HttpResponseMessage GetDisbursedLoans(int companyId)
+        {
+            try
+            {
+                var data = repoLoan.GetDisbursedLoans(companyId);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("Refinance-Loans")]
+        public HttpResponseMessage LoanRefinancing(RefinanceViewModel Model)
+        {
+            try
+            {
+                var data = repoLoan.RefinanceLoan(Model);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
     }
 }

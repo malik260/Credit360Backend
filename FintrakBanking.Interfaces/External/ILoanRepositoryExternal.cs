@@ -26,5 +26,6 @@ namespace FintrakBanking.Interfaces.External
         Task<List<LoanUploadedDocumentForReturn>> GetLoanDocumentUploadByRefNo(string loanReferenceNumber);
         Task<bool> CheckOutstandingLoan(string nhfNo);
         List<LoanVM> GetDisbursedLoans(int companyId);
+        RefinanceViewModel RefinanceLoan(RefinanceViewModel Model);
     }
 }
