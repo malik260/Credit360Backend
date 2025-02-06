@@ -2210,9 +2210,10 @@ namespace FintrakBanking.Repositories.External
                             ApplicationDate = DateTime.Now,
                             ApplicationStatus = 0,
                             Disbursed = 0,
+                            LenderId = long.Parse(Model.SecondaryLenderId)
 
                         };
-                        context.TblNmrcRefinancings.Add(Loans);
+                        context.TblNmrcRefinancing.Add(Loans);
 
                         foreach (var item in Model.RefinanceDetails)
                         {
@@ -2231,7 +2232,7 @@ namespace FintrakBanking.Repositories.External
                                 Status = 0,
                                 Disbursed = 0,
                             };
-                            context.TblNmrcRefinancingLoans.Add(LoanBreakdown);
+                            context.TblNmrcRefinancingLoan.Add(LoanBreakdown);
                         }
 
 

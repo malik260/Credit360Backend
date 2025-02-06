@@ -14,6 +14,7 @@ namespace FintrakBanking.ViewModels.External.Loan
         public List<RefinanceDetail> RefinanceDetails { get; set;}
         public int LoanSource { get; set; }
         public string RefinanceBatchNumber{ get; set; }
+        public string SecondaryLenderId { get; set; }
 
     }
 
