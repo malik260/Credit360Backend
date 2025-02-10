@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.CreditLimitValidations;
+using System.IO;
 
 namespace FintrakBanking.Repositories.External
 {
@@ -2242,6 +2243,121 @@ namespace FintrakBanking.Repositories.External
 
 
                         return result;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task<List<TblNmrcRefinancingLoan>> GetLoanForRefinance1(long CompanyId)
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var RefinanceAplications = new List<TblNmrcRefinancingLoan>();
+                    var LaonApp = dbcontext.TblNmrcRefinancing.Where(a => a.PmbId == CompanyId && a.ApplicationStatus == 0).ToList();
+                    foreach (var item in LaonApp)
+                    {
+                        var RefinanceDetails = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber).ToList();
+                        RefinanceAplications.AddRange(RefinanceDetails);
+
+                    }
+
+                    return RefinanceAplications;
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+         public async Task<List<StNmrcEligibility>> GetUUSForObligor()
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var Criterias =  dbcontext.StNmrcEligibilities.Where(a => a.Category == 1).ToList();
+                   
+                    return Criterias;
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        public List<CustomerUusViewModel> PostCustomersUItems(List<CustomerUusViewModel> Model)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                       
+                        foreach (var item in Model)
+                        {
+                            var CustomerUus = new TblCustomerUUS
+                            {
+                                EmployeeNhfNumber = item.NhfNumber,
+                                PmbId = long.Parse(item.PmbId),
+                                Item = item.Item,
+                                Description = item.Description,
+                                Option = (int)item.Option,
+                            };
+                            context.TblCustomerUUS.Add(CustomerUus);
+                            if (item.FileContentBase64 != null)
+                            {
+                                var fileData = Convert.FromBase64String(item.FileContentBase64);
+
+                                    var CustomerDoc = new TblCustomerUUSDocument
+                                    {
+                                        // FileId = entity.Id,
+                                        Nhfno = item.NhfNumber,
+                                        Item = item.Item,
+                                        Type = item.FileType,
+                                        Label = item.FileName,
+                                        Images = item.FileType,
+                                        Size = fileData.Length,
+                                        Filedata = fileData
+                                    };
+                                    context.TblCustomerUUSDocument.Add(CustomerDoc);
+
+                                }
+                            }
+                          
+                        
+
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return Model;
                     }
                     catch (DbEntityValidationException ex)
                     {

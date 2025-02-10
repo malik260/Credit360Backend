@@ -84,6 +84,9 @@
   <ItemGroup>
     <Compile Include="DocumentModels\TBL_DEFERRED_DOC_TRACKER.cs" />
     <Compile Include="DocumentModels\TBL_DOCUMENT_USAGE_FINAL_ARCHIVE.cs" />
+    <Compile Include="Models\StNmrcEligibility.cs" />
+    <Compile Include="Models\TblCustomerUUS.cs" />
+    <Compile Include="Models\TblCustomerUUSDocument.cs" />
     <Compile Include="Models\TblNmrcRefinancing.cs" />
     <Compile Include="Models\TblNmrcRefinancingLoan.cs" />
     <Compile Include="Models\TBL_ALERT_PLACEHOLDER.cs" />

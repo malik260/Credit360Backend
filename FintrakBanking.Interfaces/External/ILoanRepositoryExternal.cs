@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Credit;
+﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.External.Customer;
 using FintrakBanking.ViewModels.External.Document;
 using FintrakBanking.ViewModels.External.Loan;
@@ -27,5 +28,8 @@ namespace FintrakBanking.Interfaces.External
         Task<bool> CheckOutstandingLoan(string nhfNo);
         List<LoanVM> GetDisbursedLoans(int companyId);
         RefinanceViewModel RefinanceLoan(RefinanceViewModel Model);
+        Task<List<TblNmrcRefinancingLoan>> GetLoanForRefinance1(long CompanyId);
+        Task<List<StNmrcEligibility>> GetUUSForObligor();
+        List<CustomerUusViewModel> PostCustomersUItems(List<CustomerUusViewModel> Model);
     }
 }

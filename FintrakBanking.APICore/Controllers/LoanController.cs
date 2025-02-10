@@ -2409,6 +2409,70 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("Post-Customer-uus")]
+        public HttpResponseMessage PostCustomerUus(List<CustomerUusViewModel> Model)
+        {
+            try
+            {
+
+
+                var data = repoLoan.PostCustomersUItems(Model);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("get-obligor-uus")]
+        public async Task<HttpResponseMessage> GetObligorUUS()
+        {
+            try
+            {
+                var data = await repoLoan.GetUUSForObligor();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("get-applied-loans-refinance/")]
+        public async Task<HttpResponseMessage> GetLoanForRefinance1(long companyId)
+        {
+            try
+            {
+                var data = await repoLoan.GetLoanForRefinance1(companyId);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
 
     }
 }
