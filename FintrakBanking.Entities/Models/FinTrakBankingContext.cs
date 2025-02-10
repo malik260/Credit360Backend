@@ -686,9 +686,14 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CODE_TRACKER> TBL_CODE_TRACKER { get; set; }
         public virtual DbSet<TBL_PROPERTY_TYPE> TBL_PROPERTY_TYPE { get; set; }
 
-        public virtual DbSet<TblNmrcRefinancing> TblNmrcRefinancings { get; set; }
+        public virtual DbSet<TblNmrcRefinancing> TblNmrcRefinancing { get; set; }
 
-        public virtual DbSet<TblNmrcRefinancingLoan> TblNmrcRefinancingLoans { get; set; }
+        public virtual DbSet<TblNmrcRefinancingLoan> TblNmrcRefinancingLoan { get; set; }
+
+        public virtual DbSet<StNmrcEligibility> StNmrcEligibilities { get; set; } 
+        public virtual DbSet<TblCustomerUUS> TblCustomerUUS { get; set; } 
+        public virtual DbSet<TblCustomerUUSDocument> TblCustomerUUSDocument { get; set; } 
+
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

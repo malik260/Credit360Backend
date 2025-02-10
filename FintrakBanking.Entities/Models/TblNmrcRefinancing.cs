@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
+    [Table("tbl_NmrcRefinancing")]
+
     public partial class TblNmrcRefinancing
     {
         public long Id { get; set; }
@@ -20,14 +23,7 @@ namespace FintrakBanking.Entities.Models
         public int? Tenor { get; set; }
         public int? Rate { get; set; }
         public long? PmbId { get; set; }
-        public string ProductCode { get; set; }
-        public DateTime BaseCreateTime { get; set; }
-        public long BaseCreatorId { get; set; }
-        public long BaseProcessMenu { get; set; }
-        public int BaseVersion { get; set; }
-        public DateTime BaseModifyTime { get; set; }
-        public long BaseModifierId { get; set; }
-        public int BaseIsDelete { get; set; }
+        public string ProductCode { get; set; }        
         public int? ApplicationStatus { get; set; }
         public int? Reviewed { get; set; }
         public int? Checklisted { get; set; }
