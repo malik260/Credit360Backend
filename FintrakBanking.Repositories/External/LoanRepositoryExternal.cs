@@ -147,7 +147,9 @@ namespace FintrakBanking.Repositories.External
                                  loanStatus = b.TBL_LOAN_STATUS.ACCOUNTSTATUS,
                                  disbursedDate = b.DISBURSEDATE,
                                  company = a.NAME,
-                                 customerName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME
+                                 customerName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME,
+                                 tenor = d.APPLICATIONTENOR
+
                              }).ToList();
                 return loans;
             }
@@ -2341,8 +2343,18 @@ namespace FintrakBanking.Repositories.External
                 {
                     try
                     {
+                        var message = string.Empty;
+                        var UusItems = context.StNmrcEligibilities.Where(x=> x.DocUpload == 1).ToList();
+
                         foreach (var item in Model)
                         {
+                            var UusItem = UusItems.Where(x => x.Item.Trim().ToLower() == item.Item.Trim().ToLower());
+                            if (UusItem != null && item.FileContentBase64 == null)
+                            {
+                                message = "Document upload required for item " + item.Item;
+                                throw new SecureException($"{message}");
+                            }
+
                             var CustomerUus = new TblCustomerUUS
                             {
                                 EmployeeNhfNumber = item.NhfNumber,
