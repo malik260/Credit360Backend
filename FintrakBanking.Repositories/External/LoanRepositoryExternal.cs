@@ -2297,10 +2297,10 @@ namespace FintrakBanking.Repositories.External
                 using (var dbcontext = new FinTrakBankingContext())
                 {
                     var RefinanceAplications = new List<TblNmrcRefinancingLoan>();
-                    var LaonApp = dbcontext.TblNmrcRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 0).ToList();
+                    var LaonApp = dbcontext.TblNmrcRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1).ToList();
                     foreach (var item in LaonApp)
                     {
-                        var RefinanceDetails = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted != 1).ToList();
+                        var RefinanceDetails = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted != 1 && x.Status == 1).ToList();
                         RefinanceAplications.AddRange(RefinanceDetails);
 
                     }
