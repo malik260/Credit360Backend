@@ -31,6 +31,7 @@ namespace FintrakBanking.ViewModels.External.Loan
         public DateTime? ApplicationDate { get; set; }
         public string CustomerName { get; set; }
         public string RefinanceNumber { get; set; }
+        public string CustomerId { get; set; }
 
     }
 }

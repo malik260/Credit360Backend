@@ -15,7 +15,8 @@ namespace FintrakBanking.ViewModels.External.Loan
         public string PmbId { get; set; }
         public DateTime DeferDate { get; set; }
         public Options Option { get; set; }
-        public string FileName { get; set; }        
+        public string FileName { get; set; }
+        public string LoanId { get; set; }
         public string FileType { get; set; }       
         public string FileContentBase64 { get; set; } 
     }

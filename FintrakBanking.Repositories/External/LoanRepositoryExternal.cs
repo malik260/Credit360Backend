@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.CreditLimitValidations;
 using System.IO;
+using System.ServiceModel.Channels;
 
 namespace FintrakBanking.Repositories.External
 {
@@ -2200,14 +2201,36 @@ namespace FintrakBanking.Repositories.External
                 {
                     try
                     {
+                        var message = string.Empty;
                         // validations to be added
+                        foreach (var item in Model.RefinanceDetails)
+                        {
+                            var LoanExist = context.TblNmrcRefinancingLoan.Where(x => x.LoanId == item.LoanId).FirstOrDefault();
+                            if (LoanExist != null)
+                            {
+                                message = "LoanID" + ": " + item.LoanId + " already submitted for refinancing";
+                                throw new SecureException($"{message}");
+
+                            }
+
+                            if(Model.LoanSource == 1 && item.LoanId == null)
+                            {
+                                message = "Pls prove LoanId for internally applied loan";
+                                throw new SecureException($"{message}");
+
+                            }
+
+                        }
+
+
+
                         var result = Model;
                         var Loans = new TblNmrcRefinancing
                         {
                             TotalAmount = Model.TotalAmount,
                             PmbId = long.Parse(Model.PmbId),
                             RefinanceNumber = Model.RefinanceBatchNumber,
-                            Status = 0,
+                            Status = 1,
                             ApplicationDate = DateTime.Now,
                             ApplicationStatus = 0,
                             Disbursed = 0,
@@ -2230,8 +2253,10 @@ namespace FintrakBanking.Repositories.External
                                 Tenor = item.Tenor,
                                 ApplicationStatus = 0,
                                 LoanId = item.LoanId,
-                                Status = 0,
+                                Status = 1,
                                 Disbursed = 0,
+                                CustomerName = item.CustomerName,
+
                             };
                             context.TblNmrcRefinancingLoan.Add(LoanBreakdown);
                         }
@@ -2270,10 +2295,10 @@ namespace FintrakBanking.Repositories.External
                 using (var dbcontext = new FinTrakBankingContext())
                 {
                     var RefinanceAplications = new List<TblNmrcRefinancingLoan>();
-                    var LaonApp = dbcontext.TblNmrcRefinancing.Where(a => a.PmbId == CompanyId && a.ApplicationStatus == 0).ToList();
+                    var LaonApp = dbcontext.TblNmrcRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 0).ToList();
                     foreach (var item in LaonApp)
                     {
-                        var RefinanceDetails = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber).ToList();
+                        var RefinanceDetails = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted != 1).ToList();
                         RefinanceAplications.AddRange(RefinanceDetails);
 
                     }
@@ -2289,14 +2314,14 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
-         public async Task<List<StNmrcEligibility>> GetUUSForObligor()
+        public async Task<List<StNmrcEligibility>> GetUUSForObligor()
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var Criterias =  dbcontext.StNmrcEligibilities.Where(a => a.Category == 1).ToList();
-                   
+                    var Criterias = dbcontext.StNmrcEligibilities.Where(a => a.Category == 1).ToList();
+
                     return Criterias;
 
                 }
@@ -2316,8 +2341,6 @@ namespace FintrakBanking.Repositories.External
                 {
                     try
                     {
-
-                       
                         foreach (var item in Model)
                         {
                             var CustomerUus = new TblCustomerUUS
@@ -2333,24 +2356,25 @@ namespace FintrakBanking.Repositories.External
                             {
                                 var fileData = Convert.FromBase64String(item.FileContentBase64);
 
-                                    var CustomerDoc = new TblCustomerUUSDocument
-                                    {
-                                        // FileId = entity.Id,
-                                        Nhfno = item.NhfNumber,
-                                        Item = item.Item,
-                                        Type = item.FileType,
-                                        Label = item.FileName,
-                                        Images = item.FileType,
-                                        Size = fileData.Length,
-                                        Filedata = fileData
-                                    };
-                                    context.TblCustomerUUSDocument.Add(CustomerDoc);
+                                var CustomerDoc = new TblCustomerUUSDocument
+                                {
+                                    // FileId = entity.Id,
+                                    Nhfno = item.NhfNumber,
+                                    Item = item.Item,
+                                    Type = item.FileType,
+                                    Label = item.FileName,
+                                    Images = item.FileType,
+                                    Size = fileData.Length,
+                                    Filedata = fileData
+                                };
+                                context.TblCustomerUUSDocument.Add(CustomerDoc);
 
-                                }
                             }
-                          
-                        
+                        }
 
+                        var LoanId = Model.FirstOrDefault().LoanId;
+                        var RefinanceModel = context.TblNmrcRefinancingLoan.Where(x => x.LoanId == LoanId).FirstOrDefault();
+                        RefinanceModel.Checklisted = 1;
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
