@@ -2348,7 +2348,7 @@ namespace FintrakBanking.Repositories.External
 
                         foreach (var item in Model)
                         {
-                            var UusItem = UusItems.Where(x => x.Item.Trim().ToLower() == item.Item.Trim().ToLower());
+                            var UusItem = UusItems.Where(x => x.Id == item.ItemId).FirstOrDefault();
                             if (UusItem != null && item.FileContentBase64 == null)
                             {
                                 message = "Document upload required for item " + item.Item;
@@ -2377,7 +2377,8 @@ namespace FintrakBanking.Repositories.External
                                     Label = item.FileName,
                                     Images = item.FileType,
                                     Size = fileData.Length,
-                                    Filedata = fileData
+                                    Filedata = fileData,
+                                    ItemId = item.ItemId
                                 };
                                 context.TblCustomerUUSDocument.Add(CustomerDoc);
 
