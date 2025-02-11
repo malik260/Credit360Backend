@@ -18,5 +18,6 @@ namespace FintrakBanking.ViewModels.External.Loan
         public DateTime? disbursedDate { get; set; }
         public string company { get; set; }
         public string customerName { get; set; }
+        public int tenor { get; set; }
     }
 }
