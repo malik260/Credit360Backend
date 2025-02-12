@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using FintrakBanking.ViewModels.CreditLimitValidations;
 using System.IO;
 using System.ServiceModel.Channels;
+using System.Data.Entity.Migrations;
 
 namespace FintrakBanking.Repositories.External
 {
@@ -2207,7 +2208,7 @@ namespace FintrakBanking.Repositories.External
                         // validations to be added
                         foreach (var item in Model.RefinanceDetails)
                         {
-                            var LoanExist = context.TblNmrcRefinancingLoan.Where(x => x.LoanId == item.LoanId).FirstOrDefault();
+                            var LoanExist = context.TblRefinancingLoan.Where(x => x.LoanId == item.LoanId).FirstOrDefault();
                             if (LoanExist != null)
                             {
                                 message = "LoanID" + ": " + item.LoanId + " already submitted for refinancing";
@@ -2215,7 +2216,7 @@ namespace FintrakBanking.Repositories.External
 
                             }
 
-                            if(Model.LoanSource == 1 && item.LoanId == null)
+                            if (Model.LoanSource == 1 && item.LoanId == null)
                             {
                                 message = "Pls prove LoanId for internally applied loan";
                                 throw new SecureException($"{message}");
@@ -2227,7 +2228,7 @@ namespace FintrakBanking.Repositories.External
 
 
                         var result = Model;
-                        var Loans = new TblNmrcRefinancing
+                        var Loans = new TblRefinancing
                         {
                             TotalAmount = Model.TotalAmount,
                             PmbId = long.Parse(Model.PmbId),
@@ -2239,7 +2240,7 @@ namespace FintrakBanking.Repositories.External
                             LenderId = long.Parse(Model.SecondaryLenderId)
 
                         };
-                        context.TblNmrcRefinancing.Add(Loans);
+                        context.TblRefinancing.Add(Loans);
 
                         foreach (var item in Model.RefinanceDetails)
                         {
@@ -2290,17 +2291,17 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
-        public async Task<List<TblNmrcRefinancingLoan>> GetLoanForRefinance1(long CompanyId)
+        public async Task<List<TblRefinancingLoan>> GetLoanForRefinance1(long CompanyId)
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var RefinanceAplications = new List<TblNmrcRefinancingLoan>();
-                    var LaonApp = dbcontext.TblNmrcRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1).ToList();
+                    var RefinanceAplications = new List<TblRefinancingLoan>();
+                    var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1).ToList();
                     foreach (var item in LaonApp)
                     {
-                        var RefinanceDetails = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted != 1 && x.Status == 1).ToList();
+                        var RefinanceDetails = dbcontext.TblRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted != 1 && x.Status == 1).ToList();
                         RefinanceAplications.AddRange(RefinanceDetails);
 
                     }
@@ -2344,7 +2345,7 @@ namespace FintrakBanking.Repositories.External
                     try
                     {
                         var message = string.Empty;
-                        var UusItems = context.StNmrcEligibilities.Where(x=> x.DocUpload == 1).ToList();
+                        var UusItems = context.StNmrcEligibilities.Where(x => x.DocUpload == 1).ToList();
 
                         foreach (var item in Model)
                         {
@@ -2386,7 +2387,7 @@ namespace FintrakBanking.Repositories.External
                         }
 
                         var LoanId = Model.FirstOrDefault().LoanId;
-                        var RefinanceModel = context.TblNmrcRefinancingLoan.Where(x => x.LoanId == LoanId).FirstOrDefault();
+                        var RefinanceModel = context.TblRefinancingLoan.Where(x => x.LoanId == LoanId).FirstOrDefault();
                         RefinanceModel.Checklisted = 1;
 
                         var output = context.SaveChanges() > 0;
@@ -2415,6 +2416,155 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
+
+
+        public async Task<List<TblRefinancingLoan>> GetPmbsChecklistedLoan(long CompanyId)
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var RefinanceAplications = new List<TblRefinancingLoan>();
+                    var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1).ToList();
+                    foreach (var item in LaonApp)
+                    {
+                        var RefinanceDetails = dbcontext.TblRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted == 1 && x.Status == 1 && x.ApplicationStatus == 0).ToList();
+                        RefinanceAplications.AddRange(RefinanceDetails);
+
+                    }
+
+                    return RefinanceAplications;
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        public List<TblRefinancingLoan> ApprovePmbRefinancing(List<int> Model)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var random = new Random();
+                        var message = string.Empty;
+                        var LoanLists = new List<TblRefinancingLoan>();
+                        var Loans = context.TblRefinancingLoan.ToList();
+                        decimal? TotalAmount = 0;
+                        var RefNumber = "Ref-" + random.Next(100000, 1000000);
+
+                        foreach (var item in Model)
+                        {
+                            var Loan = Loans.Where(x => x.Id == item).FirstOrDefault();
+                            Loan.ApplicationStatus = 1;
+                            Loan.Approved = 1;
+                            TotalAmount += Loan.Amount;
+                            LoanLists.Add(Loan);
+                        }
+
+                        var NmrcRefinance = new TblNmrcRefinancing
+                        {
+                            TotalAmount = TotalAmount,
+                            RefinanceNumber = RefNumber,
+                            PmbId = LoanLists.FirstOrDefault().PmbId,
+                            ApplicationDate = DateTime.Now,
+                        };
+                        context.TblNmrcRefinancing.Add(NmrcRefinance);
+
+                        foreach (var item in LoanLists)
+                        {
+                            var NmrcLoans = new TblNmrcRefinancingLoan
+                            {
+                                Amount = item.Amount,
+                                Nhfnumber = item.Nhfnumber,
+                                CustomerName = item.CustomerName,
+                                Disbursed = 0,
+                                ApplicationDate = DateTime.Now,
+                                Status = 0,
+                                Checklisted = 0,
+                                Rate = item.Rate,
+                                Tenor = item.Tenor,
+                                ApplicationStatus = 0,
+                                LoanId = item.LoanId,
+                                ProductCode = item.ProductCode,
+                                RefinanceNumber = RefNumber,
+                                PmbId = NmrcRefinance.PmbId
+                            };
+
+                            context.TblNmrcRefinancingLoan.Add(NmrcLoans);
+                        }
+
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return LoanLists;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task<List<TblCustomerUUS>> GetCustomerUusItems(string NhfNumber)
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var Underwritings = dbcontext.TblCustomerUUS.Where(a => a.EmployeeNhfNumber == NhfNumber).ToList();
+                    return Underwritings;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<byte[]> GetCustomerUusItemDoc(string NhfNumber, int ItemId)
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var Underwritings = dbcontext.TblCustomerUUSDocument.Where(a => a.Nhfno == NhfNumber && a.ItemId == ItemId).FirstOrDefault();
+                    var Image = Underwritings.Filedata;
+                    return Image;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
 
 
 

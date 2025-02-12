@@ -49,7 +49,7 @@ namespace FintrakBanking.APICore.Controllers
                               ICustomerCollateralRepository _repoCollateral,
                               ICustomerRepository _repoCustomer,
                                ILoanScheduleRepository _scheduleRepo,
-                               IProductRepository _productRepo, 
+                               IProductRepository _productRepo,
                                ILoanOperationsRepository _loanoperations,
                                ILoanRepositoryExternal _repoLoan)
         {
@@ -287,7 +287,7 @@ namespace FintrakBanking.APICore.Controllers
                     || entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                 {
                     if (entity.isInEditMode)
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Loan Loan with Account Number: '{ data}' was successfully modified." });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Loan Loan with Account Number: '{data}' was successfully modified." });
                     else
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successfully initiated and is waiting authorization.\r\n Loan Account Number: " + data });
                 }
@@ -295,7 +295,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (entity.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
                 {
                     if (entity.isInEditMode)
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Overdaft with Account Number: '{ data}' was successfully modified." });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Overdaft with Account Number: '{data}' was successfully modified." });
                     else
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successfully initiated and is awaiting authorization.\r\n Facility Account Number: " + data });
                 }
@@ -303,7 +303,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (entity.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
                 {
                     if (entity.isInEditMode)
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"contigent facility with Account Number: '{ data}' was successfully modified." });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"contigent facility with Account Number: '{data}' was successfully modified." });
                     else
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successfully initiated and is awaiting authorization.\r\n Facility Account Number: " + data });
                 }
@@ -679,7 +679,7 @@ namespace FintrakBanking.APICore.Controllers
             model.BranchId = (short)token.GetBranchId;
             model.staffId = token.GetStaffId;
 
-            
+
             var responseId = repo.GoForApproval(model, loanBookingRequestId, isManual);
             var dynamicMessage = string.Empty;
             if (responseId == 1)
@@ -2470,6 +2470,91 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("get-pmb-checklisted-loan/")]
+        public async Task<HttpResponseMessage> GetPmbsChecklistedLoan(long companyId)
+        {
+            try
+            {
+                var data = await repoLoan.GetPmbsChecklistedLoan(companyId);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("Approve-pmb-refinance")]
+        public HttpResponseMessage ApprovePmbRefinancing(List<int> Model)
+        {
+            try
+            {
+
+
+                var data = repoLoan.ApprovePmbRefinancing(Model);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("get-customer-uus-items/")]
+        public async Task<HttpResponseMessage> GetCustomerUusItems(string NhfNumber)
+        {
+            try
+            {
+                var data = await repoLoan.GetCustomerUusItems(NhfNumber);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("get-customer-uus-items")]
+        public HttpResponseMessage GetCustomerUusItemDoc(string NhfNumber, int ItemId)
+        {
+            try
+            { 
+
+                var data = repoLoan.GetCustomerUusItemDoc(NhfNumber, ItemId);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
