@@ -2350,7 +2350,7 @@ namespace FintrakBanking.Repositories.External
                         foreach (var item in Model)
                         {
                             var UusItem = UusItems.Where(x => x.Id == item.ItemId).FirstOrDefault();
-                            if (UusItem != null && item.FileContentBase64 == null)
+                            if (item.Option != Options.Defer && UusItem != null && item.FileContentBase64 == null)
                             {
                                 message = "Document upload required for item " + item.Item;
                                 throw new SecureException($"{message}");
@@ -2369,7 +2369,11 @@ namespace FintrakBanking.Repositories.External
                             {
                                 if (item.FileContentBase64.Contains(","))
                                 {
+<<<<<<< HEAD
                                     item.FileContentBase64 = item.FileContentBase64.Split(',')[1]; // Remove the prefix
+=======
+                                    item.FileContentBase64 = item.FileContentBase64.Split(',')[1];
+>>>>>>> 9e71d402e17519ce451fe381543e4128739c41e8
                                 }
                                 var fileData = Convert.FromBase64String(item.FileContentBase64);
 
