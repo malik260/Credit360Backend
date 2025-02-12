@@ -2367,6 +2367,10 @@ namespace FintrakBanking.Repositories.External
                             context.TblCustomerUUS.Add(CustomerUus);
                             if (item.FileContentBase64 != null)
                             {
+                                if (item.FileContentBase64.Contains(","))
+                                {
+                                    item.FileContentBase64 = item.FileContentBase64.Split(',')[1];
+                                }
                                 var fileData = Convert.FromBase64String(item.FileContentBase64);
 
                                 var CustomerDoc = new TblCustomerUUSDocument
