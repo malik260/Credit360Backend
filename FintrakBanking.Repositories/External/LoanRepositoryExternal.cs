@@ -2244,7 +2244,7 @@ namespace FintrakBanking.Repositories.External
 
                         foreach (var item in Model.RefinanceDetails)
                         {
-                            var LoanBreakdown = new TblNmrcRefinancingLoan
+                            var LoanBreakdown = new TblRefinancingLoan
                             {
                                 Amount = item.Amount,
                                 RefinanceNumber = item.RefinanceNumber,
@@ -2261,7 +2261,7 @@ namespace FintrakBanking.Repositories.External
                                 CustomerName = item.CustomerName,
 
                             };
-                            context.TblNmrcRefinancingLoan.Add(LoanBreakdown);
+                            context.TblRefinancingLoan.Add(LoanBreakdown);
                         }
 
 
