@@ -2540,7 +2540,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [Route("get-customer-uus-items")]
+        [Route("get-customer-uus-items-doc")]
         public HttpResponseMessage GetCustomerUusItemDoc(string NhfNumber, int ItemId)
         {
             try

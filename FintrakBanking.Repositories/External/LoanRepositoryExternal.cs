@@ -2350,7 +2350,7 @@ namespace FintrakBanking.Repositories.External
                         foreach (var item in Model)
                         {
                             var UusItem = UusItems.Where(x => x.Id == item.ItemId).FirstOrDefault();
-                            if (UusItem != null && item.FileContentBase64 == null)
+                            if (item.Option != Options.Defer && UusItem != null && item.FileContentBase64 == null)
                             {
                                 message = "Document upload required for item " + item.Item;
                                 throw new SecureException($"{message}");
