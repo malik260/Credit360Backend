@@ -2541,12 +2541,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("get-customer-uus-items-doc")]
-        public HttpResponseMessage GetCustomerUusItemDoc(string NhfNumber, int ItemId)
+        public async Task<HttpResponseMessage> GetCustomerUusItemDoc(string NhfNumber, int ItemId)
         {
             try
             { 
 
-                var data = repoLoan.GetCustomerUusItemDoc(NhfNumber, ItemId);
+                var data = await repoLoan.GetCustomerUusItemDoc(NhfNumber, ItemId);
                 if (data == null)
                     return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });

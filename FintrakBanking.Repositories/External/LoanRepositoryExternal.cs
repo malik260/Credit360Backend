@@ -25,6 +25,7 @@ using FintrakBanking.ViewModels.CreditLimitValidations;
 using System.IO;
 using System.ServiceModel.Channels;
 using System.Data.Entity.Migrations;
+using ServiceStack;
 
 namespace FintrakBanking.Repositories.External
 {
@@ -2645,7 +2646,7 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
-        public async Task<byte[]> GetCustomerUusItemDoc(string NhfNumber, int ItemId)
+        public async Task<string> GetCustomerUusItemDoc(string NhfNumber, int ItemId)
         {
             try
             {
@@ -2653,7 +2654,9 @@ namespace FintrakBanking.Repositories.External
                 {
                     var Underwritings = dbcontext.TblCustomerUUSDocument.Where(a => a.Nhfno == NhfNumber && a.ItemId == ItemId).FirstOrDefault();
                     var Image = Underwritings?.Filedata;
-                    return Image;
+                    string base64String = Convert.ToBase64String(Image);
+                    var response =  $"data:{Underwritings.Type};base64,{base64String}";
+                    return response;
 
                 }
 
