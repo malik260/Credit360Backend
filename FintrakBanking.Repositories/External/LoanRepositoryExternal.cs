@@ -2409,6 +2409,7 @@ namespace FintrakBanking.Repositories.External
                                     Item = item.Item,
                                     Description = item.Description,
                                     Option = (int)item.Option,
+                                    ItemId = item.ItemId,   
                                 };
                                 context.TblCustomerUUS.Add(CustomerUus);
                                 if (item.FileContentBase64 != null)
@@ -2456,6 +2457,7 @@ namespace FintrakBanking.Repositories.External
                                 Item = item.Item,
                                 Description = item.Description,
                                 Option = (int)item.Option,
+                                ItemId = item.ItemId
                             };
                             context.TblCustomerUUS.Add(CustomerUus);
                             if (item.FileContentBase64 != null)
@@ -2650,7 +2652,7 @@ namespace FintrakBanking.Repositories.External
                 using (var dbcontext = new FinTrakBankingContext())
                 {
                     var Underwritings = dbcontext.TblCustomerUUSDocument.Where(a => a.Nhfno == NhfNumber && a.ItemId == ItemId).FirstOrDefault();
-                    var Image = Underwritings.Filedata;
+                    var Image = Underwritings?.Filedata;
                     return Image;
 
                 }
