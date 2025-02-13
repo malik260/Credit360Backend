@@ -25,6 +25,7 @@ using FintrakBanking.ViewModels.CreditLimitValidations;
 using System.IO;
 using System.ServiceModel.Channels;
 using System.Data.Entity.Migrations;
+using ServiceStack;
 
 namespace FintrakBanking.Repositories.External
 {
@@ -2409,6 +2410,7 @@ namespace FintrakBanking.Repositories.External
                                     Item = item.Item,
                                     Description = item.Description,
                                     Option = (int)item.Option,
+                                    ItemId = item.ItemId,   
                                 };
                                 context.TblCustomerUUS.Add(CustomerUus);
                                 if (item.FileContentBase64 != null)
@@ -2456,6 +2458,7 @@ namespace FintrakBanking.Repositories.External
                                 Item = item.Item,
                                 Description = item.Description,
                                 Option = (int)item.Option,
+                                ItemId = item.ItemId
                             };
                             context.TblCustomerUUS.Add(CustomerUus);
                             if (item.FileContentBase64 != null)
@@ -2646,15 +2649,17 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
-        public async Task<byte[]> GetCustomerUusItemDoc(string NhfNumber, int ItemId)
+        public async Task<string> GetCustomerUusItemDoc(string NhfNumber, int ItemId)
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
                     var Underwritings = dbcontext.TblCustomerUUSDocument.Where(a => a.Nhfno == NhfNumber && a.ItemId == ItemId).FirstOrDefault();
-                    var Image = Underwritings.Filedata;
-                    return Image;
+                    var Image = Underwritings?.Filedata;
+                    string base64String = Convert.ToBase64String(Image);
+                    var response =  $"data:{Underwritings.Type};base64,{base64String}";
+                    return response;
 
                 }
 
