@@ -2369,11 +2369,10 @@ namespace FintrakBanking.Repositories.External
                             {
                                 if (item.FileContentBase64.Contains(","))
                                 {
-<<<<<<< HEAD
-                                    item.FileContentBase64 = item.FileContentBase64.Split(',')[1]; // Remove the prefix
-=======
+
+
                                     item.FileContentBase64 = item.FileContentBase64.Split(',')[1];
->>>>>>> 9e71d402e17519ce451fe381543e4128739c41e8
+
                                 }
                                 var fileData = Convert.FromBase64String(item.FileContentBase64);
 
