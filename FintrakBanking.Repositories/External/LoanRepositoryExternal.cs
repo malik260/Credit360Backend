@@ -2345,10 +2345,11 @@ namespace FintrakBanking.Repositories.External
                 {
                     try
                     {
+                        var nhfNumber = Model.FirstOrDefault().NhfNumber;
                         var message = string.Empty;
                         var UusItems = context.StNmrcEligibilities.Where(x => x.DocUpload == 1).ToList();
                         var EmployeeUusItems = context.StNmrcEligibilities.Where(x => x.Category == 1).ToList();
-                        var ExisitngItems = context.TblCustomerUUS.Where(x => x.EmployeeNhfNumber == Model.FirstOrDefault().NhfNumber).ToList();
+                        var ExisitngItems = context.TblCustomerUUS.Where(x => x.EmployeeNhfNumber == nhfNumber).ToList();
 
 
                         if ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count)
