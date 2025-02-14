@@ -2378,15 +2378,15 @@ namespace FintrakBanking.Repositories.External
                         }
 
                         var NonExisting = new List<CustomerUusViewModel>();
-                        
+
                         if (ExisitngItems.Count > 0 && (Model.Count > ExisitngItems.Count))
                         {
                             foreach (var ExisitngItem in ExisitngItems)
                             {
-                                var fil = Model.Where(x=> x.ItemId == ExisitngItem.ItemId && x.NhfNumber == ExisitngItem.EmployeeNhfNumber).FirstOrDefault();
+                                var fil = Model.Where(x => x.ItemId == ExisitngItem.ItemId && x.NhfNumber == ExisitngItem.EmployeeNhfNumber).FirstOrDefault();
                                 if (fil == null)
                                     NonExisting.Add(fil);
-                              
+
                             }
 
                         }
@@ -2410,7 +2410,7 @@ namespace FintrakBanking.Repositories.External
                                     Item = item.Item,
                                     Description = item.Description,
                                     Option = (int)item.Option,
-                                    ItemId = item.ItemId,   
+                                    ItemId = item.ItemId,
                                 };
                                 context.TblCustomerUUS.Add(CustomerUus);
                                 if (item.FileContentBase64 != null)
@@ -2450,7 +2450,7 @@ namespace FintrakBanking.Repositories.External
                                 message = "Document upload required for item " + item.Item;
                                 throw new SecureException($"{message}");
                             }
-                           
+
                             var CustomerUus = new TblCustomerUUS
                             {
                                 EmployeeNhfNumber = item.NhfNumber,
@@ -2566,6 +2566,7 @@ namespace FintrakBanking.Repositories.External
                             Loan.Approved = 1;
                             TotalAmount += Loan.Amount;
                             LoanLists.Add(Loan);
+
                         }
 
                         var NmrcRefinance = new TblNmrcRefinancing
@@ -2574,8 +2575,11 @@ namespace FintrakBanking.Repositories.External
                             RefinanceNumber = RefNumber,
                             PmbId = LoanLists.FirstOrDefault().PmbId,
                             ApplicationDate = DateTime.Now,
+                            LenderId = LoanLists.FirstOrDefault().LenderId,
+
                         };
                         context.TblNmrcRefinancing.Add(NmrcRefinance);
+
 
                         foreach (var item in LoanLists)
                         {
@@ -2594,7 +2598,8 @@ namespace FintrakBanking.Repositories.External
                                 LoanId = item.LoanId,
                                 ProductCode = item.ProductCode,
                                 RefinanceNumber = RefNumber,
-                                PmbId = NmrcRefinance.PmbId
+                                PmbId = NmrcRefinance.PmbId,
+                                LenderId = item.LenderId
                             };
 
                             context.TblNmrcRefinancingLoan.Add(NmrcLoans);
@@ -2655,7 +2660,7 @@ namespace FintrakBanking.Repositories.External
                     var Underwritings = dbcontext.TblCustomerUUSDocument.Where(a => a.Nhfno == NhfNumber && a.ItemId == ItemId).FirstOrDefault();
                     var Image = Underwritings?.Filedata;
                     string base64String = Convert.ToBase64String(Image);
-                    var response =  $"data:{Underwritings.Type};base64,{base64String}";
+                    var response = $"data:{Underwritings.Type};base64,{base64String}";
                     return response;
 
                 }
@@ -2668,7 +2673,261 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
+        #region NMRC Activities
 
+        public async Task<List<TblNmrcRefinancing>> GetAppliedLoanForNmrcRefinance()
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x=> x.Status != 1 && x.ApplicationStatus != 1 && x.Disbursed != 1).ToList();
+
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<TblNmrcRefinancingLoan>> GetAppliedSubLoanForNmrcRefinance(string RefNo)
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Checklisted != 1 && x.Reviewed != 1 && x.Approved !=2  && x.Disbursed != 1).ToList();
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        // then get uus item for each obligors 
+
+        public List<UUSReviewalItem> ReviewCustomersUItems(List<UUSReviewalItem> Model)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var message = string.Empty;
+                        foreach (var item in Model)
+                        {
+                            var ChecklistItem = context.TblCustomerUUS.Where(x => x.Id == item.Id).FirstOrDefault();
+                            ChecklistItem.ReviewalComment = item.ReviewalComment;
+                            ChecklistItem.ApprovalComment = item.ApprovalComment;
+                            context.TblCustomerUUS.AddOrUpdate(ChecklistItem);
+                        }
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return Model;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public List<TblNmrcRefinancingLoan> ReviewalApproval(List<int> Model)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var random = new Random();
+                        var message = string.Empty;
+                        var Loans = new List<TblNmrcRefinancingLoan>();
+
+                        foreach (var item in Model)
+                        {
+                            var Loan = context.TblNmrcRefinancingLoan.Where(x => x.Id == item).FirstOrDefault();
+                            Loan.Reviewed = 1;
+                            Loan.Checklisted = 1;
+                            Loans.Add(Loan);
+                            context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
+                        }
+
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return Loans;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+         public List<TblNmrcRefinancingLoan> ReviewalDisApproval(List<int> Model)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var random = new Random();
+                        var message = string.Empty;
+                        var Loans = new List<TblNmrcRefinancingLoan>();
+
+                        foreach (var item in Model)
+                        {
+                            var Loan = context.TblNmrcRefinancingLoan.Where(x => x.Id == item).FirstOrDefault();
+                            Loan.Reviewed = 1;
+                            Loan.Checklisted = 1;
+                            Loan.Approved = 2;
+                            Loans.Add(Loan);
+                            context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
+                        }
+
+                        
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return Loans;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task<List<TblNmrcRefinancingLoan>> GetReviewedForApproval(string RefNo)
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Checklisted == 1 && x.Reviewed == 1 && x.Approved != 1 && x.Disbursed != 1).ToList();
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public List<TblNmrcRefinancingLoan> ApprovalReviewedLoan(List<int> Model)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var random = new Random();
+                        var message = string.Empty;
+                        var Loans = new List<TblNmrcRefinancingLoan>();
+
+                        foreach (var item in Model)
+                        {
+                            var Loan = context.TblNmrcRefinancingLoan.Where(x => x.Id == item).FirstOrDefault();
+                            Loan.Reviewed = 1;
+                            Loan.Checklisted = 1;
+                            Loan.Approved = 1;
+                            Loans.Add(Loan);
+                            context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
+                        }
+
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return Loans;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+
+
+
+        #endregion
 
     }
 }
