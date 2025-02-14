@@ -2713,6 +2713,26 @@ namespace FintrakBanking.Repositories.External
                 throw;
             }
         }
+
+        public async Task<List<TblNmrcRefinancingLoan>> GetSubLoanForNmrcReview()
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Checklisted != 1 && x.Reviewed != 1 && x.Approved != 2 && x.Disbursed != 1).ToList();
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         // then get uus item for each obligors 
 
         public List<UUSReviewalItem> ReviewCustomersUItems(List<UUSReviewalItem> Model)
@@ -2856,13 +2876,13 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
-        public async Task<List<TblNmrcRefinancingLoan>> GetReviewedForApproval(string RefNo)
+        public async Task<List<TblNmrcRefinancingLoan>> GetReviewedForApproval()
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Checklisted == 1 && x.Reviewed == 1 && x.Approved != 1 && x.Disbursed != 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Checklisted == 1 && x.Reviewed == 1 && x.Approved != 1 && x.Disbursed != 1).ToList();
 
                     return AppliedLoans;
 
@@ -2875,7 +2895,7 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
-        public List<TblNmrcRefinancingLoan> ApprovalReviewedLoan(List<int> Model)
+        public List<TblNmrcRefinancingLoan> ApproveReviewedLoan(List<int> Model)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
