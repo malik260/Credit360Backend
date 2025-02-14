@@ -2545,7 +2545,7 @@ namespace FintrakBanking.APICore.Controllers
         public async Task<HttpResponseMessage> GetCustomerUusItemDoc(string NhfNumber, int ItemId)
         {
             try
-            { 
+            {
 
                 var data = await repoLoan.GetCustomerUusItemDoc(NhfNumber, ItemId);
                 if (data == null)
@@ -2558,6 +2558,179 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
+        [HttpGet]
+        [Route("get-applied-loan-for-nmrcrefinance")]
+        public async Task<HttpResponseMessage> GetAppliedLoanForNmrcRefinance()
+        {
+            try
+            {
+                var data = await repoLoan.GetAppliedLoanForNmrcRefinance();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("get-applied-subloan-nmrcrefinance/")]
+        public async Task<HttpResponseMessage> GetAppliedSubLoanForNmrcRefinance(string RefNo)
+        {
+            try
+            {
+                var data = await repoLoan.GetAppliedSubLoanForNmrcRefinance(RefNo);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("get-subloan-for-reviewal")]
+        public async Task<HttpResponseMessage> GetSubLoanForNmrcReview()
+        {
+            try
+            {
+                var data = await repoLoan.GetSubLoanForNmrcReview();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("Nmrc-customer-uusiems-reviewal")]
+        public HttpResponseMessage ReviewCustomersUItems(List<UUSReviewalItem> Model)
+        {
+            try
+            {
+
+
+                var data = repoLoan.ReviewCustomersUItems(Model);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("Nmrc-reviewal-approval")]
+        public HttpResponseMessage ReviewalApproval(List<int> Model)
+        {
+            try
+            {
+
+
+                var data = repoLoan.ReviewalApproval(Model);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("Nmrc-reviewal-disapproval")]
+        public HttpResponseMessage ReviewalDisApproval(List<int> Model)
+        {
+            try
+            {
+
+
+                var data = repoLoan.ReviewalDisApproval(Model);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("get-subloans-for-approval")]
+        public async Task<HttpResponseMessage> GetReviewedForApproval()
+        {
+            try
+            {
+                var data = await repoLoan.GetReviewedForApproval();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("subloan-approval")]
+        public HttpResponseMessage ApproveReviewedLoan(List<int> Model)
+        {
+            try
+            {
+
+
+                var data = repoLoan.ApproveReviewedLoan(Model);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
 
 
     }

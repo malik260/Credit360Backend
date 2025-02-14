@@ -29,4 +29,11 @@ namespace FintrakBanking.ViewModels.External.Loan
         Waived,
         Defer
     }
+
+    public class UUSReviewalItem
+    {
+        public int Id { get; set; }
+        public string ReviewalComment { get; set; }
+        public string ApprovalComment { get; set; }
+    }
 }

@@ -18,5 +18,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DeferDate { get; set; }
         public int Option { get; set; }
         public int ItemId { get; set; }
+        public string ReviewalComment { get; set; }
+        public string ApprovalComment { get; set; }
     }
 }
