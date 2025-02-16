@@ -1973,6 +1973,7 @@ namespace FintrakBanking.Repositories.External
 
                         result = result + context.SaveChanges();
 
+
                         return result > 0;
                     }
                 }
@@ -2705,7 +2706,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Checklisted != 1 && x.Reviewed != 1 && x.Approved !=2  && x.Disbursed != 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo).ToList();
 
                     return AppliedLoans;
 
