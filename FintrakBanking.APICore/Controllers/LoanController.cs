@@ -2731,6 +2731,50 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpGet]
+        [Route("get-subloan-for-disbursement/")]
+        public async Task<HttpResponseMessage> GetSubLoanForDisbursement(string RefNo)
+        {
+            try
+            {
+                var data = await repoLoan.GetSubLoanForDisbursement(RefNo);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+        [HttpPost]
+        [Route("disburse-refinanced-loan")]
+        public HttpResponseMessage DisburseApprovedRefinance(List<int> Model)
+        {
+            try
+            {
+
+
+                var data = repoLoan.DisburseApprovedRefinance(Model);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
 
 
     }
