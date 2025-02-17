@@ -2801,7 +2801,7 @@ namespace FintrakBanking.Repositories.External
 
 
 
-        public List<TblNmrcRefinancingLoan> DisburseApprovedRefinance(List<int> Model)
+        public TblNmrcRefinancing DisburseApprovedRefinance(string RefNo)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -2809,27 +2809,27 @@ namespace FintrakBanking.Repositories.External
                 {
                     try
                     {
-                        var LoanList = new List<TblNmrcRefinancingLoan>();
-                        var message = string.Empty;
-                        foreach (var item in Model)
-                        {
-                            var Loans = context.TblNmrcRefinancingLoan.Where(x => x.Id == item).FirstOrDefault();
-                            Loans.Approved = 1;
-                            Loans.Disbursed  = 1;
-                            context.TblNmrcRefinancingLoan.AddOrUpdate(Loans);
-                            LoanList.Add(Loans);
-                        }
-                        var RefLoans = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == LoanList.FirstOrDefault().RefinanceNumber).FirstOrDefault();
+                        var RefLoans = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == RefNo).FirstOrDefault();
                         RefLoans.Disbursed = 1;
                         RefLoans.Status = 1;
-                        RefLoans.ApplicationStatus= 1;
+                        RefLoans.ApplicationStatus = 1;
 
+
+                        var LoanList = context.TblNmrcRefinancingLoan.Where(x=> x.RefinanceNumber == RefNo && x.Approved ==1 && x.Checklisted == 1 && x.Reviewed == 1).ToList();
+                        var message = string.Empty;
+                        foreach (var item in LoanList)
+                        {
+                            item.Approved = 1;
+                            item.Disbursed  = 1;
+                            context.TblNmrcRefinancingLoan.AddOrUpdate(item);
+                        }
+                        
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
                         trans.Dispose();
 
 
-                        return LoanList;
+                        return RefLoans;
                     }
                     catch (DbEntityValidationException ex)
                     {
