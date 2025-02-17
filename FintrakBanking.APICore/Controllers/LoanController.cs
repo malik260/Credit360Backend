@@ -2757,13 +2757,13 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("disburse-refinanced-loan")]
-        public HttpResponseMessage DisburseApprovedRefinance(List<int> Model)
+        public HttpResponseMessage DisburseApprovedRefinance(string RefNo)
         {
             try
             {
 
 
-                var data = repoLoan.DisburseApprovedRefinance(Model);
+                var data = repoLoan.DisburseApprovedRefinance(RefNo);
                 if (data == null)
                     return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
