@@ -2453,6 +2453,7 @@ namespace FintrakBanking.Repositories.External
                                 throw new SecureException($"{message}");
                             }
 
+
                             var CustomerUus = new TblCustomerUUS
                             {
                                 EmployeeNhfNumber = item.NhfNumber,
@@ -2715,6 +2716,24 @@ namespace FintrakBanking.Repositories.External
                 throw;
             }
         }
+         public async Task<List<TblNmrcRefinancingLoan>> GetSubLoanForDisbursement(string RefNo)
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Checklisted == 1 && x.Reviewed == 1 && x.Approved == 1 && x.Disbursed != 1).ToList();
+                   
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
         public async Task<List<TblNmrcRefinancingLoan>> GetSubLoanForNmrcReview()
         {
@@ -2722,7 +2741,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Checklisted != 1 && x.Reviewed != 1 && x.Approved != 2 && x.Disbursed != 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Checklisted != 1 && x.Reviewed != 1 && x.Approved != 2 && x.Disbursed != 1 && x.Approved != 1).ToList();
 
                     return AppliedLoans;
 
@@ -2779,6 +2798,59 @@ namespace FintrakBanking.Repositories.External
                 }
             }
         }
+
+
+
+        public TblNmrcRefinancing DisburseApprovedRefinance(string RefNo)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var RefLoans = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == RefNo).FirstOrDefault();
+                        RefLoans.Disbursed = 1;
+                        RefLoans.Status = 1;
+                        RefLoans.ApplicationStatus = 1;
+
+
+                        var LoanList = context.TblNmrcRefinancingLoan.Where(x=> x.RefinanceNumber == RefNo && x.Approved ==1 && x.Checklisted == 1 && x.Reviewed == 1).ToList();
+                        var message = string.Empty;
+                        foreach (var item in LoanList)
+                        {
+                            item.Approved = 1;
+                            item.Disbursed  = 1;
+                            context.TblNmrcRefinancingLoan.AddOrUpdate(item);
+                        }
+                        
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return RefLoans;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+
 
         public List<TblNmrcRefinancingLoan> ReviewalApproval(List<int> Model)
         {
@@ -2847,8 +2919,13 @@ namespace FintrakBanking.Repositories.External
                             Loan.Checklisted = 1;
                             Loan.Approved = 2;
                             Loans.Add(Loan);
+                            var Refinance = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == Loan.RefinanceNumber).FirstOrDefault();
+                            Refinance.TotalAmount = Refinance.TotalAmount - Loan.Amount;
+
                             context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
+                            context.TblNmrcRefinancing.AddOrUpdate(Refinance);
                         }
+
 
                         
 
