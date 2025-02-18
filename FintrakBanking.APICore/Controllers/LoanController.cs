@@ -2369,7 +2369,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("get-disbursed-loans/")]
+        [ClaimsAuthorization]
+        [Route("get-disbursed-loans")]
         public HttpResponseMessage GetDisbursedLoans(int companyId)
         {
             try
