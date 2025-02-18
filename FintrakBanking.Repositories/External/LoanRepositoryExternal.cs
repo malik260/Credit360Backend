@@ -2353,20 +2353,20 @@ namespace FintrakBanking.Repositories.External
                         var ExisitngItems = context.TblCustomerUUS.Where(x => x.EmployeeNhfNumber == nhfNumber).ToList();
 
 
-                        if ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count)
-                        {
-                            var Id = Model.FirstOrDefault().LoanId;
-                            var RefinanceMod = context.TblRefinancingLoan.Where(x => x.LoanId == Id).FirstOrDefault();
-                            RefinanceMod.Checklisted = 1;
+                        //if ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count)
+                        //{
+                        //    var Id = Model.FirstOrDefault().LoanId;
+                        //    var RefinanceMod = context.TblRefinancingLoan.Where(x => x.LoanId == Id).FirstOrDefault();
+                        //    RefinanceMod.Checklisted = 1;
 
-                            var output1 = context.SaveChanges() > 0;
-                            trans.Commit();
-                            trans.Dispose();
+                        //    var output1 = context.SaveChanges() > 0;
+                        //    trans.Commit();
+                        //    trans.Dispose();
 
 
-                            return Model;
+                        //    return Model;
 
-                        }
+                        //}
 
                         if (ExisitngItems.Count == 0)
                         {
