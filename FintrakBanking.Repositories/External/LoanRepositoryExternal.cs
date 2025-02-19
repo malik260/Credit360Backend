@@ -2353,7 +2353,7 @@ namespace FintrakBanking.Repositories.External
                         var ExisitngItems = context.TblCustomerUUS.Where(x => x.EmployeeNhfNumber == nhfNumber).ToList();
 
 
-                        if ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count)
+                        if (ExisitngItems.Count()> 0 &&    ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count))
                         {
                             var Id = Model.FirstOrDefault().LoanId;
                             var RefinanceMod = context.TblRefinancingLoan.Where(x => x.LoanId == Id).FirstOrDefault();
@@ -2468,7 +2468,10 @@ namespace FintrakBanking.Repositories.External
                             {
                                 if (item.FileContentBase64.Contains(","))
                                 {
+
+
                                     item.FileContentBase64 = item.FileContentBase64.Split(',')[1];
+
                                 }
                                 var fileData = Convert.FromBase64String(item.FileContentBase64);
 
