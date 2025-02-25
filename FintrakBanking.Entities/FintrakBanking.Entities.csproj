@@ -89,6 +89,7 @@
     <Compile Include="Models\TblCustomerUUSDocument.cs" />
     <Compile Include="Models\TblNmrcRefinancing.cs" />
     <Compile Include="Models\TblNmrcRefinancingLoan.cs" />
+    <Compile Include="Models\TblNmrcRefinancingTranches.cs" />
     <Compile Include="Models\TblRefinancing.cs" />
     <Compile Include="Models\TblRefinancingLoan.cs" />
     <Compile Include="Models\TBL_ALERT_PLACEHOLDER.cs" />
