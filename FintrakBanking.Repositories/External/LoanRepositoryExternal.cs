@@ -2818,6 +2818,8 @@ namespace FintrakBanking.Repositories.External
                         int randomNumber = random.Next(100000, 1000000);
                         decimal TotalApprovedAmount = 0;
                         var TranchNo = "Tranch-" + randomNumber;
+                        var message = string.Empty;
+
                         foreach (var item in RefNo)
                         {
                             var RefLoans = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == item).FirstOrDefault();
@@ -2827,7 +2829,6 @@ namespace FintrakBanking.Repositories.External
                             TotalApprovedAmount += (decimal)RefLoans.TotalAmount;
 
                             var LoanList = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item && x.Approved == 1 && x.Checklisted == 1 && x.Reviewed == 1).ToList();
-                            var message = string.Empty;
                             foreach (var Loan in LoanList)
                             {
                                 Loan.Approved = 1;
@@ -2856,7 +2857,7 @@ namespace FintrakBanking.Repositories.External
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
                         trans.Dispose();
-                        string message = "Loan Tranched with Number: " + TranchNo;
+                        message = "Loan(s) Tranched with Number: " + TranchNo;
 
                         return message;
                     }
