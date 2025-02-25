@@ -2766,13 +2766,8 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repoLoan.TranchApprovedLoans(LoanRefinanceNumber);
                 if (data == null)
                     return Request.CreateResponse(HttpStatusCode.OK,
-<<<<<<< HEAD
                    new { success = true, message = $"Loan Disbursed Successfully" });
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data,});
-=======
-                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
->>>>>>> f0985dce0db56757d41b02f0d2dfae6a92b820b4
             }
             catch (SecureException ex)
             {
