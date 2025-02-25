@@ -7,29 +7,27 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    [Table("tbl_NmrcRefinancing")]
+    [Table("tbl_NmrcRefinancingTranches")]
 
-    public partial class TblNmrcRefinancing
+    public class TblNmrcRefinancingTranches
     {
         public long Id { get; set; }
         public long? LenderId { get; set; }
-        public string Nhfnumber { get; set; }
-        public string RefinanceNumber { get; set; }
-        public decimal? Amount { get; set; }
         public decimal? TotalAmount { get; set; }
-        public string LoanId { get; set; }
         public int? Status { get; set; }
         public DateTime? ApplicationDate { get; set; }
         public int? Tenor { get; set; }
         public int? Rate { get; set; }
         public long? PmbId { get; set; }
-        public string ProductCode { get; set; }        
-        public int? ApplicationStatus { get; set; }
-        public int? Reviewed { get; set; }
-        public int? Checklisted { get; set; }
+        public string ProductCode { get; set; }      
         public int? Disbursed { get; set; }
+        public int? IsTranched { get; set; }
+        public string TranchNumber { get; set; }
+        public string BookingNumber { get; set; }
+        public int? IsScheduled { get; set; }
+        public int? IsBooked { get; set; }
         public decimal TotalApprovalAmount { get; set; }
-        
-    }
 
+    }
 }
+

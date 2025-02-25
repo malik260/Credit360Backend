@@ -37,6 +37,6 @@ namespace FintrakBanking.ViewModels.External.Loan
 
     public class LoanDisbursement
     {
-        public string RefinanceNumber { get; set; }
+        public List<string> RefinanceNumber { get; set; }
     }
 }
