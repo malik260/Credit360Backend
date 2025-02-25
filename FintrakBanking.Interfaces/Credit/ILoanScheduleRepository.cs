@@ -86,5 +86,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithNewAnnuity(int loanID, DateTime effectiveDate, double interestRate, int frequencyId, DateTime maturityDate);
 
+
+        List<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanScheduleNMRC(LoanPaymentScheduleInputViewModel loanInput);
+
     }
 }
