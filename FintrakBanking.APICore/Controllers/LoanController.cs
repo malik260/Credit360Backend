@@ -2417,7 +2417,6 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
 
-
                 var data = repoLoan.PostCustomersUItems(Model);
                 if (data == null)
                     return Request.CreateResponse(HttpStatusCode.OK,
