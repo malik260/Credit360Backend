@@ -2353,20 +2353,20 @@ namespace FintrakBanking.Repositories.External
                         var ExisitngItems = context.TblCustomerUUS.Where(x => x.EmployeeNhfNumber == nhfNumber).ToList();
 
 
-                        //if ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count)
-                        //{
-                        //    var Id = Model.FirstOrDefault().LoanId;
-                        //    var RefinanceMod = context.TblRefinancingLoan.Where(x => x.LoanId == Id).FirstOrDefault();
-                        //    RefinanceMod.Checklisted = 1;
+                        if (ExisitngItems.Count()> 0 &&    ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count))
+                        {
+                            var Id = Model.FirstOrDefault().LoanId;
+                            var RefinanceMod = context.TblRefinancingLoan.Where(x => x.LoanId == Id).FirstOrDefault();
+                            RefinanceMod.Checklisted = 1;
 
-                        //    var output1 = context.SaveChanges() > 0;
-                        //    trans.Commit();
-                        //    trans.Dispose();
+                            var output1 = context.SaveChanges() > 0;
+                            trans.Commit();
+                            trans.Dispose();
 
 
-                        //    return Model;
+                            return Model;
 
-                        //}
+                        }
 
                         if (ExisitngItems.Count == 0)
                         {
@@ -2413,6 +2413,7 @@ namespace FintrakBanking.Repositories.External
                                     Description = item.Description,
                                     Option = (int)item.Option,
                                     ItemId = item.ItemId,
+                                    DeferDate = item.DeferDate
                                 };
                                 context.TblCustomerUUS.Add(CustomerUus);
                                 if (item.FileContentBase64 != null)
@@ -2461,7 +2462,8 @@ namespace FintrakBanking.Repositories.External
                                 Item = item.Item,
                                 Description = item.Description,
                                 Option = (int)item.Option,
-                                ItemId = item.ItemId
+                                ItemId = item.ItemId,
+                                DeferDate = item.DeferDate
                             };
                             context.TblCustomerUUS.Add(CustomerUus);
                             if (item.FileContentBase64 != null)
@@ -2804,7 +2806,7 @@ namespace FintrakBanking.Repositories.External
 
 
 
-        public TblNmrcRefinancing DisburseApprovedRefinance(string RefNo)
+        public string TranchApprovedLoans(List<string> RefNo)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -2812,27 +2814,51 @@ namespace FintrakBanking.Repositories.External
                 {
                     try
                     {
-                        var RefLoans = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == RefNo).FirstOrDefault();
-                        RefLoans.Disbursed = 1;
-                        RefLoans.Status = 1;
-                        RefLoans.ApplicationStatus = 1;
-
-
-                        var LoanList = context.TblNmrcRefinancingLoan.Where(x=> x.RefinanceNumber == RefNo && x.Approved ==1 && x.Checklisted == 1 && x.Reviewed == 1).ToList();
-                        var message = string.Empty;
-                        foreach (var item in LoanList)
+                        Random random= new Random();
+                        int randomNumber = random.Next(100000, 1000000);
+                        decimal TotalApprovedAmount = 0;
+                        var TranchNo = "Tranch-" + randomNumber;
+                        foreach (var item in RefNo)
                         {
-                            item.Approved = 1;
-                            item.Disbursed  = 1;
-                            context.TblNmrcRefinancingLoan.AddOrUpdate(item);
+                            var RefLoans = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == item).FirstOrDefault();
+                            RefLoans.Disbursed = 1;
+                            RefLoans.Status = 1;
+                            RefLoans.ApplicationStatus = 1;
+                            TotalApprovedAmount += (decimal)RefLoans.TotalAmount;
+
+                            var LoanList = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item && x.Approved == 1 && x.Checklisted == 1 && x.Reviewed == 1).ToList();
+                            var message = string.Empty;
+                            foreach (var Loan in LoanList)
+                            {
+                                Loan.Approved = 1;
+                                Loan.Disbursed = 1;
+                                context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
+                            }
+
                         }
+
+                        var LoanTranch = new TblNmrcRefinancingTranches();
+                        LoanTranch.TotalApprovalAmount = TotalApprovedAmount;
+                        LoanTranch.IsBooked = 0;
+                        LoanTranch.IsScheduled = 0;
+                        LoanTranch.Disbursed = 0;
+                        LoanTranch.Rate = 0;
+                        LoanTranch.Tenor = 0;
+                        LoanTranch.Status = 0;
+                        LoanTranch.TotalAmount = TotalApprovedAmount;
+                        LoanTranch.ApplicationDate = DateTime.Now;
+                        LoanTranch.TranchNumber = TranchNo;
+                        LoanTranch.PmbId = 1;
+                        LoanTranch.LenderId = 2;
+                        context.TblNmrcRefinancingTranches.Add(LoanTranch);
                         
+
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
                         trans.Dispose();
+                        string message = "Loan Tranched with Number: " + TranchNo;
 
-
-                        return RefLoans;
+                        return message;
                     }
                     catch (DbEntityValidationException ex)
                     {

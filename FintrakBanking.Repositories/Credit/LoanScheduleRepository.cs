@@ -9828,6 +9828,190 @@ namespace FintrakBanking.Repositories.Credit
             return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
+
+
+
+
+        public List<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanScheduleNMRC(LoanPaymentScheduleInputViewModel loanInput)
+        {
+            List<LoanPaymentSchedulePeriodicViewModel> output = null; // new List<LoanPaymentSchedulePeriodicViewModel>();
+
+
+            LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
+
+
+            if (loanInput.operationTypeId == (int)OperationsEnum.LoanRecapitilization)
+            {
+                loanInput.isExistingFacility = false;
+            }
+
+            if (loanInput.isExistingFacility == false)
+            {
+
+                if (loanInput.principalAmount <= 0)
+                    throw new ConditionNotMetException("Please Enter Loan Amount");
+                if (loanInput.interestRate < 0)
+                    throw new ConditionNotMetException("Please Enter Loan Interest Amount");
+                //if (loanInput.principalFirstpaymentDate < loanInput.effectiveDate)
+                //    throw new ConditionNotMetException("First principal first payment date cannot be less than effective date ");
+                //if (loanInput.interestFirstpaymentDate < loanInput.effectiveDate)
+                //    throw new ConditionNotMetException("First interest first payment date cannot be less than effective date ");
+
+                if (scheduleMethod != LoanScheduleTypeEnum.IrregularSchedule)
+                {
+                    if (loanInput.maturityDate < loanInput.effectiveDate)
+                        throw new ConditionNotMetException("Maturity date cannot be less than effective date");
+                }
+                else
+                {
+
+                }
+
+                if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                    output = GenerateIrregularPeriodicScheduleWithAmortisedCost(loanInput).ToList();
+                else if (scheduleMethod == LoanScheduleTypeEnum.Annuity)
+                {
+                    if (loanInput.interestFirstpaymentDate == loanInput.principalFirstpaymentDate && loanInput.interestFrequency == loanInput.principalFrequency)
+                        output = GenerateNormalAnnuityPeriodicSchedule(loanInput);
+                    else
+                        output = GenerateMoratoriumAnnuityPeriodicSchedule(loanInput);
+                }
+                else if (scheduleMethod == LoanScheduleTypeEnum.ReducingBalance)
+                    output = GenerateReducingBalancePeriodicSchedule(loanInput);
+                else if (scheduleMethod == LoanScheduleTypeEnum.BulletPayment)
+                    output = GenerateBulletPeriodicScheduleWithAmortisedCost(loanInput);
+                else if (scheduleMethod == LoanScheduleTypeEnum.ConstantPrincipalAndInterest)
+                    output = GenerateConstantPrincipalAndInterestPeriodicScheduleWithAmortisedCost(loanInput);
+                else if (scheduleMethod == LoanScheduleTypeEnum.BallonPayment)
+                    output = GenerateBallonPeriodicSchedule(loanInput);
+
+            }
+            else
+            {
+                if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                    output = GenerateIrregularPeriodicScheduleWithAmortisedCost(loanInput).ToList();
+                else if (scheduleMethod == LoanScheduleTypeEnum.Annuity)
+                {
+                    if (loanInput.interestFrequencyTypeId == loanInput.principalFrequencyTypeId)
+                    {
+                        if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.MaintainTenor)
+                            output = PrepaymentWithNewAnnuity((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution);
+                        else if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.UseExistingRepayment)
+                            output = PrepaymentWithKeepExistingAnnuity((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution);
+                        else if (loanInput.operationTypeId == (int)OperationsEnum.PaymentDateChange)
+                        {
+                            if ((int)loanInput.principalFrequencyTypeId == (int)FrequencyTypeEnum.Daily && (int)loanInput.interestFrequencyTypeId == (int)FrequencyTypeEnum.Daily)
+                            {
+                                throw new ConditionNotMetException("Payment Date Change Operation Cannot Be Apply To A Daily Schedule");
+                            }
+
+                            output = InterestRateChange((int)loanInput.loanId, loanInput.effectiveDate, loanInput.interestRate, (int)loanInput.interestFrequencyTypeId, loanInput.maturityDate);
+                        }
+                        else if (loanInput.prepaymentMethodId == null || loanInput.prepaymentMethodId == 0)
+                            output = InterestRateChangeWithNewAnnuity((int)loanInput.loanId, loanInput.effectiveDate, loanInput.interestRate, (int)loanInput.interestFrequencyTypeId, loanInput.maturityDate);
+                    }
+                    else
+                    {
+                        if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.MaintainTenor)
+                            output = PrepaymentWithNewAnnuityAndUnEqualPayment((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution, (int)loanInput.principalFrequencyTypeId, (int)loanInput.interestFrequencyTypeId);
+                        else if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.UseExistingRepayment)
+                            output = PrepaymentWithKeepExistingAnnuityAndUnEqualPayment((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution, (int)loanInput.principalFrequencyTypeId, (int)loanInput.interestFrequencyTypeId);
+                        else if (loanInput.operationTypeId == (int)OperationsEnum.InterestandPrincipalFrequencyChange)
+                        {
+                            output = AnnuityFrequencyChange((int)loanInput.loanId, loanInput.effectiveDate, (int)loanInput.principalFrequencyTypeId, (int)loanInput.interestFrequencyTypeId, loanInput.interestRate, loanInput.maturityDate);
+                        }
+                        else if (loanInput.operationTypeId == (int)OperationsEnum.PaymentDateChange)
+                        {
+                            if ((int)loanInput.principalFrequencyTypeId == (int)FrequencyTypeEnum.Daily && (int)loanInput.interestFrequencyTypeId == (int)FrequencyTypeEnum.Daily)
+                            {
+                                throw new ConditionNotMetException("Payment Date Change Operation Cannot Be Apply To A Daily Schedule");
+                            }
+
+                            output = AnnuityFrequencyChange((int)loanInput.loanId, loanInput.effectiveDate, (int)loanInput.principalFrequencyTypeId, (int)loanInput.interestFrequencyTypeId, loanInput.interestRate, loanInput.maturityDate);
+                        }
+                        else
+                            output = InterestRateChangeWithNewAnnuityAndUnEqualPayment((int)loanInput.loanId, loanInput.effectiveDate, (int)loanInput.principalFrequencyTypeId, (int)loanInput.interestFrequencyTypeId, loanInput.interestRate, loanInput.maturityDate);
+                    }
+
+                }
+                else if (scheduleMethod == LoanScheduleTypeEnum.ReducingBalance)
+                {
+                    if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.MaintainTenor)
+                        output = EvenPrincipalPaymentsKeepExistingNewAnnuity((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution);
+                    else if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.UseExistingRepayment)
+                        output = EvenPrincipalPaymentsKeepExistingAnnuity((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution);
+                    else if (loanInput.interestFrequencyTypeId != loanInput.principalFrequencyTypeId)
+                    {
+                        throw new ConditionNotMetException("Different Frequency Method Cannot Be Apply To A Reducing Balance Schedule");
+                    }
+                    else if (loanInput.operationTypeId == (int)OperationsEnum.PaymentDateChange)
+                    {
+                        if ((int)loanInput.principalFrequencyTypeId == (int)FrequencyTypeEnum.Daily && (int)loanInput.interestFrequencyTypeId == (int)FrequencyTypeEnum.Daily)
+                        {
+                            throw new ConditionNotMetException("Payment Date Change Operation Cannot Be Apply To A Daily Schedule");
+                        }
+
+                        output = InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuityNew((int)loanInput.loanId, loanInput.effectiveDate, loanInput.interestRate, (int)loanInput.interestFrequencyTypeId, loanInput.maturityDate);
+                    }
+                    else
+                        output = InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuity((int)loanInput.loanId, loanInput.effectiveDate, loanInput.interestRate, (int)loanInput.interestFrequencyTypeId, loanInput.maturityDate);
+                }
+
+                else if (scheduleMethod == LoanScheduleTypeEnum.BulletPayment)
+                {
+                    if (loanInput.equityContribution.HasValue && loanInput.equityContribution != 0)
+                    {
+                        output = BulletPrepayments((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution);
+                    }
+                    else if (loanInput.operationTypeId == (int)OperationsEnum.InterestandPrincipalFrequencyChange)
+                    {
+                        throw new ConditionNotMetException("Interest And Principal Frequency Change Operation Cannot Be Apply To A Bullet Payment Schedule");
+                    }
+                    else if (loanInput.operationTypeId == (int)OperationsEnum.PaymentDateChange)
+                    {
+                        throw new ConditionNotMetException("Payment Date Change Operation Cannot Be Apply To A Bullet Payment Schedule");
+                    }
+                    else
+                    {
+                        output = BulletInterestRateChange((int)loanInput.loanId, loanInput.effectiveDate, loanInput.interestRate, loanInput.maturityDate);
+                    }
+
+                }
+
+                else if (scheduleMethod == LoanScheduleTypeEnum.ConstantPrincipalAndInterest)
+                {
+                    output = GenerateConstantPrincipalAndInterestPeriodicScheduleWithAmortisedCost(loanInput);
+                }
+
+                else if (scheduleMethod == LoanScheduleTypeEnum.BallonPayment)
+                {
+                    if (loanInput.equityContribution.HasValue && loanInput.equityContribution != 0)
+                    {
+                        output = BallonInterestRateChangePrepayment((int)loanInput.loanId, loanInput.effectiveDate, 0, (int)loanInput.interestFrequencyTypeId, loanInput.interestRate, (double)loanInput.equityContribution);
+                    }
+                    else if (loanInput.operationTypeId == (int)OperationsEnum.InterestandPrincipalFrequencyChange)
+                    {
+                        throw new ConditionNotMetException("Interest And Principal Frequency Change Operation Cannot Be Apply To A Ballon Payment Schedule");
+                    }
+                    else if (loanInput.operationTypeId == (int)OperationsEnum.PaymentDateChange)
+                    {
+                        throw new ConditionNotMetException("Payment Date Change Operation Cannot Be Apply To A Ballon Payment Schedule");
+                    }
+                    else
+                    {
+                        output = BallonInterestRateChange((int)loanInput.loanId, loanInput.effectiveDate, 0, (int)loanInput.interestFrequencyTypeId, loanInput.interestRate, loanInput.maturityDate);
+                    }
+                }
+
+            }
+
+            return output;
+        }
+
+
+
+
+
         //public List<LoanPaymentSchedulePeriodicViewModel> AnnuityEqualFrequency(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate, DateTime maturityDate)
         //{
 

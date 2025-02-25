@@ -2756,18 +2756,23 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [Route("disburse-refinanced-loan")]
-        public HttpResponseMessage DisburseApprovedRefinance([FromBody] LoanDisbursement Model)
+        [Route("tranch-approved-loan")]
+        public HttpResponseMessage TranchLoan([FromBody] List<string> LoanRefinanceNumber)
         {
             try
             {
 
 
-                var data = repoLoan.DisburseApprovedRefinance(Model.RefinanceNumber);
+                var data = repoLoan.TranchApprovedLoans(LoanRefinanceNumber);
                 if (data == null)
                     return Request.CreateResponse(HttpStatusCode.OK,
+<<<<<<< HEAD
                    new { success = true, message = $"Loan Disbursed Successfully" });
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data,});
+=======
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
+>>>>>>> f0985dce0db56757d41b02f0d2dfae6a92b820b4
             }
             catch (SecureException ex)
             {
@@ -2776,6 +2781,43 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("periodic-schedule-nmrc")]
+        public HttpResponseMessage GeneratePeriodicLoanScheduleNMRC([FromBody] LoanPaymentScheduleInputViewModel loanInput)
+        {
+            var data = scheduleRepo.GeneratePeriodicLoanScheduleNMRC(loanInput);
+
+            if (!data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
+        [HttpGet]
+        [Route("get-tranchedLoans")]
+        public async Task<HttpResponseMessage> GetTranchedLoans()
+        {
+            try
+            {
+                var data = await repoLoan.GetTranchedLoans();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }
