@@ -3052,6 +3052,25 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
+        public async Task<List<TblNmrcRefinancingTranches>> GetTranchedLoans()
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 0).ToList();
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
 
 
 
