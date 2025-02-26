@@ -634,7 +634,8 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 result = wct.AMORTSCHED(loanInput.principalAmount, loanInput.effectiveDate, (loanInput.interestRate / 100.0), loanInput.interestFirstpaymentDate, numberOfPayments, numberOfPaymentsInAYear, daysInAYear, FV, IntRule);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new ConditionNotMetException("Sorry your schedule generation library solution licence has expired");
             }
@@ -9828,6 +9829,68 @@ namespace FintrakBanking.Repositories.Credit
             return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
+        public bool SaveNmrcSchedule(List<LoanPaymentSchedulePeriodicViewModel> Model, LoanPaymentScheduleInputViewModel LoanModel)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var LoanId = LoanModel.loanId;
+                        var LoanInfo = context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == LoanId);
+                        LoanInfo.Rate = (int)Model.FirstOrDefault().interestRate;
+                        LoanInfo.IsScheduled = 1;
+                        LoanInfo.Tenor = LoanModel.tenor;
+
+
+                        var NmrcSchedule = new List<TBL_NMRC_LOAN_SCHEDULE_PERIODIC>();
+                        foreach (var item in Model)
+                        {
+                            var Schedule = new TBL_NMRC_LOAN_SCHEDULE_PERIODIC();
+                            Schedule.DATETIMECREATED = DateTime.Now;
+                            Schedule.INTERESTRATE = item.interestRate;
+                            Schedule.EFFECTIVEINTERESTRATE = item.effectiveInterestRate;
+                            Schedule.STARTPRINCIPALAMOUNT = (decimal)item.startPrincipalAmount;
+                            Schedule.PERIODPAYMENTAMOUNT = (decimal)item.periodPaymentAmount;
+                            Schedule.PERIODINTERESTAMOUNT = (decimal)item.periodInterestAmount;
+                            Schedule.PERIODPRINCIPALAMOUNT = (decimal)item.periodPrincipalAmount;
+                            Schedule.ENDPRINCIPALAMOUNT = (decimal)item.endPrincipalAmount;
+                            Schedule.AMORTISEDSTARTPRINCIPALAMOUNT = (decimal)item.amortisedStartPrincipalAmount;
+                            Schedule.AMORTISEDPERIODPAYMENTAMOUNT = (decimal)item.amortisedPeriodPaymentAmount;
+                            Schedule.AMORTISEDPERIODINTERESTAMOUNT = (decimal)item.amortisedPeriodInterestAmount;
+                            Schedule.AMORTISEDPERIODPRINCIPALAMOUNT = (decimal)item.amortisedPeriodPrincipalAmount;
+                            Schedule.DATETIMEUPDATED = DateTime.Now;
+                            Schedule.PAYMENTDATE = DateTime.Now;
+                            Schedule.LOANID = (int)LoanId;
+                            NmrcSchedule.Add(Schedule);
+
+                        }
+                        context.TBL_NMRC_LOAN_SCHEDULE_PERIODIC.AddRange(NmrcSchedule);
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+
+                        throw;
+                    }
+
+
+
+                }
+            }
+
+        }
+
+
+
 
 
 
@@ -9872,9 +9935,16 @@ namespace FintrakBanking.Repositories.Credit
                 else if (scheduleMethod == LoanScheduleTypeEnum.Annuity)
                 {
                     if (loanInput.interestFirstpaymentDate == loanInput.principalFirstpaymentDate && loanInput.interestFrequency == loanInput.principalFrequency)
+                    {
                         output = GenerateNormalAnnuityPeriodicSchedule(loanInput);
+                        SaveNmrcSchedule(output, loanInput);
+                    }
+
                     else
+                    {
                         output = GenerateMoratoriumAnnuityPeriodicSchedule(loanInput);
+                        SaveNmrcSchedule(output, loanInput);
+                    }
                 }
                 else if (scheduleMethod == LoanScheduleTypeEnum.ReducingBalance)
                     output = GenerateReducingBalancePeriodicSchedule(loanInput);

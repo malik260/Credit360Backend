@@ -213,6 +213,7 @@
     <Compile Include="Models\TBL_LOAN_RECOVERY_REPORTING_BATCH.cs" />
     <Compile Include="Models\TBL_NEXT_INTEREST_REPAYMENT.cs" />
     <Compile Include="Models\TBL_NEXT_PRINCIPAL_REPAYMENT.cs" />
+    <Compile Include="Models\TBL_NMRC_LOAN_SCHEDULE_PERIODIC.cs" />
     <Compile Include="Models\TBL_OPERATION_CAMSOL_LIST.cs" />
     <Compile Include="Models\TBL_OPERATION_SIGNATORY.cs" />
     <Compile Include="Models\TBL_AUTHORISED_SIGNATORY.cs" />

@@ -2813,6 +2813,85 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [Route("get-loan-for-booking-nmrc")]
+        public async Task<HttpResponseMessage> GetScheduledLoanForBooking()
+        {
+            try
+            {
+                var data = await repoLoan.GetScheduledLoanForBooking();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-booking-nmrc")]
+        public HttpResponseMessage BookLoanNMRC(int LoanId)
+        {
+            try
+            {
+                var data = repoLoan.BookLoanNmrc(LoanId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("get-loan-for-disbursement-nmrc")]
+        public async Task<HttpResponseMessage> GetScheduledLoanForDisbursement()
+        {
+            try
+            {
+                var data = await repoLoan.GetScheduledLoanForDisbursement();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("disburse-loan-nmrc")]
+        public HttpResponseMessage NmrcLoanDisbursment(int LoanId)
+        {
+            try
+            {
+                var data = repoLoan.DisburseLoanNmrc(LoanId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+
+        }
 
     }
 }
