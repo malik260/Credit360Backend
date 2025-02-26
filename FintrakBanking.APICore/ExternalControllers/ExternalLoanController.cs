@@ -34,17 +34,20 @@ namespace FintrakBanking.APICore.ExternalControllers
         private ILoanRepositoryExternal repoLoan;
         private ILoanApplicationRepository loanApplicationRepository;
         private ILoanPrincipalRepository loanPrincipalRepository;
-        private IGeneralSetupRepository generalSetupRepository;        
+        private IGeneralSetupRepository generalSetupRepository;
+        private ILoanScheduleRepository scheduleRepo;
 
         public ExternalLoanController(IProductRepository _repoProduct, ILoanRepositoryExternal _repoLoan, 
             ILoanApplicationRepository _loanApplicationRepository, ILoanPrincipalRepository _loanPrincipalRepository,
-            IGeneralSetupRepository _generalSetupRepository)
+            IGeneralSetupRepository _generalSetupRepository, ILoanScheduleRepository _scheduleRepo
+)
         {
             this.repoProduct = _repoProduct;
             this.repoLoan = _repoLoan;
             this.loanApplicationRepository = _loanApplicationRepository;
             this.loanPrincipalRepository = _loanPrincipalRepository;
-            this.generalSetupRepository = _generalSetupRepository;            
+            this.generalSetupRepository = _generalSetupRepository;     
+            this.scheduleRepo = _scheduleRepo;
         }
 
         [HttpGet]
@@ -643,6 +646,20 @@ namespace FintrakBanking.APICore.ExternalControllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });
             }
+        }
+
+        [HttpPost]
+        [Route("periodic-schedule-nmrc")]
+        public HttpResponseMessage GeneratePeriodicLoanScheduleNMRC([FromBody] LoanPaymentScheduleInputViewModel loanInput)
+        {
+            var data = scheduleRepo.GeneratePeriodicLoanScheduleNMRC(loanInput);
+
+            if (!data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
     }
