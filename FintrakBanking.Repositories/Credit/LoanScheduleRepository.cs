@@ -9860,6 +9860,8 @@ namespace FintrakBanking.Repositories.Credit
                             Schedule.AMORTISEDPERIODPAYMENTAMOUNT = (decimal)item.amortisedPeriodPaymentAmount;
                             Schedule.AMORTISEDPERIODINTERESTAMOUNT = (decimal)item.amortisedPeriodInterestAmount;
                             Schedule.AMORTISEDPERIODPRINCIPALAMOUNT = (decimal)item.amortisedPeriodPrincipalAmount;
+                            Schedule.DATETIMEUPDATED = DateTime.Now;
+                            Schedule.PAYMENTDATE = DateTime.Now;
                             NmrcSchedule.Add(Schedule);
 
                         }
