@@ -3073,6 +3073,131 @@ namespace FintrakBanking.Repositories.External
         }
 
 
+        public async Task<List<TblNmrcRefinancingTranches>> GetScheduledLoanForBooking()
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 1).ToList();
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<TblNmrcRefinancingTranches>> GetScheduledLoanForDisbursement()
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status == 0 && x.IsBooked == 1 && x.IsScheduled == 1).ToList();
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
+
+
+        public async Task<string> BookLoanNmrc(int Model)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var Message = string.Empty;
+                        Random ran = new Random();
+                        var booknumber = ran.Next(100000, 1000000);
+                        var BookingNumber = "BN-" + booknumber;
+                        var LoanInfo =await context.TblNmrcRefinancingTranches.FirstOrDefaultAsync(x => x.Id == Model);
+                        LoanInfo.IsBooked = 1;
+                        LoanInfo.BookingNumber = BookingNumber;
+                        context.TblNmrcRefinancingTranches.AddOrUpdate(LoanInfo);
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+                        Message = "Loan booked successfully with booking number: " + BookingNumber;
+
+                        return Message;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+
+        public async Task<string> DisburseLoanNmrc(int Model)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var Message = string.Empty;
+                        Random ran = new Random();
+                        
+                        var LoanInfo = await context.TblNmrcRefinancingTranches.FirstOrDefaultAsync(x => x.Id == Model);
+                        LoanInfo.Disbursed = 1;
+                        LoanInfo.Status = 1;
+                        context.TblNmrcRefinancingTranches.AddOrUpdate(LoanInfo);
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+                        Message = "Loan disbursed successfully, Total Amount: " + LoanInfo.TotalApprovalAmount;
+
+                        return Message;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
 
 
         #endregion

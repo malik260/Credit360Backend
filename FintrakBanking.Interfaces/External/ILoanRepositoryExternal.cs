@@ -47,6 +47,10 @@ namespace FintrakBanking.Interfaces.External
         string TranchApprovedLoans(List<string> RefNo);
         Task<List<TblNmrcRefinancingLoan>> GetSubLoanForDisbursement(string RefNo);
         Task<List<TblNmrcRefinancingTranches>> GetTranchedLoans();
+        Task<List<TblNmrcRefinancingTranches>> GetScheduledLoanForBooking();
+        Task<List<TblNmrcRefinancingTranches>> GetScheduledLoanForDisbursement();
+        Task<string> BookLoanNmrc(int Model);
+        Task<string> DisburseLoanNmrc(int Model);
 
     }
 }
