@@ -2894,5 +2894,29 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+
+        [HttpGet]
+        [Route("get-loan-schedule-nmrc")]
+        public async Task<HttpResponseMessage> GetLoanSchedule(int LoanId)
+        {
+            try
+            {
+                var data = await repoLoan.GetLoanPaymentSchedule(LoanId);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
     }
 }
