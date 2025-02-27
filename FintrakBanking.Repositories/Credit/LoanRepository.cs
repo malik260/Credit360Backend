@@ -7658,10 +7658,10 @@ namespace FintrakBanking.Repositories.Credit
                                   dateTimeCreated = data.DATETIMECREATED
                               }).FirstOrDefault();
 
-            if (dataRecord.operationId == (short)OperationsEnum.ForeignExchangeLoanBooking)
-            {
-                dataRecord.casaAccountId2 = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == dataRecord.nostroAccountId).FirstOrDefault()?.CUSTOMACCOUNTID;
-            }
+            //if (dataRecord.operationId == (short)OperationsEnum.ForeignExchangeLoanBooking)
+            //{
+            //    dataRecord.casaAccountId2 = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == dataRecord.nostroAccountId).FirstOrDefault()?.CUSTOMACCOUNTID;
+            //}
             return dataRecord;
         }
 

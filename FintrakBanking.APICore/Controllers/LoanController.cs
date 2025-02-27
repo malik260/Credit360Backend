@@ -2838,7 +2838,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-booking-nmrc")]
-        public HttpResponseMessage BookLoanNMRC(int LoanId)
+        public HttpResponseMessage BookLoanNMRC([FromBody] int LoanId)
         {
             try
             {
@@ -2866,7 +2866,7 @@ namespace FintrakBanking.APICore.Controllers
                        new { success = false, message = "No record found", result = data });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, count = data.Count(), result = data });
+                       new { success = true,  count = data.Count(), result = data });
             }
             catch (SecureException ex)
             {
@@ -2878,12 +2878,13 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("disburse-loan-nmrc")]
-        public HttpResponseMessage NmrcLoanDisbursment(int LoanId)
+        public  HttpResponseMessage NmrcLoanDisbursment([FromBody] int LoanId)
         {
             try
             {
                 var data = repoLoan.DisburseLoanNmrc(LoanId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                var message = repoLoan.DisburseLoanNmrc(LoanId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message, result = data });
             }
             catch (SecureException ex)
             {

@@ -3114,7 +3114,7 @@ namespace FintrakBanking.Repositories.External
 
 
 
-        public async Task<string> BookLoanNmrc(int Model)
+        public string BookLoanNmrc(int Model)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -3126,7 +3126,7 @@ namespace FintrakBanking.Repositories.External
                         Random ran = new Random();
                         var booknumber = ran.Next(100000, 1000000);
                         var BookingNumber = "BN-" + booknumber;
-                        var LoanInfo =await context.TblNmrcRefinancingTranches.FirstOrDefaultAsync(x => x.Id == Model);
+                        var LoanInfo = context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == Model);
                         LoanInfo.IsBooked = 1;
                         LoanInfo.BookingNumber = BookingNumber;
                         context.TblNmrcRefinancingTranches.AddOrUpdate(LoanInfo);
@@ -3157,7 +3157,7 @@ namespace FintrakBanking.Repositories.External
         }
 
 
-        public async Task<string> DisburseLoanNmrc(int Model)
+        public string DisburseLoanNmrc(int Model)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -3168,7 +3168,7 @@ namespace FintrakBanking.Repositories.External
                         var Message = string.Empty;
                         Random ran = new Random();
                         
-                        var LoanInfo = await context.TblNmrcRefinancingTranches.FirstOrDefaultAsync(x => x.Id == Model);
+                        var LoanInfo = context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == Model);
                         LoanInfo.Disbursed = 1;
                         LoanInfo.Status = 1;
                         context.TblNmrcRefinancingTranches.AddOrUpdate(LoanInfo);
