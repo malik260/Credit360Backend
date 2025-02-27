@@ -3168,7 +3168,11 @@ namespace FintrakBanking.Repositories.External
                         var Message = string.Empty;
                         Random ran = new Random();
                         
+<<<<<<< HEAD
                         var LoanInfo = context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == Model);
+=======
+                        var LoanInfo =  context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == Model);
+>>>>>>> 0e432ec230a9dd565e75fb854c20c53a98a75291
                         LoanInfo.Disbursed = 1;
                         LoanInfo.Status = 1;
                         context.TblNmrcRefinancingTranches.AddOrUpdate(LoanInfo);
@@ -3197,6 +3201,28 @@ namespace FintrakBanking.Repositories.External
                 }
             }
         }
+
+
+
+        public async Task<List<TBL_NMRC_LOAN_SCHEDULE_PERIODIC>> GetLoanPaymentSchedule(int LoanId)
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TBL_NMRC_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == LoanId).ToList();
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
 
 
 

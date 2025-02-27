@@ -51,6 +51,10 @@ namespace FintrakBanking.Interfaces.External
         Task<List<TblNmrcRefinancingTranches>> GetScheduledLoanForDisbursement();
         string BookLoanNmrc(int Model);
         string DisburseLoanNmrc(int Model);
+<<<<<<< HEAD
+=======
+        Task<List<TBL_NMRC_LOAN_SCHEDULE_PERIODIC>> GetLoanPaymentSchedule(int LoanId);
+>>>>>>> 0e432ec230a9dd565e75fb854c20c53a98a75291
 
     }
 }
