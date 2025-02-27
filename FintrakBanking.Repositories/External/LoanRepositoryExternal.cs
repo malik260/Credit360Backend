@@ -2851,6 +2851,7 @@ namespace FintrakBanking.Repositories.External
                         LoanTranch.TranchNumber = TranchNo;
                         LoanTranch.PmbId = 1;
                         LoanTranch.LenderId = 2;
+                        LoanTranch.IsTranched = 1;
                         context.TblNmrcRefinancingTranches.Add(LoanTranch);
                         
 
@@ -3059,7 +3060,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 0).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 0 && x.IsTranched == 1).ToList();
 
                     return AppliedLoans;
 
@@ -3079,7 +3080,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 1 && x.IsTranched ==1).ToList();
 
                     return AppliedLoans;
 
@@ -3098,7 +3099,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status == 0 && x.IsBooked == 1 && x.IsScheduled == 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status == 0 && x.IsBooked == 1 && x.IsScheduled == 1 && x.IsTranched ==1).ToList();
 
                     return AppliedLoans;
 
