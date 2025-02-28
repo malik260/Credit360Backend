@@ -2405,7 +2405,10 @@ namespace FintrakBanking.Repositories.External
                                     message = "Document upload required for item " + item.Item;
                                     throw new SecureException($"{message}");
                                 }
-
+                                if (item.DeferDate == null || item.DeferDate == DateTime.MinValue)
+                                {
+                                    item.DeferDate =new DateTime(1753, 1, 1);
+                                }
                                 var CustomerUus = new TblCustomerUUS
                                 {
                                     EmployeeNhfNumber = item.NhfNumber,
@@ -2455,7 +2458,10 @@ namespace FintrakBanking.Repositories.External
                                 message = "Document upload required for item " + item.Item;
                                 throw new SecureException($"{message}");
                             }
-
+                            if (item.DeferDate == null || item.DeferDate == DateTime.MinValue)
+                            {
+                                item.DeferDate = new DateTime(1753, 1, 1);
+                            }
 
                             var CustomerUus = new TblCustomerUUS
                             {
