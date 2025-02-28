@@ -2884,7 +2884,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var data = repoLoan.DisburseLoanNmrc(LoanId);
               
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data,  });
             }
             catch (SecureException ex)
             {
@@ -2896,8 +2896,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("get-loan-schedule-nmrc")]
-        public async Task<HttpResponseMessage> GetLoanSchedule(int LoanId)
+        [Route("get-loan-schedule-nmrc/")]
+        public async Task<HttpResponseMessage> GetLoanSchedule( int LoanId)
         {
             try
             {
