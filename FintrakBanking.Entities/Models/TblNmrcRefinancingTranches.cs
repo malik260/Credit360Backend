@@ -27,6 +27,7 @@ namespace FintrakBanking.Entities.Models
         public int? IsScheduled { get; set; }
         public int? IsBooked { get; set; }
         public decimal TotalApprovalAmount { get; set; }
+        public string PmbName { get; set; }
 
     }
 }

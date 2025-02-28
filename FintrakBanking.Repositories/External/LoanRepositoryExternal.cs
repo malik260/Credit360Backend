@@ -2358,6 +2358,7 @@ namespace FintrakBanking.Repositories.External
                             var Id = Model.FirstOrDefault().LoanId;
                             var RefinanceMod = context.TblRefinancingLoan.Where(x => x.LoanId == Id).FirstOrDefault();
                             RefinanceMod.Checklisted = 1;
+                            RefinanceMod.ApplicationDate = DateTime.Now.Date;
 
                             var output1 = context.SaveChanges() > 0;
                             trans.Commit();
@@ -2404,7 +2405,10 @@ namespace FintrakBanking.Repositories.External
                                     message = "Document upload required for item " + item.Item;
                                     throw new SecureException($"{message}");
                                 }
-
+                                if (item.DeferDate == null || item.DeferDate == DateTime.MinValue)
+                                {
+                                    item.DeferDate =new DateTime(1753, 1, 1);
+                                }
                                 var CustomerUus = new TblCustomerUUS
                                 {
                                     EmployeeNhfNumber = item.NhfNumber,
@@ -2413,7 +2417,7 @@ namespace FintrakBanking.Repositories.External
                                     Description = item.Description,
                                     Option = (int)item.Option,
                                     ItemId = item.ItemId,
-                                    DeferDate = item.DeferDate
+                                    DeferDate = item.DeferDate.Date
                                 };
                                 context.TblCustomerUUS.Add(CustomerUus);
                                 if (item.FileContentBase64 != null)
@@ -2435,6 +2439,7 @@ namespace FintrakBanking.Repositories.External
                                         Size = fileData.Length,
                                         Filedata = fileData,
                                         ItemId = item.ItemId
+                                        
                                     };
                                     context.TblCustomerUUSDocument.Add(CustomerDoc);
 
@@ -2453,7 +2458,10 @@ namespace FintrakBanking.Repositories.External
                                 message = "Document upload required for item " + item.Item;
                                 throw new SecureException($"{message}");
                             }
-
+                            if (item.DeferDate == null || item.DeferDate == DateTime.MinValue)
+                            {
+                                item.DeferDate = new DateTime(1753, 1, 1);
+                            }
 
                             var CustomerUus = new TblCustomerUUS
                             {
@@ -2463,7 +2471,8 @@ namespace FintrakBanking.Repositories.External
                                 Description = item.Description,
                                 Option = (int)item.Option,
                                 ItemId = item.ItemId,
-                                DeferDate = item.DeferDate
+                                DeferDate = item.DeferDate.Date,
+                                
                             };
                             context.TblCustomerUUS.Add(CustomerUus);
                             if (item.FileContentBase64 != null)
@@ -2487,7 +2496,9 @@ namespace FintrakBanking.Repositories.External
                                     Images = item.FileType,
                                     Size = fileData.Length,
                                     Filedata = fileData,
-                                    ItemId = item.ItemId
+                                    ItemId = item.ItemId,
+                                    
+                                   
                                 };
                                 context.TblCustomerUUSDocument.Add(CustomerDoc);
 
@@ -2497,6 +2508,8 @@ namespace FintrakBanking.Repositories.External
                         var LoanId = Model.FirstOrDefault().LoanId;
                         var RefinanceModel = context.TblRefinancingLoan.Where(x => x.LoanId == LoanId).FirstOrDefault();
                         RefinanceModel.Checklisted = 1;
+                        RefinanceModel.ApplicationDate = DateTime.Now.Date;
+                        
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
@@ -2574,6 +2587,7 @@ namespace FintrakBanking.Repositories.External
                             Loan.Approved = 1;
                             TotalAmount += Loan.Amount;
                             LoanLists.Add(Loan);
+
 
                         }
 
@@ -2851,6 +2865,7 @@ namespace FintrakBanking.Repositories.External
                         LoanTranch.TranchNumber = TranchNo;
                         LoanTranch.PmbId = 1;
                         LoanTranch.LenderId = 2;
+                        LoanTranch.IsTranched = 1;
                         context.TblNmrcRefinancingTranches.Add(LoanTranch);
                         
 
@@ -3059,7 +3074,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 0).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 0 && x.IsTranched == 1).ToList();
 
                     return AppliedLoans;
 
@@ -3079,7 +3094,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 1 && x.IsTranched ==1).ToList();
 
                     return AppliedLoans;
 
@@ -3098,7 +3113,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status == 0 && x.IsBooked == 1 && x.IsScheduled == 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status == 0 && x.IsBooked == 1 && x.IsScheduled == 1 && x.IsTranched ==1).ToList();
 
                     return AppliedLoans;
 
@@ -3114,7 +3129,7 @@ namespace FintrakBanking.Repositories.External
 
 
 
-        public async Task<string> BookLoanNmrc(int Model)
+        public string BookLoanNmrc(int Model)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -3126,7 +3141,7 @@ namespace FintrakBanking.Repositories.External
                         Random ran = new Random();
                         var booknumber = ran.Next(100000, 1000000);
                         var BookingNumber = "BN-" + booknumber;
-                        var LoanInfo =await context.TblNmrcRefinancingTranches.FirstOrDefaultAsync(x => x.Id == Model);
+                        var LoanInfo = context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == Model);
                         LoanInfo.IsBooked = 1;
                         LoanInfo.BookingNumber = BookingNumber;
                         context.TblNmrcRefinancingTranches.AddOrUpdate(LoanInfo);
@@ -3157,7 +3172,7 @@ namespace FintrakBanking.Repositories.External
         }
 
 
-        public async Task<string> DisburseLoanNmrc(int Model)
+        public string DisburseLoanNmrc(int Model)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -3168,7 +3183,7 @@ namespace FintrakBanking.Repositories.External
                         var Message = string.Empty;
                         Random ran = new Random();
                         
-                        var LoanInfo = await context.TblNmrcRefinancingTranches.FirstOrDefaultAsync(x => x.Id == Model);
+                        var LoanInfo =  context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == Model);
                         LoanInfo.Disbursed = 1;
                         LoanInfo.Status = 1;
                         context.TblNmrcRefinancingTranches.AddOrUpdate(LoanInfo);
@@ -3197,6 +3212,28 @@ namespace FintrakBanking.Repositories.External
                 }
             }
         }
+
+
+
+        public async Task<List<TBL_NMRC_LOAN_SCHEDULE_PERIODIC>> GetLoanPaymentSchedule(int LoanId)
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TBL_NMRC_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == LoanId).ToList();
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
 
 
 
