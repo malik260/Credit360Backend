@@ -2588,6 +2588,7 @@ namespace FintrakBanking.Repositories.External
                             TotalAmount += Loan.Amount;
                             LoanLists.Add(Loan);
 
+
                         }
 
                         var NmrcRefinance = new TblNmrcRefinancing
