@@ -2358,6 +2358,7 @@ namespace FintrakBanking.Repositories.External
                             var Id = Model.FirstOrDefault().LoanId;
                             var RefinanceMod = context.TblRefinancingLoan.Where(x => x.LoanId == Id).FirstOrDefault();
                             RefinanceMod.Checklisted = 1;
+                            RefinanceMod.ApplicationDate = DateTime.Now;
 
                             var output1 = context.SaveChanges() > 0;
                             trans.Commit();
@@ -2435,6 +2436,7 @@ namespace FintrakBanking.Repositories.External
                                         Size = fileData.Length,
                                         Filedata = fileData,
                                         ItemId = item.ItemId
+                                        
                                     };
                                     context.TblCustomerUUSDocument.Add(CustomerDoc);
 
@@ -2463,7 +2465,8 @@ namespace FintrakBanking.Repositories.External
                                 Description = item.Description,
                                 Option = (int)item.Option,
                                 ItemId = item.ItemId,
-                                DeferDate = item.DeferDate
+                                DeferDate = item.DeferDate,
+                                
                             };
                             context.TblCustomerUUS.Add(CustomerUus);
                             if (item.FileContentBase64 != null)
@@ -2487,7 +2490,8 @@ namespace FintrakBanking.Repositories.External
                                     Images = item.FileType,
                                     Size = fileData.Length,
                                     Filedata = fileData,
-                                    ItemId = item.ItemId
+                                    ItemId = item.ItemId,
+                                   
                                 };
                                 context.TblCustomerUUSDocument.Add(CustomerDoc);
 
@@ -2497,6 +2501,8 @@ namespace FintrakBanking.Repositories.External
                         var LoanId = Model.FirstOrDefault().LoanId;
                         var RefinanceModel = context.TblRefinancingLoan.Where(x => x.LoanId == LoanId).FirstOrDefault();
                         RefinanceModel.Checklisted = 1;
+                        RefinanceModel.ApplicationDate = DateTime.Now;
+                        
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
