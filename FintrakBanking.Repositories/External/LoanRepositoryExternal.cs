@@ -26,6 +26,7 @@ using System.IO;
 using System.ServiceModel.Channels;
 using System.Data.Entity.Migrations;
 using ServiceStack;
+using Microsoft.Office.Interop.Excel;
 
 namespace FintrakBanking.Repositories.External
 {
@@ -2239,7 +2240,8 @@ namespace FintrakBanking.Repositories.External
                             ApplicationDate = DateTime.Now,
                             ApplicationStatus = 0,
                             Disbursed = 0,
-                            LenderId = long.Parse(Model.SecondaryLenderId)
+                            LenderId = long.Parse(Model.SecondaryLenderId),
+
 
                         };
                         context.TblRefinancing.Add(Loans);
@@ -2353,7 +2355,7 @@ namespace FintrakBanking.Repositories.External
                         var ExisitngItems = context.TblCustomerUUS.Where(x => x.EmployeeNhfNumber == nhfNumber).ToList();
 
 
-                        if (ExisitngItems.Count()> 0 &&    ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count))
+                        if (ExisitngItems.Count() > 0 && ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count))
                         {
                             var Id = Model.FirstOrDefault().LoanId;
                             var RefinanceMod = context.TblRefinancingLoan.Where(x => x.LoanId == Id).FirstOrDefault();
@@ -2407,7 +2409,7 @@ namespace FintrakBanking.Repositories.External
                                 }
                                 if (item.DeferDate == null || item.DeferDate == DateTime.MinValue)
                                 {
-                                    item.DeferDate =new DateTime(1753, 1, 1);
+                                    item.DeferDate = new DateTime(1753, 1, 1);
                                 }
                                 var CustomerUus = new TblCustomerUUS
                                 {
@@ -2439,7 +2441,7 @@ namespace FintrakBanking.Repositories.External
                                         Size = fileData.Length,
                                         Filedata = fileData,
                                         ItemId = item.ItemId
-                                        
+
                                     };
                                     context.TblCustomerUUSDocument.Add(CustomerDoc);
 
@@ -2471,8 +2473,13 @@ namespace FintrakBanking.Repositories.External
                                 Description = item.Description,
                                 Option = (int)item.Option,
                                 ItemId = item.ItemId,
+<<<<<<< HEAD
                                 DeferDate = item?.DeferDate.Date,
                                 
+=======
+                                DeferDate = item.DeferDate.Date,
+
+>>>>>>> 428eb26cca113c6ef39c81f642e03a043ea3b528
                             };
                             context.TblCustomerUUS.Add(CustomerUus);
                             if (item.FileContentBase64 != null)
@@ -2497,8 +2504,8 @@ namespace FintrakBanking.Repositories.External
                                     Size = fileData.Length,
                                     Filedata = fileData,
                                     ItemId = item.ItemId,
-                                    
-                                   
+
+
                                 };
                                 context.TblCustomerUUSDocument.Add(CustomerDoc);
 
@@ -2509,7 +2516,7 @@ namespace FintrakBanking.Repositories.External
                         var RefinanceModel = context.TblRefinancingLoan.Where(x => x.LoanId == LoanId).FirstOrDefault();
                         RefinanceModel.Checklisted = 1;
                         RefinanceModel.ApplicationDate = DateTime.Now.Date;
-                        
+
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
@@ -2703,7 +2710,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x=> x.Status != 1 && x.ApplicationStatus != 1 && x.Disbursed != 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Status != 1 && x.ApplicationStatus != 1 && x.Disbursed != 1).ToList();
 
 
                     return AppliedLoans;
@@ -2735,14 +2742,14 @@ namespace FintrakBanking.Repositories.External
                 throw;
             }
         }
-         public async Task<List<TblNmrcRefinancingLoan>> GetSubLoanForDisbursement(string RefNo)
+        public async Task<List<TblNmrcRefinancingLoan>> GetSubLoanForDisbursement(string RefNo)
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
                     var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Checklisted == 1 && x.Reviewed == 1 && x.Approved == 1 && x.Disbursed != 1).ToList();
-                   
+
                     return AppliedLoans;
 
                 }
@@ -2828,15 +2835,16 @@ namespace FintrakBanking.Repositories.External
                 {
                     try
                     {
-                        Random random= new Random();
+                        Random random = new Random();
                         int randomNumber = random.Next(100000, 1000000);
                         decimal TotalApprovedAmount = 0;
                         var TranchNo = "Tranch-" + randomNumber;
                         var message = string.Empty;
-
+                        var PmbnName = string.Empty;
                         foreach (var item in RefNo)
                         {
                             var RefLoans = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == item).FirstOrDefault();
+                            PmbnName = RefLoans.PmbName;
                             RefLoans.Disbursed = 1;
                             RefLoans.Status = 1;
                             RefLoans.ApplicationStatus = 1;
@@ -2867,7 +2875,7 @@ namespace FintrakBanking.Repositories.External
                         LoanTranch.LenderId = 2;
                         LoanTranch.IsTranched = 1;
                         context.TblNmrcRefinancingTranches.Add(LoanTranch);
-                        
+                       
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
@@ -2894,6 +2902,326 @@ namespace FintrakBanking.Repositories.External
                 }
             }
         }
+
+
+
+
+
+        public LoanApplicationForReturn AddLoanApplicationNmrc(LoanApplicationForCreation loan)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        loan.loanApplicationSourceId = 1;
+                        loan.branchId = 1;
+                        loan.loanApplicationDetail.subSectorId = 1;
+
+                        if (loan == null && loan.loanApplicationDetail == null)
+                            throw new SecureException("The loan application and detail information cannot be null.");
+
+                        // get the loan application detail
+                        var loanDetail = loan.loanApplicationDetail;
+                        if (loanDetail == null)
+                            throw new SecureException("Kindly capture the loan application detail.");
+
+                        // get and validate the selected product details
+                        var productInfo = context.TBL_PRODUCT.Where(q => q.PRODUCTID == loanDetail.proposedProductId).FirstOrDefault();
+                        if (productInfo == null)
+                            throw new SecureException("Kindly select an existing product.");
+
+                        if (loanDetail.proposedAmount > productInfo.MAXIMUMAMOUNT)
+                        {
+                            throw new SecureException($"Maximum product Amount Exceeded! The maximum product amount for {productInfo.PRODUCTNAME} is NGN{productInfo.MAXIMUMAMOUNT.Value.ToString("N")}");
+                        }
+
+                        if (loanDetail.proposedAmount < productInfo.MINIMUMAMOUNT)
+                        {
+                            throw new SecureException($"Minimum product Amount Not Met! The minimum product amount for {productInfo.PRODUCTNAME} is NGN{productInfo.MINIMUMAMOUNT.Value.ToString("N")}");
+                        }
+
+                        if (loanDetail.proposedTenor > productInfo.MAXIMUMTENOR)
+                        {
+                            throw new SecureException($"Maximum product Tenor Exceeded! The maximum product tenor for {productInfo.PRODUCTNAME} is NGN{productInfo.MAXIMUMTENOR} days");
+                        }
+
+                        if (loanDetail.proposedTenor < productInfo.MINIMUMTENOR)
+                        {
+                            throw new SecureException($"Minimum product Tenor Not Met! The minimum product tenor for {productInfo.PRODUCTNAME} is NGN{productInfo.MINIMUMTENOR} days");
+                        }
+
+
+                        if (loan.loanApplicationSourceId > 0)
+                        {
+                            var applicationSources = context.TBL_SOURCE_APPLICATION.Select(s => s.APPLICATIONID).ToList();
+                            if (applicationSources.Count > 0)
+                            {
+                                if (!applicationSources.Contains((short)loan.loanApplicationSourceId))
+                                {
+                                    throw new ConditionNotMetException($"This loan application source is not valid");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            throw new ConditionNotMetException($"Kindly enter a valid application source");
+                        }
+
+                        // get the customer based on the customer code
+                        var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == loan.customerCode.Trim()).FirstOrDefault();
+                        if (customer == null)
+                            throw new SecureException($"There is no customer with code {loan.customerCode.Trim()}.");
+
+                        // validate account
+                        TBL_CASA account = new TBL_CASA();
+                        var PmbSingleCustomerId = 0;
+                        if (loan.loanApplicationSourceId == 3)
+                        {
+                            account = context.TBL_CASA.Where(q => q.PRODUCTACCOUNTNUMBER == loanDetail.operatingAccountNo).FirstOrDefault(); //PMB NHF account set as operating account
+                            if (account == null)
+                                throw new SecureException($"Kindly profile PMB's account");
+
+
+
+                            if (customer != null)
+                            {
+                                PmbSingleCustomerId = customer.CUSTOMERID;
+
+                                var customerCasa = context.TBL_CASA.Where(q => q.CUSTOMERID == PmbSingleCustomerId).FirstOrDefault();
+
+                                //if (customerCasa != null && customerCasa.PMBNHFACCOUNT != null)
+                                //{
+                                //    if (customerCasa.PMBNHFACCOUNT != loanDetail.operatingAccountNo) //confirm loan source is from PMB that profiled the customer
+                                //    {
+                                //        throw new SecureException($"Customer was profiled and mapped to the PMB with NHF number {customerCasa.PMBNHFACCOUNT}");
+                                //    }
+                                //}                                
+                                if (customerCasa == null)
+                                {
+                                    throw new SecureException($"Customer account is not yet synced.");
+                                }
+
+
+                            }
+                        }
+                        else
+                        {
+                            account = context.TBL_CASA.Where(q => q.PRODUCTACCOUNTNUMBER == loanDetail.operatingAccountNo.Trim()).FirstOrDefault();
+                            if (account == null)
+                                throw new SecureException($"Customer account {loanDetail.operatingAccountNo.Trim()} is not yet synced, kindly contact your credit officer.");
+
+                        }
+
+                        //if (customer.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
+                        //    loan.loanTypeId = (short)CustomerTypeEnum.Individual;
+
+                        //else
+                        //    loan.loanTypeId = (short)CustomerTypeEnum.Corporate;
+
+                        // get the RM mapped to the customer
+                        var staff = context.TBL_STAFF.Where(b => b.STAFFID == customer.RELATIONSHIPOFFICERID && b.DELETED == false).FirstOrDefault();
+                        if (staff == null)
+                            throw new SecureException($"There is no credit officer mapped to the customer.");
+
+                        // confirm the with the branch code
+                        var branch = context.TBL_BRANCH.Where(b => b.BRANCHID == staff.BRANCHID).FirstOrDefault();
+                        if (branch == null)
+                            throw new SecureException($"There is no branch mapped to the credit officer of the customer.");
+
+
+                        loan.customerId = customer.CUSTOMERID;
+                        loan.branchId = branch.BRANCHID;
+                        loan.relationshipOfficerId = staff.STAFFID;
+                        loan.isPoliticallyExposed = customer.ISPOLITICALLYEXPOSED == true ? 1 : 0;
+                        loan.isRelatedParty = 0;
+                        loan.proposedTenor = loanDetail.proposedTenor;
+                        // also get the product class id 
+                        loan.productClassId = (short)productInfo.TBL_PRODUCT_CLASS.PRODUCTCLASSID;
+
+
+                        //if (loanDetail.proposedAmount > productInfo.MAXIMUMTODAMOUNT)
+                        //    throw new SecureException($"The requested amount '{loanDetail.proposedAmount}' cannot be more than '{productInfo.MAXIMUMTODAMOUNT}'.");
+                        if (loanDetail.proposedAmount > productInfo.MAXIMUMAMOUNT)
+                            throw new SecureException($"The requested amount '{loanDetail.proposedAmount}' cannot be more than '{productInfo.MAXIMUMAMOUNT}'.");
+                        //if (loanDetail.proposedInterestRate != productInfo.MAXIMUMRATE)
+                        //    throw new SecureException($"Kindly input the exact interest rate. Interest Rate for '{productInfo.PRODUCTNAME}' is '{productInfo.MAXIMUMRATE}'.");
+
+                        // PROPERTIES TO VALIDATE BEFORE HAND
+                        // CustomerCode to get customerId 
+                        // Branch Code to get BranchId
+                        // Also capture MSI CODE of the RM at CREDIT APPLICATIONS
+                        // validate the RM of a particular customer
+                        // endpoint to get customer accounts // to be able to set casaAccount
+                        // endpoint to get subsectors
+                        // calculate the exchange rate.
+
+                        //loan.teamMisCode = loan.misCode;
+
+                        // set a list of subsectorId
+                        var sectorIds = new List<short>();
+                        sectorIds.Add(loanDetail.subSectorId);
+
+                        //ValidateLoanApplicationLimits((int)loan.branchId, (int)loan.customerId, loanDetail.proposedAmount, sectorIds);
+
+                        // get the summed exchange rate.
+                        var additionalAmount = loanDetail.exchangeAmount;
+
+                        // validate the region
+                        /*
+                        if (loan.regionId == null || loan.regionId == 0)
+                        {
+                            var capRegionId = productInfo.TBL_PRODUCT_CLASS.CAPREGIONID;
+
+                            if (capRegionId == null || capRegionId == 0)
+                                throw new SecureException("Kinldy contact an admin to setup up default cap region for this product class.");
+                            else
+                                loan.regionId = capRegionId;
+                        }
+                        */
+
+                        //if (loan.productClassId == (int)ProductClassEnum.FirstTrader)
+                        //    if (loanDetail.traderLoan == null)
+                        //        throw new SecureException("Kindly Ensure You Capture Traders Information");
+
+
+                        //var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED == false);
+                        //decimal cumulativeSum = 0;
+                        //foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
+
+                        /*
+                        if (loan.misCode != null)
+                        {
+                            using (FintrakStagingModel stagging = new FintrakStagingModel())
+                            {
+                                if (!stagging.STG_MIS_INFO.Where(x => x.FIELD1 == loan.misCode).Any())
+                                {
+                                    throw new SecureException("The MIS Code was not found.");
+                                }
+                            }
+                        }
+                        */
+
+                        if (loan.relationshipOfficerId != 0)
+                        {
+                            var validation = ValidateCreditLimitByRMBM(loan.relationshipOfficerId);
+                            if (validation.maximumAllowedLimit > 0)
+                                if (additionalAmount > (decimal)validation.limit)
+                                    throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
+                        }
+
+                        loan.applicationAmount = additionalAmount;
+                        var totalExposureAmount = loan.applicationAmount + loanApplicationRepository.GetCustomerTotalOutstandingBalance(loan.customerId);
+
+
+                        int changes = 0;
+
+                        //if (loanData != null)
+                        //{
+                        //    loanData.APPLICATIONAMOUNT = loan.applicationAmount;
+                        //    loanData.TOTALEXPOSUREAMOUNT = totalExposureAmount;
+                        //}
+
+                        if (string.IsNullOrEmpty(loan.applicationReferenceNumber))
+                            loan.applicationReferenceNumber = loanApplicationRepository.GetRefrenceNumber();
+
+                        try
+                        {
+                            // add loan application information
+                            AddloanApplicationSub(loan, totalExposureAmount, context);
+
+                            // add the loan application detail information
+                            var applicationDetailId = 0;
+
+                            if (loan.loanApplicationSourceId == 3)
+                            {
+                                applicationDetailId = AddLoanApplicationDetail(loanDetail, PmbSingleCustomerId, account.CASAACCOUNTID, loan.createdBy, context, ref changes);
+                                loan.customerId = PmbSingleCustomerId;
+                            }
+                            else
+                            {
+                                applicationDetailId = AddLoanApplicationDetail(loanDetail, loan.customerId, account.CASAACCOUNTID, loan.createdBy, context, ref changes);
+                            }
+
+                            //AddLoanAffordabilityDetails(loan, context, applicationDetailId);
+
+                            var LoanId = loan.loanId;
+                            var LoanInfo = context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == LoanId);
+                            LoanInfo.Rate = loan.loanApplicationDetail.proposedRate;
+                            LoanInfo.IsScheduled = 1;
+                            LoanInfo.Status = 1;
+                            LoanInfo.BookingNumber = loan.applicationReferenceNumber;
+                            LoanInfo.Tenor = loan.proposedTenor;
+
+
+                            var output = context.SaveChanges() > 0;
+                            trans.Commit();
+                            trans.Dispose();
+
+
+
+
+                            var result = new LoanApplicationForReturn();
+                            Task.Run(async () => result = await GetLoanApplicationByRefNo(loan.applicationReferenceNumber, context)).GetAwaiter().GetResult();
+
+
+                            return result;
+                        }
+                        catch (DbEntityValidationException ex)
+                        {
+                            trans.Rollback();
+
+                            string errorMessages = string.Join("; ",
+                            ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                            throw new DbEntityValidationException(errorMessages);
+                        }
+
+                        //int response = changes + context.SaveChanges();
+
+                        //if (savedDetails.Count() == 0 || loan.isNewApplication)
+                        //{
+                        //    if (loanData != null)
+                        //    {
+                        //        if (loan.loanApplicationId == 0)
+                        //        {
+                        //            loan.loanApplicationId = loanData.LOANAPPLICATIONID;
+                        //        }
+                        //        UpdateLoanApplication(loan, context);
+                        //        context.SaveChanges();
+                        //    }
+                        //}
+
+                        //var applicationDetails = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
+
+                        //var productClass = applicationDetails.LoanApplicationDetail.Select(o => o.productClassId).Distinct().ToList();
+                        //if (productClass.Count() > 1)
+                        //{
+                        //    var loanApplication = context.TBL_LOAN_APPLICATION.Where(o => o.APPLICATIONREFERENCENUMBER == loanData.APPLICATIONREFERENCENUMBER).FirstOrDefault();
+                        //    loanApplication.PRODUCTCLASSID = null;
+                        //    if (loanApplication.APPLICATIONTENOR == 0)
+                        //    {
+                        //        var loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID).ToList();
+                        //        loanApplication.APPLICATIONTENOR = loanApplicationDetail.Max(o => o.PROPOSEDTENOR);
+
+
+                        //    }
+                        //    context.SaveChanges();
+                        //}
+
+
+                        //if (response > 0 && !loan.isNewApplication) applicationDetails.closeApplication = true; 
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+
 
 
 
@@ -2945,7 +3273,7 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
-         public List<TblNmrcRefinancingLoan> ReviewalDisApproval(List<int> Model)
+        public List<TblNmrcRefinancingLoan> ReviewalDisApproval(List<int> Model)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -2972,7 +3300,7 @@ namespace FintrakBanking.Repositories.External
                         }
 
 
-                        
+
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
@@ -3074,7 +3402,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 0 && x.IsTranched == 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status == 0 && x.IsBooked == 0 && x.IsScheduled == 0 && x.IsTranched == 1).ToList();
 
                     return AppliedLoans;
 
@@ -3094,7 +3422,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status ==0 && x.IsBooked == 0 && x.IsScheduled == 1 && x.IsTranched ==1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status == 0 && x.IsBooked == 0 && x.IsScheduled == 1 && x.IsTranched == 1).ToList();
 
                     return AppliedLoans;
 
@@ -3113,7 +3441,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status == 0 && x.IsBooked == 1 && x.IsScheduled == 1 && x.IsTranched ==1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status == 0 && x.IsBooked == 1 && x.IsScheduled == 1 && x.IsTranched == 1).ToList();
 
                     return AppliedLoans;
 
@@ -3182,8 +3510,8 @@ namespace FintrakBanking.Repositories.External
                     {
                         var Message = string.Empty;
                         Random ran = new Random();
-                        
-                        var LoanInfo =  context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == Model);
+
+                        var LoanInfo = context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == Model);
                         LoanInfo.Disbursed = 1;
                         LoanInfo.Status = 1;
                         context.TblNmrcRefinancingTranches.AddOrUpdate(LoanInfo);

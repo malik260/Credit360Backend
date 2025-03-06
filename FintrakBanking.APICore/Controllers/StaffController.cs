@@ -33,7 +33,8 @@ namespace FintrakBanking.APICore.Controllers
             this.errorLogger = _errorLogger;
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff")]
         public HttpResponseMessage GetstaffInfo()
         {
@@ -76,7 +77,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/approvals/temp")]
         public HttpResponseMessage GetStaffAwaitingApproval()
         {
@@ -285,7 +287,8 @@ namespace FintrakBanking.APICore.Controllers
 
         //}
 
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/approvals/temp/{staffId}")]
         public HttpResponseMessage GetTempStaffDetailsById(int staffId)
         {
@@ -308,7 +311,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/approvals/{staffCode}")]
         public HttpResponseMessage GetStaffDetailsById(string staffCode)
         {
@@ -331,7 +335,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/approvals")]
         public HttpResponseMessage GetStaffDetails()
         {
@@ -353,7 +358,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/names")]
         public HttpResponseMessage GetStaff()
         {
@@ -376,7 +382,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer-relationship-Manager/{staffId}")]
         public HttpResponseMessage GetStaffRelationshipManagerByStaffId(int staffId)
         {
@@ -399,7 +406,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer-business-Manager/{staffId}")]
         public HttpResponseMessage GetStaffBusinessManagerByStaffId(int staffId)
         {
@@ -422,7 +430,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/unit/{departmentUnitId}")]
         public HttpResponseMessage GetStaff(short departmentUnitId)
         {
@@ -445,7 +454,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("approval-status")]
         public HttpResponseMessage GetApprovalStatus()
         {
@@ -469,7 +479,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/{staffId}")]
         public HttpResponseMessage GetStaffInfoById(int staffId)
         {
@@ -487,7 +498,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("staff")]
         public HttpResponseMessage AddTempStaff([FromBody] StaffInfoViewModel model)
         {
@@ -527,7 +539,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("staff/{staffid}")]
         public HttpResponseMessage UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
         {
@@ -539,7 +552,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
-                var staff =  repo.UpdateStaff(staffid, model);
+                var staff = repo.UpdateStaff(staffid, model);
 
                 if (staff)
                 {
@@ -556,7 +569,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete] [ClaimsAuthorization]
+        [HttpDelete]
+        [ClaimsAuthorization]
         [Route("staff/{staffId}")]
         public HttpResponseMessage DeletestaffInfo(int staffId)
         {
@@ -589,7 +603,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staffbybranch/{branchId}")]
         public HttpResponseMessage GetstaffInfoByBranchId(int branchId)
         {
@@ -614,9 +629,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("staff/approval")]
-        public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
+        public HttpResponseMessage GoForApprovalAsync([FromBody] ApprovalViewModel entity)
         {
             try
             {
@@ -628,7 +644,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var data = repo.GoForApproval(entity);
 
-                if (data ==  1)
+                if (data == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Staff record has been approved successfully." });
@@ -643,7 +659,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
                 }
-                
+
             }
             catch (ConditionNotMetException ce)
             {
@@ -662,7 +678,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("staff-delete/approval")]
-        public HttpResponseMessage GoForStaffDeleteApproval([FromBody]ApprovalViewModel entity)
+        public HttpResponseMessage GoForStaffDeleteApproval([FromBody] ApprovalViewModel entity)
         {
             try
             {
@@ -698,7 +714,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message =ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
             catch (Exception)
             {
@@ -706,9 +722,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("staff/bulk-approval")]
-        public HttpResponseMessage GoForBulkApproval([FromBody]List<ApprovalViewModel> entity)
+        public HttpResponseMessage GoForBulkApproval([FromBody] List<ApprovalViewModel> entity)
         {
             try
             {
@@ -720,7 +737,7 @@ namespace FintrakBanking.APICore.Controllers
                     applicationUrl = HttpContext.Current.Request.Path,
                     userIPAddress = Request.RequestUri.Host
                 };
-               
+
                 var data = repo.GoForBulkApproval(entity, info);
 
                 if (data)
@@ -895,7 +912,8 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/{departmentId}/search/")]
         public HttpResponseMessage SearchStaffbyDepartmentId(string queryString, int departmentId)
         {
@@ -919,7 +937,8 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/signature/all")]
         public HttpResponseMessage GetAllStaffSignatures()
         {
@@ -951,7 +970,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("staff/upload-signature")]
         public async Task<HttpResponseMessage> UploadStaffSignature()
         {
@@ -1013,7 +1033,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("staff/signature/{documentId}")]
         public HttpResponseMessage UpdateStaffSignature([FromBody] StaffDocumentViewModel entity, int documentId)
         {
@@ -1040,7 +1061,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/signature")]
         public HttpResponseMessage GetStaffSignatureByStaffCode(string staffCode)
         {
@@ -1061,7 +1083,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("staff/multiple-staff-data")]
         public async Task<HttpResponseMessage> UploadStaffData()
         {
@@ -1091,9 +1114,9 @@ namespace FintrakBanking.APICore.Controllers
                     documentTitle = provider.FormData["documentTitle"],
                     fileName = provider.FormData["fileName"],
                     fileExtension = provider.FormData["fileExtension"],
-                    loginStaffPassword= password,
+                    loginStaffPassword = password,
                     loginStaffCode = token.GetUsername
-                 };
+                };
 
                 if (entity.loginStaffPassword == string.Empty) entity.loginStaffPassword = "A031E392FA3FF64D1A5F18F047A23BAA7D41FACB25F6CAD49C7B9FCE945C83E6B210FDE78CCE5CEF63342748D8355DE11222FC52DCE218B090623CCEBF970C88";
 
@@ -1109,7 +1132,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.branchId = (short)token.GetBranchId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
-                
+
 
                 var file = provider.Contents.FirstOrDefault();
                 var buffer = await file.ReadAsByteArrayAsync();
@@ -1131,9 +1154,10 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("staff/update-supervisor")]
-        public HttpResponseMessage UpdateSupervisor([FromBody]SupervisorViewModel entity)
+        public HttpResponseMessage UpdateSupervisor([FromBody] SupervisorViewModel entity)
         {
             try
             {
