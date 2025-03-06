@@ -36,4 +36,16 @@ namespace FintrakBanking.ViewModels.External.Loan
         public string ReviewalComment { get; set; }
         public string ApprovalComment { get; set; }
     }
+
+    public class LoanApplicationTerms
+    {
+        public decimal ApprovedAmount { get; set; }
+        public int Tenor { get; set; }
+        public int Rate{ get; set; }
+        public int PmbId { get; set; }
+        public int ProductId { get; set; }
+        public int CustomerId { get; set; }
+        public string LoanPurpose { get; set; }
+
+    }
 }
