@@ -26,6 +26,7 @@ using System.IO;
 using System.ServiceModel.Channels;
 using System.Data.Entity.Migrations;
 using ServiceStack;
+using Microsoft.Office.Interop.Excel;
 
 namespace FintrakBanking.Repositories.External
 {
@@ -3139,6 +3140,15 @@ namespace FintrakBanking.Repositories.External
                             }
 
                             //AddLoanAffordabilityDetails(loan, context, applicationDetailId);
+
+                            var LoanId = loan.loanId;
+                            var LoanInfo = context.TblNmrcRefinancingTranches.FirstOrDefault(x => x.Id == LoanId);
+                            LoanInfo.Rate = loan.loanApplicationDetail.proposedRate;
+                            LoanInfo.IsScheduled = 1;
+                            LoanInfo.Status = 1;
+                            LoanInfo.BookingNumber = loan.applicationReferenceNumber;
+                            LoanInfo.Tenor = loan.proposedTenor;
+
 
                             var output = context.SaveChanges() > 0;
                             trans.Commit();
