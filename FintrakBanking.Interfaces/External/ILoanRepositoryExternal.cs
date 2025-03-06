@@ -52,6 +52,7 @@ namespace FintrakBanking.Interfaces.External
         string BookLoanNmrc(int Model);
         string DisburseLoanNmrc(int Model);
         Task<List<TBL_NMRC_LOAN_SCHEDULE_PERIODIC>> GetLoanPaymentSchedule(int LoanId);
+        LoanApplicationForReturn AddLoanApplicationNmrc(LoanApplicationForCreation loan);
 
     }
 }

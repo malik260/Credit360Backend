@@ -2778,6 +2778,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("post-loan-terms")]
+        public HttpResponseMessage PostLoanTerms([FromBody] LoanApplicationForCreation loanInput)
+        {
+            var data = repoLoan.AddLoanApplicationNmrc(loanInput);
+
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error applying for loan" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("periodic-schedule-nmrc")]
         public HttpResponseMessage GeneratePeriodicLoanScheduleNMRC([FromBody] LoanPaymentScheduleInputViewModel loanInput)
         {
@@ -2895,7 +2912,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("get-loan-schedule-nmrc/")]
+        [Route("get-loan-schedule-nmrc")]
         public async Task<HttpResponseMessage> GetLoanSchedule(int LoanId)
         {
             try

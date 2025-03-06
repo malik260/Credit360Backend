@@ -9895,6 +9895,8 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
+
+
         public List<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanScheduleNMRC(LoanPaymentScheduleInputViewModel loanInput)
         {
             List<LoanPaymentSchedulePeriodicViewModel> output = null; // new List<LoanPaymentSchedulePeriodicViewModel>();
