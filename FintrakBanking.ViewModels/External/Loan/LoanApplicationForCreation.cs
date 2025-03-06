@@ -11,6 +11,7 @@ namespace FintrakBanking.ViewModels.External.Loan
     public class LoanApplicationForCreation
     {
         //public string branchCode { get; set; }
+        public int? loanId { get; set; }
         public string customerCode { get; set; }
         //public string loanInformation { get; set; }
         public int? loanApplicationSourceId { get; set; }
@@ -34,5 +35,6 @@ namespace FintrakBanking.ViewModels.External.Loan
         public int isRelatedParty { get; set; }
         public int companyId { get; set; } = 1;
         public int createdBy { get { return this.relationshipOfficerId; } }    
+
     }
 }
