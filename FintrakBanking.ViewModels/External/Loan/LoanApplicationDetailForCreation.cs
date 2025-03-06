@@ -13,6 +13,7 @@ namespace FintrakBanking.ViewModels.External.Loan
         public string customerCode { get; set; }
         public int proposedProductId { get; set; }
         public int proposedTenor { get; set; }
+        public int proposedRate { get; set; }
         public decimal proposedAmount { get; set; }
         public short subSectorId { get; set; }
         public string loanPurpose { get; set; }
