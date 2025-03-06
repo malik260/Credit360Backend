@@ -9939,13 +9939,13 @@ namespace FintrakBanking.Repositories.Credit
                     if (loanInput.interestFirstpaymentDate == loanInput.principalFirstpaymentDate && loanInput.interestFrequency == loanInput.principalFrequency)
                     {
                         output = GenerateNormalAnnuityPeriodicSchedule(loanInput);
-                        SaveNmrcSchedule(output, loanInput);
+                        //SaveNmrcSchedule(output, loanInput);
                     }
 
                     else
                     {
                         output = GenerateMoratoriumAnnuityPeriodicSchedule(loanInput);
-                        SaveNmrcSchedule(output, loanInput);
+                        //SaveNmrcSchedule(output, loanInput);
                     }
                 }
                 else if (scheduleMethod == LoanScheduleTypeEnum.ReducingBalance)
