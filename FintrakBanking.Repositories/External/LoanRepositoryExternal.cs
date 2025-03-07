@@ -2912,9 +2912,11 @@ namespace FintrakBanking.Repositories.External
                 {
                     try
                     {
+                        var LoanSub = new LoanApplicationDetailForCreation();
+                        LoanSub.subSectorId = 1;
                         loan.loanApplicationSourceId = 1;
                         loan.branchId = 1;
-                        loan.loanApplicationDetail.subSectorId = 1;
+                        loan.loanApplicationDetail.subSectorId = LoanSub.subSectorId;
                         loan.customerCode = "PROS - 3777177";
                         loan.customerId = 21;
                         loan.loanApplicationDetail.proposedProductId = 9;
