@@ -2912,13 +2912,23 @@ namespace FintrakBanking.Repositories.External
                 {
                     try
                     {
+                        var LoanSub = new LoanApplicationDetailForCreation();
+                        LoanSub.subSectorId = 1;
                         loan.loanApplicationSourceId = 1;
                         loan.branchId = 1;
-                        loan.loanApplicationDetail.subSectorId = 1;
+
+                        if (loan.loanApplicationDetail == null)
+                        {
+                            loan.loanApplicationDetail = new LoanApplicationDetailForCreation();
+                        }
+
+
+
+                        loan.loanApplicationDetail.subSectorId = LoanSub.subSectorId;
                         loan.customerCode = "PROS - 3777177";
                         loan.customerId = 21;
                         loan.loanApplicationDetail.proposedProductId = 9;
-
+                        loan.loanApplicationDetail.subSectorId = 1;
                         if (loan == null && loan.loanApplicationDetail == null)
                             throw new SecureException("The loan application and detail information cannot be null.");
 
