@@ -2917,13 +2917,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-<<<<<<< HEAD
-        [Route("get-loan-schedule-nmrc/")]
-        public async Task<HttpResponseMessage> GetLoanSchedule( int LoanId)
-=======
         [Route("get-loan-schedule-nmrc")]
         public async Task<HttpResponseMessage> GetLoanSchedule(int LoanId)
->>>>>>> 428eb26cca113c6ef39c81f642e03a043ea3b528
         {
             try
             {

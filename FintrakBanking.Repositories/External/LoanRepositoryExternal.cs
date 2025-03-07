@@ -2474,13 +2474,8 @@ namespace FintrakBanking.Repositories.External
                                 Description = item.Description,
                                 Option = (int)item.Option,
                                 ItemId = item.ItemId,
-<<<<<<< HEAD
-                                DeferDate = item?.DeferDate.Date,
-                                
-=======
                                 DeferDate = item.DeferDate.Date,
 
->>>>>>> 428eb26cca113c6ef39c81f642e03a043ea3b528
                             };
                             context.TblCustomerUUS.Add(CustomerUus);
                             if (item.FileContentBase64 != null)
