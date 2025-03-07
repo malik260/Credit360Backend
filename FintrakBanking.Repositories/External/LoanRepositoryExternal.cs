@@ -1288,6 +1288,7 @@ namespace FintrakBanking.Repositories.External
                 ISFROMEXTERNALSOURCE = true,
                 LOANINFORMATION = loanInformation,
                 OWNEDBY = loan.createdBy,
+                LENDERID = loan.LenderId,
                 //LOANAPPLICATIONSOURCEID = loan.loanApplicationSourceId
             };
 
@@ -2874,6 +2875,7 @@ namespace FintrakBanking.Repositories.External
                         LoanTranch.PmbId = 1;
                         LoanTranch.LenderId = 2;
                         LoanTranch.IsTranched = 1;
+                        LoanTranch.ProductCode = "002";
                         context.TblNmrcRefinancingTranches.Add(LoanTranch);
                        
 
@@ -2918,6 +2920,9 @@ namespace FintrakBanking.Repositories.External
                         loan.loanApplicationSourceId = 1;
                         loan.branchId = 1;
                         loan.loanApplicationDetail.subSectorId = 1;
+                        loan.customerCode = "PROS - 3777177";
+                        loan.customerId = 21;
+                        loan.loanApplicationDetail.proposedProductId = 9;
 
                         if (loan == null && loan.loanApplicationDetail == null)
                             throw new SecureException("The loan application and detail information cannot be null.");
