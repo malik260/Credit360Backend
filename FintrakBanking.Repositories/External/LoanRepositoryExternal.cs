@@ -2923,9 +2923,10 @@ namespace FintrakBanking.Repositories.External
                         }
 
                         loan.loanApplicationDetail.subSectorId = LoanSub.subSectorId;
-                        loan.customerCode = "PROS - 3777177";
+                        loan.customerCode = "PROS-3777177";
                         loan.customerId = 21;
                         loan.loanApplicationDetail.proposedProductId = 9;
+                        loan.loanApplicationDetail.customerCode = loan.customerCode;
                         loan.loanApplicationDetail.subSectorId = 1;
                         if (loan == null && loan.loanApplicationDetail == null)
                             throw new SecureException("The loan application and detail information cannot be null.");
@@ -2984,6 +2985,7 @@ namespace FintrakBanking.Repositories.External
 
                         // validate account
                         TBL_CASA account = new TBL_CASA();
+                        loanDetail.operatingAccountNo = "4093850511";
                         var PmbSingleCustomerId = 0;
                         if (loan.loanApplicationSourceId == 3)
                         {
