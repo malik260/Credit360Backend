@@ -29,6 +29,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         //[StringLength(50)]
         public string APPLICATIONREFERENCENUMBER { get; set; }
+        public int LENDERID { get; set; }
 
         public int? LOANPRELIMINARYEVALUATIONID { get; set; }
 

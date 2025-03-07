@@ -24,6 +24,7 @@ using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.External.Loan;
 using FintrakBanking.Interfaces.External;
+using System.ComponentModel.Design;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -2780,6 +2781,9 @@ namespace FintrakBanking.APICore.Controllers
         [Route("post-loan-terms")]
         public HttpResponseMessage PostLoanTerms([FromBody] LoanApplicationForCreation loanInput)
         {
+            var companyId = token.GetCompanyId;
+            loanInput.LenderId = companyId;
+
             var data = repoLoan.AddLoanApplicationNmrc(loanInput);
 
             if (data == null)
