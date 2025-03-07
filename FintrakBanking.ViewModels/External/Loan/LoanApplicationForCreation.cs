@@ -34,7 +34,8 @@ namespace FintrakBanking.ViewModels.External.Loan
         public int isPoliticallyExposed { get; set; }
         public int isRelatedParty { get; set; }
         public int companyId { get; set; } = 1;
-        public int createdBy { get { return this.relationshipOfficerId; } }    
+        public int createdBy { get { return this.relationshipOfficerId; } }
+        public int LenderId { get; set; }
 
     }
 }
