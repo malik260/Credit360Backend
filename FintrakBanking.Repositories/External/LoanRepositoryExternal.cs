@@ -2922,6 +2922,8 @@ namespace FintrakBanking.Repositories.External
                             loan.loanApplicationDetail = new LoanApplicationDetailForCreation();
                         }
 
+
+
                         loan.loanApplicationDetail.subSectorId = LoanSub.subSectorId;
                         loan.customerCode = "PROS - 3777177";
                         loan.customerId = 21;
