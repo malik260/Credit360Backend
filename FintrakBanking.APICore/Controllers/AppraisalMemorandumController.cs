@@ -472,7 +472,7 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString, [FromUri] bool isSpecific)
         {
             IQueryable<LoanApplicationViewModel> items;
-            items = repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
+            items = repo.GetPendingLoanApplications(operationId, token.GetCompanyId, token.GetBranchId, token.GetStaffId, classId, isSpecific);
 
 
             if (!String.IsNullOrEmpty(searchString))

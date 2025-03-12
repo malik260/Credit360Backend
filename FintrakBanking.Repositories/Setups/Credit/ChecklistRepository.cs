@@ -1640,13 +1640,13 @@ namespace FintrakBanking.Repositories.Credit
                 var loan = context.TBL_LOAN_APPLICATION.Find(loanApplicationId);
                 var staffEmail = context.TBL_STAFF.Find(loan.CREATEDBY);
                 var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetCreditFileChecklistReminder").FirstOrDefault();
-                var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL + ";" + GetAllCreditPortfolioStaffEmails();
+                var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail?.DEFAULTEMAIL + ";" + GetAllCreditPortfolioStaffEmails();
                 alert.receiverEmailList.Add(emailList);
-                var alertTemplate = alertDetail.TEMPLATE;
+                var alertTemplate = alertDetail?.TEMPLATE;
                 var accountOfficer = staffEmail.FIRSTNAME + " " + staffEmail.LASTNAME + " " + staffEmail.MIDDLENAME;
-                alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
-                alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", loan.APPLICATIONREFERENCENUMBER);
-                LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetCreditFileChecklistReminder");
+                alertTemplate = alertTemplate?.Replace("@{{accountOfficer}}", accountOfficer);
+                alertTemplate = alertTemplate?.Replace("@{{referenceNumber}}", loan.APPLICATIONREFERENCENUMBER);
+                LogEmailAlert(alertDetail?.TEMPLATE, alertDetail?.TITLE, alert.receiverEmailList, "20023", 20023, "GetCreditFileChecklistReminder");
 
             }
             return output;
@@ -1685,15 +1685,19 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var title = alertSubject.Trim();
-                if (title.Contains("&"))
+                var title = alertSubject?.Trim();
+                if (title!=null)
                 {
-                    title = title.Replace("&", "AND");
+                    if ((bool)title?.Contains("&"))
+                    {
+                        title = title?.Replace("&", "AND");
+                    }
+                    if ((bool)title?.Contains("."))
+                    {
+                        title = title?.Replace(".", "");
+                    }
                 }
-                if (title.Contains("."))
-                {
-                    title = title.Replace(".", "");
-                }
+
 
                 string recipient = string.Join("", recipients.ToArray());
                 string messageSubject = title;
