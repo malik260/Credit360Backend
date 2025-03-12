@@ -509,22 +509,26 @@ namespace FintrakBanking.Repositories.Credit
                                                  && d.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual).ToList();
                     workflow.LevelBusinessRule = new LevelBusinessRule
                     {
-                        Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
-                        PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
-                                                              //Pep = model.politicallyExposed,
-                        Pep = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISPOLITICALLYEXPOSED == true),
-                        InsiderRelated = appl.TBL_LOAN_APPLICATION_DETAIL.Any(a => a.TBL_CUSTOMER.ISREALATEDPARTY == true),
-                        ProjectRelated = appl.ISPROJECTRELATED,
-                        OnLending = appl.ISONLENDING,
-                        InterventionFunds = appl.ISINTERVENTIONFUNDS,
-                        isAgricRelated = appl.ISAGRICRELATED,
-                        isSyndicated = appl.ISSYNDICATED,
-                        isRenewal = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.Renewal || d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.RenewalWithDecrease),
-                        OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
-                        DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
-                        //esrm = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual),
-                        esrm = details.Any(),
-                        isContingentFacility = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                        Amount = appl?.TOTALEXPOSUREAMOUNT ?? 0,       
+                        PepAmount = appl?.TOTALEXPOSUREAMOUNT ?? 0,
+                        ProjectRelated = appl?.ISPROJECTRELATED ?? false,
+                        OnLending = appl?.ISONLENDING ?? false,
+                        InterventionFunds = appl?.ISINTERVENTIONFUNDS ?? false,
+                        isAgricRelated = appl?.ISAGRICRELATED ?? false,
+                        isSyndicated = appl?.ISSYNDICATED ?? false,
+                        OrrBasedApproval = appl?.ISORRBASEDAPPROVAL ?? false,
+                        DomiciliationNotInPlace = appl?.DOMICILIATIONNOTINPLACE ?? false,
+
+                        Pep = appl?.TBL_LOAN_APPLICATION_DETAIL?.Any(a => a.TBL_CUSTOMER?.ISPOLITICALLYEXPOSED == true) ?? false,
+                        InsiderRelated = appl?.TBL_LOAN_APPLICATION_DETAIL?.Any(a => a.TBL_CUSTOMER?.ISREALATEDPARTY == true) ?? false,
+                        isRenewal = appl?.TBL_LOAN_APPLICATION_DETAIL?.Any(d =>
+                            d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.Renewal ||
+                            d.LOANDETAILREVIEWTYPEID == (short)LoanDetailReviewTypeEnum.RenewalWithDecrease) ?? false,
+                        isContingentFacility = appl?.TBL_LOAN_APPLICATION_DETAIL?.Any(d =>
+                            d.TBL_PRODUCT?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability) ?? false,
+
+                        esrm = details?.Any() ?? false
+
                     };
 
                     if (model.forwardAction == 8 || model.forwardAction == 9)

@@ -1262,7 +1262,7 @@ namespace FintrakBanking.Repositories.External
                 PRODUCTCLASSID = productClassId,
                 APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                 PRODUCT_CLASS_PROCESSID = productClassProcessId,
-                COMPANYID = loan.companyId,
+                COMPANYID = 2,
                 BRANCHID = (short)loan.branchId,
                 RELATIONSHIPOFFICERID = loan.createdBy,
                 RELATIONSHIPMANAGERID = loan.createdBy,
@@ -2925,10 +2925,11 @@ namespace FintrakBanking.Repositories.External
 
 
                         loan.loanApplicationDetail.subSectorId = LoanSub.subSectorId;
-                        loan.customerCode = "PROS - 3777177";
+                        loan.customerCode = "PROS-3777177";
                         loan.customerId = 21;
                         loan.loanApplicationDetail.proposedProductId = 9;
                         loan.loanApplicationDetail.subSectorId = 1;
+                        loan.loanApplicationDetail.customerCode = loan.customerCode;
                         if (loan == null && loan.loanApplicationDetail == null)
                             throw new SecureException("The loan application and detail information cannot be null.");
 
