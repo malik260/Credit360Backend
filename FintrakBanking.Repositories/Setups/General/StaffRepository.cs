@@ -2222,21 +2222,21 @@ namespace FintrakBanking.Repositories.Setups.General
                 MISCODE = staffModel.misCode
             };
             // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.CreateStaffInitiated,
-                STAFFID = staffModel.createdBy,
-                BRANCHID = (short)staffModel.BranchId,
-                DETAIL = $"Updated Staff Creation for '{staffModel?.StaffFullName}' with code'{staffModel?.StaffCode}'",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = staffModel.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName(),
-            };
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.CreateStaffInitiated,
+            //    STAFFID = staffModel.createdBy,
+            //    BRANCHID = (short)staffModel.BranchId,
+            //    DETAIL = $"Updated Staff Creation for '{staffModel?.StaffFullName}' with code'{staffModel?.StaffCode}'",
+            //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+            //    URL = staffModel.applicationUrl,
+            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    DEVICENAME = CommonHelpers.GetDeviceName(),
+            //    OSNAME = CommonHelpers.FriendlyName(),
+            //};
 
-            auditTrail.AddAuditTrail(audit);
+            //auditTrail.AddAuditTrail(audit);
             context.TBL_TEMP_STAFF.Add(staff);
             try
             {

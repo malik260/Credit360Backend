@@ -1288,7 +1288,7 @@ namespace FintrakBanking.Repositories.External
                 ISFROMEXTERNALSOURCE = true,
                 LOANINFORMATION = loanInformation,
                 OWNEDBY = loan.createdBy,
-                LENDERID = loan.LenderId,
+               // LENDERID = loan.LenderId,
                 //LOANAPPLICATIONSOURCEID = loan.loanApplicationSourceId
             };
 
