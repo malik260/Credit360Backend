@@ -2782,7 +2782,9 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage PostLoanTerms([FromBody] LoanApplicationForCreation loanInput)
         {
             var companyId = token.GetCompanyId;
+            var staffid = token.GetStaffId;
             loanInput.LenderId = companyId;
+            loanInput.relationshipOfficerId= staffid;
 
             var data = repoLoan.AddLoanApplicationNmrc(loanInput);
 
