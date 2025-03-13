@@ -1221,7 +1221,112 @@ namespace FintrakBanking.Repositories.External
             context.TBL_LOAN_AFFORDABILITY.Add(affordabilityDetails);
         }
         */
+
         private void AddloanApplicationSub(LoanApplicationForCreation loan, decimal totalExposureAmount, FinTrakBankingContext context)
+        {
+            //short productClassProcessId = 0;
+            //short? productClassId = null;
+            //isGroupLoan = false; 
+            //int loanId = 0; 
+
+            //if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+            //{
+            //    isGroupLoan = true;
+            //}
+            //int? casaAccountId = null;
+            //string refNumber = GenerateLoanReference(loan.customerId.Value);
+            //if (loan.customerAccount != "N/A")
+            //{
+            //    casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
+            //}
+
+
+            short productClassId = loan.productClassId;
+            //short productClassProcessId = (short)ProductClassProcessEnum.CAMBased;
+            short productClassProcessId = context.TBL_PRODUCT_CLASS.Find(loan.productClassId).PRODUCT_CLASS_PROCESSID;
+
+            string loanInformation = "New loan application";
+            string tempMisInfo = "temp";
+
+            loanData = new TBL_LOAN_APPLICATION
+            {
+                INTERESTRATE = 0, // COME IN AS ADDITIONAL PARAMETTER
+                //CASAACCOUNTID = loan.casaAccountId, // COME IN AS ADDITIONAL PARAMETTER
+                //ISINVESTMENTGRADE = loan.isInvestmentGrade, // COME IN AS ADDITIONAL PARAMETTER
+                //BUSINESSUNIT = loan.businessUnit, // COME IN AS ADDITIONAL PARAMETTER
+                MISCODE = tempMisInfo, // COME IN AS ADDITIONAL PARAMETTER
+                TEAMMISCODE = tempMisInfo, //string.Empty, // COME IN AS ADDITIONAL PARAMETTER
+
+                LOANAPPLICATIONTYPEID = loan.loanTypeId,
+                REQUIRECOLLATERAL = loan.requireCollateral == 1 ? true : false,
+                TOTALEXPOSUREAMOUNT = totalExposureAmount, // totalAmount,
+                PRODUCTCLASSID = productClassId,
+                APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
+                PRODUCT_CLASS_PROCESSID = productClassProcessId,
+                COMPANYID = loan.companyId,
+                BRANCHID = (short)loan.branchId,
+                RELATIONSHIPOFFICERID = loan.createdBy,
+                RELATIONSHIPMANAGERID = loan.createdBy,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                //LOANINFORMATION = loan.loanInformation,
+                ISRELATEDPARTY = loan.isRelatedParty == 1 ? true : false,
+                ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed == 1 ? true : false,
+                CREATEDBY = (int)loan.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                SYSTEMDATETIME = DateTime.Now,
+                CUSTOMERGROUPID = loan.customerId,
+                APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                APPLICATIONAMOUNT = loan.applicationAmount,
+                APPLICATIONTENOR = loan.proposedTenor,
+                CAPREGIONID = loan.regionId,
+                //REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId,
+                //LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
+                CUSTOMERID = loan.customerId,
+                SUBMITTEDFORAPPRAISAL = false,
+                OPERATIONID = (int)OperationsEnum.CreditAppraisal,
+                //COLLATERALDETAIL = loan.collateralDetail, 
+                ISFROMEXTERNALSOURCE = true,
+                LOANINFORMATION = loanInformation,
+                OWNEDBY = loan.createdBy,
+                //LOANAPPLICATIONSOURCEID = loan.loanApplicationSourceId
+            };
+
+            //if (isGroupLoan)
+            //{
+            //    loanData.CUSTOMERGROUPID = loan.customerId;
+            //    loanData.CUSTOMERID = null;
+            //}
+            //else
+            //{
+            loanData.CUSTOMERID = loan.customerId;
+            loanData.CUSTOMERGROUPID = null;
+            //}
+
+
+            context.TBL_LOAN_APPLICATION.Add(loanData);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplication,
+                STAFFID = loan.createdBy,
+                BRANCHID = (short)loan.branchId,
+                DETAIL = $"Applied for loan with reference number: {loan.applicationReferenceNumber}",
+                IPADDRESS = string.Empty,
+                URL = string.Empty,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = loanData.LOANAPPLICATIONID
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+        }
+
+
+
+
+        private void AddloanApplicationSub2(LoanApplicationForCreation loan, decimal totalExposureAmount, FinTrakBankingContext context)
         {
             //short productClassProcessId = 0;
             //short? productClassId = null;
@@ -1270,7 +1375,7 @@ namespace FintrakBanking.Repositories.External
                 //LOANINFORMATION = loan.loanInformation,
                 ISRELATEDPARTY = loan.isRelatedParty == 1 ? true : false,
                 ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed == 1 ? true : false,
-                CREATEDBY = (int)loan.createdBy,
+                CREATEDBY = (int)loan.relationshipOfficerId,
                 DATETIMECREATED = DateTime.Now,
                 SYSTEMDATETIME = DateTime.Now,
                 CUSTOMERGROUPID = loan.customerId,
@@ -1287,7 +1392,7 @@ namespace FintrakBanking.Repositories.External
                 //COLLATERALDETAIL = loan.collateralDetail, 
                 ISFROMEXTERNALSOURCE = true,
                 LOANINFORMATION = loanInformation,
-                OWNEDBY = loan.createdBy,
+                OWNEDBY = loan.relationshipOfficerId,
                // LENDERID = loan.LenderId,
                 //LOANAPPLICATIONSOURCEID = loan.loanApplicationSourceId
             };
@@ -3046,7 +3151,7 @@ namespace FintrakBanking.Repositories.External
 
                         loan.customerId = customer.CUSTOMERID;
                         loan.branchId = branch.BRANCHID;
-                        loan.relationshipOfficerId = staff.STAFFID;
+                        //loan.relationshipOfficerId = staff.STAFFID;
                         loan.isPoliticallyExposed = customer.ISPOLITICALLYEXPOSED == true ? 1 : 0;
                         loan.isRelatedParty = 0;
                         loan.proposedTenor = loanDetail.proposedTenor;
@@ -3142,7 +3247,7 @@ namespace FintrakBanking.Repositories.External
                         try
                         {
                             // add loan application information
-                            AddloanApplicationSub(loan, totalExposureAmount, context);
+                            AddloanApplicationSub2(loan, totalExposureAmount, context);
 
                             // add the loan application detail information
                             var applicationDetailId = 0;
