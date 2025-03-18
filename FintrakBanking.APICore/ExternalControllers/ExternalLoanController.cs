@@ -628,11 +628,11 @@ namespace FintrakBanking.APICore.ExternalControllers
 
         [HttpGet]
         [Route("get-applied-loans-refinance/")]
-        public async Task<HttpResponseMessage> GetLoanForRefinance1(long companyId)
+        public async Task<HttpResponseMessage> GetLoanForRefinance1(string  RefinanceNumber)
         {
             try
             {
-                var data = await repoLoan.GetLoanForRefinance1(companyId);
+                var data = await repoLoan.GetLoanForRefinance1(RefinanceNumber);
                 if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

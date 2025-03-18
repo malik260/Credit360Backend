@@ -28,7 +28,7 @@ namespace FintrakBanking.Interfaces.External
         Task<bool> CheckOutstandingLoan(string nhfNo);
         List<LoanVM> GetDisbursedLoans(int companyId);
         RefinanceViewModel RefinanceLoan(RefinanceViewModel Model);
-        Task<List<TblRefinancingLoan>> GetLoanForRefinance1(long CompanyId);
+        Task<List<TblRefinancingLoan>> GetLoanForRefinance1(string RefNumber);
         Task<List<StNmrcEligibility>> GetUUSForObligor();
         List<CustomerUusViewModel> PostCustomersUItems(List<CustomerUusViewModel> Model);
         Task<string> GetCustomerUusItemDoc(string NhfNumber, int ItemId);
@@ -53,6 +53,6 @@ namespace FintrakBanking.Interfaces.External
         string DisburseLoanNmrc(int Model);
         Task<List<TBL_NMRC_LOAN_SCHEDULE_PERIODIC>> GetLoanPaymentSchedule(int LoanId);
         LoanApplicationForReturn AddLoanApplicationNmrc(LoanApplicationForCreation loan);
-
+        Task<List<TblRefinancing>> GetLoanSumForRefinance1(long CompanyId);
     }
 }
