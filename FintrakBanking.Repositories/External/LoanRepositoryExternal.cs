@@ -2340,13 +2340,14 @@ namespace FintrakBanking.Repositories.External
                         var Loans = new TblRefinancing
                         {
                             TotalAmount = Model.TotalAmount,
-                            PmbId = long.Parse(Model.PmbId),
+                            PmbId = 1,
                             RefinanceNumber = Model.RefinanceBatchNumber,
                             Status = 1,
                             ApplicationDate = DateTime.Now,
                             ApplicationStatus = 0,
                             Disbursed = 0,
                             LenderId = long.Parse(Model.SecondaryLenderId),
+                            PmbName = "Fin Trak Mortgage Bank PLC"
 
 
                         };
