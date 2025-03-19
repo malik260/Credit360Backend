@@ -2637,9 +2637,9 @@ namespace FintrakBanking.Repositories.External
                         }
 
                         var LoanId = Model.FirstOrDefault().LoanId;
-                        var RefinanceModel = context.TblRefinancingLoan.Where(x => x.LoanId == LoanId).FirstOrDefault();
-                        RefinanceModel.Checklisted = 1;
-                        RefinanceModel.ApplicationDate = DateTime.Now.Date;
+                        //var RefinanceModel = context.TblRefinancingLoan.Where(x => x.LoanId == LoanId).FirstOrDefault();
+                        //RefinanceModel.Checklisted = 1;
+                        //RefinanceModel.ApplicationDate = DateTime.Now.Date;
 
 
                         var output = context.SaveChanges() > 0;
