@@ -2476,15 +2476,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
-        [Route("Approve-pmb-customer-checklist")]
+        [HttpGet]
+        [Route("Approve-pmb-customer-checklist/")]
         public HttpResponseMessage ApprovePmbCustomerCheclist(string RefinanceNumber)
         {
             try
             {
-
-                    
-
 
                 var data = repoLoan.ApprovePmbCustomerCheclist(RefinanceNumber);
                 if (data == null)
