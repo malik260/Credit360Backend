@@ -2697,7 +2697,7 @@ namespace FintrakBanking.Repositories.External
         }
 
 
-        public string ApprovePmbCustomerCheclist(int Id)
+        public string ApprovePmbCustomerCheclist(string RefNumber)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -2706,7 +2706,7 @@ namespace FintrakBanking.Repositories.External
                 {
                     try
                     {
-                        var Loan = context.TblRefinancing.Where(x => x.Id == Id).FirstOrDefault();
+                        var Loan = context.TblRefinancing.Where(x => x.RefinanceNumber == RefNumber).FirstOrDefault();
                         var Loans = context.TblRefinancingLoan.Where(x => x.RefinanceNumber == Loan.RefinanceNumber).ToList();
                         foreach (var item in Loans)
                         {

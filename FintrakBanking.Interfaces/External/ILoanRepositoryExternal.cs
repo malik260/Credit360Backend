@@ -54,6 +54,6 @@ namespace FintrakBanking.Interfaces.External
         Task<List<TBL_NMRC_LOAN_SCHEDULE_PERIODIC>> GetLoanPaymentSchedule(int LoanId);
         LoanApplicationForReturn AddLoanApplicationNmrc(LoanApplicationForCreation loan);
         Task<List<TblRefinancing>> GetLoanSumForRefinance1(long CompanyId);
-        string ApprovePmbCustomerCheclist(int Id);
+        string ApprovePmbCustomerCheclist(string Ref);
     }
 }
