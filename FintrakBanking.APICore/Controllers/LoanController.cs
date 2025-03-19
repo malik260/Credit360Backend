@@ -2476,6 +2476,25 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpGet]
+        [Route("Approve-pmb-customer-checklist/")]
+        public HttpResponseMessage ApprovePmbCustomerCheclist(string RefinanceNumber)
+        {
+            try
+            {
+
+                var data = repoLoan.ApprovePmbCustomerCheclist(RefinanceNumber);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
 
 
         [HttpGet]
