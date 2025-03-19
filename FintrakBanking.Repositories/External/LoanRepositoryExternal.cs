@@ -2409,7 +2409,7 @@ namespace FintrakBanking.Repositories.External
                 using (var dbcontext = new FinTrakBankingContext())
                 {
                     var RefinanceAplications = new List<TblRefinancingLoan>();
-                    var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1 && a.Reviewed == 0 && a.Checklisted == 0).ToList();
+                    var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1 && a.Reviewed ==null && a.Checklisted == null).ToList();
                     return LaonApp;
 
 
