@@ -2476,6 +2476,26 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpPost]
+        [Route("Approve-pmb-customer-checklist")]
+        public HttpResponseMessage ApprovePmbCustomerCheclist(int Id)
+        {
+            try
+            {
+
+
+                var data = repoLoan.ApprovePmbCustomerCheclist(Id);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
 
 
         [HttpGet]

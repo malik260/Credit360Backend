@@ -2696,6 +2696,66 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
+
+        public string ApprovePmbCustomerCheclist(int Id)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                string response = string.Empty;
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var Loan = context.TblRefinancing.Where(x => x.Id == Id).FirstOrDefault();
+                        var Loans = context.TblRefinancingLoan.Where(x => x.RefinanceNumber == Loan.RefinanceNumber).ToList();
+                        foreach (var item in Loans)
+                        {
+                            var CustomerChecklist = context.TblCustomerUUS.Where(x => x.EmployeeNhfNumber == item.Nhfnumber).ToList();
+                            if (CustomerChecklist.Count() == 0)
+                            {
+                                response = "Pls complete checklist for customer " + item.CustomerName;
+                                throw new SecureException($"{response}");
+                            }
+
+                        }
+
+                        Loan.Checklisted = 1;
+                        foreach (var res in Loans)
+                        {
+                            res.Checklisted = 1;
+                            context.TblRefinancingLoan.AddOrUpdate(res);
+                        }
+                        context.TblRefinancing.AddOrUpdate(Loan);
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+                        response = "Checklists Approved successfully";
+                        return response;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+
+
+
         public List<TblRefinancingLoan> ApprovePmbRefinancing(List<int> Model)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
