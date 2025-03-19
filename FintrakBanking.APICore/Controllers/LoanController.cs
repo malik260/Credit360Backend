@@ -2452,13 +2452,39 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
         [HttpGet]
-        [Route("get-applied-loans-refinance/")]
-        public async Task<HttpResponseMessage> GetLoanForRefinance1(long companyId)
+        [Route("get-applied-loans-summary-refinance/")]
+        public async Task<HttpResponseMessage> GetLoanForSummaryRefinance1(long companyId)
         {
             try
             {
-                var data = await repoLoan.GetLoanForRefinance1(companyId);
+                var data = await repoLoan.GetLoanSumForRefinance1(companyId);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
+        [HttpGet]
+        [Route("get-applied-loans-refinance/")]
+        public async Task<HttpResponseMessage> GetLoanForRefinance1(string RefinanceNumbr)
+        {
+            try
+            {
+                var data = await repoLoan.GetLoanForRefinance1(RefinanceNumbr);
                 if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
