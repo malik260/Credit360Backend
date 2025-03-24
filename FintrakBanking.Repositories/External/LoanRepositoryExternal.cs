@@ -2670,22 +2670,36 @@ namespace FintrakBanking.Repositories.External
 
 
 
-        public async Task<List<TblRefinancingLoan>> GetPmbsChecklistedLoan(long CompanyId)
+        public async Task<List<TblRefinancing>> GetPmbsChecklistedLoanSummary(long CompanyId)
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var RefinanceAplications = new List<TblRefinancingLoan>();
-                    var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1).ToList();
-                    foreach (var item in LaonApp)
-                    {
-                        var RefinanceDetails = dbcontext.TblRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted == 1 && x.Status == 1 && x.ApplicationStatus == 0).ToList();
-                        RefinanceAplications.AddRange(RefinanceDetails);
+                    var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1 && a.Checklisted == 1 && (a.ApplicationStatus == null || a.ApplicationStatus == 0)).ToList();
+                   
+                    return LaonApp;
 
-                    }
+                }
+            }
+            catch (Exception ex)
+            {
 
-                    return RefinanceAplications;
+                throw;
+            }
+        }
+
+
+
+        public async Task<List<TblRefinancingLoan>> GetPmbsChecklistedLoan(string RefinanceNumber)
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                   var RefinanceDetails = dbcontext.TblRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).ToList();
+
+                    return RefinanceDetails;
 
                 }
             }

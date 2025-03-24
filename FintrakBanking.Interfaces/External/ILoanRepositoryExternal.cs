@@ -34,7 +34,7 @@ namespace FintrakBanking.Interfaces.External
         Task<string> GetCustomerUusItemDoc(string NhfNumber, int ItemId);
         Task<List<TblCustomerUUS>> GetCustomerUusItems(string NhfNumber);
         List<TblRefinancingLoan> ApprovePmbRefinancing(List<int> Model);
-        Task<List<TblRefinancingLoan>> GetPmbsChecklistedLoan(long CompanyId);
+        Task<List<TblRefinancingLoan>> GetPmbsChecklistedLoan(string RefinanceNumber);
         Task<List<TblNmrcRefinancing>> GetAppliedLoanForNmrcRefinance();
         Task<List<TblNmrcRefinancingLoan>> GetAppliedSubLoanForNmrcRefinance(string RefNo);
         Task<List<TblNmrcRefinancingLoan>> GetSubLoanForNmrcReview();
@@ -55,5 +55,6 @@ namespace FintrakBanking.Interfaces.External
         LoanApplicationForReturn AddLoanApplicationNmrc(LoanApplicationForCreation loan);
         Task<List<TblRefinancing>> GetLoanSumForRefinance1(long CompanyId);
         string ApprovePmbCustomerCheclist(string Ref);
+        Task<List<TblRefinancing>> GetPmbsChecklistedLoanSummary(long CompanyId);
     }
 }
