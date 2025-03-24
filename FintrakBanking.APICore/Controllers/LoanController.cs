@@ -2520,12 +2520,35 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("get-pmb-checklisted-loan/")]
-        public async Task<HttpResponseMessage> GetPmbsChecklistedLoan(long companyId)
+        [Route("get-pmb-checklisted-loan-summary/")]
+        public async Task<HttpResponseMessage> GetPmbsChecklistedLoanSummary(long companyId)
         {
             try
             {
-                var data = await repoLoan.GetPmbsChecklistedLoan(companyId);
+                var data = await repoLoan.GetPmbsChecklistedLoanSummary(companyId);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("get-pmb-checklisted-loan/")]
+        public async Task<HttpResponseMessage> GetPmbsChecklistedLoan(string RefinanceNumber)
+        {
+            try
+            {
+                var data = await repoLoan.GetPmbsChecklistedLoan(RefinanceNumber);
                 if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
