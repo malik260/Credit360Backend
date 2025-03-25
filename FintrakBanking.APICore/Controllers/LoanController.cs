@@ -2629,12 +2629,12 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("get-applied-loan-for-nmrcrefinance")]
-        public async Task<HttpResponseMessage> GetAppliedLoanForNmrcRefinance()
+        [Route("get-summary-loan-nmrctranch")]
+        public async Task<HttpResponseMessage> GetSummaryForNmrcTranch()
         {
             try
             {
-                var data = await repoLoan.GetAppliedLoanForNmrcRefinance();
+                var data = await repoLoan.GetSummaryLoanForNmrcTranch();
                 if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -2651,7 +2651,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("get-applied-subloan-nmrcrefinance/")]
+        [Route("get-applied-subloan-nmrctranch/")]
         public async Task<HttpResponseMessage> GetAppliedSubLoanForNmrcRefinance(string RefNo)
         {
             try
@@ -2671,6 +2671,31 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+
+
+        [HttpGet]
+        [Route("get-loan-summary-nmrcreviewal")]
+        public async Task<HttpResponseMessage> GetAppliedLoanForNmrcReviewal()
+        {
+            try
+            {
+                var data = await repoLoan.GetAppliedLoanForNmrcRefinance();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
 
         [HttpGet]
         [Route("get-subloan-for-reviewal")]
@@ -2757,12 +2782,34 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("get-subloans-for-approval")]
-        public async Task<HttpResponseMessage> GetReviewedForApproval()
+        [Route("get-reviewed-sum-nmrcapproval")]
+        public async Task<HttpResponseMessage> GetReviewedSumForNmrcApproval()
         {
             try
             {
-                var data = await repoLoan.GetReviewedForApproval();
+                var data = await repoLoan.GetReviwedLoanForNmrcApproval();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("get-subloans-for-approval")]
+        public async Task<HttpResponseMessage> GetReviewedForApproval(string RefinanceNumber)
+        {
+            try
+            {
+                var data = await repoLoan.GetReviewedForApproval(RefinanceNumber);
                 if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -2799,30 +2846,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
-        [Route("get-subloan-for-disbursement/")]
-        public async Task<HttpResponseMessage> GetSubLoanForDisbursement(string RefNo)
-        {
-            try
-            {
-                var data = await repoLoan.GetSubLoanForDisbursement(RefNo);
-                if (data.Count < 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found", result = data });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, count = data.Count(), result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-        }
-
-
-
+        
         [HttpPost]
         [Route("tranch-approved-loan")]
         public HttpResponseMessage TranchLoan([FromBody] List<string> LoanRefinanceNumber)
@@ -2903,109 +2927,7 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
-        [Route("get-loan-for-booking-nmrc")]
-        public async Task<HttpResponseMessage> GetScheduledLoanForBooking()
-        {
-            try
-            {
-                var data = await repoLoan.GetScheduledLoanForBooking();
-                if (data.Count < 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found", result = data });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, count = data.Count(), result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("loan-booking-nmrc")]
-        public HttpResponseMessage BookLoanNMRC([FromBody] int LoanId)
-        {
-            try
-            {
-                var data = repoLoan.BookLoanNmrc(LoanId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-
-        }
-
-        [HttpGet]
-        [Route("get-loan-for-disbursement-nmrc")]
-        public async Task<HttpResponseMessage> GetScheduledLoanForDisbursement()
-        {
-            try
-            {
-                var data = await repoLoan.GetScheduledLoanForDisbursement();
-                if (data.Count < 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found", result = data });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true,  count = data.Count(), result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("disburse-loan-nmrc")]
-        public  HttpResponseMessage NmrcLoanDisbursment([FromBody] int LoanId)
-        {
-            try
-            {
-                var data = repoLoan.DisburseLoanNmrc(LoanId);
-              
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data,  });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-
-        }
-
-
-        [HttpGet]
-        [Route("get-loan-schedule-nmrc")]
-        public async Task<HttpResponseMessage> GetLoanSchedule(int LoanId)
-        {
-            try
-            {
-                var data = await repoLoan.GetLoanPaymentSchedule(LoanId);
-                if (data.Count < 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found", result = data });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, count = data.Count(), result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-        }
+        
 
 
     }
