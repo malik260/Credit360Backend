@@ -2656,11 +2656,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("get-subloan-for-reviewal")]
-        public async Task<HttpResponseMessage> GetSubLoanForNmrcReview()
+        public async Task<HttpResponseMessage> GetSubLoanForNmrcReview(string RefNumber)
         {
             try
             {
-                var data = await repoLoan.GetSubLoanForNmrcReview();
+                var data = await repoLoan.GetSubLoanForNmrcReview(RefNumber);
                 if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
