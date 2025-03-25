@@ -2905,13 +2905,13 @@ namespace FintrakBanking.Repositories.External
 
         #region NMRC Activities
 
-        public async Task<List<TblNmrcRefinancing>> GetAppliedLoanForNmrcRefinance()
+        public async Task<List<TblNmrcRefinancing>> GetSummaryLoanForNmrcTranch()
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Status != 1 && x.ApplicationStatus != 1 && x.Disbursed != 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && x.ApplicationStatus == null && x.Tranched == null).ToList();
 
 
                     return AppliedLoans;
@@ -2925,13 +2925,57 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
+
+
+        public async Task<List<TblNmrcRefinancing>> GetAppliedLoanForNmrcRefinance()
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == null && x.ApplicationStatus == null).ToList();
+
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
+        public async Task<List<TblNmrcRefinancing>> GetReviwedLoanForNmrcApproval()
+        {
+            try
+            {
+                using (var dbcontext = new FinTrakBankingContext())
+                {
+                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && x.ApplicationStatus == null).ToList();
+
+
+                    return AppliedLoans;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
         public async Task<List<TblNmrcRefinancingLoan>> GetAppliedSubLoanForNmrcRefinance(string RefNo)
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Reviewed == 1 && x.Approved ==  null && x.ApplicationStatus == null).ToList();
 
                     return AppliedLoans;
 
@@ -2968,7 +3012,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Checklisted != 1 && x.Reviewed != 1 && x.Approved != 2 && x.Disbursed != 1 && x.Approved != 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == null && x.Approved == null).ToList();
 
                     return AppliedLoans;
 
@@ -3046,16 +3090,15 @@ namespace FintrakBanking.Repositories.External
                         {
                             var RefLoans = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == item).FirstOrDefault();
                             PmbnName = RefLoans.PmbName;
-                            RefLoans.Disbursed = 1;
                             RefLoans.Status = 1;
                             RefLoans.ApplicationStatus = 1;
+                            RefLoans.Tranched = 1;
                             TotalApprovedAmount += (decimal)RefLoans.TotalAmount;
 
                             var LoanList = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item && x.Approved == 1 && x.Checklisted == 1 && x.Reviewed == 1).ToList();
                             foreach (var Loan in LoanList)
                             {
                                 Loan.Approved = 1;
-                                Loan.Disbursed = 1;
                                 context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
                             }
 
@@ -3463,7 +3506,10 @@ namespace FintrakBanking.Repositories.External
                             Loans.Add(Loan);
                             context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
                         }
-
+                        var LoanRef = Loans.FirstOrDefault(x => x.Id == Model.FirstOrDefault()).RefinanceNumber;
+                        var Summary = context.TblNmrcRefinancing.FirstOrDefault(x => x.RefinanceNumber == LoanRef);
+                        Summary.Reviewed = 1;
+                        context.TblNmrcRefinancing.AddOrUpdate(Summary);
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
@@ -3546,13 +3592,13 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
-        public async Task<List<TblNmrcRefinancingLoan>> GetReviewedForApproval()
+        public async Task<List<TblNmrcRefinancingLoan>> GetReviewedForApproval(string RefNumber)
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Checklisted == 1 && x.Reviewed == 1 && x.Approved != 1 && x.Disbursed != 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == 1 && x.Approved == null && x.ApplicationStatus == null ).ToList();
 
                     return AppliedLoans;
 
@@ -3620,7 +3666,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Disbursed == 0 && x.Status == 0 && x.IsBooked == 0 && x.IsScheduled == 0 && x.IsTranched == 1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingTranches.Where(x => x.Status == 0 && x.IsScheduled == 0 && x.IsTranched == 1).ToList();
 
                     return AppliedLoans;
 
