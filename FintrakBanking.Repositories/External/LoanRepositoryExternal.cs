@@ -2409,7 +2409,7 @@ namespace FintrakBanking.Repositories.External
                 using (var dbcontext = new FinTrakBankingContext())
                 {
                     var RefinanceAplications = new List<TblRefinancingLoan>();
-                    var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1 && a.Reviewed ==null && a.Checklisted == null).ToList();
+                    var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1 && a.Reviewed ==null && a.Checklisted == null && (a.ApplicationStatus == null || a.ApplicationStatus == 0)).ToList();
                     return LaonApp;
 
 
@@ -2784,6 +2784,9 @@ namespace FintrakBanking.Repositories.External
                         var Loans = context.TblRefinancingLoan.ToList();
                         decimal? TotalAmount = 0;
                         var RefNumber = "Ref-" + random.Next(100000, 1000000);
+                        var LoanRef = Loans.FirstOrDefault(x => x.Id == Model.FirstOrDefault()).RefinanceNumber;
+                        var RefinanceLoan = context.TblRefinancing.FirstOrDefault(x => x.RefinanceNumber == LoanRef);
+                        RefinanceLoan.ApplicationStatus = 1;
 
                         foreach (var item in Model)
                         {
@@ -2832,7 +2835,7 @@ namespace FintrakBanking.Repositories.External
                             context.TblNmrcRefinancingLoan.Add(NmrcLoans);
                         }
 
-
+                        context.TblRefinancing.AddOrUpdate(RefinanceLoan);
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
                         trans.Dispose();
