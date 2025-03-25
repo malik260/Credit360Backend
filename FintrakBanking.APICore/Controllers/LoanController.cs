@@ -2522,6 +2522,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [Route("get-pmb-checklisted-loan-summary/")]
         public async Task<HttpResponseMessage> GetPmbsChecklistedLoanSummary(long companyId)
+        
         {
             try
             {
