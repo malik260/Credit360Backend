@@ -3006,13 +3006,13 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
-        public async Task<List<TblNmrcRefinancingLoan>> GetSubLoanForNmrcReview()
+        public async Task<List<TblNmrcRefinancingLoan>> GetSubLoanForNmrcReview(string RefNumber)
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == null && x.Approved == null).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == null && x.Approved == null && x.RefinanceNumber == RefNumber).ToList();
 
                     return AppliedLoans;
 
@@ -3598,7 +3598,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == 1 && x.Approved == null && x.ApplicationStatus == null ).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == 1 && x.Approved == null && x.ApplicationStatus == null && x.RefinanceNumber == RefNumber ).ToList();
 
                     return AppliedLoans;
 
