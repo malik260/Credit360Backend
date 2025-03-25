@@ -2629,51 +2629,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
-        [Route("get-summary-loan-nmrctranch")]
-        public async Task<HttpResponseMessage> GetSummaryForNmrcTranch()
-        {
-            try
-            {
-                var data = await repoLoan.GetSummaryLoanForNmrcTranch();
-                if (data.Count < 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found", result = data });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, count = data.Count(), result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpGet]
-        [Route("get-applied-subloan-nmrctranch/")]
-        public async Task<HttpResponseMessage> GetAppliedSubLoanForNmrcRefinance(string RefNo)
-        {
-            try
-            {
-                var data = await repoLoan.GetAppliedSubLoanForNmrcRefinance(RefNo);
-                if (data.Count < 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found", result = data });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, count = data.Count(), result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-        }
-
-
+      
 
         [HttpGet]
         [Route("get-loan-summary-nmrcreviewal")]
@@ -2847,7 +2803,53 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        
+        [HttpGet]
+        [Route("get-summary-loan-nmrctranch")]
+        public async Task<HttpResponseMessage> GetSummaryForNmrcTranch()
+        {
+            try
+            {
+                var data = await repoLoan.GetSummaryLoanForNmrcTranch();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("get-applied-subloan-nmrctranch/")]
+        public async Task<HttpResponseMessage> GetAppliedSubLoanForNmrcRefinance(string RefNo)
+        {
+            try
+            {
+                var data = await repoLoan.GetAppliedSubLoanForNmrcRefinance(RefNo);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
         [HttpPost]
         [Route("tranch-approved-loan")]
         public HttpResponseMessage TranchLoan([FromBody] List<string> LoanRefinanceNumber)
@@ -2867,6 +2869,31 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
+        [HttpGet]
+        [Route("get-tranchedLoans")]
+        public async Task<HttpResponseMessage> GetTranchedLoans()
+        {
+            try
+            {
+                var data = await repoLoan.GetTranchedLoans();
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found", result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
 
 
         [HttpPost]
@@ -2907,29 +2934,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
-        [Route("get-tranchedLoans")]
-        public async Task<HttpResponseMessage> GetTranchedLoans()
-        {
-            try
-            {
-                var data = await repoLoan.GetTranchedLoans();
-                if (data.Count < 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found", result = data });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, count = data.Count(), result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
-        }
-        
-
+       
 
     }
 }
