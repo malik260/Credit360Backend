@@ -3598,7 +3598,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == 1 && x.Approved == null && x.ApplicationStatus == null && x.RefinanceNumber == RefNumber ).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == 1 && x.Approved == null  && x.RefinanceNumber == RefNumber ).ToList();
 
                     return AppliedLoans;
 
