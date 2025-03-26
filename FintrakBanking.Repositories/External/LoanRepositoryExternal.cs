@@ -2911,7 +2911,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && x.ApplicationStatus == null && x.Tranched == null).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && x.ApplicationStatus == 1 && x.Tranched == null).ToList();
 
 
                     return AppliedLoans;
@@ -2975,7 +2975,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Reviewed == 1 && x.Approved ==  null && x.ApplicationStatus == null).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Reviewed == 1 && x.Approved ==  1).ToList();
 
                     return AppliedLoans;
 
@@ -3095,9 +3095,10 @@ namespace FintrakBanking.Repositories.External
                             RefLoans.Tranched = 1;
                             TotalApprovedAmount += (decimal)RefLoans.TotalAmount;
 
-                            var LoanList = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item && x.Approved == 1 && x.Checklisted == 1 && x.Reviewed == 1).ToList();
+                            var LoanList = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item && x.Approved == 1 && x.Reviewed == 1).ToList();
                             foreach (var Loan in LoanList)
                             {
+                               
                                 Loan.Approved = 1;
                                 context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
                             }
