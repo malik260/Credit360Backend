@@ -2933,7 +2933,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == null && x.ApplicationStatus == null).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == null && (x.ApplicationStatus == null || x.ApplicationStatus == 0)).ToList();
 
 
                     return AppliedLoans;
@@ -2954,7 +2954,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && x.ApplicationStatus == null).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && (x.ApplicationStatus == null || x.ApplicationStatus == 0 )).ToList();
 
 
                     return AppliedLoans;
@@ -3622,7 +3622,7 @@ namespace FintrakBanking.Repositories.External
                         var random = new Random();
                         var message = string.Empty;
                         var Loans = new List<TblNmrcRefinancingLoan>();
-
+                        var LoanRef = context.TblNmrcRefinancingLoan.FirstOrDefault(x => x.Id == Model.FirstOrDefault()).RefinanceNumber;
                         foreach (var item in Model)
                         {
                             var Loan = context.TblNmrcRefinancingLoan.Where(x => x.Id == item).FirstOrDefault();
@@ -3633,6 +3633,9 @@ namespace FintrakBanking.Repositories.External
                             context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
                         }
 
+                        var LoanSum = context.TblNmrcRefinancing.FirstOrDefault(x => x.RefinanceNumber == LoanRef);
+                        LoanSum.ApplicationStatus = 1;
+                        context.TblNmrcRefinancing.AddOrUpdate(LoanSum);
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
