@@ -30,6 +30,8 @@ namespace FintrakBanking.Entities.Models
         public int? Checklisted { get; set; }
         public int? Disbursed { get; set; }
         public string CustomerName { get; set; }
+        [NotMapped]
+        public int ItemAvailable { get; set; }
 
     }
 }
