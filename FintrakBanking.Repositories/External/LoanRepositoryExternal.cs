@@ -2435,6 +2435,15 @@ namespace FintrakBanking.Repositories.External
                     foreach (var item in LaonApp)
                     {
                         var RefinanceDetails = dbcontext.TblRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted != 1 &&  x.Status == 1 && x.Reviewed != 1 && x.Approved != 1).ToList();
+                        foreach (var loan in RefinanceDetails)
+                        {
+                            var CustomerChecklist = dbcontext.TblCustomerUUS.Where(x=> x.EmployeeNhfNumber == loan.Nhfnumber).ToList();
+                            if (CustomerChecklist.Any())
+                            {
+                                loan.ItemAvailable = 1;
+                            }
+                        }
+
                         RefinanceAplications.AddRange(RefinanceDetails);
 
                     }
