@@ -2741,7 +2741,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [Route("get-reviewed-sum-nmrcapproval")]
         public async Task<HttpResponseMessage> GetReviewedSumForNmrcApproval()
-        {
+       {
             try
             {
                 var data = await repoLoan.GetReviwedLoanForNmrcApproval();

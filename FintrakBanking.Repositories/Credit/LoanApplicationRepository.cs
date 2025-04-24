@@ -5878,7 +5878,10 @@ namespace FintrakBanking.Repositories.Credit
                                              employer = context.TBL_CUSTOMER_EMPLOYER.FirstOrDefault(e => e.EMPLOYERID == x.RELATEDEMPLOYERID).EMPLOYER_NAME
                                          }).ToList();
 
+                //var allRecord = applications.Union(groupApplications).GroupBy(a => a.loanApplicationId).Select(a => a.FirstOrDefault()).ToList();
                 var allRecord = applications.Union(groupApplications).GroupBy(a => a.loanApplicationId).Select(a => a.FirstOrDefault()).ToList();
+
+
                 //int[] bookedLoanOperations = { (int) OperationsEnum.RevolvingLoanBooking, (int) OperationsEnum.TermLoanBooking, (int) OperationsEnum.ContigentLoanBooking };
 
                 foreach (var x in allRecord)
