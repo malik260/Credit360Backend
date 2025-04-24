@@ -2435,6 +2435,15 @@ namespace FintrakBanking.Repositories.External
                     foreach (var item in LaonApp)
                     {
                         var RefinanceDetails = dbcontext.TblRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted != 1 &&  x.Status == 1 && x.Reviewed != 1 && x.Approved != 1).ToList();
+                        foreach (var loan in RefinanceDetails)
+                        {
+                            var CustomerChecklist = dbcontext.TblCustomerUUS.Where(x=> x.EmployeeNhfNumber == loan.Nhfnumber).ToList();
+                            if (CustomerChecklist.Any())
+                            {
+                                loan.ItemAvailable = 1;
+                            }
+                        }
+
                         RefinanceAplications.AddRange(RefinanceDetails);
 
                     }
@@ -2484,102 +2493,108 @@ namespace FintrakBanking.Repositories.External
                         var ExisitngItems = context.TblCustomerUUS.Where(x => x.EmployeeNhfNumber == nhfNumber).ToList();
 
 
-                        if (ExisitngItems.Count() > 0 && ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count))
+
+                        //if (ExisitngItems.Count() > 0 && ((Model.Count + ExisitngItems.Count) == EmployeeUusItems.Count))
+                        //{
+                        //    var Id = Model.FirstOrDefault().LoanId;
+                        //    var RefinanceMod = context.TblRefinancingLoan.Where(x => x.LoanId == Id).FirstOrDefault();
+                        //    RefinanceMod.Checklisted = 1;
+                        //    RefinanceMod.ApplicationDate = DateTime.Now.Date;
+
+                        //    var output1 = context.SaveChanges() > 0;
+                        //    trans.Commit();
+                        //    trans.Dispose();
+
+
+                        //    return Model;
+
+                        //}
+
+                        //if (ExisitngItems.Count == 0)
+                        //{
+                        //    if (Model.Count < EmployeeUusItems.Count)
+                        //    {
+
+                        //        message = "pls complete all checklist items";
+                        //        throw new SecureException($"{message}");
+
+                        //    }
+                        //}
+
+                        //var NonExisting = new List<CustomerUusViewModel>();
+
+                        //if (ExisitngItems.Count > 0 && (Model.Count > ExisitngItems.Count))
+                        //{
+                        //    foreach (var ExisitngItem in ExisitngItems)
+                        //    {
+                        //        var fil = Model.Where(x => x.ItemId == ExisitngItem.ItemId && x.NhfNumber == ExisitngItem.EmployeeNhfNumber).FirstOrDefault();
+                        //        if (fil == null)
+                        //            NonExisting.Add(fil);
+
+                        //    }
+
+                        //}
+
+                        //if (NonExisting.Count > 0)
+                        //{
+                        //    foreach (var item in NonExisting)
+                        //    {
+
+                        //        var UusItem = UusItems.Where(x => x.Id == item.ItemId).FirstOrDefault();
+                        //        if (item.Option != Options.Defer && UusItem != null && item.FileContentBase64 == null)
+                        //        {
+                        //            message = "Document upload required for item " + item.Item;
+                        //            throw new SecureException($"{message}");
+                        //        }
+                        //        if (item.DeferDate == null || item.DeferDate == DateTime.MinValue)
+                        //        {
+                        //            item.DeferDate = new DateTime(1753, 1, 1);
+                        //        }
+                        //        var CustomerUus = new TblCustomerUUS
+                        //        {
+                        //            EmployeeNhfNumber = item.NhfNumber,
+                        //            PmbId = long.Parse(item.PmbId),
+                        //            Item = item.Item,
+                        //            Description = item.Description,
+                        //            Option = (int)item.Option,
+                        //            ItemId = item.ItemId,
+                        //            DeferDate = item.DeferDate.Date
+                        //        };
+                        //        context.TblCustomerUUS.Add(CustomerUus);
+                        //        if (item.FileContentBase64 != null)
+                        //        {
+                        //            if (item.FileContentBase64.Contains(","))
+                        //            {
+                        //                item.FileContentBase64 = item.FileContentBase64.Split(',')[1];
+                        //            }
+                        //            var fileData = Convert.FromBase64String(item.FileContentBase64);
+
+                        //            var CustomerDoc = new TblCustomerUUSDocument
+                        //            {
+                        //                // FileId = entity.Id,
+                        //                Nhfno = item.NhfNumber,
+                        //                Item = item.Item,
+                        //                Type = item.FileType,
+                        //                Label = item.FileName,
+                        //                Images = item.FileType,
+                        //                Size = fileData.Length,
+                        //                Filedata = fileData,
+                        //                ItemId = item.ItemId
+
+                        //            };
+                        //            context.TblCustomerUUSDocument.Add(CustomerDoc);
+
+                        //        }
+                        //    }
+
+
+                        //}
+
+                        if (Model.Count() != EmployeeUusItems.Count())
                         {
-                            var Id = Model.FirstOrDefault().LoanId;
-                            var RefinanceMod = context.TblRefinancingLoan.Where(x => x.LoanId == Id).FirstOrDefault();
-                            RefinanceMod.Checklisted = 1;
-                            RefinanceMod.ApplicationDate = DateTime.Now.Date;
-
-                            var output1 = context.SaveChanges() > 0;
-                            trans.Commit();
-                            trans.Dispose();
-
-
-                            return Model;
-
+                            message = "Pls complete all UUS items";
+                            throw new SecureException($"{message}");
                         }
-
-                        if (ExisitngItems.Count == 0)
-                        {
-                            if (Model.Count < EmployeeUusItems.Count)
-                            {
-
-                                message = "pls complete all checklist items";
-                                throw new SecureException($"{message}");
-
-                            }
-                        }
-
-                        var NonExisting = new List<CustomerUusViewModel>();
-
-                        if (ExisitngItems.Count > 0 && (Model.Count > ExisitngItems.Count))
-                        {
-                            foreach (var ExisitngItem in ExisitngItems)
-                            {
-                                var fil = Model.Where(x => x.ItemId == ExisitngItem.ItemId && x.NhfNumber == ExisitngItem.EmployeeNhfNumber).FirstOrDefault();
-                                if (fil == null)
-                                    NonExisting.Add(fil);
-
-                            }
-
-                        }
-
-                        if (NonExisting.Count > 0)
-                        {
-                            foreach (var item in NonExisting)
-                            {
-
-                                var UusItem = UusItems.Where(x => x.Id == item.ItemId).FirstOrDefault();
-                                if (item.Option != Options.Defer && UusItem != null && item.FileContentBase64 == null)
-                                {
-                                    message = "Document upload required for item " + item.Item;
-                                    throw new SecureException($"{message}");
-                                }
-                                if (item.DeferDate == null || item.DeferDate == DateTime.MinValue)
-                                {
-                                    item.DeferDate = new DateTime(1753, 1, 1);
-                                }
-                                var CustomerUus = new TblCustomerUUS
-                                {
-                                    EmployeeNhfNumber = item.NhfNumber,
-                                    PmbId = long.Parse(item.PmbId),
-                                    Item = item.Item,
-                                    Description = item.Description,
-                                    Option = (int)item.Option,
-                                    ItemId = item.ItemId,
-                                    DeferDate = item.DeferDate.Date
-                                };
-                                context.TblCustomerUUS.Add(CustomerUus);
-                                if (item.FileContentBase64 != null)
-                                {
-                                    if (item.FileContentBase64.Contains(","))
-                                    {
-                                        item.FileContentBase64 = item.FileContentBase64.Split(',')[1];
-                                    }
-                                    var fileData = Convert.FromBase64String(item.FileContentBase64);
-
-                                    var CustomerDoc = new TblCustomerUUSDocument
-                                    {
-                                        // FileId = entity.Id,
-                                        Nhfno = item.NhfNumber,
-                                        Item = item.Item,
-                                        Type = item.FileType,
-                                        Label = item.FileName,
-                                        Images = item.FileType,
-                                        Size = fileData.Length,
-                                        Filedata = fileData,
-                                        ItemId = item.ItemId
-
-                                    };
-                                    context.TblCustomerUUSDocument.Add(CustomerDoc);
-
-                                }
-                            }
-
-
-                        }
-
 
                         foreach (var item in Model)
                         {
