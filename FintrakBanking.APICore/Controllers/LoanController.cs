@@ -2566,7 +2566,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("Approve-pmb-refinance")]
-        public HttpResponseMessage ApprovePmbRefinancing(List<int> Model)
+        public HttpResponseMessage ApprovePmbRefinancing(int Model)
         {
             try
             {
