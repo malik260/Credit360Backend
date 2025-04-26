@@ -4418,6 +4418,10 @@ namespace FintrakBanking.Repositories.Credit
             applicationDate = x.a.APPLICATIONDATE,
             systemDateTime = x.a.SYSTEMDATETIME,
             applicationAmount = x.a.APPLICATIONAMOUNT,
+            //facility = x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LOAN_APPLICATION_DETAIL
+            //                            .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
+            //                            .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+            //                            .FirstOrDefault(),
             facility = x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LOAN_APPLICATION_DETAIL
                                         .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
                                         .Select(s => s.TBL_PRODUCT.PRODUCTNAME)

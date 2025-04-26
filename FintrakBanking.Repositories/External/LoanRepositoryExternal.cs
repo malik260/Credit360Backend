@@ -2785,7 +2785,7 @@ namespace FintrakBanking.Repositories.External
 
 
 
-        public List<TblRefinancingLoan> ApprovePmbRefinancing(List<int> Model)
+        public List<TblRefinancingLoan> ApprovePmbRefinancing(int Model)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -2796,20 +2796,18 @@ namespace FintrakBanking.Repositories.External
                         var random = new Random();
                         var message = string.Empty;
                         var LoanLists = new List<TblRefinancingLoan>();
-                        var Loans = context.TblRefinancingLoan.ToList();
                         decimal? TotalAmount = 0;
                         var RefNumber = "Ref-" + random.Next(100000, 1000000);
-                        var LoanRef = Loans.FirstOrDefault(x => x.Id == Model.FirstOrDefault()).RefinanceNumber;
-                        var RefinanceLoan = context.TblRefinancing.FirstOrDefault(x => x.RefinanceNumber == LoanRef);
+                        var RefinanceLoan = context.TblRefinancing.FirstOrDefault(x => x.Id == Model);
                         RefinanceLoan.ApplicationStatus = 1;
+                        var loans = context.TblRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceLoan.RefinanceNumber).ToList();
 
-                        foreach (var item in Model)
+                        foreach (var item in loans)
                         {
-                            var Loan = Loans.Where(x => x.Id == item).FirstOrDefault();
-                            Loan.ApplicationStatus = 1;
-                            Loan.Approved = 1;
-                            TotalAmount += Loan.Amount;
-                            LoanLists.Add(Loan);
+                            item.ApplicationStatus = 1;
+                            item.Approved = 1;
+                            TotalAmount += item.Amount;
+                            LoanLists.Add(item);
 
 
                         }
@@ -3614,7 +3612,11 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
+<<<<<<< HEAD
                     var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == 1 && x.Approved == null  && x.RefinanceNumber == RefNumber ).ToList();
+=======
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == 1 && (x.Approved == null || x.Approved == 0) && (x.ApplicationStatus == null || x.ApplicationStatus == 0) && x.RefinanceNumber == RefNumber ).ToList();
+>>>>>>> 9b49f6881929ed4ebfa02d92e2dcdd55522713f1
 
                     return AppliedLoans;
 
