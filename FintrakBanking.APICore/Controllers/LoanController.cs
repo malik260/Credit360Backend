@@ -2682,8 +2682,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-
-
                 var data = repoLoan.ReviewCustomersUItems(Model);
                 if (data == null)
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -2702,8 +2700,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-
-
                 var data = repoLoan.ReviewalApproval(Model);
                 if (data == null)
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -2760,7 +2756,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-
+        // nmrc final approval GET parent
         [HttpGet]
         [Route("get-reviewed-sum-nmrcapproval")]
         public async Task<HttpResponseMessage> GetReviewedSumForNmrcApproval()
@@ -2783,6 +2779,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        // final approval GET child
         [HttpGet]
         [Route("get-reviewed-sub-nmrcapproval")]
         public async Task<HttpResponseMessage> GetReviewedForApproval(string RefinanceNumber)
@@ -2805,6 +2802,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        // final approval child approval
         [HttpPost]
         [Route("Nmrc-approve-reviewed")]
         public HttpResponseMessage ApproveReviewedLoan(List<int> Model)
@@ -2825,6 +2823,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        // final approval child disapproval
         [HttpPost]
         [Route("Nmrc-disapprove-reviewed")]
         public HttpResponseMessage ReviewedDisapproval(List<int> Model)
@@ -2845,6 +2844,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        // send for tranch
         [HttpPost]
         [Route("Nmrc-send-approved-batch")]
         public HttpResponseMessage NmrcSendApprovedForTranch(string RefinanceNumber)

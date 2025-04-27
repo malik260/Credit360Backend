@@ -3598,9 +3598,6 @@ namespace FintrakBanking.Repositories.External
                             context.TblNmrcRefinancing.AddOrUpdate(Refinance);
                         }
 
-
-
-
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
                         trans.Dispose();
