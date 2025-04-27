@@ -30,5 +30,7 @@ namespace FintrakBanking.Entities.Models
         public int? Checklisted { get; set; }
         public int? Disbursed { get; set; }
         public string CustomerName { get; set; }
+        public int? ReviewalStatus { get; set; }
+        public int? ApprovalStatus { get; set; }
     }
 }
