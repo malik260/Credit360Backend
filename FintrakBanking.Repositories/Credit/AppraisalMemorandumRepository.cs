@@ -4631,7 +4631,7 @@ namespace FintrakBanking.Repositories.Credit
                         AUDITTYPEID = (short)AuditTypeEnum.ApplicationReassigned,
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
-                        DETAIL = $"Transaction that was previously assigned to {staff?.FIRSTNAME} {staff?.LASTNAME} {staff.STAFFCODE} was returned to general pool {level.LEVELNAME}.",
+                        DETAIL = $"Transaction that was previously assigned to {staff?.FIRSTNAME} {staff?.LASTNAME} {staff?.STAFFCODE} was returned to general pool {level.LEVELNAME}.",
                         IPADDRESS = CommonHelpers.GetLocalIpAddress(), 
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),

@@ -2738,6 +2738,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+
+        [HttpPost]
+        [Route("Nmrc-send-reviewed-batch")]
+        public HttpResponseMessage NmrcSendReviewForFinalApproval(string RefinanceNumber)
+        {
+            try
+            {
+
+
+                var data = repoLoan.NmrcSendReviewForFinalApproval(RefinanceNumber);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
         [HttpGet]
         [Route("get-reviewed-sum-nmrcapproval")]
         public async Task<HttpResponseMessage> GetReviewedSumForNmrcApproval()
@@ -2761,7 +2785,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("get-subloans-for-approval")]
+        [Route("get-reviewed-sub-nmrcapproval")]
         public async Task<HttpResponseMessage> GetReviewedForApproval(string RefinanceNumber)
         {
             try
@@ -2783,7 +2807,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("subloan-approval")]
+        [Route("Nmrc-approve-reviewed")]
         public HttpResponseMessage ApproveReviewedLoan(List<int> Model)
         {
             try
@@ -2801,6 +2825,48 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("Nmrc-disapprove-reviewed")]
+        public HttpResponseMessage ReviewedDisapproval(List<int> Model)
+        {
+            try
+            {
+
+
+                var data = repoLoan.NmrcDisapproveReviewed(Model);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("Nmrc-send-approved-batch")]
+        public HttpResponseMessage NmrcSendApprovedForTranch(string RefinanceNumber)
+        {
+            try
+            {
+
+
+                var data = repoLoan.NmrcSendAprovedForTranch(RefinanceNumber);
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error applying for this facility, kindly contact admin." });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
 
 
         [HttpGet]

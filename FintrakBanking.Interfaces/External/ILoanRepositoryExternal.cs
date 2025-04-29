@@ -59,5 +59,8 @@ namespace FintrakBanking.Interfaces.External
         Task<List<TblNmrcRefinancing>> GetReviwedLoanForNmrcApproval();
         Task<List<TblNmrcRefinancing>> GetSummaryLoanForNmrcTranch();
         List<TblRefinancingLoan> ApprovePmbRefinancing(int Model);
+        TblNmrcRefinancing NmrcSendReviewForFinalApproval(string RefinanceNumber);
+        List<TblNmrcRefinancingLoan> NmrcDisapproveReviewed(List<int> Model);
+        TblNmrcRefinancing NmrcSendAprovedForTranch(string RefinanceNumber);
     }
 }

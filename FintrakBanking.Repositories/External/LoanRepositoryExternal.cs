@@ -2926,6 +2926,19 @@ namespace FintrakBanking.Repositories.External
                 {
                     var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && x.ApplicationStatus == 1 && x.Tranched == null).ToList();
 
+                    var ValidLoans = new List<TblNmrcRefinancing>();
+                    foreach (var item in AppliedLoans)
+                    {
+                        var LoanExists = dbcontext.TblNmrcRefinancingLoan.Any(x => x.RefinanceNumber == item.RefinanceNumber && x.ReviewalStatus == 1 && x.ApprovalStatus == 1);
+
+                        if (LoanExists)
+                        {
+                            ValidLoans.Add(item);
+                        }
+                    }
+
+                    return ValidLoans;
+
 
                     return AppliedLoans;
 
@@ -2969,8 +2982,18 @@ namespace FintrakBanking.Repositories.External
                 {
                     var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && (x.ApplicationStatus == null || x.ApplicationStatus == 0 )).ToList();
 
+                    var ValidLoans = new List<TblNmrcRefinancing>();
+                    foreach (var item in AppliedLoans)
+                    {
+                        var LoanExists = dbcontext.TblNmrcRefinancingLoan.Any(x=> x.RefinanceNumber == item.RefinanceNumber && x.ReviewalStatus == 1);
 
-                    return AppliedLoans;
+                        if (LoanExists)
+                        {
+                            ValidLoans.Add(item);
+                        }
+                    }
+
+                    return ValidLoans;
 
                 }
 
@@ -2988,7 +3011,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Reviewed == 1 && x.Approved ==  1).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefNo && x.Reviewed == 1 && x.ReviewalStatus == 1 && x.ApprovalStatus == 1).ToList();
 
                     return AppliedLoans;
 
@@ -3511,19 +3534,17 @@ namespace FintrakBanking.Repositories.External
                         var random = new Random();
                         var message = string.Empty;
                         var Loans = new List<TblNmrcRefinancingLoan>();
-
                         foreach (var item in Model)
                         {
                             var Loan = context.TblNmrcRefinancingLoan.Where(x => x.Id == item).FirstOrDefault();
-                            Loan.Reviewed = 1;
-                            Loan.Checklisted = 1;
-                            Loans.Add(Loan);
+                            //Loan.Reviewed = 1;
+                            //Loan.Checklisted = 1;
+                            //Loans.Add(Loan);
+                            Loan.ReviewalStatus = 1;
                             context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
+                            Loans.Add(Loan);
                         }
-                        var LoanRef = Loans.FirstOrDefault(x => x.Id == Model.FirstOrDefault()).RefinanceNumber;
-                        var Summary = context.TblNmrcRefinancing.FirstOrDefault(x => x.RefinanceNumber == LoanRef);
-                        Summary.Reviewed = 1;
-                        context.TblNmrcRefinancing.AddOrUpdate(Summary);
+                        
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
@@ -3566,9 +3587,64 @@ namespace FintrakBanking.Repositories.External
                         foreach (var item in Model)
                         {
                             var Loan = context.TblNmrcRefinancingLoan.Where(x => x.Id == item).FirstOrDefault();
-                            Loan.Reviewed = 1;
-                            Loan.Checklisted = 1;
-                            Loan.Approved = 2;
+                            //Loan.Reviewed = 1;
+                            //Loan.Checklisted = 1;
+                            Loan.ReviewalStatus = 2;
+                            Loans.Add(Loan);
+                            var Refinance = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == Loan.RefinanceNumber).FirstOrDefault();
+                            Refinance.TotalAmount = Refinance.TotalAmount - Loan.Amount;
+
+                            context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
+                            context.TblNmrcRefinancing.AddOrUpdate(Refinance);
+                        }
+
+
+
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return Loans;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+        
+        public List<TblNmrcRefinancingLoan> NmrcDisapproveReviewed(List<int> Model)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var random = new Random();
+                        var message = string.Empty;
+                        var Loans = new List<TblNmrcRefinancingLoan>();
+
+                        foreach (var item in Model)
+                        {
+                            var Loan = context.TblNmrcRefinancingLoan.Where(x => x.Id == item).FirstOrDefault();
+                            //Loan.Reviewed = 1;
+                            //Loan.Checklisted = 1;
+                            Loan.ApprovalStatus = 2;
                             Loans.Add(Loan);
                             var Refinance = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == Loan.RefinanceNumber).FirstOrDefault();
                             Refinance.TotalAmount = Refinance.TotalAmount - Loan.Amount;
@@ -3606,17 +3682,152 @@ namespace FintrakBanking.Repositories.External
             }
         }
 
+
+
+        public TblNmrcRefinancing NmrcSendReviewForFinalApproval(string RefinanceNumber)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var random = new Random();
+                        var message = string.Empty;
+                        var Status = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).Select(x=> x.ReviewalStatus).ToList();
+
+                        foreach (var item in Status)
+                        {
+                            if (item == 0 || item == null)
+                            {
+                                throw new SecureException("Pls complete review for all batch items.");
+
+                            }
+
+                        }
+
+                        var Loans = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).ToList();
+
+
+                        foreach (var item in Loans)
+                        {
+                            item.Checklisted = 1;
+                            item.Reviewed = 1;
+                            context.TblNmrcRefinancingLoan.AddOrUpdate(item);
+                        }
+
+                        var Loan = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == RefinanceNumber).FirstOrDefault();
+                        Loan.Reviewed = 1;
+                        Loan.Checklisted = 1;
+                        context.TblNmrcRefinancing.AddOrUpdate(Loan);
+
+
+
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return Loan;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+
+        public TblNmrcRefinancing NmrcSendAprovedForTranch(string RefinanceNumber)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var random = new Random();
+                        var message = string.Empty;
+                        var Status = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).Select(x=> x.ApprovalStatus).ToList();
+
+                        foreach (var item in Status)
+                        {
+                            if (item == 0 || item == null)
+                            {
+                                throw new SecureException("Pls complete review for all batch items.");
+
+                            }
+
+                        }
+
+                        var Loans = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).ToList();
+
+
+                        foreach (var item in Loans)
+                        {
+                            item.Checklisted = 1;
+                            item.Reviewed = 1;
+                            item.ApprovalStatus = 1;
+                            context.TblNmrcRefinancingLoan.AddOrUpdate(item);
+                        }
+
+                        var Loan = context.TblNmrcRefinancing.Where(x => x.RefinanceNumber == RefinanceNumber).FirstOrDefault();
+                        Loan.Reviewed = 1;
+                        Loan.Checklisted = 1;
+                        Loan.ApplicationStatus = 1;
+                        context.TblNmrcRefinancing.AddOrUpdate(Loan);
+
+
+
+
+                        var output = context.SaveChanges() > 0;
+                        trans.Commit();
+                        trans.Dispose();
+
+
+                        return Loan;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        trans.Rollback();
+
+                        string errorMessages = string.Join("; ",
+                        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+        }
+
+
+
         public async Task<List<TblNmrcRefinancingLoan>> GetReviewedForApproval(string RefNumber)
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-<<<<<<< HEAD
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == 1 && x.Approved == null  && x.RefinanceNumber == RefNumber ).ToList();
-=======
-                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == 1 && (x.Approved == null || x.Approved == 0) && (x.ApplicationStatus == null || x.ApplicationStatus == 0) && x.RefinanceNumber == RefNumber ).ToList();
->>>>>>> 9b49f6881929ed4ebfa02d92e2dcdd55522713f1
+                    var AppliedLoans = dbcontext.TblNmrcRefinancingLoan.Where(x => x.Reviewed == 1 && (x.Approved == null || x.Approved == 0) && (x.ApplicationStatus == null || x.ApplicationStatus == 0) && x.RefinanceNumber == RefNumber && x.ReviewalStatus == 1).ToList();
 
                     return AppliedLoans;
 
@@ -3644,17 +3855,13 @@ namespace FintrakBanking.Repositories.External
                         foreach (var item in Model)
                         {
                             var Loan = context.TblNmrcRefinancingLoan.Where(x => x.Id == item).FirstOrDefault();
-                            Loan.Reviewed = 1;
-                            Loan.Checklisted = 1;
-                            Loan.Approved = 1;
+                           
+                            Loan.ApprovalStatus = 1;
                             Loans.Add(Loan);
                             context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
                         }
 
-                        var LoanSum = context.TblNmrcRefinancing.FirstOrDefault(x => x.RefinanceNumber == LoanRef);
-                        LoanSum.ApplicationStatus = 1;
-                        context.TblNmrcRefinancing.AddOrUpdate(LoanSum);
-
+                      
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
                         trans.Dispose();
