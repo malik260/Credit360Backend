@@ -306,6 +306,21 @@ namespace FintrakBanking.APICore.ExternalControllers
             }
         }
 
+        [HttpGet]
+        [Route("existing-loan-application-detail1/{applicationReferenceNo}")]
+        public async Task<HttpResponseMessage> GetLoanApplicationByRefNo1(string applicationReferenceNo)
+        {
+            try
+            {
+                var data = repoLoan.GetLoanApplicationByRefNo1(applicationReferenceNo);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
 
         [HttpGet]
         [Route("is-offerletter-ready/{applicationReferenceNo}")]
