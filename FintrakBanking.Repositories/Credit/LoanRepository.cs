@@ -3425,6 +3425,7 @@ namespace FintrakBanking.Repositories.Credit
                         && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                         && s.ISMAINTAINEDLINE == null
                         && s.ISDISBURSED == false
+                        && m.COMPANYID = companyId
 
                         orderby s.DATETIMECREATED descending
                         select new CamProcessedLoanViewModel

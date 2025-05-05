@@ -103,7 +103,7 @@ namespace FintrakBanking.APICore.Controllers
 
          [HttpPost] [ClaimsAuthorization]
         [Route("loan-document")]
-        public async Task<HttpResponseMessage> AddLoanDocument() // DEPRECATED
+        public async Task<HttpResponseMessage> AddLoanDocument1() // DEPRECATED
         {
             try
             {
@@ -170,7 +170,91 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        public class LoanDocumentUploadModel
+        {
+            public string LoanApplicationNumber { get; set; }
+            public string LoanReferenceNumber { get; set; }
+            public string DocumentTitle { get; set; }
+            public string DocumentTypeId { get; set; }
+            public string FileName { get; set; }
+            public string FileExtension { get; set; }
+            public string PhysicalFileNumber { get; set; }
+            public string PhysicalLocation { get; set; }
+            public bool IsPrimaryDocument { get; set; }
+            public Microsoft.AspNetCore.Http.IFormFile File { get; set; }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-document")]
+        public async Task<HttpResponseMessage> AddLoanDocument([FromBody] LoanDocumentUploadModel model)
+        {
+            try
+            {
+
+                if (model.File == null || model.File.Length == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "No file uploaded.");
+                }
+
+                if (!int.TryParse(model.DocumentTypeId, out int uploadType))
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+
+
+                var entity = new LoanDocumentViewModel
+                {
+                    loanApplicationNumber = model.LoanApplicationNumber,
+                    loanReferenceNumber = model.LoanReferenceNumber,
+                    documentTitle = model.DocumentTitle,
+                    documentTypeId = (short)uploadType,
+                    fileName = model.FileName,
+                    fileExtension = model.FileExtension,
+                    physicalFileNumber = model.PhysicalFileNumber,
+                    physicalLocation = model.PhysicalLocation,
+                    isPrimaryDocument = model.IsPrimaryDocument,
+                    userBranchId = (short)token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    createdBy = token.GetStaffId,
+                };
+
+                using var memoryStream = new MemoryStream();
+                await model.File.CopyToAsync(memoryStream);
+                var buffer = memoryStream.ToArray();
+
+                var data = repo.AddLoanDocument(entity, buffer);
+
+                if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                else if (data == 3)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "There was an error creating this record because the record already exists" });
+                }
+                else if (data == 4)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "Record with File Number already exists" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
+        }
+
+
+
+
+
+        [HttpPut] [ClaimsAuthorization]
         [Route("loan-document/{loanDocumentId}")]
         public HttpResponseMessage UpdateLoanDocument([FromBody] LoanDocumentViewModel entity, int loanDocumentId)
         {
