@@ -3808,8 +3808,10 @@ namespace FintrakBanking.Repositories.Credit
                 applicationAmount = x.a.APPLICATIONAMOUNT,
                 facility = x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
-                                            .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+                                            //.Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+                                            .Select(s => s.TBL_PRODUCT.PRODUCTNAME)
                                             .FirstOrDefault(),
+
                 approvedAmount = x.a.APPROVEDAMOUNT,
                 interestRate = x.a.INTERESTRATE,
                 applicationTenor = x.a.APPLICATIONTENOR,
@@ -4631,7 +4633,7 @@ namespace FintrakBanking.Repositories.Credit
                         AUDITTYPEID = (short)AuditTypeEnum.ApplicationReassigned,
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
-                        DETAIL = $"Transaction that was previously assigned to {staff?.FIRSTNAME} {staff?.LASTNAME} {staff.STAFFCODE} was returned to general pool {level.LEVELNAME}.",
+                        DETAIL = $"Transaction that was previously assigned to {staff?.FIRSTNAME} {staff?.LASTNAME} {staff?.STAFFCODE} was returned to general pool {level?.LEVELNAME}.",
                         IPADDRESS = CommonHelpers.GetLocalIpAddress(), 
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),

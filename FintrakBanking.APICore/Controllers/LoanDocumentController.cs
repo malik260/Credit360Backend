@@ -101,74 +101,74 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-         [HttpPost] [ClaimsAuthorization]
-        [Route("loan-document")]
-        public async Task<HttpResponseMessage> AddLoanDocument1() // DEPRECATED
-        {
-            try
-            {
-                if (!Request.Content.IsMimeMultipartContent())
-                {
-                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
-                }
+        //[HttpPost] [ClaimsAuthorization]
+        //[Route("loan-document")]
+        //public async Task<HttpResponseMessage> AddLoanDocument1() // DEPRECATED
+        //{
+        //    try
+        //    {
+        //        if (!Request.Content.IsMimeMultipartContent())
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+        //        }
 
-                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+        //        MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+        //        await Request.Content.ReadAsMultipartAsync(provider);
 
-                int uploadType;
-                if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
-                }
+        //        int uploadType;
+        //        if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+        //        }
 
-                var entity = new LoanDocumentViewModel
-                {
-                    loanApplicationNumber = provider.FormData["loanApplicationNumber"],
-                    loanReferenceNumber = provider.FormData["loanReferenceNumber"],
-                    documentTitle = provider.FormData["documentTitle"],
-                    documentTypeId = (short)uploadType,
-                    //SourceId = Convert.ToInt32( provider.FormData["sourceId"]),
-                    fileName = provider.FormData["fileName"],
-                    fileExtension = provider.FormData["fileExtension"],
-                    physicalFileNumber = provider.FormData["physicalFileNumber"],
-                    physicalLocation = provider.FormData["physicalLocation"],
-                    isPrimaryDocument = provider.FormData["isPrimaryDocument"] == "true",
-                };
+        //        var entity = new LoanDocumentViewModel
+        //        {
+        //            loanApplicationNumber = provider.FormData["loanApplicationNumber"],
+        //            loanReferenceNumber = provider.FormData["loanReferenceNumber"],
+        //            documentTitle = provider.FormData["documentTitle"],
+        //            documentTypeId = (short)uploadType,
+        //            //SourceId = Convert.ToInt32( provider.FormData["sourceId"]),
+        //            fileName = provider.FormData["fileName"],
+        //            fileExtension = provider.FormData["fileExtension"],
+        //            physicalFileNumber = provider.FormData["physicalFileNumber"],
+        //            physicalLocation = provider.FormData["physicalLocation"],
+        //            isPrimaryDocument = provider.FormData["isPrimaryDocument"] == "true",
+        //        };
 
-                if (!provider.FileStreams.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
-                }
+        //        if (!provider.FileStreams.Any())
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+        //        }
 
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+        //        entity.userBranchId = (short)token.GetBranchId;
+        //        entity.companyId = token.GetCompanyId;
+        //        entity.createdBy = token.GetStaffId;
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var file = provider.Contents.FirstOrDefault();
-                var buffer = await file.ReadAsByteArrayAsync();
-                var data = repo.AddLoanDocument(entity, buffer);
+        //        var file = provider.Contents.FirstOrDefault();
+        //        var buffer = await file.ReadAsByteArrayAsync();
+        //        var data = repo.AddLoanDocument(entity, buffer);
 
-                if (data == 2)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
-                else if (data == 3)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "There was an error creating this record because the record already exists" });
-                }
-                else if (data == 4)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "Record with File Number already exists" });
-                }
+        //        if (data == 2)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+        //        }
+        //        else if (data == 3)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "There was an error creating this record because the record already exists" });
+        //        }
+        //        else if (data == 4)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "Record with File Number already exists" });
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+        //    }
+        //}
 
         public class LoanDocumentUploadModel
         {
@@ -202,8 +202,8 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
                 }
 
-                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+                //MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                //await Request.Content.ReadAsMultipartAsync(provider);
 
 
 
@@ -223,7 +223,8 @@ namespace FintrakBanking.APICore.Controllers
                     createdBy = token.GetStaffId,
                 };
 
-                using var memoryStream = new MemoryStream();
+                var memoryStream = new MemoryStream();
+
                 await model.File.CopyToAsync(memoryStream);
                 var buffer = memoryStream.ToArray();
 
