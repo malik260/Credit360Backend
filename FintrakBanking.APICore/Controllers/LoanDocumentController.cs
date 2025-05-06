@@ -187,70 +187,84 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-document")]
-        public async Task<HttpResponseMessage> AddLoanDocument([FromBody] LoanDocumentUploadModel model)
+        public async Task<HttpResponseMessage> AddLoanDocument()
         {
-            try
+            if (!Request.Content.IsMimeMultipartContent())
             {
-
-                if (model.File == null || model.File.Length == 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "No file uploaded.");
-                }
-
-                if (!int.TryParse(model.DocumentTypeId, out int uploadType))
-                {
-                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
-                }
-
-                //MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                //await Request.Content.ReadAsMultipartAsync(provider);
-
-
-
-                var entity = new LoanDocumentViewModel
-                {
-                    loanApplicationNumber = model.LoanApplicationNumber,
-                    loanReferenceNumber = model.LoanReferenceNumber,
-                    documentTitle = model.DocumentTitle,
-                    documentTypeId = (short)uploadType,
-                    fileName = model.FileName,
-                    fileExtension = model.FileExtension,
-                    physicalFileNumber = model.PhysicalFileNumber,
-                    physicalLocation = model.PhysicalLocation,
-                    isPrimaryDocument = model.IsPrimaryDocument,
-                    userBranchId = (short)token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    createdBy = token.GetStaffId,
-                };
-
-                var memoryStream = new MemoryStream();
-
-                await model.File.CopyToAsync(memoryStream);
-                var buffer = memoryStream.ToArray();
-
-                var data = repo.AddLoanDocument(entity, buffer);
-
-                if (data == 2)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
-                else if (data == 3)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "There was an error creating this record because the record already exists" });
-                }
-                else if (data == 4)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "Record with File Number already exists" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Content is not multipart.");
             }
-            catch (SecureException ex)
+
+            var provider = new MultipartMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            byte[] fileBytes = null;
+            string fileName = null;
+
+            var model = new LoanDocumentUploadModel();
+
+            foreach (var content in provider.Contents)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+                var name = content.Headers.ContentDisposition.Name?.Trim('\"');
+
+                if (name == "file")
+                {
+                    fileBytes = await content.ReadAsByteArrayAsync();
+                    fileName = content.Headers.ContentDisposition.FileName?.Trim('\"');
+                }
+                else
+                {
+                    var stringValue = await content.ReadAsStringAsync();
+                    switch (name)
+                    {
+                        case "loanApplicationNumber": model.LoanApplicationNumber = stringValue; break;
+                        case "loanReferenceNumber": model.LoanReferenceNumber = stringValue; break;
+                        case "documentTitle": model.DocumentTitle = stringValue; break;
+                        case "documentTypeId": model.DocumentTypeId = stringValue; break;
+                        case "fileName": model.FileName = stringValue; break;
+                        case "fileExtension": model.FileExtension = stringValue; break;
+                        case "physicalFileNumber": model.PhysicalFileNumber = stringValue; break;
+                        case "physicalLocation": model.PhysicalLocation = stringValue; break;
+                        case "isPrimaryDocument": model.IsPrimaryDocument = stringValue.ToLower() == "true"; break;
+                    }
+                }
+            }
+
+            if (fileBytes == null || fileBytes.Length == 0)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+
+            if (!int.TryParse(model.DocumentTypeId, out int uploadType))
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid Document Type");
+
+            var entity = new LoanDocumentViewModel
+            {
+                loanApplicationNumber = model.LoanApplicationNumber,
+                loanReferenceNumber = model.LoanReferenceNumber,
+                documentTitle = model.DocumentTitle,
+                documentTypeId = (short)uploadType,
+                fileName = model.FileName ?? fileName,
+                fileExtension = model.FileExtension,
+                physicalFileNumber = model.PhysicalFileNumber,
+                physicalLocation = model.PhysicalLocation,
+                isPrimaryDocument = model.IsPrimaryDocument,
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+            };
+
+            var data = repo.AddLoanDocument(entity, fileBytes);
+
+            switch (data)
+            {
+                case 2:
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                case 3:
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "Record already exists" });
+                case 4:
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "File number already exists" });
+                default:
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "Error creating record" });
             }
         }
-
 
 
 

@@ -1456,7 +1456,7 @@ namespace FintrakBanking.Repositories.External
 
             loanData = new TBL_LOAN_APPLICATION
             {
-                INTERESTRATE = 0, // COME IN AS ADDITIONAL PARAMETTER
+                INTERESTRATE = loan.loanApplicationDetail.proposedRate, // COME IN AS ADDITIONAL PARAMETTER
                 //CASAACCOUNTID = loan.casaAccountId, // COME IN AS ADDITIONAL PARAMETTER
                 //ISINVESTMENTGRADE = loan.isInvestmentGrade, // COME IN AS ADDITIONAL PARAMETTER
                 //BUSINESSUNIT = loan.businessUnit, // COME IN AS ADDITIONAL PARAMETTER
@@ -1640,11 +1640,12 @@ namespace FintrakBanking.Repositories.External
 
             var newLoanDetail = new TBL_LOAN_APPLICATION_DETAIL
             {
-                APPROVEDINTERESTRATE = (double)product.MAXIMUMRATE.Value, //(double)entity.proposedInterestRate, // COME IN AS ADDITIONAL PARAMETTER
-                                                                          //APR = entity.apr // COME IN AS ADDITIONAL PARAMETTER
-                                                                          //REPAYMENTDATE = entity.repaymentDate, // COME IN AS ADDITIONAL PARAMETTER
-                                                                          //EQUITYAMOUNT = entity.equityAmount, // COME IN AS ADDITIONAL PARAMETTER
-                                                                          //EQUITYCASAACCOUNTID = entity.equityCasaAccountId, // COME IN AS ADDITIONAL PARAMETTER
+                APPROVEDINTERESTRATE = (entity.proposedRate != 0) ? entity.proposedRate : (double)product.MAXIMUMRATE.Value,
+                //(double)entity.proposedInterestRate, // COME IN AS ADDITIONAL PARAMETTER
+                //APR = entity.apr // COME IN AS ADDITIONAL PARAMETTER
+                //REPAYMENTDATE = entity.repaymentDate, // COME IN AS ADDITIONAL PARAMETTER
+                //EQUITYAMOUNT = entity.equityAmount, // COME IN AS ADDITIONAL PARAMETTER
+                //EQUITYCASAACCOUNTID = entity.equityCasaAccountId, // COME IN AS ADDITIONAL PARAMETTER
 
                 CURRENCYID = entity.currencyId,
                 APPROVEDAMOUNT = entity.proposedAmount,
@@ -3334,6 +3335,16 @@ namespace FintrakBanking.Repositories.External
                         if (loanDetail.proposedAmount > productInfo.MAXIMUMAMOUNT)
                         {
                             throw new SecureException($"Maximum product Amount Exceeded! The maximum product amount for {productInfo.PRODUCTNAME} is NGN{productInfo.MAXIMUMAMOUNT.Value.ToString("N")}");
+                        }
+
+                        if (loanDetail.proposedRate > productInfo.MAXIMUMRATE)
+                        {
+                            throw new SecureException($"Maximum product Rate Exceeded! The maximum product rate for {productInfo.MAXIMUMRATE} is {productInfo.MAXIMUMRATE}");
+                        }
+
+                        if (loanDetail.proposedRate < productInfo.MINIMUMRATE)
+                        {
+                            throw new SecureException($"Minimum product Rate Exceeded! The minimum product rate for {productInfo.MINIMUMRATE} is {productInfo.MINIMUMRATE}");
                         }
 
                         if (loanDetail.proposedAmount < productInfo.MINIMUMAMOUNT)
