@@ -2514,7 +2514,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-
+            data = data.OrderByDescending(x => x.systemArrivalDateTime).ToList();
             return data;
         }
 
