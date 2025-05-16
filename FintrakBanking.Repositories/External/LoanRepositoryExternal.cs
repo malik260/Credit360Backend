@@ -3339,12 +3339,12 @@ namespace FintrakBanking.Repositories.External
 
                         if (loanDetail.proposedRate > productInfo.MAXIMUMRATE)
                         {
-                            throw new SecureException($"Maximum product Rate Exceeded! The maximum product rate for {productInfo.MAXIMUMRATE} is {productInfo.MAXIMUMRATE}");
+                            throw new SecureException($"Maximum product Rate Exceeded! The maximum product rate for {productInfo.PRODUCTNAME} is {productInfo.MAXIMUMRATE}");
                         }
 
                         if (loanDetail.proposedRate < productInfo.MINIMUMRATE)
                         {
-                            throw new SecureException($"Minimum product Rate Exceeded! The minimum product rate for {productInfo.MINIMUMRATE} is {productInfo.MINIMUMRATE}");
+                            throw new SecureException($"Minimum product Rate Exceeded! The minimum product rate for {productInfo.PRODUCTNAME} is {productInfo.MINIMUMRATE}");
                         }
 
                         if (loanDetail.proposedAmount < productInfo.MINIMUMAMOUNT)
