@@ -174,7 +174,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial, Version=1.17.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\Alex.Okunrinkoya\Music\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
