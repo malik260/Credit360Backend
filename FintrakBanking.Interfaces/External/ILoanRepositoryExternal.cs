@@ -20,6 +20,7 @@ namespace FintrakBanking.Interfaces.External
         LoanApplicationForReturn AddBatchedLoanApplication(LoanApplicationForCreation loan);
         Task<List<LoanApplicationForReturn>> GetLoanApplicationByCustomer(string customerCode);
         Task<LoanApplicationForReturn> GetLoanApplicationByRefNo(string applicationRefNo);
+        Task<LoanApplicationForReturn> GetLoanApplicationByRefNo1(string applicationRefNo);
         Task<string> DownloadOfferLetter(string applicationRefNo);
         //Task<LoanEligibilityForReturn> LoanEligibility(LoanEligibilityForInquiry forInquiry);
         Task<bool> LaonDocumentUpload(LoanDocumentViewModel model, byte[] file);

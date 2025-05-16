@@ -260,6 +260,15 @@ namespace FintrakBanking.Repositories.External
                 return await GetLoanApplication(context).Where(o => o.applicationReferenceNumber == applicationRefNo).FirstOrDefaultAsync();
             }
         }
+        public async Task<LoanApplicationForReturn> GetLoanApplicationByRefNo1(string applicationRefNo)
+        {
+
+
+            var response = await GetLoanApplication1(applicationRefNo);
+            var Loan = response.FirstOrDefault();
+            return Loan;
+
+        }
 
         public async Task<LoanApplicationForReturn> GetLoanApplicationByRefNo(string applicationRefNo, FinTrakBankingContext context)
         {
@@ -357,6 +366,99 @@ namespace FintrakBanking.Repositories.External
 
             return applications;
         }
+
+
+        public async Task<List<LoanApplicationForReturn>> GetLoanApplication1(string applicationreferenceNumber)
+        {
+            var context = new FinTrakBankingContext();
+            int[] operations = {
+                    (int)OperationsEnum.OfferLetterApproval,
+                    (int)OperationsEnum.CreditAppraisal,
+                    (int)OperationsEnum.ContigentLoanBooking,
+                    (int)OperationsEnum.ContingentLiabilityRenewal,
+                    (int)OperationsEnum.ContingentLiabilityUsage,
+                    (int)OperationsEnum.ContingentRequestBooking,
+                    (int)OperationsEnum.CommercialLoanBooking,
+                    (int)OperationsEnum.LoanAvailment
+                };
+
+            var applications = (from x in context.TBL_LOAN_APPLICATION
+                                join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                                where
+                                //c.CUSTOMERCODE == customerCode && 
+                                x.APPLICATIONREFERENCENUMBER == applicationreferenceNumber
+
+
+                                //let atrail = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == x.LOANAPPLICATIONID && operations.Contains(o.OPERATIONID)).OrderByDescending(r => r.APPROVALTRAILID).ThenByDescending(w => w.SYSTEMARRIVALDATETIME).FirstOrDefault()
+                                //let branchRegion = context.TBL_BRANCH_REGION.Where(o => o.REGIONID == x.CAPREGIONID).FirstOrDefault()
+                                //let availmentRegion = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID2).FirstOrDefault() : null
+                                //let houStaff = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID).FirstOrDefault() : null
+                                //let availmentStaff = x.CAPREGIONID != null ? context.TBL_BRANCH_REGION_STAFF.Where(o => o.REGIONID == branchRegion.REGIONID2).FirstOrDefault() : null
+                                //let houStaffRec = x.CAPREGIONID != null ? context.TBL_STAFF.Where(o => o.STAFFID == houStaff.STAFFID).FirstOrDefault() : null
+                                //let availmentStaffRec = x.CAPREGIONID != null ? context.TBL_STAFF.Where(o => o.STAFFID == availmentStaff.STAFFID).FirstOrDefault() : null
+
+                                select new LoanApplicationForReturn
+                                {
+                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                    customerCode = c.CUSTOMERCODE,
+                                    applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                    //loanApplicationId = x.LOANAPPLICATIONID, 
+                                    loanBranch = x.TBL_BRANCH.BRANCHNAME + " - " + x.TBL_BRANCH.BRANCHCODE,
+                                    //customerGroupId = x.CUSTOMERGROUPID,
+                                    //loanTypeId = x.LOANAPPLICATIONTYPEID,
+                                    //relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                    //relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                    applicationDate = (DateTime)x.APPLICATIONDATE,
+                                    //applicationAmount = x.APPLICATIONAMOUNT,
+                                    //approvedAmount = x.APPROVEDAMOUNT,
+                                    //interestRate = x.INTERESTRATE,
+                                    //applicationTenor = x.APPLICATIONTENOR, 
+                                    //submittedForAppraisal = x.SUBMITTEDFORAPPRAISAL,
+                                    //approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
+
+                                    //currentApprovalLevel = atrail != null ? atrail.TOAPPROVALLEVELID != null ? atrail.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a" : "n/a",
+
+                                    //applicationStatusId = x.APPLICATIONSTATUSID,
+                                    applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o => o.APPLICATIONSTATUSID == x.APPLICATIONSTATUSID).Select(o => o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new  
+                                    relationshipOfficerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME + " - " + x.TBL_STAFF.STAFFCODE,
+                                    relationshipManagerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME + " - " + x.TBL_STAFF.STAFFCODE,
+                                    //isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
+
+                                    loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == x.LOANAPPLICATIONID)
+                                     .Select(c => new LoanApplicationDetailForReturn()
+                                     {
+                                         //equityAmount = c.EQUITYAMOUNT,
+                                         //equityCasaAccountId = c.EQUITYCASAACCOUNTID,
+                                         amount = c.APPROVEDAMOUNT,
+                                         //approvedInterestRate = c.APPROVEDINTERESTRATE,
+                                         productId = (short)c.APPROVEDPRODUCTID,
+                                         approvedTenor = c.APPROVEDTENOR,
+                                         //currencyId = c.CURRENCYID,
+                                         //currencyName = c.TBL_CURRENCY.CURRENCYNAME,
+                                         //customerId = c.CUSTOMERID,
+                                         //exchangeRate = c.EXCHANGERATE,
+                                         //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                                         //subSectorId = c.SUBSECTORID,
+                                         //loanApplicationId = c.LOANAPPLICATIONID,
+                                         //proposedAmount = c.PROPOSEDAMOUNT,
+                                         //proposedInterestRate = c.PROPOSEDINTERESTRATE,
+                                         //proposedProductId = c.PROPOSEDPRODUCTID,
+                                         //productName = c.TBL_PRODUCT.PRODUCTNAME,
+                                         //customerName = context.TBL_CUSTOMER.Where(cc => cc.CUSTOMERID == c.CUSTOMERID).Select(cc => cc.FIRSTNAME + " " + cc.MIDDLENAME + " " + cc.LASTNAME).FirstOrDefault(),
+                                         //nhfAccount = context.TBL_CASA.Where(cc => cc.CUSTOMERID == c.CUSTOMERID).Select(cc => cc.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         //statusId = c.STATUSID
+
+                                     }).ToList()
+
+                                }).ToList();
+
+
+            return applications;
+        }
+
+
+
+
 
         public IQueryable<LoanApplicationForReturn> GetBatchedLoanApplication(FinTrakBankingContext context)
         {
@@ -1354,7 +1456,7 @@ namespace FintrakBanking.Repositories.External
 
             loanData = new TBL_LOAN_APPLICATION
             {
-                INTERESTRATE = 0, // COME IN AS ADDITIONAL PARAMETTER
+                INTERESTRATE = loan.loanApplicationDetail.proposedRate, // COME IN AS ADDITIONAL PARAMETTER
                 //CASAACCOUNTID = loan.casaAccountId, // COME IN AS ADDITIONAL PARAMETTER
                 //ISINVESTMENTGRADE = loan.isInvestmentGrade, // COME IN AS ADDITIONAL PARAMETTER
                 //BUSINESSUNIT = loan.businessUnit, // COME IN AS ADDITIONAL PARAMETTER
@@ -1393,7 +1495,7 @@ namespace FintrakBanking.Repositories.External
                 ISFROMEXTERNALSOURCE = true,
                 LOANINFORMATION = loanInformation,
                 OWNEDBY = loan.relationshipOfficerId,
-               // LENDERID = loan.LenderId,
+                // LENDERID = loan.LenderId,
                 //LOANAPPLICATIONSOURCEID = loan.loanApplicationSourceId
             };
 
@@ -1538,11 +1640,12 @@ namespace FintrakBanking.Repositories.External
 
             var newLoanDetail = new TBL_LOAN_APPLICATION_DETAIL
             {
-                APPROVEDINTERESTRATE = (double)product.MAXIMUMRATE.Value, //(double)entity.proposedInterestRate, // COME IN AS ADDITIONAL PARAMETTER
-                                                                          //APR = entity.apr // COME IN AS ADDITIONAL PARAMETTER
-                                                                          //REPAYMENTDATE = entity.repaymentDate, // COME IN AS ADDITIONAL PARAMETTER
-                                                                          //EQUITYAMOUNT = entity.equityAmount, // COME IN AS ADDITIONAL PARAMETTER
-                                                                          //EQUITYCASAACCOUNTID = entity.equityCasaAccountId, // COME IN AS ADDITIONAL PARAMETTER
+                APPROVEDINTERESTRATE = (entity.proposedRate != 0) ? entity.proposedRate : (double)product.MAXIMUMRATE.Value,
+                //(double)entity.proposedInterestRate, // COME IN AS ADDITIONAL PARAMETTER
+                //APR = entity.apr // COME IN AS ADDITIONAL PARAMETTER
+                //REPAYMENTDATE = entity.repaymentDate, // COME IN AS ADDITIONAL PARAMETTER
+                //EQUITYAMOUNT = entity.equityAmount, // COME IN AS ADDITIONAL PARAMETTER
+                //EQUITYCASAACCOUNTID = entity.equityCasaAccountId, // COME IN AS ADDITIONAL PARAMETTER
 
                 CURRENCYID = entity.currencyId,
                 APPROVEDAMOUNT = entity.proposedAmount,
@@ -2409,7 +2512,7 @@ namespace FintrakBanking.Repositories.External
                 using (var dbcontext = new FinTrakBankingContext())
                 {
                     var RefinanceAplications = new List<TblRefinancingLoan>();
-                    var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1 && a.Reviewed ==null && a.Checklisted == null && (a.ApplicationStatus == null || a.ApplicationStatus == 0)).ToList();
+                    var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1 && a.Reviewed == null && a.Checklisted == null && (a.ApplicationStatus == null || a.ApplicationStatus == 0)).ToList();
                     return LaonApp;
 
 
@@ -2434,10 +2537,10 @@ namespace FintrakBanking.Repositories.External
                     var LaonApp = dbcontext.TblRefinancing.Where(a => a.RefinanceNumber == RefinanceNumbr && a.Status == 1).ToList();
                     foreach (var item in LaonApp)
                     {
-                        var RefinanceDetails = dbcontext.TblRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted != 1 &&  x.Status == 1 && x.Reviewed != 1 && x.Approved != 1).ToList();
+                        var RefinanceDetails = dbcontext.TblRefinancingLoan.Where(x => x.RefinanceNumber == item.RefinanceNumber && x.Checklisted != 1 && x.Status == 1 && x.Reviewed != 1 && x.Approved != 1).ToList();
                         foreach (var loan in RefinanceDetails)
                         {
-                            var CustomerChecklist = dbcontext.TblCustomerUUS.Where(x=> x.EmployeeNhfNumber == loan.Nhfnumber).ToList();
+                            var CustomerChecklist = dbcontext.TblCustomerUUS.Where(x => x.EmployeeNhfNumber == loan.Nhfnumber).ToList();
                             if (CustomerChecklist.Any())
                             {
                                 loan.ItemAvailable = 1;
@@ -2692,7 +2795,7 @@ namespace FintrakBanking.Repositories.External
                 using (var dbcontext = new FinTrakBankingContext())
                 {
                     var LaonApp = dbcontext.TblRefinancing.Where(a => a.PmbId == CompanyId && a.Status == 1 && a.Checklisted == 1 && (a.ApplicationStatus == null || a.ApplicationStatus == 0)).ToList();
-                   
+
                     return LaonApp;
 
                 }
@@ -2712,7 +2815,7 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                   var RefinanceDetails = dbcontext.TblRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).ToList();
+                    var RefinanceDetails = dbcontext.TblRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).ToList();
 
                     return RefinanceDetails;
 
@@ -2980,12 +3083,12 @@ namespace FintrakBanking.Repositories.External
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
-                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && (x.ApplicationStatus == null || x.ApplicationStatus == 0 )).ToList();
+                    var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && (x.ApplicationStatus == null || x.ApplicationStatus == 0)).ToList();
 
                     var ValidLoans = new List<TblNmrcRefinancing>();
                     foreach (var item in AppliedLoans)
                     {
-                        var LoanExists = dbcontext.TblNmrcRefinancingLoan.Any(x=> x.RefinanceNumber == item.RefinanceNumber && x.ReviewalStatus == 1);
+                        var LoanExists = dbcontext.TblNmrcRefinancingLoan.Any(x => x.RefinanceNumber == item.RefinanceNumber && x.ReviewalStatus == 1);
 
                         if (LoanExists)
                         {
@@ -3134,7 +3237,7 @@ namespace FintrakBanking.Repositories.External
                             var LoanList = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == item && x.Approved == 1 && x.Reviewed == 1).ToList();
                             foreach (var Loan in LoanList)
                             {
-                               
+
                                 Loan.Approved = 1;
                                 context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
                             }
@@ -3157,7 +3260,7 @@ namespace FintrakBanking.Repositories.External
                         LoanTranch.IsTranched = 1;
                         LoanTranch.ProductCode = "002";
                         context.TblNmrcRefinancingTranches.Add(LoanTranch);
-                       
+
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
@@ -3232,6 +3335,16 @@ namespace FintrakBanking.Repositories.External
                         if (loanDetail.proposedAmount > productInfo.MAXIMUMAMOUNT)
                         {
                             throw new SecureException($"Maximum product Amount Exceeded! The maximum product amount for {productInfo.PRODUCTNAME} is NGN{productInfo.MAXIMUMAMOUNT.Value.ToString("N")}");
+                        }
+
+                        if (loanDetail.proposedRate > productInfo.MAXIMUMRATE)
+                        {
+                            throw new SecureException($"Maximum product Rate Exceeded! The maximum product rate for {productInfo.MAXIMUMRATE} is {productInfo.MAXIMUMRATE}");
+                        }
+
+                        if (loanDetail.proposedRate < productInfo.MINIMUMRATE)
+                        {
+                            throw new SecureException($"Minimum product Rate Exceeded! The minimum product rate for {productInfo.MINIMUMRATE} is {productInfo.MINIMUMRATE}");
                         }
 
                         if (loanDetail.proposedAmount < productInfo.MINIMUMAMOUNT)
@@ -3544,7 +3657,7 @@ namespace FintrakBanking.Repositories.External
                             context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
                             Loans.Add(Loan);
                         }
-                        
+
 
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
@@ -3623,7 +3736,7 @@ namespace FintrakBanking.Repositories.External
                 }
             }
         }
-        
+
         public List<TblNmrcRefinancingLoan> NmrcDisapproveReviewed(List<int> Model)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -3691,7 +3804,7 @@ namespace FintrakBanking.Repositories.External
                     {
                         var random = new Random();
                         var message = string.Empty;
-                        var Status = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).Select(x=> x.ReviewalStatus).ToList();
+                        var Status = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).Select(x => x.ReviewalStatus).ToList();
 
                         foreach (var item in Status)
                         {
@@ -3758,7 +3871,7 @@ namespace FintrakBanking.Repositories.External
                     {
                         var random = new Random();
                         var message = string.Empty;
-                        var Status = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).Select(x=> x.ApprovalStatus).ToList();
+                        var Status = context.TblNmrcRefinancingLoan.Where(x => x.RefinanceNumber == RefinanceNumber).Select(x => x.ApprovalStatus).ToList();
 
                         foreach (var item in Status)
                         {
@@ -3852,13 +3965,13 @@ namespace FintrakBanking.Repositories.External
                         foreach (var item in Model)
                         {
                             var Loan = context.TblNmrcRefinancingLoan.Where(x => x.Id == item).FirstOrDefault();
-                           
+
                             Loan.ApprovalStatus = 1;
                             Loans.Add(Loan);
                             context.TblNmrcRefinancingLoan.AddOrUpdate(Loan);
                         }
 
-                      
+
                         var output = context.SaveChanges() > 0;
                         trans.Commit();
                         trans.Dispose();

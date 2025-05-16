@@ -761,6 +761,7 @@ namespace FintrakBanking.Repositories.Credit
                     let customer = cust2 != null ? cust2 : cust
                     where operationIds.Contains(atrail.OPERATIONID)
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
+                            && m.COMPANYID == companyId
                             && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                             && req.ISUSED == false && atrail.RESPONSESTAFFID == null
