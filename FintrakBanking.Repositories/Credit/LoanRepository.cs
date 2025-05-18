@@ -4527,6 +4527,7 @@ namespace FintrakBanking.Repositories.Credit
                         join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         where d.DELETED == false && s.DELETED == false
+                        && m.COMPANYID == companyId
 
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
@@ -4773,7 +4774,7 @@ namespace FintrakBanking.Repositories.Credit
             //operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
 
             var activities = admin.GetUserActivitiesByUser(staffId);
-            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
             try
             {
@@ -4981,7 +4982,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<RevolvingLoanViewModel> GetRevolvingFacilityBooked(int staffId, int companyId)
         {
             var activities = admin.GetUserActivitiesByUser(staffId);
-            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
             //var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
             try
@@ -12487,7 +12488,7 @@ namespace FintrakBanking.Repositories.Credit
                 var staffs = generalSetup.GetStaffRlieved(staffId);
 
                 var activities = admin.GetUserActivitiesByUser(staffId);
-                var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+                var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
                 var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
 
@@ -12837,7 +12838,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+                var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
                 var activities = admin.GetUserActivitiesByUser(userId);
                 var applicationDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = new List<LoanViewModel>();
@@ -14218,7 +14219,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanViewModel> GetContingentApprovedApplication(int staffId, int companyId)
         {
             var activities = admin.GetUserActivitiesByUser(staffId);
-            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
             var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
@@ -17389,7 +17390,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
             var activities = admin.GetUserActivitiesByUser(staffId);
-            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
             var operationsRecords = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.LineFacility).Select(x => x.LOANREVIEWAPPLICATIONID).ToList();
@@ -19023,7 +19024,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var activities = admin.GetUserActivitiesByUser(staffId);
-                var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+                var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
                 var applicationDate = generalSetup.GetApplicationDate();
                 List<short> productTypes = new List<short>();
