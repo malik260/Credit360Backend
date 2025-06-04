@@ -2522,6 +2522,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [Route("get-pmb-checklisted-loan-summary/")]
         public async Task<HttpResponseMessage> GetPmbsChecklistedLoanSummary(long companyId)
+        
         {
             try
             {
@@ -2636,7 +2637,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = await repoLoan.GetAppliedLoanForNmrcRefinance();
+                var companyId = token.GetCompanyId;
+                var staffid = token.GetStaffId;
+                
+                var data = await repoLoan.GetAppliedLoanForNmrcRefinance(staffid);
                 if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -2760,10 +2764,13 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [Route("get-reviewed-sum-nmrcapproval")]
         public async Task<HttpResponseMessage> GetReviewedSumForNmrcApproval()
-        {
+       {
             try
             {
-                var data = await repoLoan.GetReviwedLoanForNmrcApproval();
+                var companyId = token.GetCompanyId;
+                var staffid = token.GetStaffId;
+                
+                var data = await repoLoan.GetReviwedLoanForNmrcApproval(staffid);
                 if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

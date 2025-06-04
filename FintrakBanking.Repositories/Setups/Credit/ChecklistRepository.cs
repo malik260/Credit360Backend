@@ -1507,9 +1507,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var condition = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
                                  where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId
-                                //&& c.ISEXTERNAL == true 
-                                 && c.ISSUBSEQUENT == false &&
-                                  c.CHECKLISTSTATUSID == null
+                                    //&& c.ISEXTERNAL == true 
+                                 && c.ISSUBSEQUENT == false 
+                                 && c.CHECKLISTSTATUSID == null
                                   && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                                  select new ConditionPrecedentViewModel()
                                  {

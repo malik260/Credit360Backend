@@ -4621,6 +4621,7 @@ namespace FintrakBanking.Repositories.Credit
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
                             crmsCode = s.CRMSCODE,
                             staffId = staffId
+                            
                         }).ToList();
 
 
