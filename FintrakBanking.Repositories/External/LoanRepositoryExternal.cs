@@ -3056,12 +3056,17 @@ namespace FintrakBanking.Repositories.External
 
 
 
-        public async Task<List<TblNmrcRefinancing>> GetAppliedLoanForNmrcRefinance()
+        public async Task<List<TblNmrcRefinancing>> GetAppliedLoanForNmrcRefinance(int staffId)
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
+                    var staffrole = dbcontext.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+                    if (staffrole.STAFFROLEID == 6)
+                    {
+                        return new List<TblNmrcRefinancing>();
+                    }
                     var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == null && (x.ApplicationStatus == null || x.ApplicationStatus == 0)).ToList();
 
 
@@ -3077,15 +3082,22 @@ namespace FintrakBanking.Repositories.External
         }
 
 
-        public async Task<List<TblNmrcRefinancing>> GetReviwedLoanForNmrcApproval()
+        public async Task<List<TblNmrcRefinancing>> GetReviwedLoanForNmrcApproval(int staffId)
         {
             try
             {
                 using (var dbcontext = new FinTrakBankingContext())
                 {
+                    var ValidLoans = new List<TblNmrcRefinancing>();
+
+                    var staffRole = dbcontext.TBL_STAFF.FirstOrDefault(x => x.STAFFID == staffId);
+                    if (staffRole.STAFFROLEID == 6)
+                    {
+                        return ValidLoans;
+
+                    }
                     var AppliedLoans = dbcontext.TblNmrcRefinancing.Where(x => x.Reviewed == 1 && (x.ApplicationStatus == null || x.ApplicationStatus == 0)).ToList();
 
-                    var ValidLoans = new List<TblNmrcRefinancing>();
                     foreach (var item in AppliedLoans)
                     {
                         var LoanExists = dbcontext.TblNmrcRefinancingLoan.Any(x => x.RefinanceNumber == item.RefinanceNumber && x.ReviewalStatus == 1);

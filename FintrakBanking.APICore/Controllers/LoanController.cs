@@ -2637,7 +2637,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = await repoLoan.GetAppliedLoanForNmrcRefinance();
+                var companyId = token.GetCompanyId;
+                var staffid = token.GetStaffId;
+                
+                var data = await repoLoan.GetAppliedLoanForNmrcRefinance(staffid);
                 if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -2764,7 +2767,10 @@ namespace FintrakBanking.APICore.Controllers
        {
             try
             {
-                var data = await repoLoan.GetReviwedLoanForNmrcApproval();
+                var companyId = token.GetCompanyId;
+                var staffid = token.GetStaffId;
+                
+                var data = await repoLoan.GetReviwedLoanForNmrcApproval(staffid);
                 if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

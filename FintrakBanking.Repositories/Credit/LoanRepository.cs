@@ -4527,6 +4527,7 @@ namespace FintrakBanking.Repositories.Credit
                         join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         where d.DELETED == false && s.DELETED == false
+                        && m.COMPANYID == companyId
 
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
@@ -4620,6 +4621,7 @@ namespace FintrakBanking.Repositories.Credit
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
                             crmsCode = s.CRMSCODE,
                             staffId = staffId
+                            
                         }).ToList();
 
 
@@ -4773,7 +4775,7 @@ namespace FintrakBanking.Repositories.Credit
             //operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
 
             var activities = admin.GetUserActivitiesByUser(staffId);
-            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
             try
             {
@@ -4981,7 +4983,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<RevolvingLoanViewModel> GetRevolvingFacilityBooked(int staffId, int companyId)
         {
             var activities = admin.GetUserActivitiesByUser(staffId);
-            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
             //var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
             try

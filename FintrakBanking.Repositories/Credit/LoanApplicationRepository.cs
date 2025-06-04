@@ -5339,7 +5339,7 @@ namespace FintrakBanking.Repositories.Credit
                             proposedProductName = (a.FLOWCHANGEID == null || a.FLOWCHANGEID <= 0 || a.FLOWCHANGEID == (short)FlowChangeEnum.FAM) ? b.TBL_PRODUCT.PRODUCTNAME : b.TBL_PRODUCT.PRODUCTNAME + "(" + context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(x => x.FLOWCHANGEID == a.FLOWCHANGEID).PLACEHOLDER + ")",
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedAmount = b.PROPOSEDAMOUNT,
-                            proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                            proposedInterestRate = b.APPROVEDINTERESTRATE,
                             productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
                             productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
