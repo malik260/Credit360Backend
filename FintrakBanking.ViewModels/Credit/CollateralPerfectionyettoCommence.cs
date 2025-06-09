@@ -300,4 +300,57 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? collateralValue { get; set; }
         public int collCustomerId { get; set; }
     }
+
+    public class AvailmentUtilizationTicketViewModel
+    {
+        public string field1 { get; set; }
+        public int customerId { get; set; }
+        public string key { get; set; }
+        public string sector { get; set; }
+        public string location { get; set; }
+        public string transactionDate { get; set; }
+        public string customerRiskRating { get; set; }
+        public string customerName { get; set; }
+        public string classification { get; set; }
+        public string facilityType { get; set; }
+        public string approvedAmount { get; set; }
+        public string disbursedAmount { get; set; }
+        public string amountToBeDisbursed { get; set; }
+        public string totalDisbursedAmount { get; set; }
+        public string purpose { get; set; }
+        public string amountInFull { get; set; }
+        public double interestRate { get; set; }
+        public double otherFees { get; set; }
+        public string tranche { get; set; }
+        public int tenor { get; set; }
+        public string effectiveDate { get; set; }
+        public string maturityDate { get; set; }
+        public string repaymentCycle { get; set; }
+        public string securityDetails { get; set; }
+        public int sn { get; set; }
+        public string conditionPrecedent { get; set; }
+        public string inPlace { get; set; }
+        public string notInPlace { get; set; }
+        public string deferred { get; set; }
+        public string riskManagementName { get; set; }
+        public string legalName { get; set; }
+        public string treasurerName { get; set; }
+        public string cfoName { get; set; }
+        public string mdCeoName { get; set; }
+        public string approvedTotal { get; set; }
+        public decimal disbursedAmountTotal { get; set; }
+        public decimal amountToBeDisbusedTotal { get; set;}
+        public string totalDisbursedAmountTotal { get; set; }
+
+    }
+
+
+    public class ConditionViewModel
+    {
+        public string Conditions  { get; set; }
+        public int SN { get; set; }
+        public string InPlace { get; set; }
+        public string NotInPlace { get; set; }
+        public string Deferred { get; set; }
+    }
 }

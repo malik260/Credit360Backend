@@ -184,6 +184,8 @@ namespace FintrakBanking.Interfaces.Reports
         string CorporateCustomerCreation(DateRange param);
         string InsuranceSpoolReport(DateRange param);
 
+        string GetAvailmentUtilizationTicketReport(int customerId);
+
 
     }
 

@@ -680,6 +680,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RecoveryCollections.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\ReportDataSet.cs">
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\ReportDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1662,6 +1665,13 @@
     <Compile Include="Reports\ReportViews\ValidCollaterals.aspx.designer.cs">
       <DependentUpon>ValidCollaterals.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\AvailmentUtilizationTicket.aspx.cs">
+      <DependentUpon>AvailmentUtilizationTicket.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\AvailmentUtilizationTicket.aspx.designer.cs">
+      <DependentUpon>AvailmentUtilizationTicket.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx.cs">
       <DependentUpon>WeeklyRecoveryReportForFINCON.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1852,6 +1862,7 @@
     <Content Include="Reports\ReportViews\UnutilizedFacilityReport.aspx" />
     <Content Include="Reports\ReportViews\UserGroupChangeReport.aspx" />
     <Content Include="Reports\ReportViews\ValidCollaterals.aspx" />
+    <Content Include="Reports\ReportViews\AvailmentUtilizationTicket.aspx" />
     <Content Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
@@ -2238,6 +2249,7 @@
     <EmbeddedResource Include="Reports\Report\AnalystReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc" />
+    <EmbeddedResource Include="Reports\Report\AvailmentUtilizationTicketReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\BandGReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />

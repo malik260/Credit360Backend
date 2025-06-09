@@ -112,6 +112,7 @@
     <Compile Include="Models\TBL_COLLATERAL_LIQUIDATION_RECOVERY.cs" />
     <Compile Include="Models\TBL_COLLECTION_RETAIL_COMPUTATION-VARIABLES_SETUP.cs" />
     <Compile Include="Models\TBL_COLLECTION_RETAIL_CRON_SETUP.cs" />
+    <Compile Include="Models\TBL_NMRC_CONDITIONPRECEDENTS.cs" />
     <Compile Include="Models\TBL_CONSUMER_PROTECTION.cs" />
     <Compile Include="Models\TBL_CONTRACTOR_CRITERIA.cs" />
     <Compile Include="Models\TBL_CONTRACTOR_CRITERIA_OPTION.cs" />

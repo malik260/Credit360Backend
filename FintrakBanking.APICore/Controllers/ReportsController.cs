@@ -3957,6 +3957,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("availment-utilization-ticket")]
+        public HttpResponseMessage GetAvailmentUtilizationTicketReport(int customerId)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetAvailmentUtilizationTicketReport(customerId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }
 

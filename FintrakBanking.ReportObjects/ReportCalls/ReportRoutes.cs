@@ -9,6 +9,7 @@ using FintrakBanking.ViewModels.Admin;
 using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 
@@ -1690,6 +1691,16 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
             string path = string.Empty;
             path = reportPath + "ReportViews/OutstandingDocumentDeferredList.aspx?hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetAvailmentUtilizationTicketReport(int customerId)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/AvailmentUtilizationTicket.aspx?customerId=" + customerId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+
             return path;
         }
 
