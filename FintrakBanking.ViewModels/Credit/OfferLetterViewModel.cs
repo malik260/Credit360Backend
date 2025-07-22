@@ -22,7 +22,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerGroupName { get; set; }
         public string customerEmailAddress { get; set; }
         public string customerPhoneNumber { get; set; }
-        public bool isFinal  { get; set; }
+        public bool? isFinal  { get; set; }
         public string final { get; set; }
         public int producyClassProcessId { get; set; }
         public int loanApplicationDetailId { get; set; }

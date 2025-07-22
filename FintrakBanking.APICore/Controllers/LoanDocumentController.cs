@@ -13,6 +13,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using FintrakBanking.Common.CustomException;
+using System.Threading;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -193,65 +194,46 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Content is not multipart.");
             }
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            Task.Factory
+                .StartNew(() => provider = Request.Content.ReadAsMultipartAsync(provider).Result,
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning, // guarantees separate thread
+                    TaskScheduler.Default)
+                .Wait();
 
-            var provider = new MultipartMemoryStreamProvider();
-            await Request.Content.ReadAsMultipartAsync(provider);
-
-            byte[] fileBytes = null;
-            string fileName = null;
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
 
             var model = new LoanDocumentUploadModel();
 
-            foreach (var content in provider.Contents)
-            {
-                var name = content.Headers.ContentDisposition.Name?.Trim('\"');
+            var DocTypeID = provider.FormData["documentTypeId"];
 
-                if (name == "file")
-                {
-                    fileBytes = await content.ReadAsByteArrayAsync();
-                    fileName = content.Headers.ContentDisposition.FileName?.Trim('\"');
-                }
-                else
-                {
-                    var stringValue = await content.ReadAsStringAsync();
-                    switch (name)
-                    {
-                        case "loanApplicationNumber": model.LoanApplicationNumber = stringValue; break;
-                        case "loanReferenceNumber": model.LoanReferenceNumber = stringValue; break;
-                        case "documentTitle": model.DocumentTitle = stringValue; break;
-                        case "documentTypeId": model.DocumentTypeId = stringValue; break;
-                        case "fileName": model.FileName = stringValue; break;
-                        case "fileExtension": model.FileExtension = stringValue; break;
-                        case "physicalFileNumber": model.PhysicalFileNumber = stringValue; break;
-                        case "physicalLocation": model.PhysicalLocation = stringValue; break;
-                        case "isPrimaryDocument": model.IsPrimaryDocument = stringValue.ToLower() == "true"; break;
-                    }
-                }
-            }
-
-            if (fileBytes == null || fileBytes.Length == 0)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
-
-            if (!int.TryParse(model.DocumentTypeId, out int uploadType))
+            if (!int.TryParse(DocTypeID, out int uploadType))
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid Document Type");
 
             var entity = new LoanDocumentViewModel
             {
-                loanApplicationNumber = model.LoanApplicationNumber,
-                loanReferenceNumber = model.LoanReferenceNumber,
-                documentTitle = model.DocumentTitle,
+                loanApplicationNumber = provider.FormData["loanApplicationNumber"],
+                loanReferenceNumber = provider.FormData["loanReferenceNumber"],
+                documentTitle = provider.FormData["documentTitle"],
                 documentTypeId = (short)uploadType,
-                fileName = model.FileName ?? fileName,
-                fileExtension = model.FileExtension,
-                physicalFileNumber = model.PhysicalFileNumber,
-                physicalLocation = model.PhysicalLocation,
-                isPrimaryDocument = model.IsPrimaryDocument,
+                fileName = provider.FormData["fileName"],
+                fileExtension = provider.FormData["fileExtension"],
+                physicalFileNumber = provider.FormData["physicalFileNumber"],
+                physicalLocation = provider.FormData["physicalLocation"],
+                isPrimaryDocument = true,
                 userBranchId = (short)token.GetBranchId,
                 companyId = token.GetCompanyId,
                 createdBy = token.GetStaffId,
             };
 
-            var data = repo.AddLoanDocument(entity, fileBytes);
+            var file = provider.Contents.FirstOrDefault();
+            var buffer = await file.ReadAsByteArrayAsync();
+
+            var data = repo.AddLoanDocument(entity, buffer);
 
             switch (data)
             {
@@ -268,6 +250,91 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
+
+
+
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("loan-document")]
+        //public async Task<HttpResponseMessage> AddLoanDocument()
+        //{
+        //    if (!Request.Content.IsMimeMultipartContent())
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Content is not multipart.");
+        //    }
+
+
+        //    var provider = new MultipartMemoryStreamProvider();
+        //    await Request.Content.ReadAsMultipartAsync(provider);
+
+        //    byte[] fileBytes = null;
+        //    string fileName = null;
+
+        //    var model = new LoanDocumentUploadModel();
+
+        //    foreach (var content in provider.Contents)
+        //    {
+        //        var name = content.Headers.ContentDisposition.Name?.Trim('\"');
+
+        //        if (name == "file")
+        //        {
+        //            fileBytes = await content.ReadAsByteArrayAsync();
+        //            fileName = content.Headers.ContentDisposition.FileName?.Trim('\"');
+        //        }
+        //        else
+        //        {
+        //            var stringValue = await content.ReadAsStringAsync();
+        //            switch (name)
+        //            {
+        //                case "loanApplicationNumber": model.LoanApplicationNumber = stringValue; break;
+        //                case "loanReferenceNumber": model.LoanReferenceNumber = stringValue; break;
+        //                case "documentTitle": model.DocumentTitle = stringValue; break;
+        //                case "documentTypeId": model.DocumentTypeId = stringValue; break;
+        //                case "fileName": model.FileName = stringValue; break;
+        //                case "fileExtension": model.FileExtension = stringValue; break;
+        //                case "physicalFileNumber": model.PhysicalFileNumber = stringValue; break;
+        //                case "physicalLocation": model.PhysicalLocation = stringValue; break;
+        //                case "isPrimaryDocument": model.IsPrimaryDocument = stringValue.ToLower() == "true"; break;
+        //            }
+        //        }
+        //    }
+
+        //    if (fileBytes == null || fileBytes.Length == 0)
+        //        return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+
+        //    if (!int.TryParse(model.DocumentTypeId, out int uploadType))
+        //        return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid Document Type");
+
+        //    var entity = new LoanDocumentViewModel
+        //    {
+        //        loanApplicationNumber = model.LoanApplicationNumber,
+        //        loanReferenceNumber = model.LoanReferenceNumber,
+        //        documentTitle = model.DocumentTitle,
+        //        documentTypeId = (short)uploadType,
+        //        fileName = model.FileName ?? fileName,
+        //        fileExtension = model.FileExtension,
+        //        physicalFileNumber = model.PhysicalFileNumber,
+        //        physicalLocation = model.PhysicalLocation,
+        //        isPrimaryDocument = model.IsPrimaryDocument,
+        //        userBranchId = (short)token.GetBranchId,
+        //        companyId = token.GetCompanyId,
+        //        createdBy = token.GetStaffId,
+        //    };
+
+        //    var data = repo.AddLoanDocument(entity, fileBytes);
+
+        //    switch (data)
+        //    {
+        //        case 2:
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+        //        case 3:
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "Record already exists" });
+        //        case 4:
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "File number already exists" });
+        //        default:
+        //            return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "Error creating record" });
+        //    }
+        //}
 
         [HttpPut] [ClaimsAuthorization]
         [Route("loan-document/{loanDocumentId}")]

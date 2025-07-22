@@ -2504,6 +2504,7 @@ namespace FintrakBanking.Repositories.Setups.General
                            firstName = st.FIRSTNAME,
                            middleName = st.MIDDLENAME,
                            lastName = st.LASTNAME,
+                           companyId = st.COMPANYID
                            //departmentId = st.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
                            //departmentUnitId = (short)st.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID,
 

@@ -31,7 +31,9 @@ namespace FintrakBanking.Interfaces.Media
 
         bool DeleteDocumentUpload(int id, int documentTypeId, UserInfo user);
         DocumentUploadViewModel GetDocument(int documentId);
+        DocumentUploadViewModel GetDocument1(int documentId);
         IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int getStaffId, int operationId, int targetId, bool isOperationSpecific);
+        IEnumerable<DocumentUploadViewModel> GetDocumentUploads1(int staffId, int targetId);
         IEnumerable<DocumentUploadViewModel> GetDocumentUploadsLms(int getStaffId, int operationId, int targetId, bool isOperationSpecific, bool isLms = false);
         IEnumerable<DocumentUploadViewModel> GetDocumentDeleted(int staffId, int operationId, int targetId);
         bool AddDeferredDocument(DeferredDocumentsViewModel model, UserInfo user);

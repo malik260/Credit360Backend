@@ -46,11 +46,13 @@ namespace FintrakBanking.ReportObjects.Credit
                                           select new OfferLetterViewModel
                                           {
                                               companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
-                                              customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
+                                              //customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
+                                              customerName = b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME,
                                               customerAddress = e.ADDRESS ?? " ",
                                               customerEmailAddress = b.EMAILADDRESS,
                                               customerPhoneNumber = g.PHONENUMBER,
-                                              isFinal = (h.ISFINAL == false) ? false : h.ISFINAL,
+                                              //isFinal = (h.ISFINAL == false) ? false : h.ISFINAL,
+                                              isFinal = h != null && h.ISFINAL,
                                               producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                               loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                               offerLetterTitle = b.OFFERLETTERTITLE,
@@ -78,11 +80,11 @@ namespace FintrakBanking.ReportObjects.Credit
 
                 return offerLetterDetails;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
-            
+
         }
 
 

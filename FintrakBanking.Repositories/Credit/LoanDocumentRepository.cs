@@ -31,7 +31,6 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region TBL_MEDIA_LOAN_DOCUMENTS
-
         public int AddLoanDocument(LoanDocumentViewModel model, byte[] file)
         {
             var existing = docContext.TBL_MEDIA_LOAN_DOCUMENTS
@@ -80,7 +79,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added Loan Document with title : '{ model.documentTitle }' ",
+                DETAIL = $"Added Loan Document with title : '{model.documentTitle}' ",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
@@ -93,7 +92,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return docContext.SaveChanges() == 0 ? 1 : 2;
         }
-
         public bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId, byte[] file)
         {
             var data = this.docContext.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);

@@ -56,6 +56,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("document-upload1/target/{targetId}")]
+        public HttpResponseMessage GetDocumentUploads1(int targetId)
+        {
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads1(token.GetStaffId, targetId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("deferred-document/{loanApplicationId}")]
         public HttpResponseMessage GetDeferredDocuments(int loanApplicationId)
         {
@@ -687,6 +696,16 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetDocument(int documentId)
         {
             DocumentUploadViewModel data = repo.GetDocument(documentId);
+            if (data == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-download1/{documentId}")]
+        public HttpResponseMessage GetDocument1(int documentId)
+        {
+            DocumentUploadViewModel data = repo.GetDocument1(documentId);
             if (data == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }

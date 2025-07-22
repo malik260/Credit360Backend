@@ -83,12 +83,13 @@ namespace FintrakBanking.Repositories.Media
         //        .ToList();
         //}
 
-        public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId, int operationId, int targetId, bool isOperationSpecific=false)
+        public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId, int operationId, int targetId, bool isOperationSpecific = false)
         {
             var firstQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
                 , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
-               new {
+               new
+               {
                    documentUploadId = up.DOCUMENTUPLOADID,
                    fileName = up.FILENAME,
                    fileExtension = up.FILEEXTENSION,
@@ -136,7 +137,7 @@ namespace FintrakBanking.Repositories.Media
                     createdBy = up.createdBy,
                     uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
 
-                 })
+                })
                  .OrderBy(x => x.dateTimeCreated)
                  .ThenBy(x => x.documentCategoryId)
                  .ThenBy(x => x.documentTypeId)?
@@ -152,33 +153,63 @@ namespace FintrakBanking.Repositories.Media
             var customerBureauLog = creditBureau.GetCustomerCreditBureauReportLog(customerId.FirstOrDefault(), null).Select(x => x.customerCreditBureauId).ToList();
 
             var staff = (from x in context.TBL_STAFF
-                            join app in context.TBL_LOAN_APPLICATION_DETAIL on x.STAFFID equals app.CREATEDBY
-                            where app.LOANAPPLICATIONID == targetId
-                            select x).FirstOrDefault();
+                         join app in context.TBL_LOAN_APPLICATION_DETAIL on x.STAFFID equals app.CREATEDBY
+                         where app.LOANAPPLICATIONID == targetId
+                         select x).FirstOrDefault();
 
             var secondQuery = new List<DocumentUploadViewModel>();
 
-            if (customerBureauLog.Count() > 0) {
+            if (customerBureauLog.Count() > 0)
+            {
                 secondQuery = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
-                                   where customerBureauLog.Contains(d.CUSTOMERCREDITBUREAUID)
-                                   select new DocumentUploadViewModel
-                                   {
-                                       documentUploadId = d.DOCUMENTID,
-                                       documentTypeName = "CREDIT BUREAU",
-                                       documentCategoryName = "CREDIT BUREAU",
-                                       dateTimeCreated = d.DATETIMECREATED,
-                                       //uploadedBy = staff,
-                                       uploadedBy = staff.FIRSTNAME + " " + staff.LASTNAME,
-                                       documentTitle = d.DOCUMENT_TITLE,
-                                       fileName = d.FILENAME,
-                                       fileExtension = d.FILEEXTENSION,
-                                       owner = staff.STAFFID == staffId,
-                                       createdBy = staff.STAFFID,
-                                       //fileData = d.FILEDATA,
-                                       //fileSize = d.fileSize,
-                                   })?.ToList();
+                               where customerBureauLog.Contains(d.CUSTOMERCREDITBUREAUID)
+                               select new DocumentUploadViewModel
+                               {
+                                   documentUploadId = d.DOCUMENTID,
+                                   documentTypeName = "CREDIT BUREAU",
+                                   documentCategoryName = "CREDIT BUREAU",
+                                   dateTimeCreated = d.DATETIMECREATED,
+                                   //uploadedBy = staff,
+                                   uploadedBy = staff.FIRSTNAME + " " + staff.LASTNAME,
+                                   documentTitle = d.DOCUMENT_TITLE,
+                                   fileName = d.FILENAME,
+                                   fileExtension = d.FILEEXTENSION,
+                                   owner = staff.STAFFID == staffId,
+                                   createdBy = staff.STAFFID,
+                                   //fileData = d.FILEDATA,
+                                   //fileSize = d.fileSize,
+                               })?.ToList();
             }
-            
+
+            var loanApplication = context.TBL_LOAN_APPLICATION.Where(x => x.DELETED == false && x.LOANAPPLICATIONID == targetId).FirstOrDefault();
+            //var documentType = docContext.TBL_DOCUMENT_TYPE.Where(x => x.DELETED == false).ToList();
+            //var documentCategory = docContext.TBL_DOCUMENT_CATEGORY.Where(x => x.DELETED == false).ToList();
+
+            var thirdQuery = new List<DocumentUploadViewModel>();
+
+            //if (loanApplication != null)
+            //{
+            //    thirdQuery = (from d in docContext.TBL_MEDIA_LOAN_DOCUMENTS
+            //                  where d.LOANAPPLICATIONNUMBER == loanApplication.APPLICATIONREFERENCENUMBER
+            //                  select new DocumentUploadViewModel
+            //                  {
+            //                      documentUploadId = d.DOCUMENTID,
+            //                      documentTypeName = docContext.TBL_DOCUMENT_TYPE.Where(x => x.DOCUMENTTYPEID == d.DOCUMENTTYPEID).Select(y => y.DOCUMENTTYPENAME).FirstOrDefault(),
+            //                      documentCategoryName = docContext.TBL_DOCUMENT_CATEGORY.Where(z => z.DOCUMENTCATEGORYID == docContext.TBL_DOCUMENT_TYPE.Where(x => x.DOCUMENTTYPEID == d.DOCUMENTTYPEID).Select(y => y.DOCUMENTCATEGORYID).FirstOrDefault()).Select(b => b.DOCUMENTCATEGORYNAME).FirstOrDefault(),
+            //                      dateTimeCreated = d.SYSTEMDATETIME,
+            //                      //uploadedBy = staff,
+            //                      uploadedBy = staff.FIRSTNAME + " " + staff.LASTNAME,
+            //                      documentTitle = d.DOCUMENTTITLE,
+            //                      fileName = d.FILENAME,
+            //                      fileExtension = d.FILEEXTENSION,
+            //                      owner = staff.STAFFID == staffId,
+            //                      createdBy = staff.STAFFID,
+            //                      //fileData = d.FILEDATA,
+            //                      //fileSize = d.fileSize,
+            //                  })?.ToList();
+            //}
+
+
             //-------------------------------------------------------------------------
 
             //var customerCreditBureau = (from ccb in context.TBL_CUSTOMER_CREDIT_BUREAU
@@ -207,7 +238,7 @@ namespace FintrakBanking.Repositories.Media
             //                       //fileSize = d.fileSize,
             //                   })?.ToList();
 
-            var output = firstQuery.Union(secondQuery).ToList();
+            var output = firstQuery.Union(secondQuery).Union(thirdQuery).ToList();
 
             if (!isOperationSpecific)
             {
@@ -242,9 +273,115 @@ namespace FintrakBanking.Repositories.Media
                     }
                 }
             }
-
+            output = output.Where(x => x.deleted == false).ToList();
             return output;
         }
+
+        public IEnumerable<DocumentUploadViewModel> GetDocumentUploads1(int staffId, int targetId)
+        {
+
+            var loanApplication = context.TBL_LOAN_APPLICATION.Where(x => x.DELETED == false && x.LOANAPPLICATIONID == targetId).FirstOrDefault();
+            //var documentType = docContext.TBL_DOCUMENT_TYPE.Where(x => x.DELETED == false).ToList();
+            //var documentCategory = docContext.TBL_DOCUMENT_CATEGORY.Where(x => x.DELETED == false).ToList();
+            var staff = (from x in context.TBL_STAFF
+                         join app in context.TBL_LOAN_APPLICATION_DETAIL on x.STAFFID equals app.CREATEDBY
+                         where app.LOANAPPLICATIONID == targetId
+                         select x).FirstOrDefault();
+
+            var thirdQuery = new List<DocumentUploadViewModel>();
+
+            if (loanApplication != null)
+            {
+                thirdQuery = (from d in docContext.TBL_MEDIA_LOAN_DOCUMENTS
+                              where d.LOANAPPLICATIONNUMBER == loanApplication.APPLICATIONREFERENCENUMBER
+                              select new DocumentUploadViewModel
+                              {
+                                  documentUploadId = d.DOCUMENTID,
+                                  documentTypeName = docContext.TBL_DOCUMENT_TYPE.Where(x => x.DOCUMENTTYPEID == d.DOCUMENTTYPEID).Select(y => y.DOCUMENTTYPENAME).FirstOrDefault(),
+                                  documentCategoryName = docContext.TBL_DOCUMENT_CATEGORY.Where(z => z.DOCUMENTCATEGORYID == docContext.TBL_DOCUMENT_TYPE.Where(x => x.DOCUMENTTYPEID == d.DOCUMENTTYPEID).Select(y => y.DOCUMENTCATEGORYID).FirstOrDefault()).Select(b => b.DOCUMENTCATEGORYNAME).FirstOrDefault(),
+                                  dateTimeCreated = d.SYSTEMDATETIME,
+                                  //uploadedBy = staff,
+                                  //uploadedBy = staff.FIRSTNAME + " " + staff.LASTNAME,
+                                  documentTitle = d.DOCUMENTTITLE,
+                                  fileName = d.FILENAME,
+                                  fileExtension = d.FILEEXTENSION,
+                                  //owner = staff.STAFFID == staffId,
+                                  createdBy = staff.STAFFID,
+                                  //fileData = d.FILEDATA,
+                                  //fileSize = d.fileSize,
+                              })?.ToList();
+            }
+
+
+            //-------------------------------------------------------------------------
+
+            //var customerCreditBureau = (from ccb in context.TBL_CUSTOMER_CREDIT_BUREAU
+            //                            join app in context.TBL_LOAN_APPLICATION_DETAIL on ccb.CUSTOMERID equals app.CUSTOMERID
+            //                            where app.LOANAPPLICATIONID == targetId
+            //                            select ccb.CUSTOMERCREDITBUREAUID).ToList();
+
+            //string staff = (from x in context.TBL_STAFF
+            //                join app in context.TBL_LOAN_APPLICATION_DETAIL on x.STAFFID equals app.CREATEDBY
+            //                where app.LOANAPPLICATIONID == targetId
+            //                select x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault();
+
+            //var secondQuery = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
+            //                   where customerCreditBureau.Contains(d.CUSTOMERCREDITBUREAUID)
+            //                   select new DocumentUploadViewModel
+            //                   {
+            //                       documentUploadId = d.DOCUMENTID,
+            //                       documentTypeName = "CREDIT BUREAU",
+            //                       documentCategoryName = "CREDIT BUREAU",
+            //                       dateTimeCreated = d.DATETIMECREATED,
+            //                       uploadedBy = staff,
+            //                       documentTitle = d.DOCUMENT_TITLE,
+            //                       fileName = d.FILENAME,
+            //                       fileExtension = d.FILEEXTENSION,
+            //                       //fileData = d.FILEDATA,
+            //                       //fileSize = d.fileSize,
+            //                   })?.ToList();
+
+            var output = thirdQuery.ToList();
+
+            //if (!isOperationSpecific)
+            //{
+            //    output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.OfferLetterApproval, targetId));
+            //    output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.LoanReviewApprovalOfferLetter, targetId));
+            //    output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.LoanAvailment, targetId));
+            //    var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
+            //    foreach (var f in facilities)
+            //    {
+            //        var providedConditionCheckLists = context.TBL_LOAN_CONDITION_PRECEDENT.Where(c => c.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID && c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Provided).ToList();
+            //        foreach (var c in providedConditionCheckLists)
+            //        {
+            //            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.DefferedChecklistApproval, c.LOANCONDITIONID));
+            //        }
+            //        var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID);
+            //        foreach (var r in request)
+            //        {
+            //            if (r?.OPERATIONID != null)
+            //            {
+            //                output.AddRange(GetDocumentUploadsByOperation(staffId, (short)r.OPERATIONID, r.LOAN_BOOKING_REQUESTID));
+            //            }
+            //            else
+            //            {
+            //                output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.IndividualDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
+            //                output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.CorporateDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
+            //                output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.CreditCardDrawdownRequest, r.LOAN_BOOKING_REQUESTID));
+            //            }
+            //            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.TermLoanBooking, r.LOAN_BOOKING_REQUESTID));
+            //            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.RevolvingLoanBooking, r.LOAN_BOOKING_REQUESTID));
+            //            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.ContigentLoanBooking, r.LOAN_BOOKING_REQUESTID));
+
+            //        }
+            //    }
+            //}
+            output = output.Where(x => x.deleted == false).ToList();
+            return output;
+        }
+
+
+
 
         public IEnumerable<DocumentUploadViewModel> GetDocumentUploadsLms(int staffId, int operationId, int targetId, bool isOperationSpecific = false, bool isLms = false)
         {
@@ -1209,7 +1346,7 @@ namespace FintrakBanking.Repositories.Media
             var usageCount = 0;
             var creditBureauDoc = docContext.TBL_DOCUMENT_TYPE.FirstOrDefault(O => O.DOCUMENTTYPEID == documentTypeId);
 
-            if (creditBureauDoc.DOCUMENTTYPENAME.ToUpper() == "CREDIT BUREAU")
+            if (creditBureauDoc?.DOCUMENTTYPENAME.ToUpper() == "CREDIT BUREAU")
             {
                 var docCreditBureau = docContext.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.DOCUMENTID == id);
 
@@ -1254,6 +1391,8 @@ namespace FintrakBanking.Repositories.Media
             return docContext.SaveChanges() > 0;
         }
 
+
+
         public bool DeleteRecoveryDocumentUpload(int id)
         {
             var usage = docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.Find(id);
@@ -1265,9 +1404,34 @@ namespace FintrakBanking.Repositories.Media
 
             return docContext.SaveChanges() > 0;
         }
-
         public DocumentUploadViewModel GetDocument(int documentId)
         {
+            //var doc = (from x in docContext.TBL_MEDIA_LOAN_DOCUMENTS where x.DOCUMENTID == documentId select
+            //    new DocumentUploadViewModel
+            //    {
+            //        documentTypeId = x.DOCUMENTTYPEID,
+            //        fileData = x.FILEDATA,
+            //        fileName = x.FILENAME,
+            //        fileExtension = x.FILEEXTENSION
+            //    }).FirstOrDefault();
+
+            //if (doc == null)
+            //{
+
+            //    doc = (from x in docContext.TBL_DOCUMENT_UPLOAD
+            //            where x.DOCUMENTUPLOADID == documentId
+            //            select new DocumentUploadViewModel
+            //            {
+            //                documentTypeId = x.DOCUMENTTYPEID,
+            //                fileData = x.FILEDATA,
+            //                fileName = x.FILENAME,
+            //                fileExtension = x.FILEEXTENSION,
+            //            })
+            //                 .FirstOrDefault();
+            //}
+            //return doc;
+
+
             return (from x in docContext.TBL_DOCUMENT_UPLOAD
                     where x.DOCUMENTUPLOADID == documentId
                     select new DocumentUploadViewModel
@@ -1280,6 +1444,24 @@ namespace FintrakBanking.Repositories.Media
                          .FirstOrDefault();
         }
 
+        public DocumentUploadViewModel GetDocument1(int documentId)
+        {
+            var doc = (from x in docContext.TBL_MEDIA_LOAN_DOCUMENTS
+                       where x.DOCUMENTID == documentId
+                       select
+                new DocumentUploadViewModel
+                {
+                    documentTypeId = x.DOCUMENTTYPEID,
+                    fileData = x.FILEDATA,
+                    fileName = x.FILENAME,
+                    fileExtension = x.FILEEXTENSION
+                }).FirstOrDefault();
+
+            return doc;
+
+
+
+        }
         public DocumentUploadViewModel GetDocumentCreditBereau(int documentId)
         {
             return (from x in docContext.TBL_CUSTOMER_CREDIT_BUREAU
